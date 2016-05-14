@@ -10,7 +10,7 @@
   "devDependencies": {
   },
   "scripts": {
-    "test": "webpack-dev-server -d --progress"
+    "test": "neptune-namespaces -r test/tests/;mocha -u tdd --compilers coffee:coffee-script/register"
   },
   "author": "Shane Brinkman-Davis Delamore",
   "license": "MIT"

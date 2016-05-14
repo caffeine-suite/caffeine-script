@@ -1,5 +1,6 @@
 Foundation = require 'art-foundation'
 CoffeeScript = require 'coffee-script'
+{isString} = Foundation
 
 module.exports = class WrappedCoffeeScript
 
