@@ -26,7 +26,7 @@ module.exports = class CaffeineScript
   compile: (code, options = {})->
     Neptune.CaffeineScript.metaCompiler = @
     Neptune.CaffeineScript.compiler = new WrappedCoffeeScript
-    .compi
+
     if [_, metaCode, rest] = code.match CaffeineScript.metaCompiledSectionRegExp
       {compiled:{js}} = Neptune.CaffeineScript.compiler.compile metaCode
       eval js
