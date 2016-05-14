@@ -1,0 +1,16 @@
+{
+  "name": "babel-bridge",
+  "version": "0.0.1",
+  "description": "atomic data-types such as Color, Point, Rectangle and Matrix",
+  "main": "index.coffee",
+  "dependencies": {
+    "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "webpack-dev-server -d --progress"
+  },
+  "author": "Shane Brinkman-Davis Delamore",
+  "license": "MIT"
+}
