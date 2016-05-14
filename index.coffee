@@ -1,1 +1,1 @@
-module.exports = require "./src/babel_bridge"
+module.exports = require "./src/caffeine_script"

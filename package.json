@@ -1,10 +1,11 @@
 {
-  "name": "babel-bridge",
+  "name": "caffeine-script",
   "version": "0.0.1",
   "description": "atomic data-types such as Color, Point, Rectangle and Matrix",
   "main": "index.coffee",
   "dependencies": {
-    "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git"
+    "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git",
+    "babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git"
   },
   "devDependencies": {
   },

@@ -1,0 +1,2 @@
+suite "CaffeineScript", ->
+  test "true", ->
