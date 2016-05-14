@@ -3,4 +3,5 @@
 
 (module.exports = require './namespace')
 .addModules
+  _All: require './_all'
   Main: require './main'
