@@ -2,10 +2,10 @@ Foundation = require 'art-foundation'
 CoffeeScript = require 'coffee-script'
 {isString} = Foundation
 
-module.exports = class WrappedCoffeeScript
+module.exports = class CoffeeScriptWrapper
 
-  compile: (code, options) ->
-    out = CoffeeScript.compile code, options
+  compile: (sourceCode, options) ->
+    out = CoffeeScript.compile sourceCode, options
     if isString out
       compiled: js: out
     else
