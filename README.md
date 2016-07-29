@@ -64,6 +64,49 @@ foo.bar: 2
 foo-bar: 3
 ```
 
+#### Consistent Meaning for lines starting with '.'
+
+New rules:
+
+* starting a line with '.' applies the '.' operator to the return result of the previous line
+  * think of it as-if the previous line had ()s around the whole line
+* indenting and starting a line with '.' acts as-if there was no newline
+  * it directly apples to the last token on the previous line
+
+Just '.':
+```coffeescript
+# CoffeeScript
+# try this withou the () and be surprized what happens!
+(new MyClass)
+.foo()
+
+# CaffieneScript
+new MyClass
+.foo()
+```
+
+Indent and '.':
+```coffeescript
+# CoffeeScript
+new MyClass.getSomeOtherClass()
+
+# CaffieneScript
+new MyClass
+  .getSomeOtherClass()
+```
+
+Both:
+```coffeescript
+# CoffeeScript
+(new MyClass.getSomeOtherClass())
+.foo()
+
+# CaffieneScript
+new MyClass
+  .getSomeOtherClass()
+.foo()
+```
+
 #### Blocks instead of brackets
 
 I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's elliminated the need for all matching delimieters and just use block intention.
