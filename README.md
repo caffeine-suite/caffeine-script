@@ -14,6 +14,7 @@ CaffeineScript - experimental
 * enhanced blocks
   * array blocks
   * function invocation blocks
+  * "blocks instead of brackets"
 * eliminate the need for token matching ([], {}, "", etc)
 * 'with'
 * improved multi-line binary operator semantics (./+/- etc)
@@ -24,6 +25,7 @@ CaffeineScript - experimental
   * reduced overhead with @-binding
 * improved literate programming
 * operator overloading if it can-be done efficiently
+* object key interpolation: "hi#{foo}": 123
 
 #### Extended unquoted labels:
 
@@ -38,6 +40,53 @@ foo: 1
 foo.bar: 2
 foo-bar: 3
 ```
+
+#### Blocks instead of brackets
+
+Strings
+```coffeescript
+# CoffeeScript
+a = "This is\nmy multiline\nstring."
+
+# CaffieneScript
+a = ""
+  This is
+  my multiline
+  string.
+```
+
+Arrays
+```coffeescript
+# CoffeeScript
+a = [
+  1
+  2
+  3
+]
+
+# CaffieneScript
+a = []
+  1
+  2
+  3
+```
+
+Objects
+```coffeescript
+# CoffeeScript
+a = [
+  {foo: 1}
+  {bar: 2}
+  {baz: 3}
+]
+
+# CaffieneScript
+a = []
+  {} foo: 1
+  {} bar: 2
+  {} baz: 3
+```
+
 
 #### Improved multi-line Binary Operators
 
