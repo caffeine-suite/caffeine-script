@@ -23,6 +23,7 @@ CaffeineScript - experimental
   * use small runtime to reduce overall code-size and increase functionality
   * reduced overhead with @-binding
 * improved literate programming
+* operator overloading if it can-be done efficiently
 
 #### Extended unquoted labels:
 
@@ -54,6 +55,12 @@ encodedBitmap
 ```
 
 #### Improved pattern assignment
+
+Fix shortcomings:
+
+* data flow is both left-to-right and right-to-left
+* anything more than trivial [] and {} extraction doesn't save any tokens
+* elliminate need to match {}s and []s
 
 Object extraction
 ```coffeescript
@@ -113,7 +120,7 @@ Bitmap ||= default2
 
 # Javascript - 36 tokens
 var Base = (Engine && Engine.Elements && Engine.Elements.Base) || default1;
-var Bitmap = (Engine && Engine.Elements && Engine.Elements.Base) || default2;
+var Bitmap = (Engine && Engine.Elements && Engine.Elements.Bitmap) || default2;
 
 # CaffieneScript - 13 tokens
 Engine extract? Elements extract?
@@ -141,6 +148,24 @@ Function argument extraction, capture unextracted argument, with full defautls
 
 # CaffeineScript - 15 tokens
 (options = {} extract a = 1, b = 2) ->
+```
+
+#### Auto 'do'
+This needs performance testing and semantic refinement. However, I often have bugs because I forgot a "do". I think defaulting to 'do' will cause less bugs.
+
+```coffeescript
+# CoffeeScript
+for a in b
+  do (a) ->
+    -> a
+
+# CaffieneScript
+# for-block is an implicit closure
+# If a function is created in the for-block, wrap all variables
+# in a closure so each iteration gets its own copy.
+# Only capture variables first-assigned in the for-block and not used outside.
+for a in b
+  -> a
 ```
 
 #### compare template
