@@ -19,7 +19,9 @@ CaffeineScript - experimental
 * improved multi-line binary operator semantics (./+/- etc)
 * improved pattern assignment
 * real class inheritance
-* use small runtime to reduce overall code-size and increase functionality
+# efficiency
+  * use small runtime to reduce overall code-size and increase functionality
+  * reduced overhead with @-binding
 
 #### Extended unquoted labels:
 
@@ -28,11 +30,24 @@ CaffeineScript - experimental
 foo: 1
 'foo.bar': 2
 'foo-bar': 3
-```
 
-```coffeescript
 # CaffieneScript
 foo: 1
 foo.bar: 2
 foo-bar: 3
+```
+
+#### Improved multi-line Binary Operators
+
+```coffeescript
+# CoffeeScript
+encodedBitmap || if file
+  readAsBinaryString file
+else if sourceUrl
+  RestClient.get sourceUrl
+
+# CaffieneScript
+encodedBitmap
+|| file && readAsBinaryString file
+|| sourceUrl && RestClient.get sourceUrl
 ```
