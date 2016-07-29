@@ -27,6 +27,29 @@ CaffeineScript - experimental
 * operator overloading if it can-be done efficiently
 * object key interpolation: "hi#{foo}": 123
 
+#### Block method invocation
+
+If I could have one thing right now, I want this (and maybe 'with'): The ability to invoke a method
+by following it with a list of arguments on separate lines:
+
+```coffeescript
+# CoffeeScript
+method arg1,
+  arg2
+  arg3
+  arg4
+
+# CaffieneScript
+method
+  arg1
+  arg2
+  arg3
+  arg4
+
+# Javascript
+method(arg1, arg2, arg3, arg4);
+```
+
 #### Extended unquoted labels:
 
 ```coffeescript
@@ -43,7 +66,7 @@ foo-bar: 3
 
 #### Blocks instead of brackets
 
-I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimieters.
+I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's elliminated the need for all matching delimieters and just use block intention.
 
 Strings
 ```coffeescript
