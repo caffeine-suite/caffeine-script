@@ -43,6 +43,8 @@ foo-bar: 3
 
 #### Blocks instead of brackets
 
+I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimieters.
+
 Strings
 ```coffeescript
 # CoffeeScript
@@ -87,6 +89,16 @@ a = []
   {} baz: 3
 ```
 
+Functions
+```coffeescript
+# CoffeeScript
+a = (foo, bar, baz, who) ->
+  # ...
+
+# CaffieneScript
+a = () foo, bar, baz, who ->
+  # ...
+```
 
 #### Improved multi-line Binary Operators
 
