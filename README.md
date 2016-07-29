@@ -98,13 +98,17 @@ new MyClass
 Both:
 ```coffeescript
 # CoffeeScript
-(new MyClass.getSomeOtherClass())
-.foo()
+(new MyClass.a(1).b(2))
+.foo "hi"
+.bar "bye"
+
 
 # CaffieneScript
 new MyClass
-  .getSomeOtherClass()
-.foo()
+  .a 1
+  .b 2
+.foo "hi"
+.bar "bye"
 ```
 
 #### Blocks instead of brackets
