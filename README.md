@@ -87,7 +87,8 @@ myArray extract []
 ```
 
 Conditional extraction
-```coffeescript - 7 tokens
+```coffeescript
+# CoffeeScript - 7 tokens
 {Elements} = Engine if Engine
 
 # CaffieneScript - 4 tokens
