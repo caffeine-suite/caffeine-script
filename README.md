@@ -96,7 +96,8 @@ Engine extract? Elements
 ```
 
 Nested conditional extraction
-```coffeescript - 16 tokens
+```coffeescript
+# CoffeeScript - 16 tokens
 {Elements:{Base, Bitmap}} = Engine if Engine?.Elements
 
 # CaffieneScript - 9 tokens
