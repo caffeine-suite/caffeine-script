@@ -217,6 +217,27 @@ for a in b
   -> a
 ```
 
+
+#### with
+
+* Instead of: The first 5-20 lines of every file is just code for extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time. I rarely remove extracted values no longer need.
+* Auto extract from libraries using 'with'
+
+```coffeescript
+# CoffeeScript
+{merge} = Foundation
+class Foo
+  a: (b, c) ->
+    merge b, c
+
+# CaffieneScript
+with Foundation
+  class Foo
+    a: (b, c) ->
+      merge b, c
+```
+
+
 #### compare template
 
 ```coffeescript
