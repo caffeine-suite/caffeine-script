@@ -369,8 +369,8 @@ for a in b
 
 Basically, make '->' work more consistently with other languages. Most the time we shouldn't have to think about '@' binding. Only in rare occasions should we have to override the default.
 
-* In class definitions, -> works like CoffeeScript
-* Inside other functions, '->' always binds '@' to its enclosing scope. (like => in CoffeeScript)
+* In class definitions and not inside other explicit functions, -> works like CoffeeScript
+* Inside an explicit function definitions, -> binds '@' to its enclosing scope. (like => in CoffeeScript)
 * Overrides
   * ~> is always unbounded (-> in CoffeeScript)
   * => is always bounded (just like in CoffeeScript)
@@ -397,30 +397,30 @@ class Foo extends Art.Foundation.BaseObject
 
 ### map, each and for loops
 
-CoffeeScript's 'for' loop is actually a 'map.' Sometimes you don't want that, and sometimes you forget CoffeeScript is doing it. The way you force CoffeeScript to not map is to 'ignore' the result. If it's the last line of a function it means you need to add another statement to return something else, like 'null.'
+CoffeeScript's 'for' loop is actually a 'map.' Sometimes you don't want that. This is both a performance and a semantic problem.
 
-I'm still debating what the keywords should be.
+(I'm still debating what the keywords should be.)
 
 ```coffeescript
 # CoffeeScript
-# return new list
+# create and return new array
 (list) ->
   for element in list
     element.foo
 
-# return list
+# return list; doesn't create a new array
 (list) ->
   for element in list
     @add element
   list
 
 # CaffieneScript
-# return new list
+# create and return new array
 (list) ->
   map element in list
     element.foo
 
-# return list
+# return list; doesn't create a new array
 (list) ->
   each element in list
     @add element
