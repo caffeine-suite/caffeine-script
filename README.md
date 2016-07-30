@@ -218,7 +218,7 @@ else
 ```
 
 
-#### Same Logic Applies to All Binary Operators
+Same logic applies to all binary operators
 
 ```coffeescript
 # CoffeeScript - 19 tokens
@@ -235,19 +235,23 @@ encodedBitmap
 
 ### Improved pattern assignment
 
-Fix shortcomings:
+CoffeeScript shortcomings:
 
-* data flow is both left-to-right and right-to-left
-* anything more than trivial [] and {} extraction doesn't save any tokens
-* eliminate need to match {}s and []s
+* anything more than trivial [] and {} extraction generally isn't worth it
+  * doesn't save many tokens (only saves one token in the example below)
+  * it is hard to read since data flow is going right-to-left initially and then left-to-right
+* requires a lot of {} and [] matching
 
 Object extraction
 ```coffeescript
-# CoffeeScript
+# CoffeeScript - 11 tokens
 {Elements:{Base, Bitmap}} = Engine
 
-# CaffieneScript
-# PRO: 4 less tokens, data-flow consistent with text-flow
+# CoffeeScript alt - 12 tokens
+{Elements} = Engine
+{Base, Bitmap} = Elements
+
+# CaffieneScript - 7 tokens
 Engine extract Elements extract Base, Bitmap
 
 # alt
