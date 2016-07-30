@@ -134,7 +134,7 @@ a = () foo, bar, baz, who ->
 
 # Other Improvements
 
-### Consistent Meaning for lines starting with '.'
+### Consistent Meaning for lines starting with '.' (and other binary operators)
 
 New rules:
 
@@ -181,7 +181,7 @@ new MyClass
 .bar "bye"
 ```
 
-### Improved multi-line Binary Operators
+#### Same Logic Applies to All Binary Operators
 
 ```coffeescript
 # CoffeeScript
