@@ -132,8 +132,6 @@ a = () foo, bar, baz, who ->
   # ...
 ```
 
-# Other Improvements
-
 ### Consistent Meaning for lines starting with '.' (and other binary operators)
 
 New rules:
@@ -144,6 +142,11 @@ New rules:
 * indenting and starting a line with '.' acts as-if there was no newline
   * it directly apples to the last token on the previous line
   * or, think of it as like a binary operator with the highest precedence
+* PROS
+  * Predictability
+  * Editability - changing the order of lines has a straightforward result
+  * Further reduces the needs for ()s
+  * Works in more (all) places (after an if statement for example)
 
 Just '.':
 ```coffeescript
@@ -181,19 +184,37 @@ new MyClass
 .bar "bye"
 ```
 
+Works after 'if' and all other kinds of statements.
+```coffeescript
+# CoffeeScript
+(if foo
+  foo 1
+else
+  1)
+.myMethod 123
+
+# CaffieneScript
+if foo
+  foo 1
+else
+  1
+.myMethod 123
+```
+
+
 #### Same Logic Applies to All Binary Operators
 
 ```coffeescript
-# CoffeeScript
-encodedBitmap || if file
-  readAsBinaryString file
-else if sourceUrl
-  RestClient.get sourceUrl
+# CoffeeScript - 19 tokens
+encodedBitmap ||
+(file && readAsBinaryString file) ||
+(sourceUrl && RestClient.get sourceUrl || defaultUrl)
 
-# CaffieneScript
+# CaffieneScript - 15 tokens
 encodedBitmap
 || file && readAsBinaryString file
 || sourceUrl && RestClient.get sourceUrl
+  || defaultUrl
 ```
 
 ### Improved pattern assignment
@@ -310,6 +331,8 @@ for a in b
   -> a
 ```
 
+# Other Improvements / Refinements
+
 ### Smart '@' binding
 
 Basically, make '->' work more consistently with other languages. Most the time we shouldn't have to think about '@' binding. Only in rare occasions should we have to override the default.
@@ -385,7 +408,7 @@ foo.bar: 2
 foo-bar: 3
 ```
 
-### compare template
+# compare template
 
 ```coffeescript
 # CoffeeScript
