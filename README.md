@@ -26,6 +26,10 @@ CaffeineScript - experimental
 * improved literate programming
 * operator overloading if it can-be done efficiently
 * object key interpolation: "hi#{foo}": 123
+* Smart '@' binding
+* map, each and for loops
+
+# Core Improvements
 
 #### Block method invocation
 
@@ -50,70 +54,28 @@ method
 method(arg1, arg2, arg3, arg4);
 ```
 
-#### Extended unquoted labels:
+#### with
+
+* Instead of: The first 5-20 lines of every file is just code for extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time. I rarely remove extracted values no longer need.
+* Auto extract from libraries using 'with'
 
 ```coffeescript
 # CoffeeScript
-foo: 1
-'foo.bar': 2
-'foo-bar': 3
+{merge} = Foundation
+class Foo
+  a: (b, c) ->
+    merge b, c
 
 # CaffieneScript
-foo: 1
-foo.bar: 2
-foo-bar: 3
-```
-
-#### Consistent Meaning for lines starting with '.'
-
-New rules:
-
-* starting a line with '.' applies the '.' operator to the return result of the previous line
-  * think of it as-if the previous line had ()s around the whole line
-* indenting and starting a line with '.' acts as-if there was no newline
-  * it directly apples to the last token on the previous line
-
-Just '.':
-```coffeescript
-# CoffeeScript
-# try this withou the () and be surprized what happens!
-(new MyClass)
-.foo()
-
-# CaffieneScript
-new MyClass
-.foo()
-```
-
-Indent and '.':
-```coffeescript
-# CoffeeScript
-new MyClass.getSomeOtherClass()
-
-# CaffieneScript
-new MyClass
-  .getSomeOtherClass()
-```
-
-Both:
-```coffeescript
-# CoffeeScript
-(new MyClass.a(1).b(2))
-.foo "hi"
-.bar "bye"
-
-
-# CaffieneScript
-new MyClass
-  .a 1
-  .b 2
-.foo "hi"
-.bar "bye"
+with Foundation
+  class Foo
+    a: (b, c) ->
+      merge b, c
 ```
 
 #### Blocks instead of brackets
 
-I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's elliminated the need for all matching delimieters and just use block intention.
+I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's eliminated the need for all matching delimiters and just use block intention.
 
 Strings
 ```coffeescript
@@ -170,6 +132,69 @@ a = () foo, bar, baz, who ->
   # ...
 ```
 
+# Other Improvements
+
+#### Extended unquoted labels:
+
+```coffeescript
+# CoffeeScript
+foo: 1
+'foo.bar': 2
+'foo-bar': 3
+
+# CaffieneScript
+foo: 1
+foo.bar: 2
+foo-bar: 3
+```
+
+#### Consistent Meaning for lines starting with '.'
+
+New rules:
+
+* starting a line with '.' applies the '.' operator to the return result of the previous line
+  * think of it as-if the previous line had ()s around the whole line
+  * or, think of it as like a binary operator with the lowest precedence
+* indenting and starting a line with '.' acts as-if there was no newline
+  * it directly apples to the last token on the previous line
+  * or, think of it as like a binary operator with the highest precedence
+
+Just '.':
+```coffeescript
+# CoffeeScript
+(new MyClass)
+.foo()
+
+# CaffieneScript
+new MyClass
+.foo()
+```
+
+Indent and '.':
+```coffeescript
+# CoffeeScript
+new MyClass.getSomeOtherClass()
+
+# CaffieneScript
+new MyClass
+  .getSomeOtherClass()
+```
+
+Both:
+```coffeescript
+# CoffeeScript
+(new MyClass.a(1).b(2))
+.foo "hi"
+.bar "bye"
+
+# CaffieneScript
+new MyClass
+  .a 1
+  .b 2
+.foo "hi"
+.bar "bye"
+```
+
 #### Improved multi-line Binary Operators
 
 ```coffeescript
@@ -191,7 +216,7 @@ Fix shortcomings:
 
 * data flow is both left-to-right and right-to-left
 * anything more than trivial [] and {} extraction doesn't save any tokens
-* elliminate need to match {}s and []s
+* eliminate need to match {}s and []s
 
 Object extraction
 ```coffeescript
@@ -269,7 +294,7 @@ Function argument extraction with defaults
 (extract? a, b) ->
 ```
 
-Function argument extraction, capture unextracted argument, with full defautls
+Function argument extraction, capture unextracted argument, with full defaults
 ```coffeescript
 # CoffeeScript - 20 tokens
 (options = {}) ->
@@ -299,26 +324,66 @@ for a in b
   -> a
 ```
 
+#### Smart '@' binding
 
-#### with
+Basically, make '->' work more consistently with other languages. Most the time we shouldn't have to think about '@' binding. Only in rare occasions should we have to override the default.
 
-* Instead of: The first 5-20 lines of every file is just code for extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time. I rarely remove extracted values no longer need.
-* Auto extract from libraries using 'with'
+* In class definitions, -> works like CoffeeScript
+* Inside other functions, '->' always binds '@' to its enclosing scope. (like => in CoffeeScript)
+* Overrides
+  * ~> is always unbounded (-> in CoffeeScript)
+  * => is always bounded (just like in CoffeeScript)
 
 ```coffeescript
 # CoffeeScript
-{merge} = Foundation
-class Foo
-  a: (b, c) ->
-    merge b, c
+class Foo extends Art.Foundation.BaseObject
+  @setter
+    baz: (a) -> ...
+
+  bar: (list) ->
+    list.each (a) =>
+      @baz = a
 
 # CaffieneScript
-with Foundation
-  class Foo
-    a: (b, c) ->
-      merge b, c
+class Foo extends Art.Foundation.BaseObject
+  @setter
+    baz: (a) -> ...
+
+  bar: (list) ->
+    list.each (a) ->
+      @baz a
 ```
 
+#### map, each and for loops
+
+CoffeeScript's 'for' loop is actually a 'map.' Sometimes you don't want that, and sometimes you forget CoffeeScript is doing it. The way you force CoffeeScript to not map is to 'ignore' the result. If it's the last line of a function it means you need to add another statement to return something else, like 'null.'
+
+I'm still debating what the keywords should be.
+
+```coffeescript
+# CoffeeScript
+# return new list
+(list) ->
+  for element in list
+    element.foo
+
+# return list
+(list) ->
+  for element in list
+    @add element
+  list
+
+# CaffieneScript
+# return new list
+(list) ->
+  map element in list
+    element.foo
+
+# return list
+(list) ->
+  each element in list
+    @add element
+```
 
 #### compare template
 
