@@ -121,7 +121,7 @@ a = []
 ```
 
 array one-liners
-```
+```coffeescript
 # CoffeeScript
 a = [] 1, 2, 3
 
