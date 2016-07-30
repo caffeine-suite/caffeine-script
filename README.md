@@ -77,7 +77,7 @@ with Foundation
 
 I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's eliminated the need for all matching delimiters and just use block intention.
 
-Strings
+strings
 ```coffeescript
 # CoffeeScript
 a = "
@@ -104,7 +104,7 @@ b = """
 c = "" To end of line string.
 ```
 
-Arrays
+arrays
 ```coffeescript
 # CoffeeScript
 a = [
@@ -120,7 +120,16 @@ a = []
   3
 ```
 
-Objects
+array one-liners
+```
+# CoffeeScript
+a = [] 1, 2, 3
+
+# CaffieneScript
+a = [] 1, 2, 3
+```
+
+Object literals are still implicit, but inside other lists such as arrays, you may want to specify multiple objects on a row.
 ```coffeescript
 # CoffeeScript
 a = [
@@ -136,7 +145,7 @@ a = []
   {} baz: 3
 ```
 
-Functions
+function definitions
 ```coffeescript
 # CoffeeScript
 a = (foo, bar, baz, who) ->
