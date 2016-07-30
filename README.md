@@ -123,7 +123,7 @@ a = []
 array one-liners
 ```coffeescript
 # CoffeeScript
-a = [] 1, 2, 3
+a = [1, 2, 3]
 
 # CaffieneScript
 a = [] 1, 2, 3
