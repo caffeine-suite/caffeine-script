@@ -80,13 +80,29 @@ I've wasted too many months (years?!?) of my life searching for mismatched begin
 Strings
 ```coffeescript
 # CoffeeScript
-a = "This is\nmy multiline\nstring."
+a = "
+  This is
+  my multiline
+  string without newlines.
+  "
+b = """
+  This is
+  my multiline
+  string with newlines.
+  """
+c = "To end of line string."
+
 
 # CaffieneScript
 a = ""
   This is
   my multiline
-  string.
+  string without newlines.
+b = """
+  This is
+  my multiline
+  string with newlines.
+c = "" To end of line string.
 ```
 
 Arrays
