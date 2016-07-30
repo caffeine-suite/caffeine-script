@@ -344,7 +344,9 @@ extract a, b
 ```
 
 ### Auto 'do'
-This needs performance testing and semantic refinement. However, I often have bugs because I forgot a "do". I think defaulting to 'do' will cause less bugs.
+Do you ever have bugs because you forgot a "do"? I do all the time. I think defaulting to 'do' will cause less bugs.
+
+(This needs performance testing and semantic refinement.)
 
 ```coffeescript
 # CoffeeScript
