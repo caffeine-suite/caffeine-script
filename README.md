@@ -31,7 +31,7 @@ CaffeineScript - experimental
 
 # Core Improvements
 
-#### Block method invocation
+### Block method invocation
 
 If I could have one thing right now, I want this (and maybe 'with'): The ability to invoke a method
 by following it with a list of arguments on separate lines:
@@ -54,7 +54,7 @@ method
 method(arg1, arg2, arg3, arg4);
 ```
 
-#### with
+### with
 
 * Instead of: The first 5-20 lines of every file is just code for extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time. I rarely remove extracted values no longer need.
 * Auto extract from libraries using 'with'
@@ -73,7 +73,7 @@ with Foundation
       merge b, c
 ```
 
-#### Blocks instead of brackets
+### Blocks instead of brackets
 
 I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's eliminated the need for all matching delimiters and just use block intention.
 
@@ -134,21 +134,7 @@ a = () foo, bar, baz, who ->
 
 # Other Improvements
 
-#### Extended unquoted labels:
-
-```coffeescript
-# CoffeeScript
-foo: 1
-'foo.bar': 2
-'foo-bar': 3
-
-# CaffieneScript
-foo: 1
-foo.bar: 2
-foo-bar: 3
-```
-
-#### Consistent Meaning for lines starting with '.'
+### Consistent Meaning for lines starting with '.'
 
 New rules:
 
@@ -195,7 +181,7 @@ new MyClass
 .bar "bye"
 ```
 
-#### Improved multi-line Binary Operators
+### Improved multi-line Binary Operators
 
 ```coffeescript
 # CoffeeScript
@@ -210,7 +196,7 @@ encodedBitmap
 || sourceUrl && RestClient.get sourceUrl
 ```
 
-#### Improved pattern assignment
+### Improved pattern assignment
 
 Fix shortcomings:
 
@@ -306,7 +292,7 @@ Function argument extraction, capture unextracted argument, with full defaults
 (options = {} extract a = 1, b = 2) ->
 ```
 
-#### Auto 'do'
+### Auto 'do'
 This needs performance testing and semantic refinement. However, I often have bugs because I forgot a "do". I think defaulting to 'do' will cause less bugs.
 
 ```coffeescript
@@ -324,7 +310,7 @@ for a in b
   -> a
 ```
 
-#### Smart '@' binding
+### Smart '@' binding
 
 Basically, make '->' work more consistently with other languages. Most the time we shouldn't have to think about '@' binding. Only in rare occasions should we have to override the default.
 
@@ -354,7 +340,7 @@ class Foo extends Art.Foundation.BaseObject
       @baz a
 ```
 
-#### map, each and for loops
+### map, each and for loops
 
 CoffeeScript's 'for' loop is actually a 'map.' Sometimes you don't want that, and sometimes you forget CoffeeScript is doing it. The way you force CoffeeScript to not map is to 'ignore' the result. If it's the last line of a function it means you need to add another statement to return something else, like 'null.'
 
@@ -385,7 +371,21 @@ I'm still debating what the keywords should be.
     @add element
 ```
 
-#### compare template
+### Extended unquoted labels:
+
+```coffeescript
+# CoffeeScript
+foo: 1
+'foo.bar': 2
+'foo-bar': 3
+
+# CaffieneScript
+foo: 1
+foo.bar: 2
+foo-bar: 3
+```
+
+### compare template
 
 ```coffeescript
 # CoffeeScript
