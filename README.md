@@ -343,6 +343,8 @@ Works like other binary operators
 extract a, b
 ```
 
+# Other Improvements / Refinements
+
 ### Auto 'do'
 Do you ever have bugs because you forgot a "do"? I do all the time. I think defaulting to 'do' will cause less bugs.
 
@@ -362,8 +364,6 @@ for a in b
 for a in b
   -> a
 ```
-
-# Other Improvements / Refinements
 
 ### Smart '@' binding
 
