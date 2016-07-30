@@ -56,9 +56,9 @@ method(arg1, arg2, arg3, arg4);
 
 ### with
 
-* Instead of: The first 5-20 lines of every file is just code for extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time. I rarely remove extracted values no longer need.
-* Auto extract from libraries using 'with'
+Currently, the first 5-20 lines of all my files is wasted extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time; I rarely remove extracted values no longer need.
 
+'with' solves this
 ```coffeescript
 # CoffeeScript
 {merge} = Foundation
@@ -73,7 +73,7 @@ with Foundation
       merge b, c
 ```
 
-### Blocks instead of brackets
+### Blocks instead of Brackets
 
 I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's eliminated the need for all matching delimiters and just use block intention.
 
@@ -91,7 +91,6 @@ b = """
   string with newlines.
   """
 c = "To end of line string."
-
 
 # CaffieneScript
 a = ""
@@ -164,7 +163,7 @@ New rules:
   * Further reduces the needs for ()s
   * Works in more (all) places (after an if statement for example)
 
-Just '.':
+Just '.'
 ```coffeescript
 # CoffeeScript
 (new MyClass)
@@ -175,7 +174,7 @@ new MyClass
 .foo()
 ```
 
-Indent and '.':
+Indent and '.'
 ```coffeescript
 # CoffeeScript
 new MyClass.getSomeOtherClass()
@@ -185,7 +184,7 @@ new MyClass
   .getSomeOtherClass()
 ```
 
-Both:
+both
 ```coffeescript
 # CoffeeScript
 (new MyClass.a(1).b(2))
@@ -200,7 +199,7 @@ new MyClass
 .bar "bye"
 ```
 
-Works after 'if' and all other kinds of statements.
+works after 'if' and all other kinds of statements
 ```coffeescript
 # CoffeeScript
 (if foo
@@ -217,9 +216,7 @@ else
 .myMethod 123
 ```
 
-
-Same logic applies to all binary operators
-
+same logic applies to all binary operators
 ```coffeescript
 # CoffeeScript - 19 tokens
 encodedBitmap ||
