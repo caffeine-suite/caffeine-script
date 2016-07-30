@@ -333,6 +333,16 @@ Function argument extraction, capture unextracted argument, with full defaults
 (options = {} extract a = 1, b = 2) ->
 ```
 
+Works like other binary operators
+```coffeescript
+# CoffeeScript - 6 tokens
+{a, b} = ... # long complex expression
+
+# CaffeineScript - 4 tokens
+... # long complex expression
+extract a, b
+```
+
 ### Auto 'do'
 This needs performance testing and semantic refinement. However, I often have bugs because I forgot a "do". I think defaulting to 'do' will cause less bugs.
 
