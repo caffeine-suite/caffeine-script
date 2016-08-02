@@ -19,15 +19,41 @@ CaffeineScript - experimental
 * 'with'
 * improved multi-line binary operator semantics (./+/- etc)
 * improved pattern assignment
-* real class inheritance
-# efficiency
+* Tail catch
+  * ```result = doSomethingRisky() catch “it failed”```
+* Enhanced class System
+  * real class inheritance
+    - CoffeeScript copies all class properties from the base class and definition time
+      - updates to class properties after definition time are not propagated to child classes
+      - @classGetters & @classSetters are not inherited at all
+    - requires object instantition to look like Ruby: MyClass.new a, b, c
+  * more consistent access to super and prototypes
+    - @:: is a confusing concept in CoffeeScript. We can do better.
+  * dynamic class creation
+    - create classes with names created at runtime
+  * default extends class
+    - all classes without an explicit extend statement extend the same base class which in turn extends Object
+* streamlined switch statement
+* new string literals
+  * I’d like to add something like ```:foo == “foo”```, but I want to look ad ES6 'symbols' first
+  * I’d like to add some syntax like Ruby's: %w{a long word list becomes array of strings}
+* efficiency & performance
   * use small runtime to reduce overall code-size and increase functionality
   * reduced overhead with @-binding
+  * faster (a...) ->
+  * 'real class inheritance' will be faster
 * improved literate programming
 * operator overloading if it can-be done efficiently
-* object key interpolation: "hi#{foo}": 123
+* object key interpolation: "hi#{foo}": 123, ('this' + a): 123
 * Smart '@' binding
 * map, each and for loops
+* streamlined "require"
+* make ranges more like ruby ranges
+  - can be used anywhere
+    - j...k
+    - {begin: j, end: k, excludeEnd: true}
+  - don't need brackets []
+    - for i in j...k
 
 # Core Improvements
 
@@ -131,14 +157,14 @@ a = [] 1, 2, 3
 
 Object literals are still implicit, but inside other lists such as arrays, you may want to specify multiple objects on a row.
 ```coffeescript
-# CoffeeScript
+# CoffeeScript - 16 tokens
 a = [
   {foo: 1}
   {bar: 2}
   {baz: 3}
 ]
 
-# CaffieneScript
+# CaffieneScript - 12 tokens
 a = []
   {} foo: 1
   {} bar: 2
@@ -244,13 +270,13 @@ encodedBitmap
 CoffeeScript shortcomings:
 
 * anything more than trivial [] and {} extraction generally isn't worth it
-  * doesn't save many tokens (only saves one token in the example below)
+  * doesn't save many tokens
   * it is hard to read since data flow is going right-to-left initially and then left-to-right
 * requires a lot of {} and [] matching
 
 Object extraction
 ```coffeescript
-# CoffeeScript - 11 tokens
+# CoffeeScript - 10 tokens
 {Elements:{Base, Bitmap}} = Engine
 
 # CoffeeScript alt - 12 tokens
@@ -260,8 +286,7 @@ Object extraction
 # CaffieneScript - 7 tokens
 Engine extract Elements extract Base, Bitmap
 
-# alt
-# PRO: 5 less tokens, data-flow consistent with text-flow
+# CaffieneScript alt - 6 tokens
 Engine extract Elements extract
   Base
   Bitmap
@@ -275,7 +300,7 @@ Array extraction
 # CaffieneScript - 8 tokens
 myArray extract [] a, b, c
 
-# alt - 6 tokens
+# CaffieneScript alt - 6 tokens
 myArray extract []
   a
   b
@@ -293,7 +318,7 @@ Engine extract? Elements
 
 Nested conditional extraction
 ```coffeescript
-# CoffeeScript - 16 tokens
+# CoffeeScript - 15 tokens
 {Elements:{Base, Bitmap}} = Engine if Engine?.Elements
 
 # CaffieneScript - 9 tokens
@@ -302,7 +327,7 @@ Engine extract? Elements extract? Base, Bitmap
 
 Default extraction
 ```coffeescript
-# CoffeeScript - 24 tokens
+# CoffeeScript - 21 tokens
 {Elements:{Base, Bitmap}} = Engine if Engine?.Elements
 Base ||= default1
 Bitmap ||= default2
@@ -311,7 +336,7 @@ Bitmap ||= default2
 var Base = (Engine && Engine.Elements && Engine.Elements.Base) || default1;
 var Bitmap = (Engine && Engine.Elements && Engine.Elements.Bitmap) || default2;
 
-# CaffieneScript - 13 tokens
+# CaffieneScript - 12 tokens
 Engine extract? Elements extract?
   Base = default1
   Bitmap = default2
@@ -319,7 +344,7 @@ Engine extract? Elements extract?
 
 Function argument extraction with defaults
 ```coffeescript
-# CoffeeScript - 14 tokens
+# CoffeeScript - 13 tokens
 (options = {}) ->
   {a, b} = options
 
@@ -329,13 +354,13 @@ Function argument extraction with defaults
 
 Function argument extraction, capture unextracted argument, with full defaults
 ```coffeescript
-# CoffeeScript - 20 tokens
+# CoffeeScript - 19 tokens
 (options = {}) ->
   {a, b} = options
   a ||= 1
   b ||= 2
 
-# CaffeineScript - 15 tokens
+# CaffeineScript - 14 tokens
 (options = {} extract a = 1, b = 2) ->
 ```
 
@@ -445,6 +470,23 @@ foo: 1
 foo.bar: 2
 foo-bar: 3
 ```
+
+# NOTE: Counting Tokens
+
+I'm still refining what I consider a token. Strictly, it's what the tokenizer of a parser recognizes, but depending on how you write your tokenizer, you can alter the count.
+
+The edge cases below could be parsed by a tokenizer either way.
+
+* 1 token: empty brackets ```{}, [], ""```
+  * why: conceptually these are single entities and, when reading code, are understood as a single, simple thing
+* 1 tokens: labels ```foo: 123```
+  * why: removing ':' usually breaks parsing, if not, it results in radically different semantics
+* 2 tokens: trailing questionmark: ```foo?```
+  * why: Removing the '?' results in another legal parse with different semantics
+
+Below are some examples where there is not controversy. There is only one way a tokenizer could parse them:
+
+* 3 tokens: ```[1]```
 
 # compare template
 
