@@ -1,6 +1,9 @@
 # caffeine-script
 CaffeineScript - experimental
 
+# related projects
+
+* [Caffeine](https://www.npmjs.com/package/caffeine) [git](https://github.com/ich/caffeine)
 
 # Goals
 
@@ -54,6 +57,7 @@ CaffeineScript - experimental
     - {begin: j, end: k, excludeEnd: true}
   - don't need brackets []
     - for i in j...k
+* I do like the idea of fixing the "a + b" vs “a +b” ambiguity. Plus as a unary operator is kinda silly. Even minus as a unitary operator may be more pain than it’s worth. When you ever need it (rarely), “0 - foo” is only one more symbol.
 
 # Core Improvements
 
