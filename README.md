@@ -251,6 +251,34 @@ else
 .myMethod 123
 ```
 
+assignment
+```coffeescript
+# CoffeeScript
+foo = bar
+.fud()
+
+# JavaScript
+foo = bar.fud();
+
+# CaffieneScript
+foo = bar
+  .fud()
+```
+
+assignment the other way around
+```
+# CaffieneScript
+foo = bar
+.fud()
+
+# CoffeeScript
+(foo = bar)
+.fud()
+
+# JavaScript
+(foo = bar).fud();
+```
+
 same logic applies to all binary operators
 ```coffeescript
 # CoffeeScript - 19 tokens
@@ -270,9 +298,21 @@ encodedBitmap
 CoffeeScript shortcomings:
 
 * anything more than trivial [] and {} extraction generally isn't worth it
-  * doesn't save many tokens
+  * isn't any more token-efficient than non-pattern assignment
   * it is hard to read since data flow is going right-to-left initially and then left-to-right
 * requires a lot of {} and [] matching
+
+Object extraction
+```coffeescript
+# CoffeeScript - 10 tokens
+{compiled:{js}} = compile()
+
+# CoffeeScript without pattern assignment - 8 tokens
+js = compile().compiled.js
+
+# CaffieneScript - 4 tokens
+compile() extract js
+```
 
 Object extraction
 ```coffeescript
