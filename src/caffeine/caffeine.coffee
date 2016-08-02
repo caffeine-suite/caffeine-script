@@ -16,29 +16,23 @@ module.exports = class Caffeine extends BaseObject
   @compile: (code, options = {})->
     new Caffeine().compile code, options
 
-  ###
-  IN:
-    string: configure to use one of the CaffeineCompiler classes
-    object:
-      compiler: custom compiler instance. Must implement:
-        compile: (sourceCode, options) ->
-          IN:
-            sourceCode: string
-            options: {}
-          ERROR: throw errors
-          OUT:
-            compiled: object
-              # Consists of one or more output "files" specified as pairs:
-              #   extension: outputString
-  ###
-  # @configure: (arg) ->
-  #   if isString arg
-  #     @compiler = new Compilers[arg]
-  #   else
-  #     {@compiler} = arg
-
   @getter "compiler metaCompiler"
   @setter "metaCompiler",
+    ###
+    IN:
+      string: configure to use one of the CaffeineCompiler classes
+      object:
+        compiler: custom compiler instance. Must implement:
+          compile: (sourceCode, options) ->
+            IN:
+              sourceCode: string
+              options: {}
+            ERROR: throw errors
+            OUT:
+              compiled: object
+                # Consists of one or more output "files" specified as pairs:
+                #   extension: outputString
+    ###
     compiler: (arg) ->
       @_compiler = if isString arg
         new Compilers[arg]
