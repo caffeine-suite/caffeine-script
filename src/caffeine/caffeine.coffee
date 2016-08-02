@@ -70,10 +70,17 @@ module.exports = class Caffeine extends BaseObject
   compile: (code, options = {})->
     # log "Caffeine.compile", code: code, options: options
 
-    if match = code.match(Caffeine.multiLineMetaCompiledSectionRegExp) || code.match(Caffeine.oneLineMetaCompiledSectionRegExp)
-      [_, metaCode, rest] = match
-      {compiled:{js}} = @compiler.compile metaCode
-      evalInContext js, @
-      rest && @metaCompiler.compile rest, options
+    if match = @matchMetaCompileBlock code
+      {metaCode, code} = match
+      evalInContext @compiler.compile(metaCode).compiled.js, @
+      @metaCompiler.compile code, options
     else
       @compiler.compile code, options
+
+  matchMetaCompileBlock: (code) ->
+    if match = code.match(Caffeine.multiLineMetaCompiledSectionRegExp) ||
+        code.match(Caffeine.oneLineMetaCompiledSectionRegExp)
+      [_, metaCode, code] = match
+      metaCode: metaCode
+      code: code || ""
+
