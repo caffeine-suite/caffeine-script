@@ -1,9 +1,13 @@
 Foundation = require "art-foundation"
 Compilers = require './compilers'
 
-{log, isString} = Foundation
+{log, isString, BaseObject} = Foundation
 
-module.exports = class Caffeine
+evalInContext = (js, context) ->
+  # Return the results of the in-line anonymous function we .call with the passed context
+  (-> eval js).call context
+
+module.exports = class Caffeine extends BaseObject
   @version: "0.0.1"
 
   @oneLineMetaCompiledSectionRegExp:   /^(?:\s*\n|)###<>([^\n]*)(?:\n((?:.|\n)*)|$)/
@@ -27,15 +31,24 @@ module.exports = class Caffeine
               # Consists of one or more output "files" specified as pairs:
               #   extension: outputString
   ###
-  @configure: (arg) ->
-    if isString arg
-      @compiler = new Compilers[arg]
-    else
-      {@compiler} = arg
+  # @configure: (arg) ->
+  #   if isString arg
+  #     @compiler = new Compilers[arg]
+  #   else
+  #     {@compiler} = arg
+
+  @getter "compiler metaCompiler"
+  @setter "metaCompiler",
+    compiler: (arg) ->
+      @_compiler = if isString arg
+        new Compilers[arg]
+      else
+        arg
 
   constructor: ->
-    Neptune.Caffeine.metaCompiler = @
-    Neptune.Caffeine.compiler = new Compilers.CoffeeScript
+    super
+    @_metaCompiler = @
+    @_compiler = new Compilers.CoffeeScript
 
   ###
   IN:
@@ -59,8 +72,8 @@ module.exports = class Caffeine
 
     if match = code.match(Caffeine.multiLineMetaCompiledSectionRegExp) || code.match(Caffeine.oneLineMetaCompiledSectionRegExp)
       [_, metaCode, rest] = match
-      {compiled:{js}} = Neptune.Caffeine.compiler.compile metaCode
-      eval js
-      rest && Neptune.Caffeine.metaCompiler.compile rest, options
+      {compiled:{js}} = @compiler.compile metaCode
+      evalInContext js, @
+      rest && @metaCompiler.compile rest, options
     else
-      Neptune.Caffeine.compiler.compile code, options
+      @compiler.compile code, options

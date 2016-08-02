@@ -8,7 +8,7 @@ suite "Caffeine.coffeeScript compiler", ->
 suite "Caffeine.metaCompiler", ->
   test "single-line metaCompiler block", ->
     out = Caffeine.compile """
-      ###<> Neptune.Caffeine.configure "JavaScript"
+      ###<> @compiler = "JavaScript"
       1+2
       """
     assert.eq out, compiled: {js: "1+2"}
@@ -17,7 +17,7 @@ suite "Caffeine.metaCompiler", ->
     self.__metaCompilerTest = 123
     out = Caffeine.compile """
       ###<> self.__metaCompilerTest = 999
-      ###<> Neptune.Caffeine.configure "JavaScript"
+      ###<> @compiler = "JavaScript"
       1+2
       """
     assert.eq out, compiled: {js: "1+2"}
@@ -28,10 +28,17 @@ suite "Caffeine.metaCompiler", ->
     out = Caffeine.compile """
       ###<
       self.__metaCompilerTest = 456
-      Neptune.Caffeine.configure "JavaScript"
+      @compiler = "JavaScript"
       ###>
       1+2
       """
     assert.eq out, compiled: {js: "1+2"}
 
     assert.eq self.__metaCompilerTest, 456
+
+  test "custom compiler", ->
+    out = Caffeine.compile """
+      ###<> @compiler = compile: (source) -> compiled: js: "source: \#{source}"
+      1+2
+      """
+    assert.eq out, compiled: js: "source: 1+2"
