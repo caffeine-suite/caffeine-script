@@ -97,7 +97,7 @@ with Foundation
 
 ### Blocks instead of Brackets
 
-I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places you must have matching delimiters. Let's eliminated the need for all matching delimiters and just use block intention.
+I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places matching delimiters are required. Let's eliminated the need for all matching delimiters and just use block indention.
 
 strings
 ```coffeescript
@@ -262,7 +262,7 @@ foo = bar
 ```
 
 assignment the other way around
-```
+```coffeescript
 # CaffieneScript
 foo = bar
 .fud()
