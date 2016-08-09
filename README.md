@@ -306,8 +306,8 @@ Object extraction
 # CoffeeScript without pattern assignment - 8 tokens
 js = compile().compiled.js
 
-# CaffieneScript - 4 tokens
-compile() extract js
+# CaffieneScript - 6 tokens
+compile() extract compiled extract js
 ```
 
 Object extraction
