@@ -1,5 +1,6 @@
-# caffeine-script
-CaffeineScript - experimental
+# CaffeineScript
+
+CaffeineScript programming language that compiles to JavaScript. I'm taking the ideas in CoffeeScript and making a next-generation langauge.
 
 # Philosophy
 
@@ -44,11 +45,11 @@ Why I think this seemingly oversimplistic goal is powerful:
 
 # Goals
 
-* CoffeeScript
-  * improvements
+CoffeeScript is my baseline. I plan to make the base version of CaffeineScript close to CoffeeScript so it's easy to migrate. Broadly, here's what I hope to improve over CoffeeScript:
+
+  * new, updated, refined features for cleaner, more expressive code
+  * improved langauge consistency
   * keeping up with ES6
-
-
 
 # Core Improvements
 
