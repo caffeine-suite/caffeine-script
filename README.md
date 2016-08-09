@@ -13,9 +13,7 @@ My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-
 
 #### Primary design goal: minimize effort over the entire lifecycle of a product
 
-Ultimately, this is what matters. How much effort, mental, physical, and time, does it take to build, test, and maintain the product of which the codebase is a major component?
-
-Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming by 10% has an exponetial effect on productivity.
+Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort, mental, physical, and time, does it take to build, test, and maintain products where the codebase is a major component.
 
 #### Stragies
 
