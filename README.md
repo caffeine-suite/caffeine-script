@@ -1,9 +1,48 @@
 # caffeine-script
 CaffeineScript - experimental
 
-# related projects
+# Philosophy
 
-* [Caffeine](https://www.npmjs.com/package/caffeine) [git](https://github.com/ich/caffeine)
+I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
+
+#### Designer language
+
+IMO most programming tools are poorly designed. I don't mean to be too harsh on all the awesome effort so many people have done before me, but there is more to being well designed than simply being consistent, feature-rich, or even elegant. Take a look at the Apps which win Apple Design awards and compare them to programming tools. Programming tools, including Apple's, tend to be swiss army knives with razor blades sticking out. For some, it is a badge of honor to know how to navigate all those sharp edges to make the tool hum. I think that's crazy.
+
+My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
+
+#### Primary design goal: minimize effort over the entire lifecycle of a product
+
+Ultimately, this is what matters. How much effort, mental, physical, and time, does it take to build, test, and maintain the product of which the codebase is a major component?
+
+Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming by 10% has an exponetial effect on productivity.
+
+#### Stragies
+
+* fun & pleasurable to use
+* designed to be read
+* minimize tokens without sacrifcing clarity
+* big and small
+  - How small or big should the language be?
+  - With CaffeineMC, I thankfully don't have to answer this question. Everyone can choose for themselves.
+
+#### From RUBY
+
+Ruby is probably still my favorite language, but I don't code in it much anymore for various reasons. None the less, I will take queues from Matz wherever possible.
+
+- Principle of Least Surprise
+ - Yukihiro Matsumoto: Everyone has an individual background. Someone may come from Python, someone else may come from Perl, and they may be surprised by different aspects of the language. Then they come up to me and say, "I was surprised by this feature of the language, so therefore Ruby violates the principle of least surprise." Wait. Wait. The principle of least surprise is not for you only. The principle of least surprise means principle of least my surprise. And it means the principle of least surprise after you learn Ruby very well. For example, I was a C++ programmer before I started designing Ruby. I programmed in C++ exclusively for two or three years. And after two years of C++ programming, it still surprised me.
+
+#### Minimize Tokens
+
+Why I think this seemingly oversimplistic goal is powerful:
+
+- Refactorability is the ONLY code quality metric
+- Reducing code size is the easiest and often most effective way to improve refactorability.
+- My overriding programming goal is intentionally simple: write less code.
+- Most good programming practices reduce code-size. The rest increase clarity.
+- I measure code size in tokens. It is an objective measure that is roughly proportional to the semantic complexity of the code - unlike line counts.
+- "Without sacrificying clarity" is subjective.
 
 # Goals
 
@@ -11,53 +50,7 @@ CaffeineScript - experimental
   * improvements
   * keeping up with ES6
 
-# Language Features Befyond CoffeeScript
 
-* smart function @ binding (select -> or => automatically)
-* enhanced blocks
-  * array blocks
-  * function invocation blocks
-  * "blocks instead of brackets"
-* eliminate the need for token matching ([], {}, "", etc)
-* 'with'
-* improved multi-line binary operator semantics (./+/- etc)
-* improved pattern assignment
-* Tail catch
-  * ```result = doSomethingRisky() catch “it failed”```
-* Enhanced class System
-  * real class inheritance
-    - CoffeeScript copies all class properties from the base class and definition time
-      - updates to class properties after definition time are not propagated to child classes
-      - @classGetters & @classSetters are not inherited at all
-    - requires object instantition to look like Ruby: MyClass.new a, b, c
-  * more consistent access to super and prototypes
-    - @:: is a confusing concept in CoffeeScript. We can do better.
-  * dynamic class creation
-    - create classes with names created at runtime
-  * default extends class
-    - all classes without an explicit extend statement extend the same base class which in turn extends Object
-* streamlined switch statement
-* new string literals
-  * I’d like to add something like ```:foo == “foo”```, but I want to look ad ES6 'symbols' first
-  * I’d like to add some syntax like Ruby's: %w{a long word list becomes array of strings}
-* efficiency & performance
-  * use small runtime to reduce overall code-size and increase functionality
-  * reduced overhead with @-binding
-  * faster (a...) ->
-  * 'real class inheritance' will be faster
-* improved literate programming
-* operator overloading if it can-be done efficiently
-* object key interpolation: "hi#{foo}": 123, ('this' + a): 123
-* Smart '@' binding
-* map, each and for loops
-* streamlined "require"
-* make ranges more like ruby ranges
-  - can be used anywhere
-    - j...k
-    - {begin: j, end: k, excludeEnd: true}
-  - don't need brackets []
-    - for i in j...k
-* I do like the idea of fixing the "a + b" vs “a +b” ambiguity. Plus as a unary operator is kinda silly. Even minus as a unitary operator may be more pain than it’s worth. When you ever need it (rarely), “0 - foo” is only one more symbol.
 
 # Core Improvements
 
@@ -532,10 +525,58 @@ Below are some examples where there is not controversy. There is only one way a 
 
 * 3 tokens: ```[1]```
 
-# compare template
+# Other Language Features Being Considered
 
-```coffeescript
-# CoffeeScript
+* smart function @ binding (select -> or => automatically)
+* enhanced blocks
+  * array blocks
+  * function invocation blocks
+  * "blocks instead of brackets"
+* eliminate the need for token matching ([], {}, "", etc)
+* 'with'
+* improved multi-line binary operator semantics (./+/- etc)
+* improved pattern assignment
+* Tail catch
+  * ```result = doSomethingRisky() catch “it failed”```
+* Enhanced class System
+  * real class inheritance
+    - CoffeeScript copies all class properties from the base class and definition time
+      - updates to class properties after definition time are not propagated to child classes
+      - @classGetters & @classSetters are not inherited at all
+    - requires object instantition to look like Ruby: MyClass.new a, b, c
+  * more consistent access to super and prototypes
+    - @:: is a confusing concept in CoffeeScript. We can do better.
+  * dynamic class creation
+    - create classes with names created at runtime
+  * default extends class
+    - all classes without an explicit extend statement extend the same base class which in turn extends Object
+* streamlined switch statement
+* new string literals
+  * I’d like to add something like ```:foo == “foo”```, but I want to look ad ES6 'symbols' first
+  * I’d like to add some syntax like Ruby's: %w{a long word list becomes array of strings}
+* efficiency & performance
+  * use small runtime to reduce overall code-size and increase functionality
+  * reduced overhead with @-binding
+  * faster (a...) ->
+  * 'real class inheritance' will be faster
+* improved literate programming
+* operator overloading if it can-be done efficiently
+* object key interpolation: "hi#{foo}": 123, ('this' + a): 123
+* Smart '@' binding
+* map, each and for loops
+* streamlined "require"
+* make ranges more like ruby ranges
+  - can be used anywhere
+    - j...k
+    - {begin: j, end: k, excludeEnd: true}
+  - don't need brackets []
+    - for i in j...k
+* I do like the idea of fixing the "a + b" vs “a +b” ambiguity. Plus as a unary operator is kinda silly. Even minus as a unitary operator may be more pain than it’s worth. When you ever need it (rarely), “0 - foo” is only one more symbol.
+* CoffeeScript compiler errors suggests language features
+  - I run into this a lot in CoffeeScript. Something I think makes perfect logical sense is illegal because, IMO, the compile is incomplete.
+  - In general, when there is a compiler error for something which is logically consistent with the rest of the language (and parsing rules) suggests an opportunity for a more expressive language.
 
-# CaffieneScript
-```
+# related projects
+
+* [Caffeine](https://www.npmjs.com/package/caffeine) ([git](https://github.com/ich/caffeine))
+  - Another project forked from CoffeeScript. It hasn't been updated since 2013.
