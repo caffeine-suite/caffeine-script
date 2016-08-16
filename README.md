@@ -127,7 +127,8 @@ with
     require "art-react"
   ...
 
-# CaffeineScript
+# CaffeineScript - Alt
+# ArtSuite packages all of ArtFoundation, ArtAtomic, ArtReact and others into one object
 with require "art-suite"
   ...
 ```
