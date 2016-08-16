@@ -71,7 +71,7 @@ method arg1,
   arg3
   arg4
 
-# CaffieneScript
+# CaffeineScript
 method
   arg1
   arg2
@@ -90,15 +90,46 @@ Currently, the first 5-20 lines of all my files is wasted extracting values from
 ```coffeescript
 # CoffeeScript
 {merge} = Foundation
-class Foo
-  a: (b, c) ->
-    merge b, c
+merge b, c
 
-# CaffieneScript
+# CaffeineScript
 with Foundation
-  class Foo
-    a: (b, c) ->
-      merge b, c
+  merge b, c
+
+# JavaScript
+var merge = Foundation.merge || global.merge
+merge(a, b);
+```
+
+```coffeescript
+# CoffeeScript
+Foundation = require "art-foundation"
+Atomic = require "art-atomic"
+React = require "art-react"
+
+{log, capitalize} = Foundation
+{point, hslColor} = Atomic
+{
+  createComponentFactory
+  Component
+  CanvasElement
+  Element
+  RectangleElement
+  TextElement
+  arrayWithout
+} = React
+...
+
+# CaffeineScript
+with
+    require "art-foundation"
+    require "art-atomic"
+    require "art-react"
+  ...
+
+# CaffeineScript
+with require "art-suite"
+  ...
 ```
 
 #### JavaScript's `with`
@@ -138,7 +169,7 @@ b = """
   """
 c = "To end of line string."
 
-# CaffieneScript
+# CaffeineScript
 a = ""
   This is
   my multiline
@@ -159,7 +190,7 @@ a = [
   3
 ]
 
-# CaffieneScript
+# CaffeineScript
 a = []
   1
   2
@@ -171,7 +202,7 @@ array one-liners
 # CoffeeScript
 a = [1, 2, 3]
 
-# CaffieneScript
+# CaffeineScript
 a = [] 1, 2, 3
 ```
 
@@ -184,7 +215,7 @@ a = [
   {baz: 3}
 ]
 
-# CaffieneScript - 12 tokens
+# CaffeineScript - 12 tokens
 a = []
   {} foo: 1
   {} bar: 2
@@ -197,7 +228,7 @@ function definitions
 a = (foo, bar, baz, who) ->
   # ...
 
-# CaffieneScript
+# CaffeineScript
 a = () foo, bar, baz, who ->
   # ...
 ```
@@ -224,7 +255,7 @@ Just '.'
 (new MyClass)
 .foo()
 
-# CaffieneScript
+# CaffeineScript
 new MyClass
 .foo()
 ```
@@ -234,7 +265,7 @@ Indent and '.'
 # CoffeeScript
 new MyClass.getSomeOtherClass()
 
-# CaffieneScript
+# CaffeineScript
 new MyClass
   .getSomeOtherClass()
 ```
@@ -246,7 +277,7 @@ both
 .foo "hi"
 .bar "bye"
 
-# CaffieneScript
+# CaffeineScript
 new MyClass
   .a 1
   .b 2
@@ -263,7 +294,7 @@ else
   1)
 .myMethod 123
 
-# CaffieneScript
+# CaffeineScript
 if foo
   foo 1
 else
@@ -280,14 +311,14 @@ foo = bar
 # JavaScript
 foo = bar.fud();
 
-# CaffieneScript
+# CaffeineScript
 foo = bar
   .fud()
 ```
 
 assignment the other way around
 ```coffeescript
-# CaffieneScript
+# CaffeineScript
 foo = bar
 .fud()
 
@@ -306,7 +337,7 @@ encodedBitmap ||
 (file && readAsBinaryString file) ||
 (sourceUrl && RestClient.get sourceUrl || defaultUrl)
 
-# CaffieneScript - 15 tokens
+# CaffeineScript - 15 tokens
 encodedBitmap
 || file && readAsBinaryString file
 || sourceUrl && RestClient.get sourceUrl
@@ -330,7 +361,7 @@ Object extraction
 # CoffeeScript without pattern assignment - 8 tokens
 js = compile().compiled.js
 
-# CaffieneScript - 6 tokens
+# CaffeineScript - 6 tokens
 compile() extract compiled extract js
 ```
 
@@ -343,10 +374,10 @@ Object extraction
 {Elements} = Engine
 {Base, Bitmap} = Elements
 
-# CaffieneScript - 7 tokens
+# CaffeineScript - 7 tokens
 Engine extract Elements extract Base, Bitmap
 
-# CaffieneScript alt - 6 tokens
+# CaffeineScript alt - 6 tokens
 Engine extract Elements extract
   Base
   Bitmap
@@ -357,10 +388,10 @@ Array extraction
 # CoffeeScript - 9 tokens
 [a, b, c] = myArray
 
-# CaffieneScript - 8 tokens
+# CaffeineScript - 8 tokens
 myArray extract [] a, b, c
 
-# CaffieneScript alt - 6 tokens
+# CaffeineScript alt - 6 tokens
 myArray extract []
   a
   b
@@ -372,7 +403,7 @@ Conditional extraction
 # CoffeeScript - 7 tokens
 {Elements} = Engine if Engine
 
-# CaffieneScript - 4 tokens
+# CaffeineScript - 4 tokens
 Engine extract? Elements
 ```
 
@@ -381,7 +412,7 @@ Nested conditional extraction
 # CoffeeScript - 15 tokens
 {Elements:{Base, Bitmap}} = Engine if Engine?.Elements
 
-# CaffieneScript - 9 tokens
+# CaffeineScript - 9 tokens
 Engine extract? Elements extract? Base, Bitmap
 ```
 
@@ -396,7 +427,7 @@ Bitmap ||= default2
 var Base = (Engine && Engine.Elements && Engine.Elements.Base) || default1;
 var Bitmap = (Engine && Engine.Elements && Engine.Elements.Bitmap) || default2;
 
-# CaffieneScript - 12 tokens
+# CaffeineScript - 12 tokens
 Engine extract? Elements extract?
   Base = default1
   Bitmap = default2
@@ -408,7 +439,7 @@ Function argument extraction with defaults
 (options = {}) ->
   {a, b} = options
 
-# CaffieneScript - 8 tokens
+# CaffeineScript - 8 tokens
 (extract? a, b) ->
 ```
 
@@ -447,7 +478,7 @@ for a in b
   do (a) ->
     -> a
 
-# CaffieneScript
+# CaffeineScript
 # for-block is an implicit closure
 # If a function is created in the for-block, wrap all variables
 # in a closure so each iteration gets its own copy.
@@ -476,7 +507,7 @@ class Foo extends Art.Foundation.BaseObject
     list.each (a) =>
       @baz = a
 
-# CaffieneScript
+# CaffeineScript
 class Foo extends Art.Foundation.BaseObject
   @setter
     baz: (a) -> ...
@@ -505,7 +536,7 @@ CoffeeScript's 'for' loop is actually a 'map.' Sometimes you don't want that. Th
     @add element
   list
 
-# CaffieneScript
+# CaffeineScript
 # create and return new array
 (list) ->
   map element in list
@@ -525,7 +556,7 @@ foo: 1
 'foo.bar': 2
 'foo-bar': 3
 
-# CaffieneScript
+# CaffeineScript
 foo: 1
 foo.bar: 2
 foo-bar: 3
