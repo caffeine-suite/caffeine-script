@@ -101,6 +101,18 @@ with Foundation
       merge b, c
 ```
 
+#### JavaScript's `with`
+
+My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it is not entirely justified:
+
+* [Some arguments against](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
+* I was going to implement it as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
+* Since you can always view the generated javascript, it should be fairly clear what's happening.
+* All the bad examples above are, IMO, just bad uses of `with`:
+  * `with` should be used to pull in values from libs for the entire file, at load time.
+  * Using it in runtime code is just asking for all the headaches they mention.
+  * As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
+
 ### Blocks instead of Brackets
 
 I've wasted too many months (years?!?) of my life searching for mismatched begin/end-blocks, brackets, quotes, etc. CoffeeScript's indention-based blocks help, but there are still lots of places matching delimiters are required. Let's eliminated the need for all matching delimiters and just use block indention.
