@@ -103,9 +103,9 @@ with Foundation
 
 #### JavaScript's `with`
 
-My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it is not entirely justified:
+My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it can be rehabilitated:
 
-* [Some arguments against](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
+* [Some arguments against `with`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
 * I was going to implement it as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
 * Since you can always view the generated javascript, it should be fairly clear what's happening.
 * All the bad examples above are, IMO, just bad uses of `with`:
