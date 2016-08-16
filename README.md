@@ -61,7 +61,7 @@ CoffeeScript is my baseline. I plan to make the base version of CaffeineScript c
 
 ### Block method invocation
 
-If I could have one thing right now, I want this (and maybe 'with'): The ability to invoke a method
+If I could have one thing right now, I want this (and maybe `with`): The ability to invoke a method
 by following it with a list of arguments on separate lines:
 
 ```coffeescript
@@ -86,7 +86,7 @@ method(arg1, arg2, arg3, arg4);
 
 Currently, the first 5-20 lines of all my files is wasted extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time; I rarely remove extracted values no longer need.
 
-'with' solves this
+`with` solves this
 ```coffeescript
 # CoffeeScript
 {merge} = Foundation
@@ -118,8 +118,8 @@ My concept of `with` is similar to JavaScript's built in `with`. I know `with` i
   * and you only use it to pull in values from libraries
   * you could still be suseptable breakage due to language or library changes.
   * However, good code should never access globals - the values set on window/self/global - except for those defined by the EcmaScript standard.
-  * Such code, using 'with', is only suspetable to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
-  * In either case, code without 'with' would be just as suseptable.
+  * Such code, using `with`, is only suspetable to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
+  * In either case, code without `with` would be just as suseptable.
 
 ### Blocks instead of Brackets
 
@@ -558,7 +558,7 @@ Below are some examples where there is not controversy. There is only one way a 
   * function invocation blocks
   * "blocks instead of brackets"
 * eliminate the need for token matching ([], {}, "", etc)
-* 'with'
+* `with`
 * improved multi-line binary operator semantics (./+/- etc)
 * improved pattern assignment
 * Tail catch
