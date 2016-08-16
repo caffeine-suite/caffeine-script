@@ -108,10 +108,17 @@ My concept of `with` is similar to JavaScript's built in `with`. I know `with` i
 * [Some arguments against `with`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
 * I was going to implement it as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
 * Since you can always view the generated javascript, it should be fairly clear what's happening.
-* All the bad examples above are, IMO, just bad uses of `with`:
+* Most the bad examples in the link above are, IMO, just bad uses of `with`:
   * `with` should be used to pull in values from libs for the entire file, at load time.
-  * Using it in runtime code is just asking for all the headaches they mention.
+  * You should always use it with plain objects.
+  * Using it in code that executes after runtime is just asking for all the headaches they mention.
   * As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
+* not-future-proof is the one example I think has merit.
+  * If you only use `with` at the top most level
+  * and you only use it to pull in values from libraries
+  * you could still be suseptable to a language extension or library change in the future breaking your code.
+  * However, good code should never access globals - the values set on window/self/global - except for those defined by the EcmaScript standard.
+  * Such code is only suspetable to breakage if the EcmaScript standard or one of your Libs *removes* a property or completely redefines it. In either case, code without 'with' would be just as suseptable.
 
 ### Blocks instead of Brackets
 
