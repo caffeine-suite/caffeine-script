@@ -2,6 +2,12 @@
 
 CaffeineScript programming language that compiles to JavaScript. I'm taking the ideas in CoffeeScript and making a next-generation langauge.
 
+# CaffeineMC
+
+Designed to take maximum advantage of CaffeineMC:
+
+* See [CaffeineMC](https://github.com/shanebdavis/caffeine-mc) on github
+
 # Philosophy
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
@@ -562,6 +568,7 @@ Below are some examples where there is not controversy. There is only one way a 
 * operator overloading if it can-be done efficiently
 * object key interpolation: "hi#{foo}": 123, ('this' + a): 123
 * Smart '@' binding
+* postCreate for classes
 * map, each and for loops
 * streamlined "require"
 * make ranges more like ruby ranges
