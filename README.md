@@ -116,9 +116,10 @@ My concept of `with` is similar to JavaScript's built in `with`. I know `with` i
 * not-future-proof is the one example I think has merit.
   * If you only use `with` at the top most level
   * and you only use it to pull in values from libraries
-  * you could still be suseptable to a language extension or library change in the future breaking your code.
+  * you could still be suseptable breakage due to language or library changes.
   * However, good code should never access globals - the values set on window/self/global - except for those defined by the EcmaScript standard.
-  * Such code is only suspetable to breakage if the EcmaScript standard or one of your Libs *removes* a property or completely redefines it. In either case, code without 'with' would be just as suseptable.
+  * Such code, using 'with', is only suspetable to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
+  * In either case, code without 'with' would be just as suseptable.
 
 ### Blocks instead of Brackets
 
