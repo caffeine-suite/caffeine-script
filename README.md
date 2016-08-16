@@ -97,7 +97,7 @@ with Foundation
   merge b, c
 
 # JavaScript
-var merge = Foundation.merge || global.merge
+var merge = Foundation.merge || global.merge;
 merge(a, b);
 ```
 
