@@ -8,6 +8,16 @@ Designed to take maximum advantage of CaffeineMC:
 
 * See [CaffeineMC](https://github.com/shanebdavis/caffeine-mc) on github
 
+# What I like about CoffeeScript over ES6
+
+ES6 does a lot of nice things, but I still find it unusable. It fails in a few critical ways compared to CoffeeScript:
+
+* CoffeeScript attempts to minimize tokens
+* In CoffeeScript, everything returns a value
+* CoffeeScript avoids some of JavaScript's generally agreed-upon design flaws:
+  * CoffeeScript compiles == into ===, and != into  !==
+  * improved 'this' binding (-> vs =>)
+
 # Philosophy
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
