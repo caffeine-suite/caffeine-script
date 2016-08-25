@@ -58,9 +58,9 @@ Why I think this seemingly oversimplistic goal is powerful:
 
 With CaffeineMC, I thankfully don't have to answer this question. Everyone can choose for themselves.
 
-# Goals
+# Improving CoffeeScript
 
-CoffeeScript is my baseline. I plan to make the base version of CaffeineScript close to CoffeeScript so it's easy to migrate. Broadly, here's what I hope to improve over CoffeeScript:
+CoffeeScript is my baseline. Given some of what I plan to do, I've decided it's better to start from scratch rather than fork CoffeeScript. I plan to make the base version of CaffeineScript close to CoffeeScript so it's easy to migrate. Broadly, here's what I hope to improve over CoffeeScript:
 
   * new, updated, refined features for cleaner, more expressive code
   * improved langauge consistency
@@ -144,20 +144,20 @@ with require "art-suite"
 
 #### JavaScript's `with`
 
-My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it can be rehabilitated:
+My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it can be rehabilitated with slightly different semantics:
 
 * [Some arguments against `with`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
-* I was going to implement it as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
-* Since you can always view the generated javascript, it should be fairly clear what's happening.
+* CaffeineScript's `with` will be implemented as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
+* Since you can always view the generated javascript, CaffeineScript's `with` should be easier to understand.
 * Most the bad examples in the link above are, IMO, just bad uses of `with`:
   * `with` should be used to pull in values from libs for the entire file, at load time.
   * You should always use it with plain objects.
   * Using it in code that executes after runtime is just asking for all the headaches they mention.
   * As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
-* not-future-proof is the one example I think has merit.
-  * If you only use `with` at the top-most level of each file, and you only use it to pull in values from libraries you could still be susceptible to breakage due to language or library changes.
+* Not-future-proof is the most interesting example in the link above.
+  * If you my best-practices from the previous bullet and only use `with` at the top-most level of each file to pull in values from libraries, you could still be susceptible to breakage due to language or library changes.
   * However, good code should never access globals - the values set on window/self/global - except for those defined by the EcmaScript standard.
-  * Such code, using `with`, is only suspetable to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
+  * Such code, using `with`, is only susceptible to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
   * In either case, code without `with` would be just as susceptible.
 
 ### Blocks instead of Brackets
