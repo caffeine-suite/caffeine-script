@@ -31,22 +31,17 @@ IMO most programming tools are poorly designed. I don't mean to be too harsh on 
 
 My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
 
-#### CaffeineScript Primary Design Goal: minimize effort over the entire lifecycle of a product
+# CaffeineScript Design
+
+### Primary Design Goal: minimize effort over the entire lifecycle of a product
 
 Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort (mental, physical, and time) it takes to build, test, and maintain programming products.
 
-#### CaffeineScript Language Design Stragies
+### Design Stragies
 
 * fun & pleasurable to use
 * design for reading (we read 10x more code than we write)
 * minimize tokens without sacrifcing clarity
-
-#### From RUBY
-
-Ruby is probably still my favorite language, but I don't code in it much anymore for various reasons. None the less, I will take queues from Matz wherever possible.
-
-- Principle of Least Surprise
- - Yukihiro Matsumoto: Everyone has an individual background. Someone may come from Python, someone else may come from Perl, and they may be surprised by different aspects of the language. Then they come up to me and say, "I was surprised by this feature of the language, so therefore Ruby violates the principle of least surprise." Wait. Wait. The principle of least surprise is not for you only. The principle of least surprise means principle of least my surprise. And it means the principle of least surprise after you learn Ruby very well. For example, I was a C++ programmer before I started designing Ruby. I programmed in C++ exclusively for two or three years. And after two years of C++ programming, it still surprised me.
 
 #### Minimize Tokens
 
