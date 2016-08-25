@@ -31,14 +31,14 @@ IMO most programming tools are poorly designed. I don't mean to be too harsh on 
 
 My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
 
-#### Primary design goal: minimize effort over the entire lifecycle of a product
+#### CaffeineScript Primary Design Goal: minimize effort over the entire lifecycle of a product
 
 Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort (mental, physical, and time) it takes to build, test, and maintain programming products.
 
-#### Stragies
+#### CaffeineScript Language Design Stragies
 
 * fun & pleasurable to use
-* designed to be read (we read 10x more code than we write)
+* design for reading (we read 10x more code than we write)
 * minimize tokens without sacrifcing clarity
 
 #### From RUBY
