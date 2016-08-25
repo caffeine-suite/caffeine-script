@@ -33,17 +33,17 @@ My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-
 
 # CaffeineScript Design
 
-### Primary Design Goal: minimize effort over the entire lifecycle of a product
+### Primary Design Goal: Minimize total effort over the entire lifecycle of a product
 
 Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort (mental, physical, and time) it takes to build, test, and maintain programming products.
 
-### Design Stragies
+### Primary Design Stragies
 
 * fun & pleasurable to use
 * design for reading (we read 10x more code than we write)
 * minimize tokens without sacrifcing clarity
 
-#### Minimize Tokens
+#### Why Minimize Tokens?
 
 Why I think this seemingly oversimplistic goal is powerful:
 
