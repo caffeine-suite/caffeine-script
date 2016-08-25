@@ -33,16 +33,13 @@ My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-
 
 #### Primary design goal: minimize effort over the entire lifecycle of a product
 
-Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort, mental, physical, and time, does it take to build, test, and maintain products where the codebase is a major component.
+Programming is the ultimate lever. Programming is both a tool and a meta-tool. Improving programming has an exponetial effect on productivity. My goal is to minimize the effort (mental, physical, and time) it takes to build, test, and maintain programming products.
 
 #### Stragies
 
 * fun & pleasurable to use
-* designed to be read
+* designed to be read (we read 10x more code than we write)
 * minimize tokens without sacrifcing clarity
-* big and small
-  - How small or big should the language be?
-  - With CaffeineMC, I thankfully don't have to answer this question. Everyone can choose for themselves.
 
 #### From RUBY
 
@@ -61,6 +58,10 @@ Why I think this seemingly oversimplistic goal is powerful:
 - Most good programming practices reduce code-size. The rest increase clarity.
 - I measure code size in tokens. It is an objective measure that is roughly proportional to the semantic complexity of the code - unlike line counts.
 - "Without sacrificying clarity" is subjective.
+
+#### How small or big should the language be?
+
+With CaffeineMC, I thankfully don't have to answer this question. Everyone can choose for themselves.
 
 # Goals
 
