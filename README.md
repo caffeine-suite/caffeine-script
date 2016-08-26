@@ -150,7 +150,7 @@ My concept of `with` is similar to JavaScript's built in `with`. I know `with` i
 * CaffeineScript's `with` will be implemented as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
 * Since you can always view the generated javascript, CaffeineScript's `with` should be easier to understand.
 * `with` best practices
-  * `with` should be used to used at load time
+  * `with` should only be used at load time
   * `with` should only be used with plain objects
   * Most the bad examples in the link above are, IMO, just bad uses of `with`. As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
 * Not-future-proof is the most interesting example in the link above.
@@ -256,7 +256,7 @@ New rules:
   * Predictability
   * Editability - changing the order of lines has a straightforward result
   * Further reduces the needs for ()s
-  * Works in more (all) places (after an if statement for example)
+  * Works in more (all) places (after an if-statement for example)
 
 Just '.'
 ```coffeescript
