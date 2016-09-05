@@ -1,114 +1,49 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, wordsArray, peek} = Foundation
-{Parser, Nodes} = BabelBridge
+{log, wordsArray, defineModule} = Foundation
+{Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
-class IndentBlocksBaseNodeType extends RuleNode
+defineModule module, ->
 
-  collectLines: (lineStack) ->
-    for match in @matches
-      match.collectLines? lineStack
+  class CafScriptParser extends Parser
+    @nodeBaseClass: class CafScriptNode extends Nodes.Node
 
-class BlockNode extends RuleNode
-  constructor: (_, @indentLength = 0, firstMatch)->
-    super
-    @addMatch null, firstMatch
+      toJs: ->
+        for match in @matches when match.toJs
+          return match.toJs()
+        log "no matches have toJs": self: @, class: @class, matches: @matches, parseTreePath: @parseTreePath
+        throw new Error "no matches have toJs"
 
-  collectLines: ->
-    lineStack = @matches.reverse()
-    newLines = []
-    while line = lineStack.pop()
-      line.collectLines? lineStack
-      newLines.push line
+    @rule
+      root:
+        pattern: 'statement*'
+        node: toJs: -> (s.toJs() for s in @statements).join(";\n") + ";"
 
-    @_matches = newLines
+      statement: 'expression end'
+      end: ['blocks end', '/\n|$/']
 
-class CouldHaveBlockNode extends IndentBlocksBaseNodeType
+      blocks: 'block+'
+      block: Extensions.IndentBlocks.ruleProps
 
-  collectLines: (lineStack) ->
-    @collectLastBlock lineStack if @collectBlock == "lastBlock"
-    super
-    @collectFirstBlock lineStack if @collectBlock == "firstBlock"
+      expression: [
+        "binaryOperator"
+        "expressionWithoutBinaryOperator"
+      ]
 
-    @block?.collectLines()
+      expressionWithoutBinaryOperator: "literal"
 
+      binaryOperator: [
+        pattern: "expressionWithoutBinaryOperator operator binaryOperator"
+        node: toJs: ->
+          "(#{@expressionWithoutBinaryOperator.toJs()} #{@operator} #{@binaryOperator.toJs()})"
+        "expressionWithoutBinaryOperator"
+      ]
 
-  collectFirstBlock: (lineStack) ->
-    log "collectFirstBlock"
-    if peek(lineStack) instanceof BlockNode
-      @block = lineStack.pop()
+      operator: /[-+*\/]/
 
-  collectLastBlock: (lineStack) ->
-    console.error "here"
-    log "collectLastBlock lineStack.length: #{lineStack.length}", lineStack
-    otherBlocks = []
-    while peek(lineStack) instanceof BlockNode
-      log "collectLastBlock1"
-      otherBlocks.push @block if @block
-      @matches.push @block = lineStack.pop()
-    log "collectLastBlock2 otherBlocks.length = #{otherBlocks.length}", @block?.plainObjects
+      literal: wordsArray "boolLiteral numberLiteral"
 
-    # restore otherBlocks
-    while otherBlocks.length > 0
-      lineStack.push otherBlocks.pop()
-
-class LinesNode extends BlockNode
-  extractBlocks: ->
-    blockStack = [new BlockNode @parser]
-
-    for line in @matches
-      indentLength = line.indent.matchLength
-      line.matches = [line.expression]
-      line.indent = line.eol = null
-
-      while indentLength < peek(blockStack).indentLength
-        block = blockStack.pop()
-        peek(blockStack).matches.push block
-
-      if indentLength == peek(blockStack).indentLength
-        peek(blockStack).addMatch null, line
-      else
-        blockStack.push new BlockNode peek(blockStack), indentLength, line
-
-    while blockStack.length > 1
-      block = blockStack.pop()
-      peek(blockStack).matches.push block
-
-    @lines = null
-    @matches = [@block = blockStack[0]]
-
-  postParse: ->
-    @extractBlocks()
-    log extractBlocks: @plainObjects
-    @block.collectLines()
-    log collectLines: @plainObjects
-    @
-
-class IfRuleNode extends CouldHaveBlockNode
-  collectBlock: "lastBlock"
-
-model.exports = class CaffeineScriptParser extends Parser
-  # need to be able to declare the base non-ternal node type for all nodes
-  @baseNodeType: IndentBlocksBaseNodeType
-  @rule lines: "line+", LinesNode
-  @rule line: "indent expression eol"
-
-  @rule expression: "/if/ _ expression", IfRuleNode
-
-  @rule expression: /true|false/
-  @rule _: / +/
-  @rule eol: /[ ]*(\n|$)/
-
-  @rule indent: / */
-
-  @rule
-    if: "'if' _ expression"
-
-p = MyParser.parse """
-  if true
-    false
-  """
-log p.plainObjects
-p.postParse()
+      boolLiteral: pattern: /false|true/, node: toJs: -> @toString()
+      numberLiteral: pattern: /[0-9]+/, node: toJs: -> @toString()
