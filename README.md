@@ -4,16 +4,16 @@ CaffeineScript programming language that compiles to JavaScript. I'm taking the 
 
 # Why CaffeineScript over ES6?
 
-ES6 does a lot of nice things, but I still find it unusable. It fails in a few critical ways compared to CoffeeScript:
+ES6 does a lot of nice things, but I still find it unusable. It fails in a few critical ways compared to CaffeineScript:
 
-* CoffeeScript dramatically reduces the number of tokens required to code
+* CaffeineScript dramatically reduces the number of tokens required to code
 * Functional programming support
-  * In CoffeeScript, everything returns a value
-* CoffeeScript avoids some of JavaScript's generally agreed-upon design flaws:
-  * CoffeeScript compiles == into ===, and != into  !==
+  * In CaffeineScript, everything returns a value
+* CaffeineScript avoids some of JavaScript's generally agreed-upon design flaws:
+  * CaffeineScript compiles == into ===, and != into  !==
   * improved 'this' binding (-> vs =>)
 
-IMO, Javascript should be considered a machine-langauge. It is more machine-friendly than human-friendly. What's great is, like the JVM, it's a runtime that is available on all platforms. It is nice that it is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
+IMO, Javascript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than the JVM, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
 
 # Philosophy
 
@@ -21,9 +21,19 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 
 #### Designer language
 
-IMO most programming tools are poorly designed. I don't mean to be too harsh on all the awesome effort so many people have done before me, but there is more to being well designed than simply being consistent, feature-rich, or even elegant. Take a look at the Apps which win Apple Design awards and compare them to programming tools. Programming tools, including Apple's, tend to be swiss army knives with razor blades sticking out. For some, it is a badge of honor to know how to navigate all those sharp edges to make the tool hum. I think that's crazy.
+I'm taking the principles of good design and applying them to the entire programming environment...
 
-My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
+Take a look at the Apps which win Apple Design awards and compare them to programming tools. Programming tools, including Apple's, tend to be swiss army knives with razor blades sticking out. For some, it is a badge of honor to know how to navigate all those sharp edges to make the tool hum. I think that's crazy.
+
+Instead, good design in programming, like in apps, should have these properties and more:
+
+* discoverable
+* singularly focused on minimizing physical AND mental effort
+* beautiful
+* pleasurable to use
+* less is more
+
+More on my design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
 
 # CaffeineMC (Meta-Compiler)
 
