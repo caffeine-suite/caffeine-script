@@ -21,17 +21,15 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 
 #### Designer language
 
-I'm taking the principles of good design and applying them to the entire programming environment...
+Good design in programming, just like in Apps, should have these properties:
 
-Take a look at the Apps which win Apple Design awards and compare them to programming tools. Programming tools, including Apple's, tend to be swiss army knives with razor blades sticking out. For some, it is a badge of honor to know how to navigate all those sharp edges to make the tool hum. I think that's crazy.
-
-Instead, good design in programming, like in apps, should have these properties and more:
-
-* discoverable
-* singularly focused on minimizing physical AND mental effort
 * beautiful
 * pleasurable to use
+* discoverable
+* singularly focused on minimizing physical and mental effort
 * less is more
+
+I look forward to the day when there are design awards for programing langauges, editors, IDEs, compilers, debuggers, etc.
 
 More on my design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
 
