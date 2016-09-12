@@ -76,10 +76,11 @@ CoffeeScript is my baseline. Given some of what I plan to do, I've decided it's 
 
 # Core Improvements
 
+The most significant improvements over CoffeeScript.
+
 ### Block method invocation
 
-If I could have one thing right now, I want this (and maybe `with`): The ability to invoke a method
-by following it with a list of arguments on separate lines:
+Invoke a method by following it with a list of arguments on separate lines:
 
 ```coffeescript
 # CoffeeScript
@@ -99,19 +100,19 @@ method
 method(arg1, arg2, arg3, arg4);
 ```
 
-### with
+### include
 
 Currently, the first 5-20 lines of all my files is wasted extracting values from libraries. These need to be constantly updated as I use new parts from my libraries in each file. Also, they tend to accumulate junk over time; I rarely remove extracted values no longer need.
 
-`with` solves this
+`include` solves this
 ```coffeescript
 # CoffeeScript
 {merge} = Foundation
 merge b, c
 
 # CaffeineScript
-with Foundation
-  merge b, c
+include Foundation
+merge b, c
 
 # JavaScript
 var merge = Foundation.merge || global.merge;
@@ -138,34 +139,42 @@ React = require "art-react"
 ...
 
 # CaffeineScript
-with
-    require "art-foundation"
-    require "art-atomic"
-    require "art-react"
-  ...
+include
+  require "art-foundation"
+  require "art-atomic"
+  require "art-react"
+...
+
+# CaffeineScript
+# string literal args for include become 'require' statements
+include
+  "art-foundation"
+  "art-atomic"
+  "art-react"
+...
 
 # CaffeineScript - Alt
 # ArtSuite packages all of ArtFoundation, ArtAtomic, ArtReact and others into one object
-with require "art-suite"
-  ...
+include "art-suite"
+...
 ```
 
 #### JavaScript's `with`
 
-My concept of `with` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it can be rehabilitated with slightly different semantics:
+My concept of `include` is similar to JavaScript's built in `with`. I know `with` is maligned, but I think it can be rehabilitated with slightly different semantics:
 
 * [Some arguments against `with`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/with)
-* CaffeineScript's `with` will be implemented as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
-* Since you can always view the generated javascript, CaffeineScript's `with` should be easier to understand.
-* `with` best practices
-  * `with` should only be used at load time
-  * `with` should only be used with plain objects
-  * Most the bad examples in the link above are, IMO, just bad uses of `with`. As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
+* CaffeineScript's `include` will be implemented as a load-time cost, not a runtime cost. Essentially, there should be little or no practical performance hit.
+* Since you can always view the generated javascript, CaffeineScript's `include` should be easier to understand.
+* `include` best practices
+  * `include` should only be used at load time
+  * `include` should only be used with plain objects
+  * Most the bad examples in the link above are, IMO, just bad uses of `include`. As with all powerful tools, including most programming constructs, you can shoot yourself in your foot if you use it incorrectly.
 * Not-future-proof is the most interesting example in the link above.
-  * If use the best-practices from the previous bullet and only use `with` at the top-most level of each file to pull in values from libraries, you could still be susceptible to breakage due to language or library changes.
+  * If use the best-practices from the previous bullet and only use `include` at the top-most level of each file to pull in values from libraries, you could still be susceptible to breakage due to language or library changes.
   * However, good code should never access globals - the values set on window/self/global - except for those defined by the EcmaScript standard.
-  * Such code, using `with`, is only susceptible to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
-  * In either case, code without `with` would be just as susceptible.
+  * Such code, using `include`, is only susceptible to breakage if the EcmaScript standard or a library *removes* a property or completely redefines it.
+  * In either case, code without `include` would be just as susceptible.
 
 ### Blocks instead of Brackets
 
