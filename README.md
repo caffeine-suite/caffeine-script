@@ -145,7 +145,7 @@ include
   require "art-react"
 ...
 
-# CaffeineScript
+# CaffeineScript - Alt 1
 # string literal args for include become 'require' statements
 include
   "art-foundation"
@@ -153,7 +153,7 @@ include
   "art-react"
 ...
 
-# CaffeineScript - Alt
+# CaffeineScript - Alt 2
 # ArtSuite packages all of ArtFoundation, ArtAtomic, ArtReact and others into one object
 include "art-suite"
 ...
