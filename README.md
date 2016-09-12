@@ -271,6 +271,14 @@ a =
   bar: 2, bad: 4
   baz: 3, bud: 4
 
+# CaffeineScript ALT - 14 tokens
+# commas are optional after number and string literals
+a =
+  foo: 1 fod: 4
+  bar: 2 bad: 4
+  baz: 3 bud: 4
+
+
 ```
 
 
