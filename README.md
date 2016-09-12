@@ -278,7 +278,9 @@ a =
   bar: 2 bad: 4
   baz: 3 bud: 4
 
-
+# Final Token comparision - almost half!
+#   CaffeineScript:12 / CoffeeScript:23 = 48% less
+# (ignoring the `a =`)
 ```
 
 
