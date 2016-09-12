@@ -1,14 +1,8 @@
-# CaffeineScript
+# CaffeineScript (CafScript for short)
 
 CaffeineScript programming language that compiles to JavaScript. I'm taking the ideas in CoffeeScript and making a next-generation langauge.
 
-# CaffeineMC
-
-Designed to take maximum advantage of CaffeineMC:
-
-* See [CaffeineMC](https://github.com/shanebdavis/caffeine-mc) on github
-
-# Why CoffeeScript and CaffeineScript over ES6?
+# Why CaffeineScript over ES6?
 
 ES6 does a lot of nice things, but I still find it unusable. It fails in a few critical ways compared to CoffeeScript:
 
@@ -30,6 +24,12 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 IMO most programming tools are poorly designed. I don't mean to be too harsh on all the awesome effort so many people have done before me, but there is more to being well designed than simply being consistent, feature-rich, or even elegant. Take a look at the Apps which win Apple Design awards and compare them to programming tools. Programming tools, including Apple's, tend to be swiss army knives with razor blades sticking out. For some, it is a badge of honor to know how to navigate all those sharp edges to make the tool hum. I think that's crazy.
 
 My design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
+
+# CaffeineMC (Meta-Compiler)
+
+Designed to take maximum advantage of CaffeineMC. This means the language is extensible on a per-file or per-project basis.
+
+* Learn more about [CaffeineMC](https://github.com/shanebdavis/caffeine-mc) on github
 
 # CaffeineScript Design
 
