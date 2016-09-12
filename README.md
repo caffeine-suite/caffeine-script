@@ -248,6 +248,32 @@ a = []
   {} baz: 3
 ```
 
+Object-literals with two or more object-literal-properties on one line are 'one-liners'
+```coffeescript
+# CoffeeScript - 25 tokens
+a = [
+  {foo: 1, fod: 4}
+  {bar: 2, bad: 4}
+  {baz: 3, bud: 4}
+]
+
+# CaffeineScript - 18 tokens
+a = []
+  foo: 1, fod: 4
+  bar: 2, bad: 4
+  baz: 3, bud: 4
+
+# CaffeineScript ALT - 17 tokens
+# When a single value is expected,
+# a block with 2+ statements becomes an array literal.
+a =
+  foo: 1, fod: 4
+  bar: 2, bad: 4
+  baz: 3, bud: 4
+
+```
+
+
 function definitions
 ```coffeescript
 # CoffeeScript
