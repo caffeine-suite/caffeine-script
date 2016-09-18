@@ -1,4 +1,5 @@
 {CaffeineScript} = Neptune
+{log} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
 module.exports = suite: ->

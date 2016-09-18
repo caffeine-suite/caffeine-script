@@ -1,7 +1,7 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, wordsArray, defineModule} = Foundation
+{log, wordsArray, defineModule, compactFlatten} = Foundation
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
@@ -21,25 +21,25 @@ defineModule module, ->
         pattern: 'statement*'
         node: toJs: -> (s.toJs() for s in @statements).join(";\n") + ";"
 
-      statement: 'expression end'
+      statement: 'binaryOperatorSequence end'
       end: ['blocks end', '/\n|$/']
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
 
-      expression: [
-        "binaryOperator"
-        "expressionWithoutBinaryOperator"
-      ]
-
-      expressionWithoutBinaryOperator: "literal"
-
-      binaryOperator: [
-        pattern: "expressionWithoutBinaryOperator operator binaryOperator"
+      binaryOperatorSequence:
+        pattern: "expression operatorAndExpression*"
         node: toJs: ->
-          "(#{@expressionWithoutBinaryOperator.toJs()} #{@operator} #{@binaryOperator.toJs()})"
-        "expressionWithoutBinaryOperator"
-      ]
+          ops = for op in compactFlatten [@expression, @operatorAndExpressions]
+            op.toJs()
+          ops.join ' '
+
+      operatorAndExpression:
+        pattern: "operator expression"
+        node: toJs: ->
+          "#{@operator} #{@expression.toJs()}"
+
+      expression: "literal"
 
       operator: /[-+*\/]/
 
