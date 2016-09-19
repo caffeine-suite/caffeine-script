@@ -2,6 +2,11 @@
 {log} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
+parseTests = (map) ->
+  for k, v of map
+    do (k, v) ->
+      test k.replace(/\n/g, "\\n"), -> assert.eq Parser.parse(k).toJs(), v
+
 module.exports = suite:
   literals: ->
     test "false", -> assert.eq Parser.parse("false").toJs(), "false;"
@@ -11,25 +16,88 @@ module.exports = suite:
     test "'hi'", -> assert.eq "'hi';", Parser.parse("'hi'").toJs()
 
   operators: ->
-    test "1 + 2", -> assert.eq Parser.parse("1 + 2").toJs(), "1 + 2;"
-    test "a 1 + 2", -> assert.eq Parser.parse("a 1 + 2").toJs(), "a(1 + 2);"
+    parseTests
+      "1 + 2":    "1 + 2;"
+      "a 1 + 2":  "a(1 + 2);"
 
   values: ->
-    test "foo", -> assert.eq Parser.parse("foo").toJs(), "foo;"
-    test "foo.bar", -> assert.eq Parser.parse("foo.bar").toJs(), "foo.bar;"
-    test "foo[bar]", -> assert.eq Parser.parse("foo[bar]").toJs(), "foo[bar];"
+    parseTests
+      "foo"     : "foo;"
+      "foo.bar" : "foo.bar;"
+      "foo[bar]": "foo[bar];"
 
   invocation: ->
-    test "foo 1", -> assert.eq Parser.parse("foo 1").toJs(), "foo(1);"
-    test "foo 1, 2", -> assert.eq Parser.parse("foo 1, 2").toJs(), "foo(1, 2);"
-    test "foo 'bar'", -> assert.eq Parser.parse("foo 'bar'").toJs(), "foo('bar');"
-    test "foo bar 2", -> assert.eq Parser.parse("foo bar 2").toJs(), "foo(bar(2));"
+    parseTests
+      "foo 1"    : "foo(1);"
+      "foo 1, 2" : "foo(1, 2);"
+      "foo 'bar'": "foo('bar');"
+      "foo bar 2": "foo(bar(2));"
 
   function: ->
-    test "-> 321", -> assert.eq Parser.parse("-> 321").toJs(), "(function() {return 321;});"
-    test "->\n  321", -> assert.eq Parser.parse("->\n  321").toJs(), "(function() {return 321;});"
-    test "->\n  321\n   456", -> assert.eq Parser.parse("->\n  321\n  456").toJs(), "(function() {321;\nreturn 456;});"
-    test "->\n  321\n\n   456", -> assert.eq Parser.parse("->\n  321\n\n  456").toJs(), "(function() {321;\nreturn 456;});"
+    parseTests
+      "-> 321"             : "(function() {return 321;});"
+      "->\n  321"          : "(function() {return 321;});"
+      "->\n  321\n  456"   : "(function() {321;\nreturn 456;});"
+      "->\n  321\n\n  456" : "(function() {321;\nreturn 456;});"
+
+  assignment: ->
+    parseTests
+      "a=b":        "a = b;"
+      "a   =    b": "a = b;"
+      "a[1] = b":   "a[1] = b;"
+      "a.b = b":    "a.b = b;"
+
+  statements: ->
+    parseTests
+      """
+      123
+      456
+      """:
+        """
+        123;
+        456;
+        """
+
+      # on liner function followed immediately by another statement
+      """
+      -> 123
+      456
+      """:
+        """
+        (function() {return 123;});
+        456;
+        """
+
+  controlStatements: ->
+    parseTests
+      """
+      if foo
+        bar
+      """: "if (foo) {bar;};"
+
+      """
+      if foo
+        bar
+      else
+        baz
+      """: "if (foo) {bar;} else {baz;};"
+
+      """
+      unless foo
+        bar
+      """: "if (!(foo)) {bar;};"
+
+      """
+      unless foo + bar
+        bar
+      """: "if (!(foo + bar)) {bar;};"
+
+      """
+      unless foo
+        bar
+      else
+        baz
+      """: "if (!(foo)) {bar;} else {baz;};"
 
   math: ->
     testMath = (equation) ->
@@ -41,4 +109,3 @@ module.exports = suite:
     testMath "1+2*3"
     testMath "2*3+4"
     testMath "2+4+4"
-

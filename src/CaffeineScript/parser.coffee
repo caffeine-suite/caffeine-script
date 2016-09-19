@@ -50,17 +50,40 @@ defineModule module, ->
         node: toJs: ->
           "#{@operator} #{@expressionWithoutBinaryOperator.toJs()}"
 
-      expressionWithoutBinaryOperator: [
-        "literal"
-        "invocation"
-        "value"
-        "functionDefinition"
+      assign: [
+        pattern: "assignable _* /=/ _* expression"
+        node: toJs: -> "#{@assignable.toJs()} = #{@expression.toJs()}"
       ]
+
+      expressionWithoutBinaryOperator: wordsArray "
+        assign
+        literal
+        controlStatement
+        invocation
+        value
+        functionDefinition
+        "
+
+      controlStatement: wordsArray "ifStatement unlessStatement"
+
+      ifStatement:
+        pattern: "'if' _ expression block optionalElseClause?"
+        node: toJs: ->
+          "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
+
+      unlessStatement:
+        pattern: "'unless' _ expression block optionalElseClause?"
+        node: toJs: ->
+          "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
+
+      optionalElseClause:
+        pattern: "/\nelse/ block"
+        node: toJs: -> " else {#{@block.toJs()}}"
 
       functionDefinition: [
         {
-          pattern: "'->' _* statement"
-          node: toJs: -> "(function() {return #{@statement.toJs()};})"
+          pattern: "'->' _* expression"
+          node: toJs: -> "(function() {return #{@expression.toJs()};})"
         }
         {
           pattern: "'->' _* block"
@@ -115,7 +138,12 @@ defineModule module, ->
           ///
         node: toJs: -> @toString()
 
-      operator: /[-+*\/]/
+      operator: wordsArray "logicOperator shiftOperator compareOperator mathOperator"
+
+      logicOperator:    /// && | \|\| | & | \| | \^ ///
+      shiftOperator:    /// << | >> | >>> ///
+      compareOperator:  /// == | != | < | > | <= | >= ///
+      mathOperator:     /// [-+*/%] | // | %% ///
 
       literal: wordsArray "boolLiteral numberLiteral stringLiteral"
 
@@ -126,8 +154,8 @@ defineModule module, ->
       numberLiteral: pattern: /[0-9]+/,     node: toJs: -> @toString()
 
       stringLiteral: [
-        {pattern: /// ' (?: [^\\'] | \\[\s\S] )* ' ///, node: toJs: -> @toString()}
-        {pattern: /// " (?: [^\\"] | \\[\s\S] )* " ///, node: toJs: -> @toString()}
+        {pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, node: toJs: -> @toString()}
+        {pattern: /// " ( [^\\"] | \\[\s\S] )* " ///, node: toJs: -> @toString()}
         # /// "( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
         # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
         # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///
