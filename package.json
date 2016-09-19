@@ -1,6 +1,6 @@
 {
   "name": "caffeine-script",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "atomic data-types such as Color, Point, Rectangle and Matrix",
   "main": "index.coffee",
   "dependencies": {
