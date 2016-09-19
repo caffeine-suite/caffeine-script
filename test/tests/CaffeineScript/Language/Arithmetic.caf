@@ -1,0 +1,12 @@
+|caffeine-script
+
+suite "dogfood test", ->
+  test "basic", -> assert.eq 1, 1
+
+  test "+", -> assert.eq 6, 4 + 2
+
+  test "-", -> assert.eq 2, 4 - 2
+
+  test "*", -> assert.eq 8, 4 * 2
+
+  test "/", -> assert.eq 2, 4 / 2

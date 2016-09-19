@@ -2,5 +2,6 @@
 # file: CaffeineScript/index.coffee
 
 module.exports = require './namespace'
+.includeInNamespace require './CaffeineScript'
 .addModules
   Parser: require './parser'

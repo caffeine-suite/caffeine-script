@@ -1,7 +1,7 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, wordsArray, defineModule, compactFlatten} = Foundation
+{log, wordsArray, defineModule, compactFlatten, present} = Foundation
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
@@ -13,37 +13,123 @@ defineModule module, ->
       toJs: ->
         for match in @matches when match.toJs
           return match.toJs()
-        log "no matches have toJs": self: @, class: @class, matches: @matches, parseTreePath: @parseTreePath
-        throw new Error "no matches have toJs"
+        ""
 
     @rule
       root:
-        pattern: 'statement*'
-        node: toJs: -> (s.toJs() for s in @statements).join(";\n") + ";"
+        pattern: 'statementOrBlankLine*'
+        node:
+          toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join(";\n") + ";"
+          toFunctionBodyJs: ->
+            (for s, i in lines = @statementOrBlankLines when present js = s.toJs()
+              if i == lines.length - 1
+                "return #{js}"
+              else
+                js
+            ).join(";\n") + ";"
 
-      statement: 'binaryOperatorSequence end'
+      statementOrBlankLine: [
+        "statement"
+        /\n/
+      ]
+      statement: 'expression end'
       end: ['blocks end', '/\n|$/']
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
 
-      binaryOperatorSequence:
-        pattern: "expression operatorAndExpression*"
+      expression:
+        pattern: "expressionWithoutBinaryOperator operatorAndExpression*"
         node: toJs: ->
-          ops = for op in compactFlatten [@expression, @operatorAndExpressions]
+          ops = for op in compactFlatten [@expressionWithoutBinaryOperator, @operatorAndExpressions]
             op.toJs()
           ops.join ' '
 
       operatorAndExpression:
-        pattern: "operator expression"
+        pattern: "_? operator _? expressionWithoutBinaryOperator"
         node: toJs: ->
-          "#{@operator} #{@expression.toJs()}"
+          "#{@operator} #{@expressionWithoutBinaryOperator.toJs()}"
 
-      expression: "literal"
+      expressionWithoutBinaryOperator: [
+        "literal"
+        "invocation"
+        "value"
+        "functionDefinition"
+      ]
+
+      functionDefinition: [
+        {
+          pattern: "'->' _* statement"
+          node: toJs: -> "(function() {return #{@statement.toJs()};})"
+        }
+        {
+          pattern: "'->' _* block"
+          node: toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
+        }
+      ]
+
+      value: "assignable"
+
+      invocation:
+        pattern: "value _ arguments"
+        node: toJs: ->
+          "#{@value.toJs()}(#{@arguments.toJs()})"
+
+      arguments:
+        pattern: "expression commaExpression*"
+        node: toJs: ->
+          args = for arg in compactFlatten [@expression, @commaExpressions]
+            arg.toJs()
+
+          args.join ', '
+
+      commaExpression:
+        pattern: " _? ',' _? expression"
+        node: toJs: -> @expression.toJs()
+
+      assignable:
+        pattern: "simpleAssignable accessor*"
+        node: toJs: -> "#{@simpleAssignable.toJs()}#{(a.toJs() for a in @accessors || []).join ''}"
+
+      simpleAssignable: [
+        "identifier"
+      ]
+
+      accessor: [
+        {
+          pattern: "'.' simpleAssignable"
+          node: toJs: -> ".#{@simpleAssignable.toJs()}"
+        }
+        {
+          pattern: "'[' _* expression _* ']'"
+          node: toJs: -> "[#{@expression.toJs()}]"
+        }
+      ]
+
+      identifier:
+        pattern:
+          ///
+          (?!\d)
+          ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
+          ( [^\n\S]* : (?!:) )?  # Is this a property name?
+          ///
+        node: toJs: -> @toString()
 
       operator: /[-+*\/]/
 
-      literal: wordsArray "boolLiteral numberLiteral"
+      literal: wordsArray "boolLiteral numberLiteral stringLiteral"
 
-      boolLiteral: pattern: /false|true/, node: toJs: -> @toString()
-      numberLiteral: pattern: /[0-9]+/, node: toJs: -> @toString()
+      _: / +/
+
+    @rule
+      boolLiteral:   pattern: /false|true/, node: toJs: -> @toString()
+      numberLiteral: pattern: /[0-9]+/,     node: toJs: -> @toString()
+
+      stringLiteral: [
+        {pattern: /// ' (?: [^\\'] | \\[\s\S] )* ' ///, node: toJs: -> @toString()}
+        {pattern: /// " (?: [^\\"] | \\[\s\S] )* " ///, node: toJs: -> @toString()}
+        # /// "( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
+        # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
+        # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///
+      ]
+

@@ -1,3 +1,4 @@
+require 'caffeine-mc/register'
 require '../index'
 {Mocha} = require "art-foundation/dev_tools/test"
 
