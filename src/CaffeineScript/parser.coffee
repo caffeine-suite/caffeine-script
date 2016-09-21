@@ -235,6 +235,7 @@ defineModule module, ->
       stringLiteral: a
         pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
         m pattern: /// " ( [^\\"] | \\[\s\S] )* " ///, toJs: -> @toString()
+        m pattern: "':' identifier", toJs: -> "'#{@identifier.toString()}'"
         # /// "( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
         # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
         # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///

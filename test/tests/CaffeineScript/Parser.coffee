@@ -9,11 +9,13 @@ parseTests = (map) ->
 
 module.exports = suite:
   literals: ->
-    test "false", -> assert.eq Parser.parse("false").toJs(), "false;"
-    test "true", -> assert.eq Parser.parse("true").toJs(), "true;"
-    test "0123", -> assert.eq Parser.parse("0123").toJs(), "0123;"
-    test '"hi"', -> assert.eq '"hi";', Parser.parse('"hi"').toJs()
-    test "'hi'", -> assert.eq "'hi';", Parser.parse("'hi'").toJs()
+    parseTests
+      "true":   "true;"
+      "false":  "false;"
+      "0123":   "0123;"
+      '"hi"':   '"hi";'
+      "'hi'":   "'hi';"
+      ":hi":    "'hi';"
 
   operators: ->
     parseTests
@@ -126,8 +128,10 @@ module.exports = suite:
       parseTests
         "d: 5, 6": "{d: [5, 6]};"
         "d: 5 6":  "{d: [5, 6]};"
-    #     # e: 5 6
-    #     # """: ""
+        """
+        a: :foo :bar
+        b: :shut :up
+        """: "{a: ['foo', 'bar'], b: ['shut', 'up']};"
 
   assignment: ->
     parseTests
