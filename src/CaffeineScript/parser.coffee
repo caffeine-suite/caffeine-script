@@ -5,6 +5,8 @@ BabelBridge = require 'babel-bridge'
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
+Rules = require './Rules'
+
 defineModule module, ->
 
   class CaffeineScriptParser extends Parser
@@ -13,7 +15,8 @@ defineModule module, ->
       toJs: ->
         for match in @matches when match.toJs
           return match.toJs()
-        ""
+
+        @toString()
 
     @rule
       root:
@@ -37,8 +40,10 @@ defineModule module, ->
             else
               "[#{(s.toJs() for s in statements).join ', '}]"
 
-      # root: pattern: "array", toJs: -> @array.toJs() + ";"
+    for modName, mod of Rules.modules
+      @rule mod
 
+    @rule
       statementOrBlankLine: [
         "statement"
         /\n/
@@ -72,8 +77,7 @@ defineModule module, ->
       expressionWithoutBinaryOperator: w "
         assign
         controlStatement
-        array
-        object
+        structuredLiteral
         invocation
         value
         functionDefinition
@@ -82,8 +86,6 @@ defineModule module, ->
       assign: a
         pattern: "assignable / *= */ expression", toJs: -> "#{@assignable.toJs()} = #{@expression.toJs()}"
         m pattern: "assignable / *= */ block", toJs: -> "#{@assignable.toJs()} = #{@block.toImplicitArrayOrValueJs()}"
-
-      controlStatement: w "ifStatement unlessStatement"
 
       invocation:
         pattern: "value _ arguments"
@@ -107,20 +109,6 @@ defineModule module, ->
       existanceTest:
         pattern: "assignable '?'"
         toJs: -> "(#{@assignable.toJs()} != null)"
-
-      ifStatement:
-        pattern: "'if' _ expression _? block optionalElseClause?"
-        toJs: ->
-          "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
-
-      unlessStatement:
-        pattern: "'unless' _ expression _? block optionalElseClause?"
-        toJs: ->
-          "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
-
-      optionalElseClause:
-        pattern: "/\nelse/ block"
-        toJs: -> " else {#{@block.toJs()}}"
 
       functionDefinition: [
         {
@@ -147,10 +135,8 @@ defineModule module, ->
         toJs: -> "#{@simpleAssignable.toJs()}#{(a.toJs() for a in @accessors || []).join ''}"
 
       simpleAssignable: [
-        "!valueKeyword identifier"
+        "!reservedWord identifier"
       ]
-
-      valueKeyword: /if|while|unless/
 
       accessor: [
         {
@@ -163,119 +149,15 @@ defineModule module, ->
         }
       ]
 
-      identifier:
-        pattern:
-          ///
-          (?!\d)
-          ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
-          ///
-        toJs: -> @toString()
-
-      operator: w "logicOperator shiftOperator compareOperator mathOperator"
-
-      logicOperator:    /// && | \|\| | & | \| | \^ ///
-      shiftOperator:    /// << | >> | >>> ///
-      compareOperator:  /// == | != | < | > | <= | >= ///
-      mathOperator:     /// [-+*/%] | // | %% ///
-
-      _: / +/
-
-      implicitArray: a
-        pattern: "expressionWithoutImplicitArray / *, */ valueList"
-        toJs: -> "[#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}]"
-        m
-          pattern: "literal _ valueList"
-          toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
-
-      array: a
-        pattern: "'[' _? valueList _? ']'"
-        toJs: -> "[#{@valueList.toJs()}]"
-        m
-          pattern: "'[]' _? valueList"
-          toJs: -> "[#{@valueList.toJs()}]"
-        m
-          pattern: "'[]' _? block"
-          toJs: -> "[#{@block.toJsList()}]"
-        m
-          pattern: "'[]'"
-          toJs: -> @toString()
-
-      implicitObject:
-        pattern: "propertyList"
-
-      object: a
-        pattern: "'{' _? propertyList _? '}'"
-        toJs: -> "{#{@propertyList.toJs()}}"
-        m
-          pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
-          toJs: -> "{#{@implicitObjectWithTwoOrMorePropsOnOneLine.toJs()}}"
-
-        m
-          pattern: "multiLineImplicitObject &/ *\n|$/"
-          toJs: -> "{#{@multiLineImplicitObject.toJs()}}"
-
-        m
-          pattern: "implicitObject"
-          toJs: -> "{#{@implicitObject.toJs()}}"
-
-        m
-          pattern: "'{}' _? propertyList"
-          toJs: -> "{#{@propertyList.toJs()}}"
-
-        m
-          pattern: "'{}' _? block"
-          toJs: -> @block.toJsList()
-
-        m
-          pattern: "'{}'"
-          toJs: -> @toString()
-
-      multiLineImplicitObject: a
-
-        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays /( *\n)+/ multiLineImplicitObject"
-        toJs: -> "#{@valuePropertyWithImplicitArrays.toJs()}, #{@multiLineImplicitObject.toJs()}"
-        m
-          pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays"
-
-
     @rule
-      implicitObjectWithTwoOrMorePropsOnOneLine:
-        pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
-
-      propertyList: a
-        pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
-        m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
-        m pattern: "valueProperty"
-
-      valueProperty:
-        pattern: "identifier colon expressionWithoutImplicitArray", toJs: -> "#{@identifier.toJs()}: #{@expressionWithoutImplicitArray.toJs()}"
-
-      valuePropertyWithImplicitArrays: a
-        pattern: "identifier colon expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
-        m pattern: "identifier colon block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
-
-      literalProperty:
-        pattern: "identifier colon literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
-
-      valueList: a
-        pattern: "expressionWithoutImplicitArray comma valueList", toJs: -> "#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}"
-        m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
-        m pattern: "expressionWithoutImplicitArray", toJs: -> @expressionWithoutImplicitArray.toJs()
-
+      _:     / +/
       colon: / *: */
       comma: / *, */
 
-    @rule
-      literal: w "boolLiteral numberLiteral stringLiteral"
+      reservedWord: /if|while|unless/
 
-      boolLiteral:   pattern: /false|true/, toJs: -> @toString()
-      numberLiteral: pattern: /-?[0-9]+/,     toJs: -> @toString()
-
-      stringLiteral: a
-        pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
-        m pattern: /// " ( [^\\"] | \\[\s\S] )* " ///, toJs: -> @toString()
-        m pattern: "':' identifier", toJs: -> "'#{@identifier.toString()}'"
-        # /// "( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
-        # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
-        # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///
-
+      identifier:
+        ///
+        (?!\d)
+        ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
+        ///
