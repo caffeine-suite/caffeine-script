@@ -18,6 +18,8 @@ defineModule module, ->
 
         @toString()
 
+    @rule mod for modName, mod of Rules.modules
+
     @rule
       root:
         pattern: 'statementOrBlankLine*'
@@ -40,19 +42,12 @@ defineModule module, ->
             else
               "[#{(s.toJs() for s in statements).join ', '}]"
 
-    for modName, mod of Rules.modules
-      @rule mod
+      statementOrBlankLine: a "statement", /\n/
 
-    @rule
-      statementOrBlankLine: [
-        "statement"
-        /\n/
-      ]
       statement: a
         pattern: 'complexExpression end'
         m pattern: 'complexExpression / +if +/ complexExpression end', toJs: -> "if (#{@expressions[1].toJs()}) {#{@expressions[0].toJs()}}"
 
-      end: '/\n|$/'
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
@@ -91,7 +86,7 @@ defineModule module, ->
           args.join ', '
 
       commaExpression:
-        pattern: " _? ',' _? expression"
+        pattern: "comma expression"
         toJs: -> @expression.toJs()
 
       value: w "existanceTest assignable literal"
@@ -100,19 +95,15 @@ defineModule module, ->
         pattern: "assignable '?'"
         toJs: -> "(#{@assignable.toJs()} != null)"
 
-      functionDefinition: [
-        {
-          pattern: "argDefinition? / *-> */ complexExpression"
-          toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@complexExpression.toJs()};})"
-        }
-        {
-          pattern: "argDefinition? / *-> */ block"
+      functionDefinition: a
+        pattern: "argDefinition? arrow complexExpression"
+        toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@complexExpression.toJs()};})"
+        m
+          pattern: "argDefinition? arrow block"
           toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
-        }
-      ]
 
       argDefinition:
-        pattern: "/\\( */ argList / *\\)/"
+        pattern: "openParen argList closeParen"
         toJs: -> @argList.toString()
 
       argList: a
@@ -124,30 +115,8 @@ defineModule module, ->
         pattern: "simpleAssignable accessor*"
         toJs: -> "#{@simpleAssignable.toJs()}#{(a.toJs() for a in @accessors || []).join ''}"
 
-      simpleAssignable: [
-        "!reservedWord identifier"
-      ]
+      simpleAssignable: "!reservedWord identifier"
 
-      accessor: [
-        {
-          pattern: "'.' simpleAssignable"
-          toJs: -> ".#{@simpleAssignable.toJs()}"
-        }
-        {
-          pattern: "'[' _* expression _* ']'"
-          toJs: -> "[#{@expression.toJs()}]"
-        }
-      ]
-
-    @rule
-      _:     / +/
-      colon: / *: */
-      comma: / *, */
-
-      reservedWord: /if|while|unless/
-
-      identifier:
-        ///
-        (?!\d)
-        ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
-        ///
+      accessor: a
+        pattern: "'.' simpleAssignable",                  toJs: -> ".#{@simpleAssignable.toJs()}"
+        m pattern: "openBracket expression closeBracket", toJs: -> "[#{@expression.toJs()}]"

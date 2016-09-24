@@ -4,7 +4,7 @@ module.exports =
   structuredLiteral: w "array object"
 
   array: a
-    pattern: "'[' _? valueList _? ']'"
+    pattern: "openBracket valueList closeBracket"
     toJs: -> "[#{@valueList.toJs()}]"
     m
       pattern: "'[]' _? valueList"
@@ -18,7 +18,7 @@ module.exports =
 
 
   implicitArray: a
-    pattern: "expression / *, */ valueList"
+    pattern: "expression comma valueList"
     toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
     m
       pattern: "literal _ valueList"
@@ -28,7 +28,7 @@ module.exports =
     pattern: "propertyList"
 
   object: a
-    pattern: "'{' _? propertyList _? '}'"
+    pattern: "openCurly propertyList closeCurly"
     toJs: -> "{#{@propertyList.toJs()}}"
     m
       pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
