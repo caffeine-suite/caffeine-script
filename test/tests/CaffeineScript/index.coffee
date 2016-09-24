@@ -3,7 +3,6 @@
 
 module.exports = require './namespace'
 .addModules
-  CoffeeScript: require './CoffeeScript'
-  Helper:       require './Helper'      
-  Parser:       require './Parser'      
+  Helper: require './Helper'
 require './Language'
+require './Parser'

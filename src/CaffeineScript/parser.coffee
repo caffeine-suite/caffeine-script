@@ -69,11 +69,6 @@ defineModule module, ->
         toJs: ->
           "#{@operator} #{@expressionWithoutBinaryOperator.toJs()}"
 
-      assign: [
-        pattern: "assignable _* /=/ _* expression"
-        toJs: -> "#{@assignable.toJs()} = #{@expression.toJs()}"
-      ]
-
       expressionWithoutBinaryOperator: w "
         assign
         controlStatement
@@ -84,34 +79,11 @@ defineModule module, ->
         functionDefinition
         "
 
-      value: w "assignable literal"
+      assign: a
+        pattern: "assignable / *= */ expression", toJs: -> "#{@assignable.toJs()} = #{@expression.toJs()}"
+        m pattern: "assignable / *= */ block", toJs: -> "#{@assignable.toJs()} = #{@block.toImplicitArrayOrValueJs()}"
 
       controlStatement: w "ifStatement unlessStatement"
-
-      ifStatement:
-        pattern: "'if' _ expression _? block optionalElseClause?"
-        toJs: ->
-          "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
-
-      unlessStatement:
-        pattern: "'unless' _ expression _? block optionalElseClause?"
-        toJs: ->
-          "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
-
-      optionalElseClause:
-        pattern: "/\nelse/ block"
-        toJs: -> " else {#{@block.toJs()}}"
-
-      functionDefinition: [
-        {
-          pattern: "'->' _* expression"
-          toJs: -> "(function() {return #{@expression.toJs()};})"
-        }
-        {
-          pattern: "'->' _* block"
-          toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
-        }
-      ]
 
       invocation:
         pattern: "value _ arguments"
@@ -129,6 +101,46 @@ defineModule module, ->
       commaExpression:
         pattern: " _? ',' _? expressionWithoutImplicitArray"
         toJs: -> @expressionWithoutImplicitArray.toJs()
+
+      value: w "existanceTest assignable literal"
+
+      existanceTest:
+        pattern: "assignable '?'"
+        toJs: -> "(#{@assignable.toJs()} != null)"
+
+      ifStatement:
+        pattern: "'if' _ expression _? block optionalElseClause?"
+        toJs: ->
+          "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
+
+      unlessStatement:
+        pattern: "'unless' _ expression _? block optionalElseClause?"
+        toJs: ->
+          "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
+
+      optionalElseClause:
+        pattern: "/\nelse/ block"
+        toJs: -> " else {#{@block.toJs()}}"
+
+      functionDefinition: [
+        {
+          pattern: "argDefinition? / *-> */ expression"
+          toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@expression.toJs()};})"
+        }
+        {
+          pattern: "argDefinition? / *-> */ block"
+          toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
+        }
+      ]
+
+      argDefinition:
+        pattern: "/\\( */ argList / *\\)/"
+        toJs: -> @argList.toString()
+
+      argList: a
+        pattern: "identifier comma argList", toJs: -> "#{@identifier.toJs()}, #{@argList.toJs()}"
+        m pattern: "identifier _ argList", toJs: -> "#{@identifier.toJs()}, #{@argList.toJs()}"
+        m pattern: "identifier", toJs: -> @identifier.toJs()
 
       assignable:
         pattern: "simpleAssignable accessor*"
@@ -205,12 +217,15 @@ defineModule module, ->
         m
           pattern: "implicitObject"
           toJs: -> "{#{@implicitObject.toJs()}}"
+
         m
           pattern: "'{}' _? propertyList"
           toJs: -> "{#{@propertyList.toJs()}}"
+
         m
           pattern: "'{}' _? block"
           toJs: -> @block.toJsList()
+
         m
           pattern: "'{}'"
           toJs: -> @toString()

@@ -1,16 +1,22 @@
 {
-  "name": "caffeine-script",
-  "version": "0.3.1",
+  "author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
+  "dependencies": [
+    {
+      "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git",
+      "babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git",
+      "caffeine-mc": "git@github.com:shanebdavis/caffeine-mc.git"
+    }
+  ],
   "description": "atomic data-types such as Color, Point, Rectangle and Matrix",
-  "main": "index.coffee",
-  "dependencies": {
-    "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git",
-    "babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git"
-  },
-  "devDependencies": {},
+  "license": "ISC",
+  "name": "caffeine-script",
   "scripts": {
-    "test": "neptune-namespaces -r test/tests/ -r src/*;mocha -u tdd --compilers coffee:coffee-script/register"
+    "dev": "neptune-namespaces --std; webpack-dev-server -d --progress",
+    "hot": "neptune-namespaces --std; webpack-dev-server --hot --inline --progress",
+    "nn": "neptune-namespaces --std",
+    "nodeTest": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register",
+    "perf": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
+    "test": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
   },
-  "author": "Shane Brinkman-Davis Delamore",
-  "license": "MIT"
+  "version": "0.3.1"
 }
