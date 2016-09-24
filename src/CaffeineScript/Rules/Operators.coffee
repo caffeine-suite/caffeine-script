@@ -13,6 +13,10 @@ module.exports =
     toJs: ->
       "#{@operator} #{@expressionWithoutBinOps.toJs()}"
 
+  existanceTest:
+    pattern: "assignable '?'"
+    toJs: -> "(#{@assignable.toJs()} != null)"
+
   operator: w "logicOperator shiftOperator compareOperator mathOperator"
 
   logicOperator:    /// && | \|\| | & | \| | \^ ///

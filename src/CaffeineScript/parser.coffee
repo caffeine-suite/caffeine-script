@@ -46,8 +46,9 @@ defineModule module, ->
 
       statement: a
         pattern: 'complexExpression end'
-        m pattern: 'complexExpression / +if +/ complexExpression end', toJs: -> "if (#{@expressions[1].toJs()}) {#{@expressions[0].toJs()}}"
-
+        m
+          pattern: 'complexExpression / +if +/ complexExpression end',
+          toJs: -> "if (#{@complexExpressions[1].toJs()}) {#{@complexExpressions[0].toJs()}}"
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
@@ -78,22 +79,18 @@ defineModule module, ->
           "#{@value.toJs()}(#{@arguments.toJs()})"
 
       arguments:
-        pattern: "expression commaExpression*"
+        pattern: "expression _commaExpression*"
         toJs: ->
-          args = for arg in compactFlatten [@expression, @commaExpressions]
+          args = for arg in a = compactFlatten [@expression, @_commaExpressions]
             arg.toJs()
 
           args.join ', '
 
-      commaExpression:
+      _commaExpression:
         pattern: "_comma_ expression"
         toJs: -> @expression.toJs()
 
       value: w "existanceTest assignable literal"
-
-      existanceTest:
-        pattern: "assignable '?'"
-        toJs: -> "(#{@assignable.toJs()} != null)"
 
       functionDefinition: a
         pattern: "argDefinition? _arrow_ complexExpression"

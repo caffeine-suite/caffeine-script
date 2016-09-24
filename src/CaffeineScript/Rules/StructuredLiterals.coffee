@@ -16,7 +16,6 @@ module.exports =
       pattern: "'[]'"
       toJs: -> @toString()
 
-
   implicitArray: a
     pattern: "expression _comma_ valueList"
     toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
