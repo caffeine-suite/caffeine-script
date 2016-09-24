@@ -18,8 +18,8 @@ module.exports =
 
 
   implicitArray: a
-    pattern: "expressionWithoutImplicitArray / *, */ valueList"
-    toJs: -> "[#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}]"
+    pattern: "expression / *, */ valueList"
+    toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
     m
       pattern: "literal _ valueList"
       toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
@@ -71,16 +71,16 @@ module.exports =
     m pattern: "valueProperty"
 
   valueProperty:
-    pattern: "identifier colon expressionWithoutImplicitArray", toJs: -> "#{@identifier.toJs()}: #{@expressionWithoutImplicitArray.toJs()}"
+    pattern: "identifier colon expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
 
   valuePropertyWithImplicitArrays: a
-    pattern: "identifier colon expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
+    pattern: "identifier colon complexExpression", toJs: -> "#{@identifier.toJs()}: #{@complexExpression.toJs()}"
     m pattern: "identifier colon block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
 
   literalProperty:
     pattern: "identifier colon literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
 
   valueList: a
-    pattern: "expressionWithoutImplicitArray comma valueList", toJs: -> "#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}"
+    pattern: "expression comma valueList", toJs: -> "#{@expression.toJs()}, #{@valueList.toJs()}"
     m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
-    m pattern: "expressionWithoutImplicitArray", toJs: -> @expressionWithoutImplicitArray.toJs()
+    m pattern: "expression", toJs: -> @expression.toJs()

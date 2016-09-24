@@ -49,32 +49,22 @@ defineModule module, ->
         /\n/
       ]
       statement: a
-        pattern: 'expression end'
-        m pattern: 'expression / +if +/ expression end', toJs: -> "if (#{@expressions[1].toJs()}) {#{@expressions[0].toJs()}}"
+        pattern: 'complexExpression end'
+        m pattern: 'complexExpression / +if +/ complexExpression end', toJs: -> "if (#{@expressions[1].toJs()}) {#{@expressions[0].toJs()}}"
 
       end: '/\n|$/'
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
 
-      expression: a
+      complexExpression: a
         pattern: "implicitArray"
         m
-          pattern: "expressionWithoutImplicitArray"
+          pattern: "expression"
 
-      expressionWithoutImplicitArray:
-        pattern: "expressionWithoutBinaryOperator operatorAndExpression*"
-        toJs: ->
-          ops = for op in compactFlatten [@expressionWithoutBinaryOperator, @operatorAndExpressions]
-            op.toJs()
-          ops.join ' '
+      expression: w "binOpExpression expressionWithoutBinOps"
 
-      operatorAndExpression:
-        pattern: "_? operator _? expressionWithoutBinaryOperator"
-        toJs: ->
-          "#{@operator} #{@expressionWithoutBinaryOperator.toJs()}"
-
-      expressionWithoutBinaryOperator: w "
+      expressionWithoutBinOps: w "
         assign
         controlStatement
         structuredLiteral
@@ -84,7 +74,7 @@ defineModule module, ->
         "
 
       assign: a
-        pattern: "assignable / *= */ expression", toJs: -> "#{@assignable.toJs()} = #{@expression.toJs()}"
+        pattern: "assignable / *= */ complexExpression", toJs: -> "#{@assignable.toJs()} = #{@complexExpression.toJs()}"
         m pattern: "assignable / *= */ block", toJs: -> "#{@assignable.toJs()} = #{@block.toImplicitArrayOrValueJs()}"
 
       invocation:
@@ -93,16 +83,16 @@ defineModule module, ->
           "#{@value.toJs()}(#{@arguments.toJs()})"
 
       arguments:
-        pattern: "expressionWithoutImplicitArray commaExpression*"
+        pattern: "expression commaExpression*"
         toJs: ->
-          args = for arg in compactFlatten [@expressionWithoutImplicitArray, @commaExpressions]
+          args = for arg in compactFlatten [@expression, @commaExpressions]
             arg.toJs()
 
           args.join ', '
 
       commaExpression:
-        pattern: " _? ',' _? expressionWithoutImplicitArray"
-        toJs: -> @expressionWithoutImplicitArray.toJs()
+        pattern: " _? ',' _? expression"
+        toJs: -> @expression.toJs()
 
       value: w "existanceTest assignable literal"
 
@@ -112,8 +102,8 @@ defineModule module, ->
 
       functionDefinition: [
         {
-          pattern: "argDefinition? / *-> */ expression"
-          toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@expression.toJs()};})"
+          pattern: "argDefinition? / *-> */ complexExpression"
+          toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@complexExpression.toJs()};})"
         }
         {
           pattern: "argDefinition? / *-> */ block"
@@ -144,8 +134,8 @@ defineModule module, ->
           toJs: -> ".#{@simpleAssignable.toJs()}"
         }
         {
-          pattern: "'[' _* expressionWithoutImplicitArray _* ']'"
-          toJs: -> "[#{@expressionWithoutImplicitArray.toJs()}]"
+          pattern: "'[' _* expression _* ']'"
+          toJs: -> "[#{@expression.toJs()}]"
         }
       ]
 
