@@ -73,10 +73,9 @@ defineModule module, ->
         pattern: "assignable / *= */ complexExpression", toJs: -> "#{@assignable.toJs()} = #{@complexExpression.toJs()}"
         m pattern: "assignable / *= */ block", toJs: -> "#{@assignable.toJs()} = #{@block.toImplicitArrayOrValueJs()}"
 
-      invocation:
-        pattern: "value _ arguments"
-        toJs: ->
-          "#{@value.toJs()}(#{@arguments.toJs()})"
+      invocation: a
+        pattern: "value _ arguments", toJs: -> "#{@value.toJs()}(#{@arguments.toJs()})"
+        m pattern: "value openParen_ arguments _closeParen", toJs: -> "#{@value.toJs()}(#{@arguments.toJs()})"
 
       arguments:
         pattern: "expression _commaExpression*"

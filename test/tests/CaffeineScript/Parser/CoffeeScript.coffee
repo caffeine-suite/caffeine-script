@@ -36,4 +36,4 @@ module.exports = suite:
   functions: ->
     parseTests
       "square = (x) -> x * x": "square = (function(x) {return x * x;});"
-      "cube   = (x) -> square(x) * x": ""
+      "cube   = (x) -> square(x) * x": "cube = (function(x) {return square(x) * x;});"

@@ -16,26 +16,9 @@ module.exports =
       pattern: "'[]'"
       toJs: -> @toString()
 
-  implicitArray: a
-    pattern: "expression _comma_ valueList"
-    toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
-    m
-      pattern: "literal _ valueList"
-      toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
-
-  implicitObject:
-    pattern: "propertyList"
-
   object: a
     pattern: "openCurly_ propertyList _closeCurly"
     toJs: -> "{#{@propertyList.toJs()}}"
-    m
-      pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
-      toJs: -> "{#{@implicitObjectWithTwoOrMorePropsOnOneLine.toJs()}}"
-
-    m
-      pattern: "multiLineImplicitObject &/ *\n|$/"
-      toJs: -> "{#{@multiLineImplicitObject.toJs()}}"
 
     m
       pattern: "implicitObject"
@@ -53,6 +36,18 @@ module.exports =
       pattern: "'{}'"
       toJs: -> @toString()
 
+  implicitArray: a
+    pattern: "expression _comma_ valueList"
+    toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
+    m
+      pattern: "literal _ valueList"
+      toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
+
+  implicitObject: a
+    pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
+    m pattern: "multiLineImplicitObject &/ *\n|$/"
+    # m pattern: "propertyList"
+
   multiLineImplicitObject: a
 
     pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays /( *\n)+/ multiLineImplicitObject"
@@ -60,9 +55,9 @@ module.exports =
     m
       pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays"
 
-
-  implicitObjectWithTwoOrMorePropsOnOneLine:
-    pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+  implicitObjectWithTwoOrMorePropsOnOneLine: a
+    pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
+    m pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
 
   propertyList: a
     pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
