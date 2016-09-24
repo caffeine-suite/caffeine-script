@@ -49,8 +49,9 @@ module.exports = suite:
 
     implicit: ->
       parseTests
-        "1, 2"    : "[1, 2];"
-        "1 2"     : "[1, 2];"
+        "1, 2"      : "[1, 2];"
+        "1 2"       : "[1, 2];"
+        "1 + 2, 3"  : "[1 + 2, 3];"
 
     matchless: ->
       parseTests
@@ -85,9 +86,10 @@ module.exports = suite:
 
     implicit: ->
       parseTests
-        "a:1"       : "{a: 1};"
-        "a:1, b:2"  : "{a: 1, b: 2};"
-        "a:1\nb:2"  : "{a: 1, b: 2};"
+        "a:1"           : "{a: 1};"
+        "a:1, b:2"      : "{a: 1, b: 2};"
+        "a:1 + 2, b:2"  : "{a: 1 + 2, b: 2};"
+        "a:1\nb:2"      : "{a: 1, b: 2};"
 
         """
         a:1, b:2

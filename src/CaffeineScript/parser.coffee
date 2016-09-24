@@ -188,13 +188,6 @@ defineModule module, ->
           pattern: "'[]'"
           toJs: -> @toString()
 
-      remainingMultiLineImplicitObject: a
-
-        pattern: "valuePropertyWithImplicitArrays /( *\n)+/ remainingMultiLineImplicitObject"
-        toJs: -> "#{@valuePropertyWithImplicitArrays.toJs()}, #{@remainingMultiLineImplicitObject.toJs()}"
-        m
-          pattern: "valuePropertyWithImplicitArrays"
-
       implicitObject:
         pattern: "propertyList"
 
@@ -202,8 +195,13 @@ defineModule module, ->
         pattern: "'{' _? propertyList _? '}'"
         toJs: -> "{#{@propertyList.toJs()}}"
         m
-          pattern: "remainingMultiLineImplicitObject &/ *\n|$/"
-          toJs: -> "{#{@remainingMultiLineImplicitObject.toJs()}}"
+          pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
+          toJs: -> "{#{@implicitObjectWithTwoOrMorePropsOnOneLine.toJs()}}"
+
+        m
+          pattern: "multiLineImplicitObject &/ *\n|$/"
+          toJs: -> "{#{@multiLineImplicitObject.toJs()}}"
+
         m
           pattern: "implicitObject"
           toJs: -> "{#{@implicitObject.toJs()}}"
@@ -217,7 +215,18 @@ defineModule module, ->
           pattern: "'{}'"
           toJs: -> @toString()
 
+      multiLineImplicitObject: a
+
+        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays /( *\n)+/ multiLineImplicitObject"
+        toJs: -> "#{@valuePropertyWithImplicitArrays.toJs()}, #{@multiLineImplicitObject.toJs()}"
+        m
+          pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays"
+
+
     @rule
+      implicitObjectWithTwoOrMorePropsOnOneLine:
+        pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+
       propertyList: a
         pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
         m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
