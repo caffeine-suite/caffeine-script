@@ -86,7 +86,7 @@ defineModule module, ->
           args.join ', '
 
       commaExpression:
-        pattern: "comma expression"
+        pattern: "_comma_ expression"
         toJs: -> @expression.toJs()
 
       value: w "existanceTest assignable literal"
@@ -96,18 +96,18 @@ defineModule module, ->
         toJs: -> "(#{@assignable.toJs()} != null)"
 
       functionDefinition: a
-        pattern: "argDefinition? arrow complexExpression"
+        pattern: "argDefinition? _arrow_ complexExpression"
         toJs: -> "(function(#{@argDefinition?.toJs() || ""}) {return #{@complexExpression.toJs()};})"
         m
-          pattern: "argDefinition? arrow block"
+          pattern: "argDefinition? _arrow_ block"
           toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
 
       argDefinition:
-        pattern: "openParen argList closeParen"
+        pattern: "openParen_ argList _closeParen"
         toJs: -> @argList.toString()
 
       argList: a
-        pattern: "identifier comma argList", toJs: -> "#{@identifier.toJs()}, #{@argList.toJs()}"
+        pattern: "identifier _comma_ argList", toJs: -> "#{@identifier.toJs()}, #{@argList.toJs()}"
         m pattern: "identifier _ argList", toJs: -> "#{@identifier.toJs()}, #{@argList.toJs()}"
         m pattern: "identifier", toJs: -> @identifier.toJs()
 
@@ -119,4 +119,4 @@ defineModule module, ->
 
       accessor: a
         pattern: "'.' simpleAssignable",                  toJs: -> ".#{@simpleAssignable.toJs()}"
-        m pattern: "openBracket expression closeBracket", toJs: -> "[#{@expression.toJs()}]"
+        m pattern: "openBracket_ expression _closeBracket", toJs: -> "[#{@expression.toJs()}]"

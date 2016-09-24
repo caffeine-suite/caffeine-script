@@ -4,7 +4,7 @@ module.exports =
   structuredLiteral: w "array object"
 
   array: a
-    pattern: "openBracket valueList closeBracket"
+    pattern: "openBracket_ valueList _closeBracket"
     toJs: -> "[#{@valueList.toJs()}]"
     m
       pattern: "'[]' _? valueList"
@@ -18,7 +18,7 @@ module.exports =
 
 
   implicitArray: a
-    pattern: "expression comma valueList"
+    pattern: "expression _comma_ valueList"
     toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
     m
       pattern: "literal _ valueList"
@@ -28,7 +28,7 @@ module.exports =
     pattern: "propertyList"
 
   object: a
-    pattern: "openCurly propertyList closeCurly"
+    pattern: "openCurly_ propertyList _closeCurly"
     toJs: -> "{#{@propertyList.toJs()}}"
     m
       pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
@@ -63,24 +63,24 @@ module.exports =
 
 
   implicitObjectWithTwoOrMorePropsOnOneLine:
-    pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+    pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
 
   propertyList: a
-    pattern: "valueProperty comma propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+    pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
     m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
     m pattern: "valueProperty"
 
   valueProperty:
-    pattern: "identifier colon expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
+    pattern: "identifier _colon_ expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
 
   valuePropertyWithImplicitArrays: a
-    pattern: "identifier colon complexExpression", toJs: -> "#{@identifier.toJs()}: #{@complexExpression.toJs()}"
-    m pattern: "identifier colon block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
+    pattern: "identifier _colon_ complexExpression", toJs: -> "#{@identifier.toJs()}: #{@complexExpression.toJs()}"
+    m pattern: "identifier _colon_ block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
 
   literalProperty:
-    pattern: "identifier colon literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
+    pattern: "identifier _colon_ literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
 
   valueList: a
-    pattern: "expression comma valueList", toJs: -> "#{@expression.toJs()}, #{@valueList.toJs()}"
+    pattern: "expression _comma_ valueList", toJs: -> "#{@expression.toJs()}, #{@valueList.toJs()}"
     m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
     m pattern: "expression", toJs: -> @expression.toJs()
