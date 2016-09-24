@@ -19,6 +19,8 @@ defineModule module, ->
       root:
         pattern: 'statementOrBlankLine*'
         node:
+          getStatements: -> s for s in @statementOrBlankLines when s.statement
+
           toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join(";\n") + ";"
           toJsList: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join ", "
           toFunctionBodyJs: ->
@@ -28,14 +30,24 @@ defineModule module, ->
               else
                 js
             ).join(";\n") + ";"
+          toImplicitArrayOrValueJs: ->
+            statements = @getStatements()
+            if statements.length == 1
+              statements[0].toJs()
+            else
+              "[#{(s.toJs() for s in statements).join ', '}]"
+
       # root: pattern: "array", toJs: -> @array.toJs() + ";"
 
       statementOrBlankLine: [
         "statement"
         /\n/
       ]
-      statement: 'expression end'
-      end: ['blocks end', '/\n|$/']
+      statement: a
+        pattern: 'expression end'
+        m pattern: 'expression / +if +/ expression end', toJs: -> "if (#{@expressions[1].toJs()}) {#{@expressions[0].toJs()}}"
+
+      end: '/\n|$/'
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
@@ -77,12 +89,12 @@ defineModule module, ->
       controlStatement: w "ifStatement unlessStatement"
 
       ifStatement:
-        pattern: "'if' _ expression block optionalElseClause?"
+        pattern: "'if' _ expression _? block optionalElseClause?"
         toJs: ->
           "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
 
       unlessStatement:
-        pattern: "'unless' _ expression block optionalElseClause?"
+        pattern: "'unless' _ expression _? block optionalElseClause?"
         toJs: ->
           "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs() || ''}"
 
@@ -123,8 +135,10 @@ defineModule module, ->
         toJs: -> "#{@simpleAssignable.toJs()}#{(a.toJs() for a in @accessors || []).join ''}"
 
       simpleAssignable: [
-        "identifier"
+        "!valueKeyword identifier"
       ]
+
+      valueKeyword: /if|while|unless/
 
       accessor: [
         {
@@ -155,8 +169,8 @@ defineModule module, ->
       _: / +/
 
       implicitArray: a
-        pattern: "value / *, */ valueList"
-        toJs: -> "[#{@value.toJs()}, #{@valueList.toJs()}]"
+        pattern: "expressionWithoutImplicitArray / *, */ valueList"
+        toJs: -> "[#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}]"
         m
           pattern: "literal _ valueList"
           toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
@@ -212,16 +226,17 @@ defineModule module, ->
       valueProperty:
         pattern: "identifier colon expressionWithoutImplicitArray", toJs: -> "#{@identifier.toJs()}: #{@expressionWithoutImplicitArray.toJs()}"
 
-      valuePropertyWithImplicitArrays:
+      valuePropertyWithImplicitArrays: a
         pattern: "identifier colon expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
+        m pattern: "identifier colon block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
 
       literalProperty:
         pattern: "identifier colon literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
 
       valueList: a
-        pattern: "value comma valueList", toJs: -> "#{@value.toJs()}, #{@valueList.toJs()}"
+        pattern: "expressionWithoutImplicitArray comma valueList", toJs: -> "#{@expressionWithoutImplicitArray.toJs()}, #{@valueList.toJs()}"
         m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
-        m pattern: "value", toJs: -> @value.toJs()
+        m pattern: "expressionWithoutImplicitArray", toJs: -> @expressionWithoutImplicitArray.toJs()
 
       colon: / *: */
       comma: / *, */
@@ -230,7 +245,7 @@ defineModule module, ->
       literal: w "boolLiteral numberLiteral stringLiteral"
 
       boolLiteral:   pattern: /false|true/, toJs: -> @toString()
-      numberLiteral: pattern: /[0-9]+/,     toJs: -> @toString()
+      numberLiteral: pattern: /-?[0-9]+/,     toJs: -> @toString()
 
       stringLiteral: a
         pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()

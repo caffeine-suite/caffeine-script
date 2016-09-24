@@ -2,10 +2,7 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-parseTests = (map) ->
-  for k, v of map
-    do (k, v) ->
-      test k.replace(/\n/g, "\\n"), -> assert.eq (p = Parser.parse(k)).toJs(), v, formattedInspect p
+{parseTests} = require './Helper'
 
 module.exports = suite:
   literals: ->
@@ -128,10 +125,44 @@ module.exports = suite:
       parseTests
         "d: 5, 6": "{d: [5, 6]};"
         "d: 5 6":  "{d: [5, 6]};"
+
         """
-        a: :foo :bar
-        b: :shut :up
-        """: "{a: ['foo', 'bar'], b: ['shut', 'up']};"
+        a: :shut :the :frell :up
+        b: :dude :this :is :cool
+        """: "{a: ['shut', 'the', 'frell', 'up'], b: ['dude', 'this', 'is', 'cool']};"
+
+    withBlockValues: ->
+      parseTests
+        """
+        a:
+          1
+        """: "{a: 1};"
+
+        """
+        a:
+          1
+          2
+          3
+        b:
+          1
+        """: "{a: [1, 2, 3], b: 1};"
+
+        """
+        a:
+          1 2 3
+          4 5 6
+          7 8 9
+        """: "{a: [[1, 2, 3], [4, 5, 6], [7, 8, 9]]};"
+
+        """
+        match:
+          pattern: :blah   action: -> :boring
+          pattern: :zoom   action: -> :fast
+        """: "
+          {match:
+            [{pattern: 'blah', action: (function() {return 'boring';})},
+            {pattern: 'zoom', action: (function() {return 'fast';})}]};"
+
 
   assignment: ->
     parseTests
