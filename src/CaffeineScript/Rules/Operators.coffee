@@ -1,6 +1,6 @@
 {a, m, w, compactFlatten, log, min, arrayWithout} = require "art-foundation"
 
-{resolveOperatorSequence} = require "../OperatorHelper"
+{resolveOperatorPrecidence} = require "../OperatorHelper"
 
 module.exports =
   binOpExpression:
@@ -9,7 +9,7 @@ module.exports =
       ops = (ope.getNormalizedOp() for ope in @operatorAndExpressions)
       operands = compactFlatten [@unaryOpExpression.toJs(), (operand.getJsExpression() for operand in @operatorAndExpressions)]
 
-      resolveOperatorSequence ops, operands
+      resolveOperatorPrecidence ops, operands
 
   operatorAndExpression:
     pattern: "_? operator _? unaryOpExpression"

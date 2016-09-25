@@ -36,7 +36,7 @@ module.exports = class OperatorHelper
     @opsToPrecidence[op] = i for op in ops
     direction
 
-  @resolveOperatorSequence: (ops, operands, infix = @infix) =>
+  @resolveOperatorPrecidence: (ops, operands, infix = @infix) =>
     throw new Error unless operands.length == ops.length + 1
     while ops.length > 0
 
