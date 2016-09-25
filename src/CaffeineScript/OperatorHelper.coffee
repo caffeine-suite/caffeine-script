@@ -11,39 +11,45 @@ module.exports = class OperatorHelper
 
   @infix: (a, b, op) -> "#{a} #{op} #{b}"
   @precidence: [
-    a "right", w "**"
-    a "left" , w "* / % // %%"
-    a "left" , w "+ -"
-    a "left" , w "<< >> >>>"
-    a "left" , w "< <= > >= instanceof in"
-    a "left" , w "=== !=="
-    a "left" , w "&"
-    a "left" , w "^"
-    a "left" , w "|"
-    a "left" , w "&&"
-    a "left" , w "||"
+    w "left  ?"
+    w "right **"
+    w "left  * / % // %%"
+    w "left  + -"
+    w "left  << >> >>>"
+    w "left  < <= > >= instanceof in"
+    w "left  === !=="
+    w "left  &"
+    w "left  ^"
+    w "left  |"
+    w "left  &&"
+    w "left  ||"
   ]
 
   @opsToPrecidence: {}
 
-  for [direction, ops], i in @precidence
+  @getOpPrecidence: (op) =>
+    unless (p = @opsToPrecidence[op])?
+      throw new Error "OperatorHelper: operator '#{op}' not defined"
+    p
+
+  @direction = for [direction, ops...], i in @precidence
     @opsToPrecidence[op] = i for op in ops
+    direction
 
   @resolveOperatorSequence: (ops, operands, infix = @infix) =>
     throw new Error unless operands.length == ops.length + 1
     while ops.length > 0
 
-      lowestPrecidence = @opsToPrecidence[ops[0]]
+      lowestPrecidence = @getOpPrecidence ops[0]
       firstOccurance = lastOccurance = 0
       for op, i in ops
-        if lowestPrecidence > p = @opsToPrecidence[op]
+        if lowestPrecidence > p = @getOpPrecidence op
           firstOccurance = lastOccurance = i
           lowestPrecidence = p
         else if lowestPrecidence == p
           lastOccurance = i
 
-      [direction] = @precidence[lowestPrecidence]
-      opIndexToResolve = if direction == "left" then firstOccurance else lastOccurance
+      opIndexToResolve = if @direction[lowestPrecidence] == "left" then firstOccurance else lastOccurance
 
       opsBefore = ops
       operandsBefore = operands

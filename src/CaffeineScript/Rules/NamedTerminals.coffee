@@ -31,7 +31,9 @@ module.exports =
 
     and | or | is | isnt |
 
-    in
+    in |
+
+    not
     )\b
     ///
 
@@ -42,7 +44,8 @@ module.exports =
     ///
 
 
-  logicOperator:    /// && | \|\| | & | \| | \^ | ((and | or | isnt | is | in)\b) ///
+  unaryOperator:    /// ! | ~ | not\b ///
+  logicOperator:    /// && | \|\| | & | \| | \^ | \? | ((and | or | isnt | is | in)\b) ///
   shiftOperator:    /// << | >> | >>> ///
   compareOperator:  /// == | != | < | > | <= | >= ///
   mathOperator:     /// [-+*/%] | // | %% ///

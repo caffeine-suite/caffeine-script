@@ -3,8 +3,10 @@
 
 module.exports = require './namespace'
 .addModules
-  ControlFlow:        require './ControlFlow'       
-  Literals:           require './Literals'          
-  NamedTerminals:     require './NamedTerminals'    
-  Operators:          require './Operators'         
-  StructuredLiterals: require './StructuredLiterals'
+  ControlFlow:              require './ControlFlow'             
+  Literals:                 require './Literals'                
+  NamedTerminals:           require './NamedTerminals'          
+  Operators:                require './Operators'               
+  Root:                     require './Root'                    
+  StatementsAndExpressions: require './StatementsAndExpressions'
+  StructuredLiterals:       require './StructuredLiterals'      

@@ -4,15 +4,15 @@
 
 module.exports =
   binOpExpression:
-    pattern: "expressionWithoutBinOps operatorAndExpression+"
+    pattern: "unaryOpExpression operatorAndExpression+"
     toJs: ->
       ops = (ope.getNormalizedOp() for ope in @operatorAndExpressions)
-      operands = compactFlatten [@expressionWithoutBinOps.toJs(), (operand.getJsExpression() for operand in @operatorAndExpressions)]
+      operands = compactFlatten [@unaryOpExpression.toJs(), (operand.getJsExpression() for operand in @operatorAndExpressions)]
 
       resolveOperatorSequence ops, operands
 
   operatorAndExpression:
-    pattern: "_? operator _? expressionWithoutBinOps"
+    pattern: "_? operator _? unaryOpExpression"
     getNormalizedOp: ->
       switch op = @operator.toString()
         when "and" then "&&"
@@ -21,7 +21,20 @@ module.exports =
         when "!=", "isnt" then "!=="
         else op
 
-    getJsExpression: -> @expressionWithoutBinOps.toJs()
+    getJsExpression: -> @unaryOpExpression.toJs()
+
+  unaryOpExpression: a
+    pattern: "unaryOperator _? unaryOpExpression"
+
+    getNormalizedOp: ->
+      switch op = @unaryOperator.toString()
+        when "not" then "!"
+        else op
+
+    toJs: ->
+      "#{@getNormalizedOp()}#{@unaryOpExpression.toJs()}"
+
+    m pattern: "expressionWithoutBinOps"
 
   existanceTest:
     pattern: "assignable '?'"

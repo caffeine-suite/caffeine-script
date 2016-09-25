@@ -106,4 +106,7 @@ module.exports = suite:
 
       'print inspect "My name is #{@name}"': 'print(inspect("My name is " + this.name));'
 
-
+  existentialOperator: ->
+    parseTests
+      "solipsism = true if mind? and not world?": "if ((mind != null) && !(world != null)) {solipsism = true};"
+      'footprints = yeti ? "bear"': "footprints = yeti ? \"bear\";"
