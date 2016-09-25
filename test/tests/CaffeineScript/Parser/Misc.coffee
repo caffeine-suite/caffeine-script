@@ -32,6 +32,13 @@ module.exports = suite:
       "foo 'bar'": "foo('bar');"
       "foo bar 2": "foo(bar(2));"
 
+      "foo()"               : "foo();"
+      "foo(bar())"          : "foo(bar());"
+      "foo(1)"              : "foo(1);"
+      "foo(1, 2)"           : "foo(1, 2);"
+      "foo(1, bar(1, 2))"   : "foo(1, bar(1, 2));"
+
+
   assignment: ->
     parseTests
       "a=b":        "a = b;"
@@ -45,20 +52,14 @@ module.exports = suite:
       123
       456
       """:
-        """
-        123;
-        456;
-        """
+        "123; 456;"
 
       # on liner function followed immediately by another statement
       """
       -> 123
       456
       """:
-        """
-        (function() {return 123;});
-        456;
-        """
+        "(function() {return 123;}); 456;"
 
   controlStatements: ->
     parseTests

@@ -7,7 +7,7 @@ Most rules (rules with no "_" suffix or prefix) do not consume spaces before or 
 module.exports =
   _:              / +/
   _colon_:        / *: */
-  _comma_:        / *, */
+  _comma_:        / *,(( *\n)+| *)/
   _arrow_:        / *-> */
   end:            /\n|$/
 
@@ -19,8 +19,21 @@ module.exports =
 
   openCurly_:     /\{ */
   _closeCurly:    / *\}/
+  _else:          /(( *\n)+| +)else/
 
-  reservedWord: /if|while|unless/
+  reservedWord: ///
+    (
+    if | until |
+
+    while | unless |
+
+    then | else |
+
+    and | or | is | isnt |
+
+    in
+    )\b
+    ///
 
   identifier:
     ///
@@ -28,3 +41,8 @@ module.exports =
     ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
     ///
 
+
+  logicOperator:    /// && | \|\| | & | \| | \^ | ((and | or | isnt | is | in)\b) ///
+  shiftOperator:    /// << | >> | >>> ///
+  compareOperator:  /// == | != | < | > | <= | >= ///
+  mathOperator:     /// [-+*/%] | // | %% ///

@@ -38,6 +38,59 @@ module.exports = suite:
           1
           2
         """: "[1, 2];"
+    implicitCombos: ->
+      parseTests
+        """
+        singleArray =
+          1, 0, 1,
+          0, 0, 1,
+          1, 1, 0
+        """: "singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+
+        """
+        arrayOfArrays =
+          1, 0, 1
+          0, 0, 1
+          1, 1, 0
+        """: "arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+
+    explicitImplicitCombos: ->
+      parseTests
+        """
+        singleArray = []
+          1, 0, 1,
+          0, 0, 1,
+          1, 1, 0
+        """: "singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+
+        """
+        singleArray = []
+          [1, 0, 1,
+          0, 0, 1,
+          1, 1, 0]
+        """: "singleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+
+        """
+        doubleArray = [] []
+          1, 0, 1,
+          0, 0, 1,
+          1, 1, 0
+        """: "doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+
+        """
+        doubleArray = []
+          []
+            1, 0, 1,
+            0, 0, 1,
+            1, 1, 0
+        """: "doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+
+        """
+        arrayOfArrays = []
+          1, 0, 1
+          0, 0, 1
+          1, 1, 0
+        """: "arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
 
   objectLiterals:
     basic: ->
@@ -64,18 +117,12 @@ module.exports = suite:
         """
         a:1, b:2
         c:3, d:4
-        """: """
-          {a: 1, b: 2};
-          {c: 3, d: 4};
-          """
+        """: "{a: 1, b: 2}; {c: 3, d: 4};"
 
         """
         a:1
         b:3, c:4
-        """: """
-          {a: 1};
-          {b: 3, c: 4};
-          """
+        """: "{a: 1}; {b: 3, c: 4};"
 
     withExplicitArrays: ->
       parseTests

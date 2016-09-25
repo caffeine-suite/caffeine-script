@@ -12,9 +12,14 @@ defineModule module, ->
   class CaffeineScriptParser extends Parser
     @nodeBaseClass: class CafScriptNode extends Nodes.Node
 
-      toJs: ->
+      isImplicitArray: ->
+        for match in @matches when match.isImplicitArray
+          return match.isImplicitArray()
+        false
+
+      toJs: (returnJsStatement)->
         for match in @matches when match.toJs
-          return match.toJs()
+          return match.toJs returnJsStatement
 
         @toString()
 
@@ -26,14 +31,14 @@ defineModule module, ->
         node:
           getStatements: -> s for s in @statementOrBlankLines when s.statement
 
-          toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join(";\n") + ";"
+          toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join("; ") + ";"
           toJsList: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join ", "
           toFunctionBodyJs: ->
-            (for s, i in lines = @statementOrBlankLines when present js = s.toJs()
-              if i == lines.length - 1
-                "return #{js}"
-              else
+            (for s, i in lines = @statementOrBlankLines when present js = s.toJs notLastLine = i < lines.length - 1
+              if notLastLine
                 js
+              else
+                "return #{js}"
             ).join(";\n") + ";"
           toImplicitArrayOrValueJs: ->
             statements = @getStatements()
@@ -46,17 +51,33 @@ defineModule module, ->
 
       statement: a
         pattern: 'complexExpression end'
+        toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
         m
-          pattern: 'complexExpression / +if +/ complexExpression end',
-          toJs: -> "if (#{@complexExpressions[1].toJs()}) {#{@complexExpressions[0].toJs()}}"
+          pattern: 'complexExpression / +(if|while|until|unless) +/ complexExpression end',
+          toJs: (returnJsStatement = true) ->
+            isNot = false
+            switch control = @matches[1].toString().trim()
+              when "until" then isNot = true; control = "while";
+              when "unless" then isNot = true; control = "if";
+
+            test = @complexExpressions[1].toJs()
+            test = "!(#{test})" if isNot
+
+            if returnJsStatement
+              "#{control} (#{test}) {#{@complexExpressions[0].toJs returnJsStatement}}"
+            else
+              "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
 
       blocks: 'block+'
       block: Extensions.IndentBlocks.ruleProps
 
       complexExpression: a
         pattern: "implicitArray"
+        isImplicitArray: -> true
+
         m
           pattern: "expression"
+          isImplicitArray: -> false
 
       expression: w "binOpExpression expressionWithoutBinOps"
 
@@ -75,7 +96,7 @@ defineModule module, ->
 
       invocation: a
         pattern: "value _ arguments", toJs: -> "#{@value.toJs()}(#{@arguments.toJs()})"
-        m pattern: "value openParen_ arguments _closeParen", toJs: -> "#{@value.toJs()}(#{@arguments.toJs()})"
+        m pattern: "value openParen_ arguments? _closeParen", toJs: -> "#{@value.toJs()}(#{@arguments?.toJs()|| ""})"
 
       arguments:
         pattern: "expression _commaExpression*"
@@ -89,7 +110,7 @@ defineModule module, ->
         pattern: "_comma_ expression"
         toJs: -> @expression.toJs()
 
-      value: w "existanceTest assignable literal"
+      value: w "existanceTest literal assignable"
 
       functionDefinition: a
         pattern: "argDefinition? _arrow_ complexExpression"
@@ -99,7 +120,7 @@ defineModule module, ->
           toJs: -> "(function() {#{@block.toFunctionBodyJs()}})"
 
       argDefinition:
-        pattern: "openParen_ argList _closeParen"
+        pattern: "openParen_ argList? _closeParen"
         toJs: -> @argList.toString()
 
       argList: a

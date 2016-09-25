@@ -6,12 +6,19 @@ module.exports =
   array: a
     pattern: "openBracket_ valueList _closeBracket"
     toJs: -> "[#{@valueList.toJs()}]"
+
     m
       pattern: "'[]' _? valueList"
       toJs: -> "[#{@valueList.toJs()}]"
     m
       pattern: "'[]' _? block"
-      toJs: -> "[#{@block.toJsList()}]"
+      toJs: ->
+        statements = @block.getStatements()
+        if statements.length == 1 && statements[0].isImplicitArray()
+          statements[0].toJs()
+        else
+          "[#{(s.toJs() for s in statements).join ", "}]"
+
     m
       pattern: "'[]'"
       toJs: -> @toString()

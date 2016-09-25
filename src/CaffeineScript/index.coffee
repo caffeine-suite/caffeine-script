@@ -4,5 +4,7 @@
 module.exports = require './namespace'
 .includeInNamespace require './CaffeineScript'
 .addModules
-  Parser: require './parser'
+  OperatorHelper: require './OperatorHelper'
+  Parser:         require './parser'        
 require './Rules'
+require './Runtime'

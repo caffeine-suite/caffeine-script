@@ -3,8 +3,11 @@
 module.exports =
   literal: w "boolLiteral numberLiteral stringLiteral"
 
-  boolLiteral:   pattern: /false|true/, toJs: -> @toString()
-  numberLiteral: pattern: /-?[0-9]+/,     toJs: -> @toString()
+  boolLiteral:   w "true false"
+  numberLiteral: pattern: /-?[0-9]+/,   toJs: -> @toString()
+
+  true:   pattern: "/true|yes|on/",   toJs: -> "true"
+  false:  pattern: "/false|no|off/",  toJs: -> "false"
 
   stringLiteral: a
     pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
