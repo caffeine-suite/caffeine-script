@@ -10,10 +10,10 @@ module.exports =
   false:  pattern: "/(false|no|off)(?![a-zA-Z0-9]+)/",  toJs: -> "false"
 
   stringLiteral: a
-    pattern: /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
-    m pattern: /// " ( [^\\"] | \\[\s\S] )* " ///, toJs: -> @toString()
+    pattern:   /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
+    m pattern: /// " ( [^\\"\#] | \\[\s\S] |           \#(?!\{) )* " ///, toJs: -> @toString()
+    # m pattern: /// " ( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
     m pattern: "':' identifier", toJs: -> "'#{@identifier.toString()}'"
-    # /// "( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
     # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
     # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///
 
