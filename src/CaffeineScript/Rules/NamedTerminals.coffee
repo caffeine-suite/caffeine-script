@@ -43,6 +43,11 @@ module.exports =
     ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
     ///
 
+  unquotedString:
+    ///
+    ((?!\s)[-.$\w\x7f-\uffff])+
+    ///
+
 
   unaryOperator:    /// ! | ~ | not\b ///
   logicOperator:    /// && | \|\| | & | \| | \^ | \? | ((and | or | isnt | is | in)\b) ///

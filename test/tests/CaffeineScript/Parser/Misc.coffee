@@ -7,12 +7,7 @@
 module.exports = suite:
   literals: ->
     parseTests
-      "true":   "true;"
-      "false":  "false;"
       "0123":   "0123;"
-      '"hi"':   '"hi";'
-      "'hi'":   "'hi';"
-      ":hi":    "'hi';"
 
   operators: ->
     parseTests

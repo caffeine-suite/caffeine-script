@@ -1,4 +1,4 @@
-{a, m, w} = require "art-foundation"
+{a, m, w, escapeJavascriptString} = require "art-foundation"
 
 module.exports =
   structuredLiteral: w "array object"
@@ -72,14 +72,25 @@ module.exports =
     m pattern: "valueProperty"
 
   valueProperty:
-    pattern: "identifier _colon_ expression", toJs: -> "#{@identifier.toJs()}: #{@expression.toJs()}"
+    pattern: "propertyName _colon_ expression", toJs: -> "#{@propertyName.toJs()}: #{@expression.toJs()}"
 
   valuePropertyWithImplicitArrays: a
-    pattern: "identifier _colon_ complexExpression", toJs: -> "#{@identifier.toJs()}: #{@complexExpression.toJs()}"
-    m pattern: "identifier _colon_ block",    toJs: -> "#{@identifier.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
+    pattern: "propertyName _colon_ complexExpression", toJs: -> "#{@propertyName.toJs()}: #{@complexExpression.toJs()}"
+    m pattern: "propertyName _colon_ block",    toJs: -> "#{@propertyName.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
 
   literalProperty:
-    pattern: "identifier _colon_ literal", toJs: -> "#{@identifier.toJs()}: #{@literal.toJs()}"
+    pattern: "propertyName _colon_ literal", toJs: -> "#{@propertyName.toJs()}: #{@literal.toJs()}"
+
+  propertyName: a
+    pattern: "identifier &_colon_"
+    m pattern: "numberLiteral &_colon_", toJs: ->
+      number = +(str = @toString())
+      if number < 0 || "#{number}" != str
+        escapeJavascriptString str
+      else
+        str
+    m pattern: "unquotedString", toJs: -> escapeJavascriptString @toString()
+    # m pattern: "stringLiteral"
 
   valueList: a
     pattern: "expression _comma_ valueList", toJs: -> "#{@expression.toJs()}, #{@valueList.toJs()}"

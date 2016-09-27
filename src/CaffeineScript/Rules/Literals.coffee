@@ -1,4 +1,11 @@
-{a, m, w} = require "art-foundation"
+{a, m, w, log, formattedInspect, escapeJavascriptString} = require "art-foundation"
+
+dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
+
+normalizeString = (string) ->
+  string = escapeJavascriptString string.toString().trim()
+  string = string.replace /\\\\/g, "\\"
+  string = string.replace /\\ /g, " "
 
 module.exports =
   literal: w "boolLiteral numberLiteral stringLiteral"
@@ -10,10 +17,36 @@ module.exports =
   false:  pattern: "/(false|no|off)(?![a-zA-Z0-9]+)/",  toJs: -> "false"
 
   stringLiteral: a
-    pattern:   /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
-    m pattern: /// " ( [^\\"\#] | \\[\s\S] |           \#(?!\{) )* " ///, toJs: -> @toString()
+    pattern: '/"" */ toEolString', toJs: -> normalizeString @toEolString
+    m pattern: '/"" */ unparsedBlock', toJs: -> normalizeString @unparsedBlock
+
+    m pattern:   /// ' ( [^\\'] | \\[\s\S] )* ' ///, toJs: -> @toString()
+    m
+      pattern: "/\"/ dqStringMiddle interpolatedDqStringEnd"
+      toJs: -> '"' + @dqStringMiddle.toJs() + @interpolatedDqStringEnd.toJs()
     # m pattern: /// " ( [^\\"\#] | \\[\s\S] |           \#(?!\{) )*" ///
-    m pattern: "':' identifier", toJs: -> "'#{@identifier.toString()}'"
+    m pattern: "':' unquotedString", toJs: -> "'#{@unquotedString.toString()}'"
     # /// ( [^\\']  | \\[\s\S] | '(?!'')            )* ///
     # /// ( [^\\"#] | \\[\s\S] | "(?!"") | \#(?!\{) )* ///
 
+  toEolString: /[^\n]+/
+
+  dqStringMiddle: /// ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
+  # interpolatedDqStringStart: /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
+
+  interpolationStart: /\#\{/
+  interpolationEnd: /\}/
+  interpolatedDqStringEnd: a
+    pattern: "interpolationStart expression interpolationEnd dqStringMiddle interpolatedDqStringEnd"
+    toJs: -> "
+      \" +
+      (#{@expression.toJs()})#{
+        if '"' == endJs = @dqStringMiddle.toJs() + @interpolatedDqStringEnd.toJs()
+          ""
+        else ' + "' + endJs
+      }
+      "
+    m pattern: /"/
+
+  # interpolatedString a
+  #   pattern:
