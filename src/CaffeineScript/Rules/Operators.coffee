@@ -12,9 +12,9 @@ module.exports =
       resolveOperatorPrecidence ops, operands
 
   operatorAndExpression:
-    pattern: "_? operator _? unaryOpExpression"
+    pattern: "_? binaryOperator _? unaryOpExpression"
     getNormalizedOp: ->
-      switch op = @operator.toString()
+      switch op = @binaryOperator.toString()
         when "and" then "&&"
         when "or"  then "||"
         when "==", "is"   then "==="
@@ -40,4 +40,4 @@ module.exports =
     pattern: "assignable '?'"
     toJs: -> "(#{@assignable.toJs()} != null)"
 
-  operator: w "logicOperator shiftOperator compareOperator mathOperator"
+  binaryOperator: w "logicOperator shiftOperator compareOperator mathOperator"

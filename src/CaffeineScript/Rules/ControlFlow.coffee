@@ -1,30 +1,52 @@
 {a, m, w} = require "art-foundation"
+{Extensions} = require 'babel-bridge'
+{matchBlock} = Extensions.IndentBlocks
 
+upToButNotEol = /[^\n]*/y
 module.exports =
-  controlStatement: w "ifStatement unlessStatement"
+  ifUnlessWhile: /if|unless|while/
+  thenDo: /then|do/
+  expressionWithOneLessBlock:
+    parse: (parentNode) ->
+      {nextOffset, source} = parentNode
+      originalOffset = nextOffset
+      upToButNotEol.lastIndex = nextOffset
+      if [m] = upToButNotEol.exec source
+        endOffset = nextOffset += m.length
+        while (match = matchBlock nextOffset: nextOffset, source: source)
+          endOffset = nextOffset
+          {nextOffset} = match
 
-  ifStatement: a
-    pattern: "'if' _ expression _? block optionalElseClause?"
+        expressionSource = source.slice originalOffset, endOffset
+        parentNode.subParse expressionSource,
+          rule:                 "complexExpression"
+          originalOffset:       originalOffset
+          originalMatchLength:  endOffset - originalOffset
+
+  controlStatement: a
+
+    pattern: "ifUnlessWhile _ expressionWithOneLessBlock _? block optionalElseClause?"
     toJs: (statement) ->
-      if statement
-        "if (#{@expression.toJs()}) {#{@block.toJs()}}#{@optionalElseClause?.toJs(true) || ""}"
+      testJs = if "unless" == keyword = @ifUnlessWhile.toString()
+        keyword = "if"
+        "!(#{@expressionWithOneLessBlock.toJs()})"
       else
-        "#{@expression.toJs()} ? #{@block.toJs()}#{@optionalElseClause?.toJs() || " : null"}"
+        if @optionalElseClause && "while" == keyword
+          throw new Error "'else' not expected after 'while' (offset: #{@offset})"
+
+        @expressionWithOneLessBlock.toJs()
+
+      if statement
+        "#{keyword} (#{testJs}) {#{@block.toJs()}}#{@optionalElseClause?.toJs(true) || ""}"
+      else
+        "#{testJs} ? #{@block.toJs()}#{@optionalElseClause?.toJs() || " : null"}"
     m
-      pattern: "'if' _ expression _ 'then' _ complexExpression optionalElseClause?"
+      pattern: "ifUnlessWhile _ expression _ thenDo _ complexExpression optionalElseClause?"
       toJs: (statement) ->
         if statement
-          "if (#{@expression.toJs()}) {#{@complexExpression.toJs()}}#{@optionalElseClause?.toJs(true) || ""}"
+          "#{@ifUnlessWhile} (#{@expression.toJs()}) {#{@complexExpression.toJs()}}#{@optionalElseClause?.toJs(true) || ""}"
         else
           "#{@expression.toJs()} ? #{@complexExpression.toJs()}#{@optionalElseClause?.toJs() || " : null"}"
-
-  unlessStatement:
-    pattern: "'unless' _ expression _? block optionalElseClause?"
-    toJs: (statement) ->
-      if statement
-        "if (!(#{@expression.toJs()})) {#{@block.toJs()}}#{@optionalElseClause?.toJs(true) || ""}"
-      else
-        "!(#{@expression.toJs()}) ? #{@block.toJs()}#{@optionalElseClause?.toJs() || " : null"}"
 
   optionalElseClause: a
     pattern: "_else block"

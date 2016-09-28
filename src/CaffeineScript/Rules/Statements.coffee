@@ -3,7 +3,17 @@
 
 module.exports =
 
-  statementOrBlankLine: a "statement", /\n/
+  statementOrBlankLine: w "multiLineStatement blankLine"
+
+  multiLineStatement:
+    pattern: "statement newLineBinOp*"
+    toJs: (returnJsStatement = true) ->
+      if @newLineBinOp
+        out = @statement.toJs false
+        out = nlbo.toJs out for nlbo in @newLineBinOps
+        out
+      else
+        @statement.toJs returnJsStatement
 
   statement: a
     pattern: 'complexExpression end'
@@ -23,3 +33,12 @@ module.exports =
           "#{control} (#{test}) {#{@complexExpressions[0].toJs returnJsStatement}}"
         else
           "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
+
+  newLineBinOp: a
+    pattern: "binaryOperator _? statement"
+    toJs: (previousStatement) ->
+      "(#{previousStatement}) #{@binaryOperator} #{@statement.toJs false}"
+    m
+      pattern: "'.' simpleAssignable"
+      toJs: (previousStatement) ->
+        "(#{previousStatement}).#{@simpleAssignable.toJs false}"

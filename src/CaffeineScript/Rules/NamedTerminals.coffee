@@ -9,7 +9,18 @@ module.exports =
   _colon_:        / *: */
   _comma_:        / *,(( *\n)+| *)/
   _arrow_:        / *-> */
-  end:            /\n|$/
+  # end:            /\n|$/
+  end:            "comment? /\\n|$/"
+  blankLine: a
+    pattern: "comment /\\n/?"
+    toJs: -> ""
+    m
+      pattern: /\n/
+      toJs: -> ""
+
+  comment: a
+    pattern: "/ *(\\# *)/ unparsedBlock"
+    m pattern: "/ *(\\#[^\n]*)/"
 
   openParen_:     /\( */
   _closeParen:    / *\)/

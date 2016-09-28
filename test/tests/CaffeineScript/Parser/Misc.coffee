@@ -20,20 +20,6 @@ module.exports = suite:
       "foo.bar" : "foo.bar;"
       "foo[bar]": "foo[bar];"
 
-  invocation: ->
-    parseTests
-      "foo 1"    : "foo(1);"
-      "foo 1, 2" : "foo(1, 2);"
-      "foo 'bar'": "foo('bar');"
-      "foo bar 2": "foo(bar(2));"
-
-      "foo()"               : "foo();"
-      "foo(bar())"          : "foo(bar());"
-      "foo(1)"              : "foo(1);"
-      "foo(1, 2)"           : "foo(1, 2);"
-      "foo(1, bar(1, 2))"   : "foo(1, bar(1, 2));"
-
-
   assignment: ->
     parseTests
       "a=b":        "a = b;"
@@ -55,37 +41,6 @@ module.exports = suite:
       456
       """:
         "(function() {return 123;}); 456;"
-
-  controlStatements: ->
-    parseTests
-      """
-      if foo
-        bar
-      """: "if (foo) {bar;};"
-
-      """
-      if foo
-        bar
-      else
-        baz
-      """: "if (foo) {bar;} else {baz;};"
-
-      """
-      unless foo
-        bar
-      """: "if (!(foo)) {bar;};"
-
-      """
-      unless foo + bar
-        bar
-      """: "if (!(foo + bar)) {bar;};"
-
-      """
-      unless foo
-        bar
-      else
-        baz
-      """: "if (!(foo)) {bar;} else {baz;};"
 
   math: ->
     testMath = (equation) ->

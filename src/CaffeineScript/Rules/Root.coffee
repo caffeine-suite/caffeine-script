@@ -5,7 +5,8 @@ module.exports =
   root:
     pattern: 'statementOrBlankLine*'
     node:
-      getStatements: -> s for s in @statementOrBlankLines when s.statement
+      getStatements: ->
+        s for s in @statementOrBlankLines when present s.toString()
 
       toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join("; ") + ";"
       toJsList: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join ", "
