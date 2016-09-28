@@ -29,12 +29,29 @@ module.exports = suite:
       || baz
       """: "((foo) || bar) || baz;"
 
+  multiLineInvocation: ->
+    parseTests
+      """
+      foo
+      (bar)
+      """: "(foo)(bar);"
+
   multiLineAccess: ->
     parseTests
       """
       foo
       .bar
       """: "(foo).bar;"
+
+      """
+      foo
+      .bar = c
+      """: "(foo).bar = c;"
+
+      """
+      foo
+      .bar().baz = c
+      """: "(foo).bar().baz = c;"
 
       """
       foo

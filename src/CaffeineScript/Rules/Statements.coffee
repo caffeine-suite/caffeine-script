@@ -15,16 +15,20 @@ module.exports =
       else
         @statementWithoutEnd.toJs returnJsStatement
 
-  statement: "statementWithoutEnd end"
+  statement:
+    pattern: "statementWithoutEnd end"
+    toJs: -> @statementWithoutEnd.toJs()
+
+  tailControlOperator: / +(if|while|until|unless) +/
 
   statementWithoutEnd: a
-    pattern: 'complexExpression'
+    pattern: 'complexExpression !tailControlOperator'
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
-      pattern: 'complexExpression / +(if|while|until|unless) +/ complexExpression',
+      pattern: 'complexExpression tailControlOperator complexExpression',
       toJs: (returnJsStatement = true) ->
         isNot = false
-        switch control = @matches[1].toString().trim()
+        switch control = @tailControlOperator.toString().trim()
           when "until" then isNot = true; control = "while";
           when "unless" then isNot = true; control = "if";
 
@@ -37,9 +41,14 @@ module.exports =
           "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
 
   newLineBinOp: a
-    pattern: "/( *\n)+/ binaryOperator _? statementWithoutEnd"
+    pattern: "/( *\n)+/ binaryOperator _? complexExpression"
     toJs: (previousStatement) ->
-      "(#{previousStatement}) #{@binaryOperator} #{@statementWithoutEnd.toJs false}"
+      "(#{previousStatement}) #{@binaryOperator} #{@complexExpression.toJs false}"
+    m
+      pattern: "/( *\n)+\./ simpleAssignable assignableExtension* assignmentExtension"
+      toJs: (previousStatement) ->
+        jsList = (a.toJs() for a in compactFlatten [@simpleAssignable, @assignableExtensions])
+        @assignmentExtension.toJs "(#{previousStatement}).#{jsList.join ''}"
     m
       pattern: "/( *\n)+/ accessor+"
       toJs: (previousStatement) ->
