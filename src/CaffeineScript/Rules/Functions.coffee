@@ -19,11 +19,6 @@ module.exports =
     m pattern: "identifier _ argDefList", toJs: -> "#{@identifier.toJs()}, #{@argDefList.toJs()}"
     m pattern: "identifier", toJs: -> @identifier.toJs()
 
-  functionInvocation: a
-    pattern: "value _ arguments", toJs: -> "#{@value.toJs()}(#{@arguments.toJs()})"
-    m pattern: "value openParen_ arguments? _closeParen", toJs: -> "#{@value.toJs()}(#{@arguments?.toJs()|| ""})"
-    m pattern: "value block", toJs: -> "#{@value.toJs()}(#{@block.toJsList()})"
-
   arguments:
     pattern: "expression _commaExpression*"
     toJs: ->

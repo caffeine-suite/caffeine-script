@@ -3,24 +3,41 @@
 
 module.exports =
 
-  value: w "existanceTest literal this assignable"
+  value: w "existanceTest nonAssignable assignable"
 
-  assignable:
-    pattern: "simpleAssignable accessor*"
-    toJs: -> "#{@simpleAssignable.toJs()}#{(a.toJs() for a in @accessors || []).join ''}"
+  functionInvocation: a
+    pattern: "_ arguments",                         toJs: -> "(#{@arguments.toJs()})"
+    m pattern: "openParen_ arguments? _closeParen", toJs: -> "(#{@arguments?.toJs() || ""})"
+    m pattern: "block",                             toJs: -> "(#{@block.toJsList()})"
+
+  assignableExtension: a
+    pattern: 'functionInvocation+ assignableAccessor'
+    m pattern: "assignableAccessor"
+
+  accessor: w "assignableAccessor functionInvocation"
+
+  nonAssignable: a
+    pattern: "assignable functionInvocation+"
+    m pattern: "assignableIfExtended assignableExtension* functionInvocation?"
+
+  assignable: a
+    pattern: "simpleAssignable assignableExtension*"
+    m pattern: "assignableIfExtended assignableExtension+"
+
+  assignableIfExtended: w "this literal"
 
   this:
     pattern: "/@/ !identifier"
     toJs: -> "this"
 
-  thisProperty:
-    pattern: "/@/ identifier"
-    toJs: -> "this.#{@identifier}"
-
   simpleAssignable: a
     pattern: "!reservedWord identifier"
     m pattern: "thisProperty"
 
-  accessor: a
-    pattern: "'.' simpleAssignable",                  toJs: -> ".#{@simpleAssignable.toJs()}"
+  thisProperty:
+    pattern: "/@/ identifier"
+    toJs: -> "this.#{@identifier}"
+
+  assignableAccessor: a
+    pattern: "'.' identifier",                          toJs: -> ".#{@identifier.toJs()}"
     m pattern: "openBracket_ expression _closeBracket", toJs: -> "[#{@expression.toJs()}]"

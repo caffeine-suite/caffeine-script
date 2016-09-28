@@ -17,10 +17,10 @@ module.exports =
     assign
     controlStatement
     structuredLiteral
-    functionInvocation
     value
     functionDefinition
     "
+
 
   structuredLiteral: w "array object"
 

@@ -6,20 +6,22 @@ module.exports =
   statementOrBlankLine: w "multiLineStatement blankLine"
 
   multiLineStatement:
-    pattern: "statement newLineBinOp*"
+    pattern: "statementWithoutEnd newLineBinOp* end"
     toJs: (returnJsStatement = true) ->
       if @newLineBinOp
-        out = @statement.toJs false
+        out = @statementWithoutEnd.toJs false
         out = nlbo.toJs out for nlbo in @newLineBinOps
         out
       else
-        @statement.toJs returnJsStatement
+        @statementWithoutEnd.toJs returnJsStatement
 
-  statement: a
-    pattern: 'complexExpression end'
+  statement: "statementWithoutEnd end"
+
+  statementWithoutEnd: a
+    pattern: 'complexExpression'
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
-      pattern: 'complexExpression / +(if|while|until|unless) +/ complexExpression end',
+      pattern: 'complexExpression / +(if|while|until|unless) +/ complexExpression',
       toJs: (returnJsStatement = true) ->
         isNot = false
         switch control = @matches[1].toString().trim()
@@ -35,10 +37,10 @@ module.exports =
           "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
 
   newLineBinOp: a
-    pattern: "binaryOperator _? statement"
+    pattern: "/( *\n)+/ binaryOperator _? statementWithoutEnd"
     toJs: (previousStatement) ->
-      "(#{previousStatement}) #{@binaryOperator} #{@statement.toJs false}"
+      "(#{previousStatement}) #{@binaryOperator} #{@statementWithoutEnd.toJs false}"
     m
-      pattern: "'.' simpleAssignable"
+      pattern: "/( *\n)+/ accessor+"
       toJs: (previousStatement) ->
-        "(#{previousStatement}).#{@simpleAssignable.toJs false}"
+        "(#{previousStatement})#{(a.toJs() for a in @accessors).join ''}"

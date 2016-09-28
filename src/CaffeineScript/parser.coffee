@@ -18,9 +18,12 @@ defineModule module, ->
         false
 
       toJs: (returnJsStatement)->
-        for match in @matches when match.toJs
-          return match.toJs returnJsStatement
+        js = for match in compactFlatten @matches when match.toJs
+          match.toJs returnJsStatement
 
-        @toString()
+        if js.length > 0
+          js.join ''
+        else
+          @toString()
 
     @rule mod for modName, mod of Rules.modules
