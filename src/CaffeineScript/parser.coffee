@@ -1,7 +1,7 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, a, w, m, defineModule, compactFlatten, present} = Foundation
+{log, a, w, m, defineModule, compactFlatten, present, isFunction} = Foundation
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
@@ -26,4 +26,8 @@ defineModule module, ->
         else
           @toString()
 
-    @rule mod for modName, mod of Rules.modules
+    for modName, mod of Rules.modules
+      if isFunction mod
+        mod.call @
+      else
+        @rule mod

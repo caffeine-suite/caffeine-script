@@ -72,7 +72,6 @@ render(HelloMessage({
 * It ensures everything returns a value so you can program in a functional way.
 * It avoids JavaScript's pitfalls:
   * JavaScript's == and != are dangroups. CafScript compiles == and != into ===, and !==.
-  * JavaScript makes working with 'this' awkward and dangroups. Smart 'this' (@) bindings in CafScript (auto: ->, manualBound: =>, manualUnbound: ~>) make working with 'this' a snap.
 
 #### JavaScript ES6 is a Machine-Language
 

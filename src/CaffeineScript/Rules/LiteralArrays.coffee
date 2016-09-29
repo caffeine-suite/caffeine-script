@@ -4,7 +4,7 @@ module.exports =
   structuredLiteral: w "array object"
 
   array: a
-    pattern: "openBracket_ valueList _closeBracket"
+    pattern: "openBracket_ valueList _comma_? _closeBracket"
     toJs: -> "[#{@valueList.toJs()}]"
 
     m

@@ -7,7 +7,7 @@ Most rules (rules with no "_" suffix or prefix) do not consume spaces before or 
 module.exports =
   _:              / +/
   _colon_:        / *: */
-  _comma_:        / *,(( *\n)+| *)/
+  _comma_:        / *,[ \n]*/
   _arrow_:        / *-> */
   # end:            /\n|$/
   end:            "comment? /\\n|$/"
@@ -25,8 +25,8 @@ module.exports =
   openParen_:     /\( */
   _closeParen:    / *\)/
 
-  openBracket_:   /\[ */
-  _closeBracket:  / *\]/
+  openBracket_:   /\[[ \n]*/
+  _closeBracket:  /[ \n]*\]/
 
   openCurly_:     /\{ */
   _closeCurly:    / *\}/
