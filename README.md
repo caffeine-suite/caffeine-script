@@ -37,7 +37,7 @@ While the product of code is an asset - it creates value in the world, the code 
 
 (1) These are, of course, rough numbers with no study backing them up. They are based on personal experience.
 
-### Why CaffeineScript over JavaScript/ES6?
+# Why CaffeineScript over JavaScript/ES6?
 
 ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's biggest shortcoming: its syntax.
 
