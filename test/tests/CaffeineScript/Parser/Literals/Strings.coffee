@@ -46,7 +46,7 @@ module.exports = suite:
       ":hi.there":  "'hi.there';"
       ":hi-there":  "'hi-there';"
 
-  hereDocs: ->
+  hereDocsDoubleQuotes: ->
     parseTests
       '"""here"""': '"here";'
       '"""\nhere"""': '"here";'
@@ -60,6 +60,21 @@ module.exports = suite:
         there
       """
       ''': '"here\\nthere";'
+
+  hereDocsSingleQuotes: ->
+    parseTests
+      "'''here'''":       '"here";'
+      "'''\nhere'''":     '"here";'
+      "'''    \nhere'''": '"here";'
+      "'''here\n'''":     '"here";'
+      "'''here\n    '''": '"here";'
+
+      """
+      '''
+        here
+        there
+      '''
+      """: '"here\\nthere";'
 
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays": ->

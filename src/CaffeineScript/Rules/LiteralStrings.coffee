@@ -34,16 +34,10 @@ module.exports = ->
   @rule
     literal: w "boolLiteral numberLiteral stringLiteral"
 
-    stringLiteral: a
-      pattern: '/"" */ unparsedBlock', toJs: -> normalizeString @unparsedBlock
-
-      m pattern:   /// ' ( [^\\'] | \\. )* ' ///, toJs: -> escapeNewLines @toString()
-
-      m pattern: "':' unquotedString", toJs: -> "'#{@unquotedString.toString()}'"
-
   @rule
     stringLiteral: a
-      pattern: "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDocDqStringEnd"
+      pattern: "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
+      m pattern: "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
       m pattern: 'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
       m pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
   , toJs: ->
@@ -55,7 +49,7 @@ module.exports = ->
         """
         "#{@mid.toEscapedDoubleQuotes()}"
         """
-      if @hereDocDqStringStart
+      if @hereDoc
         indents = out.match /\n *(?=\S)*/g
         if indents?.length > 0
           minIndent = null
@@ -68,7 +62,18 @@ module.exports = ->
       escapeNewLines out
 
   @rule
+
+    stringLiteral: a
+      pattern: '/"" */ unparsedBlock', toJs: -> normalizeString @unparsedBlock
+
+      m pattern:   /// ' ( [^\\'] | \\. )* ' ///, toJs: -> escapeNewLines @toString()
+
+      m pattern: "':' unquotedString", toJs: -> "'#{@unquotedString.toString()}'"
+
+
+  @rule
     hereDocDqStringStart: /"""( *(?=\n))?/
+    hereDocSqStringStart: /'''( *(?=\n))?/
     eolStringStart: /"" +/
     dqStringStart: /"/
 
@@ -79,7 +84,10 @@ module.exports = ->
     eolStringMiddle: /// ( ([\ ]*(?=\S)) | [^\ \n\\#] | \\[^\n] | \#(?!\{) )* ///
     dqStringMiddle:  /// ( [^"\\#] | \\. | \#(?!\{) )* ///
     hereDocDqStringMiddle:  /// ((?!(\n\ *)?""") ( [^\\#] | \\. | \#(?!\{) )) * ///
+    hereDocSqStringMiddle:  /// ((?!(\n\ *)?''') ( [^\\#] | \\. | \#(?!\{) )) * ///
   ,
+    toEscapedQuotes: (quote) -> deescapeSpaces escapeUnEscapedQuotes @toString(), quote
+
     toEscapedBackTicks:    -> deescapeSpaces escapeUnEscapedQuotes @toString(), '`'
     toEscapedDoubleQuotes: -> deescapeSpaces escapeUnEscapedQuotes @toString(), '"'
 
@@ -87,10 +95,12 @@ module.exports = ->
     dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle end:dqStringInterpolation?"
     eolStringInterpolation: "interpolationStart expression interpolationEnd mid:eolStringMiddle end:eolStringInterpolation?"
     hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle end:hearDocDqStringInterpolation?"
+    hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle end:hearDocDqStringInterpolation?"
   ,
     toJs: -> "${#{@expression.toJs()}}#{@mid.toEscapedBackTicks()}#{@end?.toJs() || ''}"
 
   @rule
     hereDocDqStringEnd: /(\n *)?"""/
+    hereDocSqStringEnd: /(\n *)?'''/
     dqStringEnd: /"/
     eolStringEnd: / *(?=\n|$)/
