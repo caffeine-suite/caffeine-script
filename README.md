@@ -43,11 +43,12 @@ ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's big
 
 ```coffeescript
 # CaffeineScript - 20 tokens and 1 matching: #{}
+# (Please excuse the poor syntax highlighting - github doesn't support CaffeineScript yet...)
 Framework extract createFactory render Div
 
 HelloMessage = createFactory
   render: ->
-    Div "" Hello #{@props.name}
+    Div "" Hello #{@props.name}.
 
 render HelloMessage name: :Bob
 ```
@@ -57,7 +58,7 @@ render HelloMessage name: :Bob
 var {createFactory, render, Div} = Framework;
 
 var HelloMessage = createFactory({
-  render: () => Div(`Hello ${this.props.name}`)
+  render: () => Div(`Hello ${this.props.name}.`)
 });
 
 render(HelloMessage({
