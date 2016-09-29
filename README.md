@@ -6,13 +6,15 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 
 ### What?
 
-CaffeineScript is programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
+CaffeineScript is lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6. It is close to JavaScript in semantics and close to CoffeeScript in syntax.
+
+I owe a debt of gratitude to Jeremy Ashkenas, the author of CoffeeScript. It is my primary inspiration, and what the CaffeineScript compiler is currently written in.
 
 ### Why CaffeineScript over ES6? Syntax matters.
 
 ES6 does a lot of nice things, but it still fails in a few critical ways.
 
-CaffeineScript is a Human-Language
+##### CaffeineScript is a Human-Language
 
 * It dramatically reduces the number of tokens required to code.
 * It ensures everything returns a value so you can program in a functional way.
@@ -20,7 +22,7 @@ CaffeineScript is a Human-Language
   * JavaScript's == and != are dangroups. CafScript compiles == and != into ===, and !==.
   * JavaScript makes working with 'this' awkward and dangroups. Smart 'this' (@) bindings in CafScript (auto: ->, manualBound: =>, manualUnbound: ~>) make working with 'this' a snap.
 
-JavaScript is a Machine-Language
+##### JavaScript is a Machine-Language
 
 IMO, JavaScript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than JVM byte-codes, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
 
