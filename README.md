@@ -31,7 +31,7 @@ More on my design philosophy: http://www.essenceandartifact.com/2014/07/amazingl
 
 I believe syntax matters. For every line of code I write, throughout the product lifecycle, I edit that line at least 10 times and I read it at least 100 times. Every single token added to the source costs 10x - 100x or more programmer-time down the road. (1)
 
-#### Code is a liability.
+> Code is a liability.
 
 While the product of code is an asset - it creates value in the world, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity.
 
