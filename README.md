@@ -1,25 +1,28 @@
-# CaffeineScript (CafScript for short)
+# Programming with Caffeine
 
-CaffeineScript programming language that compiles to JavaScript. I'm taking the ideas in CoffeeScript and making a next-generation langauge.
+CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
-# Why CaffeineScript over ES6?
+### What?
 
-ES6 does a lot of nice things, but I still find it unusable. It fails in a few critical ways compared to CaffeineScript:
+CaffeineScript is programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
 
-* CaffeineScript dramatically reduces the number of tokens required to code
-* Functional programming support
-  * In CaffeineScript, everything returns a value
-* CaffeineScript avoids some of JavaScript's generally agreed-upon design flaws:
-  * CaffeineScript compiles == into ===, and != into  !==
-  * improved 'this' binding (-> vs =>)
+### Why CaffeineScript over ES6? Syntax matters.
 
-IMO, Javascript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than the JVM, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
+ES6 does a lot of nice things, but it still fails in a few critical ways.
 
-# Philosophy
+CaffeineScript:
 
-I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
+* dramatically reduces the number of tokens required to code
+* ensures everything returns a value so you can program in a functional way.
+* avoids some of JavaScript's generally agreed-upon design flaws:
+  * compile == and != into ===, and !==
+  * smart "this" binding (->, => and ~>)
 
-#### Designer language
+#### JavaScript is a Machine-Language
+
+IMO, JavaScript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than JVM byte-codes, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
+
+### Designer language
 
 Good design in programming, just like in Apps, should have these properties:
 
@@ -640,60 +643,3 @@ The edge cases below could be parsed by a tokenizer either way.
 Below are some examples where there is not controversy. There is only one way a tokenizer could parse them:
 
 * 3 tokens: ```[1]```
-
-# Other Language Features Being Considered
-
-* smart function @ binding (select -> or => automatically)
-* enhanced blocks
-  * array blocks
-  * function invocation blocks
-  * "blocks instead of brackets"
-* eliminate the need for token matching ([], {}, "", etc)
-* `with`
-* improved multi-line binary operator semantics (./+/- etc)
-* improved pattern assignment
-* Tail catch
-  * ```result = doSomethingRisky() catch “it failed”```
-* Enhanced class System
-  * real class inheritance
-    - CoffeeScript copies all class properties from the base class and definition time
-      - updates to class properties after definition time are not propagated to child classes
-      - @classGetters & @classSetters are not inherited at all
-    - requires object instantition to look like Ruby: MyClass.new a, b, c
-  * more consistent access to super and prototypes
-    - @:: is a confusing concept in CoffeeScript. We can do better.
-  * dynamic class creation
-    - create classes with names created at runtime
-  * default extends class
-    - all classes without an explicit extend statement extend the same base class which in turn extends Object
-* streamlined switch statement
-* new string literals
-  * I’d like to add something like ```:foo == “foo”```, but I want to look ad ES6 'symbols' first
-  * I’d like to add some syntax like Ruby's: %w{a long word list becomes array of strings}
-* efficiency & performance
-  * use small runtime to reduce overall code-size and increase functionality
-  * reduced overhead with @-binding
-  * faster (a...) ->
-  * 'real class inheritance' will be faster
-* improved literate programming
-* operator overloading if it can-be done efficiently
-* object key interpolation: "hi#{foo}": 123, ('this' + a): 123
-* Smart '@' binding
-* postCreate for classes
-* map, each and for loops
-* streamlined "require"
-* make ranges more like ruby ranges
-  - can be used anywhere
-    - j...k
-    - {begin: j, end: k, excludeEnd: true}
-  - don't need brackets []
-    - for i in j...k
-* I do like the idea of fixing the "a + b" vs “a +b” ambiguity. Plus as a unary operator is kinda silly. Even minus as a unitary operator may be more pain than it’s worth. When you ever need it (rarely), “0 - foo” is only one more symbol.
-* CoffeeScript compiler errors suggests language features
-  - I run into this a lot in CoffeeScript. Something I think makes perfect logical sense is illegal because, IMO, the compile is incomplete.
-  - In general, when there is a compiler error for something which is logically consistent with the rest of the language (and parsing rules) suggests an opportunity for a more expressive language.
-
-# related projects
-
-* [Caffeine](https://www.npmjs.com/package/caffeine) ([git](https://github.com/ich/caffeine))
-  - Another project forked from CoffeeScript. It hasn't been updated since 2013.
