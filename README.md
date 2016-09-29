@@ -4,27 +4,13 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
+
 ### What?
 
 CaffeineScript is lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6. It is close to JavaScript in semantics and close to CoffeeScript in syntax.
 
 I owe a debt of gratitude to Jeremy Ashkenas, the author of CoffeeScript. It is my primary inspiration, and what the CaffeineScript compiler is currently written in.
 
-### Why CaffeineScript over ES6? Syntax matters.
-
-ES6 does a lot of nice things, but it still fails in a few critical ways.
-
-##### CaffeineScript is a Human-Language
-
-* It dramatically reduces the number of tokens required to code.
-* It ensures everything returns a value so you can program in a functional way.
-* It avoids JavaScript's pitfalls:
-  * JavaScript's == and != are dangroups. CafScript compiles == and != into ===, and !==.
-  * JavaScript makes working with 'this' awkward and dangroups. Smart 'this' (@) bindings in CafScript (auto: ->, manualBound: =>, manualUnbound: ~>) make working with 'this' a snap.
-
-##### JavaScript is a Machine-Language
-
-IMO, JavaScript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than JVM byte-codes, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
 
 ### Designer language
 
@@ -39,6 +25,40 @@ Good design in programming, just like in Apps, should have these properties:
 I look forward to the day when there are design awards for programing langauges, editors, IDEs, compilers, debuggers, etc.
 
 More on my design philosophy: http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html
+
+
+### Syntax Matters
+
+I believe syntax matters. For every line of code I write, throughout the product lifecycle, I edit that line at least 10 times and I read it at least 100 times. Every single token added to the source costs 10x - 100x or more programmer-time down the road. (1)
+
+#### Code is a liability.
+
+While the product of code is an asset - it creates value in the world, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity.
+
+(1) These are, of course, rough numbers with no study backing them up. They are based on personal experience.
+
+### Why CaffeineScript over JavaScript/ES6?
+
+ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's biggest shortcoming: its syntax.
+
+#### CaffeineScript is a Human-Language
+
+* It dramatically reduces the number of tokens required to code.
+* It ensures everything returns a value so you can program in a functional way.
+* It avoids JavaScript's pitfalls:
+  * JavaScript's == and != are dangroups. CafScript compiles == and != into ===, and !==.
+  * JavaScript makes working with 'this' awkward and dangroups. Smart 'this' (@) bindings in CafScript (auto: ->, manualBound: =>, manualUnbound: ~>) make working with 'this' a snap.
+
+#### JavaScript ES6 is a Machine-Language
+
+IMO, JavaScript should be considered a machine-langauge. It is more machine-friendly than human-friendly. And that's great! Like the JVM, it's a runtime that is available on all platforms. Even better than JVM byte-codes, Javascript is vaguely human-readable. As such, it's easy to inspect the generated code and see what's going on under the CaffeineScript hood.
+
+
+
+
+
+
+
 
 # CaffeineMC (Meta-Compiler)
 
