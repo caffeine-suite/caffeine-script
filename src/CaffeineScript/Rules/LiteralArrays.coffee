@@ -1,4 +1,4 @@
-{a, m, w, escapeJavascriptString, log} = require "art-foundation"
+{a, m, w, escapeJavascriptString, log, present} = require "art-foundation"
 
 module.exports =
   structuredLiteral: w "array object"
@@ -24,13 +24,22 @@ module.exports =
       toJs: -> @toString()
 
   implicitArray: a
-    pattern: "expression _comma_ valueList"
-    toJs: -> "[#{@expression.toJs()}, #{@valueList.toJs()}]"
+    pattern: "start:expression _comma_ valueList _comma_?"
+    toJs: ->
+      if present vlJs = @valueList.toJs()
+        "[#{@start.toJs()}, #{vlJs}]"
+      else
+        "[#{@start.toJs()}]"
+
     m
-      pattern: "literal _ valueList"
-      toJs: -> "[#{@literal.toJs()}, #{@valueList.toJs()}]"
+      pattern: "start:literal _ valueList _comma_?"
+      toJs: -> "[#{@start.toJs()}, #{@valueList.toJs()}]"
 
   valueList: a
-    pattern: "expression _comma_ valueList", toJs: -> "#{@expression.toJs()}, #{@valueList.toJs()}"
+    pattern: "expression _comma_ valueList", toJs: ->
+      js = @expression.toJs()
+      js += ", #{vlJs}" if present vlJs = @valueList.toJs()
+      js
     m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
     m pattern: "expression", toJs: -> @expression.toJs()
+    # m pattern: /[\s\n]*$/
