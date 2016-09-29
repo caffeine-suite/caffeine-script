@@ -39,7 +39,31 @@ While the product of code is an asset - it creates value in the world, the code 
 
 # Why CaffeineScript over JavaScript/ES6?
 
-ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's biggest shortcoming: its syntax.
+ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's biggest shortcoming: syntax.
+
+```coffeescript
+# CaffeineScript - 20 tokens
+Framework extract createFactory render Div
+
+HelloMessage = createFactory
+  render: ->
+    Div "Hello #{@props.name}"
+
+render HelloMessage name: :Bob
+```
+
+```javascript
+// ES6 - 44 tokens
+var {createFactory, render, Div} = Framework;
+
+var HelloMessage = createFactory({
+  render: () => Div(`Hello ${this.props.name}`)
+});
+
+render(HelloMessage({
+  name: "Bob"
+}));
+```
 
 #### CaffeineScript is a Human-Language
 
