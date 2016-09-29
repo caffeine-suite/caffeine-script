@@ -42,18 +42,18 @@ While the product of code is an asset - it creates value in the world, the code 
 ES6 adds a lot of nice things to JavaScript, but didn't address JavaScript's biggest shortcoming: syntax.
 
 ```coffeescript
-# CaffeineScript - 20 tokens
+# CaffeineScript - 20 tokens and 1 matching: #{}
 Framework extract createFactory render Div
 
 HelloMessage = createFactory
   render: ->
-    Div "Hello #{@props.name}"
+    Div "" Hello #{@props.name}
 
 render HelloMessage name: :Bob
 ```
 
 ```javascript
-// ES6 - 44 tokens
+// ES6 - 44 tokens and 9 matchings: 4x(), 3x{}, 1x${}, and 1x``
 var {createFactory, render, Div} = Framework;
 
 var HelloMessage = createFactory({
