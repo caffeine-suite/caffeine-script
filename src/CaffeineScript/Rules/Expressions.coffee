@@ -16,11 +16,11 @@ module.exports =
   expressionWithoutBinOps: w "
     assign
     controlStatement
+    classDefinition
     structuredLiteral
     value
     functionDefinition
     "
-
 
   structuredLiteral: w "array object"
 
