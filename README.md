@@ -8,6 +8,46 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 
 CaffeineScript is a lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6. It is close to JavaScript in semantics and close to CoffeeScript in syntax.
 
+#### Example
+
+```coffeescript
+# CaffeineScript - 28 tokens
+import &ArtSuite
+
+class Login extends Component
+
+  render: ->
+    Dialog
+      TextElement text: :username size: ww: 1 hch: 1
+
+      TextInput
+        placeholder: "" enter username here
+        size: ww: 1 hch: 1
+```
+
+```javascript
+// ES6 - 97 tokens
+module.exports = (function(){
+  var {
+    Component = global.Component,
+    Dialog = global.Dialog,
+    TextElement = global.TextElement,
+    TextInput = global.TextInput
+  } = require('art-suite');
+
+  return class Login extends Component {
+    render() {
+      Dialog(
+        TextElement({text: 'username', size: {ww: 1, hch: 1}}),
+        TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
+      );
+    };
+  };
+
+
+})();
+```
+
 ### Status
 
 CaffeineScript is still a work in progress. I am not using it in any code yet. Progress is very good, though, and it *may* be ready soon. Perhaps it will be ready in November or December for beta use.
