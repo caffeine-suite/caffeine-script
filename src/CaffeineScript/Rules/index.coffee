@@ -4,6 +4,7 @@
 module.exports = require './namespace'
 .addModules
   Blocks:         require './Blocks'        
+  Classes:        require './Classes'       
   ControlFlow:    require './ControlFlow'   
   Expressions:    require './Expressions'   
   Functions:      require './Functions'     

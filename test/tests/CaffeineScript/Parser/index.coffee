@@ -4,6 +4,7 @@
 module.exports = require './namespace'
 .addModules
   BasicLiterals:     require './BasicLiterals'    
+  Classes:           require './Classes'          
   CoffeeScript:      require './CoffeeScript'     
   Comments:          require './Comments'         
   ControlStatements: require './ControlStatements'
