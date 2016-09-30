@@ -33,10 +33,11 @@ module.exports = ->
 
   @rule
     literal: w "boolLiteral numberLiteral stringLiteral"
-    stringLiteral:
+
+  @rule
+    stringLiteral: a
       pattern: '/"" */ unparsedBlock'
       toJs: -> normalizeString @unparsedBlock
-
 
   @rule
     stringLiteral: a
