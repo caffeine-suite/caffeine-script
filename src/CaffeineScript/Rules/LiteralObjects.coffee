@@ -1,65 +1,72 @@
 {a, m, w, escapeJavascriptString} = require "art-foundation"
 
-module.exports =
+module.exports = ->
+  @rule
 
-  object: a
-    pattern: "openCurly_ propertyList _closeCurly"
-    toJs: -> "{#{@propertyList.toJs()}}"
-
-    m
-      pattern: "implicitObject"
-      toJs: -> "{#{@implicitObject.toJs()}}"
-
-    m
-      pattern: "'{}' _? propertyList"
+    object: a
+      pattern: "openCurly_ propertyList _closeCurly"
       toJs: -> "{#{@propertyList.toJs()}}"
 
-    m
-      pattern: "'{}' _? block"
-      toJs: -> @block.toJsList()
+      m
+        pattern: "implicitObject"
+        toJs: -> "{#{@implicitObject.toJs()}}"
 
-    m
-      pattern: "'{}'"
-      toJs: -> @toString()
+      m
+        pattern: "'{}' _? propertyList"
+        toJs: -> "{#{@propertyList.toJs()}}"
 
-  implicitObject: a
-    pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
-    m pattern: "multiLineImplicitObject &/ *\n|$/"
-    # m pattern: "propertyList"
+      m
+        pattern: "'{}' _? block"
+        toJs: -> @block.toJsList()
 
-  multiLineImplicitObject: a
+      m
+        pattern: "'{}'"
+        toJs: -> @toString()
 
-    pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays /( *\n)+/ multiLineImplicitObject"
-    toJs: -> "#{@valuePropertyWithImplicitArrays.toJs()}, #{@multiLineImplicitObject.toJs()}"
-    m
-      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithImplicitArrays"
+    implicitObject: a
+      pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
+      m pattern: "multiLineImplicitObject &/ *\n|$/"
+      # m pattern: "propertyList"
 
-  implicitObjectWithTwoOrMorePropsOnOneLine: a
-    pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
-    m pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+    multiLineImplicitObject: a
 
-  propertyList: a
-    pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
-    m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
-    m pattern: "valueProperty"
+      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithComplexExpression /( *\n)+/ multiLineImplicitObject"
+      toJs: -> "#{@valuePropertyWithComplexExpression.toJs()}, #{@multiLineImplicitObject.toJs()}"
+      m
+        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithComplexExpression"
 
-  valueProperty:
-    pattern: "propertyName _colon_ expression", toJs: -> "#{@propertyName.toJs()}: #{@expression.toJs()}"
+    implicitObjectWithTwoOrMorePropsOnOneLine: a
+      pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
 
-  valuePropertyWithImplicitArrays: a
-    pattern: "propertyName _colon_ complexExpression", toJs: -> "#{@propertyName.toJs()}: #{@complexExpression.toJs()}"
-    m pattern: "propertyName _colon_ block",    toJs: -> "#{@propertyName.toJs()}: #{@block.toImplicitArrayOrValueJs()}"
+    propertyList: a
+      pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "valueProperty"
 
-  literalProperty:
-    pattern: "propertyName _colon_ literal", toJs: -> "#{@propertyName.toJs()}: #{@literal.toJs()}"
 
-  propertyName: a
-    pattern: "identifier &_colon_"
-    m pattern: "numberLiteral &_colon_", toJs: ->
-      number = +(str = @toString())
-      if number < 0 || "#{number}" != str
-        escapeJavascriptString str
-      else
-        str
-    m pattern: "unquotedString", toJs: -> escapeJavascriptString @toString()
-    # m pattern: "stringLiteral"
+  @rule
+    literalProperty:  "propertyName _colon_ propValue:literal"
+    valueProperty:    "propertyName _colon_ propValue:expression"
+
+    valuePropertyWithComplexExpression: a
+      pattern:        "propertyName _colon_ propValue:complexExpression"
+      m pattern:      "propertyName _colon_ propValue:propertyValueBlock"
+  ,
+    type: "valueProperty"
+    toJs: -> "#{@propertyName.toJs()}: #{@propValue.toJs()}"
+
+  @rule
+    propertyValueBlock:
+      pattern: "block"
+      toJs: -> @block.toImplicitArrayOrValueJs()
+
+    propertyName: a
+      pattern: "identifier &_colon_"
+      m pattern: "numberLiteral &_colon_", toJs: ->
+        number = +(str = @toString())
+        if number < 0 || "#{number}" != str
+          escapeJavascriptString str
+        else
+          str
+      m pattern: "unquotedString", toJs: -> escapeJavascriptString @toString()

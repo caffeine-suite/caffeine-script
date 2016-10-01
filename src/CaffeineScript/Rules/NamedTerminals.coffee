@@ -4,64 +4,73 @@
 Note that "_" in rule-names is used consistently to indicate one or more spaces will be matched before or after the rule or both.
 Most rules (rules with no "_" suffix or prefix) do not consume spaces before or after themselves.
 ###
-module.exports =
-  _:              / +/
-  _colon_:        / *: */
-  _comma_:        / *,[ \n]*/
-  _arrow_:        / *-> */
-  # end:            /\n|$/
-  end:            "comment? /\\n|$/"
-  blankLine: a
-    pattern: "comment /\\n/?"
-    toJs: -> ""
-    m
-      pattern: /\n/
+module.exports = ->
+
+  @rule
+    _:              / +/
+    end:            "comment? /\\n|$/"
+    comment: a
+      pattern:      "/ *(\\# *)/ unparsedBlock"
+      m pattern:    "/ *(\\#[^\n]*)/"
+  ,
+    getPresent: -> false
+
+  @rule
+    _colon_:        / *: */
+    _comma_:        / *,[ \n]*/
+    _arrow_:        / *-> */
+    # end:            /\n|$/
+
+    blankLine: a
+      pattern: "comment /\\n/?"
+      getPresent: ->
+        log "blankline getPresent"
+        false
       toJs: -> ""
+      m
+        pattern: /\n/
+        toJs: -> ""
 
-  comment: a
-    pattern: "/ *(\\# *)/ unparsedBlock"
-    m pattern: "/ *(\\#[^\n]*)/"
+    openParen_:     /\( */
+    _closeParen:    / *\)/
 
-  openParen_:     /\( */
-  _closeParen:    / *\)/
+    openBracket_:   /\[[ \n]*/
+    _closeBracket:  /[ \n]*\]/
 
-  openBracket_:   /\[[ \n]*/
-  _closeBracket:  /[ \n]*\]/
+    openCurly_:     /\{ */
+    _closeCurly:    / *\}/
+    _else:          /(( *\n)+| +)else/
 
-  openCurly_:     /\{ */
-  _closeCurly:    / *\}/
-  _else:          /(( *\n)+| +)else/
+    reservedWord: ///
+      (
+      if | until |
 
-  reservedWord: ///
-    (
-    if | until |
+      while | unless |
 
-    while | unless |
+      then | else |
 
-    then | else |
+      and | or | is | isnt |
 
-    and | or | is | isnt |
+      in |
 
-    in |
+      not
+      )\b
+      ///
 
-    not
-    )\b
-    ///
+    identifier:
+      ///
+      (?!\d)
+      ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
+      ///
 
-  identifier:
-    ///
-    (?!\d)
-    ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
-    ///
-
-  unquotedString:
-    ///
-    ((?!\s)[-.$\#\w\x7f-\uffff])+
-    ///
+    unquotedString:
+      ///
+      ((?!\s)[-.$\#\w\x7f-\uffff])+
+      ///
 
 
-  unaryOperator:    /// ! | ~ | not\b ///
-  logicOperator:    /// && | \|\| | & | \| | \^ | \? | ((and | or | isnt | is | in)\b) ///
-  shiftOperator:    /// << | >> | >>> ///
-  compareOperator:  /// == | != | < | > | <= | >= ///
-  mathOperator:     /// [-+*/%] | // | %% ///
+    unaryOperator:    /// ! | ~ | not\b ///
+    logicOperator:    /// && | \|\| | & | \| | \^ | \? | ((and | or | isnt | is | in)\b) ///
+    shiftOperator:    /// << | >> | >>> ///
+    compareOperator:  /// == | != | < | > | <= | >= ///
+    mathOperator:     /// [-+*/%] | // | %% ///

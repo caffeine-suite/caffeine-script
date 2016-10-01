@@ -1,12 +1,5 @@
 {a, m, w, log, formattedInspect, escapeJavascriptString} = require "art-foundation"
 
-dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
-
-normalizeString = (string) ->
-  string = escapeJavascriptString string.toString().trim()
-  string = string.replace /\\\\/g, "\\"
-  string = string.replace /\\ /g, " "
-
 module.exports =
   literal: w "boolLiteral numberLiteral stringLiteral"
 

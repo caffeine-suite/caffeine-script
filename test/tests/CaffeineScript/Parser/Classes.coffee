@@ -12,5 +12,5 @@ module.exports = suite:
       "class Foo extends Bar": "class Foo extends Bar {};"
       """
       class Foo extends Bar
-        foo: 123
+        foo: 123 boo: 456
       """: ""
