@@ -10,15 +10,17 @@ module.exports = ->
     _:              / +/
     end:            "comment? /\\n|$/"
     comment: a
-      pattern:      "/ *(\\# *)/ unparsedBlock"
+      pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"
+      m pattern:    "/ *(\\# *)/ unparsedBlock"
       m pattern:    "/ *(\\#[^\n]*)/"
   ,
     getPresent: -> false
 
   @rule
+    _equals_:       / *= */
     _colon_:        / *: */
     _comma_:        / *,[ \n]*/
-    _arrow_:        / *-> */
+    _arrow_:        / *[-=]> */
     # end:            /\n|$/
 
     blankLine: a

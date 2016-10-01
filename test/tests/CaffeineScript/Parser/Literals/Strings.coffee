@@ -11,7 +11,7 @@ module.exports = suite:
       "'hi'":   "'hi';"
       ":hi":    "'hi';"
 
-  multiLine:
+  multiline:
     doubleQuotes: ->
       parseTests
         '"\na"': '"\\na";'

@@ -25,44 +25,44 @@ module.exports = ->
 
     implicitObject: a
       pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
-      m pattern: "multiLineImplicitObject &/ *\n|$/"
+      m pattern: "multilineImplicitObject &/ *\n|$/"
       # m pattern: "propertyList"
 
-    multiLineImplicitObject: a
+    multilineImplicitObject: a
 
-      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithComplexExpression /( *\n)+/ multiLineImplicitObject"
-      toJs: -> "#{@valuePropertyWithComplexExpression.toJs()}, #{@multiLineImplicitObject.toJs()}"
+      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression /( *\n)+/ multilineImplicitObject"
+      toJs: -> "#{@valuePropWithComplexExpression.toJs()}, #{@multilineImplicitObject.toJs()}"
       m
-        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropertyWithComplexExpression"
+        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
 
     implicitObjectWithTwoOrMorePropsOnOneLine: a
-      pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
-      m pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
+      pattern: "literalProp _ propertyList",        toJs: -> "#{@literalProp.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "valueProp _comma_ propertyList",  toJs: -> "#{@valueProp.toJs()}, #{@propertyList.toJs()}"
 
     propertyList: a
-      pattern: "valueProperty _comma_ propertyList", toJs: -> "#{@valueProperty.toJs()}, #{@propertyList.toJs()}"
-      m pattern: "literalProperty _ propertyList", toJs: -> "#{@literalProperty.toJs()}, #{@propertyList.toJs()}"
-      m pattern: "valueProperty"
-
+      pattern: "valueProp _comma_ propertyList",    toJs: -> "#{@valueProp.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "literalProp _ propertyList",      toJs: -> "#{@literalProp.toJs()}, #{@propertyList.toJs()}"
+      m pattern: "valueProp"
 
   @rule
-    literalProperty:  "propertyName _colon_ propValue:literal"
-    valueProperty:    "propertyName _colon_ propValue:expression"
+    literalProp:  "propName _colon_ propValue:literal"
+    valueProp:    "propName _colon_ propValue:expression"
 
-    valuePropertyWithComplexExpression: a
-      pattern:        "propertyName _colon_ propValue:complexExpression"
-      m pattern:      "propertyName _colon_ propValue:propertyValueBlock"
+    valuePropWithComplexExpression: a
+      pattern:    "propName _colon_ propValue:complexExpression"
+      m pattern:  "propName _colon_ propValue:propertyValueBlock"
   ,
-    type: "valueProperty"
-    toJs: -> "#{@propertyName.toJs()}: #{@propValue.toJs()}"
+    name: "literalObjectProperty"
+    toJs: -> "#{@propName.toJs()}: #{@propValue.toJs()}"
 
   @rule
     propertyValueBlock:
       pattern: "block"
       toJs: -> @block.toImplicitArrayOrValueJs()
 
-    propertyName: a
+    propName: a
       pattern: "identifier &_colon_"
+      m pattern: "openBracket_ complexExpression _closeBracket"
       m pattern: "numberLiteral &_colon_", toJs: ->
         number = +(str = @toString())
         if number < 0 || "#{number}" != str
@@ -70,3 +70,4 @@ module.exports = ->
         else
           str
       m pattern: "unquotedString", toJs: -> escapeJavascriptString @toString()
+

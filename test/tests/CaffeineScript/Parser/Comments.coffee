@@ -1,3 +1,4 @@
+
 {CaffeineScript} = Neptune
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
@@ -29,6 +30,53 @@ module.exports = suite:
       """
       # comment 1
       # comment 2
+      1
+      """: "1;"
+
+  anyNumberOfOctothorpsAllowedExcept3: ->
+    parseTests
+      "#\n1\n###": "1;"
+      "##\n1\n###": "1;"
+      "###\n1\n###": ";"  # triggers ### - ### comment
+      "####\n1\n###": "1;"
+      "#####\n1\n###": "1;"
+
+  multiline: ->
+    parseTests
+      """
+      ###
+      # comment 1
+      # comment 2
+      ###
+      1
+      """: "1;"
+
+    parseTests
+      """
+      ###
+      /* all ok! */
+      ###
+      1
+      """: "1;"
+
+    parseTests
+      """
+      ###
+      ##
+        comment 1
+      ###
+      1
+      """: "1;"
+
+    parseTests
+      """
+      ###a###
+      1
+      """: "1;"
+
+    parseTests
+      """
+      ##
       1
       """: "1;"
 

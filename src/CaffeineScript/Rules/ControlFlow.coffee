@@ -18,7 +18,7 @@ module.exports =
           {nextOffset} = match
 
         expressionSource = source.slice originalOffset, endOffset
-        parentNode.subParse expressionSource,
+        parentNode.subparse expressionSource,
           rule:                 "complexExpression"
           originalOffset:       originalOffset
           originalMatchLength:  endOffset - originalOffset

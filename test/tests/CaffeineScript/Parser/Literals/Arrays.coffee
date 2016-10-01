@@ -143,3 +143,10 @@ module.exports = suite:
         0, 0, 1
         1, 1, 0
       """: "arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+
+  splatsSpread: ->
+    parseTests
+      "[a...]":             "[...a];"
+      "[a, b...]":          "[a, ...b];"
+      "[a, b..., c]":       "[a, ...b, c];"
+      "[a, b..., c, d...]": "[a, ...b, c, ...d];"

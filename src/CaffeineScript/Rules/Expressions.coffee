@@ -22,12 +22,12 @@ module.exports =
     functionDefinition
     "
 
-  structuredLiteral: w "array object"
+  structuredLiteral: w "object array"
 
   assign:
     pattern: "assignable assignmentExtension"
     toJs: -> @assignmentExtension.toJs @assignable.toJs()
 
   assignmentExtension: a
-    pattern: "/ *= */ complexExpression", toJs: (assignableJs) -> "#{assignableJs} = #{@complexExpression.toJs()}"
-    m pattern: "/ *= */ block",           toJs: (assignableJs) -> "#{assignableJs} = #{@block.toImplicitArrayOrValueJs()}"
+    pattern: "_equals_ complexExpression", toJs: (assignableJs) -> "#{assignableJs} = #{@complexExpression.toJs()}"
+    m pattern: "_equals_ block",           toJs: (assignableJs) -> "#{assignableJs} = #{@block.toImplicitArrayOrValueJs()}"

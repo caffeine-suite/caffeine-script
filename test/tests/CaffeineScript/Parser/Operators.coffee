@@ -9,7 +9,14 @@ module.exports = suite:
     parseTests
       "1 + 2": "1 + 2;"
 
-  multiLine: ->
+  multilineWithIndent: ->
+    parseTests
+      """
+      foo
+      || bar
+      """: "(foo) || bar;"
+
+  multiline: ->
     parseTests
       """
       foo
@@ -29,14 +36,14 @@ module.exports = suite:
       || baz
       """: "((foo) || bar) || baz;"
 
-  multiLineInvocation: ->
+  multilineInvocation: ->
     parseTests
       """
       foo
       (bar)
       """: "(foo)(bar);"
 
-  multiLineAccess: ->
+  multilineAccess: ->
     parseTests
       """
       foo

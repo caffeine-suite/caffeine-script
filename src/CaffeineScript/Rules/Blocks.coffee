@@ -12,5 +12,9 @@ module.exports =
     toFunctionBodyJs: -> @actualBlock.toFunctionBodyJs()
     toImplicitArrayOrValueJs: -> @actualBlock.toImplicitArrayOrValueJs()
 
-  actualBlock: Extensions.IndentBlocks.ruleProps
-  unparsedBlock: Extensions.IndentBlocks.unparsedBlockRuleProps
+  actualBlock: Extensions.IndentBlocks.getPropsToSubparseBlock()
+  unparsedBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "anything"
+
+  anything:
+    pattern: /(.|\n)*$/
+    toString: -> @subparseText

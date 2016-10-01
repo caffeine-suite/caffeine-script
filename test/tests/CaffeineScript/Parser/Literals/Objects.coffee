@@ -13,6 +13,19 @@ module.exports = suite:
         "{a:1}"       : "{a: 1};"
         "{a:1, b:2}"  : "{a: 1, b: 2};"
 
+    computedKeys: ->
+      parseTests
+        "{[a]:1}"     : "{[a]: 1};"
+        "[a]:1"       : "{[a]: 1};"
+        "[a] : 1"     : "{[a]: 1};"
+        """
+        b: 1
+        [a]:2
+        """           : "{b: 1, [a]: 2};"
+        """
+        b: 1 [a]:2
+        """           : "{b: 1, [a]: 2};"
+
     unusualKeys: ->
       parseTests
         "{0:1}"       : '{0: 1};'

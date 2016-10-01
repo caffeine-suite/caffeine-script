@@ -35,10 +35,15 @@ module.exports =
       toJs: -> "[#{@start.toJs()}, #{@valueList.toJs()}]"
 
   valueList: a
-    pattern: "expression _comma_ valueList", toJs: ->
-      js = @expression.toJs()
+    pattern: "arrayValue _comma_ valueList", toJs: ->
+      js = @arrayValue.toJs()
       js += ", #{vlJs}" if present vlJs = @valueList.toJs()
       js
     m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
-    m pattern: "expression", toJs: -> @expression.toJs()
+    m pattern: "arrayValue"
     # m pattern: /[\s\n]*$/
+
+  arrayValue: a
+    pattern: "identifier etc"
+    toJs: -> "...#{@identifier}"
+    m pattern: "expression"

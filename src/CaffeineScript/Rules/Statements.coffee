@@ -3,9 +3,9 @@
 
 module.exports =
 
-  statementOrBlankLine: w "multiLineStatement blankLine"
+  statementOrBlankLine: w "multilineStatement blankLine"
 
-  multiLineStatement:
+  multilineStatement:
     pattern: "statementWithoutEnd newLineBinOp* end"
     toJs: (returnJsStatement = true) ->
       if @newLineBinOp

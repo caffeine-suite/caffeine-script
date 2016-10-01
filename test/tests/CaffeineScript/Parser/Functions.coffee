@@ -2,18 +2,53 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../Helper'
+{parseTests, illegalSyntaxTests} = require '../Helper'
 
 module.exports = suite:
-  definition: ->
-    parseTests
-      "-> 321"             : "(function() {return 321;});"
-      "foo -> 321"         : "foo((function() {return 321;}));"
-      "(foo) -> 321"       : "(function(foo) {return 321;});"
-      "(foo, bar) -> 321"  : "(function(foo, bar) {return 321;});"
-      "->\n  321"          : "(function() {return 321;});"
-      "->\n  321\n  456"   : "(function() {321;\nreturn 456;});"
-      "->\n  321\n\n  456" : "(function() {321;\nreturn 456;});"
+  definition:
+    unbound: ->
+      parseTests
+        "-> 321"             : "(function() {return 321;});"
+        "foo -> 321"         : "foo((function() {return 321;}));"
+        "(foo) -> 321"       : "(function(foo) {return 321;});"
+        "(foo, bar) -> 321"  : "(function(foo, bar) {return 321;});"
+        "->\n  321"          : "(function() {return 321;});"
+        "->\n  321\n  456"   : "(function() {321;\nreturn 456;});"
+        "->\n  321\n\n  456" : "(function() {321;\nreturn 456;});"
+
+    bound: ->
+      parseTests
+        "=>"                 : "(() => {});"
+        "=> 321"             : "(() => {return 321;});"
+        "foo => 321"         : "foo((() => {return 321;}));"
+        "(foo) => 321"       : "((foo) => {return 321;});"
+        "(foo, bar) => 321"  : "((foo, bar) => {return 321;});"
+        "=>\n  321"          : "(() => {return 321;});"
+        "=>\n  321\n  456"   : "(() => {321;\nreturn 456;});"
+        "=>\n  321\n\n  456" : "(() => {321;\nreturn 456;});"
+
+    splatsRest: ->
+      parseTests
+        "(a...) =>":      "((...a) => {});"
+        "(b, a...) =>":   "((b, ...a) => {});"
+
+      illegalSyntaxTests [
+        "(b..., a) =>"
+      ]
+
+    defaultArguments: ->
+      parseTests
+        "(a = 1) =>":         "((a = 1) => {});"
+        "(a, b = 1) =>":      "((a, b = 1) => {});"
+        "(a = 1, b) =>":      "((a = 1, b) => {});"
+        "(a = 1, b = 2) =>":  "((a = 1, b = 2) => {});"
+
+    thisAssignmentInArguments: ->
+      parseTests
+        "(@foo) =>": "((foo) => {this.foo = foo; });"
+        "(@foo = 123) =>": "((foo = 123) => {this.foo = foo; });"
+        "(@foo...) =>": "((...foo) => {this.foo = foo; });"
+        "(@foo, @bar) =>": "((foo, bar) => {this.foo = foo; this.bar = bar; });"
 
   invocation: ->
     parseTests
@@ -46,10 +81,6 @@ module.exports = suite:
           "@f()()":     "this.f()();"
 
           "@.f":        "this.f;"
-          # "@.f.foo.bar": "this.f.foo.bar;"
-          # "@.f.foo()":   "this.f.foo();"
-          # "@.f().bar":   "this.f().bar;"
-          # "@.f()()":     "this.f()();"
 
     assign:
       basic: ->
