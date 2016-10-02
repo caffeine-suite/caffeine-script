@@ -3,8 +3,8 @@
 
 module.exports = require './namespace'
 .addModules
-  Ast:            require './Ast'           
   Helper:         require './Helper'        
   OperatorHelper: require './OperatorHelper'
+  SemanticTree:   require './SemanticTree'  
 require './Language'
 require './Parser'

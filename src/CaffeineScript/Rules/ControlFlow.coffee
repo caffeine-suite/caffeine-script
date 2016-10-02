@@ -1,4 +1,4 @@
-{a, m, w} = require "art-foundation"
+{a, m, w, log} = require "art-foundation"
 {Extensions} = require 'babel-bridge'
 {matchBlock} = Extensions.IndentBlocks
 
@@ -8,14 +8,16 @@ module.exports =
   thenDo: /then|do/
   expressionWithOneLessBlock:
     parse: (parentNode) ->
-      {nextOffset, source} = parentNode
-      originalOffset = nextOffset
-      upToButNotEol.lastIndex = nextOffset
+      {nextOffset:offset, source} = parentNode
+      originalOffset = offset
+      upToButNotEol.lastIndex = offset
       if [m] = upToButNotEol.exec source
-        endOffset = nextOffset += m.length
-        while (match = matchBlock nextOffset: nextOffset, source: source)
-          endOffset = nextOffset
-          {nextOffset} = match
+        endOffset = offset += m.length
+
+        while (match = matchBlock source, offset)
+          endOffset = offset
+          {matchLength} = match
+          offset += matchLength
 
         expressionSource = source.slice originalOffset, endOffset
         parentNode.subparse expressionSource,

@@ -5,6 +5,8 @@ module.exports =
 
   statementOrBlankLine: w "multilineStatement blankLine"
 
+  statement: "multilineStatement"
+
   multilineStatement:
     pattern: "statementWithoutEnd newLineBinOp* end"
     toJs: (returnJsStatement = true) ->
@@ -14,10 +16,6 @@ module.exports =
         out
       else
         @statementWithoutEnd.toJs returnJsStatement
-
-  statement:
-    pattern: "statementWithoutEnd end"
-    toJs: -> @statementWithoutEnd.toJs()
 
   tailControlOperator: / +(if|while|until|unless) +/
 

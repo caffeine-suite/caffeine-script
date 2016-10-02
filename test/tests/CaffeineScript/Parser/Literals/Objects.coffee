@@ -38,10 +38,21 @@ module.exports = suite:
         "{a.b:1}"     : '{"a.b": 1};'
         "{a-b:1}"     : '{"a-b": 1};'
 
-    matchless: ->
+    toEol: ->
       parseTests
         "{} a:1"       : "{a: 1};"
         "{} a:1, b:2"  : "{a: 1, b: 2};"
+
+    toEolNesting: ->
+      parseTests
+        "{} a: {} b:2"      : "{a: {b: 2}};"
+        "{} a:\n {} b:2"    : "{a: {b: 2}};"
+        "{} a:\n {}\n b:2"  : "{a: [{}, {b: 2}]};"
+
+    explicitBlock: ->
+      parseTests
+        "{}\n a:1"        : "{a: 1};"
+        "{}\n a:1\n b:2"  : "{a: 1, b: 2};"
 
     implicit: ->
       parseTests

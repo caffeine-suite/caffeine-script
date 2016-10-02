@@ -40,3 +40,7 @@ module.exports = suite:
           1 2 3,
           4 5 6
         """: "[1, 2, 3, 4, 5, 6]"
+
+    objects: ->
+      parseAstToJs
+        "{a:1}":        "{a: 1}"

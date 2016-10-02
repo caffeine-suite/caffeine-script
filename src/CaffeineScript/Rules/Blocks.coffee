@@ -1,20 +1,25 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Extensions} = require 'babel-bridge'
 
-module.exports =
+module.exports = ->
+  @rule
+    blocks: 'block+'
 
-  blocks: 'block+'
-  block:
-    pattern: "comment? actualBlock"
-    getStatements: -> @actualBlock.getStatements()
-    toJs: -> @actualBlock.toJs()
-    toJsList: -> @actualBlock.toJsList()
-    toFunctionBodyJs: -> @actualBlock.toFunctionBodyJs()
-    toImplicitArrayOrValueJs: -> @actualBlock.toImplicitArrayOrValueJs()
+  @rule
+    block:          "comment? block:actualBlock"
+    toEolAndBlock:  "comment? block:actualToEolAndBlock"
+  ,
+    getStatements: -> @block.getStatements()
+    toJs: -> @block.toJs()
+    toJsList: -> @block.toJsList()
+    toFunctionBodyJs: -> @block.toFunctionBodyJs()
+    toImplicitArrayOrValueJs: -> @block.toImplicitArrayOrValueJs()
 
-  actualBlock: Extensions.IndentBlocks.getPropsToSubparseBlock()
-  unparsedBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "anything"
+  @rule
+    actualBlock:          Extensions.IndentBlocks.getPropsToSubparseBlock()
+    actualToEolAndBlock:  Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
+    unparsedBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "anything"
 
-  anything:
-    pattern: /(.|\n)*$/
-    toString: -> @subparseText
+    anything:
+      pattern: /(.|\n)*$/
+      toString: -> @subparseText

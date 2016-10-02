@@ -1,27 +1,29 @@
 {a, m, w, escapeJavascriptString} = require "art-foundation"
 
+{ObjectStn, ObjectPropValueStn} =  require '../SemanticTree'
+
 module.exports = ->
   @rule
 
     object: a
-      pattern: "openCurly_ propertyList _closeCurly"
-      toJs: -> "{#{@propertyList.toJs()}}"
+      pattern: "openCurly_ props:propertyList _closeCurly"
+
+      m pattern: "props:implicitObject"
+      m pattern: "'{}' _? props:propertyList"
 
       m
-        pattern: "implicitObject"
-        toJs: -> "{#{@implicitObject.toJs()}}"
-
-      m
-        pattern: "'{}' _? propertyList"
-        toJs: -> "{#{@propertyList.toJs()}}"
-
-      m
-        pattern: "'{}' _? block"
-        toJs: -> @block.toJsList()
+        pattern: "'{}' _? props:toEolAndBlock"
+        toJs: -> @props.toJsList()
 
       m
         pattern: "'{}'"
         toJs: -> @toString()
+  ,
+    toJs: -> "{#{@props.toJs()}}"
+    getStn: ->
+      ObjectStn()
+
+  @rule
 
     implicitObject: a
       pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
