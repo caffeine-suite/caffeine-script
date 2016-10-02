@@ -5,11 +5,9 @@ module.exports =
 
   complexExpression: a
     pattern: "implicitArray"
-    isImplicitArray: -> true
 
     m
       pattern: "expression"
-      isImplicitArray: -> false
 
   expression: w "binOpExpression unaryOpExpression expressionWithoutBinOps"
 

@@ -1,6 +1,7 @@
-{a, m, w, log, formattedInspect, escapeJavascriptString} = require "art-foundation"
+{a, m, w, log, formattedInspect, escapeJavascriptString, createObjectTreeFactory} = require "art-foundation"
 
 dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
+{StringStn, InterpolatedStringStn} =  require '../SemanticTree'
 
 normalizeString = (string) ->
   string = escapeJavascriptString string.toString().trim()
@@ -10,17 +11,8 @@ normalizeString = (string) ->
 deescapeSpaces = (string) ->
   string.replace /\\ /g, ' '
 
-escapeNewLines = (string) -> string.replace /\n/g, "\\n"
+{escapeNewLines, escapeUnEscapedQuotes} = require '../Lib'
 
-escapeUnEscapedQuotes = (string, quote = '"') ->
-  string.replace ///
-  (
-    [^#{quote}\\]*
-    (?:
-      \\.[^#{quote}\\]*
-    )*
-  )#{quote}
-  ///g, "$1#{quote}"
 ###
 Notes:
 
@@ -42,7 +34,8 @@ module.exports = ->
       m pattern: "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
       m pattern: 'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
       m pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
-  , toJs: ->
+  ,
+    toJs: ->
       out = if @interpolation
         """
         `#{@mid.toEscapedBackTicks()}#{@interpolation.toJs()}`
@@ -63,14 +56,27 @@ module.exports = ->
 
       escapeNewLines out
 
+    getStnChildren: (appendTo = [])->
+      appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+      @interpolation?.getStnChildren appendTo
+      appendTo
+
+    getStn: ->
+      if @interpolation
+        InterpolatedStringStn @getStnChildren()
+      else
+        StringStn value: @mid.toString()
+
   @rule
 
     stringLiteral: a
 
-      pattern:   /// ' ( [^\\'] | \\. )* ' ///, toJs: -> escapeNewLines @toString()
+      pattern:   "/'/ string:/([^\\']|\\.)*/ /'/", toJs: -> escapeNewLines @toString()
 
-      m pattern: "':' unquotedString", toJs: -> "'#{@unquotedString.toString()}'"
-
+      m pattern: "':' string:unquotedString",
+  ,
+    toJs: -> "'#{escapeNewLines @string.toString()}'"
+    getStn: -> StringStn value: @string.toString()
 
   @rule
     hereDocDqStringStart: /"""( *(?=\n))?/
@@ -93,12 +99,17 @@ module.exports = ->
     toEscapedDoubleQuotes: -> deescapeSpaces escapeUnEscapedQuotes @toString(), '"'
 
   @rule
-    dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle end:dqStringInterpolation?"
-    eolStringInterpolation: "interpolationStart expression interpolationEnd mid:eolStringMiddle end:eolStringInterpolation?"
-    hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle end:hearDocDqStringInterpolation?"
-    hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle end:hearDocDqStringInterpolation?"
+    dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
+    eolStringInterpolation: "interpolationStart expression interpolationEnd mid:eolStringMiddle interpolation:eolStringInterpolation?"
+    hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
+    hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
   ,
-    toJs: -> "${#{@expression.toJs()}}#{@mid.toEscapedBackTicks()}#{@end?.toJs() || ''}"
+    toJs: -> "${#{@expression.toJs()}}#{@mid.toEscapedBackTicks()}#{@interpolation?.toJs() || ''}"
+    getStnChildren: (appendTo = [])->
+      appendTo.push @expression.getStn()
+      appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+      @interpolation?.getStnChildren appendTo
+      appendTo
 
   @rule
     hereDocDqStringEnd: /(\n *)?"""/

@@ -1,49 +1,75 @@
 {a, m, w, escapeJavascriptString, log, present} = require "art-foundation"
+{ArrayStn} =  require '../SemanticTree'
 
-module.exports =
+module.exports = ->
+  @rule
 
-  array: a
-    pattern: "openBracket_ valueList _comma_? _closeBracket"
-    toJs: -> "[#{@valueList.toJs()}]"
+    array: a
+      pattern: "openBracket_ valueList _comma_? _closeBracket"
+      m pattern: "'[]' _? valueList"
+      m pattern: "'[]' _? block", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
+      m pattern: "'[]'"
 
-    m
-      pattern: "'[]' _? valueList"
-      toJs: -> "[#{@valueList.toJs()}]"
-    m
-      pattern: "'[]' _? block"
-      toJs: ->
-        statements: statements = @block.getStatements()
-        if statements.length == 1 && statements[0].isImplicitArray()
-          statements[0].toJs()
+    implicitArray: a
+      pattern: "start:expression _comma_ valueList _comma_?"
+      # toJs: ->
+      #   if present vlJs = @valueList.toJs()
+      #     "[#{@start.toJs()}, #{vlJs}]"
+      #   else
+      #     "[#{@start.toJs()}]"
+      getImplicitArray: -> @
+
+      m
+        pattern: "start:literal _ valueList _comma_?"
+        getImplicitArray: -> @
+     # toJs: -> "[#{@start.toJs()}, #{@valueList.toJs()}]"
+  ,
+    toJs: -> #@getStn().toJs()
+      "[#{(el.toJs() for el in @getArrayElements()).join ', '}]"
+
+    getArrayElements: ->
+      if @valueList
+        if @start
+          [@start].concat @valueList.getArrayElements()
         else
-          "[#{(s.toJs() for s in statements).join ", "}]"
-
-    m
-      pattern: "'[]'"
-      toJs: -> @toString()
-
-  implicitArray: a
-    pattern: "start:expression _comma_ valueList _comma_?"
-    toJs: ->
-      if present vlJs = @valueList.toJs()
-        "[#{@start.toJs()}, #{vlJs}]"
+          @valueList.getArrayElements()
+      else if @block
+        statements = @block.getStatements()
+        if statements.length == 1 && implicitArray = statements[0].getImplicitArray()
+          # log implicitArray: true
+          implicitArray.getArrayElements()
+        else
+          # log implicitArray: false
+          statements
       else
-        "[#{@start.toJs()}]"
+        []
 
-    m
-      pattern: "start:literal _ valueList _comma_?"
-      toJs: -> "[#{@start.toJs()}, #{@valueList.toJs()}]"
+    getStn: -> ArrayStn (el.getStn() for el in @getArrayElements())
 
-  valueList: a
-    pattern: "arrayValue _comma_ valueList", toJs: ->
-      js = @arrayValue.toJs()
-      js += ", #{vlJs}" if present vlJs = @valueList.toJs()
-      js
-    m pattern: "literal _ valueList", toJs: -> "#{@literal.toJs()}, #{@valueList.toJs()}"
-    m pattern: "arrayValue"
-    # m pattern: /[\s\n]*$/
+  @rule
+    valueList: a
+      pattern: "element:arrayValue _comma_ valueList",
+      toJs: ->
+        js = @element.toJs()
+        js += ", #{vlJs}" if present vlJs = @valueList.toJs()
+        js
 
-  arrayValue: a
-    pattern: "identifier etc"
-    toJs: -> "...#{@identifier}"
-    m pattern: "expression"
+      m
+        pattern: "element:literal _ valueList"
+        toJs: -> "#{@element.toJs()}, #{@valueList.toJs()}"
+
+      m
+        pattern: "element:arrayValue"
+  ,
+    getArrayElements: (res = []) ->
+      res.push @element
+      if @valueList
+        @valueList.getArrayElements res
+      else
+        res
+
+  @rule
+    arrayValue: a
+      pattern: "identifier etc"
+      toJs: -> "...#{@identifier}"
+      m pattern: "expression"

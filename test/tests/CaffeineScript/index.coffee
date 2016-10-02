@@ -3,6 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
+  Ast:            require './Ast'           
   Helper:         require './Helper'        
   OperatorHelper: require './OperatorHelper'
 require './Language'

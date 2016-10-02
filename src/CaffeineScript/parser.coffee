@@ -1,11 +1,24 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, a, w, m, defineModule, compactFlatten, present, isFunction} = Foundation
+{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
 Rules = require './Rules'
+
+###
+Eventualy I want all AstNodes to respond to:
+
+initially we should do:
+  toJsExpression - no need for parens because it is either inside brackets already or the end of an expression.
+  toStatement - no return-value needed; generate the nicest JS you can.
+
+eventually we should also do:
+  toJsExpressionInList - add parens if a following comma would confusing things
+  toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
+
+###
 
 defineModule module, ->
 
@@ -13,9 +26,18 @@ defineModule module, ->
     @nodeBaseClass: class CafScriptNode extends Nodes.Node
 
       isImplicitArray: ->
-        for match in @matches when match.isImplicitArray
-          return match.isImplicitArray()
+        !!@getImplicitArray()
+
+      getImplicitArray: ->
+        for match in @matches when ret = match.getImplicitArray?()
+          return ret
         false
+
+      getStn: ->
+        x = for m in @matches when v = m.getStn?()
+          v
+
+        if x.length == 1 then x[0] else if x.length == 0 then null else x
 
       toJs: (returnJsStatement)->
         js = for match in compactFlatten @matches when match.toJs
