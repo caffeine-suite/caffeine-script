@@ -60,10 +60,12 @@ module.exports = ->
       ///
 
     identifier:
-      ///
-      (?!\d)
-      ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
-      ///
+      pattern:
+        ///
+        (?!\d)
+        ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
+        ///
+      stnFactory: "IdentifierStn"
 
     unquotedString:
       ///

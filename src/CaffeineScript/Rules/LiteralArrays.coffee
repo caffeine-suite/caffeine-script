@@ -1,13 +1,15 @@
 {a, m, w, escapeJavascriptString, log, present} = require "art-foundation"
 {ArrayStn} =  require '../SemanticTree'
 
+{Extensions} = require 'babel-bridge'
+
 module.exports = ->
   @rule
 
     array: a
       pattern: "openBracket_ valueList _comma_? _closeBracket"
-      m pattern: "'[]' _? valueList"
-      m pattern: "'[]' _? block", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
+      # m pattern: "'[]' _? valueList"
+      m pattern: "'[]' _? arrayLiteralBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
       m pattern: "'[]'"
 
     implicitArray: a
@@ -18,10 +20,14 @@ module.exports = ->
       #   else
       #     "[#{@start.toJs()}]"
       getImplicitArray: -> @
+      stnFactory: ArrayStn
+      stnProps: implicitArray: true
 
       m
         pattern: "start:literal _ valueList _comma_?"
         getImplicitArray: -> @
+        stnFactory: ArrayStn
+        stnProps: implicitArray: true
      # toJs: -> "[#{@start.toJs()}, #{@valueList.toJs()}]"
   ,
     toJs: -> #@getStn().toJs()
@@ -33,8 +39,8 @@ module.exports = ->
           [@start].concat @valueList.getArrayElements()
         else
           @valueList.getArrayElements()
-      else if @block
-        statements = @block.getStatements()
+      else if @arrayLiteralBlock
+        statements = @arrayLiteralBlock.getStatements()
         if statements.length == 1 && implicitArray = statements[0].getImplicitArray()
           # log implicitArray: true
           implicitArray.getArrayElements()
@@ -44,7 +50,12 @@ module.exports = ->
       else
         []
 
-    getStn: -> ArrayStn (el.getStn() for el in @getArrayElements())
+    stnFactory: ArrayStn
+    # getStn: -> ArrayStn (el.getStn() for el in @getArrayElements())
+
+  @rule
+    arrayLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "arrayBlockSubParse"
+    arrayBlockSubParse: "statement*"
 
   @rule
     valueList: a
@@ -72,4 +83,5 @@ module.exports = ->
     arrayValue: a
       pattern: "identifier etc"
       toJs: -> "...#{@identifier}"
+      stnFactory: "ArraySpreadElementStn"
       m pattern: "expression"

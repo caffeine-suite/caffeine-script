@@ -1,22 +1,30 @@
 {a, m, w, compactFlatten, log, present} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
+{StatementsStn} = require '../SemanticTree'
 
 module.exports =
   root:
-    pattern: 'statementOrBlankLine*'
+    pattern: 'statement*'
     node:
       getStatements: ->
-        s for s in @statementOrBlankLines when present s.toString()
+        s for s in @statement when present s.toString()
 
-      toJs: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join("; ") + ";"
-      toJsList: -> (js for s in @statementOrBlankLines when present js = s.toJs()).join ", "
+      toJs: ->
+        @getStn().toJs()
+        # (js for s in @statement when present js = s.toJs()).join("; ") + ";"
+
+      stnFactory: StatementsStn
+
+      toJsList: -> (js for s in @statement when present js = s.toJs()).join ", "
+
       toFunctionBodyJs: ->
-        (for s, i in lines = @statementOrBlankLines when present js = s.toJs notLastLine = i < lines.length - 1
+        (for s, i in lines = @statement when present js = s.toJs notLastLine = i < lines.length - 1
           if notLastLine
             js
           else
             "return #{js}"
         ).join(";\n") + ";"
+
       toImplicitArrayOrValueJs: ->
         statements = @getStatements()
         if statements.length == 1

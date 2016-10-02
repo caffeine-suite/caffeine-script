@@ -1,6 +1,7 @@
 {a, m, w, escapeJavascriptString} = require "art-foundation"
 
-{ObjectStn, ObjectPropValueStn} =  require '../SemanticTree'
+{ObjectStn, ObjectPropValueStn, ObjectPropNameStn} =  require '../SemanticTree'
+{Extensions} = require 'babel-bridge'
 
 module.exports = ->
   @rule
@@ -12,7 +13,7 @@ module.exports = ->
       m pattern: "'{}' _? props:propertyList"
 
       m
-        pattern: "'{}' _? props:toEolAndBlock"
+        pattern: "'{}' _? props:objectLiteralBlock"
         toJs: -> @props.toJsList()
 
       m
@@ -21,9 +22,16 @@ module.exports = ->
   ,
     toJs: -> "{#{@props.toJs()}}"
     getStn: ->
-      ObjectStn()
+      children = for m in @getMatchStns()
+        if m instanceof ObjectStn.class
+          m.children
+        else
+          m
+
+      ObjectStn children
 
   @rule
+    objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "object"
 
     implicitObject: a
       pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
@@ -56,20 +64,25 @@ module.exports = ->
   ,
     name: "literalObjectProperty"
     toJs: -> "#{@propName.toJs()}: #{@propValue.toJs()}"
+    getStn: ->
+      ObjectPropValueStn @propName.getStn(), @propValue.getStn()
 
   @rule
     propertyValueBlock:
-      pattern: "block"
-      toJs: -> @block.toImplicitArrayOrValueJs()
+      pattern: "rValueBlock"
+      toJs: -> @rValueBlock.toImplicitArrayOrValueJs()
 
+    propName: pattern: "bracketAccessor"
+
+  @rule
     propName: a
-      pattern: "identifier &_colon_"
-      m pattern: "openBracket_ complexExpression _closeBracket"
-      m pattern: "numberLiteral &_colon_", toJs: ->
+      pattern: "str:identifier &_colon_"
+      m pattern: "str:numberLiteral &_colon_", toJs: ->
         number = +(str = @toString())
         if number < 0 || "#{number}" != str
           escapeJavascriptString str
         else
           str
-      m pattern: "unquotedString", toJs: -> escapeJavascriptString @toString()
+      m pattern: "str:unquotedString", toJs: -> escapeJavascriptString @toString()
+  , getStn: -> ObjectPropNameStn value: @str.toString()
 

@@ -6,6 +6,7 @@ BabelBridge = require 'babel-bridge'
 {RuleNode} = Nodes
 
 Rules = require './Rules'
+SemanticTree = require "./SemanticTree"
 
 ###
 Eventualy I want all AstNodes to respond to:
@@ -33,9 +34,21 @@ defineModule module, ->
           return ret
         false
 
+      getMatchStns: ->
+        v for m in @matches when v = m.getStn?()
+
+      getStnFactory: ->
+        SemanticTree[@stnFactory] || @stnFactory
+
+
       getStn: ->
-        x = for m in @matches when v = m.getStn?()
-          v
+        if factory = @getStnFactory()
+          return factory
+            parseTreeNode: @
+            @stnProps
+            @getMatchStns()
+
+        x = @getMatchStns()
 
         if x.length == 1 then x[0] else if x.length == 0 then null else x
 

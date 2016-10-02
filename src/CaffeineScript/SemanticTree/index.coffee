@@ -3,10 +3,17 @@
 
 module.exports = require './namespace'
 .addModules
+  ArraySpreadElementStn: require './ArraySpreadElementStn'
   ArrayStn:              require './ArrayStn'             
+  AssignmentStn:         require './AssignmentStn'        
   BaseStn:               require './BaseStn'              
+  BinaryOperatorStn:     require './BinaryOperatorStn'    
+  BracketAccessorStn:    require './BracketAccessorStn'   
+  IdentifierStn:         require './IdentifierStn'        
   InterpolatedStringStn: require './InterpolatedStringStn'
+  ObjectPropNameStn:     require './ObjectPropNameStn'    
   ObjectPropValueStn:    require './ObjectPropValueStn'   
   ObjectStn:             require './ObjectStn'            
   SimpleLiteralStn:      require './SimpleLiteralStn'     
+  StatementsStn:         require './StatementsStn'        
   StringStn:             require './StringStn'            

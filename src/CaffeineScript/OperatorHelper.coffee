@@ -9,7 +9,7 @@ module.exports = class OperatorHelper
     "%%": (a, b) -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
     in:   (a, b) -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
 
-  @infix: (a, b, op) -> "#{a} #{op} #{b}"
+  @infix: infix = (a, b, op) -> "#{a} #{op} #{b}"
   @precidence: [
     w "left  ?"
     w "right **"
@@ -36,7 +36,7 @@ module.exports = class OperatorHelper
     @opsToPrecidence[op] = i for op in ops
     direction
 
-  @resolveOperatorPrecidence: (ops, operands, infix = @infix) =>
+  @resolveOperatorPrecidence: (ops, operands, combinerOverride) =>
     throw new Error unless operands.length == ops.length + 1
     while ops.length > 0
 
@@ -60,7 +60,7 @@ module.exports = class OperatorHelper
       ops = arrayWithout ops, opIndexToResolve
 
       operands = arrayWithout operands, opIndexToResolve
-      combiner = @operatorMap[op] || infix
+      combiner = combinerOverride || @operatorMap[op] || infix
       operands[opIndexToResolve] = combiner operandA, operandB, op
 
     throw new Error unless operands.length == 1

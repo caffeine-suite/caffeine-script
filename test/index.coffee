@@ -9,11 +9,8 @@ try
     self.testAssetRoot = "/test/assets"
     require './tests'
 catch error
-  maxLineNumber = 0
   pe = new PrettyError
   pe.skip (traceLine, lineNumber) ->
-    maxLineNumber = lineNumber if lineNumber > maxLineNumber
-    console.log traceLine:traceLine if lineNumber < 2
     lineNumber > 4 || !traceLine.path.match "babel-bridge"
 
   # TODO - search up Path to find the package.json dir, then only keep from there down

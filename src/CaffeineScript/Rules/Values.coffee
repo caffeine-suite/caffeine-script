@@ -1,6 +1,8 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
 
+{BracketAccessorStn} =  require '../SemanticTree'
+
 module.exports =
 
   value: w "existanceTest nonAssignable assignable"
@@ -40,4 +42,10 @@ module.exports =
 
   assignableAccessor: a
     pattern: "'.' identifier",                          toJs: -> ".#{@identifier.toJs()}"
-    m pattern: "openBracket_ expression _closeBracket", toJs: -> "[#{@expression.toJs()}]"
+    m pattern: "bracketAccessor"
+
+  bracketAccessor:
+    pattern: "openBracket_ expression _closeBracket"
+    toJs: -> "[#{@expression.toJs()}]"
+    getStn: ->
+      BracketAccessorStn @expression.getStn()

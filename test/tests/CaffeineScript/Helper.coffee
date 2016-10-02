@@ -10,7 +10,7 @@ module.exports =
           p = Parser.parse(k)
           assert.eq p.getStn(), v
 
-  parseAstToJs: (map) ->
+  parseAstToJs: astParseTest = (map) ->
     for source, expectedJs of map
       do (source, expectedJs) ->
         test "ast: " + source.replace(/\n/g, "\\n"), ->
@@ -19,10 +19,10 @@ module.exports =
           log stn: stn, js:js, expectedJs: expectedJs if js != expectedJs
           assert.eq js, expectedJs
 
-  parseTests: (map) ->
-    for k, v of map
-      do (k, v) ->
-        test "#{k} >> #{v}".replace(/\n/g, "\\n"), -> assert.eq (p = Parser.parse(k)).toJs(), v#, formattedInspect p
+  parseTests: astParseTest #(map) ->
+    # for k, v of map
+    #   do (k, v) ->
+    #     test "#{k} >> #{v}".replace(/\n/g, "\\n"), -> assert.eq (p = Parser.parse(k)).toJs(), v#, formattedInspect p
 
   illegalSyntaxTests: (array) ->
     for source in array
