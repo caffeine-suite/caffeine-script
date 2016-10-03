@@ -8,7 +8,15 @@ module.exports = ->
 
   @rule
     _:              / +/
-    end:            "comment? /\\n|$/"
+    # end:            "endExceptEob* commentOrSpace? endStatement"
+    endExceptEob:   "commentOrSpace* /\\n|;/"
+    commentOrSpace: w "comment _"
+    end: [
+      "endExceptEob+ commentOrSpace* /$/?"
+      "commentOrSpace* /$/"
+    ]
+
+    endStatement: /\\n|$|;/
     comment: a
       pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"
       m pattern:    "/ *(\\# *)/ unparsedBlock"
@@ -34,13 +42,13 @@ module.exports = ->
         toJs: -> ""
 
     openParen_:     /\( */
-    _closeParen:    / *\)/
+    _closeParen:    /\ *\)/
 
     openBracket_:   /\[[ \n]*/
     _closeBracket:  /[ \n]*\]/
 
     openCurly_:     /\{ */
-    _closeCurly:    / *\}/
+    _closeCurly:    /\ *\}/
     _else:          /(( *\n)+| +)else/
 
     reservedWord: ///

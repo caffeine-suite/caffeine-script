@@ -3,49 +3,52 @@
 
 {BracketAccessorStn} =  require '../SemanticTree'
 
-module.exports =
+module.exports = ->
+  @rule
+    value: w "existanceTest nonAssignable assignable"
 
-  value: w "existanceTest nonAssignable assignable"
+  @rule
+    nonAssignable: a
+      pattern: "assignable functionInvocation+"
+      m pattern: "assignableIfExtended assignableExtension* functionInvocation?"
+  ,
+    stnFactory: "ValueStn"
 
-  functionInvocation: a
-    pattern: "_ arguments",                         toJs: -> "(#{@arguments.toJs()})"
-    m pattern: "openParen_ arguments? _closeParen", toJs: -> "(#{@arguments?.toJs() || ""})"
-    m pattern: "block",                             toJs: -> "(#{@block.toJsList()})"
+  @rule
+    assignable: a
+      pattern: "simpleAssignable assignableExtension*"
+      m pattern: "assignableIfExtended assignableExtension+"
+  ,
+    stnFactory: "ValueStn"
+    stnProps: assignable: true
 
-  assignableExtension: a
-    pattern: 'functionInvocation+ assignableAccessor'
-    m pattern: "assignableAccessor"
+  @rule
+    assignableExtension: a
+      pattern: 'functionInvocation+ assignableAccessor'
+      m pattern: "assignableAccessor"
 
-  accessor: w "assignableAccessor functionInvocation"
+    accessor: w "assignableAccessor functionInvocation"
 
-  nonAssignable: a
-    pattern: "assignable functionInvocation+"
-    m pattern: "assignableIfExtended assignableExtension* functionInvocation?"
+    assignableIfExtended: w "this literal"
 
-  assignable: a
-    pattern: "simpleAssignable assignableExtension*"
-    m pattern: "assignableIfExtended assignableExtension+"
+    this:
+      pattern: "/@/ !identifier"
+      toJs: -> "this"
 
-  assignableIfExtended: w "this literal"
+    simpleAssignable: a
+      pattern: "!reservedWord identifier"
+      m pattern: "thisProperty"
 
-  this:
-    pattern: "/@/ !identifier"
-    toJs: -> "this"
+    thisProperty:
+      pattern: "/@/ identifier"
+      toJs: -> "this.#{@identifier}"
 
-  simpleAssignable: a
-    pattern: "!reservedWord identifier"
-    m pattern: "thisProperty"
+    dotAccessor:
+      pattern: "'.' identifier",                          toJs: -> ".#{@identifier.toJs()}"
 
-  thisProperty:
-    pattern: "/@/ identifier"
-    toJs: -> "this.#{@identifier}"
+    assignableAccessor: w "dotAccessor bracketAccessor"
 
-  assignableAccessor: a
-    pattern: "'.' identifier",                          toJs: -> ".#{@identifier.toJs()}"
-    m pattern: "bracketAccessor"
-
-  bracketAccessor:
-    pattern: "openBracket_ expression _closeBracket"
-    toJs: -> "[#{@expression.toJs()}]"
-    getStn: ->
-      BracketAccessorStn @expression.getStn()
+    bracketAccessor:
+      pattern: "openBracket_ expression _closeBracket"
+      toJs: -> "[#{@expression.toJs()}]"
+      stnFactory: "BracketAccessorStn"

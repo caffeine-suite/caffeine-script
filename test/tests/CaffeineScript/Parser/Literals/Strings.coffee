@@ -8,8 +8,8 @@ module.exports = suite:
   basic: ->
     parseTests
       '"hi"':   '"hi";'
-      "'hi'":   "'hi';"
-      ":hi":    "'hi';"
+      "'hi'":   '"hi";'
+      ":hi":    '"hi";'
 
   multiline:
     doubleQuotes: ->
@@ -22,30 +22,30 @@ module.exports = suite:
 
     singleQuotes: ->
       parseTests
-        "'\na'": "'\\na';"
-        "'\na\n'": "'\\na\\n';"
-        "'a\n'": "'a\\n';"
-        "'  a\n'": "'  a\\n';"
-        "'  a\nb'": "'  a\\nb';"
+        '"\na"': '"\\na";'
+        '"\na\n"': '"\\na\\n";'
+        '"a\n"': '"a\\n";'
+        '"  a\n"': '"  a\\n";'
+        '"  a\nb"': '"  a\\nb";'
 
   unusualUnquotedStrings: ->
     parseTests
-      ":0":         "'0';"
-      ":01":        "'01';"
-      ":0a":        "'0a';"
-      ":a0":        "'a0';"
-      ":10":        "'10';"
-      ":10":        "'10';"
-      ":#fff":      "'#fff';"
+      ':0':         '"0";'
+      ':01':        '"01";'
+      ':0a':        '"0a";'
+      ':a0':        '"a0";'
+      ':10':        '"10";'
+      ':10':        '"10";'
+      ':#fff':      '"#fff";'
 
-      ":-a":        "'-a';"
-      ":a-":        "'a-';"
+      ':-a':        '"-a";'
+      ':a-':        '"a-";'
 
-      ":_a":        "'_a';"
-      ":a_":        "'a_';"
+      ':_a':        '"_a";'
+      ':a_':        '"a_";'
 
-      ":hi.there":  "'hi.there';"
-      ":hi-there":  "'hi-there';"
+      ':hi.there':  '"hi.there";'
+      ':hi-there':  '"hi-there";'
 
   hereDocsDoubleQuotes: ->
     parseTests
@@ -91,14 +91,14 @@ module.exports = suite:
 
     interpolation: ->
       parseTests
-        '"" #{name}': '`${name}`;'
-        '"" a#{name}': '`a${name}`;'
-        '"" #{name}b': '`${name}b`;'
-        '"" #{a}#{b}': '`${a}${b}`;'
-        '"" - #{a}#{b}': '`- ${a}${b}`;'
-        '"" #{a} - #{b}': '`${a} - ${b}`;'
-        '"" #{a}#{b} -': '`${a}${b} -`;'
-        '"" Hello #{@props.name}.': '`Hello ${this.props.name}.`;'
+        '"" #{name}': '"${name}";'
+        '"" a#{name}': '"a${name}";'
+        '"" #{name}b': '"${name}b";'
+        '"" #{a}#{b}': '"${a}${b}";'
+        '"" - #{a}#{b}': '"- ${a}${b}";'
+        '"" #{a} - #{b}': '"${a} - ${b}";'
+        '"" #{a}#{b} -': '"${a}${b} -";'
+        '"" Hello #{@props.name}.': '"Hello ${this.props.name}.";'
 
     escaping: ->
       parseTests
@@ -213,9 +213,9 @@ module.exports = suite:
 
   interpolated: ->
     parseTests
-      '"#{foo}"':                        '`${foo}`;'
-      '"#{foo}after"':                   '`${foo}after`;'
-      '"before#{foo}"':                  '`before${foo}`;'
-      '"before#{foo}after"':             '`before${foo}after`;'
-      '"before#{@foo + bar}after"':      '`before${this.foo + bar}after`;'
-      '"before#{foo}middle#{bar}after"': '`before${foo}middle${bar}after`;'
+      '"#{foo}"':                        '"${foo}";'
+      '"#{foo}after"':                   '"${foo}after";'
+      '"before#{foo}"':                  '"before${foo}";'
+      '"before#{foo}after"':             '"before${foo}after";'
+      '"before#{@foo + bar}after"':      '"before${this.foo + bar}after";'
+      '"before#{foo}middle#{bar}after"': '"before${foo}middle${bar}after";'

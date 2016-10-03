@@ -45,7 +45,7 @@ defineModule module, ->
         if factory = @getStnFactory()
           return factory
             parseTreeNode: @
-            @stnProps
+            @stnProps?() || @stnProps
             @getMatchStns()
 
         x = @getMatchStns()

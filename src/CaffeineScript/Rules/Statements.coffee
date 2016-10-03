@@ -48,6 +48,6 @@ module.exports =
         jsList = (a.toJs() for a in compactFlatten [@simpleAssignable, @assignableExtensions])
         @assignmentExtension.toJs "(#{previousStatement}).#{jsList.join ''}"
     m
-      pattern: "/( *\n)+/ accessor+"
+      pattern: "/( *\n)+/ dotAccessor+"
       toJs: (previousStatement) ->
-        "(#{previousStatement})#{(a.toJs() for a in @accessors).join ''}"
+        "(#{previousStatement})#{(a.toJs() for a in @dotAccessors).join ''}"

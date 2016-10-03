@@ -13,8 +13,8 @@ module.exports = suite:
         "(foo) -> 321"       : "(function(foo) {return 321;});"
         "(foo, bar) -> 321"  : "(function(foo, bar) {return 321;});"
         "->\n  321"          : "(function() {return 321;});"
-        "->\n  321\n  456"   : "(function() {321;\nreturn 456;});"
-        "->\n  321\n\n  456" : "(function() {321;\nreturn 456;});"
+        "->\n  321\n  456"   : "(function() {321; return 456;});"
+        "->\n  321\n\n  456" : "(function() {321; return 456;});"
 
     bound: ->
       parseTests
@@ -24,8 +24,8 @@ module.exports = suite:
         "(foo) => 321"       : "((foo) => {return 321;});"
         "(foo, bar) => 321"  : "((foo, bar) => {return 321;});"
         "=>\n  321"          : "(() => {return 321;});"
-        "=>\n  321\n  456"   : "(() => {321;\nreturn 456;});"
-        "=>\n  321\n\n  456" : "(() => {321;\nreturn 456;});"
+        "=>\n  321\n  456"   : "(() => {321; return 456;});"
+        "=>\n  321\n\n  456" : "(() => {321; return 456;});"
 
     splatsRest: ->
       parseTests
@@ -54,13 +54,15 @@ module.exports = suite:
     parseTests
       "foo 1"    : "foo(1);"
       "foo 1, 2" : "foo(1, 2);"
-      "foo 'bar'": "foo('bar');"
+      "foo 1 2"  : "foo(1, 2);"
+      "foo 'bar'": 'foo("bar");'
       "foo bar 2": "foo(bar(2));"
 
       "foo()"               : "foo();"
       "foo(bar())"          : "foo(bar());"
       "foo(1)"              : "foo(1);"
       "foo(1, 2)"           : "foo(1, 2);"
+      "foo(1 2)"            : "foo(1, 2);"
       "foo(1, bar(1, 2))"   : "foo(1, bar(1, 2));"
 
   mixedAccessorsAndInvocations:

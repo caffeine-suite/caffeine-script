@@ -7,3 +7,11 @@ defineModule module, class StatementsStn extends require './BaseStn'
 
   toJs: ->
     (c.toJsStatement() for c in @children).join("; ") + ";"
+
+  toFunctionBodyJs: ->
+    (for c, i in lines = @children
+      if i < lines.length - 1
+        c.toJsStatement()
+      else
+        "return #{c.toJsExpression()}"
+    ).join("; ") + ";"
