@@ -33,11 +33,16 @@ module.exports = suite:
       [1, 2, 3, 4,]
       """: "[1, 2, 3, 4];"
 
-  implicit: ->
-    parseTests
-      "1, 2"      : "[1, 2];"
-      "1 2"       : "[1, 2];"
-      "1 + 2, 3"  : "[(1 + 2), 3];"
+  implicit:
+    basic: ->
+      parseTests
+        "1, 2"      : "[1, 2];"
+        "1 2"       : "[1, 2];"
+        "1 + 2, 3"  : "[(1 + 2), 3];"
+
+    mixed: ->
+      parseTests
+        "1 2 if bar": "if (bar) {[1, 2]};"
 
   matchless: ->
     parseTests
@@ -90,6 +95,18 @@ module.exports = suite:
         1
         2
       """: "[1, 2];"
+
+      """
+      [] # this is a block array
+        1
+        2
+      """: "[1, 2];"
+
+      """
+      [] a
+        b
+      """: "[a(b)];"
+
   implicitCombos: ->
     parseTests
       """

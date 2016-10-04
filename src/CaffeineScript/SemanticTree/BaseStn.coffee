@@ -85,7 +85,7 @@ defineModule module, class BaseStn extends BaseObject
 
         \[[^\]]*\] |
 
-        (-?[_a-z0-9.]+|[!]*)(\(.*\))?
+        ([!]*-?[_a-z0-9.]+)(\(.*\))?
 
         )$
         ///i

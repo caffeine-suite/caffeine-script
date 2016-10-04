@@ -9,7 +9,7 @@ module.exports = ->
     array: a
       pattern: "openBracket_ valueList _comma_? _closeBracket"
       # m pattern: "'[]' _? valueList"
-      m pattern: "'[]' _? valueListBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
+      m pattern: "'[]' _? comment? valueListToEolAndBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
       m pattern: "'[]'"
 
     implicitArray: a
@@ -54,7 +54,8 @@ module.exports = ->
     # getStn: -> ArrayStn (el.getStn() for el in @getArrayElements())
 
   @rule
-    valueListBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "valueListBlockSubParse"
+    valueListBlock:         Extensions.IndentBlocks.getPropsToSubparseBlock rule: "valueListBlockSubParse"
+    valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "valueListBlockSubParse"
     valueListBlockSubParse: "statement*"
 
   @rule

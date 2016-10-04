@@ -51,48 +51,60 @@ module.exports = suite:
         "(@foo...) =>": "((...foo) => {this.foo = foo;});"
         "(@foo, @bar) =>": "((foo, bar) => {this.foo = foo; this.bar = bar;});"
 
-  invocation: ->
-    parseTests
-      "foo 1"    : "foo(1);"
-      "foo 1, 2" : "foo(1, 2);"
-      "foo 1 2"  : "foo(1, 2);"
-      "foo 'bar'": 'foo("bar");'
-      "foo bar 2": "foo(bar(2));"
-
-      "foo()"               : "foo();"
-      "foo(bar())"          : "foo(bar());"
-      "foo(1)"              : "foo(1);"
-      "foo(1, 2)"           : "foo(1, 2);"
-      "foo(1 2)"            : "foo(1, 2);"
-      "foo(1, bar(1, 2))"   : "foo(1, bar(1, 2));"
-
-  blockInvocation:
-    basic: ->
+  invocation:
+    noParens: ->
       parseTests
-        """
-        foo
-          1
-        """: "foo(1);"
+        "foo 1"    : "foo(1);"
+        "foo 1, 2" : "foo(1, 2);"
+        "foo 1 2"  : "foo(1, 2);"
+        "foo 'bar'": 'foo("bar");'
+        "foo bar 2": "foo(bar(2));"
 
-        """
-        foo
-          1
-          2
-        """: "foo(1, 2);"
-
-    react: ->
-      # This is the seed of why I built CaffeineScript! -SBD
+    parens: ->
       parseTests
-        """
-        Element
-          RectangleElement color:  :red
-          RectangleElement colors: :red :blue :green
-        """: 'Element(RectangleElement({color: "red"}), RectangleElement({colors: ["red", "blue", "green"]}));'
+        "foo()"               : "foo();"
+        "foo(bar())"          : "foo(bar());"
+        "foo(1)"              : "foo(1);"
+        "foo(1, 2)"           : "foo(1, 2);"
+        "foo(1 2)"            : "foo(1, 2);"
+        "foo(1, bar(1, 2))"   : "foo(1, bar(1, 2));"
 
-    mixedWithControlStatements: ->
+    andTailIf: ->
       parseTests
-        """
-        if foo
+        'foo 123 if bar': "if (bar) {foo(123)};"
+
+    block:
+      basic: ->
+        parseTests
+          """
+          foo
             1
-          2
-        """: "if (foo(1)) {2;};"
+          """: "foo(1);"
+
+          """
+          foo
+            1
+            2
+          """: "foo(1, 2);"
+
+      react: ->
+        # This is the seed of why I built CaffeineScript! -SBD
+        parseTests
+          """
+          Element
+            RectangleElement color:  :red
+            RectangleElement colors: :red :blue :green
+          """: 'Element(RectangleElement({color: "red"}), RectangleElement({colors: ["red", "blue", "green"]}));'
+
+      mixed: ->
+        parseTests
+          """
+          if foo
+              1
+            2
+          """: "if (foo(1)) {2;};"
+
+          """
+          foo # comment 1
+            not a comment
+          """: "foo(!a(comment));"

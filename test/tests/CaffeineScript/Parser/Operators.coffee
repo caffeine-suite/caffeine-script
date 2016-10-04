@@ -34,7 +34,8 @@ module.exports = suite:
       "1 |    2":   "1 | 2;"
       "1 ^    2":   "1 ^ 2;"
 
-      "1 ?    2":   "Caf.existsOr(1, ()=>{return 2});"
+      "a ?    b":   "a != null ? a : b;"
+      "a.b ?  b":   "Caf.existsOr(a.b, (()=>{return b})());"
       "1 and  2":   "1 && 2;"
       "1 or   2":   "1 || 2;"
       "1 isnt 2":   "1 !== 2;"

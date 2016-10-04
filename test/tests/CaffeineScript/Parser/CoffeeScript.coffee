@@ -30,7 +30,7 @@ module.exports = suite:
       #   print winner, runners
       # """: ""
 
-      'alert "I knew it!" if elvis?' : "if ((elvis != null)) {alert(\"I knew it!\")};"
+      'alert "I knew it!" if elvis?' : "if (elvis != null) {alert(\"I knew it!\")};"
       # "cubes = (math.cube num for num in list)" : ""
 
   functions: ->
@@ -109,4 +109,4 @@ module.exports = suite:
   existentialOperator: ->
     parseTests
       "solipsism = true if mind? and not world?": "if ((mind != null) && !(world != null)) {solipsism = true};"
-      'footprints = yeti ? "bear"': "footprints = yeti != null ? yeti || \"bear\";"
+      'footprints = yeti ? "bear"': "footprints = (yeti != null ? yeti : (\"bear\"));"

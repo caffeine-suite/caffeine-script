@@ -8,7 +8,11 @@ module.exports = class OperatorHelper
     "//": (a, b) -> "#{CoffeeScriptGlobal}.div(#{a}, #{b})"
     "%%": (a, b) -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
     in:   (a, b) -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
-    "?":  (a, b) -> "#{CoffeeScriptGlobal}.existsOr(#{a}, (()=>{return #{b}})())"
+    "?":  (a, b) ->
+      if a.match /^@?[_a-z0-9]+$/i
+        "#{a} != null ? #{a} : #{b}"
+      else
+        "#{CoffeeScriptGlobal}.existsOr(#{a}, (()=>{return #{b}})())"
 
   @infix: infix = (a, b, op) -> "#{a} #{op} #{b}"
   @precidence: [

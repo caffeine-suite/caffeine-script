@@ -19,3 +19,4 @@ module.exports = suite:
       "-123": false
       "foo.bar": false
       "-7 % 5": true
+      "!!!foo": false

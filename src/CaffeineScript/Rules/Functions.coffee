@@ -52,7 +52,8 @@ module.exports = ->
   @rule
     functionInvocation: a
       pattern: "openParen_ valueList? _closeParen",   toJs: -> "(#{@arguments?.toJs() || ""})"
-      m pattern: "valueListBlock"
+      m pattern: "_? complexExpression"
+      m pattern: "comment? valueListBlock"
   ,
     stnFactory: "FunctionInvocationStn"
 

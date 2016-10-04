@@ -4,7 +4,7 @@
 
 module.exports =
 
-  statementOrBlankLine: w "multilineStatement blankLine"
+  # statementOrBlankLine: w "multilineStatement blankLine"
 
   statement: "multilineStatement"
 
@@ -29,7 +29,7 @@ module.exports =
   tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
 
   statementWithoutEnd: a
-    pattern: 'complexExpression !tailControlOperator'
+    pattern: '/ *\n/* lineComment* complexExpression !tailControlOperator'
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
       pattern: 'complexExpression tailControlOperatorComplexExpression+',
@@ -41,20 +41,6 @@ module.exports =
             tco.complexExpression.getStn()
             stn
         stn
-
-      # toJs: (returnJsStatement = true) ->
-      #   isNot = false
-      #   switch control = @tailControlOperator.toString().trim()
-      #     when "until" then isNot = true; control = "while";
-      #     when "unless" then isNot = true; control = "if";
-
-      #   test = @complexExpressions[1].toJs()
-      #   test = "!(#{test})" if isNot
-
-      #   if returnJsStatement
-      #     "#{control} (#{test}) {#{@complexExpressions[0].toJs returnJsStatement}}"
-      #   else
-      #     "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
 
   newLineBinOp: a
     pattern: "/( *\n)+/ binaryOperator _? complexExpression"

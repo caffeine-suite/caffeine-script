@@ -9,18 +9,16 @@ module.exports = ->
   @rule
     _:              / +/
     # end:            "endExceptEob* commentOrSpace? endStatement"
-    endExceptEob:   "commentOrSpace* /\\n|;/"
+    end:   "commentOrSpace* /\\n|;|$/"
     commentOrSpace: w "comment _"
-    end: [
-      "endExceptEob+ commentOrSpace* /$/?"
-      "commentOrSpace* /$/"
-    ]
+    # end: [
+    #   "endExceptEob+ commentOrSpace* /$/?"
+    #   "commentOrSpace* /$/"
+    # ]
+    # end: / *(\n|;|$)/
 
-    endStatement: /\\n|$|;/
-    comment: a
-      pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"
-      m pattern:    "/ *(\\# *)/ unparsedBlock"
-      m pattern:    "/ *(\\#[^\n]*)/"
+    # endStatement: /\\n|$|;/
+
   ,
     getPresent: -> false
 

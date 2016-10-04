@@ -9,19 +9,11 @@ module.exports = suite:
 
   eol: ->
     parseTests
-      """
-      1# comment
-      """: "1;"
+      "1# comment": "1;"
 
-      """
-      # comment
-      1
-      """: "1;"
+      "# comment\n1": "1;"
 
-      """
-      1
-      # comment
-      """: "1;"
+      "1\n# comment": "1;"
 
       """
       # comment
@@ -31,6 +23,22 @@ module.exports = suite:
       # comment 1
       # comment 2
       1
+      """: "1;"
+
+      """
+
+
+      # comment 1
+
+
+      # comment 2
+
+
+      1
+
+      # comment 3
+
+
       """: "1;"
 
   anyNumberOfOctothorpsAllowedExcept3: ->

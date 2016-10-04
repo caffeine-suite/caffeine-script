@@ -3,8 +3,8 @@
 {StatementsStn} = require '../SemanticTree'
 
 module.exports =
-  root:
-    pattern: 'statement*'
+  root: a
+    pattern: 'statement* lineComment*'
     node:
       getStatements: ->
         s for s in @statement when present s.toString()
@@ -31,4 +31,3 @@ module.exports =
           statements[0].toJs()
         else
           "[#{(s.toJs() for s in statements).join ', '}]"
-
