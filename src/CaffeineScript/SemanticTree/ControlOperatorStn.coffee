@@ -20,7 +20,6 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
   toJs: (options = {})->
     {returnExpression} = options
     expression = @expression.toJsExpression()
-    elseBody = @elseBody?.toJsExpression()
     {operand} = @
 
     operand = switch operand
@@ -36,15 +35,15 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
         "
         #{@applyParens expression} ?
         #{@body.toJsParenExpression()} :
-        #{elseBody || 'undefined'}
+        #{@elseBody?.toJsExpression() || 'undefined'}
         "
     else
       "
       #{operand}
       #{@applyRequiredParens expression}
-      {#{@body.toJsExpression()}}#{
-        if elseBody
-          " else {#{elseBody}}"
+      {#{@body.toJs()}}#{
+        if @elseBody
+          " else {#{@elseBody?.toJs()}}"
         else ""
       }
       "

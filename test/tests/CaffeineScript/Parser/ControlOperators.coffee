@@ -81,9 +81,9 @@ module.exports = suite:
 
     combined: ->
       parseTests
-        "foo if bar unless baz": "if (baz) {if (bar) {foo}};"
-        "foo if bar while baz": "TODO"
-        "foo while bar if baz": "TODO"
+        "foo if bar unless baz": "if (!baz) {if (bar) {foo}};"
+        "foo if bar while baz": "while (baz) {if (bar) {foo}};"
+        "foo while bar if baz": "if (baz) {while (bar) {foo}};"
 
     expressions: ->
       parseTests

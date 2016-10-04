@@ -1,6 +1,6 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
-{BinaryOperatorStn} = require '../SemanticTree'
+{BinaryOperatorStn, ControlOperatorStn} = require '../SemanticTree'
 
 module.exports =
 
@@ -26,15 +26,21 @@ module.exports =
         @statementWithoutEnd.getStn()
 
   tailControlOperator: / +(if|while|until|unless) +/
+  tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
 
   statementWithoutEnd: a
     pattern: 'complexExpression !tailControlOperator'
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
-      pattern: 'complexExpression tailControlOperator complexExpression',
-      stnFactory: "ControlOperatorStn"
-      stnChildren: -> c.getStn() for c in @complexExpressions by -1
-      stnProps: -> operand: @tailControlOperator.toString().trim()
+      pattern: 'complexExpression tailControlOperatorComplexExpression+',
+      getStn: ->
+        stn = @complexExpression.getStn()
+        for tco in @tailControlOperatorComplexExpressions
+          stn = ControlOperatorStn
+            operand: tco.tailControlOperator.toString().trim()
+            tco.complexExpression.getStn()
+            stn
+        stn
 
       # toJs: (returnJsStatement = true) ->
       #   isNot = false
