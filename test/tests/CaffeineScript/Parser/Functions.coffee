@@ -9,7 +9,7 @@ module.exports = suite:
     unbound: ->
       parseTests
         "-> 321"             : "(function() {return 321;});"
-        "foo -> 321"         : "foo((function() {return 321;}));"
+        "foo -> 321"         : "foo(function() {return 321;});"
         "(foo) -> 321"       : "(function(foo) {return 321;});"
         "(foo, bar) -> 321"  : "(function(foo, bar) {return 321;});"
         "->\n  321"          : "(function() {return 321;});"
@@ -20,7 +20,7 @@ module.exports = suite:
       parseTests
         "=>"                 : "(() => {});"
         "=> 321"             : "(() => {return 321;});"
-        "foo => 321"         : "foo((() => {return 321;}));"
+        "foo => 321"         : "foo(() => {return 321;});"
         "(foo) => 321"       : "((foo) => {return 321;});"
         "(foo, bar) => 321"  : "((foo, bar) => {return 321;});"
         "=>\n  321"          : "(() => {return 321;});"
@@ -87,7 +87,7 @@ module.exports = suite:
         Element
           RectangleElement color:  :red
           RectangleElement colors: :red :blue :green
-        """: "Element(RectangleElement({color: 'red'}), RectangleElement({colors: ['red', 'blue', 'green']}));"
+        """: 'Element(RectangleElement({color: "red"}), RectangleElement({colors: ["red", "blue", "green"]}));'
 
     mixedWithControlStatements: ->
       parseTests
