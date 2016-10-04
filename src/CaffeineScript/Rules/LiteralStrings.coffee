@@ -8,10 +8,26 @@ normalizeString = (string) ->
   string = string.replace /\\\\/g, "\\"
   string = string.replace /\\ /g, " "
 
-deescapeSpaces = (string) ->
-  string.replace /\\ /g, ' '
+{escapeNewLines, escapeUnEscapedQuotes, deescapeSpaces} = require '../Lib'
 
-{escapeNewLines, escapeUnEscapedQuotes} = require '../Lib'
+normalizeHereDoc = (hereDoc) ->
+  [all, firstLine, rest] = hereDoc.match /^([^\n]*)(?=\n|$)((?:.|\n)*)/
+
+  return firstLine if !rest || rest.length == 0
+
+  indents = rest.match /\n *(?=[^ \n])/g
+
+  if indents?.length > 0
+    minIndent = null
+    for i in indents
+      len = i.length - 1
+      minIndent = len if !minIndent? || len < minIndent
+    rest = rest.replace ///\n\ {#{minIndent}}///g, "\n"
+
+  rest = rest.replace /^\n/, ''
+  unless !firstLine || firstLine?.match /\ */
+    rest = firstLine + "\\n" + rest
+  rest
 
 ###
 Notes:
@@ -27,6 +43,8 @@ module.exports = ->
     stringLiteral: a
       pattern: '/"" */ unparsedBlock'
       toJs: -> normalizeString @unparsedBlock
+      getStn: ->
+        StringStn value: @unparsedBlock.toString().trim()
 
   @rule
     stringLiteral: a
@@ -62,7 +80,9 @@ module.exports = ->
       appendTo
 
     getStn: ->
-      if @interpolation
+      if @hereDoc
+        StringStn value: normalizeHereDoc @mid.toString()
+      else if @interpolation
         InterpolatedStringStn @getStnChildren()
       else
         StringStn value: @mid.toString()

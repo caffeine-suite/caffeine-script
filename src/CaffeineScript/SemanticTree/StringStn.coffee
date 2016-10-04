@@ -1,10 +1,10 @@
 Foundation = require 'art-foundation'
-{escapeUnEscapedQuotes, escapeNewLines} = require '../Lib'
+{escapeUnEscapedQuotes, escapeNewLines, deescapeSpaces} = require '../Lib'
 
 {log, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
 
 defineModule module, class StringStn extends require './BaseStn'
 
-  toJs: -> escapeJavascriptString @props.value
+  toJs: -> escapeJavascriptString(deescapeSpaces @props.value).replace /\\\\/g, '\\'
 
-  toInterpolatedJsStringPart: -> escapeNewLines escapeUnEscapedQuotes @props.value, "`"
+  toInterpolatedJsStringPart: -> escapeNewLines deescapeSpaces escapeUnEscapedQuotes @props.value, "`"

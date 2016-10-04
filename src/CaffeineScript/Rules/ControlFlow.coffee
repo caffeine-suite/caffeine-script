@@ -11,7 +11,8 @@ module.exports =
       {nextOffset:offset, source} = parentNode
       originalOffset = offset
       upToButNotEol.lastIndex = offset
-      if [m] = upToButNotEol.exec source
+      if match = upToButNotEol.exec source
+        [m] = match
         endOffset = offset += m.length
 
         while (match = matchBlock source, offset)

@@ -49,10 +49,10 @@ module.exports = suite:
 
   hereDocsDoubleQuotes: ->
     parseTests
-      '"""here"""': '"here";'
-      '"""\nhere"""': '"here";'
+      '"""here"""':       '"here";'
+      '"""\nhere"""':     '"here";'
       '"""    \nhere"""': '"here";'
-      '"""here\n"""': '"here";'
+      '"""here\n"""':     '"here";'
       '"""here\n    """': '"here";'
 
       '''
@@ -80,7 +80,7 @@ module.exports = suite:
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays": ->
       parseTests
-        "'' 0 '' 2":      "['', 0, '', 2];"
+        "'' 0 '' 2":      '["", 0, "", 2];'
         '"", 0, "", 2':   '["", 0, "", 2];'
 
     basic: ->
@@ -91,14 +91,14 @@ module.exports = suite:
 
     interpolation: ->
       parseTests
-        '"" #{name}': '"${name}";'
-        '"" a#{name}': '"a${name}";'
-        '"" #{name}b': '"${name}b";'
-        '"" #{a}#{b}': '"${a}${b}";'
-        '"" - #{a}#{b}': '"- ${a}${b}";'
-        '"" #{a} - #{b}': '"${a} - ${b}";'
-        '"" #{a}#{b} -': '"${a}${b} -";'
-        '"" Hello #{@props.name}.': '"Hello ${this.props.name}.";'
+        '"" #{name}':               '`${name}`;'
+        '"" a#{name}':              '`a${name}`;'
+        '"" #{name}b':              '`${name}b`;'
+        '"" #{a}#{b}':              '`${a}${b}`;'
+        '"" - #{a}#{b}':            '`- ${a}${b}`;'
+        '"" #{a} - #{b}':           '`${a} - ${b}`;'
+        '"" #{a}#{b} -':            '`${a}${b} -`;'
+        '"" Hello #{@props.name}.': '`Hello ${this.props.name}.`;'
 
     escaping: ->
       parseTests
@@ -131,13 +131,17 @@ module.exports = suite:
         """
         ""
           "foo"
-        """: '"\\"foo\\"";'
+        """: """
+          '"foo"';
+          """
 
       parseTests
         """
         ""
           'foo'
-        """: '"\'foo\'";'
+        """: """
+          "'foo'";
+          """
 
       parseTests
         """
@@ -145,9 +149,9 @@ module.exports = suite:
           "
           ""
           ""\"
-        """: """
-          "\\"\\n\\"\\"\\n\\"\\"\\"";
-          """
+        """: '''
+          '"\\n""\\n"""';
+          '''
 
     escapes:
       escapedNewLines: -> parseTests
@@ -213,9 +217,9 @@ module.exports = suite:
 
   interpolated: ->
     parseTests
-      '"#{foo}"':                        '"${foo}";'
-      '"#{foo}after"':                   '"${foo}after";'
-      '"before#{foo}"':                  '"before${foo}";'
-      '"before#{foo}after"':             '"before${foo}after";'
-      '"before#{@foo + bar}after"':      '"before${this.foo + bar}after";'
-      '"before#{foo}middle#{bar}after"': '"before${foo}middle${bar}after";'
+      '"#{foo}"':                        '`${foo}`;'
+      '"#{foo}after"':                   '`${foo}after`;'
+      '"before#{foo}"':                  '`before${foo}`;'
+      '"before#{foo}after"':             '`before${foo}after`;'
+      '"before#{@foo + bar}after"':      '`before${this.foo + bar}after`;'
+      '"before#{foo}middle#{bar}after"': '`before${foo}middle${bar}after`;'
