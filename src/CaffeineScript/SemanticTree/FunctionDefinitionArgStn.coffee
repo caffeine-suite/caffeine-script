@@ -6,6 +6,11 @@ FunctionDefinitionArgsStn = require './FunctionDefinitionArgsStn'
 
 defineModule module, class FunctionDefinitionArgStn extends require './BaseStn'
 
+  constructor: ({@assignThisProperty, @rest}, [@identifier, @defaultValue]) ->
+    super
+
+  getFunctionPreBodyStatementsJs: ->
+    "this.#{@identifier.toJs()} = #{@identifier.toJs()};" if @assignThisProperty
+
   toJs: ->
-    [identifier, defaultValue] = @children
-    "#{if @props.rest then '...' else ''}#{identifier.toJs()}#{if defaultValue then " = #{defaultValue.toJs()}" else ""}"
+    "#{if @rest then '...' else ''}#{@identifier.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"

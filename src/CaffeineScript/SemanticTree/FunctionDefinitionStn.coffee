@@ -14,17 +14,18 @@ defineModule module, class FunctionDefinitionStn extends require './BaseStn'
     super props, children
 
   toJs: ->
-    [argDef, body] = @children
+    [argsDef, body] = @children
+    statements = []
+    argsDef = if argsDef
 
-    # preBody = for prop in getPropertySetters(@argsDefinition)
-    #   "this.#{prop} = #{prop};"
+      statements = (statements for arg in argsDef.children when statements = arg.getFunctionPreBodyStatementsJs())
+      argsDef.toJs()
+    else "()"
 
-    # preBody = if preBody.length > 0 then preBody.join(" ") + " " else ""
-    preBody = ""
-
-    body = "{#{preBody}#{body?.toFunctionBodyJs()||''}}"
+    statements = compactFlatten [statements, body?.toFunctionBodyJs()]
+    body = "{#{statements.join ' '}}"
 
     if @props.bound
-      "(#{argDef.toJs()} => #{body})"
+      "(#{argsDef} => #{body})"
     else
-      "(function#{argDef.toJs()} #{body})"
+      "(function#{argsDef} #{body})"

@@ -45,10 +45,11 @@ module.exports = suite:
 
     thisAssignmentInArguments: ->
       parseTests
-        "(@foo) =>": "((foo) => {this.foo = foo; });"
-        "(@foo = 123) =>": "((foo = 123) => {this.foo = foo; });"
-        "(@foo...) =>": "((...foo) => {this.foo = foo; });"
-        "(@foo, @bar) =>": "((foo, bar) => {this.foo = foo; this.bar = bar; });"
+        "(@foo) =>": "((foo) => {this.foo = foo;});"
+        "(@foo) => foo + 1": "((foo) => {this.foo = foo; return foo + 1;});"
+        "(@foo = 123) =>": "((foo = 123) => {this.foo = foo;});"
+        "(@foo...) =>": "((...foo) => {this.foo = foo;});"
+        "(@foo, @bar) =>": "((foo, bar) => {this.foo = foo; this.bar = bar;});"
 
   invocation: ->
     parseTests

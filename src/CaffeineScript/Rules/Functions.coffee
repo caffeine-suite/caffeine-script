@@ -36,33 +36,18 @@ module.exports = ->
     argDefList: a
       pattern: "argDef _comma_ argDefList", toJs: -> "#{@argDef.toJs()}, #{@argDefList.toJs()}"
       m pattern: "argDef _ argDefList", toJs: -> "#{@argDef.toJs()}, #{@argDefList.toJs()}"
-      m pattern: "lastArgDef"
+      m pattern: "argDef"
+
+    argDef:
+      pattern: "at:/@/? identifier argIdentifierExtension?"
+      stnFactory: "FunctionDefinitionArgStn"
+      stnProps: -> rest: !!@argIdentifierExtension?.etc, assignThisProperty: !!@at
+
+    argIdentifierExtension: w "defaultValue etc"
 
     defaultValue:
       pattern: "_equals_ expression"
       toJs: -> "= #{@expression.toJs()}"
-
-  @rule
-    lastArgDef: a
-      pattern: "argIdentifier defaultValue", toJs: -> "#{@argIdentifier.toJs()} #{@defaultValue.toJs()}"
-      m pattern: "argIdentifier etc",        toJs: -> "...#{@argIdentifier.toJs()}"
-      m pattern: "argIdentifier"
-
-    argDef:
-      pattern: "argIdentifier defaultValue?"
-      toJs: ->
-        if @defaultValue
-          "#{@argIdentifier.toJs()} #{@defaultValue.toJs()}"
-        else
-          @argIdentifier.toJs()
-
-    argIdentifier:
-      pattern: "at:/@/? identifier"
-      toJs: -> @identifier.toJs()
-      shouldSetProperty: -> @at && @identifier.toJs()
-  ,
-    stnFactory: "FunctionDefinitionArgStn"
-    stnProps: -> rest: !!@etc
 
   @rule
     functionInvocation: a
