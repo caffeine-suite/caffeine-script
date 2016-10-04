@@ -58,7 +58,13 @@ defineModule module, class BaseStn extends BaseObject
     @toJs()
 
   # return JS code that can be used as js-expression (returns a value)
+  # for statements: a; b; return c;
   toJsExpression: ->
+    @toJs()
+
+  # return JS code that can be used as js-expression (returns a value)
+  # for statements: (a,b,c)
+  toJsParenExpression: ->
     @toJs()
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
@@ -72,7 +78,15 @@ defineModule module, class BaseStn extends BaseObject
       "(#{expr})"
 
   applyParens: (expr) ->
-    if expr.match /^([_a-z0-9]*\(.*\)|(([_a-z0-9]+)|(-?[0-9]+)))$/
+    if expr.match ///
+        ^
+
+        \([^)]*\) |
+
+        -?[_a-z0-9.]+(\(.*\))?
+
+        $
+        ///
       expr
     else
       "(#{expr})"

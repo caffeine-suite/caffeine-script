@@ -15,3 +15,6 @@ defineModule module, class StatementsStn extends require './BaseStn'
       else
         "return #{c.toJsExpression skipParens: true}"
     ).join("; ") + ";"
+
+  toJsParenExpression: ->
+    @applyRequiredParens (c.toJsStatement() for c in @children).join(", ")

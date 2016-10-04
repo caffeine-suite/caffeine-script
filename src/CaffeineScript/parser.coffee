@@ -1,7 +1,7 @@
 Foundation = require 'art-foundation'
 BabelBridge = require 'babel-bridge'
 
-{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
+{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject, inspect, isString} = Foundation
 {Parser, Nodes, Extensions} = BabelBridge
 {RuleNode} = Nodes
 
@@ -38,6 +38,7 @@ defineModule module, ->
         v for m in @matches when v = m.getStn?()
 
       getStnFactory: ->
+        throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
         SemanticTree[@stnFactory] || @stnFactory
 
 
