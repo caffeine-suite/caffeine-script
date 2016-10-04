@@ -4,10 +4,11 @@ module.exports = class OperatorHelper
   @CoffeeScriptGlobal: CoffeeScriptGlobal = "Caf"
 
   @operatorMap:
-    "**": (a, b) -> "Math.pow(#{a}, #{b})"
-    "//": (a, b) -> "Math.floor(#{a} / #{b})"
+    "**": (a, b) -> "#{CoffeeScriptGlobal}.pow(#{a}, #{b})"
+    "//": (a, b) -> "#{CoffeeScriptGlobal}.div(#{a}, #{b})"
     "%%": (a, b) -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
     in:   (a, b) -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
+    "?":  (a, b) -> "#{CoffeeScriptGlobal}.existsOr(#{a}, ()=>{return #{b}})"
 
   @infix: infix = (a, b, op) -> "#{a} #{op} #{b}"
   @precidence: [
@@ -24,6 +25,10 @@ module.exports = class OperatorHelper
     w "left  &&"
     w "left  ||"
   ]
+
+  @binaryOperatorToJs: (operand, a, b) ->
+    f = OperatorHelper.operatorMap[operand] || infix
+    f a, b, operand
 
   @opsToPrecidence: {}
 

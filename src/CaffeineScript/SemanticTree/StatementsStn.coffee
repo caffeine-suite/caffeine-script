@@ -13,5 +13,5 @@ defineModule module, class StatementsStn extends require './BaseStn'
       if i < lines.length - 1
         c.toJsStatement()
       else
-        "return #{c.toJsExpression()}"
+        "return #{c.toJsExpression skipParens: true}"
     ).join("; ") + ";"

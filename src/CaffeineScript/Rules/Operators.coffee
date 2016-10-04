@@ -43,10 +43,13 @@ module.exports =
     toJs: ->
       "#{@getNormalizedOp()}#{@unaryOpExpression.toJs()}"
 
+    stnFactory: "UnaryOperatorStn"
+    stnProps: -> operand: @unaryOperator.toString()
+
     m pattern: "expressionWithoutBinOps"
 
   existanceTest:
     pattern: "assignable '?'"
     toJs: -> "(#{@assignable.toJs()} != null)"
 
-  binaryOperator: w "logicOperator shiftOperator compareOperator mathOperator"
+  # binaryOperator: w "logicOperator shiftOperator compareOperator mathOperator"

@@ -63,3 +63,14 @@ defineModule module, class BaseStn extends BaseObject
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
+
+  @getter
+    normalizedOperand: ->
+      switch op = @props.operand
+        when "and" then "&&"
+        when "or"  then "||"
+        when "==", "is"   then "==="
+        when "!=", "isnt" then "!=="
+        when "not" then "!"
+        else op
+

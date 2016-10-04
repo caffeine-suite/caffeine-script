@@ -82,7 +82,27 @@ module.exports = ->
 
 
     unaryOperator:    /// ! | ~ | not\b ///
-    logicOperator:    /// && | \|\| | & | \| | \^ | \? | ((and | or | isnt | is | in)\b) ///
-    shiftOperator:    /// << | >> | >>> ///
-    compareOperator:  /// == | != | < | > | <= | >= ///
-    mathOperator:     /// [-+*/%] | // | %% ///
+    binaryOperator: ///
+
+      # js logic
+      && | \|\| | & | \| | \^ |
+
+      # cs logic
+      \? |
+
+      # cs english logic
+      ((and | or | isnt | is | in)\b) |
+
+      # shift
+      << | >>> | >> |
+
+      # comparison
+      == | != | <= | >= | < | > |
+
+      # cs math
+      // | %% | \*\* |
+
+      # js math
+      [-+*/%]
+
+      ///

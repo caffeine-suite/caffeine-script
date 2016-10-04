@@ -1,6 +1,7 @@
 Foundation = require 'art-foundation'
 
 {log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
+{binaryOperatorToJs} = require '../OperatorHelper'
 
 defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
@@ -9,9 +10,11 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
   toJs: -> @toJsExpression()
 
+  toJsStatement: -> @toJsExpression skipParens: true
+
   toJsExpression: (options = {})->
     {skipParens} = options
-    contents = "#{@left.toJsExpression()} #{@props.operand} #{@right.toJsExpression()}"
+    contents = binaryOperatorToJs @props.operand, @left.toJsExpression(), @right.toJsExpression()
     if skipParens
       contents
     else
