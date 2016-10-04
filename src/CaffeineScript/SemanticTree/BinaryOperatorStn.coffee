@@ -9,5 +9,10 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
   toJs: -> @toJsExpression()
 
-  toJsExpression: ->
-    "(#{@left.toJsExpression()} #{@props.operand} #{@right.toJsExpression()})"
+  toJsExpression: (options = {})->
+    {skipParens} = options
+    contents = "#{@left.toJsExpression()} #{@props.operand} #{@right.toJsExpression()}"
+    if skipParens
+      contents
+    else
+      "(#{contents})"

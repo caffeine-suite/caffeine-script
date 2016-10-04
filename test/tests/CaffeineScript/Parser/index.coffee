@@ -3,7 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
-  BasicLiterals:     require './BasicLiterals'    
+  Accessors:         require './Accessors'        
   Classes:           require './Classes'          
   CoffeeScript:      require './CoffeeScript'     
   Comments:          require './Comments'         

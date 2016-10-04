@@ -62,4 +62,4 @@ defineModule module, class BaseStn extends BaseObject
     @toJs()
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
-  toInterpolatedJsStringPart: -> "${#{@toJsExpression()}}"
+  toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"

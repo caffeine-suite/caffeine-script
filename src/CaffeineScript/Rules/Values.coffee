@@ -22,6 +22,13 @@ module.exports = ->
     stnFactory: "ValueStn"
     stnProps: assignable: true
 
+  # need this and thisProperty because one is assignable and the other is not.
+  @rule
+    this:         "/@/ !identifier"
+    thisProperty: "/@/ identifier"
+  ,
+    stnFactory: "ThisStn"
+
   @rule
     assignableExtension: a
       pattern: 'functionInvocation+ assignableAccessor'
@@ -31,20 +38,14 @@ module.exports = ->
 
     assignableIfExtended: w "this literal"
 
-    this:
-      pattern: "/@/ !identifier"
-      toJs: -> "this"
-
     simpleAssignable: a
       pattern: "!reservedWord identifier"
       m pattern: "thisProperty"
 
-    thisProperty:
-      pattern: "/@/ identifier"
-      toJs: -> "this.#{@identifier}"
-
     dotAccessor:
-      pattern: "'.' identifier",                          toJs: -> ".#{@identifier.toJs()}"
+      pattern: "'.' identifier"
+      toJs: -> ".#{@identifier.toJs()}"
+      stnFactory: "DotAccessor"
 
     assignableAccessor: w "dotAccessor bracketAccessor"
 

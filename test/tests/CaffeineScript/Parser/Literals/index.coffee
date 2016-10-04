@@ -4,5 +4,6 @@
 module.exports = require './namespace'
 .addModules
   Arrays:  require './Arrays' 
+  Basic:   require './Basic'  
   Objects: require './Objects'
   Strings: require './Strings'
