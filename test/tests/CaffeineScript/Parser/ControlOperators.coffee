@@ -67,3 +67,24 @@ module.exports = suite:
   until: ->
     parseTests
       "until foo\n  bar": "while (!foo) {bar;};"
+
+  tail:
+    ifUnless: ->
+      parseTests
+        "foo if bar": "if (bar) {foo};"
+        "foo unless bar": "if (!bar) {foo};"
+
+    whileUntil: ->
+      parseTests
+        "foo while bar": "while (bar) {foo};"
+        "foo until bar": "while (!bar) {foo};"
+
+    combined: ->
+      parseTests
+        "foo if bar unless baz": "if (baz) {if (bar) {foo}};"
+        "foo if bar while baz": "TODO"
+        "foo while bar if baz": "TODO"
+
+    expressions: ->
+      parseTests
+        "=>\n foo if bar": "(() => {return bar ? foo : undefined;});"

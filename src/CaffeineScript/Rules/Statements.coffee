@@ -32,19 +32,23 @@ module.exports =
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
       pattern: 'complexExpression tailControlOperator complexExpression',
-      toJs: (returnJsStatement = true) ->
-        isNot = false
-        switch control = @tailControlOperator.toString().trim()
-          when "until" then isNot = true; control = "while";
-          when "unless" then isNot = true; control = "if";
+      stnFactory: "ControlOperatorStn"
+      stnChildren: -> c.getStn() for c in @complexExpressions by -1
+      stnProps: -> operand: @tailControlOperator.toString().trim()
 
-        test = @complexExpressions[1].toJs()
-        test = "!(#{test})" if isNot
+      # toJs: (returnJsStatement = true) ->
+      #   isNot = false
+      #   switch control = @tailControlOperator.toString().trim()
+      #     when "until" then isNot = true; control = "while";
+      #     when "unless" then isNot = true; control = "if";
 
-        if returnJsStatement
-          "#{control} (#{test}) {#{@complexExpressions[0].toJs returnJsStatement}}"
-        else
-          "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
+      #   test = @complexExpressions[1].toJs()
+      #   test = "!(#{test})" if isNot
+
+      #   if returnJsStatement
+      #     "#{control} (#{test}) {#{@complexExpressions[0].toJs returnJsStatement}}"
+      #   else
+      #     "#{test} ? #{@complexExpressions[0].toJs returnJsStatement} : null"
 
   newLineBinOp: a
     pattern: "/( *\n)+/ binaryOperator _? complexExpression"

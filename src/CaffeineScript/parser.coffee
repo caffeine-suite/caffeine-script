@@ -41,15 +41,23 @@ defineModule module, ->
         throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
         SemanticTree[@stnFactory] || @stnFactory
 
+      getStnChildren: ->
+        if @stnChildren
+          if isFunction @stnChildren
+            @stnChildren()
+          else
+            @stnChildren
+        else
+          v for m in @matches when v = m.getStn?()
 
       getStn: ->
         if factory = @getStnFactory()
           return factory
             parseTreeNode: @
             @stnProps?() || @stnProps
-            @getMatchStns()
+            @getStnChildren()
 
-        x = @getMatchStns()
+        x = @getStnChildren()
 
         if x.length == 1 then x[0] else if x.length == 0 then null else x
 
