@@ -57,7 +57,7 @@ module.exports = suite:
         """
         foo
         || bar
-        """: "(foo) || bar;"
+        """: "foo || bar;"
 
         """
         foo = baz.dood
@@ -70,24 +70,36 @@ module.exports = suite:
         foo
         || bar
         || baz
-        """: "((foo) || bar) || baz;"
+        """: "(foo || bar) || baz;"
 
-    multilineWithIndent: ->
+    withIndent: ->
       parseTests
         """
-        foo
-        || bar
+        foo + bar
+        || baz
+        """: "(foo + bar) || baz;"
+
+      parseTests
+        """
+        foo + bar
+          || baz
         """: "(foo) || bar;"
 
+      parseTests
+        """
+        foo + bar
+          baz
+        """: "foo + bar(baz);"
 
-    multilineInvocation: ->
+
+    invocation: ->
       parseTests
         """
         foo
         (bar)
         """: "(foo)(bar);"
 
-    multilineAccess: ->
+    access: ->
       parseTests
         """
         foo

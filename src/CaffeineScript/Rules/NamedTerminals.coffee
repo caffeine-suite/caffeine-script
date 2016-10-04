@@ -74,6 +74,7 @@ module.exports = ->
         ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
         ///
       stnFactory: "IdentifierStn"
+      stnProps: -> identifier: @toString()
 
     unquotedString:
       ///

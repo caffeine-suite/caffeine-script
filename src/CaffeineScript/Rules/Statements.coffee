@@ -1,5 +1,6 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
+{BinaryOperatorStn} = require '../SemanticTree'
 
 module.exports =
 
@@ -16,6 +17,13 @@ module.exports =
         out
       else
         @statementWithoutEnd.toJs returnJsStatement
+    getStn: ->
+      if @newLineBinOp
+        out = @statementWithoutEnd.getStn()
+        out = nlbo.getStn out for nlbo in @newLineBinOps
+        out
+      else
+        @statementWithoutEnd.getStn()
 
   tailControlOperator: / +(if|while|until|unless) +/
 
@@ -42,6 +50,10 @@ module.exports =
     pattern: "/( *\n)+/ binaryOperator _? complexExpression"
     toJs: (previousStatement) ->
       "(#{previousStatement}) #{@binaryOperator} #{@complexExpression.toJs false}"
+
+    getStn: (previousLineStn)->
+      BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
+
     m
       pattern: "/( *\n)+\./ simpleAssignable assignableExtension* assignmentExtension"
       toJs: (previousStatement) ->
@@ -51,3 +63,4 @@ module.exports =
       pattern: "/( *\n)+/ dotAccessor+"
       toJs: (previousStatement) ->
         "(#{previousStatement})#{(a.toJs() for a in @dotAccessors).join ''}"
+

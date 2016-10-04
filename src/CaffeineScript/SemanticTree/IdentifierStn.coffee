@@ -4,4 +4,4 @@ Foundation = require 'art-foundation'
 
 defineModule module, class IdentifierStn extends require './BaseStn'
 
-  toJs: -> @parseTreeNode.toString()
+  toJs: -> @props.identifier
