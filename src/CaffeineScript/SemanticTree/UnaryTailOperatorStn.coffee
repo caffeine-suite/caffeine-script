@@ -4,4 +4,4 @@ Foundation = require 'art-foundation'
 
 defineModule module, class UnaryOperatorStn extends require './BaseStn'
 
-  toJs: -> "#{@normalizedOperand}#{@applyParens @children[0].toJsExpression()}"
+  toJs: -> "#{@applyParens @children[0].toJsExpression()} != null"

@@ -71,25 +71,30 @@ defineModule module, class BaseStn extends BaseObject
   toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
 
 
-  applyRequiredParens: (expr) ->
+  @applyRequiredParens: applyRequiredParens = (expr) ->
     if expr.match /^\(.*\)$/
       expr
     else
       "(#{expr})"
 
-  applyParens: (expr) ->
+  @applyParens: applyParens = (expr) ->
     if expr.match ///
-        ^
+        ^(
 
         \([^)]*\) |
 
-        -?[_a-z0-9.]+(\(.*\))?
+        \[[^\]]*\] |
 
-        $
-        ///
+        (-?[_a-z0-9.]+|[!]*)(\(.*\))?
+
+        )$
+        ///i
       expr
     else
       "(#{expr})"
+
+  applyRequiredParens: applyRequiredParens
+  applyParens: applyParens
 
   @getter
     normalizedOperand: ->

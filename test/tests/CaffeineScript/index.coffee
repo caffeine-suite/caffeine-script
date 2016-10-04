@@ -3,6 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
+  BaseStn:        require './BaseStn'       
   Helper:         require './Helper'        
   OperatorHelper: require './OperatorHelper'
   SemanticTree:   require './SemanticTree'  

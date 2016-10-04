@@ -50,6 +50,10 @@ module.exports = suite:
 
       "nottrue": "nottrue;"
 
+  unaryTail: ->
+    parseTests
+      "foo?": "foo != null;"
+
   multiline:
 
     basic: ->

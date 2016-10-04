@@ -50,6 +50,7 @@ module.exports =
 
   existanceTest:
     pattern: "assignable '?'"
+    stnFactory: "UnaryTailOperatorStn"
     toJs: -> "(#{@assignable.toJs()} != null)"
 
   # binaryOperator: w "logicOperator shiftOperator compareOperator mathOperator"

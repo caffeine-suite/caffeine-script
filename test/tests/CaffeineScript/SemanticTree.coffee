@@ -20,7 +20,7 @@ module.exports = suite:
         '"a#{1}"': '`a${1}`;'
         '"#{1}a"': '`${1}a`;'
         '"#{1}#{2}"': '`${1}${2}`;'
-        '"#{1}#{"hi"}"': '`${1}hi`;' # isn't that awesome! It's just a string!
+        '"#{1}#{"hi"}"': '`${1}${"hi"}`;' # isn't that awesome! It's just a string!
 
     Arrays: ->
       parseAstToJs
