@@ -28,15 +28,6 @@ module.exports = ->
 
     structuredLiteral: w "object array"
 
-    # assign:
-    #   pattern: "assignable assignmentExtension"
-    #   toJs: -> @assignmentExtension.toJs @assignable.toJs()
-    #   stnFactory: "AssignmentStn"
-
-    # assignmentExtension: a
-    #   pattern: "_equals_ complexExpression",    toJs: (assignableJs) -> "#{assignableJs} = #{@complexExpression.toJs()}"
-    #   m pattern: "_equals_ rValueBlock",  toJs: (assignableJs) -> "#{assignableJs} = #{@rValueBlock.toImplicitArrayOrValueJs()}"
-
   @rule
     newLineBinOpBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "newLineBinOpBlockSubparse"
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"

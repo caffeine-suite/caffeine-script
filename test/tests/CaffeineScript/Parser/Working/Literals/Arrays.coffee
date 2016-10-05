@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../Helper'
+{parseTests} = require '../../../Helper'
 
 module.exports = suite:
   basic: ->
@@ -38,7 +38,7 @@ module.exports = suite:
       parseTests
         "1, 2"      : "[1, 2];"
         "1 2"       : "[1, 2];"
-        "1 + 2, 3"  : "[(1 + 2), 3];"
+        "1 + 2, 3"  : "[1 + 2, 3];"
 
     mixed: ->
       parseTests

@@ -6,5 +6,11 @@ defineModule module, class BracketAccessorStn extends require './BaseStn'
 
   constructor: (props, [@value, @expression]) ->
     super
+    @transformForComputedPropertyKeyUseCase()
 
-  toJs: -> "#{@value.toJsExpression()}[#{@expression.toJsExpression()}]"
+  transformForComputedPropertyKeyUseCase: ->
+    unless @expression
+      @expression = @value
+      @value = null
+
+  toJs: -> "#{@value?.toJsExpression()||""}[#{@expression.toJsExpression()}]"

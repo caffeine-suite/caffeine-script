@@ -5,6 +5,5 @@ module.exports = require './namespace'
 .addModules
   Assignment:   require './Assignment'  
   CoffeeScript: require './CoffeeScript'
-require './Literals'
 require './NotWorking'
 require './Working'

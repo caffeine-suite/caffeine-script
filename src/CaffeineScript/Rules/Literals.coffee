@@ -9,8 +9,12 @@ module.exports = ->
     boolLiteral:   w "true false"
     numberLiteral: pattern: /-?[0-9]+/
 
-    true:   pattern: "/(true|yes|on)(?![a-zA-Z0-9]+)/",   toJs: -> "true"
-    false:  pattern: "/(false|no|off)(?![a-zA-Z0-9]+)/",  toJs: -> "false"
+    true:   "/(true|yes|on)(?![a-zA-Z0-9]+)/"
+    false:  "/(false|no|off)(?![a-zA-Z0-9]+)/"
   ,
-    getStn: ->
-      SimpleLiteralStn value: @toJs()
+    stnFactory: "SimpleLiteralStn"
+    stnProps: ->
+      value: switch v = @toString()
+        when "true", "yes", "on" then "true"
+        when "false", "no", "off" then "false"
+        else v

@@ -28,14 +28,13 @@ module.exports = ->
 
     argsDefinition: a
       pattern: "openParen_ argDefList? _closeParen"
-      toJs: -> @argDefList.toJs()
   ,
     stnFactory: "FunctionDefinitionArgsStn"
 
   @rule
     argDefList: a
-      pattern: "argDef _comma_ argDefList", toJs: -> "#{@argDef.toJs()}, #{@argDefList.toJs()}"
-      m pattern: "argDef _ argDefList", toJs: -> "#{@argDef.toJs()}, #{@argDefList.toJs()}"
+      pattern: "argDef _comma_ argDefList"
+      m pattern: "argDef _ argDefList"
       m pattern: "argDef"
 
     argDef:
@@ -47,7 +46,6 @@ module.exports = ->
 
     defaultValue:
       pattern: "_equals_ expression"
-      toJs: -> "= #{@expression.toJs()}"
 
   @rule
     etc: "'...'"

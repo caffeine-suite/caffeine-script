@@ -8,12 +8,6 @@ module.exports = ->
   @rule
     block:          "comment? block:actualBlock"
     toEolAndBlock:  "comment? block:actualToEolAndBlock"
-  ,
-    getStatements: -> @block.getStatements()
-    toJs: -> @block.toJs()
-    toJsList: -> @block.toJsList()
-    toFunctionBodyJs: -> @block.toFunctionBodyJs()
-    toImplicitArrayOrValueJs: -> @block.toImplicitArrayOrValueJs()
 
   @rule
     actualBlock:          Extensions.IndentBlocks.getPropsToSubparseBlock()

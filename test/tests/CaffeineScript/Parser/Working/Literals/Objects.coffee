@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../Helper'
+{parseTests} = require '../../../Helper'
 
 module.exports = suite:
 
@@ -58,7 +58,7 @@ module.exports = suite:
       parseTests
         "a:1"           : "({a: 1});"
         "a:1, b:2"      : "({a: 1, b: 2});"
-        "a:1 + 2, b:2"  : "({a: (1 + 2), b: 2});"
+        "a:1 + 2, b:2"  : "({a: 1 + 2, b: 2});"
         "a:1\nb:2"      : "({a: 1, b: 2});"
 
         "a: 1 b: 2":
@@ -87,7 +87,7 @@ module.exports = suite:
 
     withExpressions: ->
       parseTests
-        "d: 1 + 2": "({d: (1 + 2)});"
+        "d: 1 + 2": "({d: 1 + 2});"
         "d: a b":   "({d: a(b)});"
 
     withImplicitArrays: ->
@@ -129,5 +129,5 @@ module.exports = suite:
           pattern: :zoom   action: -> :fast
         """: '
           ({match:
-            [{pattern: "blah", action: (function() {return "boring";})},
-            {pattern: "zoom", action: (function() {return "fast";})}]});'
+            [{pattern: "blah", action: function() {return "boring";}},
+            {pattern: "zoom", action: function() {return "fast";}}]});'

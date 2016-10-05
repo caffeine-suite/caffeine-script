@@ -11,16 +11,9 @@ module.exports = ->
 
       m pattern: "props:implicitObject"
       m pattern: "'{}' _? props:propertyList"
-
-      m
-        pattern: "'{}' _? props:objectLiteralBlock"
-        toJs: -> @props.toJsList()
-
-      m
-        pattern: "'{}'"
-        toJs: -> @toString()
+      m pattern: "'{}' _? props:objectLiteralBlock"
+      m pattern: "'{}'"
   ,
-    toJs: -> "{#{@props.toJs()}}"
     getStn: ->
       children = for m in @getMatchStns()
         if m instanceof ObjectStn.class
@@ -41,17 +34,15 @@ module.exports = ->
     multilineImplicitObject: a
 
       pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression /( *\n)+/ multilineImplicitObject"
-      toJs: -> "#{@valuePropWithComplexExpression.toJs()}, #{@multilineImplicitObject.toJs()}"
-      m
-        pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
+      m pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
 
     implicitObjectWithTwoOrMorePropsOnOneLine: a
-      pattern: "literalProp _ propertyList",        toJs: -> "#{@literalProp.toJs()}, #{@propertyList.toJs()}"
-      m pattern: "valueProp _comma_ propertyList",  toJs: -> "#{@valueProp.toJs()}, #{@propertyList.toJs()}"
+      pattern: "literalProp _ propertyList"
+      m pattern: "valueProp _comma_ propertyList"
 
     propertyList: a
-      pattern: "valueProp _comma_ propertyList",    toJs: -> "#{@valueProp.toJs()}, #{@propertyList.toJs()}"
-      m pattern: "literalProp _ propertyList",      toJs: -> "#{@literalProp.toJs()}, #{@propertyList.toJs()}"
+      pattern: "valueProp _comma_ propertyList"
+      m pattern: "literalProp _ propertyList"
       m pattern: "valueProp"
 
   @rule
@@ -63,26 +54,17 @@ module.exports = ->
       m pattern:  "propName _colon_ propValue:propertyValueBlock"
   ,
     name: "literalObjectProperty"
-    toJs: -> "#{@propName.toJs()}: #{@propValue.toJs()}"
     getStn: ->
       ObjectPropValueStn @propName.getStn(), @propValue.getStn()
 
   @rule
-    propertyValueBlock:
-      pattern: "rValueBlock"
-      toJs: -> @rValueBlock.toImplicitArrayOrValueJs()
-
+    propertyValueBlock: "rValueBlock"
     propName: pattern: "bracketAccessor"
 
   @rule
     propName: a
       pattern: "str:identifier &_colon_"
-      m pattern: "str:numberLiteral &_colon_", toJs: ->
-        number = +(str = @toString())
-        if number < 0 || "#{number}" != str
-          escapeJavascriptString str
-        else
-          str
-      m pattern: "str:unquotedString", toJs: -> escapeJavascriptString @toString()
+      m pattern: "str:numberLiteral &_colon_"
+      m pattern: "str:unquotedString"
   , getStn: -> ObjectPropNameStn value: @str.toString()
 
