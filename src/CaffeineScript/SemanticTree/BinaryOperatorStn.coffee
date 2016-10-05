@@ -5,20 +5,14 @@ Foundation = require 'art-foundation'
 
 defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
-  constructor: (props, [@left, @right]) ->
+  constructor: ({@operand}, [@left, @right]) ->
     super
 
   toJs: -> @toJsExpression()
 
   toJsStatement: -> @toJsExpression skipParens: true
 
-  toJsExpression: (options = {})->
-    {skipParens} = options
-    left = @applyParens @left.toJsExpression()
-    right = @applyParens @right.toJsExpression()
-
-    contents = binaryOperatorToJs @props.operand, left, right
-    if skipParens
-      contents
-    else
-      "(#{contents})"
+  toJsExpression: ->
+    binaryOperatorToJs @operand,
+      left = @applyParens @left.toJsExpression()
+      right = @applyParens @right.toJsExpression()

@@ -14,9 +14,12 @@ defineModule module, class BaseStn extends BaseObject
   @getter
     inspectedObjects: ->
       out = {}
-      a = []
-      a.push @props if objectKeyCount(@props) > 0
-      out[@class.getName()] = a.concat (c.inspectedObjects for c in @children)
+      out[@class.getName()] = if @children.length == 0
+        @props
+      else
+        a = []
+        a.push @props if objectKeyCount(@props) > 0
+        a.concat (c.inspectedObjects for c in @children)
       out
 
   # so subclasses can add custom newInstance implementations
@@ -72,10 +75,7 @@ defineModule module, class BaseStn extends BaseObject
 
 
   @applyRequiredParens: applyRequiredParens = (expr) ->
-    if expr.match /^\(.*\)$/
-      expr
-    else
-      "(#{expr})"
+    "(#{expr})"
 
   @applyParens: applyParens = (expr) ->
     if expr.match ///
@@ -85,7 +85,7 @@ defineModule module, class BaseStn extends BaseObject
 
         \[[^\]]*\] |
 
-        ([!]*-?[_a-z0-9.]+)(\(.*\))?
+        ([!~-]*[_a-z0-9.]*)(\([^)]*\))?
 
         )$
         ///i

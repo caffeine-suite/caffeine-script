@@ -26,6 +26,6 @@ defineModule module, class FunctionDefinitionStn extends require './BaseStn'
     body = "{#{statements.join ' '}}"
 
     if @props.bound
-      "(#{argsDef} => #{body})"
+      "#{argsDef} => #{body}"
     else
-      "(function#{argsDef} #{body})"
+      "function#{argsDef} #{body}"

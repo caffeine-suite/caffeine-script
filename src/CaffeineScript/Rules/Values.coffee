@@ -1,28 +1,26 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
 
-{BracketAccessorStn} =  require '../SemanticTree'
+{BracketAccessorStn, ValueStn, DotAccessorStn} =  require '../SemanticTree'
 
 module.exports = ->
   @rule
-    value: w "existanceTest nonAssignable assignable"
+    value: "simpleValue valueExtension* assignmentExtension?"
+  ,
+    getStn: ->
+      [left, rest...] = @matches
+      stn = left.getStn()
+      for r in rest when r.getStn
+        stn = r.getStn stn
+      stn
 
   @rule
-    nonAssignable: a
-      pattern: "assignable functionInvocation+"
-      m pattern: "assignableIfExtended assignableExtension* functionInvocation?"
-  ,
-    stnFactory: "ValueStn"
+    valueExtension: w "dotAccessor bracketAccessor functionInvocation"
+    simpleValue: w "this thisProperty literal unqualifiedIdentifier"
 
   @rule
-    assignable: a
-      pattern: "simpleAssignable assignableExtension*"
-      m pattern: "assignableIfExtended assignableExtension+"
-  ,
-    stnFactory: "ValueStn"
-    stnProps: assignable: true
+    unqualifiedIdentifier: "!reservedWord identifier"
 
-  # need this and thisProperty because one is assignable and the other is not.
   @rule
     this:         "/@/ !identifier"
     thisProperty: "/@/ identifier"
@@ -30,26 +28,25 @@ module.exports = ->
     stnFactory: "ThisStn"
 
   @rule
-    assignableExtension: a
-      pattern: 'functionInvocation+ assignableAccessor'
-      m pattern: "assignableAccessor"
-
-    accessor: w "assignableAccessor functionInvocation"
-
-    assignableIfExtended: w "this literal"
-
-    simpleAssignable: a
-      pattern: "!reservedWord identifier"
-      m pattern: "thisProperty"
-
     dotAccessor:
-      pattern: "'.' identifier"
-      toJs: -> ".#{@identifier.toJs()}"
-      stnFactory: "DotAccessor"
-
-    assignableAccessor: w "dotAccessor bracketAccessor"
+      pattern: "dot_ identifier"
+      stnFactory: "DotAccessorStn"
 
     bracketAccessor:
       pattern: "openBracket_ expression _closeBracket"
-      toJs: -> "[#{@expression.toJs()}]"
       stnFactory: "BracketAccessorStn"
+
+  @rule
+    functionInvocation: a
+      pattern: "openParen_ valueList? _closeParen"
+      m pattern: "_? complexExpression"
+      m pattern: "commentOrSpace* valueListBlock"
+  ,
+    stnFactory: "FunctionInvocationStn"
+
+  @rule
+    assignmentExtension: a
+      pattern: "_assignmentOperator_ complexExpression"
+      m pattern: "_assignmentOperator_ rValueBlock"
+  ,
+    stnFactory: "AssignmentStn"

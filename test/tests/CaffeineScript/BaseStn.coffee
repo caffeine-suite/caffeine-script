@@ -20,3 +20,8 @@ module.exports = suite:
       "foo.bar": false
       "-7 % 5": true
       "!!!foo": false
+      "(b + (b || c))": true
+      "(b + c)": false
+      "!(b + c)": false
+      "(b + c) || (b + c)": true
+      "world != null": true

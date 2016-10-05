@@ -3,7 +3,9 @@
 
 module.exports = ->
   @rule
-    lineComment: "/ *\n/* comment /( *\n)*(\n|$)/"
+    lineCommentEnd: "/( *\n)*/ comment /( *\n)*(\n|$)/"
+    lineComment:    "/( *\n)*/ comment"
+    lineCommentOrBlankLine: ["lineComment", /( *\n)+(?=\n|$)/]
 
     comment: a
       pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"

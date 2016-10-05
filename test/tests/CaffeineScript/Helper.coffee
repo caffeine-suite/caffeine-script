@@ -13,15 +13,20 @@ module.exports =
   parseAstToJs: astParseTest = (map) ->
     for source, expectedJs of map
       do (source, expectedJs) ->
-        test "ast: " + source.replace(/\n/g, "\\n"), ->
-          stn = (p = Parser.parse(source)).getStn()
-          js = stn.toJs()
+        test "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
+          js = try
+            stn = (p = Parser.parse(source)).getStn()
+            stn.toJs()
+          catch error
+            logPrettyError error
+            null
           if js != expectedJs
             log
               semanticTree: stn
-              # parseTree: p
+              parseTree: p
               js:js
               expectedJs: expectedJs
+          throw error if error
           assert.eq js, expectedJs
 
   parseTests: astParseTest #(map) ->

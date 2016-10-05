@@ -4,11 +4,11 @@ Foundation = require 'art-foundation'
 
 defineModule module, class FunctionInvocationStn extends require './BaseStn'
 
-  constructor: (props, children) ->
+  constructor: (props, [@value, @args...]) ->
     # collapse implicit arrays into parents
-    if children.length == 1 && children[0].props.implicitArray
-      children = children[0].children
-    super props, children
+    if @args.length == 1 && @args[0].props.implicitArray
+      @args = @args[0].children
+    super
 
   toJs: ->
-    @applyRequiredParens @childrenToJs ', '
+    "#{@value.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"

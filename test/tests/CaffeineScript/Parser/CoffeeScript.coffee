@@ -14,7 +14,7 @@ module.exports = suite:
 
       "number = -42 if opposite": "if (opposite) {number = -42};"
 
-      "square = (x) -> x * x": "square = (function(x) {return x * x;});"
+      "square = (x) -> x * x": "square = function(x) {return x * x;};"
 
       "list = [1, 2, 3, 4, 5]": "list = [1, 2, 3, 4, 5];"
 
@@ -23,7 +23,7 @@ module.exports = suite:
         root:   Math.sqrt
         square: square
         cube:   (x) -> x * square x
-      """: "math = {root: Math.sqrt, square: square, cube: (function(x) {return x * square(x);})};"
+      """: "math = {root: Math.sqrt, square: square, cube: function(x) {return x * square(x);}};"
 
       # """
       # race = (winner, runners...) ->
@@ -35,8 +35,8 @@ module.exports = suite:
 
   functions: ->
     parseTests
-      "square = (x) -> x * x": "square = (function(x) {return x * x;});"
-      "cube   = (x) -> square(x) * x": "cube = (function(x) {return square(x) * x;});"
+      "square = (x) -> x * x": "square = function(x) {return x * x;};"
+      "cube   = (x) -> square(x) * x": "cube = function(x) {return square(x) * x;};"
 
       #fill = (container, liquid = "coffee") ->
       #  "Filling the #{container} with #{liquid}..."
@@ -109,4 +109,4 @@ module.exports = suite:
   existentialOperator: ->
     parseTests
       "solipsism = true if mind? and not world?": "if ((mind != null) && !(world != null)) {solipsism = true};"
-      'footprints = yeti ? "bear"': "footprints = (yeti != null ? yeti : (\"bear\"));"
+      'footprints = yeti ? "bear"': "footprints = yeti != null ? yeti : (\"bear\");"

@@ -5,11 +5,8 @@ Foundation = require 'art-foundation'
 ArrayStn = require './ArrayStn'
 
 defineModule module, class AssignmentStn extends require './BaseStn'
-  constructor: (props, [@lValue, @rValue...]) ->
-    if @rValue.length > 1
-      @rValue = ArrayStn @rValue
-    else
-      @rValue = @rValue[0]
-    super props, [@lValue, @rValue]
+  constructor: (props, [@lValue, @rValue]) ->
+    super
 
-  toJs: ->  "#{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+  toJs: ->
+    "#{@lValue.toJs()} = #{@rValue.toJsExpression()}"

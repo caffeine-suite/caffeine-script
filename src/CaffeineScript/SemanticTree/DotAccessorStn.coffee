@@ -4,5 +4,9 @@ Foundation = require 'art-foundation'
 
 defineModule module, class DotAccessorStn extends require './BaseStn'
 
+  constructor: (props, [@value, @identier]) ->
+    super
+
   toJs: ->
-    ".#{@children[0].toJs()}"
+    throw new Error "value and identier expected" unless @value and @identier
+    "#{@value.toJsExpression()}.#{@identier.toJs()}"

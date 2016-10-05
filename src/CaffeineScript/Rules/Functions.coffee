@@ -50,37 +50,4 @@ module.exports = ->
       toJs: -> "= #{@expression.toJs()}"
 
   @rule
-    functionInvocation: a
-      pattern: "openParen_ valueList? _closeParen",   toJs: -> "(#{@arguments?.toJs() || ""})"
-      m pattern: "_? complexExpression"
-      m pattern: "comment? valueListBlock"
-  ,
-    stnFactory: "FunctionInvocationStn"
-
-  @rule
-    # when we allow '...' in the middle:
-    # argDef:
-    #   pattern: "identifier etc?"
-    #   toJs: ->
-    #     if @etc
-    #       "...#{@identifier.toJs()}"
-    #     else
-    #       @identifier.toJs()
-
     etc: "'...'"
-
-    # arguments:
-    #   pattern: "expression _commaExpression*"
-    #   toJs: ->
-    #     args = for arg in a = compactFlatten [@expression, @_commaExpressions]
-    #       arg.toJs()
-
-    #     args.join ', '
-
-    # _commaExpression:
-    #   pattern: "_argsSeparator+ expression"
-    #   toJs: -> @expression.toJs()
-
-    # _argsSeparator:
-    #   pattern: / *(,[\n ]*|\n)/
-

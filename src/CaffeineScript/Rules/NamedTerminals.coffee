@@ -80,7 +80,10 @@ module.exports = ->
       ///
 
 
-    unaryOperator:    /// ! | ~ | not\b ///
+    unaryTailOperator: /\?/
+    unaryOperator_:    /// (! | ~ | not\b) \ * ///
+
+    dot_: /\. */
     binaryOperator: ///
 
       # js logic
@@ -105,3 +108,5 @@ module.exports = ->
       [-+*/%]
 
       ///
+
+    _assignmentOperator_: /\ *(=) */

@@ -1,6 +1,6 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
-{BinaryOperatorStn, ControlOperatorStn} = require '../SemanticTree'
+{BinaryOperatorStn, ControlOperatorStn, DodAccessorStn} = require '../SemanticTree'
 
 module.exports =
 
@@ -9,27 +9,16 @@ module.exports =
   statement: "multilineStatement"
 
   multilineStatement:
-    pattern: "statementWithoutEnd newLineBinOp* end"
-    toJs: (returnJsStatement = true) ->
-      if @newLineBinOp
-        out = @statementWithoutEnd.toJs false
-        out = nlbo.toJs out for nlbo in @newLineBinOps
-        out
-      else
-        @statementWithoutEnd.toJs returnJsStatement
+    pattern: "statementWithoutEnd newLineBinOps? end"
     getStn: ->
-      if @newLineBinOp
-        out = @statementWithoutEnd.getStn()
-        out = nlbo.getStn out for nlbo in @newLineBinOps
-        out
-      else
-        @statementWithoutEnd.getStn()
+      out = @statementWithoutEnd.getStn()
+      @newLineBinOps?.getStn(out) || out
 
   tailControlOperator: / +(if|while|until|unless) +/
   tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
 
   statementWithoutEnd: a
-    pattern: '/ *\n/* lineComment* complexExpression !tailControlOperator'
+    pattern: '/ *\n/* lineCommentEnd* complexExpression !tailControlOperator'
     toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
       pattern: 'complexExpression tailControlOperatorComplexExpression+',
@@ -42,21 +31,41 @@ module.exports =
             stn
         stn
 
+  newLineBinOps:
+    pattern: "newLineBinOp+"
+    getStn: (previousLineStn)->
+      out = previousLineStn
+      out = nlbo.getStn out for nlbo in @newLineBinOps
+      out
+
+  newLineBinOpBlockSubparse: a
+    pattern: "binaryOperator _? complexExpression newLineBinOps? end lineCommentEnd*"
+
+    getStn: (previousLineStn)->
+      out = BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
+      @newLineBinOps?.getStn(out) || out
+
+  newLineStart: /( *\n)+/
   newLineBinOp: a
-    pattern: "/( *\n)+/ binaryOperator _? complexExpression"
-    toJs: (previousStatement) ->
-      "(#{previousStatement}) #{@binaryOperator} #{@complexExpression.toJs false}"
+    pattern: "newLineStart binaryOperator _? complexExpression"
 
     getStn: (previousLineStn)->
       BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
 
-    m
-      pattern: "/( *\n)+\./ simpleAssignable assignableExtension* assignmentExtension"
-      toJs: (previousStatement) ->
-        jsList = (a.toJs() for a in compactFlatten [@simpleAssignable, @assignableExtensions])
-        @assignmentExtension.toJs "(#{previousStatement}).#{jsList.join ''}"
-    m
-      pattern: "/( *\n)+/ dotAccessor+"
-      toJs: (previousStatement) ->
-        "(#{previousStatement})#{(a.toJs() for a in @dotAccessors).join ''}"
+    # m pattern: "/( *\n)+\./ simpleAssignable assignableExtension* assignmentExtension"
+    # m
+    #   pattern: "/( *\n)+/ dotAccessor+"
+    #   getStn: (previousLineStn)->
+    #     stn = previousLineStn
+    #     stn = r.getStn stn for r in @dotAccessors
+    #     stn
 
+    m
+      pattern: "newLineStart &newLineBinOpStart valueExtension*"
+      getStn: (left) ->
+        stn = left
+        for right in @valueExtensions || []
+          stn = right.getStn stn
+        stn
+
+  newLineBinOpStart: w "dot_ binaryOperator"

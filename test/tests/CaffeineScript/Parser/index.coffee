@@ -3,13 +3,8 @@
 
 module.exports = require './namespace'
 .addModules
-  Accessors:        require './Accessors'       
-  Classes:          require './Classes'         
-  CoffeeScript:     require './CoffeeScript'    
-  Comments:         require './Comments'        
-  ControlOperators: require './ControlOperators'
-  Functions:        require './Functions'       
-  Misc:             require './Misc'            
-  Operators:        require './Operators'       
-  Statements:       require './Statements'      
+  Assignment:   require './Assignment'  
+  CoffeeScript: require './CoffeeScript'
 require './Literals'
+require './NotWorking'
+require './Working'

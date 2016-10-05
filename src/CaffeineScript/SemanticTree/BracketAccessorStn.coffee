@@ -4,4 +4,7 @@ Foundation = require 'art-foundation'
 
 defineModule module, class BracketAccessorStn extends require './BaseStn'
 
-  toJs: -> "[#{@children[0].toJsExpression()}]"
+  constructor: (props, [@value, @expression]) ->
+    super
+
+  toJs: -> "#{@value.toJsExpression()}[#{@expression.toJsExpression()}]"

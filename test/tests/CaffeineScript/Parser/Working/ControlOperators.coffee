@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../Helper'
+{parseTests} = require '../../Helper'
 
 module.exports = suite:
 
@@ -85,6 +85,6 @@ module.exports = suite:
         "foo if bar while baz": "while (baz) {if (bar) {foo}};"
         "foo while bar if baz": "if (baz) {while (bar) {foo}};"
 
-    expressions: ->
+    asExpressions: ->
       parseTests
-        "=>\n foo if bar": "(() => {return bar ? foo : undefined;});"
+        "=>\n foo if bar": "() => {return bar ? foo : undefined;};"

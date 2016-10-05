@@ -4,30 +4,30 @@
 
 module.exports =
   root: a
-    pattern: 'statement* lineComment*'
+    pattern: 'statement* lineCommentEnd*'
     node:
-      getStatements: ->
-        s for s in @statement when present s.toString()
+      # getStatements: ->
+      #   s for s in @statement when present s.toString()
 
-      toJs: ->
-        @getStn().toJs()
-        # (js for s in @statement when present js = s.toJs()).join("; ") + ";"
+      # toJs: ->
+      #   @getStn().toJs()
+      #   # (js for s in @statement when present js = s.toJs()).join("; ") + ";"
 
       stnFactory: StatementsStn
 
-      toJsList: -> (js for s in @statement when present js = s.toJs()).join ", "
+      # toJsList: -> (js for s in @statement when present js = s.toJs()).join ", "
 
-      toFunctionBodyJs: ->
-        (for s, i in lines = @statement when present js = s.toJs notLastLine = i < lines.length - 1
-          if notLastLine
-            js
-          else
-            "return #{js}"
-        ).join(";\n") + ";"
+      # toFunctionBodyJs: ->
+      #   (for s, i in lines = @statement when present js = s.toJs notLastLine = i < lines.length - 1
+      #     if notLastLine
+      #       js
+      #     else
+      #       "return #{js}"
+      #   ).join(";\n") + ";"
 
-      toImplicitArrayOrValueJs: ->
-        statements = @getStatements()
-        if statements.length == 1
-          statements[0].toJs()
-        else
-          "[#{(s.toJs() for s in statements).join ', '}]"
+      # toImplicitArrayOrValueJs: ->
+      #   statements = @getStatements()
+      #   if statements.length == 1
+      #     statements[0].toJs()
+      #   else
+      #     "[#{(s.toJs() for s in statements).join ', '}]"
