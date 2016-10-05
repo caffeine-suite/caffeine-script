@@ -36,14 +36,11 @@ module.exports = ->
       m pattern: "_? complexExpression"
       m pattern: "commentOrSpace* valueListBlock"
   ,
-    stnExtension: true
     stnFactory: "FunctionInvocationStn"
+    stnExtension: true
 
   @rule
-    assignmentExtension: "assignmentExtensionFoo"
-
-  @rule
-    assignmentExtensionFoo: a
+    assignmentExtension: a
       pattern: "_assignmentOperator_ complexExpression"
       m pattern: "_assignmentOperator_ rValueBlock"
   ,
