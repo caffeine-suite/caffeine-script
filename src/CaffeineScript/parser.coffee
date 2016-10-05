@@ -48,11 +48,12 @@ defineModule module, ->
           else
             @stnChildren
         else
-          v for m in @nonStnExtensionMatches when v = m.getStn? left
+          v for m in @nonStnExtensionMatches when v = m.getStn left
 
       @getter
-        stnExtensionMatches: -> m for m in @matches when m.stnExtension
-        nonStnExtensionMatches: -> m for m in @matches when !m.stnExtension
+        isStnExtension: -> @stnExtension || (@matches.length == 1 && @matches[0].isStnExtension)
+        stnExtensionMatches: -> m for m in @matches when m.getStn && m.isStnExtension
+        nonStnExtensionMatches: -> m for m in @matches when m.getStn && !m.isStnExtension
 
       getStn: (left) ->
         stn = if factory = @getStnFactory()
@@ -64,9 +65,10 @@ defineModule module, ->
         else
           x = @getStnChildren left
 
-          if x.length == 1 then x[0] else if x.length == 0 then null else x
+          if x.length == 1 then x[0] else if x.length == 0 then left else x
 
-        stn = estension.getStn stn for extension in @stnExtensionMatches
+        for extension in @stnExtensionMatches
+          stn = extension.getStn stn
         stn
 
       toJs: (returnJsStatement)->

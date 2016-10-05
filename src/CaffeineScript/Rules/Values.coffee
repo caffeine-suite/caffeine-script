@@ -1,18 +1,9 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
 
-{BracketAccessorStn, ValueStn, DotAccessorStn, ThisStn} =  require '../SemanticTree'
-
 module.exports = ->
   @rule
     value: "simpleValue valueExtension*"
-  ,
-    getStn: ->
-      [left, rest...] = @matches
-      stn = left.getStn()
-      for r in rest when r.getStn
-        stn = r.getStn stn
-      stn
 
   @rule
     valueExtension: w "dotAccessor bracketAccessor functionInvocation"
@@ -21,38 +12,23 @@ module.exports = ->
   @rule
     unqualifiedIdentifier:
       pattern: "!reservedWord identifier assignmentExtension?"
-      getStn: ->
-        stn = @identifier.getStn()
-        if @assignmentExtension
-          @assignmentExtension.getStn stn
-        else stn
 
   @rule
     this:         "/@/ !identifier"
+    thisProperty: "/@/ identifier assignmentExtension?"
   ,
     stnFactory: "ThisStn"
 
   @rule
-    thisProperty: "/@/ identifier assignmentExtension?"
-  ,
-    getStn: ->
-      stn = ThisStn @identifier.getStn()
-      if @assignmentExtension
-        @assignmentExtension.getStn stn
-      else stn
-
-  @rule
     dotAccessor:
       pattern: "dot_ identifier assignmentExtension?"
-      getStn: (left) ->
-        stn = DotAccessorStn left, @identifier.getStn()
-        if @assignmentExtension
-          @assignmentExtension.getStn stn
-        else stn
+      stnFactory: "DotAccessorStn"
+      stnExtension: true
 
     bracketAccessor:
       pattern: "openBracket_ expression _closeBracket"
       stnFactory: "BracketAccessorStn"
+      stnExtension: true
 
   @rule
     functionInvocation: a
@@ -60,11 +36,16 @@ module.exports = ->
       m pattern: "_? complexExpression"
       m pattern: "commentOrSpace* valueListBlock"
   ,
+    stnExtension: true
     stnFactory: "FunctionInvocationStn"
 
   @rule
-    assignmentExtension: a
+    assignmentExtension: "assignmentExtensionFoo"
+
+  @rule
+    assignmentExtensionFoo: a
       pattern: "_assignmentOperator_ complexExpression"
       m pattern: "_assignmentOperator_ rValueBlock"
   ,
     stnFactory: "AssignmentStn"
+    stnExtension: true
