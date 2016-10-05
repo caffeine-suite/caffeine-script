@@ -1,6 +1,6 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
-{ArrayStn} = require "../SemanticTree"
+{ArrayStn, BinaryOperatorStn} = require "../SemanticTree"
 module.exports = ->
   @rule
 
@@ -30,6 +30,13 @@ module.exports = ->
 
   @rule
     newLineBinOpBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "newLineBinOpBlockSubparse"
+    newLineBinOpBlockSubparse: a
+      pattern: "binaryOperator _? complexExpression newLineBinOps? end lineCommentEnd*"
+
+      getStn: (previousLineStn)->
+        out = BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
+        @newLineBinOps?.getStn(out) || out
+
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:
       pattern: "statement*"

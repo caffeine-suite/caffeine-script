@@ -37,13 +37,6 @@ module.exports =
       out = nlbo.getStn out for nlbo in @newLineBinOps
       out
 
-  newLineBinOpBlockSubparse: a
-    pattern: "binaryOperator _? complexExpression newLineBinOps? end lineCommentEnd*"
-
-    getStn: (previousLineStn)->
-      out = BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
-      @newLineBinOps?.getStn(out) || out
-
   newLineStart: /( *\n)+/
   newLineBinOp: a
     pattern: "newLineStart binaryOperator _? complexExpression"
