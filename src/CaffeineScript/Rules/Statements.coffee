@@ -19,7 +19,6 @@ module.exports =
 
   statementWithoutEnd: a
     pattern: '/ *\n/* lineCommentEnd* complexExpression !tailControlOperator'
-    toJs: (returnJsStatement = true) -> @complexExpression.toJs returnJsStatement
     m
       pattern: 'complexExpression tailControlOperatorComplexExpression+',
       getStn: ->

@@ -34,10 +34,8 @@ module.exports = ->
       getPresent: ->
         log "blankline getPresent"
         false
-      toJs: -> ""
       m
         pattern: /\n/
-        toJs: -> ""
 
     openParen_:     /\( */
     _closeParen:    /\ *\)/

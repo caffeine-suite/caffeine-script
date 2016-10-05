@@ -42,7 +42,6 @@ module.exports = ->
   @rule
     stringLiteral: a
       pattern: '/"" */ unparsedBlock'
-      toJs: -> normalizeString @unparsedBlock
       getStn: ->
         StringStn value: @unparsedBlock.toString().trim()
 
@@ -53,26 +52,6 @@ module.exports = ->
       m pattern: 'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
       m pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
   ,
-    toJs: ->
-      out = if @interpolation
-        """
-        `#{@mid.toEscapedBackTicks()}#{@interpolation.toJs()}`
-        """
-      else
-        """
-        "#{@mid.toEscapedDoubleQuotes()}"
-        """
-      if @hereDoc
-        indents = out.match /\n *(?=\S)*/g
-        if indents?.length > 0
-          minIndent = null
-          for i in indents
-            len = i.length - 1
-            minIndent = len if !minIndent? || len < minIndent
-          out = out.replace ///\n\ {#{minIndent}}///g, "\n"
-        out = out.replace /^"\n/, '"'
-
-      escapeNewLines out
 
     getStnChildren: (appendTo = [])->
       appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
@@ -91,11 +70,9 @@ module.exports = ->
 
     stringLiteral: a
 
-      pattern:   "/'/ string:/([^\\']|\\.)*/ /'/", toJs: -> escapeNewLines @toString()
-
-      m pattern: "':' string:unquotedString",
+      pattern:   "/'/ string:/([^\\']|\\.)*/ /'/"
+      m pattern: "':' string:unquotedString"
   ,
-    toJs: -> "'#{escapeNewLines @string.toString()}'"
     getStn: -> StringStn value: @string.toString()
 
   @rule
@@ -124,7 +101,6 @@ module.exports = ->
     hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
     hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
   ,
-    toJs: -> "${#{@expression.toJs()}}#{@mid.toEscapedBackTicks()}#{@interpolation?.toJs() || ''}"
     getStnChildren: (appendTo = [])->
       appendTo.push @expression.getStn()
       appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0

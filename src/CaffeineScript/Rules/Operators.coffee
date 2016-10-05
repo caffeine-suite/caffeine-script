@@ -23,8 +23,6 @@ module.exports =
         when "!=", "isnt" then "!=="
         else op
 
-    getJsExpression: -> @unaryOpExpression.toJs()
-
   unaryOpExpression: a
     pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"
 
