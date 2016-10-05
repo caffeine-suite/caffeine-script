@@ -29,3 +29,20 @@ module.exports = suite:
         "@.f = 1":          "this.f = 1;"
         "@.f().foo = 1":    "this.f().foo = 1;"
         "@.f.foo.bar = 1":  "this.f.foo.bar = 1;"
+
+  multiline:
+    basic: ->
+      parseTests
+        "f\n.foo = 1":   "f.foo = 1;"
+        "f\n|| foo = 1": "f || (foo = 1);"
+
+    compound: ->
+      parseTests
+        "f\n.foo.bar = 1":   "f.foo.bar = 1;"
+        "f\n.foo().bar = 1": "f.foo().bar = 1;"
+
+  indentedMultiline:
+    basic: ->
+      parseTests
+        "f\n  .foo = 1":     "f.foo = 1);"
+        "f\n  || foo = 1":   "f || (foo = 1);"

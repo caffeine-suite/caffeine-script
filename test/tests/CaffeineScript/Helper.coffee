@@ -23,7 +23,7 @@ module.exports =
           if js != expectedJs
             log
               semanticTree: stn
-              parseTree: p
+              # parseTree: p
               js:js
               expectedJs: expectedJs
           throw error if error
