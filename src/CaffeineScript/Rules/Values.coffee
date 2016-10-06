@@ -34,7 +34,7 @@ module.exports = ->
     functionInvocation: a
       pattern: "openParen_ valueList? _closeParen"
       m pattern: "_? complexExpression"
-      m pattern: "commentsOrSpaceWithoutEnd valueListBlock"
+      m pattern: "_? valueListBlock"
   ,
     stnFactory: "FunctionInvocationStn"
     stnExtension: true
@@ -48,9 +48,9 @@ module.exports = ->
     stnExtension: true
 
   @rule
-    blockValueExtension: "commentsOrSpaceWithoutEnd blockValueExtensionBlock"
+    blockValueExtension: "_? blockValueExtensionBlock"
     blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
     blockValueExtensionSubparse: a
 
-      pattern: "blankOrCommentLinesWithEnd? lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
-      m pattern: "blankOrCommentLinesWithEnd? &dot_ valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
+      pattern: "end? lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
+      m pattern: "end? &dot_ valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"

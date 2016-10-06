@@ -6,8 +6,8 @@ module.exports = ->
     blocks: 'block+'
 
   @rule
-    block:          "comment? block:actualBlock"
-    toEolAndBlock:  "comment? block:actualToEolAndBlock"
+    block:          "_? block:actualBlock"
+    toEolAndBlock:  "_? block:actualToEolAndBlock"
 
   @rule
     actualBlock:          Extensions.IndentBlocks.getPropsToSubparseBlock()
