@@ -7,35 +7,10 @@ Most rules (rules with no "_" suffix or prefix) do not consume spaces before or 
 module.exports = ->
 
   @rule
-    _:              / +/
-    # end:            "endExceptEob* commentOrSpace? endStatement"
-    end:   "commentOrSpace* /\\n|;|$/"
-    commentOrSpace: w "comment _"
-    # end: [
-    #   "endExceptEob+ commentOrSpace* /$/?"
-    #   "commentOrSpace* /$/"
-    # ]
-    # end: / *(\n|;|$)/
-
-    # endStatement: /\\n|$|;/
-
-  ,
-    getPresent: -> false
-
-  @rule
     _equals_:       / *= */
     _colon_:        / *: */
     _comma_:        / *,[ \n]*/
     _arrow_:        / *[-=]> */
-    # end:            /\n|$/
-
-    blankLine: a
-      pattern: "comment /\\n/?"
-      getPresent: ->
-        log "blankline getPresent"
-        false
-      m
-        pattern: /\n/
 
     openParen_:     /\( */
     _closeParen:    /\ *\)/

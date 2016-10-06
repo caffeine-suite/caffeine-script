@@ -27,31 +27,43 @@ module.exports = class OperatorHelper
     w "left  ^"
     w "left  |"
     w "left  &&"
-    w "left  ||"
+    w "left  || ?"
   ]
+
+  @opsToPrecidence: {}
+  @direction = for [direction, operators...], i in @precidence
+    @opsToPrecidence[op] = i for op in operators
+    direction
+
+  @validateOperator: validateOperator = (operator) =>
+    throw new Error "OperatorHelper: operator '#{operator}' is not defined" unless @opsToPrecidence[operator]
+    operator
+
+  @getNormalizedOperator: (operator)->
+    switch operator = operator.toString().trim()
+      when "and" then "&&"
+      when "or"  then "||"
+      when "==", "is"   then "==="
+      when "!=", "isnt" then "!=="
+      else
+        validateOperator operator
 
   @binaryOperatorToJs: (operand, a, b) ->
     f = OperatorHelper.operatorMap[operand] || infix
     f a, b, operand
-
-  @opsToPrecidence: {}
 
   @getOpPrecidence: (op) =>
     unless (p = @opsToPrecidence[op])?
       throw new Error "OperatorHelper: operator '#{op}' not defined"
     p
 
-  @direction = for [direction, ops...], i in @precidence
-    @opsToPrecidence[op] = i for op in ops
-    direction
+  @resolveOperatorPrecidence: (operators, operands, combinerOverride) =>
+    throw new Error "expecting: operands.length:#{operands.length} == operators.length:#{operators.length} + 1" unless operands.length == operators.length + 1
+    while operators.length > 0
 
-  @resolveOperatorPrecidence: (ops, operands, combinerOverride) =>
-    throw new Error unless operands.length == ops.length + 1
-    while ops.length > 0
-
-      lowestPrecidence = @getOpPrecidence ops[0]
+      lowestPrecidence = @getOpPrecidence operators[0]
       firstOccurance = lastOccurance = 0
-      for op, i in ops
+      for op, i in operators
         if lowestPrecidence > p = @getOpPrecidence op
           firstOccurance = lastOccurance = i
           lowestPrecidence = p
@@ -60,13 +72,13 @@ module.exports = class OperatorHelper
 
       opIndexToResolve = if @direction[lowestPrecidence] == "left" then firstOccurance else lastOccurance
 
-      opsBefore = ops
+      opsBefore = operators
       operandsBefore = operands
 
-      op = ops[opIndexToResolve]
+      op = operators[opIndexToResolve]
       operandA = operands[opIndexToResolve]
       operandB = operands[opIndexToResolve + 1]
-      ops = arrayWithout ops, opIndexToResolve
+      operators = arrayWithout operators, opIndexToResolve
 
       operands = arrayWithout operands, opIndexToResolve
       combiner = combinerOverride || @operatorMap[op] || infix

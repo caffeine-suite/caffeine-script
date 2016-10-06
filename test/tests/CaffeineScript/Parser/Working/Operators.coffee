@@ -43,6 +43,13 @@ module.exports = suite:
         "1 is   2":   "1 === 2;"
         "1 in   2":   "Caf.in(1, 2);"
 
+    precedence: ->
+      parseTests
+        "1 +  2 +  3":  "(1 + 2) + 3;";
+        "1 ** 2 ** 3":  "Caf.pow(1, Caf.pow(2, 3));";
+        "1 +  2 *  3":  "1 + (2 * 3);";
+        "1 *  2 +  3":  "(1 * 2) + 3;";
+
     unary: ->
       parseTests
         "!true": "!true;"
@@ -58,41 +65,42 @@ module.exports = suite:
 
   multiline:
 
-    basic: ->
-      parseTests
-        """
-        foo
-        || bar
-        """: "foo || bar;"
+    newLine:
+      basic: ->
+        parseTests
+          """
+          foo
+          || bar
+          """: "foo || bar;"
 
-        """
-        foo = baz.dood
-          1
-          2
-        || bar
-        """: "(foo = baz.dood(1, 2)) || bar;"
+          """
+          foo = baz.dood
+            1
+            2
+          || bar
+          """: "(foo = baz.dood(1, 2)) || bar;"
 
-        """
-        foo
-        || bar
-        || baz
-        """: "(foo || bar) || baz;"
+          """
+          foo
+          || bar
+          || baz
+          """: "(foo || bar) || baz;"
 
-    mixed: ->
-      parseTests
-        """
-        foo
-        || bar
-        .baz
-        """: "(foo || bar).baz;"
+      mixed: ->
+        parseTests
+          """
+          foo
+          || bar
+          .baz
+          """: "(foo || bar).baz;"
 
-        """
-        foo
-        .bar
-        || baz
-        """: "foo.bar || baz;"
+          """
+          foo
+          .bar
+          || baz
+          """: "foo.bar || baz;"
 
-    withIndent:
+    block:
       basic: ->
         parseTests
           """
@@ -101,10 +109,23 @@ module.exports = suite:
           """: "foo || bar;"
 
           """
+          foo && bar
+            || baz
+          """: "foo && (bar || baz);"
+
+      mixed: ->
+        parseTests
+          """
           foo
             || bar
-            || baz
-          """: "(foo || bar) || baz;"
+              .baz
+          """: "foo || bar.baz;"
+
+          """
+          foo
+            .bar
+              || baz
+          """: "foo.bar || baz;"
 
       precedence: ->
         parseTests
@@ -120,6 +141,11 @@ module.exports = suite:
 
       comments: ->
         parseTests
+          """
+          foo # 1
+            || bar
+          """: "foo || bar;"
+
           """
           # 1
           foo # 2
@@ -139,65 +165,152 @@ module.exports = suite:
             # 1
           """: "foo || bar;"
 
-      contrasted: ->
-        parseTests
-          """
-          a && b
-            || c && d
-          """: "a && (b || (c && d));"
-
-          """
-          a || b
-          && c || d
-          """: "(a || b) && (c || d);"
-
-          """
-          a or b
-          and c or d
-          """: "(a || b) && (c || d);"
-
-
-    withAndWithoutIndent: ->
+    contrasted: ->
       parseTests
         """
-        foo + bar
-          || baz
-        """: "foo + (bar || baz);"
+        a && b
+        || c && d
+        """: "(a && b) || (c && d);"
 
         """
-        foo + bar
-        || baz
-        """: "(foo + bar) || baz;"
+        a && b
+          || c && d
+        """: "a && (b || (c && d));"
 
         """
-        foo + bar
-          baz
-        """: "foo + bar(baz);"
+        a || b
+        && c || d
+        """: "(a || b) && (c || d);"
 
         """
-        a
-          || b
-          # comment
-        """: "a || b;"
+        a || b
+          && c || d
+        """: "a || (b && (c || d));"
 
+    englishOperators: ->
+      parseTests
         """
-        a
-        # comment
-          || b
-        """: "a || b;"
-
-        """
-        a
-        || b + c
-          || d
-          || e + f
-        || g
-        """: "(a || (b + ((c || d) || (e + f)))) || g;"
+        a or b
+        and c or d
+        """: "(a || b) && (c || d);"
 
 
-    # invocation: ->
-    #   parseTests
-    #     """
-    #     foo
-    #     (bar)
-    #     """: "(foo)(bar);"
+    mixed:
+      justOperators:
+        simple: ->
+          parseTests
+            """
+            foo
+            || bar
+              || baz
+            """: "foo || (bar || baz);"
+
+            """
+            foo
+              || bar
+            || baz
+            """: "(foo || bar) || baz;"
+
+            """
+            foo
+              || bar
+              || baz
+            """: "(foo || bar) || baz;"
+
+            """
+            foo
+            || bar
+            || baz
+            """: "(foo || bar) || baz;"
+
+            """
+            foo
+              || bar
+                || baz
+            """: "foo || (bar || baz);"
+
+        precedence: ->
+          parseTests
+            """
+            a || b
+            && c || d
+            && e || f
+            """: "((a || b) && (c || d)) && (e || f);"
+
+          parseTests
+            """
+            a + b
+            || c + d
+              || e + f
+            """: "(a + b) || (c + (d || (e + f)));"
+
+          parseTests
+            """
+            a || b
+              && c || d
+            && e || f
+            """: "(a || (b && (c || d))) && (e || f);"
+
+          parseTests
+            """
+            a || b
+              && c || d
+              && e || f
+            """: "a || ((b && (c || d)) && (e || f));"
+
+          parseTests
+            """
+            a || b && c || d && e || f
+            """: "((a || (b && c)) || (d && e)) || f;"
+      operatorsAndAccess:
+        newLineOnly: ->
+          parseTests
+            """
+            a || b
+            && c || d
+            .e || f
+            """: "(((a || b) && (c || d)).e) || f;"
+
+            """
+            a || b
+            .c || d
+            && e || f
+            """: "(((a || b).c) || d) && (e || f);"
+
+        mixedMultiline: ->
+          parseTests
+            """
+            a || b
+            && c || d
+              .e || f
+            """: "(a || b) && (c || (d.e || f));"
+
+            """
+            a || b
+            .c || d
+              && e || f
+            """: "((a || b).c) || (d && (e || f));"
+
+            """
+            a || b
+              && c || d
+            .e || f
+            """: "((a || (b && (c || d))).e) || f;"
+
+            """
+            a || b
+              .c || d
+            && e || f
+            """: "(a || (b.c || d)) && (e || f);"
+
+            """
+            a || b
+              && c || d
+              .e || f
+            """: "a || (((b && (c || d)).e) || f);"
+
+            """
+            a || b
+              .c || d
+              && e || f
+            """: "a || ((b.c || d) && (e || f));"

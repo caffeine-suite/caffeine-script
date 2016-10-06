@@ -82,6 +82,7 @@ defineModule module, class BaseStn extends BaseObject
 
   needsParens: true
   needsParensAsStatement: false
+
   getNeedsParens: -> @needsParens
   getNeedsParensAsStatement: -> @needsParensAsStatement
 

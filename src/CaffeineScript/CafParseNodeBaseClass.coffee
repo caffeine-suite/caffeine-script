@@ -50,11 +50,14 @@ defineModule module, ->
 
     @getter
       isStnExtension: -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
-      stnExtensionMatches: -> m for m in @matches when m.getStn && m.isStnExtension
-      nonStnExtensionMatches: -> m for m in @matches when m.getStn && !m.isStnExtension
+      stnExtensionMatches: -> m for m in @presentMatches when m.getStn && m.isStnExtension
+      nonStnExtensionMatches: -> m for m in @presentMatches when m.getStn && !m.isStnExtension
 
     getStn: (left) ->
-      # log getStn: @getRuleName(), isStnExtension: @isStnExtension, presentMatchesCount: @presentMatches.length
+      # log getStn:
+      #   ruleName: @getRuleName()
+      #   isStnExtension: @isStnExtension
+      #   presentMatchesCount: @presentMatches.length
       stn = if factory = @getStnFactory()
         # log getStn:
         #   stnFactory: @stnFactory?.getName?() || @stnFactory
@@ -74,11 +77,4 @@ defineModule module, ->
         stn = extension.getStn stn
       stn
 
-    toJs: (returnJsStatement)->
-      js = for match in compactFlatten @matches when match.toJs
-        match.toJs returnJsStatement
-
-      if js.length > 0
-        js.join ''
-      else
-        @toString()
+    toJs: -> @getStn().toJs()

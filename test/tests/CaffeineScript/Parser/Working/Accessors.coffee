@@ -60,11 +60,17 @@ module.exports = suite:
             .bar + 1
           """: "foo.bar + 1;"
 
+      precedence: ->
         parseTests
           """
           foo
             .bar * 2 + 3
           """: "(foo.bar * 2) + 3;"
+
+          """
+          foo
+            .bar + 2 * 3
+          """: "foo.bar + (2 * 3);"
 
     compound: ->
       parseTests

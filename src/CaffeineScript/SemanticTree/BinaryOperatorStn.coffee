@@ -5,7 +5,7 @@ Foundation = require 'art-foundation'
 
 defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
-  constructor: ({@operand}, [@left, @right]) ->
+  constructor: ({@operator}, [@left, @right]) ->
     super
 
   toJs: -> @toJsExpression()
@@ -13,6 +13,6 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
   toJsStatement: -> @toJsExpression skipParens: true
 
   toJsExpression: ->
-    binaryOperatorToJs @operand,
+    binaryOperatorToJs @operator,
       left = @applyParens @left.toJsExpression()
       right = @applyParens @right.toJsExpression()

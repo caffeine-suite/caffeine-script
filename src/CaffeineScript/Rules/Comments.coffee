@@ -3,11 +3,24 @@
 
 module.exports = ->
   @rule
-    lineCommentEnd: "/( *\n)*/ comment /( *\n)*(\n|$)/"
-    lineComment:    "/( *\n)*/ comment"
-    lineCommentOrBlankLine: ["lineComment", /( *\n)+(?=\n|$)/]
+    lineCommentEnd: "spaceAndNewLinesWithEnd comment justEnd"
+    lineComment:    "spaceAndNewLinesWithEnd comment"
 
     comment: a
       pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"
       m pattern:    "/ *(\\# *)/ unparsedBlock"
       m pattern:    "/ *(\\#[^\n]*)/"
+
+    commentWithoutEnd: "comment optionalSpace"
+    commentsOrSpaceWithoutEnd: "optionalSpace commentWithoutEnd*"
+    blankOrCommentLinesWithEnd: "lineCommentEnd* spaceAndNewLinesWithEnd?"
+
+    optionalSpace:  / */
+    _:              / +/
+    spaceAndNewLinesWithEnd:   /( *(\n|;|$))*/
+    end:   "commentsOrSpaceWithoutEnd justEnd blankOrCommentLinesWithEnd"
+    justEnd: /\n|;|$/
+    commentOrSpace: w "comment _"
+
+  ,
+    getPresent: -> false

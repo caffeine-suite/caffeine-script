@@ -4,5 +4,5 @@
 
 module.exports =
   root: a
-    pattern: 'statement* lineCommentEnd*'
+    pattern: 'end? statement* end?'
     stnFactory: StatementsStn

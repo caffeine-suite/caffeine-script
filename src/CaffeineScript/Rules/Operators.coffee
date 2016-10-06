@@ -1,27 +1,34 @@
 {a, m, w, compactFlatten, log, min, arrayWithout} = require "art-foundation"
 
-{resolveOperatorPrecidence} = require "../OperatorHelper"
+{resolveOperatorPrecidence, getNormalizedOperator} = require "../OperatorHelper"
 {BinaryOperatorStn, UnaryOperatorStn} = require '../SemanticTree'
 
 module.exports =
   binOpExpression:
-    pattern: "unaryOpExpression operatorAndExpression+"
-    getStn: ->
-      ops = (ope.getNormalizedOp() for ope in @operatorAndExpressions)
-      operands = compactFlatten [@unaryOpExpression.getStn(), (operand.getStn() for operand in @operatorAndExpressions)]
+    pattern: "unaryOpExpression binaryOperatorSequenceExtension?"
 
-      resolveOperatorPrecidence ops, operands, (operandA, operandB, op) ->
-        BinaryOperatorStn operand: op, operandA, operandB
+  binaryOperatorSequenceExtension:
+    pattern: "binaryOperatorAndExpression+"
+    stnExtension: true
+    getStn: (left)->
+      throw new Error "expecting left" unless left
+      operators = (getNormalizedOperator operator.binaryOperator for operator in @binaryOperatorAndExpressions)
+      operands = compactFlatten [left, (operand.unaryOpExpression.getStn() for operand in @binaryOperatorAndExpressions)]
 
-  operatorAndExpression:
+      resolveOperatorPrecidence operators, operands, (operandA, operandB, operator) ->
+        BinaryOperatorStn operator: operator, operandA, operandB
+
+  binaryOperatorAndExpression:
     pattern: "_? binaryOperator _? unaryOpExpression"
-    getNormalizedOp: ->
-      switch op = @binaryOperator.toString()
-        when "and" then "&&"
-        when "or"  then "||"
-        when "==", "is"   then "==="
-        when "!=", "isnt" then "!=="
-        else op
+    # stnProps: -> operator: getNormalizedOperator @binaryOperator
+    # stnFactory: "BinaryOperatorStn"
+    # stnExtension: true
+
+  lineStartBinaryOperatorAndExpression:
+    pattern: "binaryOperator _? binOpExpression"
+    stnProps: -> operator: getNormalizedOperator @binaryOperator
+    stnFactory: "BinaryOperatorStn"
+    stnExtension: true
 
   unaryOpExpression: a
     pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"
