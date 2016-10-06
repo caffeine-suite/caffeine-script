@@ -21,6 +21,11 @@ defineModule module, class BaseStn extends BaseObject
         a.push @props if objectKeyCount(@props) > 0
         a.concat (c.inspectedObjects for c in @children)
       out
+    type: -> @class.type
+
+  @postCreate: ->
+    [@type] = @getName().split /Stn$/
+    super
 
   # so subclasses can add custom newInstance implementations
   @newInstance: (props, children) ->

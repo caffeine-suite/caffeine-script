@@ -11,4 +11,7 @@ defineModule module, class DotAccessorStn extends require './BaseStn'
 
   toJs: ->
     throw new Error "value and identier expected" unless @value and @identier
-    "#{@value.toJsExpressionWithParens()}.#{@identier.toJs()}"
+    if (identierString = @identier.toJs()).match /['"`]/
+      "#{@value.toJsExpressionWithParens()}[#{identierString}]"
+    else
+      "#{@value.toJsExpressionWithParens()}.#{identierString}"

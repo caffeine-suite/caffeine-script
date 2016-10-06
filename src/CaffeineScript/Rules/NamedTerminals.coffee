@@ -49,7 +49,7 @@ module.exports = ->
 
     unquotedString:
       ///
-      ((?!\s)[-.$\#\w\x7f-\uffff])+
+      ((?!\s)[-@.$\#\w\x7f-\uffff])+
       ///
 
 

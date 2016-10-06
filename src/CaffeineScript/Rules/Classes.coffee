@@ -11,6 +11,9 @@ normalizeString = (string) ->
 module.exports =
   classDefinition:
     pattern: "/class/ _ identifier _extendsClause? block?"
+
+    stnFactory: "ClassStn"
+
     toJs: ->
       out = "class #{@identifier.toJs()} "
       if @_extendsClause

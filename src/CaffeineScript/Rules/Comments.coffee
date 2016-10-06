@@ -17,6 +17,5 @@ module.exports = ->
       "spaceOrEnds? comment+ spaceOrEnds"
       "spaceOrEnds"
     ]
-
   ,
     getPresent: -> false

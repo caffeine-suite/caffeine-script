@@ -4,3 +4,4 @@ module.exports =
   div: (a, b) -> a // b
   pow: (a, b) -> a ** b
   existsOr: (a, b) -> a ? b()
+  defClass: (klass, init) -> init.call klass

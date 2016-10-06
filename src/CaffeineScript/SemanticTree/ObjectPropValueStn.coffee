@@ -4,6 +4,8 @@ Foundation = require 'art-foundation'
 
 defineModule module, class ObjectPropValueStn extends require './BaseStn'
 
+  @getter isObject: true
+
   toJs: ->
     [prop, value] = @children
     "#{prop.toJs()}: #{value.toJsExpression()}"
