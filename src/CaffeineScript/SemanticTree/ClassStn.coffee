@@ -58,8 +58,3 @@ defineModule module, class ClassStn extends require './BaseStn'
       out + " {}, #{@body.toJs()})"
     else
       out + " {}"
-
-
-
-
-
