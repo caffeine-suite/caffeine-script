@@ -11,12 +11,16 @@ module.exports = suite:
       parseTests
         "class Foo": "Foo = Caf.defClass(class Foo {}, function(){return this;});"
         "class Foo extends Bar": "Foo = Caf.defClass(class Foo extends Bar {}, function(){return this;});"
+
+    body: ->
+      parseTests
         """
         class Foo extends Bar
           foo: 1
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){this.prototype.foo = 1;
+          function()
+          {this.prototype.foo = 1;
           return this;});"
 
         """
@@ -24,7 +28,8 @@ module.exports = suite:
           foo: 1
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){this.prototype.foo = 1;
+          function()
+          {this.prototype.foo = 1;
           return this;});"
 
         """
@@ -32,7 +37,8 @@ module.exports = suite:
           @foo: 1
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){this.foo = 1;
+          function()
+          {this.foo = 1;
           return this;});"
 
     withNormalStatemnts: ->

@@ -16,23 +16,21 @@ module.exports =
         test "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
           js = try
             stn = (p = Parser.parse(source)).getStn()
-            stn.toJs()
+            transformedStn = stn.transform()
+            transformedStn.toJs()
           catch error
             logPrettyError error
             null
           if js != expectedJs
             log
               semanticTree: stn
-              # parseTree: p
+              transformedSemanticTree: transformedStn if transformedStn != stn
               js:js
               expectedJs: expectedJs
           throw error if error
           assert.eq js, expectedJs
 
-  parseTests: astParseTest #(map) ->
-    # for k, v of map
-    #   do (k, v) ->
-    #     test "#{k} >> #{v}".replace(/\n/g, "\\n"), -> assert.eq (p = Parser.parse(k)).toJs(), v#, formattedInspect p
+  parseTests: astParseTest
 
   illegalSyntaxTests: (array) ->
     for source in array

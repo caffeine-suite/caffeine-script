@@ -65,6 +65,20 @@ defineModule module, class BaseStn extends BaseObject
   toJsStatement: ->
     @toJs()
 
+  transformChildren: ->
+    ret = null
+    for child, i in @children
+      if child != newChild = child.transform()
+        ret ?= @children.slice()
+        ret[i] = newChild
+    ret || @children
+
+  transform: ->
+    if @children != newChildren = @transformChildren()
+      new @class @props, newChildren
+    else
+      @
+
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;
   toJsExpression: ->

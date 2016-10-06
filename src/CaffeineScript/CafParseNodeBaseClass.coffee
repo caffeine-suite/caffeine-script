@@ -77,4 +77,7 @@ defineModule module, ->
         stn = extension.getStn stn
       stn
 
-    toJs: -> @getStn().toJs()
+    getTransformedSemanticTree: ->
+      @getStn().transform()
+
+    toJs: -> @getTransformedSemanticTree().toJs()
