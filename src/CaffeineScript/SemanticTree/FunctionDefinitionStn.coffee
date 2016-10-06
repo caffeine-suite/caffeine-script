@@ -13,6 +13,10 @@ defineModule module, class FunctionDefinitionStn extends require './BaseStn'
         children = [FunctionDefinitionArgsStn(), children[0]]
     super props, children
 
+  @getter
+    needsParens: -> false
+    needsParensAsStatement: -> !@props.bound
+
   toJs: ->
     [argsDef, body] = @children
     statements = []

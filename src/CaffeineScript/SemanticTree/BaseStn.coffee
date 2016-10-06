@@ -81,8 +81,9 @@ defineModule module, class BaseStn extends BaseObject
   toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
 
   needsParens: true
-
+  needsParensAsStatement: false
   getNeedsParens: -> @needsParens
+  getNeedsParensAsStatement: -> @needsParensAsStatement
 
   @applyRequiredParens: applyRequiredParens = (expr) ->
     "(#{expr})"
