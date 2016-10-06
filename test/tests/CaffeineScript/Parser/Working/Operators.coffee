@@ -78,6 +78,20 @@ module.exports = suite:
         || baz
         """: "(foo || bar) || baz;"
 
+    mixed: ->
+      parseTests
+        """
+        foo
+        || bar
+        .baz
+        """: "(foo || bar).baz;"
+
+        """
+        foo
+        .bar
+        || baz
+        """: "foo.bar || baz;"
+
     withIndent:
       basic: ->
         parseTests
@@ -85,6 +99,12 @@ module.exports = suite:
           foo
             || bar
           """: "foo || bar;"
+
+          """
+          foo
+            || bar
+            || baz
+          """: "(foo || bar) || baz;"
 
       precedence: ->
         parseTests
@@ -165,7 +185,6 @@ module.exports = suite:
         # comment
           || b
         """: "a || b;"
-
 
         """
         a

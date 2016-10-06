@@ -4,7 +4,7 @@
 
 module.exports =
 
-  statement: "statementWithoutEnd newLineBinOp* end"
+  statement: "statementWithoutEnd newLineStatementExtension* end"
 
   tailControlOperator: / +(if|while|until|unless) +/
   tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
@@ -26,7 +26,7 @@ module.exports =
     pattern: /( *\n)+/
     getPresent: -> false
 
-  newLineBinOp: a
+  newLineStatementExtension: a
     pattern: "newLineStart &binaryOperator binaryOperatorExtension+"
     m pattern: "newLineStart &dot_ valueExtension+ binaryOperatorExtension*"
 

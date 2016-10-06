@@ -90,12 +90,12 @@ module.exports = suite:
         .bar
         """: "(foo = baz.dood(1, 2)).bar;"
 
-        # """
-        # foo = baz.dood
-        #   1
-        #   2
-        # .then -> 123
-        # .catch -> 456
-        # """: "((foo = baz.dood(1, 2)).then((function() {return 123;}))).catch((function() {return 456;}));"
+        """
+        foo = baz.dood
+          1
+          2
+        .then -> 123
+        .catch -> 456
+        """: "((foo = baz.dood(1, 2)).then((function() {return 123;}))).catch((function() {return 456;}));"
 
 
