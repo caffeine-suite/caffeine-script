@@ -52,5 +52,5 @@ module.exports = ->
     blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
     blockValueExtensionSubparse: a
 
-      pattern: "blankOrCommentLinesWithEnd? lineStartBinaryOperatorAndExpression newLineStatementExtension*"
-      m pattern: "blankOrCommentLinesWithEnd? &dot_ valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension*"
+      pattern: "blankOrCommentLinesWithEnd? lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
+      m pattern: "blankOrCommentLinesWithEnd? &dot_ valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"

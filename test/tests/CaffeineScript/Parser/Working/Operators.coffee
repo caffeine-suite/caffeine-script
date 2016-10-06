@@ -100,6 +100,26 @@ module.exports = suite:
           || baz
           """: "foo.bar || baz;"
 
+      comments: ->
+        parseTests
+          """
+          foo # 1
+          || bar
+          """: "foo || bar;"
+
+        parseTests
+          """
+          foo
+          # 1
+          || bar
+          """: "foo || bar;"
+
+        parseTests
+          """
+          foo
+          || bar # 1
+          """: "foo || bar;"
+
     block:
       basic: ->
         parseTests
@@ -147,13 +167,6 @@ module.exports = suite:
           """: "foo || bar;"
 
           """
-          # 1
-          foo # 2
-            || bar # 3
-          # 4
-          """: "foo || bar;"
-
-          """
           foo
             # 1
             || bar
@@ -162,7 +175,19 @@ module.exports = suite:
           """
           foo
             || bar # 1
+          """: "foo || bar;"
+
+          """
+          foo
+            || bar
             # 1
+          """: "foo || bar;"
+
+          """
+          foo # 1
+            # 2
+            || bar # 3
+            # 4
           """: "foo || bar;"
 
     contrasted: ->
