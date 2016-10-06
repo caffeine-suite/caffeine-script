@@ -27,18 +27,13 @@ module.exports =
     getPresent: -> false
 
   newLineBinOp: a
-    pattern: "newLineStart binaryOperator _? complexExpression"
+    pattern: "newLineStart &binaryOperator binaryOperatorExtension+"
+    m pattern: "newLineStart &dot_ valueExtension+ binaryOperatorExtension*"
 
+  binaryOperatorExtension:
+    pattern: "_? binaryOperator _? complexExpression"
     stnProps: -> operand: @binaryOperator.toString()
     stnFactory: "BinaryOperatorStn"
     stnExtension: true
 
-    m
-      pattern: "newLineStart &newLineBinOpStart valueExtension*"
-      # getStn: (left) ->
-      #   stn = left
-      #   for right in @valueExtensions || []
-      #     stn = right.getStn stn
-      #   stn
-
-  newLineBinOpStart: w "dot_ binaryOperator"
+  # newLineBinOpStart: w "dot_ binaryOperator"

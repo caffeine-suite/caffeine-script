@@ -16,26 +16,18 @@ module.exports = ->
       controlStatement
       classDefinition
       structuredLiteral
-      valueWithIndentedBinOp
       value
       functionDefinition
       "
 
-    valueWithIndentedBinOp:
-      pattern: "value lineCommentOrBlankLine* newLineBinOpBlock"
-      getStn: ->
-        @newLineBinOpBlock.getStn @value.getStn()
+    # valueWithIndentedBinOp:
+    #   pattern: "value lineCommentOrBlankLine* newLineBinOpBlock"
+    #   getStn: ->
+    #     @newLineBinOpBlock.getStn @value.getStn()
 
     structuredLiteral: w "object array"
 
   @rule
-    newLineBinOpBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "newLineBinOpBlockSubparse"
-    newLineBinOpBlockSubparse: a
-      pattern: "binaryOperator _? complexExpression newLineBinOp* end lineCommentEnd*"
-
-      stnFactory: "BinaryOperatorStn"
-      stnProps: -> operand: @binaryOperator.toString()
-      stnExtension: true
 
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:

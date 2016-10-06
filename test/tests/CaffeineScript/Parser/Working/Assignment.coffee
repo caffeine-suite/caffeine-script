@@ -40,8 +40,7 @@ module.exports = suite:
         "f\n.foo.bar = 1":   "f.foo.bar = 1;"
         "f\n.foo().bar = 1": "f.foo().bar = 1;"
 
-  indentedMultiline:
-    basic: ->
-      parseTests
-        "f\n  .foo = 1":     "f.foo = 1);"
-        "f\n  || foo = 1":   "f || (foo = 1);"
+    block: ->
+        parseTests
+          "f\n  .foo = 1":     "f.foo = 1;"
+          "f\n  || foo = 1":   "f || (foo = 1);"

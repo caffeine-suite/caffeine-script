@@ -6,7 +6,7 @@ module.exports = ->
     value: "simpleValue valueExtension*"
 
   @rule
-    valueExtension: w "dotAccessor bracketAccessor functionInvocation"
+    valueExtension: w "dotAccessor bracketAccessor functionInvocation blockValueExtension"
     simpleValue: w "this thisProperty literal unqualifiedIdentifier"
 
   @rule
@@ -46,3 +46,11 @@ module.exports = ->
   ,
     stnFactory: "AssignmentStn"
     stnExtension: true
+
+  @rule
+    blockValueExtension: "commentOrSpace* blockValueExtensionBlock"
+    blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
+    blockValueExtensionSubparse: a
+
+      pattern: "lineCommentOrBlankLine* binaryOperatorExtension+ lineCommentOrBlankLine*"
+      m pattern: "lineCommentOrBlankLine* &dot_ valueExtension+ binaryOperatorExtension* lineCommentOrBlankLine*"

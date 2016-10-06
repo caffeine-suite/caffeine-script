@@ -78,12 +78,64 @@ module.exports = suite:
         || baz
         """: "(foo || bar) || baz;"
 
-    withIndent: ->
-      parseTests
-        """
-        foo
-          || bar
-        """: "foo || bar;"
+    withIndent:
+      basic: ->
+        parseTests
+          """
+          foo
+            || bar
+          """: "foo || bar;"
+
+      precedence: ->
+        parseTests
+          """
+          foo
+            || bar + 2 * 3
+          """: "foo || (bar + (2 * 3));"
+
+          """
+          foo
+            || bar * 2 + 3
+          """: "foo || ((bar * 2) + 3);"
+
+      comments: ->
+        parseTests
+          """
+          # 1
+          foo # 2
+            || bar # 3
+          # 4
+          """: "foo || bar;"
+
+          """
+          foo
+            # 1
+            || bar
+          """: "foo || bar;"
+
+          """
+          foo
+            || bar # 1
+            # 1
+          """: "foo || bar;"
+
+      contrasted: ->
+        parseTests
+          """
+          a && b
+            || c && d
+          """: "a && (b || (c && d));"
+
+          """
+          a || b
+          && c || d
+          """: "(a || b) && (c || d);"
+
+          """
+          a or b
+          and c or d
+          """: "(a || b) && (c || d);"
+
 
     withAndWithoutIndent: ->
       parseTests

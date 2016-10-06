@@ -38,6 +38,34 @@ module.exports = suite:
         .bar
         """: "foo.bar;"
 
+    binaryOperatorExtensions: ->
+      parseTests
+        """
+        foo
+        .bar + 1
+        """: "foo.bar + 1;"
+
+    block:
+      basic: ->
+        parseTests
+          """
+          foo
+            .bar
+          """: "foo.bar;"
+
+      binaryOperatorExtensions: ->
+        parseTests
+          """
+          foo
+            .bar + 1
+          """: "foo.bar + 1;"
+
+        parseTests
+          """
+          foo
+            .bar * 2 + 3
+          """: "(foo.bar * 2) + 3;"
+
     compound: ->
       parseTests
         """
