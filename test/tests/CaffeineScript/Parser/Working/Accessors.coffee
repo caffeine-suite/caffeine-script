@@ -30,41 +30,44 @@ module.exports = suite:
 
           "@.f":        "this.f;"
 
-  multiline: ->
-    parseTests
-      """
-      foo
-      .bar
-      """: "foo.bar;"
+  multiline:
+    basic: ->
+      parseTests
+        """
+        foo
+        .bar
+        """: "foo.bar;"
 
-      """
-      foo
-      .bar = c
-      """: "foo.bar = c;"
+    compound: ->
+      parseTests
+        """
+        foo
+        .bar = c
+        """: "foo.bar = c;"
 
-      """
-      foo
-      .bar().baz = c
-      """: "foo.bar().baz = c;"
+        """
+        foo
+        .bar().baz = c
+        """: "foo.bar().baz = c;"
 
-      """
-      foo
-      .bar 1
-      """: "foo.bar(1);"
+        """
+        foo
+        .bar 1
+        """: "foo.bar(1);"
 
-      """
-      foo = baz.dood
-        1
-        2
-      .bar
-      """: "(foo = baz.dood(1, 2)).bar;"
+        """
+        foo = baz.dood
+          1
+          2
+        .bar
+        """: "(foo = baz.dood(1, 2)).bar;"
 
-      """
-      foo = baz.dood
-        1
-        2
-      .then -> 123
-      .catch -> 456
-      """: "((foo = baz.dood(1, 2)).then((function() {return 123;}))).catch((function() {return 456;}));"
+        # """
+        # foo = baz.dood
+        #   1
+        #   2
+        # .then -> 123
+        # .catch -> 456
+        # """: "((foo = baz.dood(1, 2)).then((function() {return 123;}))).catch((function() {return 456;}));"
 
 

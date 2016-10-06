@@ -7,6 +7,8 @@ defineModule module, class DotAccessorStn extends require './BaseStn'
   constructor: (props, [@value, @identier]) ->
     super
 
+  needsParens: false
+
   toJs: ->
     throw new Error "value and identier expected" unless @value and @identier
-    "#{@value.toJsExpression()}.#{@identier.toJs()}"
+    "#{@value.toJsExpressionWithParens()}.#{@identier.toJs()}"

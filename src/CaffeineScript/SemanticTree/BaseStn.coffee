@@ -65,6 +65,13 @@ defineModule module, class BaseStn extends BaseObject
   toJsExpression: ->
     @toJs()
 
+  toJsExpressionWithParens: ->
+    js = @toJsExpression()
+    if @getNeedsParens()
+      "(#{js})"
+    else
+      js
+
   # return JS code that can be used as js-expression (returns a value)
   # for statements: (a,b,c)
   toJsParenExpression: ->
@@ -73,6 +80,9 @@ defineModule module, class BaseStn extends BaseObject
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
 
+  needsParens: true
+
+  getNeedsParens: -> @needsParens
 
   @applyRequiredParens: applyRequiredParens = (expr) ->
     "(#{expr})"

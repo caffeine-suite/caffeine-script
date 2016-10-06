@@ -10,5 +10,7 @@ defineModule module, class FunctionInvocationStn extends require './BaseStn'
       @args = @args[0].children
     super
 
+  needsParens: false
+
   toJs: ->
     "#{@value.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"

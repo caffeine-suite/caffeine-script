@@ -4,15 +4,7 @@
 
 module.exports =
 
-  # statementOrBlankLine: w "multilineStatement blankLine"
-
-  statement: "multilineStatement"
-
-  multilineStatement:
-    pattern: "statementWithoutEnd newLineBinOps? end"
-    getStn: ->
-      out = @statementWithoutEnd.getStn()
-      @newLineBinOps?.getStn(out) || out
+  statement: "statementWithoutEnd newLineBinOp* end"
 
   tailControlOperator: / +(if|while|until|unless) +/
   tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
@@ -30,34 +22,23 @@ module.exports =
             stn
         stn
 
-  newLineBinOps:
-    pattern: "newLineBinOp+"
-    getStn: (previousLineStn)->
-      out = previousLineStn
-      out = nlbo.getStn out for nlbo in @newLineBinOps
-      out
+  newLineStart:
+    pattern: /( *\n)+/
+    getPresent: -> false
 
-  newLineStart: /( *\n)+/
   newLineBinOp: a
     pattern: "newLineStart binaryOperator _? complexExpression"
 
-    getStn: (previousLineStn)->
-      BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
-
-    # m pattern: "/( *\n)+\./ simpleAssignable assignableExtension* assignmentExtension"
-    # m
-    #   pattern: "/( *\n)+/ dotAccessor+"
-    #   getStn: (previousLineStn)->
-    #     stn = previousLineStn
-    #     stn = r.getStn stn for r in @dotAccessors
-    #     stn
+    stnProps: -> operand: @binaryOperator.toString()
+    stnFactory: "BinaryOperatorStn"
+    stnExtension: true
 
     m
       pattern: "newLineStart &newLineBinOpStart valueExtension*"
-      getStn: (left) ->
-        stn = left
-        for right in @valueExtensions || []
-          stn = right.getStn stn
-        stn
+      # getStn: (left) ->
+      #   stn = left
+      #   for right in @valueExtensions || []
+      #     stn = right.getStn stn
+      #   stn
 
   newLineBinOpStart: w "dot_ binaryOperator"

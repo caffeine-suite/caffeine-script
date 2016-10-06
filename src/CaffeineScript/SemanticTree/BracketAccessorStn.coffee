@@ -8,6 +8,8 @@ defineModule module, class BracketAccessorStn extends require './BaseStn'
     super
     @transformForComputedPropertyKeyUseCase()
 
+  needsParens: false
+
   transformForComputedPropertyKeyUseCase: ->
     unless @expression
       @expression = @value

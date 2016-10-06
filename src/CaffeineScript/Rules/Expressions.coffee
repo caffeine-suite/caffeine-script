@@ -31,11 +31,11 @@ module.exports = ->
   @rule
     newLineBinOpBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "newLineBinOpBlockSubparse"
     newLineBinOpBlockSubparse: a
-      pattern: "binaryOperator _? complexExpression newLineBinOps? end lineCommentEnd*"
+      pattern: "binaryOperator _? complexExpression newLineBinOp* end lineCommentEnd*"
 
-      getStn: (previousLineStn)->
-        out = BinaryOperatorStn operand: @binaryOperator.toString(), previousLineStn, @complexExpression.getStn()
-        @newLineBinOps?.getStn(out) || out
+      stnFactory: "BinaryOperatorStn"
+      stnProps: -> operand: @binaryOperator.toString()
+      stnExtension: true
 
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:

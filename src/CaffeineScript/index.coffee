@@ -4,9 +4,10 @@
 module.exports = require './namespace'
 .includeInNamespace require './CaffeineScript'
 .addModules
-  Lib:            require './Lib'           
-  OperatorHelper: require './OperatorHelper'
-  Parser:         require './parser'        
+  CafParseNodeBaseClass: require './CafParseNodeBaseClass'
+  Lib:                   require './Lib'                  
+  OperatorHelper:        require './OperatorHelper'       
+  Parser:                require './parser'               
 require './Rules'
 require './Runtime'
 require './SemanticTree'

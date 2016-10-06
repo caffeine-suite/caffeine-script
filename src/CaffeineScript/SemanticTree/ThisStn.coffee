@@ -4,6 +4,8 @@ Foundation = require 'art-foundation'
 
 defineModule module, class ThisStn extends require './BaseStn'
 
+  needsParens: false
+
   toJs: ->
     if @children[0]
       "this.#{@children[0].toJs()}"

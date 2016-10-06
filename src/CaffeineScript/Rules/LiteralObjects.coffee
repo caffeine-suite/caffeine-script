@@ -59,7 +59,11 @@ module.exports = ->
 
   @rule
     propertyValueBlock: "rValueBlock"
-    propName: pattern: "bracketAccessor"
+    propName: pattern: "computedPropName"
+    computedPropName:
+      pattern: "openBracket_ expression _closeBracket"
+      stnFactory: "BracketAccessorStn"
+
 
   @rule
     propName: a
