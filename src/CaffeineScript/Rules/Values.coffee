@@ -7,7 +7,7 @@ module.exports = ->
 
   @rule
     valueExtension: w "dotAccessor bracketAccessor functionInvocation blockValueExtension"
-    simpleValue: w "this thisProperty literal unqualifiedIdentifier"
+    simpleValue: w "this thisProperty super literal unqualifiedIdentifier"
 
   @rule
     unqualifiedIdentifier:
@@ -18,6 +18,13 @@ module.exports = ->
     thisProperty: "/@/ identifier assignmentExtension?"
   ,
     stnFactory: "ThisStn"
+  @rule
+    super: [
+      "/super/ functionInvocation"
+      "/super/"
+    ]
+  ,
+    stnFactory: "SuperStn"
 
   @rule
     dotAccessor:
