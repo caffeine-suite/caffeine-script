@@ -9,6 +9,9 @@ defineModule module, class FunctionDefinitionArgStn extends require './BaseStn'
   constructor: ({@assignThisProperty, @rest}, [@identifier, @defaultValue]) ->
     super
 
+  @getter
+    argumentName: -> @identifier.name
+
   getFunctionPreBodyStatementsJs: ->
     "this.#{@identifier.toJs()} = #{@identifier.toJs()};" if @assignThisProperty
 

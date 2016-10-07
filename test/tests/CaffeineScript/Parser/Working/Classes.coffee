@@ -9,8 +9,8 @@ module.exports = suite:
   definition:
     basic: ->
       parseTests
-        "class Foo": "Foo = Caf.defClass(class Foo {}, function(){return this;});"
-        "class Foo extends Bar": "Foo = Caf.defClass(class Foo extends Bar {}, function(){return this;});"
+        "class Foo": "Foo = Caf.defClass(class Foo {});"
+        "class Foo extends Bar": "Foo = Caf.defClass(class Foo extends Bar {});"
 
     body: ->
       parseTests
@@ -20,8 +20,8 @@ module.exports = suite:
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
           function()
-          {this.prototype.foo = 1;
-          return this;});"
+            {this.prototype.foo = 1;
+            return this;});"
 
         """
         class Foo extends Bar
@@ -29,8 +29,8 @@ module.exports = suite:
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
           function()
-          {this.prototype.foo = 1;
-          return this;});"
+            {this.prototype.foo = 1;
+            return this;});"
 
         """
         class Foo extends Bar
@@ -38,8 +38,8 @@ module.exports = suite:
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
           function()
-          {this.foo = 1;
-          return this;});"
+            {this.foo = 1;
+            return this;});"
 
     withNormalStatemnts: ->
       parseTests
@@ -48,8 +48,9 @@ module.exports = suite:
           doSomething()
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){doSomething();
-          return this;});"
+          function()
+            {doSomething();
+            return this;});"
 
     unusualProps: ->
       parseTests
@@ -58,7 +59,8 @@ module.exports = suite:
           a-b: 1
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){this.prototype[\"a-b\"] = 1;
+          function()
+            {this.prototype[\"a-b\"] = 1;
           return this;});"
 
       parseTests
@@ -67,7 +69,8 @@ module.exports = suite:
           [fooBar()]: 1
         """: "Foo =
           Caf.defClass(class Foo extends Bar {},
-          function(){this.prototype[fooBar()] = 1;
+          function()
+            {this.prototype[fooBar()] = 1;
           return this;});"
 
     realworld: ->
@@ -78,7 +81,7 @@ module.exports = suite:
             foo: -> @_foo
         """: "
           Foo = Caf.defClass(class Foo extends BaseObject {},
-            function(){this.getter({foo:
-              function()
-                {return this._foo;}});
+            function()
+              {this.getter({foo:
+                function() {return this._foo;}});
               return this;});"

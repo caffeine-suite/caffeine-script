@@ -21,6 +21,8 @@ eventually we should also do:
 
 ###
 
+{RootStn} = require './SemanticTree'
+
 defineModule module, ->
   class CafParseNodeBaseClass extends Nodes.Node
 
@@ -75,7 +77,11 @@ defineModule module, ->
 
       for extension in @stnExtensionMatches
         stn = extension.getStn stn
-      stn
+
+      if @isRoot
+        RootStn stn
+      else
+        stn
 
     getTransformedSemanticTree: ->
       @getStn().transform()

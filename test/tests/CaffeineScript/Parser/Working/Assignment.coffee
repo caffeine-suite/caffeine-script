@@ -7,8 +7,8 @@
 module.exports = suite:
   basic: ->
     parseTests
-      "a = 1": "a = 1;"
-      "a = 1 + 2": "a = 1 + 2;"
+      "a = 1": "let a; a = 1;"
+      "b = 1 + 2": "let b; b = 1 + 2;"
 
   this: ->
     parseTests
@@ -33,7 +33,7 @@ module.exports = suite:
     basic: ->
       parseTests
         "f\n.foo = 1":   "f.foo = 1;"
-        "f\n|| foo = 1": "f || (foo = 1);"
+        "f\n|| foo = 1": "let foo; f || (foo = 1);"
 
     compound: ->
       parseTests
@@ -43,4 +43,4 @@ module.exports = suite:
     block: ->
         parseTests
           "f\n  .foo = 1":     "f.foo = 1;"
-          "f\n  || foo = 1":   "f || (foo = 1);"
+          "f\n  || foo = 1":   "let foo; f || (foo = 1);"

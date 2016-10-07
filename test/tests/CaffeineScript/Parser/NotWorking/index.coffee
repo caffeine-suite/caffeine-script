@@ -2,5 +2,3 @@
 # file: tests/CaffeineScript/Parser/NotWorking/index.coffee
 
 module.exports = require './namespace'
-.addModules
-  Classes: require './Classes'

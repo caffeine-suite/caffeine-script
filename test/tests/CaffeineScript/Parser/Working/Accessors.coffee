@@ -94,7 +94,7 @@ module.exports = suite:
           1
           2
         .bar
-        """: "(foo = baz.dood(1, 2)).bar;"
+        """: "let foo; (foo = baz.dood(1, 2)).bar;"
 
         """
         foo = baz.dood
@@ -102,6 +102,6 @@ module.exports = suite:
           2
         .then -> 123
         .catch -> 456
-        """: "(foo = baz.dood(1, 2)).then(function() {return 123;}).catch(function() {return 456;});"
+        """: "let foo; (foo = baz.dood(1, 2)).then(function() {return 123;}).catch(function() {return 456;});"
 
 

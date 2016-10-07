@@ -31,15 +31,15 @@ module.exports = suite:
         """
         bar = if foo
           1
-        """: "bar = foo ? (1) : undefined;"
+        """: "let bar; bar = foo ? (1) : undefined;"
 
         """
         bar = if foo
           1
           2
-        """: "bar = foo ? (1, 2) : undefined;"
+        """: "let bar; bar = foo ? (1, 2) : undefined;"
 
-        "bar = if foo then 1 else 2": "bar = foo ? 1 : 2;"
+        "bar = if foo then 1 else 2": "let bar; bar = foo ? 1 : 2;"
 
   unless: ->
     parseTests

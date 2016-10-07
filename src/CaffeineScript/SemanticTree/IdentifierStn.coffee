@@ -4,5 +4,7 @@ Foundation = require 'art-foundation'
 
 defineModule module, class IdentiferStn extends require './BaseStn'
 
+  @getter name: -> @props.identifier
+
   needsParens: false
   toJs: -> @props.identifier

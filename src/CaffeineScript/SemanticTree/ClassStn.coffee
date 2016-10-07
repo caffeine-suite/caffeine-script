@@ -57,4 +57,4 @@ defineModule module, class ClassStn extends require './BaseStn'
     if @body
       out + " {}, #{@body.toJs()})"
     else
-      out + " {}"
+      out + " {})"

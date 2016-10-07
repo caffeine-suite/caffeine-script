@@ -5,6 +5,8 @@ module.exports = require './namespace'
 .addModules
   Accessors:        require './Accessors'       
   Assignment:       require './Assignment'      
+  AutoScoping:      require './AutoScoping'     
+  Classes:          require './Classes'         
   Comments:         require './Comments'        
   ControlOperators: require './ControlOperators'
   Functions:        require './Functions'       

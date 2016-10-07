@@ -38,14 +38,14 @@ defineModule module, class BaseStn extends BaseObject
       (props, children) =>
         @newInstance props, children
 
-  find: (stnClassPattern) ->
+  find: (stnTypePattern) ->
     a = for child in @children
       # log find_test_name: child.class.getName()
-      if child.class.getName().match stnClassPattern
-        # log find_found:child
+      value = child.class.type
+      if value == stnTypePattern || value.match stnTypePattern
         child
       else
-        child.find stnClassPattern
+        child.find stnTypePattern
 
     a = compactFlatten a
     if a.length == 0
@@ -136,4 +136,13 @@ defineModule module, class BaseStn extends BaseObject
         when "!=", "isnt" then "!=="
         when "not" then "!"
         else op
+
+  updateScope: (@scope) ->
+    child.updateScope @scope for child in @children
+
+
+
+
+
+
 

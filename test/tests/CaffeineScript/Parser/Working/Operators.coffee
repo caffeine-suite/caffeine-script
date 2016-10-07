@@ -78,7 +78,7 @@ module.exports = suite:
             1
             2
           || bar
-          """: "(foo = baz.dood(1, 2)) || bar;"
+          """: "let foo; (foo = baz.dood(1, 2)) || bar;"
 
           """
           foo

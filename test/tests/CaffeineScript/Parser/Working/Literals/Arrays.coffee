@@ -114,14 +114,14 @@ module.exports = suite:
         1, 0, 1,
         0, 0, 1,
         1, 1, 0
-      """: "singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+      """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
 
       """
       arrayOfArrays =
         1, 0, 1
         0, 0, 1
         1, 1, 0
-      """: "arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+      """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
 
   explicitImplicitCombos: ->
     parseTests
@@ -130,21 +130,21 @@ module.exports = suite:
         1, 0, 1,
         0, 0, 1,
         1, 1, 0
-      """: "singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+      """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
 
       """
       singleArray = []
         [1, 0, 1,
         0, 0, 1,
         1, 1, 0]
-      """: "singleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+      """: "let singleArray; singleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
 
       """
       doubleArray = [] []
         1, 0, 1,
         0, 0, 1,
         1, 1, 0
-      """: "doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+      """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
 
       """
       doubleArray = []
@@ -152,14 +152,14 @@ module.exports = suite:
           1, 0, 1,
           0, 0, 1,
           1, 1, 0
-      """: "doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+      """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
 
       """
       arrayOfArrays = []
         1, 0, 1
         0, 0, 1
         1, 1, 0
-      """: "arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+      """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
 
   splatsSpread: ->
     parseTests
