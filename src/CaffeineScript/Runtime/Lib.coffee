@@ -5,6 +5,14 @@ module.exports =
   pow: (a, b) -> a ** b
   existsOr: (a, b) -> a ? b()
 
+  # CaffeineStyle truth (same as Ruby)
+
+  # returns true if a is anothing other than false, null or undefined
+  t: (a) -> a? && a != false
+
+  # returns true if a is false, null or undefined
+  f: (a) -> a == false || !a?
+
   isFunction:       isFunction = (a) -> typeof a is "function"
   isInstance:       isFunction = (a) -> !isFunction(o) and _super.constructor == o.constructor
 
