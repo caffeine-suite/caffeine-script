@@ -13,7 +13,7 @@ defineModule module, class FunctionDefinitionArgStn extends require './BaseStn'
     argumentName: -> @identifier.name
 
   getFunctionPreBodyStatementsJs: ->
-    "this.#{@identifier.toJs()} = #{@identifier.toJs()};" if @assignThisProperty
+    "this.#{@identifier.toJs()} = #{@identifier.toJs()}" if @assignThisProperty
 
   toJs: ->
     "#{if @rest then '...' else ''}#{@identifier.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"

@@ -9,7 +9,7 @@ defineModule module, class TryStn extends require './BaseStn'
     {body, optionalCatch} = @labeledChildren
     body = if returnExpression then body.toFunctionBodyJs() else body.toJs();
     optionalCatch = optionalCatch?.toJs(options) || "catch (error) {}"
-    "try {#{body}} #{optionalCatch}"
+    "try {#{body};} #{optionalCatch}"
 
   toJsExpression: ->
     @doJs null, @toJs returnExpression: true

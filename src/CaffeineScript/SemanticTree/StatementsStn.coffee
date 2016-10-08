@@ -6,10 +6,10 @@ Foundation = require 'art-foundation'
 defineModule module, class StatementsStn extends require './BaseStn'
 
   toJs: ->
-    @getChildrenStatementsJsArray().join("; ") + ";"
+    @getChildrenStatementsJsArray().join "; "
 
   toFunctionBodyJs: ->
-    @getChildrenStatementsJsArray(true).join("; ") + ";"
+    @getChildrenStatementsJsArray(true).join "; "
 
   getChildrenStatementsJsArray: (lastIsExpression = false)->
     for c, i in lines = @children

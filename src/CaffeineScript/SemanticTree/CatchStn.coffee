@@ -7,6 +7,7 @@ defineModule module, class CatchStn extends require './BaseStn'
   updateScope: (@scope) ->
     if id = @labeledChildren.identifier
       @scope.addIdentifierAssigned id.name
+      @scope.addIdentifierUsed id.name
     super
 
   toJs: (options = {}) ->
@@ -16,4 +17,4 @@ defineModule module, class CatchStn extends require './BaseStn'
     if identifier
       tempName = @getUnusedVariableName "error"
       body = compactFlatten(["#{identifier.name} = #{tempName}", body]).join '; '
-      "catch (#{tempName}) {#{body}}"
+      "catch (#{tempName}) {#{body};}"

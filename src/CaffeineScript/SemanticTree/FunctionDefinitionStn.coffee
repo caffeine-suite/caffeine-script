@@ -18,6 +18,7 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
     super props, children
 
   updateScope: (@scope)->
+    @scope.addChildScope @
     child.updateScope @ for child in @children
 
   cloneWithNewStatements: (statements)->
@@ -38,8 +39,10 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       argsDef.toJs()
     else "()"
 
-    statements = compactFlatten [statements, body?.toFunctionBodyJs()]
-    body = "{#{statements.join ' '}}"
+    statements = compactFlatten [@getAutoLets(), statements, body?.toFunctionBodyJs()]
+    body = if statements.length > 0
+      "{#{statements.join '; '};}"
+    else "{}"
 
     if @props.bound
       "#{argsDef} => #{body}"

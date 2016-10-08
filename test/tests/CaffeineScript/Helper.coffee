@@ -11,13 +11,22 @@ module.exports =
           p = Parser.parse(k)
           assert.eq p.getStn(), v
 
-  parseTests: parseTests = (map) ->
+  parseTests: parseTests = (a, b) ->
+    map = if b
+      {compileModule} = a
+      b
+    else
+      a
+
     newObjectFromEach map, (source, expectedJs) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
         js = try
           stn = (p = Parser.parse(source)).getStn()
           transformedStn = stn.transform()
-          transformedStn.toJs()
+          if compileModule
+            transformedStn.toJsModule()
+          else
+            transformedStn.toJs()
         catch error
           logPrettyError error
           null
@@ -29,12 +38,19 @@ module.exports =
             expectedJs: expectedJs
             parseTree: p
             semanticTree: stn
-            transformedSemanticTree: transformedStn if transformedStn != stn
+            transformedSemanticTree: if transformedStn != stn then transformedStn else "no change"
           log "\n"
         throw error if error
         assert.eq js, expectedJs
 
-  parseTestSuite: parseTestSuite = (map) ->
+  parseTestSuite: parseTestSuite = (a, b) ->
+    map = if b
+      options = a
+      b
+    else
+      options = {}
+      a
+
     hasStrings = hasOther = false
     for k, v of map
       if isString v
@@ -44,9 +60,9 @@ module.exports =
 
     throw new Error "either strings or others!" if hasStrings && hasOther
     if hasStrings
-      -> parseTests map
+      -> parseTests options, map
     else
-      newObjectFromEach map, (v) -> parseTestSuite v
+      newObjectFromEach map, (v) -> parseTestSuite options, v
 
 
   illegalSyntaxTests: (array) ->

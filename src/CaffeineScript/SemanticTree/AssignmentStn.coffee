@@ -9,8 +9,8 @@ defineModule module, class AssignmentStn extends require './BaseStn'
     super
 
   updateScope: (@scope) ->
-    if @lValue.type == "Identifer"
-      @scope.addIdentifierAssigned @lValue.props.identifier
+    if @lValue.type == "Reference"
+      @scope.addIdentifierAssigned @lValue.toJs()
     super
 
   toJs: ->

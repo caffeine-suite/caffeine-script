@@ -42,7 +42,7 @@ module.exports = suite:
 
     mixed: ->
       parseTests
-        "1 2 if bar": "if (bar) {[1, 2]};"
+        "1 2 if bar": "if (bar) {[1, 2];};"
 
   matchless: ->
     parseTests

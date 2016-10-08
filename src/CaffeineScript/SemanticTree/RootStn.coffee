@@ -14,8 +14,27 @@ defineModule module, class RootStn extends ScopeStnMixin require './BaseStn'
     new RootStn @props, [StatementsStn compactFlatten statements]
 
   transform: ->
+    ret = super
+    # needs to be after super for correct identifier-use detection
     @updateScope @
+    ret
 
-    super
+  toJsModule: ->
+    {identifiersUsedButNotAssigned} = @
+    identifiersUsedButNotAssigned = ("#{k} = global.#{k}" for k, v of identifiersUsedButNotAssigned)
+    statements = compactFlatten [
+      "let #{identifiersUsedButNotAssigned.join ', '}" if identifiersUsedButNotAssigned.length > 0
+      @getAutoLets()
+      @statements.toFunctionBodyJs()
+    ]
 
-  toJs: ->  @childrenToJs()
+    "Caf.defMod(module, () => {#{statements.join '; '};});"
+
+  toJs: ->
+    compactFlatten([
+      @getAutoLets()
+      @statements.toJs()
+    ]).join('; ') + ";"
+
+
+

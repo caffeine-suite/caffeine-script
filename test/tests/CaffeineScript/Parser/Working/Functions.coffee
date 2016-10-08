@@ -74,7 +74,7 @@ module.exports = suite:
 
     andTailIf: ->
       parseTests
-        'foo 123 if bar': "if (bar) {foo(123)};"
+        'foo 123 if bar': "if (bar) {foo(123);};"
 
     block:
       basic: ->

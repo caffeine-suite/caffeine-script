@@ -7,6 +7,14 @@ defineModule module, class BaseStn extends BaseObject
   # could go in BabelBridge standard BaseStn
   ####################
   @abstractClass()
+
+  ###
+  IN:
+    props should be a plain-object-structure with an object as the root
+    children should be a compact, flat array of Stns
+
+  TODO: I'd like to make setting the parseTreeNode cleaner.
+  ###
   noChildren = []
   constructor: (props, @children = noChildren) ->
     @parseTreeNode = props.parseTreeNode
@@ -85,10 +93,10 @@ defineModule module, class BaseStn extends BaseObject
     throw "TODO" if args
     body = body.toFunctionBodyJs() unless isString body
 
-    "(function() {#{body}})()"
+    "(function() {#{body};})()"
 
   toFunctionBodyJs: ->
-    "return #{@toJsExpression()};"
+    "return #{@toJsExpression()}"
 
   transformChildren: ->
     ret = null

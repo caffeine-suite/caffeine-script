@@ -41,9 +41,9 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
       "
       #{operand}
       #{@applyRequiredParens expression}
-      {#{@body.toJs()}}#{
+      {#{@body.toJs()};}#{
         if @elseBody
-          " else {#{@elseBody?.toJs()}}"
+          " else {#{@elseBody?.toJs()};}"
         else ""
       }
       "
