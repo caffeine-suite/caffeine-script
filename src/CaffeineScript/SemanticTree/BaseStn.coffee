@@ -14,6 +14,7 @@ defineModule module, class BaseStn extends BaseObject
     if @children
       @labeledChildren = {}
       for child in @children
+        child.parent = @
         @labeledChildren[child.label] = child
 
   @getter
@@ -43,6 +44,15 @@ defineModule module, class BaseStn extends BaseObject
       class: @
       (props, children) =>
         @newInstance props, children
+
+  findParent: (stnTypePattern) ->
+    {parent} = @
+    while parent
+      value = parent.class.type
+      if value == stnTypePattern || value.match stnTypePattern
+        return parent
+      {parent} = parent
+    null
 
   find: (stnTypePattern) ->
     a = for child in @children

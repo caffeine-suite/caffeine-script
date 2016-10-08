@@ -27,7 +27,7 @@ module.exports =
           log info:
             js:js
             expectedJs: expectedJs
-            # parseTree: p
+            parseTree: p
             semanticTree: stn
             transformedSemanticTree: transformedStn if transformedStn != stn
           log "\n"

@@ -54,11 +54,18 @@ module.exports = suite: parseTestSuite
       class Foo extends Bar
         foo: -> super
       """: "Foo = Caf.defClass(class Foo extends Bar {},
-        function() {this.prototype.foo = function() {return Caf.getSuper().foo.call(this);}; return this;});"
+        function() {this.prototype.foo = function() {return Caf.getSuper().foo.apply(this, arguments);}; return this;});"
 
-      "foo: -> super":    "({foo: function() {return Caf.getSuper().foo.call(this);}});"
+      """
+      class Foo extends Bar
+        constructor: -> super
+      """: "Foo = Caf.defClass(class Foo extends Bar {},
+        function() {this.prototype.constructor = function() {return Caf.getSuper().constructor.apply(this, arguments);}; return this;});"
+
+      "foo: -> super":    "({foo: function() {return Caf.getSuper().foo.apply(this, arguments);}});"
+      "foo: -> super()":    "({foo: function() {return Caf.getSuper().foo.call(this);}});"
+      "@foo: -> super":   '({"@foo": function() {return Caf.getSuper().foo.apply(this, arguments);}});'
       "foo: -> super 1":  "({foo: function() {return Caf.getSuper().foo.call(this, 1);}});"
-      "@foo: -> super":   '({"@foo": function() {return Caf.getSuper().foo.call(this);}});'
 
 
     unusualProps:

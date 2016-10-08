@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
+{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject, merge} = Foundation
 
 defineModule module, class SuperStn extends require './BaseStn'
 
@@ -12,5 +12,19 @@ defineModule module, class SuperStn extends require './BaseStn'
 
   needsParens: false
 
+  transform: ->
+    throw new Error "super must be used inside an object-literal value" unless propValue = @findParent "ObjectPropValue"
+    methodName = propValue.labeledChildren.propName.props.value
+    [__, methodName] = m if m = methodName.match /^@(.*)/
+    new @class merge(@props, methodName: methodName), @transformChildren()
+
   toJs: ->
-    "Caf.getSuper().TODO.call#{@applyRequiredParens ['this'].concat((a.toJsExpression() for a in @args)).join ', '}"
+    {args} = @
+    method = if @props.passArguments
+      args = "arguments"
+      "apply"
+    else
+      args = (a.toJsExpression() for a in args)
+      "call"
+
+    "Caf.getSuper().#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
