@@ -6,13 +6,13 @@ I'm making this language for me, much as Matz did with Ruby. If you agree with t
 
 ### What is CaffeineScript?
 
-CaffeineScript is a lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6. It is close to JavaScript in semantics and close to CoffeeScript in syntax.
+CaffeineScript is a lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
 
 #### Example
 
 ```coffeescript
 # CaffeineScript - 28 tokens
-import &ArtSuite
+import &:ArtSuite
 
 class Login extends Component
 
@@ -26,24 +26,22 @@ class Login extends Component
 ```
 
 ```javascript
-// ES6 - 97 tokens
-module.exports = (function(){
-  var {
-    Component = global.Component,
-    Dialog = global.Dialog,
-    TextElement = global.TextElement,
-    TextInput = global.TextInput
-  } = require('art-suite');
+// ES6 - 85 tokens
+let {
+  Component = global.Component,
+  Dialog = global.Dialog,
+  TextElement = global.TextElement,
+  TextInput = global.TextInput
+} = require('art-suite');
 
-  return class Login extends Component {
-    render() {
-      Dialog(
-        TextElement({text: 'username', size: {ww: 1, hch: 1}}),
-        TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
-      );
-    };
+module.exports = class Login extends Component {
+  render() {
+    Dialog(
+      TextElement({text: 'username', size: {ww: 1, hch: 1}}),
+      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
+    );
   };
-})();
+};
 ```
 
 ## Syntax Matters
