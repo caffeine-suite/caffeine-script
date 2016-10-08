@@ -26,6 +26,11 @@ module.exports = ->
   , stnFactory: "CatchStn"
 
   @rule
+    controlStatement:
+      pattern: "/do/ _ functionDefinition"
+      stnFactory: "DoStn"
+
+  @rule
     ifUnlessWhileUntil: /if|unless|while|until/
     thenDo: /then|do/
 

@@ -13,7 +13,7 @@ getPropertySetters = (node, list = []) ->
 module.exports = ->
   @rule
     functionDefinition: a
-      pattern: "argsDefinition? _arrow_ functionDefinitionBodyBlock?"
+      pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
   ,
     stnFactory: "FunctionDefinitionStn"
     stnProps: -> bound: @_arrow_.text.match /=>/

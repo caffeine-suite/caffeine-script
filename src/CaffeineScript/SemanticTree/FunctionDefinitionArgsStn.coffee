@@ -8,7 +8,7 @@ defineModule module, class FunctionDefinitionArgsStn extends require './BaseStn'
 
   @getter
     argumentNames: ->
-      c.argumentName for c in @children
+      c.argumentName for c in @children || []
 
   toJs: ->
     "(#{(c.toJs() for c in @children).join(', ')})"

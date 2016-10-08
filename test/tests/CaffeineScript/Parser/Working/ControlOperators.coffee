@@ -64,6 +64,13 @@ module.exports = suite: parseTestSuite
     "until foo\n  bar": "while (!foo) {bar;};"
 
   ################################
+  # DO
+  ################################
+  do:
+    "do ->": "(function() {})();"
+    "do (a) ->": "(function(a) {})(a);"
+
+  ################################
   # TRY
   ################################
   try:

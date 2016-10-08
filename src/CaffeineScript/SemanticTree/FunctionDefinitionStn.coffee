@@ -28,7 +28,7 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
     needsParens: -> false
     needsParensAsStatement: -> !@props.bound
     argumentNames: ->
-      @arguments.argumentNames
+      @arguments?.argumentNames || []
 
   toJs: ->
     [argsDef, body] = @children

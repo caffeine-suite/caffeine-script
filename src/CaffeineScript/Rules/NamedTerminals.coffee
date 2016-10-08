@@ -24,6 +24,8 @@ module.exports = ->
 
     reservedWord: ///
       (
+      do |
+
       if | until |
 
       try | catch |
