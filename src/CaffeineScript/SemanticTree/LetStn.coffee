@@ -5,4 +5,10 @@ Foundation = require 'art-foundation'
 defineModule module, class LetStn extends require './BaseStn'
 
   toJs: ->
-    "let #{@props.identifier}"
+    {identifiers, identifier} = @props
+    if identifiers
+      throw new Error "LetStn identifiers empty" unless identifiers.length > 0
+      "let #{identifiers.join ', '}"
+    else if identifier
+      "let #{identifier}"
+    else throw new Error "LetStn needs props!"

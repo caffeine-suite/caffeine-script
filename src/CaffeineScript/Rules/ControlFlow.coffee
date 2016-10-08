@@ -16,6 +16,16 @@ module.exports = ->
       joiner: @thenDo?.toString()
 
   @rule
+    controlStatement: a
+      pattern: "/try/ _ body:complexExpression _? optionalCatch:catchClause?"
+      m pattern: "/try/ body:block"
+  , stnFactory: "TryStn"
+
+  @rule
+    catchClause: "/catch(?=[ \n])/ _? identifier? body:block?"
+  , stnFactory: "CatchStn"
+
+  @rule
     ifUnlessWhileUntil: /if|unless|while|until/
     thenDo: /then|do/
 

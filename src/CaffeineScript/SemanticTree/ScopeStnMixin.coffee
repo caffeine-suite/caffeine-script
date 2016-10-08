@@ -13,6 +13,13 @@ defineModule module, ->
     addIdentifierAssigned: (identifier)->
       (@props.identifiersAssigned ||= {})[identifier] = true
 
+    getUnusedVariableName: (rootName)->
+      {identifersUsed} = @
+      count = 1
+      out = rootName
+      out = "#{rootName}#{count++}" while identifersUsed[out]
+      out
+
     @getter
       argumentNames: -> []
 
@@ -22,6 +29,7 @@ defineModule module, ->
           unless identifiersAssignedInParentScopes[k]
             out[k] = true
 
+      identifersUsed: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
       identifiersAssigned: -> @props.identifiersAssigned
       identifiersAssignedInParentScopes: ->
         if @scope && @scope != @
@@ -30,8 +38,9 @@ defineModule module, ->
 
     transform: ->
       if @props.identifiersAssigned
+        identifiers = (id for id, __ of @identifiersNeedLet)
         @cloneWithNewStatements compactFlatten [
-          LetStn identifier: id for id, __ of @identifiersNeedLet
+          LetStn identifiers: identifiers if identifiers.length > 0
           @statements.transformChildren()
         ]
       else

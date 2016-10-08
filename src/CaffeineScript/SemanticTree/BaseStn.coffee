@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, compact, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
+{log, compact, isString, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
 
 defineModule module, class BaseStn extends BaseObject
   ####################
@@ -81,6 +81,15 @@ defineModule module, class BaseStn extends BaseObject
   toJsStatement: ->
     @toJs()
 
+  doJs: (args, body) ->
+    throw "TODO" if args
+    body = body.toFunctionBodyJs() unless isString body
+
+    "(function() {#{body}})()"
+
+  toFunctionBodyJs: ->
+    "return #{@toJsExpression()};"
+
   transformChildren: ->
     ret = null
     for child, i in @children
@@ -94,6 +103,8 @@ defineModule module, class BaseStn extends BaseObject
       new @class @props, newChildren
     else
       @
+
+  getUnusedVariableName: (root) -> @scope.getUnusedVariableName root
 
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;

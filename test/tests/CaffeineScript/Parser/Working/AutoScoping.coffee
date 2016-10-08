@@ -7,6 +7,7 @@
 module.exports = suite: parseTestSuite
   basic:
     "a = 1": "let a; a = 1;"
+    "a = b = 1": "let a, b; a = b = 1;"
 
     """
     a = 1
