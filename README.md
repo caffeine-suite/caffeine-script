@@ -11,7 +11,7 @@ CaffeineScript is a lean, high-level programming language that compiles to JavaS
 #### Example
 
 ```coffeescript
-# CaffeineScript - 28 tokens
+# CaffeineScript - 28 tokens and 0 matching-token-pairs
 import &:ArtSuite
 
 class Login extends Component
@@ -26,12 +26,12 @@ class Login extends Component
 ```
 
 ```javascript
-// ES6 - 85 tokens
+// ES6 - 69 tokens and 11 matching-token-pairs
 let {
-  Component = global.Component,
-  Dialog = global.Dialog,
-  TextElement = global.TextElement,
-  TextInput = global.TextInput
+  Component,
+  Dialog,
+  TextElement,
+  TextInput
 } = require('art-suite');
 
 module.exports = class Login extends Component {
@@ -44,11 +44,16 @@ module.exports = class Login extends Component {
 };
 ```
 
+* Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
+* Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but elliminates the need for matching-token-pairs.
+
+* The JavaScript above is only roughly equivelent to the actual generated JavaScript. The generated JavaScript is a bit more capable than the JavaScript above and a bit longer. Why not show the generated code? When comparing CaffeineScript with other languages, what matters is what the hand-written code looks like in both. That said, CaffeineScript strives to generate excellent JavaScript.
+
 ## Syntax Matters
 
 I believe syntax matters. Every line of code we write, throughout the product lifecycle, will get edited at least 10 times and read it at least 100 times. Every token costs 10x - 100x more programmer-time down the road than it did to initially add it. (1)
 
-### Code is a liability.
+### Code is a Liability
 
 While the product of code is an asset - it creates value in the world, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
 
