@@ -48,7 +48,8 @@ defineModule module, ->
         else
           @stnChildren
       else
-        v for m in @nonStnExtensionMatches when v = m.getStn left
+        for m in @nonStnExtensionMatches when v = m.getStn left
+          v
 
     @getter
       isStnExtension: -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
@@ -78,6 +79,7 @@ defineModule module, ->
       for extension in @stnExtensionMatches
         stn = extension.getStn stn
 
+      stn?.props?.label = @label
       if @isRoot
         RootStn stn
       else

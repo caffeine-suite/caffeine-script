@@ -2,9 +2,9 @@
 
 module.exports =
   classDefinition:
-    pattern: "/class/ _ identifier _extendsClause? block?"
+    pattern: "/class/ _ className:identifier classExtends:_extendsClause? body:block?"
     stnFactory: "ClassStn"
 
   _extendsClause:
-    pattern: "/ +extends/ _ expressionWithOneLessBlock"
+    pattern: "_ /extends/ _ expressionWithOneLessBlock"
     toJs: -> @expressionWithOneLessBlock.toJs()

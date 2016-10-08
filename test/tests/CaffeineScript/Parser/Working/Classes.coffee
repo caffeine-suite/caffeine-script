@@ -17,19 +17,10 @@ module.exports = suite: parseTestSuite
       """: "Foo =
         Caf.defClass(class Foo {},
         function()
-          {this.prototype.foo = function() {return 1;}
+          {this.prototype.foo = function() {return 1;};
           return this;});"
 
     body:
-      """
-      class Foo extends Bar
-        foo: 1
-      """: "Foo =
-        Caf.defClass(class Foo extends Bar {},
-        function()
-          {this.prototype.foo = 1;
-          return this;});"
-
       """
       class Foo extends Bar
         foo: 1
@@ -65,17 +56,9 @@ module.exports = suite: parseTestSuite
       """: "Foo = Caf.defClass(class Foo extends Bar {},
         function() {this.prototype.foo = function() {return Caf.getSuper().foo.call(this);}; return this;});"
 
-      """
-      foo: -> super
-      """: "({foo: function() {return Caf.getSuper().foo.call(this);}});"
-
-      """
-      foo: -> super 1
-      """: "({foo: function() {return Caf.getSuper().foo.call(this, 1);}});"
-
-      """
-      @foo: -> super
-      """: '({"@foo": function() {return Caf.getSuper().foo.call(this);}});'
+      "foo: -> super":    "({foo: function() {return Caf.getSuper().foo.call(this);}});"
+      "foo: -> super 1":  "({foo: function() {return Caf.getSuper().foo.call(this, 1);}});"
+      "@foo: -> super":   '({"@foo": function() {return Caf.getSuper().foo.call(this);}});'
 
 
     unusualProps:

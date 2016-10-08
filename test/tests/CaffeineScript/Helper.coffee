@@ -11,8 +11,6 @@ module.exports =
           p = Parser.parse(k)
           assert.eq p.getStn(), v
 
-
-
   parseTests: parseTests = (map) ->
     newObjectFromEach map, (source, expectedJs) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
@@ -29,6 +27,7 @@ module.exports =
           log info:
             js:js
             expectedJs: expectedJs
+            # parseTree: p
             semanticTree: stn
             transformedSemanticTree: transformedStn if transformedStn != stn
           log "\n"

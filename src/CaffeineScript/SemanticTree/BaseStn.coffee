@@ -7,11 +7,17 @@ defineModule module, class BaseStn extends BaseObject
   # could go in BabelBridge standard BaseStn
   ####################
   @abstractClass()
-  constructor: (props, @children) ->
+  noChildren = []
+  constructor: (props, @children = noChildren) ->
     @parseTreeNode = props.parseTreeNode
     @props = objectWithout props, "parseTreeNode"
+    if @children
+      @labeledChildren = {}
+      for child in @children
+        @labeledChildren[child.label] = child
 
   @getter
+    label: -> @props.label
     inspectedObjects: ->
       out = {}
       out[@class.getName()] = if @children.length == 0

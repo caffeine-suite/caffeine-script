@@ -11,12 +11,14 @@ FunctionDefinitionStn = require './FunctionDefinitionStn'
 
 defineModule module, class ClassStn extends require './BaseStn'
 
-  constructor: (props, [@identifier, @extendsExpression, @body]) -> super
-
   transform: ->
-    [identifier, extendsExpression, body] = children = @transformChildren()
-    if body
-      body = FunctionDefinitionStn StatementsStn null,
+    {className, classExtends, body} = @labeledChildren
+    # log labeledChildren:@labeledChildren, className: @className
+    className = className.transform()
+    classExtends = classExtends?.transform()
+
+    if body = body?.transform()
+      body = FunctionDefinitionStn label: "body", StatementsStn null,
         for stn in body.children
           if stn.type == "Object"
             for objectPropValueStn in stn.children
@@ -42,19 +44,20 @@ defineModule module, class ClassStn extends require './BaseStn'
             stn
         ThisStn()
 
-      children = compactFlatten [identifier, extendsExpression, body]
-    if children == @children
-      @
+      children = compactFlatten [className, classExtends, body]
     else
-      new ClassStn @props, children
+      children = @children
+    new ClassStn @props, children
+
 
   toJs: ->
-    className = @identifier.toJs()
+    {className, classExtends, body} = @labeledChildren
+    className = className.toJs()
     out = "#{className} = Caf.defClass(class #{className}"
-    if @extendsExpression
-      out += " extends #{@extendsExpression.toJsExpression()}"
+    if classExtends
+      out += " extends #{classExtends.toJsExpression()}"
 
-    if @body
-      out + " {}, #{@body.toJs()})"
+    if body
+      out + " {}, #{body.toJs()})"
     else
       out + " {})"

@@ -1,6 +1,6 @@
 {a, m, w, escapeJavascriptString} = require "art-foundation"
 
-{ObjectStn, ObjectPropValueStn, ObjectPropNameStn} =  require '../SemanticTree'
+{ObjectStn} =  require '../SemanticTree'
 {Extensions} = require 'babel-bridge'
 
 module.exports = ->
@@ -54,8 +54,7 @@ module.exports = ->
       m pattern:  "propName _colon_ propValue:propertyValueBlock"
   ,
     name: "literalObjectProperty"
-    getStn: ->
-      ObjectPropValueStn @propName.getStn(), @propValue.getStn()
+    stnFactory: "ObjectPropValueStn"
 
   @rule
     propertyValueBlock: "rValueBlock"
@@ -70,5 +69,7 @@ module.exports = ->
       pattern: "str:identifier &_colon_"
       m pattern: "str:numberLiteral &_colon_"
       m pattern: "str:unquotedString"
-  , getStn: -> ObjectPropNameStn value: @str.toString()
+  ,
+    stnFactory: "ObjectPropNameStn"
+    stnProps: -> value: @str.toString()
 
