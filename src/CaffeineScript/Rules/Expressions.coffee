@@ -20,11 +20,6 @@ module.exports = ->
       functionDefinition
       "
 
-    # valueWithIndentedBinOp:
-    #   pattern: "value lineCommentOrBlankLine* newLineBinOpBlock"
-    #   getStn: ->
-    #     @newLineBinOpBlock.getStn @value.getStn()
-
     structuredLiteral: w "object array"
 
   @rule

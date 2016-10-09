@@ -18,15 +18,20 @@ defineModule module, class BaseStn extends BaseObject
   noChildren = []
   constructor: (props, @children = noChildren) ->
     @parseTreeNode = props.parseTreeNode
+
     @props = objectWithout props, "parseTreeNode"
     if @children
       @labeledChildren = {}
       for child in @children
         child.parent = @
-        @labeledChildren[child.label] = child
+        {label, pluralLabel} = child
+        @labeledChildren[label] = child
+        if pluralLabel
+          (@labeledChildren[pluralLabel] ||= []).push child
 
   @getter
     label: -> @props.label
+    pluralLabel: -> @props.pluralLabel
     inspectedObjects: ->
       out = {}
       out[@class.getName()] = if @children.length == 0

@@ -26,6 +26,10 @@ module.exports = ->
       (
       do |
 
+      switch |
+
+      when |
+
       if | until |
 
       try | catch |

@@ -6,9 +6,9 @@ upToButNotEol = /[^\n]*/y
 module.exports = ->
   @rule
     controlStatement: a
-      pattern: "ifUnlessWhileUntil _ expressionWithOneLessBlock _? block optionalElseClause?"
+      pattern: "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
       m
-        pattern: "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression optionalElseClause?"
+        pattern: "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
   ,
     stnFactory: "ControlOperatorStn"
     stnProps: ->
@@ -29,6 +29,20 @@ module.exports = ->
     controlStatement:
       pattern: "/do/ _ functionDefinition"
       stnFactory: "DoStn"
+
+  @rule
+    controlStatement:
+      pattern: "/switch/ _ condition:expressionWithOneLessBlock switchBody"
+      stnFactory: "SwitchStn"
+
+    switchBody: "end switchWhenClause+ elseClause?"
+    switchWhenClause:
+      pattern: "/when/ _ whenValue:expression thenDo:thenClause"
+      stnFactory: "SwitchWhenStn"
+
+    thenClause: a
+      pattern:    "_ /then/ _ complexExpression"
+      # m pattern:  "block"
 
   @rule
     ifUnlessWhileUntil: /if|unless|while|until/
@@ -54,6 +68,6 @@ module.exports = ->
             originalOffset:       originalOffset
             originalMatchLength:  endOffset - originalOffset
 
-    optionalElseClause: a
+    elseClause: a
       pattern: "_else block"
       m pattern: "_else _ complexExpression"

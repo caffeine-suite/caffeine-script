@@ -57,15 +57,7 @@ defineModule module, ->
       nonStnExtensionMatches: -> m for m in @presentMatches when m.getStn && !m.isStnExtension
 
     getStn: (left) ->
-      # log getStn:
-      #   ruleName: @getRuleName()
-      #   isStnExtension: @isStnExtension
-      #   presentMatchesCount: @presentMatches.length
       stn = if factory = @getStnFactory()
-        # log getStn:
-        #   stnFactory: @stnFactory?.getName?() || @stnFactory
-        #   stnProps: @stnProps?() || @stnProps
-        #   left: left
         factory
           parseTreeNode: @
           @stnProps?() || @stnProps
@@ -79,7 +71,13 @@ defineModule module, ->
       for extension in @stnExtensionMatches
         stn = extension.getStn stn
 
-      stn?.props?.label = @label
+      if stn?.props
+        {label} = stn.props
+        # log label: label, atLabel: @label, ruleName:@ruleName
+        if (!label) || (@ruleName && @ruleName != @label)
+          stn.props.label = @label
+          stn.props.pluralLabel = @pluralLabel
+
       if @isRoot
         RootStn stn
       else

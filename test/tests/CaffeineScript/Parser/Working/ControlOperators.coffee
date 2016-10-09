@@ -71,6 +71,13 @@ module.exports = suite: parseTestSuite
     "do (a) ->": "(function(a) {})(a);"
 
   ################################
+  # switch
+  ################################
+  switch:
+    "switch a\nwhen b then c": "switch (a) {case b: c; break;}};"
+    # "switch a\nwhen b then c\nwhen d then e": "switch (a) {case b: c; break;}};"
+
+  ################################
   # TRY
   ################################
   try:
