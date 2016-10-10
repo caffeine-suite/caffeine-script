@@ -6,4 +6,4 @@ defineModule module, class SwitchWhenStn extends require './BaseStn'
 
   toJs: ->
     {whenValue, thenDo} = @labeledChildren
-    "case #{whenValue.toJsExpression()}: #{thenDo.toJs()}; break;}"
+    "case #{whenValue.toJsExpression()}: #{thenDo.toJs()};"

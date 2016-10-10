@@ -72,11 +72,11 @@ defineModule module, ->
         stn = extension.getStn stn
 
       if stn?.props
-        {label} = stn.props
-        # log label: label, atLabel: @label, ruleName:@ruleName
-        if (!label) || (@ruleName && @ruleName != @label)
-          stn.props.label = @label
-          stn.props.pluralLabel = @pluralLabel
+        currentStnLabel = stn.props.label
+        if !currentStnLabel || @label
+          {label, ruleName, pluralLabel, pluralRuleName} = @
+          stn.props.label = label || ruleName
+          stn.props.pluralLabel = pluralLabel || pluralRuleName
 
       if @isRoot
         RootStn stn

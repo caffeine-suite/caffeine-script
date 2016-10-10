@@ -100,6 +100,18 @@ module.exports = suite:
         b: :dude :this :is :cool
         """: '({a: ["shut", "the", "frell", "up"], b: ["dude", "this", "is", "cool"]});'
 
+        """
+        a =
+          foo: 1
+          foo: 10
+        """: 'a = [{foo: 1}, {foo: 10}]'
+
+        """
+        []
+          foo: 1
+          foo: 10
+        """: '[{foo: 1}, {foo: 10}]'
+
     withBlockValues: ->
       parseTests
         """

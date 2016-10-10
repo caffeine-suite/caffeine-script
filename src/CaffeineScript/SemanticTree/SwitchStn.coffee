@@ -5,5 +5,7 @@ Foundation = require 'art-foundation'
 defineModule module, class SwitchStn extends require './BaseStn'
 
   toJs: ->
-    {condition, switchWhenClauses} = @labeledChildren
-    "switch (#{condition.toJsExpression()}) {#{(clause.toJs() for clause in switchWhenClauses || [])}}"
+    {condition, switchWhens, switchElse} = @labeledChildren
+    cases = (clause.toJs() for clause in switchWhens || [])
+    cases.push "default: #{switchElse.toJs()}" if switchElse
+    "switch (#{condition.toJsExpression()}) {#{cases.join ' break; '}}"

@@ -24,6 +24,14 @@ module.exports = suite: parseTestSuite
         baz
       """: "if (foo) {bar;} else {baz;};"
 
+      """
+      if foo
+        bar
+      else
+        baz
+        boom
+      """: "if (foo) {bar;} else {baz; boom;};"
+
 
     expressions:
       """
@@ -74,8 +82,36 @@ module.exports = suite: parseTestSuite
   # switch
   ################################
   switch:
-    "switch a\nwhen b then c": "switch (a) {case b: c; break;}};"
-    # "switch a\nwhen b then c\nwhen d then e": "switch (a) {case b: c; break;}};"
+    csStyle:
+      """
+      switch a
+        when b then c
+      """: "switch (a) {case b: c;};"
+
+    cafStyle:
+      """
+      switch a
+      when b then c
+      """: "switch (a) {case b: c;};"
+
+      """
+      switch a
+      when b then c
+      when d then e
+      """: "switch (a) {case b: c; break; case d: e;};"
+
+      """
+      switch a
+      when b then c
+      else d
+      """: "switch (a) {case b: c; break; default: d};"
+
+      """
+      switch a
+      when b
+        c
+        d
+      """: "switch (a) {case b: c; d;};"
 
   ################################
   # TRY

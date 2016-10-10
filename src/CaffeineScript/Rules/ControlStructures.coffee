@@ -31,22 +31,28 @@ module.exports = ->
       stnFactory: "DoStn"
 
   @rule
-    controlStatement:
-      pattern: "/switch/ _ condition:expressionWithOneLessBlock switchBody"
-      stnFactory: "SwitchStn"
+    controlStatement: a
+      pattern: "/switch/ _ condition:expressionWithOneLessBlock _? switchThenBlock"
+      m pattern: "/switch/ _ condition:expression switchBody"
+  , stnFactory: "SwitchStn"
 
-    switchBody: "end switchWhenClause+ elseClause?"
-    switchWhenClause:
-      pattern: "/when/ _ whenValue:expression thenDo:thenClause"
-      stnFactory: "SwitchWhenStn"
+  @rule
+    switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
+    thenClause: "_ /then/ _ complexExpression"
 
-    thenClause: a
-      pattern:    "_ /then/ _ complexExpression"
-      # m pattern:  "block"
+    switchThenBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: "switchBody"
+
+  @rule
+    switchWhenClause: a
+      pattern: "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"
+      m pattern: "end? when _ whenValue:expression thenDo:thenClause"
+  ,
+    stnFactory: "SwitchWhenStn"
 
   @rule
     ifUnlessWhileUntil: /if|unless|while|until/
     thenDo: /then|do/
+    when: /when/
 
     expressionWithOneLessBlock:
       parse: (parentNode) ->
