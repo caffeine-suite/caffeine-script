@@ -1,3 +1,7 @@
+## WIP WARNING
+
+CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
+
 ## Programming with Caffeine
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive.
