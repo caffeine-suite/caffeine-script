@@ -32,6 +32,34 @@ module.exports = suite: parseTestSuite
         boom
       """: "if (foo) {bar;} else {baz; boom;};"
 
+    chain:
+      """
+      if a
+        b
+      else if c
+        d
+      else
+        e
+      """: "if (a) {b;} else {if (c) {d;} else {e;};};"
+
+      """
+      foo = if a
+        b
+      else if c
+        d
+      else
+        e
+      """: "if (a) {b;} else {if (c) {d;} else {f;};};"
+
+      """
+      foo = if a
+        if b
+          c
+        else
+          d
+      else
+        e
+      """: "if (a) {b;} else {if (c) {d;} else {f;};};"
 
     expressions:
       """
@@ -88,10 +116,47 @@ module.exports = suite: parseTestSuite
         when b then c
       """: "switch (a) {case b: c;};"
 
+      """
+      switch a
+        when b, d then c
+      """: "switch (a) {case b: c;};"
+
+      """
+      switch a
+        when b
+          c
+      """: "switch (a) {case b: c;};"
+
+      """
+      switch a
+        when b, c
+          c
+      """: "switch (a) {case b: c;};"
+
+      """
+      switch a
+        when b
+          c
+        else
+          d
+      """: "switch (a) {case b: c; break; zdefault: d};"
+
+      """
+      switch a
+        when b
+          c
+          d
+      """: "switch (a) {case b: c; d;};"
+
     cafStyle:
       """
       switch a
       when b then c
+      """: "switch (a) {case b: c;};"
+
+      """
+      switch a
+      when b then c; d
       """: "switch (a) {case b: c;};"
 
       """
@@ -112,6 +177,27 @@ module.exports = suite: parseTestSuite
         c
         d
       """: "switch (a) {case b: c; d;};"
+
+    asIfThenChain:
+      """
+      switch
+      when a < b then c
+      when d then e
+      else f
+      """: ""
+
+    expression:
+      """
+      s = switch a
+      when b then c
+      else d
+      """: ""
+
+      """
+      s = switch
+      when b then c
+      else d
+      """: ""
 
   ################################
   # TRY

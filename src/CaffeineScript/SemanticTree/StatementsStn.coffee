@@ -13,7 +13,7 @@ defineModule module, class StatementsStn extends require './BaseStn'
 
   getChildrenStatementsJsArray: (lastIsExpression = false)->
     for c, i in lines = @children
-      if lastIsExpression && isLast = i == lines.length - 1
+      if lastIsExpression && i == lines.length - 1
         "return #{c.toJsExpression()}"
       else
         if (statement = c.toJsStatement()).match /^function/
@@ -23,3 +23,4 @@ defineModule module, class StatementsStn extends require './BaseStn'
 
   toJsParenExpression: ->
     @applyRequiredParens (@getChildrenStatementsJsArray()).join(", ")
+
