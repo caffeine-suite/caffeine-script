@@ -55,7 +55,7 @@ module.exports = class Login extends Component {
 * Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
 * Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but elliminates the need for matching-token-pairs.
 
-* The JavaScript above is only roughly equivelent to the actual generated JavaScript. The generated JavaScript is a bit more capable than the JavaScript above and a bit longer. Why not show the generated code? When comparing CaffeineScript with other languages, what matters is what the hand-written code looks like in both. That said, CaffeineScript strives to generate excellent JavaScript.
+* The JavaScript above is hand-coded. It is only roughly equivelent to the actual generated JavaScript. The generated JavaScript is a bit more capable and a bit longer than the JavaScript above.
 
 ## Syntax Matters
 
