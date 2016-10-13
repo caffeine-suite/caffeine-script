@@ -8,6 +8,10 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
+### Wiki
+
+After you've read this short intro file, check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for more details.
+
 ### What is CaffeineScript?
 
 CaffeineScript is a lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
