@@ -98,7 +98,7 @@ defineModule module, class BaseStn extends BaseObject
     throw "TODO" if args
     body = body.toFunctionBodyJs() unless isString body
 
-    "(function() {#{body};})()"
+    "(() => {#{body};})()"
 
   toFunctionBodyJs: ->
     "return #{@toJsExpression()}"

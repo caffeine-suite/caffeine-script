@@ -12,7 +12,7 @@ module.exports = class OperatorHelper
       if a.match /^@?[_a-z0-9]+$/i
         "#{a} != null ? #{a} : #{b}"
       else
-        "#{CoffeeScriptGlobal}.existsOr(#{a}, (()=>{return #{b}})())"
+        "#{CoffeeScriptGlobal}.existsOr(#{a}, (() => {return #{b}})())"
 
   @infix: infix = (a, b, op) -> "#{a} #{op} #{b}"
   @precidence: [

@@ -22,5 +22,8 @@ defineModule module, class StatementsStn extends require './BaseStn'
           statement
 
   toJsParenExpression: ->
-    @applyRequiredParens (@getChildrenStatementsJsArray()).join(", ")
+    if @children.length == 1
+      @children[0].toJsParenExpression()
+    else
+      @applyRequiredParens (@getChildrenStatementsJsArray()).join(", ")
 

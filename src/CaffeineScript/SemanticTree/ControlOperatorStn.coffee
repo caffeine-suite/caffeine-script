@@ -35,7 +35,7 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
         "
         #{@applyParens expression} ?
         #{@body.toJsParenExpression()} :
-        #{@elseBody?.toJsExpression() || 'undefined'}
+        #{@elseBody?.toJsParenExpression() || 'undefined'}
         "
     else
       "
@@ -47,6 +47,9 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
         else ""
       }
       "
+
+  toJsParenExpression: ->
+    @applyRequiredParens @toJs returnExpression: true
 
   toJsExpression: ->
     @toJs returnExpression: true

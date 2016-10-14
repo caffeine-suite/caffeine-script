@@ -156,7 +156,7 @@ module.exports = suite:
 
         score = 76;
 
-        grade = (function()
+        grade = (() =>
           {switch (false)
             {case !(score < 60):
               return "F";

@@ -49,7 +49,7 @@ module.exports = suite: parseTestSuite
         d
       else
         e
-      """: "if (a) {b;} else {if (c) {d;} else {f;};};"
+      """: "let foo; foo = a ? b : (c ? d : e);"
 
       """
       foo = if a
@@ -59,13 +59,13 @@ module.exports = suite: parseTestSuite
           d
       else
         e
-      """: "if (a) {b;} else {if (c) {d;} else {f;};};"
+      """: "let foo; foo = a ? (b ? c : d) : e;"
 
     expressions:
       """
       bar = if foo
         1
-      """: "let bar; bar = foo ? (1) : undefined;"
+      """: "let bar; bar = foo ? 1 : undefined;"
 
       """
       bar = if foo
@@ -129,7 +129,7 @@ module.exports = suite: parseTestSuite
     conflictingName:
       basic:
         "error = try foo catch bar":
-          "let error, bar; error = (function() {try {return foo;} catch (error1) {bar = error1;};})();"
+          "let error, bar; error = (() => {try {return foo;} catch (error1) {bar = error1;};})();"
 
         "try foo catch error":
           "let error; try {foo;} catch (error1) {error = error1;};"
@@ -138,14 +138,14 @@ module.exports = suite: parseTestSuite
           "let bar; try {foo;} catch (error1) {bar = error1; error;};"
 
     asExpression:
-      "a = try foo": "let a; a = (function() {try {return foo;} catch (error) {};})();"
+      "a = try foo": "let a; a = (() => {try {return foo;} catch (error) {};})();"
       """
       a = try
         foo
         bar
-      """: "let a; a = (function() {try {foo; return bar;} catch (error) {};})();"
+      """: "let a; a = (() => {try {foo; return bar;} catch (error) {};})();"
 
-      "a = try foo catch bar": "let a, bar; a = (function() {try {return foo;} catch (error) {bar = error;};})();"
+      "a = try foo catch bar": "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
 
     catch:
       basic:
@@ -164,18 +164,18 @@ module.exports = suite: parseTestSuite
         """: "let bar; try {foo;} catch (error) {bar = error; baz; bud;};"
 
       asExpression:
-        "a = try foo catch bar": "let a, bar; a = (function() {try {return foo;} catch (error) {bar = error;};})();"
+        "a = try foo catch bar": "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
 
         """
         a = try foo catch bar
           baz
-        """: "let a, bar; a = (function() {try {return foo;} catch (error) {bar = error; return baz;};})();"
+        """: "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error; return baz;};})();"
 
         """
         a = try foo catch bar
           baz
           bud
-        """: "let a, bar; a = (function() {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
+        """: "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
 
 
   ################################

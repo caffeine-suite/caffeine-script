@@ -114,19 +114,19 @@ module.exports = suite: parseTestSuite
       """
       foo = switch a
       when b then c
-      """: "let foo; foo = (function() {switch (a) {case b: return c;};})();"
+      """: "let foo; foo = (() => {switch (a) {case b: return c;};})();"
 
       """
       foo = switch a
       when b then c
       when d then e
-      """: "let foo; foo = (function() {switch (a) {case b: return c; case d: return e;};})();"
+      """: "let foo; foo = (() => {switch (a) {case b: return c; case d: return e;};})();"
 
       """
       foo = switch a
       when b then c
       else d
-      """: "let foo; foo = (function() {switch (a) {case b: return c; default: return d};})();"
+      """: "let foo; foo = (() => {switch (a) {case b: return c; default: return d};})();"
 
     when:
       block:
@@ -135,10 +135,10 @@ module.exports = suite: parseTestSuite
         when b
           c
           d
-        """: "let foo; foo = (function() {switch (a) {case b: c; return d;};})();"
+        """: "let foo; foo = (() => {switch (a) {case b: c; return d;};})();"
 
       twoStatementsOneLine:
         """
         foo = switch a
         when b then c; d
-        """: "let foo; foo = (function() {switch (a) {case b: c; return d;};})();"
+        """: "let foo; foo = (() => {switch (a) {case b: c; return d;};})();"

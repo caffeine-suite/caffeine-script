@@ -18,7 +18,7 @@ defineModule module, class SwitchStn extends require './BaseStn'
     options = falsifyCases: falsifyCases
     cases = (clause.toFunctionBodyJs options for clause in switchWhens || [])
     cases.push "default: #{switchElse.toFunctionBodyJs()}" if switchElse
-    "(function() {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
+    "(() => {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
 
   getConditionJs: ->
     {condition} = @labeledChildren
