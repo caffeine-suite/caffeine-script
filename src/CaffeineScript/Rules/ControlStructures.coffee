@@ -32,20 +32,22 @@ module.exports = ->
 
   @rule
     controlStatement: a
-      pattern: "/switch/ _ condition:expressionWithOneLessBlock _? switchThenBlock"
-      m pattern: "/switch/ _ condition:expression switchBody"
+      pattern: "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock"
+      m pattern: "/switch/ _ condition:expression? switchBody"
+      m pattern: "/switch/ switchBodyBlock"
+      m pattern: "/switch/ switchBody"
   , stnFactory: "SwitchStn"
 
   @rule
     switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
-    thenClause: "_ /then/ _ complexExpression"
+    thenClause: "_ /then/ _ lineOfStatements"
 
-    switchThenBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: "switchBody"
+    switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: "switchBody"
 
   @rule
     switchWhenClause: a
       pattern: "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"
-      m pattern: "end? when _ whenValue:expression thenDo:thenClause"
+      m pattern: "end? when _ whenValue:complexExpression thenDo:thenClause"
   ,
     stnFactory: "SwitchWhenStn"
 

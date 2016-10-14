@@ -16,4 +16,3 @@ module.exports = ->
 
     anything:
       pattern: /(.|\n)*$/
-      toString: -> @subparseText

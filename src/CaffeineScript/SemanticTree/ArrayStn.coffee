@@ -4,6 +4,9 @@ Foundation = require 'art-foundation'
 
 defineModule module, class ArrayStn extends require './BaseStn'
 
+  @getter
+    implicitArray: -> @props.implicitArray
+
   constructor: (props, children) ->
     # collapse implicit arrays into parents
     if children.length == 1 && children[0].props.implicitArray
