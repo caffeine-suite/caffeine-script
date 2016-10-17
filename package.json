@@ -2,9 +2,11 @@
   "author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
   "dependencies": [
     {
-      "art-foundation": "git://github.com/Imikimi-LLC/art-foundation.git",
+      "art-foundation": "git://github.com/imikimi/art-foundation.git",
       "babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git",
-      "caffeine-mc": "git@github.com:shanebdavis/caffeine-mc.git"
+      "caffeine-mc": "git@github.com:shanebdavis/caffeine-mc.git",
+      "colors": "^1.1.2",
+      "pretty-error": "^2.0.1"
     }
   ],
   "description": "atomic data-types such as Color, Point, Rectangle and Matrix",
