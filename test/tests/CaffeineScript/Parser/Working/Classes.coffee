@@ -6,6 +6,12 @@
 
 module.exports = suite: parseTestSuite
 
+  new:
+    basic:
+      "new Foo": "new Foo;"
+      "new Foo 1": "new Foo(1);"
+      "new Foo.Bar": "new Foo.Bar;"
+
   definition:
     basic:
       "class Foo": "Foo = Caf.defClass(class Foo {});"

@@ -4,7 +4,6 @@
 module.exports = ->
   @rule
     _:              '/ +/ comment*'
-    __:             '/[ \n]+/ comment*'
     end:            "lineCommentEnd+"
 
     comment: a

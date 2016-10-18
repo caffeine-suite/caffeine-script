@@ -2,48 +2,58 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../Helper'
+{parseTestSuite} = require '../../Helper'
 
-module.exports = suite:
+module.exports = suite: parseTestSuite
 
-  simpleValues: ->
-    parseTests
-      "a":  "a;"
-      "@":  "this;"
-      "@a": "this.a;"
+  simpleValues:
+    "a":  "a;"
+    "@":  "this;"
+    "@a": "this.a;"
 
   extensions:
-    basic: ->
-      parseTests
-        "a.b":  "a.b;"
-        "a[b]": "a[b];"
-        "a()":  "a();"
-        "a b":  "a(b);"
+    basic:
+      "a.b":  "a.b;"
+      "a[b]": "a[b];"
+      "a()":  "a();"
+      "a b":  "a(b);"
 
-    homogenousChains: ->
-      parseTests
-        "a.b.c":    "a.b.c;"
-        "a(b(c))":  "a(b(c));"
-        "a[b[c]]":  "a[b[c]];"
-        "a b c":    "a(b(c));"
+    homogenousChains:
+      "a.b.c":    "a.b.c;"
+      "a(b(c))":  "a(b(c));"
+      "a[b[c]]":  "a[b[c]];"
+      "a b c":    "a(b(c));"
 
-    heterogenousChains: ->
-      parseTests
-        # mixed . and explicit function
-        "a(b).c":   "a(b).c;"
-        "a(b.c)":   "a(b.c);"
-        "a.b(c)":   "a.b(c);"
+    heterogenousChains:
+      # mixed . and explicit function
+      "a(b).c":   "a(b).c;"
+      "a(b.c)":   "a(b.c);"
+      "a.b(c)":   "a.b(c);"
 
-        # mixed . and implicit function
-        "a.b c":    "a.b(c);"
-        "a b.c":    "a(b.c);"
+      # mixed . and implicit function
+      "a.b c":    "a.b(c);"
+      "a b.c":    "a(b.c);"
 
-        # mixed . and []
-        "a.b[c]":   "a.b[c];"
-        "a[b.c]":   "a[b.c];"
-        "a[b].c":   "a[b].c;"
+      # mixed . and []
+      "a.b[c]":   "a.b[c];"
+      "a[b.c]":   "a[b.c];"
+      "a[b].c":   "a[b].c;"
 
-        # mixed [] and implicit function
-        "a b[c]":   "a(b[c]);"
-        "a[b c]":   "a[b(c)];"
-        "a[b] c":   "a[b](c);"
+      # mixed [] and implicit function
+      "a b[c]":   "a(b[c]);"
+      "a[b c]":   "a[b(c)];"
+      "a[b] c":   "a[b](c);"
+
+  parenthesis:
+    "(1)": "1;"
+    "(1 + 2) * 5":    "(1 + 2) * 5;"
+    "1 + 2 * 5":      "1 + (2 * 5);"
+    "1 + (2 * 5)":    "1 + (2 * 5);"
+    "(new Foo).bar":  "(new Foo).bar;"
+
+    """
+    (
+      1 + 2
+    ) * 5
+    """: "(1 + 2) * 5;"
+

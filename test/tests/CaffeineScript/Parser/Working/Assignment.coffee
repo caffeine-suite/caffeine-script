@@ -29,6 +29,13 @@ module.exports = suite:
         "@.f().foo = 1":    "this.f().foo = 1;"
         "@.f.foo.bar = 1":  "this.f.foo.bar = 1;"
 
+  block: ->
+    parseTests
+      """
+      foo =
+        bar: 1
+      """: "let foo; foo = {bar: 1};"
+
   multiline:
     basic: ->
       parseTests

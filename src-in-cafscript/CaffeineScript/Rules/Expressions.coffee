@@ -16,19 +16,14 @@ module.exports = ->
       controlStatement
       classDefinition
       structuredLiteral
-      newInstance
-      functionDefinition
       value
+      functionDefinition
       "
 
     structuredLiteral: w "object array"
 
   @rule
-    newInstance: "/new/ _ expressionWithoutBinOps"
-  ,
-    stnFactory: "NewInstanceStn"
 
-  @rule
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:
       pattern: "statement*"
