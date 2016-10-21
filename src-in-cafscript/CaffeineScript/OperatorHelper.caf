@@ -1,3 +1,4 @@
+|caffeine-script
 {a, m, w, compactFlatten, log, min, arrayWithout} = require "art-foundation"
 
 module.exports = class OperatorHelper
