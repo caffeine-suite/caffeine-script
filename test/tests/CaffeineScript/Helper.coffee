@@ -8,7 +8,7 @@ module.exports =
     for k, v of map
       do (k, v) ->
         test "ast: " + k.replace(/\n/g, "\\n"), ->
-          p = Parser.parse(k)
+          p = Parser.parse k, verbose: true
           assert.eq p.getStn(), v
 
   parseTests: parseTests = (a, b) ->
@@ -21,7 +21,7 @@ module.exports =
     newObjectFromEach map, (source, expectedJs) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
         js = try
-          stn = (p = Parser.parse(source)).getStn()
+          stn = (p = Parser.parse(source, verbose: true)).getStn()
           transformedStn = stn.transform()
           if compileModule
             transformedStn.toJsModule()
@@ -69,4 +69,4 @@ module.exports =
     for source in array
       do (source) ->
         test "illegal: #{source.replace(/\n/g, "\\n")}", ->
-          assert.throws -> Parse.parse source
+          assert.throws -> Parse.parse source, verbose: true

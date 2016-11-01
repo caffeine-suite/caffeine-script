@@ -44,5 +44,6 @@ module.exports = suite: parseTestSuite
       "f\n  .foo = 1":     "f.foo = 1;"
       "f\n  || foo = 1":   "let foo; f || (foo = 1);"
 
-  destructuring:
+  destructuring: #->
     "{a} = b": "let a; ({a} = b);"
+    "[a] = b": "let a; ({a} = b);"
