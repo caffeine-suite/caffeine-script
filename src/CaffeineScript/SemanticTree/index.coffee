@@ -3,6 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
+  ArrayDestructuringStn:      require './ArrayDestructuringStn'     
   ArraySpreadElementStn:      require './ArraySpreadElementStn'     
   ArrayStn:                   require './ArrayStn'                  
   AssignmentStn:              require './AssignmentStn'             

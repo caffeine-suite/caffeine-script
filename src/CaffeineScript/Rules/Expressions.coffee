@@ -15,6 +15,7 @@ module.exports = ->
     expressionWithoutBinOps: w "
       controlStatement
       classDefinition
+      destructuringAssignment
       structuredLiteral
       newInstance
       functionDefinition

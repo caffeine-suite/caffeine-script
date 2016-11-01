@@ -23,6 +23,8 @@ module.exports = ->
 
   @rule
     arrayDestructuring: "'[' _? identifier _? ']'"
+  , stnFactory: "ArrayDestructuringStn"
+
+  @rule
     arrayDestructuringElement: w "identifier objectDestructuring arrayDestructuring implicitObjectDestructuring"
 
-  # , stnFactory: "ArrayDestructuringStn"
