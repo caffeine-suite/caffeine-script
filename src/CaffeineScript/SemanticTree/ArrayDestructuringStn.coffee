@@ -4,4 +4,9 @@ Foundation = require 'art-foundation'
 
 defineModule module, class ArrayDestructuringStn extends require './BaseStn'
 
-  toJs: ->  @childrenToJs()
+  updateScope: (@scope) ->
+    @scope.addIdentifierAssigned @labeledChildren.identifier.toJs()
+    super
+
+  toJs: ->
+    "[#{@childrenToJs()}]"

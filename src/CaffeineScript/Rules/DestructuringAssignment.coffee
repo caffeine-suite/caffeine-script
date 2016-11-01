@@ -3,7 +3,7 @@
 
 module.exports = ->
   @rule
-    destructuringAssignment: "destructuringTarget _? '=' _? expression"
+    destructuringAssignment: "structure:destructuringTarget _? '=' _? value:expression"
   , stnFactory: "DestructuringAssignmentStn"
 
   @rule

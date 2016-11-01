@@ -46,4 +46,4 @@ module.exports = suite: parseTestSuite
 
   destructuring: #->
     # "{a} = b": "let a; ({a} = b);"
-    "[a] = b": "let a; ({a} = b);"
+    "[a] = b": "let a; ([a] = b);"

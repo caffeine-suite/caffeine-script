@@ -4,4 +4,6 @@ Foundation = require 'art-foundation'
 
 defineModule module, class DestructuringAssignmentStn extends require './BaseStn'
 
-  toJs: ->  @childrenToJs()
+  toJs: ->
+    {structure, value} = @labeledChildren
+    "(#{structure.toJs()} = #{value.toJs()})"
