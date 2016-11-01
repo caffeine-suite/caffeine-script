@@ -10,7 +10,10 @@ module.exports = ->
     destructuringTarget: w "objectDestructuring arrayDestructuring"
 
   @rule
-    objectDestructuring: "'{' _? objectDestructuringElement* _? '}'"
+    objectDestructuring: "'{' _? identifier _? '}'"
+  , stnFactory: "ObjectDestructuringStn"
+
+  @rule
     implicitObjectDestructuring: /TODO/
 
     objectDestructuringElement: "objectDestructuringElementPart spaceOrComma"
@@ -19,7 +22,6 @@ module.exports = ->
     objectDestructuringElementPart: w "identifier destructuringProperty"
 
     destructuringProperty: "identifier _? ':' _?"
-  # , stnFactory: "ObjectDestructuringStn"
 
   @rule
     arrayDestructuring: "'[' _? identifier _? ']'"
