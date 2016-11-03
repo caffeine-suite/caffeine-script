@@ -10,4 +10,5 @@ defineModule module, class DestructuringIdentifierStn extends require './BaseStn
 
 
   toJs: ->
-    @childrenToJs()
+    {identifier, destructuringDefault} = @labeledChildren
+    "#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"

@@ -14,12 +14,12 @@ module.exports = suite: parseTestSuite
 
   withAccessors:
     basic:
-      "f().foo = 1":   "f().foo = 1;"
-      "f.foo.bar = 1": "f.foo.bar = 1;"
+      "f().foo = 1":      "f().foo = 1;"
+      "f.foo.bar = 1":    "f.foo.bar = 1;"
 
     this:
-      "@f().foo = 1":   "this.f().foo = 1;"
-      "@f.foo.bar = 1": "this.f.foo.bar = 1;"
+      "@f().foo = 1":     "this.f().foo = 1;"
+      "@f.foo.bar = 1":   "this.f.foo.bar = 1;"
 
       "@.f = 1":          "this.f = 1;"
       "@.f().foo = 1":    "this.f().foo = 1;"
@@ -33,16 +33,16 @@ module.exports = suite: parseTestSuite
 
   multiline:
     basic:
-      "f\n.foo = 1":   "f.foo = 1;"
-      "f\n|| foo = 1": "let foo; f || (foo = 1);"
+      "f\n.foo = 1":        "f.foo = 1;"
+      "f\n|| foo = 1":      "let foo; f || (foo = 1);"
 
     compound:
-      "f\n.foo.bar = 1":   "f.foo.bar = 1;"
-      "f\n.foo().bar = 1": "f.foo().bar = 1;"
+      "f\n.foo.bar = 1":    "f.foo.bar = 1;"
+      "f\n.foo().bar = 1":  "f.foo().bar = 1;"
 
     block:
-      "f\n  .foo = 1":     "f.foo = 1;"
-      "f\n  || foo = 1":   "let foo; f || (foo = 1);"
+      "f\n  .foo = 1":      "f.foo = 1;"
+      "f\n  || foo = 1":    "let foo; f || (foo = 1);"
 
   destructuring:
     basic:
@@ -52,3 +52,7 @@ module.exports = suite: parseTestSuite
     list:
       "[a, b] = c": "let a, b; ([a, b] = c);"
       "{a, b} = c": "let a, b; ({a, b} = c);"
+
+    defaults:
+      "[a = 1, b] = c": "let a, b; ([a = 1, b] = c);"
+      "{a = 1, b} = c": "let a, b; ({a = 1, b} = c);"
