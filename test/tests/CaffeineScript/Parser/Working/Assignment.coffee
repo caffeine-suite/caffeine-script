@@ -56,3 +56,15 @@ module.exports = suite: parseTestSuite
     defaults:
       "[a = 1, b] = c": "let a, b; ([a = 1, b] = c);"
       "{a = 1, b} = c": "let a, b; ({a = 1, b} = c);"
+
+    asDifferentName:
+      "{a: c} = b": "let c; ({a: c} = b);"
+
+    nesting:
+      array:
+        "[{a}] = b": "let a; ([{a}] = b);"
+        "[[a]] = b": "let a; ([[a]] = b);"
+
+      object:
+        "{c:{a}} = b": "let a; ({c: {a}} = b);"
+        "{c:[a]} = b": "let a; ({c: [a]} = b);"

@@ -24,7 +24,7 @@ module.exports = ->
       # m pattern: "element:literal _ valueList"
       m pattern: "element:arrayDestructuringElement"
 
-    arrayDestructuringElement: "destructuringIdentifier"
+    arrayDestructuringElement: w "destructuringIdentifier destructuringTarget"
 
   @rule
     objectDestructuringList: a
@@ -32,7 +32,11 @@ module.exports = ->
       # m pattern: "element:literal _ valueList"
       m pattern: "element:objectDestructuringElement"
 
-    objectDestructuringElement: "destructuringIdentifier"
+    objectDestructuringElement: w "labeledDestructuringTarget destructuringIdentifier"
+
+  @rule
+    labeledDestructuringTarget: "identifier _? ':' _? arrayDestructuringElement"
+  , stnFactory: "LabeledDestructuringTargetStn"
 
   @rule
     destructuringIdentifier: "identifier destructuringDefault:destructuringDefault?" # objectDestructuring arrayDestructuring implicitObjectDestructuring"
