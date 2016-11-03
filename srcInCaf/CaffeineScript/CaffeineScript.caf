@@ -1,0 +1,4 @@
+|caffeine-script
+Parser = require './Parser'
+compile: (source) ->
+  compiled: js: Parser.parse(source).getStn().transform().toJsModule()
