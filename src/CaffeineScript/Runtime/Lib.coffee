@@ -13,8 +13,10 @@ module.exports =
   # returns true if a is false, null or undefined
   f: (a) -> a == false || !a?
 
-  isFunction:       isFunction = (a) -> typeof a is "function"
-  isInstance:       isFunction = (a) -> !isFunction(o) and _super.constructor == o.constructor
+  isFunction:       isF = (a) -> typeof a is "function"
+  isF:              isF
+  isInstance:       isI = (a) -> !isF(o) and _super.constructor == o.constructor
+  isI:              isI
 
   ###
   All about getSuper in ES6 land:
@@ -71,7 +73,7 @@ module.exports =
   ###
   getSuper: getSuper = (o) ->
     _super = Object.getPrototypeOf o
-    _super = Object.getPrototypeOf _super if isInstance o
+    _super = Object.getPrototypeOf _super if isI o
     _super
 
   ###
@@ -79,7 +81,7 @@ module.exports =
     klass a new class-function object
     init: (klass) -> outKlass
 
-  OUT: if isFunction outKlass.createWithPostCreate
+  OUT: if isF outKlass.createWithPostCreate
     outKlass.createWithPostCreate outKlass
   OR
     outKlass (from init)

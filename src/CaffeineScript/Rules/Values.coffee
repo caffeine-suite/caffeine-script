@@ -61,9 +61,9 @@ module.exports = ->
 
   @rule
     functionInvocation: a
-      pattern: "openParen_ valueList? _closeParen"
-      m pattern: "_? complexExpression"
-      m pattern: "_? valueListBlock"
+      pattern:   "conditional:'?'? openParen_ valueList? _closeParen"
+      m pattern: "conditional:'?'? _? complexExpression"
+      m pattern: "conditional:'?'? _? valueListBlock"
   ,
     stnFactory: "FunctionInvocationStn"
     stnExtension: true

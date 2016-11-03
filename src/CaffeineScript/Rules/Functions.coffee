@@ -25,7 +25,6 @@ module.exports = ->
       stnFactory: "StatementsStn"
 
   @rule
-
     argsDefinition: a
       pattern: "openParen_ argDefList? _closeParen"
   ,
