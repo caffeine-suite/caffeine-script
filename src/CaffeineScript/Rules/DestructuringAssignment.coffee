@@ -10,23 +10,32 @@ module.exports = ->
     destructuringTarget: w "objectDestructuring arrayDestructuring"
 
   @rule
-    objectDestructuring: "'{' _? identifier _? '}'"
+    objectDestructuring: "'{' _? objectDestructuringList _? '}'"
   , stnFactory: "ObjectDestructuringStn"
 
   @rule
-    implicitObjectDestructuring: /TODO/
-
-    objectDestructuringElement: "objectDestructuringElementPart spaceOrComma"
-    spaceOrComma: ["_? ',' _?", "_"]
-
-    objectDestructuringElementPart: w "identifier destructuringProperty"
-
-    destructuringProperty: "identifier _? ':' _?"
-
-  @rule
-    arrayDestructuring: "'[' _? identifier _? ']'"
+    arrayDestructuring: "'[' _? arrayDestructuringList _? ']'"
   , stnFactory: "ArrayDestructuringStn"
 
+
   @rule
-    arrayDestructuringElement: w "identifier objectDestructuring arrayDestructuring implicitObjectDestructuring"
+    arrayDestructuringList: a
+      pattern: "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+      # m pattern: "element:literal _ valueList"
+      m pattern: "element:arrayDestructuringElement"
+
+  @rule
+    arrayDestructuringElement: w "identifier" # objectDestructuring arrayDestructuring implicitObjectDestructuring"
+  , stnFactory: "DestructuringIdentifierStn"
+
+
+  @rule
+    objectDestructuringList: a
+      pattern: "element:objectDestructuringElement _comma_ objectDestructuringList"
+      # m pattern: "element:literal _ valueList"
+      m pattern: "element:objectDestructuringElement"
+
+  @rule
+    objectDestructuringElement: w "identifier" # objectDestructuring objectDestructuring implicitObjectDestructuring"
+  , stnFactory: "DestructuringIdentifierStn"
 
