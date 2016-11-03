@@ -26,6 +26,23 @@ module.exports = suite: parseTestSuite
           {this.prototype.foo = function() {return 1;};
           return this;});"
 
+    comments:
+      """
+      class Foo
+        # one line
+      """: "Foo =
+        Caf.defClass(class Foo {},
+        function()
+          {return this;});"
+      """
+      class Foo
+        ##
+          comment block
+      """: "Foo =
+        Caf.defClass(class Foo {},
+        function()
+          {return this;});"
+
     body:
       """
       class Foo extends Bar

@@ -48,20 +48,20 @@ module.exports =
   MAP:
     A <-> aPrototype
 
-    ^     ^ ^
-    |     | a
+    ^     ^     ^
+    |     |     a
     |     |
 
     B <-> bPrototype
 
-    ^     ^ ^
-    |     | b
+    ^     ^     ^
+    |     |     b
     |     |
 
     C <-> cPrototype
 
-            ^
-            c
+                ^
+                c
 
   Definition of super:
 
@@ -74,5 +74,19 @@ module.exports =
     _super = Object.getPrototypeOf _super if isInstance o
     _super
 
+  ###
+  IN:
+    klass a new class-function object
+    init: (klass) -> outKlass
+
+  OUT: if isFunction outKlass.createWithPostCreate
+    outKlass.createWithPostCreate outKlass
+  OR
+    outKlass (from init)
+
+  EFFECT:
+    outKlass.createWithPostCreate?(outKlass) ? outKlass
+  ###
   defClass: (klass, init) ->
-    init.call klass
+    outKlass = init.call klass
+    outKlass.createWithPostCreate?(outKlass) ? outKlass

@@ -9,18 +9,18 @@ BabelBridge = require 'babel-bridge'
 Rules = require './Rules'
 SemanticTree = require "./SemanticTree"
 
-###
-Eventualy I want all AstNodes to respond to:
+# line comment
 
-initially we should do:
-  toJsExpression - no need for parens because it is either inside brackets already or the end of an expression.
-  toStatement - no return-value needed; generate the nicest JS you can.
+##
+  Eventualy I want all AstNodes to respond to:
 
-eventually we should also do:
-  toJsExpressionInList - add parens if a following comma would confusing things
-  toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
+  initially we should do:
+    toJsExpression - no need for parens because it is either inside brackets already or the end of an expression.
+    toStatement - no return-value needed; generate the nicest JS you can.
 
-###
+  eventually we should also do:
+    toJsExpressionInList - add parens if a following comma would confusing things
+    toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
 
 {RootStn} = require './SemanticTree'
 
@@ -34,6 +34,7 @@ defineModule module, ->
       for match in @matches when ret = match.getImplicitArray?()
         return ret
       false
+  ##
 
     getMatchStns: ->
       v for m in @matches when v = m.getStn?()

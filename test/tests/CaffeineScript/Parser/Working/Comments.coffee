@@ -91,7 +91,7 @@ module.exports = suite:
   block: ->
     parseTests
       """
-      #
+      ##
         comment
       1
       """: "1;"
