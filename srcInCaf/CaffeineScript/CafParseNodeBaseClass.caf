@@ -31,9 +31,9 @@ defineModule module, ->
       !!@getImplicitArray()
 
     getImplicitArray: ->
-      # for match in @matches when ret = match.getImplicitArray?()
-      #   return ret
-      # false
+      for match in @matches when ret = match.getImplicitArray?()
+        ret
+      false
   ##
 
     getMatchStns: ->

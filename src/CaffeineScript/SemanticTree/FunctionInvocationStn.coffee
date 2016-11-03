@@ -14,7 +14,7 @@ defineModule module, class FunctionInvocationStn extends require './BaseStn'
 
   toJs: ->
     invocationJs = "#{valueJs = @value.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"
-    if @parseTreeNode.conditional
+    if @parseTreeNode?.conditional
       "Caf.isF(#{valueJs}) && #{invocationJs}"
     else
       invocationJs
