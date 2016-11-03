@@ -20,5 +20,5 @@
     "perf": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
     "test": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
   },
-  "version": "0.13.0"
+  "version": "0.13.1"
 }
