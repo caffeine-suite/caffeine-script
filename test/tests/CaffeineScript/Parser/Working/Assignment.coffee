@@ -68,3 +68,13 @@ module.exports = suite: parseTestSuite
       object:
         "{c:{a}} = b": "let a; ({c: {a}} = b);"
         "{c:[a]} = b": "let a; ({c: [a]} = b);"
+
+  binopAssignment:
+    basic:
+      "a &&= b":  "let a; a = a && b;"
+      "a ||= b":  "let a; a = a || b;"
+      "a ?= b":   "let a; a = a != null ? a : b;"
+
+    complexBase:
+      "a.c ||= d": "a.c = a.c || d;"
+      "a.b.c ||= d": "let base; (base = a.b).c = base.c || d;"

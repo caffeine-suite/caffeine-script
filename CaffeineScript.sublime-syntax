@@ -1,0 +1,49 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: CaffeineScript
+file_extensions:
+  - caf
+scope: source.caffeine
+contexts:
+  main:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character
+    - match: '"'
+      scope: punctuation.definition.string.begin.caffeine
+      push: double_quoted_string
+
+
+    # - match: '##(?: *\n)+( *)([^ \n][^\n]*)(\n( *\n)*\1[^\n]*)*'
+    - match: '##'
+      scope: punctuation.definition.comment.caffeine
+
+    # Comments begin with a '#' and finish at the end of the line
+    - match: '#'
+      scope: punctuation.definition.comment.caffeine
+      push: line_comment
+
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(if|else|for|while)\b'
+      scope: keyword.control.caffeine
+
+    # Numbers
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric.caffeine
+
+  double_quoted_string:
+    - meta_scope: string.quoted.double.caffeine
+    - match: '\\.'
+      scope: constant.character.escape.caffeine
+    - match: '"'
+      scope: punctuation.definition.string.end.caffeine
+      pop: true
+
+  line_comment:
+    - meta_scope: comment.line.caffeine
+    - match: $
+      pop: true
