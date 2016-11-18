@@ -65,7 +65,7 @@ module.exports = ->
     unaryOperator_:    /// (! | ~ | not\b) \ * ///
 
     dot_: /\. */
-    binaryOperator: ///
+    binaryOperator: binaryOperatorRegEx = ///
 
       # js logic
       && | \|\| | & | \| | \^ |
@@ -90,4 +90,30 @@ module.exports = ->
 
       ///
 
-    _assignmentOperator_: /\ *(=) */
+    _assignmentOperator_: ///
+      \ *
+      ( # copy of binaryOperatorRegEx EXCEPT comparison operators
+        # js logic
+        && | \|\| | & | \| | \^ |
+
+        # cs logic
+        \? |
+
+        # cs english logic
+        ((and | or | isnt | is | in)\b) |
+
+        # shift
+        << | >>> | >> |
+
+        # comparison
+        # == | != | <= | >= | < | > |
+
+        # cs math
+        // | %% | \*\* |
+
+        # js math
+        [-+*/%]
+      )?
+      =
+      \ *
+      ///

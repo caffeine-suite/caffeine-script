@@ -70,11 +70,14 @@ module.exports = ->
 
   @rule
     assignmentExtension: a
-      pattern: "_assignmentOperator_ complexExpression"
-      m pattern: "_assignmentOperator_ rValueBlock"
+      pattern: "assignmentOperator:_assignmentOperator_ complexExpression"
+      m pattern: "assignmentOperator:_assignmentOperator_ rValueBlock"
   ,
     stnFactory: "AssignmentStn"
     stnExtension: true
+    stnProps: ->
+      rawOp = @assignmentOperator.toString()
+      operator: (match = rawOp.match /(\S*)=/) && match[1]
 
   @rule
     blockValueExtension: "_? blockValueExtensionBlock"
