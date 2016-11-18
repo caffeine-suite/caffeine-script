@@ -9,6 +9,9 @@ defineModule module, class DotAccessorStn extends require './BaseStn'
 
   needsParens: false
 
+  @getter
+    isAccessor: -> true
+
   toJs: ->
     throw new Error "value and identier expected" unless @value and @identier
     if (identierString = @identier.toJs()).match /['"`]/

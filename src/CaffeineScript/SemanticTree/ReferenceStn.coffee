@@ -5,9 +5,16 @@ Foundation = require 'art-foundation'
 defineModule module, class ReferenceStn extends require './BaseStn'
 
   updateScope: (@scope) ->
-    @scope.addIdentifierUsed @toJs()
+    if @props.identifierHandle
+      @scope.addUniqueIdentifierHandle @props.identifierHandle
+    else
+      @scope.addIdentifierUsed @toJs()
     super
+
+  @getter
+    isReference: -> true
 
   needsParens: false
   toJs: ->
+    @props.identifierHandle?.identifier ||
     @labeledChildren.identifier.toJs()

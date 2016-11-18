@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, compact, isString, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
+{log, compact, isString, toInspectedObjects, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
 
 defineModule module, class BaseStn extends BaseObject
   ####################
@@ -35,7 +35,7 @@ defineModule module, class BaseStn extends BaseObject
     inspectedObjects: ->
       out = {}
       out[@class.getName()] = if @children.length == 0
-        @props
+        toInspectedObjects @props
       else
         a = []
         a.push @props if objectKeyCount(@props) > 0
@@ -179,10 +179,4 @@ defineModule module, class BaseStn extends BaseObject
 
   updateScope: (@scope) ->
     child.updateScope @scope for child in @children
-
-
-
-
-
-
-
+    null

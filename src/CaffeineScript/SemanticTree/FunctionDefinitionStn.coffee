@@ -19,7 +19,7 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
 
   updateScope: (@scope)->
     @scope.addChildScope @
-    child.updateScope @ for child in @children
+    super @ #child.updateScope @ for child in @children
 
   cloneWithNewStatements: (statements)->
     new @class @props, [@arguments, StatementsStn compactFlatten statements]

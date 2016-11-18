@@ -10,6 +10,9 @@ defineModule module, class BracketAccessorStn extends require './BaseStn'
 
   needsParens: false
 
+  @getter
+    isAccessor: -> true
+
   transformForComputedPropertyKeyUseCase: ->
     unless @expression
       @expression = @value

@@ -12,7 +12,16 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
   toJsStatement: -> @toJsExpression skipParens: true
 
+  updateScope: (@scope) ->
+    if @operator == "?" && !@left.isReference
+      {@uniqueIdentifierHandle} = @scope
+    super
+
   toJsExpression: ->
-    binaryOperatorToJs @operator,
-      left = @applyParens @left.toJsExpression()
-      right = @applyParens @right.toJsExpression()
+    if @operator == "?" && @uniqueIdentifierHandle
+      {identifier} = @uniqueIdentifierHandle
+      "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
+    else
+      binaryOperatorToJs @operator,
+        left = @applyParens @left.toJsExpression()
+        right = @applyParens @right.toJsExpression()

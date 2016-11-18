@@ -77,4 +77,4 @@ module.exports = suite: parseTestSuite
 
     complexBase:
       "a.c ||= d": "a.c = a.c || d;"
-      "a.b.c ||= d": "let base; (base = a.b).c = base.c || d;"
+      "a.b.c ||= d": "let base; base.c = ((base = a.b).c) || d;"

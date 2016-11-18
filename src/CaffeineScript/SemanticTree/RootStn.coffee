@@ -16,7 +16,10 @@ defineModule module, class RootStn extends ScopeStnMixin require './BaseStn'
   transform: ->
     ret = super
     # needs to be after super for correct identifier-use detection
-    @updateScope @
+    ret.updateScope ret
+    # log RootStn_transform_afterUpdateScope:
+    #   old: @
+    #   new: ret
     ret
 
   toJsModule: ->
