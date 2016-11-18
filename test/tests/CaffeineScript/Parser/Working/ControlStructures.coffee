@@ -129,13 +129,13 @@ module.exports = suite: parseTestSuite
     conflictingName:
       basic:
         "error = try foo catch bar":
-          "let error, bar; error = (() => {try {return foo;} catch (error1) {bar = error1;};})();"
+          "let error, bar, error1; error = (() => {try {return foo;} catch (error1) {bar = error1;};})();"
 
         "try foo catch error":
-          "let error; try {foo;} catch (error1) {error = error1;};"
+          "let error, error1; try {foo;} catch (error1) {error = error1;};"
 
         "try foo catch bar\n  error":
-          "let bar; try {foo;} catch (error1) {bar = error1; error;};"
+          "let bar, error1; try {foo;} catch (error1) {bar = error1; error;};"
 
     asExpression:
       "a = try foo": "let a; a = (() => {try {return foo;} catch (error) {};})();"
@@ -145,37 +145,37 @@ module.exports = suite: parseTestSuite
         bar
       """: "let a; a = (() => {try {foo; return bar;} catch (error) {};})();"
 
-      "a = try foo catch bar": "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
+      "a = try foo catch bar": "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
 
     catch:
       basic:
-        "try foo catch bar": "let bar; try {foo;} catch (error) {bar = error;};"
+        "try foo catch bar": "let bar, error; try {foo;} catch (error) {bar = error;};"
 
       body:
         """
         try foo catch bar
           baz
-        """: "let bar; try {foo;} catch (error) {bar = error; baz;};"
+        """: "let bar, error; try {foo;} catch (error) {bar = error; baz;};"
 
         """
         try foo catch bar
           baz
           bud
-        """: "let bar; try {foo;} catch (error) {bar = error; baz; bud;};"
+        """: "let bar, error; try {foo;} catch (error) {bar = error; baz; bud;};"
 
       asExpression:
-        "a = try foo catch bar": "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
+        "a = try foo catch bar": "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
 
         """
         a = try foo catch bar
           baz
-        """: "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error; return baz;};})();"
+        """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; return baz;};})();"
 
         """
         a = try foo catch bar
           baz
           bud
-        """: "let a, bar; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
+        """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
 
 
   ################################

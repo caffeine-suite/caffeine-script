@@ -6,6 +6,7 @@ defineModule module, class CatchStn extends require './BaseStn'
 
   updateScope: (@scope) ->
     if id = @labeledChildren.identifier
+      @uniqueIdentifierHandle = @scope.getUniqueIdentifierHandle "error"
       @scope.addIdentifierAssigned id.name
       @scope.addIdentifierUsed id.name
     super
@@ -15,6 +16,6 @@ defineModule module, class CatchStn extends require './BaseStn'
     {identifier, body} = @labeledChildren
     body = body && if returnExpression then body.toFunctionBodyJs() else body.toJs()
     if identifier
-      tempName = @getUnusedVariableName "error"
+      tempName = @uniqueIdentifierHandle.identifier
       body = compactFlatten(["#{identifier.name} = #{tempName}", body]).join '; '
       "catch (#{tempName}) {#{body};}"

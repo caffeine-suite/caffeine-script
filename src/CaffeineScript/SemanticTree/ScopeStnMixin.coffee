@@ -99,9 +99,11 @@ defineModule module, ->
 
       identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
       identifiersAssignedInParentScopes: ->
-        @_identifiersAssignedInParentScopes ||= if @scope && @scope != @
+        out = if @scope && @scope != @
           merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, arrayToTruthMap @argumentNames
-        else {}
+        else
+          {}
+        out
 
     # transform: ->
     #   if @props.identifiersAssigned

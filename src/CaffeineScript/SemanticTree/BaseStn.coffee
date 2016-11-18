@@ -117,8 +117,6 @@ defineModule module, class BaseStn extends BaseObject
     else
       @
 
-  getUnusedVariableName: (root) -> @scope.getUnusedVariableName root
-
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;
   toJsExpression: ->
