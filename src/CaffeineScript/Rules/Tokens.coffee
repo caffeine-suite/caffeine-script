@@ -24,6 +24,8 @@ module.exports = ->
 
     reservedWord: ///
       (
+      with |
+
       do |
 
       switch |
@@ -117,3 +119,10 @@ module.exports = ->
       =
       \ *
       ///
+
+    with: /with/
+
+  @rule
+    comprehensionOutputType: /object|array|map/
+    comprehensionIterationType: /from( +(object|array|iter))?/
+  , stnFactory: "SemanticTokenStn"

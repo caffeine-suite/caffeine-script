@@ -14,6 +14,7 @@ module.exports = ->
 
     expressionWithoutBinOps: w "
       controlStatement
+      comprehension
       classDefinition
       destructuringAssignment
       structuredLiteral
