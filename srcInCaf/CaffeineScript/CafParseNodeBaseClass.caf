@@ -30,18 +30,18 @@ defineModule module, ->
     isImplicitArray: ->
       !!@getImplicitArray()
 
-    getImplicitArray: ->
-      for match in @matches when ret = match.getImplicitArray?()
-        ret
-      false
-  ##
-
     getMatchStns: ->
-      v for m in @matches when v = m.getStn?()
+      array m from @matches when v = m.getStn?()
+        v
+
+    getImplicitArray: ->
+      find match from @matches
+        match.getImplicitArray?()
 
     getStnFactory: ->
       throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
       SemanticTree[@stnFactory] || @stnFactory
+
 
     getStnChildren: (left) ->
       if @stnChildren
@@ -50,15 +50,22 @@ defineModule module, ->
         else
           @stnChildren
       else
-        for m in @nonStnExtensionMatches when v = m.getStn left
+        array m from @nonStnExtensionMatches when v = m.getStn left
           v
 
     @getter
-      isStnExtension: -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
-      stnExtensionMatches: -> m for m in @presentMatches when m.getStn && m.isStnExtension
-      nonStnExtensionMatches: -> m for m in @presentMatches when m.getStn && !m.isStnExtension
+      isStnExtension:         -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
+      stnExtensionMatches:    -> array m from @presentMatches when m.getStn && m.isStnExtension
+      nonStnExtensionMatches: -> array m from @presentMatches when m.getStn && !m.isStnExtension
+
+    getTransformedSemanticTree: ->
+      @getStn().transform()
+
+    toJs: -> @getTransformedSemanticTree().toJs()
+
 
     getStn: (left) ->
+
       stn = if factory = @getStnFactory()
         factory
           parseTreeNode: @
@@ -70,11 +77,14 @@ defineModule module, ->
 
         if x.length == 1 then x[0] else if x.length == 0 then left else x
 
-      for extension in @stnExtensionMatches
+      each extension from @stnExtensionMatches
         stn = extension.getStn stn
 
+
+      # CAF TODO: all we need to fix is the ?. operator!
       if stn?.props
         currentStnLabel = stn.props.label
+
         if !currentStnLabel || @label
           {label, ruleName, pluralLabel, pluralRuleName} = @
           stn.props.label = label || ruleName
@@ -85,7 +95,3 @@ defineModule module, ->
       else
         stn
 
-    getTransformedSemanticTree: ->
-      @getStn().transform()
-
-    toJs: -> @getTransformedSemanticTree().toJs()

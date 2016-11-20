@@ -17,11 +17,7 @@ defineModule module, class ComprehensionStn extends require './BaseStn'
     if iterationType = iterationType?.props.token.match /object|array|iter/
       [iterationType] = iterationType
 
-    func = switch outputType
-      when "object" then "o"
-      when "map" then "m"
-      when "each" then "e"
-      else "a"
+    func = outputType.slice 0,1
 
     varDefString = if variableDefinition
       variableDefinition.toJs()

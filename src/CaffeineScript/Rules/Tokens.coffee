@@ -124,6 +124,6 @@ module.exports = ->
     when: /when/
 
   @rule
-    comprehensionOutputType: /object|array|map/
+    comprehensionOutputType: /object|array|map|each|find/
     comprehensionIterationType: /from( +(object|array|iter))?/
   , stnFactory: "SemanticTokenStn"

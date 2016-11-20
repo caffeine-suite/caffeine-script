@@ -52,6 +52,8 @@ module.exports = suite: parseTestSuite
       "array b":        "Caf.a(b);"
       "map b":          "Caf.m(b);"
       "object b":       "Caf.o(b);"
+      "each b":         "Caf.e(b);"
+      "find b":         "Caf.f(b);"
 
     iterationTypes:
       "array from b":           "Caf.a(b);"

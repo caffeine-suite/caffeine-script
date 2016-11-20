@@ -35,6 +35,13 @@ module.exports = suite: parseTestSuite
       #   "(b..., a) =>"
       # ]
 
+    blankLine:
+      """
+      (a) ->
+
+        a
+      """: "(function(a) {return a;});"
+
     defaultArguments:
       "(a = 1) =>":         "(a = 1) => {};"
       "(a, b = 1) =>":      "(a, b = 1) => {};"

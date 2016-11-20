@@ -30,6 +30,11 @@ module.exports = suite:
 
           "@.f":        "this.f;"
 
+  existanceAccessor:
+    basic: ->
+      parseTests
+        "a?.b": ""
+
   multiline:
     basic: ->
       parseTests
