@@ -49,17 +49,6 @@ module.exports = ->
     m pattern: "_? valueListBlock"
 
   @rule
-    dotAccessor:
-      pattern: "dot_ identifier assignmentExtension?"
-      stnFactory: "DotAccessorStn"
-      stnExtension: true
-
-    bracketAccessor:
-      pattern: "openBracket_ expression _closeBracket"
-      stnFactory: "BracketAccessorStn"
-      stnExtension: true
-
-  @rule
     functionInvocation: a
       pattern:   "conditional:'?'? openParen_ valueList? _closeParen"
       m pattern: "conditional:'?'? _? complexExpression"
@@ -85,4 +74,4 @@ module.exports = ->
     blockValueExtensionSubparse: a
 
       pattern: "end? lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
-      m pattern: "end? &dot_ valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
+      m pattern: "end? &dot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"

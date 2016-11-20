@@ -8,5 +8,8 @@ defineModule module, class SemanticTokenStn extends require './BaseStn'
     super
     @props.token ||= @parseTreeNode.toString()
 
+  @getter
+    token: -> @props.token
+
   toJs: ->
-    throw new Error "SemanticTokenStn is not indented to output Js directly"
+    throw new Error "SemanticTokenStn is not intended to output Js directly"

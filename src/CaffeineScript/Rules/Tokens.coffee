@@ -66,7 +66,6 @@ module.exports = ->
     unaryTailOperator: /\?/
     unaryOperator_:    /// (! | ~ | not\b) \ * ///
 
-    dot_: /\. */
     binaryOperator: binaryOperatorRegEx = ///
 
       # js logic
@@ -126,4 +125,6 @@ module.exports = ->
   @rule
     comprehensionOutputType: /object|array|map|each|find/
     comprehensionIterationType: /from( +(object|array|iter))?/
+    dot: /\??\./
+    questionMark: /\?/
   , stnFactory: "SemanticTokenStn"

@@ -2,8 +2,7 @@ Foundation = require 'art-foundation'
 
 {log, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
 AssignmentStn = require './AssignmentStn'
-DotAccessorStn = require './DotAccessorStn'
-BracketAccessorStn = require './BracketAccessorStn'
+AccessorStn = require './AccessorStn'
 ThisStn = require './ThisStn'
 IdentifierStn = require './IdentifierStn'
 StatementsStn = require './StatementsStn'
@@ -30,11 +29,11 @@ defineModule module, class ClassStn extends require './BaseStn'
                     [__, classPropName] = m
                     ThisStn IdentifierStn identifier: classPropName
                   else
-                    DotAccessorStn null,
+                    AccessorStn null,
                       ThisStn IdentifierStn identifier: "prototype"
                       IdentifierStn identifier: propName
                 when "BracketAccessor"
-                  BracketAccessorStn null,
+                  AccessorStn null,
                     ThisStn IdentifierStn identifier: "prototype"
                     propNameStn.children
                 else

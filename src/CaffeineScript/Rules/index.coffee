@@ -3,6 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
+  Accessors:               require './Accessors'              
   Blocks:                  require './Blocks'                 
   Classes:                 require './Classes'                
   Comments:                require './Comments'               

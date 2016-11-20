@@ -1,5 +1,4 @@
 {a, m, w, log, defineModule, formattedInspect, escapeJavascriptString} = require "art-foundation"
-{SimpleLiteralStn} =  require '../SemanticTree'
 
 defineModule module, ->
   ->

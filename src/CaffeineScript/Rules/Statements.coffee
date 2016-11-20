@@ -28,7 +28,7 @@ module.exports =
 
   newLineStatementExtension: a
     pattern: "end lineStartBinaryOperatorAndExpression"
-    m pattern: "end &dot_ valueExtension+ binaryOperatorSequenceExtension?"
+    m pattern: "end &dot valueExtension+ binaryOperatorSequenceExtension?"
 
   lineOfStatements:
     pattern: "statementSemi* statementWithoutEnd"

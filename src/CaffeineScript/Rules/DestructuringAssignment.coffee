@@ -1,5 +1,4 @@
 {a, m, w, log, formattedInspect, escapeJavascriptString} = require "art-foundation"
-{SimpleLiteralStn} =  require '../SemanticTree'
 
 module.exports = ->
   @rule

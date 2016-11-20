@@ -25,7 +25,7 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
         value2
         BinaryOperatorStn
           operator: @operator
-          value1
+          value1 # should this be cloned? I've tried to make Stns Pure-functional, so this should be OK.
           @rValue
     else
       super
