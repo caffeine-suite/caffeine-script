@@ -13,12 +13,32 @@ module.exports = suite: parseTestSuite
         a
       """: "Caf.o(b, (a) => {return a;});"
 
+    ###
+    scope:
+      """
+      a = 10
+      object a from b
+      """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
+
+      """
+      object a from b
+        foo = a
+        foo * 2
+      """: "Caf.o(b, (a) => {let foo; foo = a; return foo * 2;});"
+    ###
+
     # kvForm:
     #   "object k, v from b with k + v": "Caf.o(b, (k, v) => {return k + v;});"
 
-    # with:
-    #   "object a from b with a": "Caf.o(b, (a) => {return a;});"
+    # TODO: 'with' works, but the parsing code is awkward.
+    # What I'd prefer is to fix "expressionWithOneLessBlock" to allow it matching
+    # part of the rest of the line. Right now it must match all the rest of the line, plus any one-less-blocks, to succeed.
+    # A partial-match would be just fine, and it would simplify this case.
+    # AND, it is going to significnatly simplify when we add "when" and "when + with" tests, sketched below.
+    with:
+      "object a from b with a": "Caf.o(b, (a) => {return a;});"
 
+    # TODO
     # when:
     #   "object a from b when a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
     #   "object a from b when a with a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
