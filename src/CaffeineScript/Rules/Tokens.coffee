@@ -121,6 +121,7 @@ module.exports = ->
       ///
 
     with: /with/
+    when: /when/
 
   @rule
     comprehensionOutputType: /object|array|map/

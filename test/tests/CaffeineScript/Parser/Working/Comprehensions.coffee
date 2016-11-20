@@ -39,30 +39,30 @@ module.exports = suite: parseTestSuite
       "object a from b with a": "Caf.o(b, (a) => {return a;});"
 
     # TODO
-    # when:
-    #   "object a from b when a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
-    #   "object a from b when a with a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
+    when:
+      "object a from b when a": "Caf.o(b, null, (a) => {return a;});"
+      "object a from b when a with a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
 
-    #   """
-    #   object a from b when a
-    #     a
-    #   """: "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
+      """
+      object a from b when a
+        a
+      """: "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
 
     outputTypes:
-      "array b":        "Caf.a(b, (v) => {return v;});"
-      "map b":          "Caf.m(b, (v) => {return v;});"
-      "object b":       "Caf.o(b, (v) => {return v;});"
+      "array b":        "Caf.a(b);"
+      "map b":          "Caf.m(b);"
+      "object b":       "Caf.o(b);"
 
     iterationTypes:
-      "array from b":           "Caf.a(b, (v) => {return v;});"
-      "array from object b":    "Caf.aFromO(b, (v) => {return v;});"
-      "array from array b":     "Caf.aFromA(b, (v) => {return v;});"
-      "array from iter b":      "Caf.aFromI(b, (v) => {return v;});"
+      "array from b":           "Caf.a(b);"
+      "array from object b":    "Caf.aFromO(b);"
+      "array from array b":     "Caf.aFromA(b);"
+      "array from iter b":      "Caf.aFromI(b);"
 
     implicitForms:
-      "object v from b":  "Caf.o(b, (v) => {return v;});"
-      "object from b":    "Caf.o(b, (v) => {return v;});"
-      "object b":         "Caf.o(b, (v) => {return v;});"
+      "object v from b":  "Caf.o(b);"
+      "object from b":    "Caf.o(b);"
+      "object b":         "Caf.o(b);"
 
     # range:      "for a in 1..10\n  a": ""
     # oneLiner:   "a for a in b": ""

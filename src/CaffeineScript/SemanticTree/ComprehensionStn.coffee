@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, formattedInspect, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
+{peek, log, formattedInspect, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
 
 defineModule module, class ComprehensionStn extends require './BaseStn'
 
@@ -11,6 +11,7 @@ defineModule module, class ComprehensionStn extends require './BaseStn'
       variableDefinition
       body
       iterable
+      whenClause
     } = @labeledChildren
     outputType = outputType?.props.token
     if iterationType = iterationType?.props.token.match /object|array|iter/
@@ -27,17 +28,26 @@ defineModule module, class ComprehensionStn extends require './BaseStn'
     else
       "v"
 
-    bodyStr = if body
-      body.toFunctionBodyJs()
-    else
-      "return #{varDefString}"
+    withFunctionStr = if body
+      "(#{varDefString}) =>
+      {#{body.toFunctionBodyJs()};}"
+
+    whenFunctionString = if whenClause
+      "(#{varDefString}) =>
+      {#{whenClause.toFunctionBodyJs()};}"
 
     switch iterationType
       when "array" then func+="FromA"
       when "object" then func+="FromO"
       when "iter" then func+="FromI"
-    "
-    Caf.#{func}(#{iterable.toJsExpression()},
-      (#{varDefString}) =>
-      {#{bodyStr};})
-    "
+
+    params = [
+      iterable.toJsExpression()
+      withFunctionStr
+      whenFunctionString
+    ]
+    params.pop() while (!peek params)
+    params = for p in params
+      p || "null"
+
+    "Caf.#{func}(#{params.join ', '})"

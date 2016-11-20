@@ -1,6 +1,10 @@
 {a, m, w, compactFlatten, log} = require "art-foundation"
 {Parser, Nodes, Extensions} = require 'babel-bridge'
 {ArrayStn, BinaryOperatorStn} = require "../SemanticTree"
+{matchBlock} = Extensions.IndentBlocks
+
+upToButNotEol = /[^\n]*/y
+
 module.exports = ->
   @rule
 
@@ -31,6 +35,27 @@ module.exports = ->
     stnFactory: "NewInstanceStn"
 
   @rule
+    expressionWithOneLessBlock:
+      parse: (parentNode) ->
+        {nextOffset:offset, source} = parentNode
+        originalOffset = offset
+        upToButNotEol.lastIndex = offset
+        if match = upToButNotEol.exec source
+          [m] = match
+          endOffset = offset += m.length
+
+          while (match = matchBlock source, offset)
+            endOffset = offset
+            {matchLength} = match
+            offset += matchLength
+
+          expressionSource = source.slice originalOffset, endOffset
+          parentNode.subparse expressionSource,
+            allowPartialMatch:    true
+            rule:                 "complexExpression"
+            originalOffset:       originalOffset
+            originalMatchLength:  endOffset - originalOffset
+
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:
       pattern: "statement*"

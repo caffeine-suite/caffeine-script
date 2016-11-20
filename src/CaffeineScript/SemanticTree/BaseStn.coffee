@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, compact, isString, toInspectedObjects, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
+{log, compact, isString, toInspectedObjects, merge, compactFlatten, defineModule, createObjectTreeFactory, BaseObject, objectWithout, objectKeyCount, inspectedObjectLiteral, clone} = Foundation
 
 defineModule module, class BaseStn extends BaseObject
   ####################
@@ -34,11 +34,14 @@ defineModule module, class BaseStn extends BaseObject
     pluralLabel: -> @props.pluralLabel
     inspectedObjects: ->
       out = {}
-      out[@class.getName()] = if @children.length == 0
-        toInspectedObjects @props
+      {label} = @
+      props = merge (objectWithout @props, "label", "pluralLabel"),
+        class: @class.getName() if label
+      out[label || @class.getName()] = if @children.length == 0
+        toInspectedObjects props
       else
         a = []
-        a.push @props if objectKeyCount(@props) > 0
+        a.push props if objectKeyCount(props) > 0
         a.concat (c.inspectedObjects for c in @children)
       out
     type: -> @class.type

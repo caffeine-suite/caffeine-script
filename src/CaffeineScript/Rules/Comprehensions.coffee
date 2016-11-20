@@ -9,11 +9,11 @@ defineModule module, ->
     @rule
       comprehensionVariableDef_: '!comprehensionIterationType identifier _'
       comprehensionIterationTypeClause_: 'comprehensionIterationType _'
-      compressionWithBody: '_? with _ expression'
-      comprehensionIterableAndBody: [
-        "iterable:expressionWithOneLessBlock body:block"
-        "iterable:expression compressionWithBody?"
-      ]
+      comprehensionWith: '_? with _ expression'
+      comprehensionIterable: "expressionWithOneLessBlock"
+      comprehensionBody: w "block comprehensionWith"
+
+      comprehensionWhen: '_? when _ expressionWithOneLessBlock'
 
     @rule
       forComprehension: "
@@ -21,6 +21,8 @@ defineModule module, ->
         variableDefinition:comprehensionVariableDef_?
         iterationType:comprehensionIterationTypeClause_?
 
-        comprehensionIterableAndBody
+        iterable:comprehensionIterable
+        whenClause:comprehensionWhen?
+        body:comprehensionBody?
         "
     , stnFactory: "ComprehensionStn"
