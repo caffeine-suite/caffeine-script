@@ -52,7 +52,7 @@ defineModule module, ->
           v
 
     @getter
-      isStnExtension: -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
+      isStnExtension: -> @stnExtension || @presentMatches[0]?.isStnExtension
       stnExtensionMatches: -> m for m in @presentMatches when m.getStn && m.isStnExtension
       nonStnExtensionMatches: -> m for m in @presentMatches when m.getStn && !m.isStnExtension
 

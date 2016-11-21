@@ -49,7 +49,8 @@ class CafParseNodeBaseClass extends Nodes.Node
         v
 
   @getter
-    isStnExtension:         -> @stnExtension || ((p = @presentMatches).length >= 1 && p[0].isStnExtension)
+    isStnExtension:         -> @stnExtension || @presentMatches[0]?.isStnExtension
+
     stnExtensionMatches:    -> array m from @presentMatches when m.getStn && m.isStnExtension
     nonStnExtensionMatches: -> array m from @presentMatches when m.getStn && !m.isStnExtension
 
