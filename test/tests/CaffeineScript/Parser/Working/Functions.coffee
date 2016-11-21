@@ -75,9 +75,14 @@ module.exports = suite: parseTestSuite
       'foo 123 if bar': "if (bar) {foo(123);};"
 
     conditional:
-      "a?(b)":    "Caf.isF(a) && a(b);"
-      "a? b":     "Caf.isF(a) && a(b);"
-      "a?(b)+4":  "(Caf.isF(a) && a(b)) + 4;"
+      basic:
+        "a?(b)":    "Caf.isF(a) && a(b);"
+        "a? b":     "Caf.isF(a) && a(b);"
+        "a?\n b":   "Caf.isF(a) && a(b);"
+        "a?(b)+4":  "(Caf.isF(a) && a(b)) + 4;"
+
+      baseExtraction:
+        "a.foo.bar?(b)":  "let base; (Caf.isF((base = a.foo).bar)) && base.bar(b);"
 
     block:
       basic:

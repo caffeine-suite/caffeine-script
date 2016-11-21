@@ -61,7 +61,7 @@ module.exports = ->
     propName: pattern: "computedPropName"
     computedPropName:
       pattern: "openBracket_ expression _closeBracket"
-      stnFactory: "BracketAccessorStn"
+      stnFactory: "AccessorStn"
 
 
   @rule

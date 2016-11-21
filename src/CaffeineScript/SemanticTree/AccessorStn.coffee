@@ -5,13 +5,12 @@ SemanticTree = require './namespace'
 
 defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
 
-  constructor: (props, [@value, @dot, @key]) ->
-    unless @key
-      throw new Error "no token, no!" if @dot.token
-      @key = @dot
-      @dot = null
-    throw new Error "no key" unless @key
-    throw new Error "no value" unless @value
+  constructor: (props, children) ->
+    switch children.length
+      when 1 then [@key] = children
+      when 2 then [@value, @key] = children
+      when 3 then [@value, @dot, @key] = children
+      else throw new Error "expected <=3 children"
     super
 
   needsParens: false
@@ -37,12 +36,14 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
     else
       super
 
+  ###
+  @value is only ever not set for object literal interpolation.
+  ###
   toJs: ->
-    throw new Error "value and identier expected" unless @value and @key
-    if @key.isIdentifier
+    if @value && @key.isIdentifier
       if (identierString = @key.toJs()).match /['"`]/
         "#{@value.toJsExpressionWithParens()}[#{identierString}]"
       else
         "#{@value.toJsExpressionWithParens()}.#{identierString}"
     else
-      "#{@value.toJsExpressionWithParens()}[#{@key.toJsExpression()}]"
+      "#{@value?.toJsExpressionWithParens() || ""}[#{@key.toJsExpression()}]"

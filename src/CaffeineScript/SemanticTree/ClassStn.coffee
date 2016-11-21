@@ -32,7 +32,7 @@ defineModule module, class ClassStn extends require './BaseStn'
                     AccessorStn null,
                       ThisStn IdentifierStn identifier: "prototype"
                       IdentifierStn identifier: propName
-                when "BracketAccessor"
+                when "Accessor"
                   AccessorStn null,
                     ThisStn IdentifierStn identifier: "prototype"
                     propNameStn.children
