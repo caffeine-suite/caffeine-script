@@ -27,18 +27,16 @@ class CafParseNodeBaseClass extends Nodes.Node
   isImplicitArray: ->
     !!@getImplicitArray()
 
-  getMatchStns: ->
-    array m from @matches when v = m.getStn?()
-      v
-
   getImplicitArray: ->
     find match from @matches
       match.getImplicitArray?()
 
+  getMatchStns: ->
+    array m from @matches when v = m.getStn?() with v
+
   getStnFactory: ->
     throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
     SemanticTree[@stnFactory] || @stnFactory
-
 
   getStnChildren: (left) ->
     if @stnChildren
@@ -55,14 +53,7 @@ class CafParseNodeBaseClass extends Nodes.Node
     stnExtensionMatches:    -> array m from @presentMatches when m.getStn && m.isStnExtension
     nonStnExtensionMatches: -> array m from @presentMatches when m.getStn && !m.isStnExtension
 
-  getTransformedSemanticTree: ->
-    @getStn().transform()
-
-  toJs: -> @getTransformedSemanticTree().toJs()
-
-
   getStn: (left) ->
-
     stn = if factory = @getStnFactory()
       factory
         parseTreeNode: @
@@ -77,11 +68,8 @@ class CafParseNodeBaseClass extends Nodes.Node
     each extension from @stnExtensionMatches
       stn = extension.getStn stn
 
-
-    # CAF TODO: all we need to fix is the ?. operator!
     if stn?.props
       currentStnLabel = stn.props.label
-
       if !currentStnLabel || @label
         {label, ruleName, pluralLabel, pluralRuleName} = @
         stn.props.label = label || ruleName
@@ -92,3 +80,7 @@ class CafParseNodeBaseClass extends Nodes.Node
     else
       stn
 
+  getTransformedSemanticTree: ->
+    @getStn().transform()
+
+  toJs: -> @getTransformedSemanticTree().toJs()
