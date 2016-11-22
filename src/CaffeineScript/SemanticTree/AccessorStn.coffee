@@ -37,7 +37,7 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
       super
 
   ###
-  @value is only ever not set for object literal interpolation.
+  @value is only ever not set for object literal computed property names.
   ###
   toJs: ->
     if @value && @key.isIdentifier

@@ -1,8 +1,9 @@
 Foundation = require 'art-foundation'
+ScopeStnMixin = require './ScopeStnMixin'
 
 {peek, log, formattedInspect, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
 
-defineModule module, class ComprehensionStn extends require './BaseStn'
+defineModule module, class ComprehensionStn extends ScopeStnMixin require './BaseStn'
 
   toJs: ->
     {

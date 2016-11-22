@@ -43,6 +43,7 @@ defineModule module, ->
       name
 
     addChildScope: (child) ->
+      return if child == @
       (@childScopes ||= []).push child
       # log ADDCHILDSCOPE:
       #   self: @
@@ -66,9 +67,11 @@ defineModule module, ->
       if @props.identifiersAssigned && (identifiers = (Object.keys @identifiersNeedingLet)).length > 0
         "let #{identifiers.join ', '}"
 
-    updateScope: (@scope) ->
-      super
+    updateScope: (@scope)->
       @bindAllUniqueIdentifiersRequested()
+      @scope.addChildScope @
+      child.updateScope @ for child in @children
+      null
 
     @getter
       argumentNames: -> []
