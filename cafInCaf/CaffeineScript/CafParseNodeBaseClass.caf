@@ -28,7 +28,7 @@ class CafParseNodeBaseClass extends Nodes.Node
     !!@getImplicitArray()
 
   getImplicitArray: ->
-    find match from @matches
+    find match in @matches
       match.getImplicitArray?()
 
   getMatchStns: ->
@@ -45,8 +45,7 @@ class CafParseNodeBaseClass extends Nodes.Node
       else
         @stnChildren
     else
-      array m from @nonStnExtensionMatches when v = m.getStn left
-        v
+      array m from @nonStnExtensionMatches when m = m.getStn left
 
   @getter
     isStnExtension:         -> @stnExtension || @presentMatches[0]?.isStnExtension
