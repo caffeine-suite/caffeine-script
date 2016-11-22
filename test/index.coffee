@@ -7,7 +7,7 @@ try
 # if true
   {Mocha} = require "art-foundation/dev_tools/test"
   require 'caffeine-mc/register'
-  require '../index'
+  require '../'
 
   Mocha.run ({assert})->
     self.testAssetRoot = "/test/assets"

@@ -13,22 +13,44 @@ module.exports = suite: parseTestSuite
         a
       """: "Caf.o(b, (a) => {return a;});"
 
-    ###
     scope:
-      """
-      a = 10
-      object a from b
-      """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
+      ###
+      See Evernote on Scope
+      ###
+
+      # """
+      # a = 10
+      # object a from b with a
+      # """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
 
       """
       object a from b
         foo = a
         foo * 2
       """: "Caf.o(b, (a) => {let foo; foo = a; return foo * 2;});"
-    ###
+
+      """
+      object a from b when c = a.foo()
+        c
+      """: "(() => {let c; return Caf.o(b, (a) => {return c;}, (a) => {c = a.foo()})})();"
+
+    into:
+      "object a into b": ""
+
+    initOut:
+      "each k, v, out = {} with out[k+1] = v": ""
+
+    alternativeKeywords:
+      in:
+        "find a in b when a > 10": ""
+      do:
+        "each a in b do a()": ""
 
     # kvForm:
     #   "object k, v from b with k + v": "Caf.o(b, (k, v) => {return k + v;});"
+
+    # withDestructuring:
+    #   "object [a] from c with a": ""
 
     # TODO: 'with' works, but the parsing code is awkward.
     # What I'd prefer is to fix "expressionWithOneLessBlock" to allow it matching
