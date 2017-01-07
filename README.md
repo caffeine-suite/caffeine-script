@@ -1,26 +1,25 @@
-## WIP WARNING
-
-CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
-
 ## Programming with Caffeine
+
+> WIP WARNING
+> CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive.
 
+CaffeineScript is a lean, high-level programming language that compiles to JavaScript that is inspired by CoffeeScript, Ruby and ES6.
+
+#### Motivation
+
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
-### Wiki
+#### Wiki
 
 After you've read this short intro file, check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for more details.
-
-### What is CaffeineScript?
-
-CaffeineScript is a lean, high-level programming language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
 
 #### Example
 
 ```coffeescript
 # CaffeineScript - 28 tokens and 0 matching-token-pairs
-import &:ArtSuite
+import &ArtSuite
 
 class Login extends Component
 
