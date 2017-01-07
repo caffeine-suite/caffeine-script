@@ -1,6 +1,6 @@
 ## Programming with Caffeine
 
-> WIP WARNING
+> WARNING:
 > CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive.
@@ -33,22 +33,22 @@ class Login extends Component
 ```
 
 ```javascript
-// ES6 - 69 tokens and 11 matching-token-pairs
-let {
-  Component,
-  Dialog,
-  TextElement,
-  TextInput
-} = require('art-suite');
+// ES6 - 70 tokens and 11 matching-token-pairs
+let {                                                                           // 2
+  Component,                                                                    // 2
+  Dialog,                                                                       // 2
+  TextElement,                                                                  // 2
+  TextInput                                                                     // 1
+} = require('art-suite');                                                       // 7 tokens (17 total)
 
-module.exports = class Login extends Component {
-  render() {
-    Dialog(
-      TextElement({text: 'username', size: {ww: 1, hch: 1}}),
-      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
-    );
-  };
-};
+module.exports = class Login extends Component {                                // 9
+  render() {                                                                    // 3
+    Dialog(                                                                     // 2
+      TextElement({text: 'username', size: {ww: 1, hch: 1}}),                   // 17
+      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})    // 16
+    );                                                                          // 2
+  };                                                                            // 2
+};                                                                              // 2 tokens (53 total)
 ```
 
 * Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
