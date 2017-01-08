@@ -52,13 +52,13 @@ module.exports = class Login extends Component {                                
 ```
 
 * Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
-* Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but elliminates the need for matching-token-pairs.
+* Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but eliminates the need for matching-token-pairs.
 
-* The JavaScript above is hand-coded. It is only roughly equivelent to the actual generated JavaScript. The generated JavaScript is a bit more capable and a bit longer than the JavaScript above.
+* The JavaScript above is hand-coded. It is only roughly equivalent to the actual generated JavaScript. The generated JavaScript is a bit more capable and a bit longer than the JavaScript above.
 
 ## Syntax Matters
 
-I believe syntax matters. Every line of code we write, throughout the product lifecycle, will get edited at least 10 times and read it at least 100 times. Every token costs 10x - 100x more programmer-time down the road than it did to initially add it. (1)
+I believe syntax matters. Every line of code we write, throughout the product lifecycle, will get edited at approximately 10 times and read approximately 100 times. Therefor every token costs 10x - 100x more programmer-time overall compared to the initial cost of adding it. (1)
 
 ### Code is a Liability
 
@@ -68,7 +68,7 @@ While the product of code is an asset - it creates value in the world, the code 
 
 ## Good Design and Programming Languages
 
-Good design in programming, just like in anything else, is important. Sadly, good design princinples are rarely applied to programming tools. I'm on a mission to change that. All well-designed things have the following properties. I aim to design CaffeineScript and it's related tools with these in mind:
+Good design in programming, just like in anything else, is important. Sadly, good design principles are rarely applied to programming tools. I'm on a mission to change that. All well-designed things have the following properties. I aim to design CaffeineScript and it's related tools with these in mind:
 
 * beautiful
 * pleasurable to use
@@ -79,7 +79,7 @@ Good design in programming, just like in anything else, is important. Sadly, goo
   * streamline the most common work flows
   * place uncommon work-flows off-screen so they don't distract
 
-I look forward to the day when there are design awards for programing langauges, editors, IDEs, compilers, debuggers, etc.
+I look forward to the day when there are design awards for programing languages, editors, IDEs, compilers, debuggers, etc.
 
 More on my design philosophy: [Amazingly Great Design @ EssenceAndArtifact.com](http://www.essenceandartifact.com/2014/07/amazingly-great-design-howto.html)
 
@@ -95,4 +95,4 @@ I owe a debt of gratitude to Jeremy Ashkenas, the author of CoffeeScript. It is 
 
 ## Status
 
-CaffeineScript is still a work in progress. I am not using it in any code yet. Progress is very good, though, and it *may* be ready soon. Perhaps it will be ready in November or December for beta use.
+CaffeineScript is still a work in progress. I am not using it in any code yet. Progress is very good, though, and it *may* be ready soon.
