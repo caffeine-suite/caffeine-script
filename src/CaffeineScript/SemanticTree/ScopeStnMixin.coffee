@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, newObjectFromEach} = Foundation
+{log, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
 StatementsStn = require './StatementsStn'
 LetStn = require './LetStn'
 
@@ -82,7 +82,7 @@ defineModule module, ->
 
       identifiersNeedingLet: ->
         {identifiersAssignedInParentScopes, identifiersAssigned} = @
-        newObjectFromEach identifiersAssigned, (out, k, v) ->
+        object identifiersAssigned, (out, k, v) ->
           unless identifiersAssignedInParentScopes[k]
             out[k] = true
 
@@ -94,7 +94,7 @@ defineModule module, ->
       identifiersUsedButNotAssigned: ->
         return @props.identifiersUsedButNotAssigned if @props.identifiersUsedButNotAssigned
         assigned = @identifiersAssignedInParentThisOrChildrenScopes
-        ret = newObjectFromEach @identifiersUsed, (out, k, v) ->
+        ret = object @identifiersUsed, (out, k, v) ->
           out[k] = true unless assigned[k]
         for childScope in @childScopes || []
           mergeInto ret, childScope.identifiersUsedButNotAssigned
