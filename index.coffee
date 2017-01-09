@@ -1,1 +1,1 @@
-module.exports = require "./src/CaffeineScript"
+module.exports = require "./source/CaffeineScript"
