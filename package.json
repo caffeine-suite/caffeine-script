@@ -13,12 +13,12 @@
   "license": "ISC",
   "name": "caffeine-script",
   "scripts": {
-    "dev": "neptune-namespaces --std; webpack-dev-server -d --progress",
-    "hot": "neptune-namespaces --std; webpack-dev-server --hot --inline --progress",
-    "nn": "neptune-namespaces --std",
-    "nodeTest": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register",
-    "perf": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
-    "test": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
+    "dev": "nn --std; webpack-dev-server -d --progress",
+    "hot": "nn --std; webpack-dev-server --hot --inline --progress",
+    "nn": "nn --std",
+    "nodeTest": "nn --std;mocha -u tdd --compilers coffee:coffee-script/register",
+    "perf": "nn --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
+    "test": "nn --std;mocha -u tdd --compilers coffee:coffee-script/register"
   },
   "version": "0.16.0"
 }
