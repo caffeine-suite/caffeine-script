@@ -18,7 +18,7 @@ module.exports =
     else
       a
 
-    object map, (source, expectedJs) ->
+    object map, (expectedJs, source) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
         js = try
           stn = (p = Parser.parse(source, verbose: true)).getStn()

@@ -82,9 +82,9 @@ defineModule module, ->
 
       identifiersNeedingLet: ->
         {identifiersAssignedInParentScopes, identifiersAssigned} = @
-        object identifiersAssigned, (out, k, v) ->
-          unless identifiersAssignedInParentScopes[k]
-            out[k] = true
+        object identifiersAssigned,
+          when: (v, k) -> !identifiersAssignedInParentScopes[k]
+          with: -> true
 
       identifiersUsed: -> @props.identifiersUsed ||= {}
       identifiersAssigned: -> @props.identifiersAssigned ||= {}
@@ -94,8 +94,10 @@ defineModule module, ->
       identifiersUsedButNotAssigned: ->
         return @props.identifiersUsedButNotAssigned if @props.identifiersUsedButNotAssigned
         assigned = @identifiersAssignedInParentThisOrChildrenScopes
-        ret = object @identifiersUsed, (out, k, v) ->
-          out[k] = true unless assigned[k]
+        ret = object @identifiersUsed,
+          when: (v, k) -> !assigned[k]
+          with: -> true
+
         for childScope in @childScopes || []
           mergeInto ret, childScope.identifiersUsedButNotAssigned
         @props.identifiersUsedButNotAssigned = ret
