@@ -18,27 +18,44 @@ module.exports = suite: parseTestSuite
       See Evernote on Scope
       ###
 
-      # """
-      # a = 10
-      # object a from b with a
-      # """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
+      "assigning to existing variable":
 
-      """
-      object a from b
-        foo = a
-        foo * 2
-      """: "Caf.o(b, (a) => {let foo; foo = a; return foo * 2;});"
+        """
+        a = 10
+        object a from b with a
+        """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
 
-      """
-      object a from b when c = a.foo()
-        c
-      """: "(() => {let c; return Caf.o(b, (a) => {return c;}, (a) => {c = a.foo()})})();"
+      "assigning to loop variable in when":
+
+        """
+        object a from b when a = a.foo
+        """: "(() => {let a; return Caf.o(b, () => {a;}, (_a) => {a = _a; return a = a.foo;});})();"
+
+      "new variables within comprehensions scope basic":
+        """
+        object a from b with foo = a
+        """: "(() => {let foo; return Caf.o(b, (a) => {return foo = a;});})();"
+
+      "new variables within comprehensions scope span when and with":
+
+        """
+        object a from b when c = a.foo()
+          c
+        """: "(() => {let c; return Caf.o(b, (a) => {return c;}, (a) => {return c = a.foo();});})();"
 
     into:
       "object a into b": ""
 
     initOut:
-      "each k, v, out = {} with out[k+1] = v": ""
+      "each v, k, out = {} from o with out[k+1] = v": ""
+
+    patternAssignment:
+      # Basically: (a for {a} in o)
+      "array {a} from o with a": ""
+
+    extractAssignment:
+      # Basically: (foo.a for foo in o)
+      "array extract a from o": ""
 
     alternativeKeywords:
       in:
@@ -72,16 +89,10 @@ module.exports = suite: parseTestSuite
 
     outputTypes:
       "array b":        "Caf.a(b);"
-      "map b":          "Caf.m(b);"
+      "reduce b":       "Caf.r(b);"
       "object b":       "Caf.o(b);"
       "each b":         "Caf.e(b);"
       "find b":         "Caf.f(b);"
-
-    iterationTypes:
-      "array from b":           "Caf.a(b);"
-      "array from object b":    "Caf.aFromO(b);"
-      "array from array b":     "Caf.aFromA(b);"
-      "array from iter b":      "Caf.aFromI(b);"
 
     implicitForms:
       "object v from b":  "Caf.o(b);"
