@@ -5,6 +5,11 @@ ScopeStnMixin = require './ScopeStnMixin'
 
 defineModule module, class ComprehensionStn extends ScopeStnMixin require './BaseStn'
 
+  # updateScope: (@scope) ->
+  #   if @lValue.type == "Reference"
+  #     @scope.addIdentifierAssigned @lValue.toJs()
+  #   super
+
   ###
   TODO
   capture-loop-variables (CLV):
@@ -68,6 +73,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
       whenClause
     } = @labeledChildren
     outputType = outputType?.props.token
+
+    log {variableDefinition}
 
     func = outputType.slice 0,1
 

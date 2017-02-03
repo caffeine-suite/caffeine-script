@@ -13,6 +13,11 @@ module.exports = suite: parseTestSuite
         a
       """: "Caf.o(b, (a) => {return a;});"
 
+      """
+      object v, k, into from b
+        v
+      """: "Caf.o(b, (a) => {return a;});"
+
     scope:
       ###
       See Evernote on Scope
