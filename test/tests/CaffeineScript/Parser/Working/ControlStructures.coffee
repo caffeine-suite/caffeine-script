@@ -177,6 +177,8 @@ module.exports = suite: parseTestSuite
           bud
         """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
 
+  throw:
+    "throw new Error": "throw new Error();"
 
   ################################
   # tail control structures
