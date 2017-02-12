@@ -3,24 +3,31 @@
 defineModule module, ->
   ->
     @rule
-      comprehension: 'forComprehension'
+      comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType'
+    , stnFactory: "FunctionDefinitionArgsStn"
 
     @rule
-      comprehensionVariableDef_: '!comprehensionIterationType identifier _'
+      optionalArg: "_comma_? !with argDef"
+
       comprehensionIterationTypeClause_: 'comprehensionIterationType _'
-      comprehensionWith: '_? with _ expression'
       comprehensionIterable: "expressionWithOneLessBlock"
-      comprehensionBody: w "block comprehensionWith"
+
+      comprehensionInto: '_? into _ expressionWithOneLessBlock'
 
       comprehensionWhen: '_? when _ expressionWithOneLessBlock'
 
+      comprehensionWith: '_? withOrDo _ expression'
+
+      comprehensionBody: w "block comprehensionWith"
+
     @rule
-      forComprehension: "
+      comprehension: "
         outputType:comprehensionOutputType _
         variableDefinition:comprehensionVariableDef_?
         iterationType:comprehensionIterationTypeClause_?
 
         iterable:comprehensionIterable
+        into:comprehensionInto?
         whenClause:comprehensionWhen?
         body:comprehensionBody?
         "

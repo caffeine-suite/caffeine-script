@@ -3,6 +3,9 @@ ScopeStnMixin = require './ScopeStnMixin'
 
 {peek, log, formattedInspect, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
 
+SemanticTree = require './namespace'
+
+
 defineModule module, class ComprehensionStn extends ScopeStnMixin require './BaseStn'
 
   # updateScope: (@scope) ->
@@ -64,46 +67,155 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
     and so on for o, a, f, r, e >> 3x the functions
 
   ###
-  toJs: ->
+
+
+  transform: ->
     {
       outputType
       variableDefinition
       body
       iterable
       whenClause
+      into
     } = @labeledChildren
+
     outputType = outputType?.props.token
+    iterationFunction = outputType.slice 0,1
 
-    log {variableDefinition}
+    {
+      FunctionDefinitionStn
+      IdentifierStn
+      FunctionInvocationStn
+      FunctionDefinitionArgsStn
+      FunctionDefinitionArgStn
+      SimpleLiteralStn
+      AssignmentStn
+      ValueStn
+      ObjectStn
+      ArrayStn
+      AccessorStn
+      ControlOperatorStn
+      StatementsStn
+    } = SemanticTree
+    # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
 
-    func = outputType.slice 0,1
 
-    varDefString = if variableDefinition
-      variableDefinition.toJs()
+    ###
+    EXAMPLES:
+      # IN
+      find v from o with v > 10
+
+      # PSEUDO-OUT
+      Caf.ee o, null, (v, k, out, brk) ->
+        brk v if v > 10
+
+      # IN
+      object o
+
+      # OUT
+      Caf.e(o, {}, function(v, k, into) {
+        return into[k] = v;
+      });
+    ###
+
+    # These should actually be
+    #  a) extracted from variableDefinition...
+    #  b) and if not present, unused var-names generated
+    valueIdentifer = "v"
+    keyIdentifer = "k"
+    intoIdentifer = "into"
+    brkIdentifer = "brk"
+
+    useExtendedEach = switch outputType
+      when "find" then true
+      else false
+
+    variableDefinition = FunctionDefinitionArgsStn null,
+      valueVarDef = variableDefinition?.children[0] || FunctionDefinitionArgStn IdentifierStn identifier: valueIdentifer
+      keyVarDef   = variableDefinition?.children[1] || FunctionDefinitionArgStn IdentifierStn identifier: keyIdentifer
+      intoVarDef  = variableDefinition?.children[2] || FunctionDefinitionArgStn IdentifierStn identifier: intoIdentifer
+      useExtendedEach && FunctionDefinitionArgStn IdentifierStn identifier: brkIdentifer
+
+    bodyWithDefault = body || ValueStn valueVarDef
+
+    whenClauseWrapper = if whenClause
+      (actionStn) ->
+        ControlOperatorStn
+          operator: "if"
+          whenClause
+          actionStn
+
     else
-      "v"
+      (actionStn) -> actionStn
 
-    withFunctionStr = if body
-      "(#{varDefString}) =>
-      {#{body.toFunctionBodyJs()};}"
+    FunctionInvocationStn null,
+      IdentifierStn identifier: "Caf.#{if useExtendedEach then 'ee' else 'e'}"
+      iterable
+      into || switch outputType
+        when "object" then ObjectStn()
+        when "array" then ArrayStn()
+        when "each" then SimpleLiteralStn value: "undefined"
+        when "find" then SimpleLiteralStn value: "null"
+        when "reduce" then
+        else throw new Error "not supported yet: #{outputType}"
 
-    whenFunctionString = if whenClause
-      "(#{varDefString}) =>
-      {#{whenClause.toFunctionBodyJs()};}"
+      FunctionDefinitionStn
+        bound: true
+        variableDefinition
 
-    params = [
-      iterable.toJsExpression()
-      withFunctionStr
-      whenFunctionString
-    ]
-    params.pop() while (!peek params)
-    params = for p in params
-      p || "null"
+        switch outputType
+          when "object"
+            whenClauseWrapper AssignmentStn null,
+              AccessorStn null,
+                IdentifierStn identifier: intoIdentifer
+                ValueStn keyVarDef
+              bodyWithDefault
 
-    cafLibInvocation = "Caf.#{func}(#{params.join ', '})"
+          when "array"
+            whenClauseWrapper FunctionInvocationStn null,
+              AccessorStn null,
+                IdentifierStn identifier: intoIdentifer
+                IdentifierStn identifier: "push"
+              bodyWithDefault
 
-    if present lets = @getAutoLets()
-      "(() => {#{lets}; return #{cafLibInvocation};})()"
-    else
-      cafLibInvocation
+          when "each"
+            whenClauseWrapper bodyWithDefault
 
+          when "find"
+            if whenClause
+              if body
+                ControlOperatorStn
+                  operator: "if"
+                  whenClause
+
+                  FunctionInvocationStn null,
+                    IdentifierStn identifier: brkIdentifer
+                    body
+              else
+                ControlOperatorStn
+                  operator: "if"
+                  whenClause
+
+                  FunctionInvocationStn null,
+                    IdentifierStn identifier: brkIdentifer
+                    valueVarDef
+            else
+              if body
+                ControlOperatorStn
+                  operator: "if"
+                  AssignmentStn null,
+                    IdentifierStn identifier: "todoRealTemp"
+                    body
+
+                  FunctionInvocationStn null,
+                    IdentifierStn identifier: brkIdentifer
+                    IdentifierStn identifier: "todoRealTemp"
+
+              else
+                ControlOperatorStn
+                  operator: "if"
+                  valueVarDef
+
+                  FunctionInvocationStn null,
+                    IdentifierStn identifier: brkIdentifer
+                    valueVarDef

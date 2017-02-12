@@ -10,6 +10,7 @@ module.exports = suite:
       "true": "true;"
       "yes":  "true;"
       "on":   "true;"
+      "null": "null;"
 
       "false":  "false;"
       "no":     "false;"

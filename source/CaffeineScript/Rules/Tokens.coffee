@@ -24,6 +24,8 @@ module.exports = ->
 
     reservedWord: ///
       (
+      into |
+
       with |
 
       do |
@@ -121,10 +123,13 @@ module.exports = ->
 
     with: /with/
     when: /when/
+    into: /into/
+    withOrDo: /with|do/
 
   @rule
     comprehensionOutputType: /object|array|reduce|each|find/
-    comprehensionIterationType: /from/
+    comprehensionIterationType: /from|in\b/
+
     # comprehensionIterationType: /from( +(object|array|iter))?/
     dot: /\??\./
     questionMark: /\?/

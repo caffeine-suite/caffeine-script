@@ -33,17 +33,29 @@ defineModule module, class BaseStn extends BaseObject
     label: -> @props.label
     pluralLabel: -> @props.pluralLabel
     inspectedObjects: ->
-      out = {}
+      # out = {}
       {label} = @
-      props = merge (objectWithout @props, "label", "pluralLabel"),
-        class: @class.getName() if label
-      out[label || @class.getName()] = if @children.length == 0
-        toInspectedObjects props
-      else
-        a = []
-        a.push props if objectKeyCount(props) > 0
-        a.concat (c.inspectedObjects for c in @children)
-      out
+      # props = merge (objectWithout @props, "label", "pluralLabel"),
+      #   class: @class.getName() if label
+      # out[label || @class.getName()] = if @children.length == 0
+      #   toInspectedObjects props
+      # else
+      #   a = []
+      #   a.push props if objectKeyCount(props) > 0
+      #   a.concat (c.inspectedObjects for c in @children)
+      # out
+
+      props = objectWithout @props, "label", "pluralLabel"
+      name = @class.getName()
+      name = "#{label}.#{name}" if label
+
+      "#{name}": if @children.length == 0
+          toInspectedObjects props
+        else
+          a = []
+          a.push props if objectKeyCount(props) > 0
+          a.concat (c.inspectedObjects for c in @children)
+
     type: -> @class.type
 
   @postCreate: ->

@@ -2,10 +2,11 @@
 
 module.exports = ->
   @rule
-    literal: w "boolLiteral numberLiteral stringLiteral"
+    literal: w "nullLiteral boolLiteral numberLiteral stringLiteral"
 
   @rule
     boolLiteral:   w "true false"
+    nullLiteral:   "/null/"
     numberLiteral: pattern: /-?[0-9]+/
 
     true:   "/(true|yes|on)(?![a-zA-Z0-9]+)/"

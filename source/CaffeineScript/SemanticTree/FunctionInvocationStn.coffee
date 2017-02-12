@@ -5,7 +5,7 @@ SemanticTree = require './namespace'
 
 defineModule module, class FunctionInvocationStn extends require './ValueBaseCaptureStn'
 
-  constructor: (props, [@value, @args...]) ->
+  constructor: (props, [@functionValue, @args...]) ->
     # collapse implicit arrays into parents
     if @args.length == 1 && @args[0].props.implicitArray
       @args = @args[0].children
@@ -21,7 +21,7 @@ defineModule module, class FunctionInvocationStn extends require './ValueBaseCap
     {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
 
     if @conditional
-      {value1, value2} = @getValueWithBaseCapture @value
+      {value1, value2} = @getValueWithBaseCapture @functionValue
       if value1 != value2
         return BinaryOperatorStn
           operator: "&&"
@@ -34,7 +34,7 @@ defineModule module, class FunctionInvocationStn extends require './ValueBaseCap
     super
 
   toJs: ->
-    invocationJs = "#{valueJs = @value.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"
+    invocationJs = "#{valueJs = @functionValue.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"
     if @conditional
       "Caf.isF(#{valueJs}) && #{invocationJs}"
     else

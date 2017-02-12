@@ -6,111 +6,130 @@
 
 module.exports = suite: parseTestSuite
 
-  for:
-    basic:
-      """
-      object a from b
-        a
-      """: "Caf.o(b, (a) => {return a;});"
+  good:
 
+    iterationTypes:
+      "array b":        "Caf.e(b, [], (v, k, into) => {return into.push(v);});"
+      "object b":       "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
+      "each b":         "Caf.e(b, undefined, (v, k, into) => {return v;});"
+      "find b":         "Caf.ee(b, null, (v, k, into, brk) => {return v ? brk(v) : undefined;});"
+
+    multipleArgs:
       """
-      object v, k, into from b
-        v
-      """: "Caf.o(b, (a) => {return a;});"
+      object myV, myK from mySource
+        myV
+      """: "Caf.e(mySource, {}, (myV, myK, into) => {return into[myK] = myV;});"
+
+    syntaxVariants:
+      implicitWith:
+        "object b":         "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
+        "object from b":    "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
+        "object v from b":  "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
+
+      with:
+        "object v from mySource\n  v":    "Caf.e(mySource, {}, (v, k, into) => {return into[k] = v;});"
+        "object v from mySource with v":  "Caf.e(mySource, {}, (v, k, into) => {return into[k] = v;});"
+
+        "object mySource\n true":         "Caf.e(mySource, {}, (v, k, into) => {return into[k] = true;});"
+        "object mySource with true":      "Caf.e(mySource, {}, (v, k, into) => {return into[k] = true;});"
+
+
+      when:
+        "object a from b when a":        "Caf.e(b, {}, (a, k, into) => {return a ? into[k] = a : undefined;});"
+        "object a from b when a with a": "Caf.e(b, {}, (a, k, into) => {return a ? into[k] = a : undefined;});"
+
+        """
+        object a from b when a
+          a
+        """: "Caf.e(b, {}, (a, k, into) => {return a ? into[k] = a : undefined;});"
+
 
     scope:
-      ###
-      See Evernote on Scope
-      ###
+      enclosingScope:
+        "assigning to existing variable":
 
-      "assigning to existing variable":
+          """
+          a = 10
+          object a from b with a
+          """: "let a; a = 10; Caf.e(b, {}, (a, k, into) => {return into[k] = a;});"
 
-        """
-        a = 10
-        object a from b with a
-        """: "let a; a = 10; Caf.o(b, (_a) => {a = _a; return a;});"
+      assigningToLoopVariables:
+        "in when using default with":
 
-      "assigning to loop variable in when":
+          """
+          object a from b when a = a.foo
+          """: "Caf.e(b, {}, (a, k, into) => {return (a = a.foo) ? into[k] = a : undefined;});"
 
-        """
-        object a from b when a = a.foo
-        """: "(() => {let a; return Caf.o(b, () => {a;}, (_a) => {a = _a; return a = a.foo;});})();"
+        "in when using explicit with":
 
-      "new variables within comprehensions scope basic":
-        """
-        object a from b with foo = a
-        """: "(() => {let foo; return Caf.o(b, (a) => {return foo = a;});})();"
+          """
+          object a from b when a = a.foo with a + 1
+          """: "Caf.e(b, {}, (a, k, into) => {return (a = a.foo) ? into[k] = a + 1 : undefined;});"
 
-      "new variables within comprehensions scope span when and with":
+      definingNewVariables:
+        "in with":
+          """
+          object a from b with foo = a
+          """: "Caf.e(b, {}, (a, k, into) => {let foo; return into[k] = foo = a;});"
 
-        """
-        object a from b when c = a.foo()
-          c
-        """: "(() => {let c; return Caf.o(b, (a) => {return c;}, (a) => {return c = a.foo();});})();"
+        "in when":
+          """
+          object a from b when foo = a
+          """: "Caf.e(b, {}, (a, k, into) => {let foo; return (foo = a) ? into[k] = a : undefined;});"
+
+        "in both":
+          """
+          object a from b when foo = a with foo = foo + 1
+          """: "Caf.e(b, {}, (a, k, into) => {let foo; return (foo = a) ? into[k] = foo = foo + 1 : undefined;});"
+
+      usingExternalVariables:
+        "in with":
+          """
+          foo = 1
+          object a from b with foo = a
+          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {return into[k] = foo = a;});"
+
+        "in when":
+          """
+          foo = 1
+          object a from b when foo = a
+          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {return (foo = a) ? into[k] = a : undefined;});"
+
+        "in both":
+          """
+          foo = 1
+          object a from b when foo = a with foo = foo + 1
+          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {return (foo = a) ? into[k] = foo = foo + 1 : undefined;});"
 
     into:
-      "object a into b": ""
+      "object a into b": "Caf.e(a, b, (v, k, into) => {return into[k] = v;});"
 
-    initOut:
-      "each v, k, out = {} from o with out[k+1] = v": ""
+    find:
+      "find a from b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) ? brk(a) : undefined;});"
+      "find a from b with a > 10": "Caf.ee(b, null, (a, k, into, brk) => {return (todoRealTemp = a > 10) ? brk(todoRealTemp) : undefined;});"
+      "find a from b when a > 10 with 123": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) ? brk(123) : undefined;});"
+
+    alternativeKeywords:
+      in:
+        "find a in b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) ? brk(a) : undefined;});"
+      do:
+        "object a from b do a + 1": "Caf.e(b, {}, (a, k, into) => {return into[k] = a + 1;});"
+
+    expression: "c = array b": "let c; c = Caf.e(b, [], (v, k, into) => {return into.push(v);});"
+
+  ###
+  notWorkingYet:
+    iterationTypes:
+      "reduce b":       "Caf.r(b);"
 
     patternAssignment:
       # Basically: (a for {a} in o)
       "array {a} from o with a": ""
+      "object [a] from c with a": ""
 
     extractAssignment:
       # Basically: (foo.a for foo in o)
       "array extract a from o": ""
 
-    alternativeKeywords:
-      in:
-        "find a in b when a > 10": ""
-      do:
-        "each a in b do a()": ""
 
-    # kvForm:
-    #   "object k, v from b with k + v": "Caf.o(b, (k, v) => {return k + v;});"
-
-    # withDestructuring:
-    #   "object [a] from c with a": ""
-
-    # TODO: 'with' works, but the parsing code is awkward.
-    # What I'd prefer is to fix "expressionWithOneLessBlock" to allow it matching
-    # part of the rest of the line. Right now it must match all the rest of the line, plus any one-less-blocks, to succeed.
-    # A partial-match would be just fine, and it would simplify this case.
-    # AND, it is going to significnatly simplify when we add "when" and "when + with" tests, sketched below.
-    with:
-      "object a from b with a": "Caf.o(b, (a) => {return a;});"
-
-    # TODO
-    when:
-      "object a from b when a": "Caf.o(b, null, (a) => {return a;});"
-      "object a from b when a with a": "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
-
-      """
-      object a from b when a
-        a
-      """: "Caf.o(b, (a) => {return a;}, (a) => {return a;});"
-
-    outputTypes:
-      "array b":        "Caf.a(b);"
-      "reduce b":       "Caf.r(b);"
-      "object b":       "Caf.o(b);"
-      "each b":         "Caf.e(b);"
-      "find b":         "Caf.f(b);"
-
-    implicitForms:
-      "object v from b":  "Caf.o(b);"
-      "object from b":    "Caf.o(b);"
-      "object b":         "Caf.o(b);"
-
-    # range:      "for a in 1..10\n  a": ""
-    # oneLiner:   "a for a in b": ""
-    # by:         "for a in b by 2\n  a": ""
-    # when:       "for a in b when a\n  a": ""
-    # byWhen:     "for a in b by 2 when a\n  a": ""
-    # whenBy:     "for a in b when a by 2\n  a": ""
-
-    # expression: "c = for a in b\n  a": ""
-# TODO: I really want to standardize "in" and "of" loops: one param is the "value", two params is "key" "value" - for either.
-# Maybe the "in" and "of" keywords need re-examining. They are really confusing as-is.
+  ###
