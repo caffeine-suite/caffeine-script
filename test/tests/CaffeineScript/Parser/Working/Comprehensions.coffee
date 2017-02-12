@@ -118,6 +118,7 @@ module.exports = suite: parseTestSuite
     expression: "c = array b": "let c; c = Caf.e(b, [], (v, k, into) => {return into.push(v);});"
 
   ###
+  # TODO
   notWorkingYet:
     iterationTypes:
       "reduce b":       "Caf.r(b);"
