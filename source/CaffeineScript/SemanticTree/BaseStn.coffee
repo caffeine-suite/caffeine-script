@@ -30,6 +30,8 @@ defineModule module, class BaseStn extends BaseObject
           (@labeledChildren[pluralLabel] ||= []).push child
 
   @getter
+    parser: -> @parseTreeNode.parser
+    sourceFile: -> @parser.sourceFile
     label: -> @props.label
     pluralLabel: -> @props.pluralLabel
     inspectedObjects: ->

@@ -1,4 +1,4 @@
 Parser = require './Parser'
 module.exports =
-  compile: (source) ->
-    compiled: js: Parser.parse(source).getStn().transform().toJsModule()
+  compile: (source, options) ->
+    compiled: js: Parser.parse(source, options).getStn().transform().toJsModule()

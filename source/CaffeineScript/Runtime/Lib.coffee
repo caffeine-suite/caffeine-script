@@ -5,6 +5,24 @@ module.exports =
   pow: (a, b) -> a ** b
   existsOr: (a, b) -> a ? b()
 
+  ###
+  Implements the 'import' function.
+
+  IN:
+    importNamesString: a space-delimited list of identifiers to import
+    libs: array of objects to import from, first has highest priority.
+
+  OUT: and object with one property per importName
+  ###
+  i: (importNamesString, libs) ->
+    out = {}
+    for importName in importNamesString.split /\s+/
+      for lib in libs
+        if (v = lib[importName])?
+          out[importName] = v
+          break
+    out
+
   # CaffeineStyle truth (same as Ruby)
 
   # returns true if a is anothing other than false, null or undefined

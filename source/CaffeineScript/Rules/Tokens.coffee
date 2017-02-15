@@ -24,6 +24,8 @@ module.exports = ->
 
     reservedWord: ///
       (
+      import |
+
       throw |
 
       return |
@@ -53,7 +55,9 @@ module.exports = ->
       in |
 
       not
-      )\b
+      )
+
+      \b
       ///
 
     identifier:
@@ -77,7 +81,7 @@ module.exports = ->
     binaryOperator: binaryOperatorRegEx = ///
 
       # js logic
-      && | \|\| | & | \| | \^ |
+      && | \|\| | &(?=\s) | \| | \^ |
 
       # cs logic
       \? |

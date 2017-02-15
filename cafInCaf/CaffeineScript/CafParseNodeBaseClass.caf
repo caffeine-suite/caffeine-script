@@ -1,6 +1,9 @@
 |caffeine-script
+# import &ArtFoundation, &BabelBridge, &SemanticTree
+
 {log, isFunction, BaseObject, inspect, isString} = &ArtFoundation
 {Nodes} = &BabelBridge
+{RootStn} = &SemanticTree
 
 ##
   Eventualy I want all AstNodes to respond to:
@@ -12,8 +15,6 @@
   eventually we should also do:
     toJsExpressionInList - add parens if a following comma would confusing things
     toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
-
-{RootStn} = SemanticTree = require './SemanticTree'
 
 class CafParseNodeBaseClass extends Nodes.Node
 
@@ -63,9 +64,8 @@ class CafParseNodeBaseClass extends Nodes.Node
     if stn?.props
       currentStnLabel = stn.props.label
       if !currentStnLabel || @label
-        {label, ruleName, pluralLabel, pluralRuleName} = @
-        stn.props.label = label || ruleName
-        stn.props.pluralLabel = pluralLabel || pluralRuleName
+        stn.props.label = @label || @ruleName
+        stn.props.pluralLabel = @pluralLabel || @pluralRuleName
 
     if @isRoot
       RootStn stn
