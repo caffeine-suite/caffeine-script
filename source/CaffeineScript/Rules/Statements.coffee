@@ -11,6 +11,7 @@ module.exports =
 
   statementWithoutEnd: a
     pattern: 'complexExpression !tailControlOperator'
+    "importStatement"
     m
       pattern: 'complexExpression tailControlOperatorComplexExpression+',
       getStn: ->
@@ -25,6 +26,10 @@ module.exports =
   newLineStart:
     pattern: /( *\n)+/
     getPresent: -> false
+
+  importStatement:
+    pattern: '/import/ _ valueList functionDefinitionBodyBlockSubParse'
+    stnFactory: "ImportStn"
 
   newLineStatementExtension: a
     pattern: "end lineStartBinaryOperatorAndExpression"

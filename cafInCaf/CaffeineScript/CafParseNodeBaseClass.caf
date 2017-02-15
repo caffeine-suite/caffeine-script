@@ -1,7 +1,8 @@
 |caffeine-script
-# import &ArtFoundation, &BabelBridge, &SemanticTree
+import &ArtFoundation
+# &BabelBridge, &SemanticTree
 
-{log, isFunction, BaseObject, inspect, isString} = &ArtFoundation
+# {log, isFunction, BaseObject, inspect, isString} = &ArtFoundation
 {Nodes} = &BabelBridge
 {RootStn} = &SemanticTree
 

@@ -14,7 +14,7 @@ defineModule module, class StatementsStn extends require './BaseStn'
   getChildrenStatementsJsArray: (lastIsExpression = false, useReturn = true)->
     for c, i in lines = @children
       if lastIsExpression && i == lines.length - 1
-        if useReturn
+        if useReturn && !c.jsExpressionUsesReturn
           "return #{c.toJsExpression()}"
         else c.toJsExpression()
       else

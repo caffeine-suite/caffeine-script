@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, array, isString, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
+{mergeInto, log, array, isString, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
 StatementsStn = require './StatementsStn'
 LetStn = require './LetStn'
 
@@ -12,10 +12,12 @@ defineModule module, ->
 
     addIdentifierUsed: (identifier)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
+      @resetCachedValues()
       @identifiersUsed[identifier] = true
 
     addIdentifierAssigned: (identifier, initializer)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
+      @resetCachedValues()
       @identifiersAssigned[identifier] = initializer || true
 
     @getter
@@ -49,12 +51,12 @@ defineModule module, ->
       #   self: @
       #   childScopes: @childScopes
 
-    getUnusedIdentifierName: (rootName)->
-      {identifiersUsed} = @
-      count = 1
-      out = rootName
-      out = "#{rootName}#{count++}" while identifiersUsed[out]
-      out
+    # getUnusedIdentifierName: (rootName)->
+    #   {identifiersUsed} = @
+    #   count = 1
+    #   out = rootName
+    #   out = "#{rootName}#{count++}" while identifiersUsed[out]
+    #   out
 
     bindAllUniqueIdentifiersRequested: ->
       return unless @_uniqueIdentifierHandles
@@ -72,6 +74,10 @@ defineModule module, ->
       @scope.addChildScope @
       child.updateScope @ for child in @children
       null
+
+    resetCachedValues: ->
+      @props.identifiersUsedButNotAssigned = null
+
 
     @getter
       argumentNames: -> []
@@ -95,7 +101,14 @@ defineModule module, ->
       identifiersUsed: -> @props.identifiersUsed ||= {}
       identifiersAssigned: -> @props.identifiersAssigned ||= {}
 
-      identifiersUsedOrAssigned: -> merge @identifiersUsed, @identifiersAssigned
+      identifiersUsedOrAssigned: ->
+        out = merge @identifiersUsed, @identifiersAssigned
+        {scope} = @
+        while scope
+          mergeInto out, scope.identifiersAssigned
+          break if scope == scope.scope
+          {scope} = scope
+        out
 
       identifiersUsedButNotAssigned: ->
         return @props.identifiersUsedButNotAssigned if @props.identifiersUsedButNotAssigned

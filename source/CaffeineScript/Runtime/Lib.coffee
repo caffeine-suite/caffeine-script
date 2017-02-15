@@ -1,3 +1,4 @@
+{compactFlatten} = require './ArrayCompactFlatten'
 module.exports =
   in: (a, b) -> a in b
   mod: (a, b) -> a %% b
@@ -9,14 +10,15 @@ module.exports =
   Implements the 'import' function.
 
   IN:
-    importNamesString: a space-delimited list of identifiers to import
+    importNames: array of strings of identifiers to import
     libs: array of objects to import from, first has highest priority.
 
   OUT: and object with one property per importName
   ###
-  i: (importNamesString, libs) ->
+  i: (importNames, libs) ->
     out = {}
-    for importName in importNamesString.split /\s+/
+    libs = compactFlatten libs
+    for importName in importNames.split /\s+/
       for lib in libs
         if (v = lib[importName])?
           out[importName] = v

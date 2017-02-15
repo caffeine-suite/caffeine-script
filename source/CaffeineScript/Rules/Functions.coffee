@@ -21,7 +21,7 @@ module.exports = ->
   @rule
     functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "functionDefinitionBodyBlockSubParse"
     functionDefinitionBodyBlockSubParse:
-      pattern: "end* statement*"
+      pattern: "end? statement* end?"
       stnFactory: "StatementsStn"
 
   @rule

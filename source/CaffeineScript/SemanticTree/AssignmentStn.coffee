@@ -6,7 +6,6 @@ BinaryOperatorStn = require './BinaryOperatorStn'
 IdentifierStn = require './IdentifierStn'
 ReferenceStn = require './ReferenceStn'
 ArrayStn = require './ArrayStn'
-UniqueIdentifierHandle = require './UniqueIdentifierHandle'
 
 defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
   constructor: ({@operator}, [@lValue, @rValue]) ->
@@ -18,6 +17,10 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
     super
 
   transform: ->
+    super.postSuperTransform()
+
+  # TODO - I need a better way of saying "do all the transforms for the children, and then maybe I'll do some more transforms here"
+  postSuperTransform: ->
     if @operator
       {value1, value2} = @getValueWithBaseCapture @lValue
 
@@ -28,7 +31,7 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
           value1
           @rValue
     else
-      super
+      @
 
   toJs: ->
     if @operator

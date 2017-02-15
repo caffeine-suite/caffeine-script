@@ -25,18 +25,21 @@ defineModule module, class RootStn extends ScopeStnMixin require './BaseStn'
   toJsModule: ->
     {identifiersUsedButNotAssigned} = @
     identifiersUsedButNotAssigned = ("#{k} = global.#{k}" for k, v of identifiersUsedButNotAssigned)
+
+    statementsJs = @statements.toFunctionBodyJs()
     statements = compactFlatten [
       "let #{identifiersUsedButNotAssigned.join ', '}" if identifiersUsedButNotAssigned.length > 0
       @getAutoLets()
-      @statements.toFunctionBodyJs()
+      statementsJs
     ]
 
     "Caf.defMod(module, () => {#{statements.join '; '};});"
 
   toJs: ->
+    statementsJs = @statements.toJs()
     compactFlatten([
       @getAutoLets()
-      @statements.toJs()
+      statementsJs
     ]).join('; ') + ";"
 
 

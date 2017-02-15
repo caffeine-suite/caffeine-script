@@ -52,7 +52,8 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       argsDef.toJs()
     else "()"
 
-    statements = compactFlatten [@getAutoLets(), statements, body?.toFunctionBodyJs()]
+    bodyJs = body?.toFunctionBodyJs()
+    statements = compactFlatten [@getAutoLets(), statements, bodyJs]
     body = if statements.length > 0
       "{#{statements.join '; '};}"
     else "{}"
