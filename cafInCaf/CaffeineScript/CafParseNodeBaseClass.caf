@@ -1,6 +1,6 @@
 |caffeine-script
-{log, isFunction, BaseObject, inspect, isString} = require 'art-foundation'
-{Nodes} = require 'babel-bridge'
+{log, isFunction, BaseObject, inspect, isString} = &ArtFoundation
+{Nodes} = &BabelBridge
 
 ##
   Eventualy I want all AstNodes to respond to:

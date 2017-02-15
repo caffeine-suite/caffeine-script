@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
+{log, array, isString, a, w, m, mergeInto, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
 StatementsStn = require './StatementsStn'
 LetStn = require './LetStn'
 
@@ -14,9 +14,9 @@ defineModule module, ->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
       @identifiersUsed[identifier] = true
 
-    addIdentifierAssigned: (identifier)->
+    addIdentifierAssigned: (identifier, initializer)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
-      @identifiersAssigned[identifier] = true
+      @identifiersAssigned[identifier] = initializer || true
 
     @getter
       uniqueIdentifierHandle: (preferredName = "_temp") ->
@@ -64,7 +64,7 @@ defineModule module, ->
 
     getAutoLets: ->
       @bindAllUniqueIdentifiersRequested()
-      if @props.identifiersAssigned && (identifiers = (Object.keys @identifiersNeedingLet)).length > 0
+      if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
         "let #{identifiers.join ', '}"
 
     updateScope: (@scope)->
@@ -80,11 +80,17 @@ defineModule module, ->
 
       boundUniqueIdentifiers: -> @_boundUniqueIdentifiers ||= {}
 
-      identifiersNeedingLet: ->
+      requiredIdentifierLets: ->
         {identifiersAssignedInParentScopes, identifiersAssigned} = @
-        object identifiersAssigned,
-          when: (v, k) -> !identifiersAssignedInParentScopes[k]
-          with: -> true
+        array identifiersAssigned,
+          when: (initializer, k) -> !identifiersAssignedInParentScopes[k]
+          with: (initializer, identifier) ->
+            if isString initializer
+              "#{identifier} = #{initializer}"
+            else if initializer.toJsExpression?
+              "#{identifier} = #{initializer.toJsExpression()}"
+            else
+              identifier
 
       identifiersUsed: -> @props.identifiersUsed ||= {}
       identifiersAssigned: -> @props.identifiersAssigned ||= {}
@@ -112,7 +118,7 @@ defineModule module, ->
 
     # transform: ->
     #   if @props.identifiersAssigned
-    #     identifiers = (id for id, __ of @identifiersNeedingLet)
+    #     identifiers = (id for id, __ of @requiredIdentifierLets)
     #     @cloneWithNewStatements compactFlatten [
     #       LetStn identifiers: identifiers if identifiers.length > 0
     #       @statements.transformChildren()

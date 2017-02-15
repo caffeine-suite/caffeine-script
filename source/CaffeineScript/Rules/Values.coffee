@@ -7,10 +7,14 @@ module.exports = ->
 
   @rule
     valueExtension: w "dotAccessor bracketAccessor functionInvocation blockValueExtension"
-    simpleValue: w "global this thisProperty literal super unqualifiedIdentifier parentheticalExpression"
+    simpleValue: w "require global this thisProperty literal super unqualifiedIdentifier parentheticalExpression"
 
   @rule
     parentheticalExpression: "'(' __? expression __? ')'"
+
+  @rule
+    require: "/&/ identifier"
+  , stnFactory: "RequireStn"
 
   @rule
     unqualifiedIdentifier:
