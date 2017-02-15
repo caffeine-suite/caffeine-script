@@ -11,10 +11,12 @@ defineModule module, class StatementsStn extends require './BaseStn'
   toFunctionBodyJs: ->
     @getChildrenStatementsJsArray(true).join "; "
 
-  getChildrenStatementsJsArray: (lastIsExpression = false)->
+  getChildrenStatementsJsArray: (lastIsExpression = false, useReturn = true)->
     for c, i in lines = @children
       if lastIsExpression && i == lines.length - 1
-        "return #{c.toJsExpression()}"
+        if useReturn
+          "return #{c.toJsExpression()}"
+        else c.toJsExpression()
       else
         if (statement = c.toJsStatement()).match /^function/
           @applyRequiredParens statement
@@ -25,5 +27,5 @@ defineModule module, class StatementsStn extends require './BaseStn'
     if @children.length == 1
       @children[0].toJsParenExpression()
     else
-      @applyRequiredParens (@getChildrenStatementsJsArray()).join(", ")
+      @applyRequiredParens (@getChildrenStatementsJsArray(true, false)).join(", ")
 

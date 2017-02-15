@@ -75,6 +75,13 @@ module.exports = suite: parseTestSuite
 
       "bar = if foo then 1 else 2": "let bar; bar = foo ? 1 : 2;"
 
+      """
+      y = if true
+        x = 1
+
+        if true then x else x
+      """: "let y, x; y = true ? (x = 1, true ? x : x) : undefined;"
+
   unless:
     """
     unless foo
@@ -178,7 +185,7 @@ module.exports = suite: parseTestSuite
         """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
 
   throw:
-    "throw new Error": "throw new Error();"
+    "throw new Error": "throw new Error;"
 
   ################################
   # tail control structures

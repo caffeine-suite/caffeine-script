@@ -24,6 +24,12 @@ module.exports = ->
 
     reservedWord: ///
       (
+      throw |
+
+      return |
+
+      break |
+
       into |
 
       with |
@@ -121,6 +127,8 @@ module.exports = ->
       \ *
       ///
 
+    new: /new/
+    throw: /throw/
     with: /with/
     when: /when/
     into: /into/

@@ -22,6 +22,7 @@ module.exports = ->
       classDefinition
       destructuringAssignment
       structuredLiteral
+      throwExpression
       newInstance
       functionDefinition
       value
@@ -30,9 +31,14 @@ module.exports = ->
     structuredLiteral: w "object array"
 
   @rule
-    newInstance: "/new/ _ expressionWithoutBinOps"
+    newInstance: "new _ expressionWithoutBinOps"
   ,
     stnFactory: "NewInstanceStn"
+
+  @rule
+    throwExpression: "throw _ expressionWithoutBinOps"
+  ,
+    stnFactory: "ThrowStn"
 
   @rule
     expressionWithOneLessBlock:
