@@ -1,13 +1,6 @@
 |caffeine-script
-Foundation = require 'art-foundation'
-BabelBridge = require 'babel-bridge'
-
-{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject, inspect, isString} = Foundation
-{Parser, Nodes, Extensions} = BabelBridge
-{RuleNode} = Nodes
-
-Rules = require './Rules'
-SemanticTree = require "./SemanticTree"
+{log, isFunction, BaseObject, inspect, isString} = require 'art-foundation'
+{Nodes} = require 'babel-bridge'
 
 ##
   Eventualy I want all AstNodes to respond to:
@@ -20,7 +13,7 @@ SemanticTree = require "./SemanticTree"
     toJsExpressionInList - add parens if a following comma would confusing things
     toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
 
-{RootStn} = require './SemanticTree'
+{RootStn} = SemanticTree = require './SemanticTree'
 
 class CafParseNodeBaseClass extends Nodes.Node
 
