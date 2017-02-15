@@ -32,7 +32,7 @@ class CafParseNodeBaseClass extends Nodes.Node
       match.getImplicitArray?()
 
   getMatchStns: ->
-    array m from @matches when v = m.getStn?() with v
+    array m from @matches when m = m.getStn?()
 
   getStnFactory: ->
     throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
@@ -45,13 +45,12 @@ class CafParseNodeBaseClass extends Nodes.Node
       else
         @stnChildren
     else
-      array m from @nonStnExtensionMatches when m = m.getStn left
+      array m in @nonStnExtensionMatches when m = m.getStn left
 
   @getter
     isStnExtension:         -> @stnExtension || @presentMatches[0]?.isStnExtension
-
-    stnExtensionMatches:    -> array m from @presentMatches when m.getStn && m.isStnExtension
-    nonStnExtensionMatches: -> array m from @presentMatches when m.getStn && !m.isStnExtension
+    stnExtensionMatches:    -> array m in @presentMatches when m.getStn && m.isStnExtension
+    nonStnExtensionMatches: -> array m in @presentMatches when m.getStn && !m.isStnExtension
 
   getStn: (left) ->
     stn = if factory = @getStnFactory()
@@ -65,7 +64,7 @@ class CafParseNodeBaseClass extends Nodes.Node
 
       if x.length == 1 then x[0] else if x.length == 0 then left else x
 
-    each extension from @stnExtensionMatches
+    each extension in @stnExtensionMatches
       stn = extension.getStn stn
 
     if stn?.props
