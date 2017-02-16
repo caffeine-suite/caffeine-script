@@ -1,12 +1,14 @@
 arraySlice = Array.prototype.slice
 
 isArguments = (o) ->
-  o.constructor == Object &&
+  o &&
   (typeof o.callee is "function") &&
   (typeof o.length is "number")
 
+isPlainArray = Array.isArray || (o) => o.constructor == Array
+
 isArrayOrArguments = (o) ->
-  o && (o.constructor == Array || isArguments o)
+  o && (isPlainArray(o) || isArguments o)
 
 doFlattenInternal = (array, keepTester, output) ->
   output ||= []
@@ -22,8 +24,7 @@ needsFlatteningOrCompacting = (array, keepTester) ->
     return true
   false
 
-keepAll = -> true
-flattenIfNeeded = (array, keepTester = keepAll, output)->
+flattenIfNeeded = (array, keepTester, output)->
   if needsFlatteningOrCompacting array, keepTester
     doFlattenInternal array, keepTester, output
   else if output
@@ -34,10 +35,12 @@ flattenIfNeeded = (array, keepTester = keepAll, output)->
   else
     array
 
-module.exports = class ArrayCompactFlatten
-  @keepUnlessNullOrUndefined: keepUnlessNullOrUndefined = (a) -> a != null && a != undefined
+keepAll = -> true
+keepUnlessNullOrUndefined = (a) -> a != null && a != undefined
 
-  @compact: compact = (array, keepTester = keepUnlessNullOrUndefined) =>
+module.exports = class ArrayCompactFlatten
+
+  @compact: (array, keepTester = keepUnlessNullOrUndefined) ->
     for a in array
       unless keepTester a
         # needs compacting
@@ -46,14 +49,15 @@ module.exports = class ArrayCompactFlatten
     # already compact
     array
 
-  @flatten: flatten = (firstArg)->
+  @flatten: (firstArg)->
     flattenIfNeeded if arguments.length == 1
-      if isArrayOrArguments firstArg
-        firstArg
+        if isArrayOrArguments firstArg
+          firstArg
+        else
+          [firstArg]
       else
-        [firstArg]
-    else
-      arguments
+        arguments
+    , keepAll
 
-  @compactFlatten: (array, keepTester = keepUnlessNullOrUndefined)->
+  @compactFlatten: (array, keepTester = keepUnlessNullOrUndefined) ->
     flattenIfNeeded array, keepTester
