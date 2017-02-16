@@ -34,7 +34,7 @@ defineModule module, class BaseStn extends BaseObject
 
 
   @getter
-    parser: -> @parseTreeNode.parser
+    parser: -> @parseTreeNode.parser.rootParser
     sourceFile: -> @parser.sourceFile
     label: -> @props.label
     pluralLabel: -> @props.pluralLabel

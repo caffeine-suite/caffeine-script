@@ -1,5 +1,5 @@
 {CaffeineScript} = Neptune
-{log, formattedInspect, isPlainObject, object, stringCount, isString} = Neptune.Art.Foundation
+{log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 require "colors"
 
@@ -13,15 +13,17 @@ module.exports =
 
   parseTests: parseTests = (a, b) ->
     map = if b
-      {compileModule} = a
+      {compileModule} = options = a
       b
     else
       a
 
+    parseOptions = merge options, verbose: true
+
     object map, (expectedJs, source) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
         js = try
-          stn = (p = Parser.parse(source, verbose: true)).getStn()
+          stn = (p = Parser.parse(source, parseOptions)).getStn()
           transformedStn = stn.transform()
           if compileModule
             transformedStn.toJsModule()

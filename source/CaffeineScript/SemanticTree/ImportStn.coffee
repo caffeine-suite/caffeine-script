@@ -21,8 +21,8 @@ defineModule module, class ImportStn extends ScopeStnMixin require './BaseStn'
       @scope.addIdentifierAssigned id
     null
 
-  addIdentifierAssigned: (id) ->
-    @scope.addIdentifierAssigned id
+  addIdentifierAssigned: (id, init) ->
+    @scope.addIdentifierAssigned id, init
 
   jsExpressionUsesReturn: true
 

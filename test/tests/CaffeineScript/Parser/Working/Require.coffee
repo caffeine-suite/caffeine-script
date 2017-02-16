@@ -4,7 +4,10 @@
 
 {parseTests, parseTestSuite, illegalSyntaxTests} = require '../../Helper'
 
-module.exports = suite: parseTestSuite
+module.exports = suite: parseTestSuite {
+  sourceFiles:["source/CaffeineScript/foo"]
+  sourceRoot: "."
+  },
 
   require:
     "&BabelBridge": "let BabelBridge = require('babel-bridge'); BabelBridge;"
@@ -29,3 +32,16 @@ module.exports = suite: parseTestSuite
       "
 
     "foo &BabelBridge": "let BabelBridge = require('babel-bridge'); foo(BabelBridge);"
+
+  requireLocal:
+    "&Lib": "let Lib = require('./Lib.coffee'); Lib;"
+    "&Source": "let Source = require('../../source'); Source;"
+
+    "-> &Lib": "(function() {let Lib = require('./Lib.coffee'); return Lib;});"
+
+  regressions:
+    """
+    import &Foo
+    &Bar
+    """: "let Foo = require('foo'), Bar = require('bar'); return Bar;"
+

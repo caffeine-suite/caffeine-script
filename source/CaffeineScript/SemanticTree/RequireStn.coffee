@@ -29,6 +29,8 @@ defineModule module, class RequireStn extends require './BaseStn'
     {normalizedIdentifier} = @
 
     directory = sourceDir = Path.resolve Path.dirname sourceFile
+    sourceRoot = Path.resolve sourceRoot
+    # log findFileInPackage: {sourceRoot, sourceDir}
     while true
       found = find files = Fs.readdirSync(directory), (name) ->
         [baseName] = name.split '.'
