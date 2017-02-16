@@ -25,6 +25,11 @@ module.exports = suite: parseTestSuite
       "@.f().foo = 1":    "this.f().foo = 1;"
       "@.f.foo.bar = 1":  "this.f.foo.bar = 1;"
 
+    array:
+      "f[a]=1": "f[a] = 1;"
+      "f[a] = 1": "f[a] = 1;"
+      "foo.bar[a] = 1": "foo.bar[a] = 1;"
+
   block:
     """
     foo =
@@ -59,6 +64,10 @@ module.exports = suite: parseTestSuite
 
     asDifferentName:
       "{a: c} = b": "let c; ({a: c} = b);"
+
+    dotDotDot:
+      "[a...] = c":     "let a; ([...a] = c);"
+      "[a, b ...] = c": "let a, b; ([a, ...b] = c);"
 
     nesting:
       array:

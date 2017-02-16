@@ -63,13 +63,18 @@ module.exports = ->
       pattern: "openBracket_ expression _closeBracket"
       stnFactory: "AccessorStn"
 
+  @rule
+    stringLiteralPropNameTail: [
+      "_ /:/ !unquotedString"
+      "/:/"
+    ]
 
   @rule
     propName: a
       pattern: "str:identifier &_colon_"
-      m pattern: "str:numberLiteral &_colon_"
-      m pattern: "str:unquotedString"
+      m pattern: "str:unquotedString &/:/"
+      m pattern: "str:stringLiteral &stringLiteralPropNameTail"
   ,
     stnFactory: "ObjectPropNameStn"
-    stnProps: -> value: @str.toString()
+    # stnProps: -> value: @str.toString()
 

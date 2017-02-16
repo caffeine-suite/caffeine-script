@@ -2,7 +2,7 @@
 
 module.exports = ->
   @rule
-    literal: w "nullLiteral boolLiteral numberLiteral stringLiteral"
+    literal: w "nullLiteral boolLiteral numberLiteral stringLiteral regExpLiteral"
 
   @rule
     boolLiteral:   w "true false"

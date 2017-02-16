@@ -69,9 +69,12 @@ module.exports = ->
       stnFactory: "IdentifierStn"
       stnProps: -> identifier: @toString()
 
+    # definitly not: space, comma, [], (), {}
+    # could, could not: '', "", ``
+    # questionables: |, \
     unquotedString:
       ///
-      ((?!\s)[-@.$\#\w\x7f-\uffff])+
+      ((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\x7f-\uffff])+
       ///
 
 

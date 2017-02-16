@@ -8,7 +8,7 @@ module.exports = ->
 
     comment: a
       pattern:      "/ *###[^#]((?!###)(.|\n))*###/ *"
-      m pattern:    "/ *## */ unparsedBlock"
+      m pattern:    "/ *## */ unparsedBlock+"
       m pattern:    "/ *(\\#[^\n]*)/"
 
     spaceOrEnds:  /( *(\n|;|$))+/

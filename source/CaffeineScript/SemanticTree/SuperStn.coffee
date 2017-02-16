@@ -14,6 +14,8 @@ defineModule module, class SuperStn extends require './BaseStn'
 
   transform: ->
     throw new Error "super must be used inside an object-literal value" unless propValue = @findParent "ObjectPropValue"
+    # TODO: we should validate that propName has a legal value string
+
     methodName = propValue.labeledChildren.propName.props.value
     [__, methodName] = m if m = methodName.match /^@(.*)/
     new @class merge(@props, methodName: methodName), @transformChildren()

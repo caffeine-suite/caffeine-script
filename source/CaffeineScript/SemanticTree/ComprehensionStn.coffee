@@ -70,6 +70,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
 
 
   transform: ->
+    @children = @transformChildren()
+    @initLabeledChildren()
     {
       outputType
       variableDefinition

@@ -8,7 +8,8 @@ defineModule module, class DestructuringIdentifierStn extends require './BaseStn
     @scope.addIdentifierAssigned @labeledChildren.identifier.toJs()
     super
 
+  # TODO: check that etc is only used on the last element of an array destructure - javascript limitations
 
   toJs: ->
     {identifier, destructuringDefault} = @labeledChildren
-    "#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"
+    "#{if @props.etc then '...' else ''}#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"

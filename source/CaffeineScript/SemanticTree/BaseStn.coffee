@@ -20,14 +20,18 @@ defineModule module, class BaseStn extends BaseObject
     @parseTreeNode = props.parseTreeNode
 
     @props = objectWithout props, "parseTreeNode"
-    if @children
-      @labeledChildren = {}
-      for child in @children
-        child.parent = @
-        {label, pluralLabel} = child
-        @labeledChildren[label] = child
-        if pluralLabel
-          (@labeledChildren[pluralLabel] ||= []).push child
+    @initLabeledChildren()
+
+  initLabeledChildren: ->
+    return unless @children
+    @labeledChildren = {}
+    for child in @children
+      child.parent = @
+      {label, pluralLabel} = child
+      @labeledChildren[label] = child
+      if pluralLabel
+        (@labeledChildren[pluralLabel] ||= []).push child
+
 
   @getter
     parser: -> @parseTreeNode.parser
@@ -105,7 +109,8 @@ defineModule module, class BaseStn extends BaseObject
   childrenToJs: (joiner = '')->
     (c.toJs() for c in @children).join joiner
 
-  toJs: -> throw new Error "must override one of the toJs* functions"
+  toJs: ->
+    throw new Error "must override one of the toJs* functions: #{@className}"
 
   # return JS code that doesn't (have to) return a value
   toJsStatement: ->

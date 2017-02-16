@@ -20,6 +20,11 @@ module.exports = suite: parseTestSuite
         myV
       """: "Caf.e(mySource, {}, (myV, myK, into) => {return into[myK] = myV;});"
 
+      """
+      direction = array v, i in precidence
+        i
+      """: "let direction; direction = Caf.e(precidence, [], (v, i, into) => {return into.push(i);});"
+
     syntaxVariants:
       implicitWith:
         "object b":         "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
@@ -43,6 +48,17 @@ module.exports = suite: parseTestSuite
           a
         """: "Caf.e(b, {}, (a, k, into) => {return a ? into[k] = a : undefined;});"
 
+    nested:
+      """
+      array a
+        array b
+      """: "Caf.e(a,
+        [],
+        (v, k, into) =>
+        {return into.push(Caf.e(b,
+        [],
+        (v, k, into) =>
+        {return into.push(v);}));});"
 
     scope:
       enclosingScope:
