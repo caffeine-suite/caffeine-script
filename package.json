@@ -20,5 +20,5 @@
     "perf": "nn --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
     "test": "nn --std;mocha -u tdd --compilers coffee:coffee-script/register"
   },
-  "version": "0.20.0"
+  "version": "0.21.0"
 }
