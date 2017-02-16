@@ -138,7 +138,19 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
       intoVarDef  = variableDefinition?.children[2] || FunctionDefinitionArgStn IdentifierStn identifier: intoIdentifer
       useExtendedEach && FunctionDefinitionArgStn IdentifierStn identifier: brkIdentifer
 
-    bodyWithDefault = body || ValueStn valueVarDef
+
+    if outputType == "object" || outputType == "array"
+      if body
+        if body.className == "StatementsStn"
+          [bodyStatementsExceptLast..., lastBodyStatement] = body.children
+        else
+          lastBodyStatement = body
+      else
+        bodyStatementsExceptLast = null
+        lastBodyStatement = ValueStn valueVarDef
+    else
+      bodyWithDefault = body || ValueStn valueVarDef
+
 
     whenClauseWrapper = if whenClause
       (actionStn) ->
@@ -167,18 +179,20 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
 
         switch outputType
           when "object"
-            whenClauseWrapper AssignmentStn null,
+            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, AssignmentStn null,
               AccessorStn null,
                 IdentifierStn identifier: intoIdentifer
                 ValueStn keyVarDef
-              bodyWithDefault
+              lastBodyStatement
+            ]
 
           when "array"
-            whenClauseWrapper FunctionInvocationStn null,
+            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, FunctionInvocationStn null,
               AccessorStn null,
                 IdentifierStn identifier: intoIdentifer
                 IdentifierStn identifier: "push"
-              bodyWithDefault
+              lastBodyStatement
+            ]
 
           when "each"
             whenClauseWrapper bodyWithDefault

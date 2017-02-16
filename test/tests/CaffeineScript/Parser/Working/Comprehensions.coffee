@@ -6,8 +6,6 @@
 
 module.exports = suite: parseTestSuite
 
-  good:
-
     iterationTypes:
       "array b":        "Caf.e(b, [], (v, k, into) => {return into.push(v);});"
       "object b":       "Caf.e(b, {}, (v, k, into) => {return into[k] = v;});"
@@ -47,6 +45,26 @@ module.exports = suite: parseTestSuite
         object a from b when a
           a
         """: "Caf.e(b, {}, (a, k, into) => {return a ? into[k] = a : undefined;});"
+
+    multilineWith:
+      """
+      array v in a
+        foo
+        v
+      """:
+        "Caf.e(a, [],
+        (v, k, into) => {foo;
+        return into.push(v);});"
+
+      """
+      array v in a
+        foo
+        bar
+        v
+      """:
+        "Caf.e(a, [],
+        (v, k, into) => {foo; bar;
+        return into.push(v);});"
 
     nested:
       """
