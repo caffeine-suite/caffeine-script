@@ -112,3 +112,22 @@ module.exports =
   defClass: (klass, init) ->
     outKlass = init.call klass
     outKlass.createWithPostCreate?(outKlass) ? outKlass
+
+
+
+  definingModule = null
+  @getModuleBeingDefined: -> definingModule
+
+  ###
+  IN:
+    defineFunciton ||
+  ###
+  @defMod: (_module, a) ->
+    lastModule = definingModule
+    definingModule = _module
+
+    result = _module.exports = a()
+
+    definingModule = lastModule
+
+    result
