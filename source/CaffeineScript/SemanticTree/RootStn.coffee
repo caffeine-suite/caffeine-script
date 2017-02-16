@@ -27,9 +27,10 @@ defineModule module, class RootStn extends ScopeStnMixin require './BaseStn'
     identifiersUsedButNotAssigned = ("#{k} = global.#{k}" for k, v of identifiersUsedButNotAssigned)
 
     statementsJs = @statements.toFunctionBodyJs()
+
+    lets = compactFlatten [identifiersUsedButNotAssigned, @requiredIdentifierLets]
     statements = compactFlatten [
-      "let #{identifiersUsedButNotAssigned.join ', '}" if identifiersUsedButNotAssigned.length > 0
-      @getAutoLets()
+      "let #{lets.join ', '}" if lets.length > 0
       statementsJs
     ]
 

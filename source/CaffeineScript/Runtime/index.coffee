@@ -4,5 +4,6 @@
 module.exports = require './namespace'
 .includeInNamespace require './Runtime'
 .addModules
-  Iteration: require './Iteration'
-  Lib:       require './Lib'      
+  ArrayCompactFlatten: require './ArrayCompactFlatten'
+  Iteration:           require './Iteration'          
+  Lib:                 require './Lib'                

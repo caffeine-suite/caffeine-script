@@ -12,12 +12,10 @@ defineModule module, ->
 
     addIdentifierUsed: (identifier)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
-      @resetCachedValues()
       @identifiersUsed[identifier] = true
 
     addIdentifierAssigned: (identifier, initializer)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
-      @resetCachedValues()
       @identifiersAssigned[identifier] = initializer || true
 
     @getter
@@ -47,16 +45,6 @@ defineModule module, ->
     addChildScope: (child) ->
       return if child == @
       (@childScopes ||= []).push child
-      # log ADDCHILDSCOPE:
-      #   self: @
-      #   childScopes: @childScopes
-
-    # getUnusedIdentifierName: (rootName)->
-    #   {identifiersUsed} = @
-    #   count = 1
-    #   out = rootName
-    #   out = "#{rootName}#{count++}" while identifiersUsed[out]
-    #   out
 
     bindAllUniqueIdentifiersRequested: ->
       return unless @_uniqueIdentifierHandles
@@ -75,10 +63,6 @@ defineModule module, ->
       child.updateScope @ for child in @children
       null
 
-    resetCachedValues: ->
-      @props.identifiersUsedButNotAssigned = null
-
-
     @getter
       argumentNames: -> []
 
@@ -87,9 +71,9 @@ defineModule module, ->
       boundUniqueIdentifiers: -> @_boundUniqueIdentifiers ||= {}
 
       requiredIdentifierLets: ->
-        {identifiersAssignedInParentScopes, identifiersAssigned} = @
-        array identifiersAssigned,
-          when: (initializer, k) -> !identifiersAssignedInParentScopes[k]
+        {identifiersAssignedInParentScopes} = @
+        array @identifiersAssigned,
+          when: identifiersAssignedInParentScopes && (initializer, k) -> !identifiersAssignedInParentScopes[k]
           with: (initializer, identifier) ->
             if isString initializer
               "#{identifier} = #{initializer}"
@@ -111,7 +95,7 @@ defineModule module, ->
         out
 
       identifiersUsedButNotAssigned: ->
-        return @props.identifiersUsedButNotAssigned if @props.identifiersUsedButNotAssigned
+        # return @props.identifiersUsedButNotAssigned if @props.identifiersUsedButNotAssigned
         assigned = @identifiersAssignedInParentThisOrChildrenScopes
         ret = object @identifiersUsed,
           when: (v, k) -> !assigned[k]
@@ -123,11 +107,8 @@ defineModule module, ->
 
       identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
       identifiersAssignedInParentScopes: ->
-        out = if @scope && @scope != @
+        if @scope && @scope != @
           merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, arrayToTruthMap @argumentNames
-        else
-          {}
-        out
 
     # transform: ->
     #   if @props.identifiersAssigned

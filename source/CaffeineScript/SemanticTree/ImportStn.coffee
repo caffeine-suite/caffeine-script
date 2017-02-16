@@ -7,15 +7,22 @@ defineModule module, class ImportStn extends ScopeStnMixin require './BaseStn'
 
   updateScope: (@scope)->
     @bindAllUniqueIdentifiersRequested()
-    @children[0].updateScope @scope
+
+    [@importChildren..., @statementsChild] = @children
+
+    for child in @importChildren
+      child.updateScope @scope
 
     @scope.addChildScope @
 
-    @children[1].updateScope @
+    @statementsChild.updateScope @
     @importing = Object.keys @identifiersUsedButNotAssigned
     for id of @identifiersUsedButNotAssigned
-      @addIdentifierAssigned id
+      @scope.addIdentifierAssigned id
     null
+
+  addIdentifierAssigned: (id) ->
+    @scope.addIdentifierAssigned id
 
   jsExpressionUsesReturn: true
 
@@ -36,13 +43,16 @@ defineModule module, class ImportStn extends ScopeStnMixin require './BaseStn'
 
     importFromCaptureIdentifier ||= "global"
 
-    [importFrom, statements] = @children
-    bodyJs = compactFlatten([@getAutoLets(), statements.toFunctionBodyJs()]).join "; "
+    bodyJs = @statementsChild.toFunctionBodyJs();
+
+    importsJs = (c.toJsExpression() for c in @importChildren)
+
+    importingJs = "[#{("\"#{i}\"" for i in @importing).join ', '}]"
 
     imports = if @importing?.length > 0
       "({#{@importing.join ', '}} =
-      Caf.i(#{JSON.stringify @importing},
-      #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ""}[#{importFrom.toJs()}, #{importFromCaptureIdentifier}])); "
+      Caf.i(#{importingJs},
+      #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ""}[#{importsJs.join ', '}, #{importFromCaptureIdentifier}])); "
     else ""
 
     "#{imports}#{bodyJs}"

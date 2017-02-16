@@ -5,3 +5,4 @@ Foundation = require 'art-foundation'
 defineModule module, class ThrowStn extends require './BaseStn'
 
   toJs: ->  "throw #{@childrenToJs()}"
+  toJsExpression: -> "(()=>{#{@toJs()};})()"
