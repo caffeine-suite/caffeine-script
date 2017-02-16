@@ -34,7 +34,10 @@ defineModule module, class RootStn extends ScopeStnMixin require './BaseStn'
       statementsJs
     ]
 
-    "Caf.defMod(module, () => {#{statements.join '; '};});"
+    """
+    let Caf = require('caffeine-script-runtime');
+    Caf.defMod(module, () => {#{statements.join '; '};});
+    """
 
   toJs: ->
     statementsJs = @statements.toJs()

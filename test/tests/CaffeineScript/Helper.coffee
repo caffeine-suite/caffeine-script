@@ -67,6 +67,12 @@ module.exports =
       object map, (v) -> parseTestSuite options, v
 
 
+  applyModuleWrapper: (body) ->
+    """
+    let Caf = require(\'caffeine-script-runtime\');
+    Caf.defMod(module, () => {#{body}});
+    """
+
   illegalSyntaxTests: (array) ->
     for source in array
       do (source) ->

@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests, parseTestSuite, illegalSyntaxTests} = require '../../Helper'
+{parseTests, parseTestSuite, illegalSyntaxTests, applyModuleWrapper} = require '../../Helper'
 
 module.exports = suite: parseTestSuite {compileModule: true},
 
@@ -11,29 +11,26 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import a
     foo()
     """:
-      'Caf.defMod(module, () =>
-      {let a = global.a, foo;
+      applyModuleWrapper 'let a = global.a, foo;
       ({foo} = Caf.i(["foo"], [a, global]));
-      return foo();});'
+      return foo();'
 
     """
     import a
     foo bar
     """:
-      'Caf.defMod(module, () =>
-      {let a = global.a, foo, bar;
+      applyModuleWrapper 'let a = global.a, foo, bar;
       ({foo, bar} = Caf.i(["foo", "bar"], [a, global]));
-      return foo(bar);});'
+      return foo(bar);'
 
     """
     import a, b
     foo()
     """:
-      'Caf.defMod(module, () =>
-      {let a = global.a,
+      applyModuleWrapper 'let a = global.a,
       b = global.b, foo;
       ({foo} = Caf.i(["foo"], [a, b, global]));
-      return foo();});'
+      return foo();'
 
   nested:
     """
@@ -41,11 +38,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import b
     foo()
     """:
-      'Caf.defMod(module, () =>
-      {let a = global.a, foo, b, parentImports;
+      applyModuleWrapper 'let a = global.a, foo, b, parentImports;
       ({b} = Caf.i(["b"], parentImports = [a, global]));
       ({foo} = Caf.i(["foo"], [b, parentImports]));
-      return foo();});
+      return foo();
       '
 
   scopes:
@@ -53,10 +49,9 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import global.Math
     -> min
     """:
-      'Caf.defMod(module, () =>
-      {let min;
+      applyModuleWrapper 'let min;
       ({min} = Caf.i(["min"], [global.Math, global]));
-      return function() {return min;};});'
+      return function() {return min;};'
 
 
   deepNested:
@@ -66,9 +61,8 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import c
     foo()
     """:
-      'Caf.defMod(module, () =>
-      {let a = global.a, foo, c, b, parentImports, parentImports1;
+      applyModuleWrapper 'let a = global.a, foo, c, b, parentImports, parentImports1;
       ({b} = Caf.i(["b"], parentImports = [a, global]));
       ({c} = Caf.i(["c"], parentImports1 = [b, parentImports]));
-      ({foo} = Caf.i(["foo"], [c, parentImports1])); return foo();});
+      ({foo} = Caf.i(["foo"], [c, parentImports1])); return foo();
       '

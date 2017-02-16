@@ -1,1 +1,1 @@
-Caf.defMod(module, () => {let require = global.require; let Parser; Parser = require("./Parser"); return {compile: function(source) {return {compiled: {js: Parser.parse(source).getStn().transform().toJsModule()}};}};});
+Caf.defMod(module, () => {return {compile: function(source) {let Parser = require('./Parser.caf'); return {compiled: {js: (Parser).parse(source).getStn().transform().toJsModule()}};}};});
