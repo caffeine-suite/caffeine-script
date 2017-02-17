@@ -1,4 +1,3 @@
-{a, m, w, compactFlatten, log} = require "art-foundation"
 {Extensions} = require 'babel-bridge'
 
 module.exports = ->
@@ -12,7 +11,7 @@ module.exports = ->
   @rule
     actualBlock:          Extensions.IndentBlocks.getPropsToSubparseBlock()
     actualToEolAndBlock:  Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
-    unparsedBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "anything"
+    unparsedBlock:        Extensions.IndentBlocks.getPropsToSubparseBlock rule: "anything"
 
     anything:
       pattern: /(.|\n)*$/
