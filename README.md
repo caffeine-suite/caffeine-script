@@ -7,17 +7,13 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters. It is a lean, high-level language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
 
-#### Motivation
+### Maximizing Programmer (My) Productivity
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
 All my projects are in CoffeeScript. At last count I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumultating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to frutition in CaffeineScript.
 
-Really, they all come down to one thing:
-
-* **maximize programmer (my) productivity**
-
-With a few common themes:
+Really, they all come down to trying to figure out how to maximizing my productivity. To that end, I've found some common themes:
 
 - minimize tokens
 - maximize use of blocks / minimize tokens which need matching
@@ -25,11 +21,11 @@ With a few common themes:
 - npm / CommonJs integration
 - If a syntax error has a reasonable, obvious interpretation, maybe it should be supported rather than be a syntax error.
 
-#### Wiki
+### Wiki
 
 After you've read this short intro file, check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for more details.
 
-#### Example
+### Example
 
 ```coffeescript
 # CaffeineScript - 28 tokens and 0 matching-token-pairs
