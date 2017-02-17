@@ -141,7 +141,7 @@ defineModule module, class BaseStn extends BaseObject
 
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;
-  toJsExpression: ->
+  toJsExpression: (returnValueIgnored = false)->
     @toJs()
 
   toJsExpressionWithParens: ->

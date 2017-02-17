@@ -105,8 +105,9 @@ module.exports = suite: parseTestSuite
 
     """
     a = while foo
-      bar
-    """: "let a; a = (() => {let result; while (foo) {result = bar}; return result})();"
+      1
+      2
+    """: "let a, _temp; a = (() => {while (foo) {1; _temp = 2;}; return _temp})();"
 
     """
     a = if true
@@ -114,7 +115,7 @@ module.exports = suite: parseTestSuite
         1
       2
     else 3
-    """: "let a; a = true ? ((() => {while (false) {1;}})(), 2) : 3;"
+    """: "let a; a = true ? ((() => {while (false) {1;};})(), 2) : 3;"
 
   until:
     "until foo\n  bar": "while (!foo) {bar;};"

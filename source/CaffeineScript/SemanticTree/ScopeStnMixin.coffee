@@ -10,6 +10,12 @@ defineModule module, ->
 
   (toExtend) -> class ScopeStnMixin extends toExtend
 
+    constructor: ->
+      super
+      @_uniqueIdentifierHandles =
+      @_boundUniqueIdentifiers = null
+
+
     addIdentifierUsed: (identifier)->
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
       @identifiersUsed[identifier] = true
@@ -19,6 +25,11 @@ defineModule module, ->
       @identifiersAssigned[identifier] = initializer || true
 
     @getter
+      # call during toJs
+      uniqueIdentifier: (preferredName = "_temp") ->
+        @getUniqueIdentifierHandle(preferredName).identifier
+
+      # call during transform
       uniqueIdentifierHandle: (preferredName = "_temp") ->
         @addUniqueIdentifierHandle new UniqueIdentifierHandle preferredName
 

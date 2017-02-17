@@ -8,24 +8,32 @@ defineModule module, class StatementsStn extends require './BaseStn'
   toJs: ->
     @getChildrenStatementsJsArray().join "; "
 
-  toFunctionBodyJs: ->
-    @getChildrenStatementsJsArray(true).join "; "
+  toFunctionBodyJs: (returnAction = true)->
+    @getChildrenStatementsJsArray(true, returnAction).join "; "
 
-  getChildrenStatementsJsArray: (lastIsExpression = false, useReturn = true)->
+  getChildrenStatementsJsArray: (returnLastValue = false, returnAction = "return", generateStatements = true)->
+    if returnAction == true
+      returnAction = "return"
+
     for c, i in lines = @children
-      if lastIsExpression && i == lines.length - 1
-        if useReturn && !c.jsExpressionUsesReturn
-          "return #{c.toJsExpression()}"
+      if returnLastValue && i == lines.length - 1
+        if returnAction && !c.jsExpressionUsesReturn
+          "#{returnAction} #{c.toJsExpression()}"
         else c.toJsExpression()
       else
-        if (statement = c.toJsStatement()).match /^function/
-          @applyRequiredParens statement
+        if generateStatements
+          statement = c.toJsStatement()
+          if statement.match /^function/
+            @applyRequiredParens statement
+          else
+            statement
         else
-          statement
+          c.toJsExpression true
+
 
   toJsParenExpression: ->
     if @children.length == 1
       @children[0].toJsParenExpression()
     else
-      @applyRequiredParens (@getChildrenStatementsJsArray(true, false)).join(", ")
+      @applyRequiredParens (@getChildrenStatementsJsArray(true, false, false)).join(", ")
 

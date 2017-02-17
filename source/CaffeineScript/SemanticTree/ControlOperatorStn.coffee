@@ -18,7 +18,7 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
         throw new Error "INTERNAL: invalid control-operator: #{inspect @operand}"
 
   toJs: (options = {})->
-    {returnExpression} = options
+    {returnExpression, returnValueIsIgnored} = options
     expression = @expression.toJsExpression()
     {operand} = @
 
@@ -30,7 +30,20 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
 
     if returnExpression
       if operand == "while"
-        throw new Error "TODO"
+        if returnValueIsIgnored
+          "
+          (() => {while
+          #{@applyRequiredParens expression}
+          {#{@body.toFunctionBodyJs false};};})()
+          "
+        else
+          tempVarIdentifier = @scope.uniqueIdentifier
+          "
+          (() => {while
+          #{@applyRequiredParens expression}
+          {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
+          return #{tempVarIdentifier}})()
+          "
       else
         "
         #{@applyParens expression} ?
@@ -51,5 +64,5 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
   toJsParenExpression: ->
     @applyRequiredParens @toJs returnExpression: true
 
-  toJsExpression: ->
-    @toJs returnExpression: true
+  toJsExpression: (returnValueIsIgnored) ->
+    @toJs returnExpression: true, returnValueIsIgnored: returnValueIsIgnored
