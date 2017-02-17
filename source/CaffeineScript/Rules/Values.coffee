@@ -47,20 +47,6 @@ module.exports = ->
     stnFactory: "SuperStn"
     stnProps: passArguments: true
 
-  @rule superFunctionInvocation: a
-    pattern: "openParen_ valueList? _closeParen"
-    m pattern: "_? complexExpression"
-    m pattern: "_? valueListBlock"
-
-  @rule
-    functionInvocation: a
-      pattern:   "conditional:'?'? openParen_ valueList? _closeParen"
-      m pattern: "conditional:'?'? _? complexExpression"
-      m pattern: "conditional:'?'? _? valueListBlock"
-  ,
-    stnFactory: "FunctionInvocationStn"
-    stnExtension: true
-
   @rule
     assignmentExtension: a
       pattern: "assignmentOperator:_assignmentOperator_ complexExpression"

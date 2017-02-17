@@ -29,7 +29,7 @@ module.exports = ->
   @rule
     valueListBlock:         Extensions.IndentBlocks.getPropsToSubparseBlock rule: "valueListBlockSubParse"
     valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "valueListBlockSubParse"
-    valueListBlockSubParse: "statement*"
+    valueListBlockSubParse: "end* statement*"
 
   @rule
     valueList: a

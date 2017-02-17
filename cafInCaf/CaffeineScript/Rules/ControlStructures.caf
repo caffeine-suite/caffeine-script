@@ -39,7 +39,7 @@ import &ArtFoundation, &BabelBridge
     switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
     thenClause: "_ /then/ _ lineOfStatements"
 
-    switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: "switchBody"
+    switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: :switchBody
 
   @rule
     switchWhenClause:

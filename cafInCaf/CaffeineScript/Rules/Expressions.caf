@@ -1,15 +1,14 @@
 |caffeine-script
-# import &ArtFoundation, &BabelBridge, &SemanticTree
-# {matchBlock} = Extensions.IndentBlocks
+import &ArtFoundation, &BabelBridge, &SemanticTree
+{matchBlock} = Extensions.IndentBlocks
 
-# upToButNotEol = /[^\n]*/y
+upToButNotEol = /[^\n]*/y
 
-# ->
-rule
+->
+  @rule
 
-  lineStartExpression: "multilineImplicitObject"
+    lineStartExpression: "multilineImplicitObject"
 
-##
     complexExpression:
       {} pattern: "implicitArray"
       {} pattern: "expression"
@@ -33,6 +32,7 @@ rule
     structuredLiteral:
       :object
       :array
+
   @rule
     newInstance: "new _ expressionWithoutBinOps"
     {} stnFactory: :NewInstanceStn

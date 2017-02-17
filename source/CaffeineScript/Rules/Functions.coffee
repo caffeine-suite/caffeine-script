@@ -48,3 +48,17 @@ module.exports = ->
 
   @rule
     etc: "'...'"
+
+  @rule superFunctionInvocation: a
+    pattern: "openParen_ valueList? _closeParen"
+    m pattern: "_? complexExpression"
+    m pattern: "_? valueListBlock"
+
+  @rule
+    functionInvocation: a
+      pattern:   "conditional:'?'? openParen_ valueList? _closeParen"
+      m pattern: "conditional:'?'? _? complexExpression"
+      m pattern: "conditional:'?'? _? valueListBlock"
+  ,
+    stnFactory: "FunctionInvocationStn"
+    stnExtension: true
