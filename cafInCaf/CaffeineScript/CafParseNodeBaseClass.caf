@@ -14,6 +14,9 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
 
 class CafParseNodeBaseClass extends Nodes.Node
 
+  @_createSubclassBase: ->
+    class NodeSubclass extends @
+
   isImplicitArray: ->
     !!@getImplicitArray()
 

@@ -34,10 +34,10 @@ module.exports = suite: parseTestSuite {
     "foo &BabelBridge": "let BabelBridge = require('babel-bridge'); foo(BabelBridge);"
 
   requireLocal:
-    "&Lib": "let Lib = require('./Lib.coffee'); Lib;"
+    "&Lib": "let Lib = require('./Lib'); Lib;"
     "&Source": "let Source = require('../../source'); Source;"
 
-    "-> &Lib": "(function() {let Lib = require('./Lib.coffee'); return Lib;});"
+    "-> &Lib": "(function() {let Lib = require('./Lib'); return Lib;});"
 
   regressions:
     """

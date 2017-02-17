@@ -37,7 +37,7 @@ defineModule module, class RequireStn extends require './BaseStn'
         normalizedName = upperCamelCase baseName
         if normalizedName == normalizedIdentifier
           relative = Path.relative sourceDir, directory
-          relative = Path.join relative, name
+          relative = Path.join relative, baseName
           relative = "./#{relative}" unless relative.match /^\./
           relative
       return found if found
