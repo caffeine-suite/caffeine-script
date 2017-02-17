@@ -4,7 +4,9 @@ Caf.defMod(module, () => {
     compile: function(source, options) {
       let Parser = require("./Parser");
       return {
-        compiled: { js: Parser.parse(source, options).getStn().transform().toJsModule() }
+        compiled: {
+          js: Parser.parse(source, options).getStn().transform().toJsModule()
+        }
       };
     }
   };
