@@ -33,13 +33,13 @@ module.exports = suite:
   existanceAccessor:
     basic: ->
       parseTests
-        "a?.b": "(a == null) && a.b;"
-        "a?[b]": "(a == null) && (a[b]);"
+        "a?.b":   "(a != null) && a.b;"
+        "a?[b]":  "(a != null) && (a[b]);"
 
     withBase: ->
       parseTests
-        "a.foo.bar?.b":  "let base; (((base = a.foo).bar) == null) && base.bar.b;"
-        "a.foo.bar?[b]": "let base; (((base = a.foo).bar) == null) && (base.bar[b]);"
+        "a.foo.bar?.b":  "let base; (((base = a.foo).bar) != null) && base.bar.b;"
+        "a.foo.bar?[b]": "let base; (((base = a.foo).bar) != null) && (base.bar[b]);"
 
   multiline:
     basic: ->

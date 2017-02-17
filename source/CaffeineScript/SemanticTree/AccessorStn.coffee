@@ -27,7 +27,7 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
       BinaryOperatorStn
         operator: "&&"
         BinaryOperatorStn
-          operator: "=="
+          operator: "!="
           value1
           SimpleLiteralStn value: "null"
         AccessorStn.Factory null,
