@@ -99,9 +99,11 @@ More on my design philosophy: [Amazingly Great Design @ EssenceAndArtifact.com](
 
 ## CaffeineMC (Meta-Compiler)
 
-CoffeeScript is designed to take maximum advantage of CaffeineMC. This means the language is extensible on a per-file or per-project basis.
+CoffeeScript is designed to take maximum advantage of CaffeineMC. This means the language is extensible on a per-file or per-project basis. CaffeineMC enables this startling concept:
 
-* Learn more about [CaffeineMC](https://github.com/shanebdavis/caffeine-mc) on github
+* Any language can change *arbitrarilly* without breaking any existing code.
+
+No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unlease the power of language evolution! Learn more: [CaffeineMC](https://github.com/shanebdavis/caffeine-mc).
 
 ## CaffeineScript and CoffeeScript
 
