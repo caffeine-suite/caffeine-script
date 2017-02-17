@@ -74,8 +74,8 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
 
   @rule
     propName:
-      {} pattern: "str:identifier &_colon_"
-      {} pattern: "str:unquotedString &/:/"
+      {} pattern: "!/then\\s/ str:identifier &_colon_"
+      {} pattern: "!/then\\s/ str:unquotedString &/:/"
       {} pattern: "str:stringLiteral &stringLiteralPropNameTail"
 
     {}

@@ -1,0 +1,113 @@
+|caffeine-script
+import &ArtFoundation, &SemanticTree, &Lib
+
+dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
+
+normalizeString = (string) ->
+  string = escapeJavascriptString string.toString().trim()
+  string = string.replace /\\\\/g, "\\"
+  string = string.replace /\\ /g, " "
+
+normalizeHereDoc = (hereDoc) ->
+  [all, firstLine, rest] = hereDoc.match /^([^\n]*)(?=\n|$)((?:.|\n)*)/
+
+  if !rest || rest.length == 0
+    firstLine
+  else
+
+    indents = rest.match /\n *(?=[^ \n])/g
+
+    if indents?.length > 0
+      minIndent = null
+      each i in indents
+        len = i.length - 1
+        minIndent = len if !minIndent? || len < minIndent
+      rest = rest.replace ///\n\ {#{minIndent}}///g, "\n"
+
+    rest = rest.replace /^\n/, ''
+    unless !firstLine || firstLine?.match /\ */
+      rest = firstLine + "\\n" + rest
+    rest
+
+##
+  Notes:
+
+    1) generate ES6 interpolations: `foo#{bar}`
+    2) unparsedBlock needs to be interpolated (create a new block-type that starts the sub-parse on rule: stringBlock)
+    3) "" EOL needs interpolation
+    4) #tripples """ and ''' need interpolation
+
+->
+
+  @rule
+    stringLiteral:
+      pattern: '/"" */ unparsedBlock'
+      getStn: ->
+        StringStn value: @unparsedBlock.toString().trim()
+
+  @rule
+    stringLiteral:
+      {} pattern: "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
+      {} pattern: "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
+      {} pattern: 'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
+      {} pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
+
+    {}
+      getStnChildren: (appendTo = [])->
+        appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+        @interpolation?.getStnChildren appendTo
+        appendTo
+
+      getStn: ->
+        if @hereDoc
+          StringStn value: normalizeHereDoc @mid.toString()
+        else if @interpolation
+          InterpolatedStringStn @getStnChildren()
+        else
+          StringStn value: @mid.toString()
+
+  @rule
+    stringLiteral:
+      {} pattern:   "/'/ string:/([^\\']|\\.)*/ /'/"
+      {} pattern:   "':' string:unquotedString"
+
+    {}
+      getStn: -> StringStn value: @string.toString()
+
+  @rule
+    hereDocDqStringStart:   /"""( *(?=\n))?/
+    hereDocSqStringStart:   /'''( *(?=\n))?/
+    eolStringStart:         /"" +/
+    dqStringStart:          /"/
+
+    interpolationStart:     /\#\{/
+    interpolationEnd:       /\}/
+
+  @rule
+    eolStringMiddle:        /// ( ([\ ]*(?=\S)) | [^\ \n\\#] | \\[^\n] | \#(?!\{) )* ///
+    dqStringMiddle:         /// ( [^"\\#] | \\. | \#(?!\{) )* ///
+    hereDocDqStringMiddle:  /// ((?!(\n\ *)?""") ( [^\\#] | \\. | \#(?!\{) )) * ///
+    hereDocSqStringMiddle:  /// ((?!(\n\ *)?''') ( [^\\#] | \\. | \#(?!\{) )) * ///
+    {}
+      toEscapedQuotes: (quote) -> deescapeSpaces escapeUnEscapedQuotes @toString(), quote
+
+      toEscapedBackTicks:    -> deescapeSpaces escapeUnEscapedQuotes @toString(), '`'
+      toEscapedDoubleQuotes: -> deescapeSpaces escapeUnEscapedQuotes @toString(), '"'
+
+  @rule
+    dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
+    eolStringInterpolation: "interpolationStart expression interpolationEnd mid:eolStringMiddle interpolation:eolStringInterpolation?"
+    hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
+    hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
+    {}
+      getStnChildren: (appendTo = [])->
+        appendTo.push @expression.getStn()
+        appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+        @interpolation?.getStnChildren appendTo
+        appendTo
+
+  @rule
+    hereDocDqStringEnd: /(\n *)?"""/
+    hereDocSqStringEnd: /(\n *)?'''/
+    dqStringEnd: /"/
+    eolStringEnd: / *(?=\n|$)/
