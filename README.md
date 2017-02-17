@@ -16,8 +16,12 @@ All my projects are in CoffeeScript. At last count I am maintaining almost 1700 
 Really, they all come down to trying to figure out how to maximizing my productivity. To that end, I've found some common themes:
 
 - minimize tokens
-- maximize use of blocks / minimize tokens which need matching
+- maximize use of blocks
+- minimize tokens which need matching
 - minimize refactor effort
+- consistency
+- everything returns a value
+- patching Javscript's warts
 - npm / CommonJs integration
 - If a syntax error has a reasonable, obvious interpretation, maybe it should be supported rather than be a syntax error.
 
