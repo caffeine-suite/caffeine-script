@@ -9,7 +9,7 @@ module.exports = ->
   @rule
     _equals_:       / *= */
     _colon_:        / *: */
-    _comma_:        / *,[ \n]*/
+    _comma_:        / *, *\n*/
     _arrow_:        / *[-=]> */
 
     openParen_:     /\( */

@@ -22,6 +22,7 @@ defineModule module, class RequireStn extends require './BaseStn'
 
 
   findFileInPackage: ({sourceFiles, sourceRoot} = @parser.options) ->
+    # log findFileInPackageA: {sourceRoot, sourceFiles}
     return unless (sourceFile = sourceFiles?[0]) && sourceRoot
     Path ||= require 'path'
     Fs ||= require 'fs'
@@ -30,7 +31,7 @@ defineModule module, class RequireStn extends require './BaseStn'
 
     directory = sourceDir = Path.resolve Path.dirname sourceFile
     sourceRoot = Path.resolve sourceRoot
-    # log findFileInPackage: {sourceRoot, sourceDir}
+    # log findFileInPackageB: {sourceRoot, sourceDir}
     while true
       found = find files = Fs.readdirSync(directory), (name) ->
         [baseName] = name.split '.'

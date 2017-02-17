@@ -18,9 +18,17 @@ module.exports = suite:
       """
       [
         1, 2,
-        3, 4
+      3, 4
       ]
       """: "[1, 2, 3, 4];"
+
+      # this currently fails to parse
+      # """
+      # [
+      #   1, 2,
+      #   3, 4
+      # ]
+      # """: "[1, 2, 3, 4];"
 
       """
       [

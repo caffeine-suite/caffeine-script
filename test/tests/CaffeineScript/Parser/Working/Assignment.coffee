@@ -79,6 +79,13 @@ module.exports = suite: parseTestSuite
         "{c:[a]} = b": "let a; ({c: [a]} = b);"
 
   binopAssignment:
+    javascriptSupported:
+      "a += b":  "let a; a += b;"
+      "a -= b":  "let a; a -= b;"
+      "a *= b":  "let a; a *= b;"
+      "a /= b":  "let a; a /= b;"
+      "a %= b":  "let a; a %= b;"
+
     basic:
       "a &&= b":  "let a; a = a && b;"
       "a ||= b":  "let a; a = a || b;"

@@ -7,8 +7,10 @@ IdentifierStn = require './IdentifierStn'
 ReferenceStn = require './ReferenceStn'
 ArrayStn = require './ArrayStn'
 
+supportedOperatorsRegExp = /^([-+*\/%]|)$/
+
 defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
-  constructor: ({@operator}, [@lValue, @rValue]) ->
+  constructor: ({@operator=""}, [@lValue, @rValue]) ->
     super
 
   updateScope: (@scope) ->
@@ -21,7 +23,7 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
 
   # TODO - I need a better way of saying "do all the transforms for the children, and then maybe I'll do some more transforms here"
   postSuperTransform: ->
-    if @operator
+    unless @operator.match supportedOperatorsRegExp
       {value1, value2} = @getValueWithBaseCapture @lValue
 
       AssignmentStn.Factory {},
@@ -34,7 +36,7 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
       @
 
   toJs: ->
-    if @operator
-      "#{@lValue.toJs()} = #{@lValue.toJsExpression()} #{@operator} #{@rValue.toJsExpression()}"
+    if @operator.match supportedOperatorsRegExp
+      "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
-      "#{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+      "#{@lValue.toJs()} = #{@lValue.toJsExpression()} #{@operator} #{@rValue.toJsExpression()}"

@@ -58,7 +58,8 @@ upToButNotEol = /[^\n]*/y
             offset += matchLength
 
           expressionSource = source.slice originalOffset, endOffset
-          parentNode.subparse expressionSource,
+          parentNode.subparse
+            expressionSource
             allowPartialMatch:    true
             rule:                 "complexExpression"
             originalOffset:       originalOffset

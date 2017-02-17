@@ -103,6 +103,22 @@ module.exports = suite: parseTestSuite
           2
         """: "foo(1, 2);"
 
+      regressions:
+        """
+        foo bar,
+        a: 1,
+        b: 2
+        """: "foo(bar, {a: 1, b: 2});"
+
+      # This is failing now, rather than generating bad code.
+      # That's OK! We could decide to support it later.
+      #   """
+      #   foo bar,
+      #     a: 1
+      #     b: 2
+      #     baz
+      #   """: "foo(bar, {a: 1, b: 2}, baz);"
+
       react:
         # This is the seed of why I built CaffeineScript! -SBD
         """
