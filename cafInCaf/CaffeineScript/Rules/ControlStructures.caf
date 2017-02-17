@@ -1,0 +1,57 @@
+|caffeine-script
+import &ArtFoundation, &BabelBridge
+
+->
+  @rule
+    controlStatement:
+      {} pattern: "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
+      {} pattern: "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
+    {}
+      stnFactory: :ControlOperatorStn
+      stnProps: ->
+        operand: @ifUnlessWhileUntil.toString()
+        joiner: @thenDo?.toString()
+
+  @rule
+    controlStatement:
+      {} pattern: "/try/ _ body:complexExpression _? optionalCatch:catchClause?"
+      {} pattern: "/try/ body:block"
+    {} stnFactory: :TryStn
+
+  @rule
+    catchClause: "/catch(?=[ \n])/ _? identifier? body:block?"
+    {} stnFactory: :CatchStn
+
+  @rule
+    controlStatement:
+      pattern: "/do/ _ functionDefinition"
+      stnFactory: :DoStn
+
+  @rule
+    controlStatement:
+      {} pattern: "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock"
+      {} pattern: "/switch/ _ condition:expression? switchBody"
+      {} pattern: "/switch/ switchBodyBlock"
+      {} pattern: "/switch/ switchBody"
+    {} stnFactory: :SwitchStn
+
+  @rule
+    switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
+    thenClause: "_ /then/ _ lineOfStatements"
+
+    switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: "switchBody"
+
+  @rule
+    switchWhenClause:
+      {} pattern: "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"
+      {} pattern: "end? when _ whenValue:complexExpression thenDo:thenClause"
+    {} stnFactory: :SwitchWhenStn
+
+  @rule
+    ifUnlessWhileUntil: /if|unless|while|until/
+    thenDo:             /then|do/
+    when:               /when/
+
+    elseClause:
+      {} pattern: "_else block"
+      {} pattern: "_else _ complexExpression"

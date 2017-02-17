@@ -1,0 +1,21 @@
+|caffeine-script
+import &ArtFoundation
+
+->
+  @rule
+    _:            '/ +/ comment*'
+    __:           '/[ \n]+/ comment*'
+    end:          "lineCommentEnd+"
+
+    comment:
+      {} pattern: "/ *###[^#]((?!###)(.|\n))*###/ *"
+      {} pattern: "/ *## */ unparsedBlock+"
+      {} pattern: "/ *(\\#[^\n]*)/"
+
+    spaceOrEnds:  /( *(\n|;|$))+/
+
+    lineCommentEnd:
+      "spaceOrEnds? comment+ spaceOrEnds"
+      "spaceOrEnds"
+
+    {} getPresent: -> false

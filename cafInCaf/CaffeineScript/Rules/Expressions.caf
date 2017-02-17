@@ -1,0 +1,74 @@
+|caffeine-script
+# import &ArtFoundation, &BabelBridge, &SemanticTree
+# {matchBlock} = Extensions.IndentBlocks
+
+# upToButNotEol = /[^\n]*/y
+
+# ->
+rule
+
+  lineStartExpression: "multilineImplicitObject"
+
+##
+    complexExpression:
+      {} pattern: "implicitArray"
+      {} pattern: "expression"
+
+    expression:
+      :binOpExpression
+      :unaryOpExpression
+      :expressionWithoutBinOps
+
+    expressionWithoutBinOps:
+      :controlStatement
+      :comprehension
+      :classDefinition
+      :destructuringAssignment
+      :structuredLiteral
+      :throwExpression
+      :newInstance
+      :functionDefinition
+      :value
+
+    structuredLiteral:
+      :object
+      :array
+  @rule
+    newInstance: "new _ expressionWithoutBinOps"
+    {} stnFactory: :NewInstanceStn
+
+  @rule
+    throwExpression: "throw _ expressionWithoutBinOps"
+    {} stnFactory: :ThrowStn
+
+  @rule
+    expressionWithOneLessBlock:
+      parse: (parentNode) ->
+        {nextOffset, source} = parentNode
+        offset = nextOffset
+        originalOffset = offset
+        upToButNotEol.lastIndex = offset
+        if match = upToButNotEol.exec source
+          [m] = match
+          endOffset = offset += m.length
+
+          while (match = matchBlock source, offset)
+            endOffset = offset
+            {matchLength} = match
+            offset += matchLength
+
+          expressionSource = source.slice originalOffset, endOffset
+          parentNode.subparse expressionSource,
+            allowPartialMatch:    true
+            rule:                 "complexExpression"
+            originalOffset:       originalOffset
+            originalMatchLength:  endOffset - originalOffset
+
+    rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
+    rValueBlockSubParse:
+      pattern: "statement*"
+      getStn: ->
+        if @statements.length == 1
+          @statements[0].getStn()
+        else
+          ArrayStn @getMatchStns()
