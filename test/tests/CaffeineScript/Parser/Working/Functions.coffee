@@ -105,6 +105,26 @@ module.exports = suite: parseTestSuite
           RectangleElement colors: :red :blue :green
         """: 'Element(RectangleElement({color: "red"}), RectangleElement({colors: ["red", "blue", "green"]}));'
 
+        """
+        Element
+          size: 100
+          axis: "topLeft"
+        """: 'Element({size: 100, axis: "topLeft"});'
+
+        """
+        Element
+          RectangleElement()
+          size: 100
+          axis: "topLeft"
+        """: 'Element(RectangleElement(), {size: 100, axis: "topLeft"});'
+
+        """
+        Element
+          size: 100
+          axis: "topLeft"
+          RectangleElement()
+        """: 'Element({size: 100, axis: "topLeft"}, RectangleElement());'
+
       mixed:
         """
         if foo

@@ -5,6 +5,9 @@
 
 module.exports = ->
   @rule
+    singleOrMultilineImplicitObject: w "multilineImplicitObject object"
+
+  @rule
 
     object: a
       pattern: "openCurly_ props:propertyList _closeCurly"
@@ -13,6 +16,10 @@ module.exports = ->
       m pattern: "'{}' _? props:propertyList"
       m pattern: "'{}' _? props:objectLiteralBlock"
       m pattern: "'{}'"
+
+    multilineImplicitObject: a
+
+      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
   ,
     getStn: ->
       children = for m in @getMatchStns()
@@ -24,17 +31,13 @@ module.exports = ->
       ObjectStn children
 
   @rule
-    objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "object"
+    multilineImplicitObjectExtension:
+      "/( *\n)+/ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
+
+    objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "singleOrMultilineImplicitObject"
 
     implicitObject: a
-      pattern: "implicitObjectWithTwoOrMorePropsOnOneLine"
-      m pattern: "multilineImplicitObject &/ *\n|$/"
-      # m pattern: "propertyList"
-
-    multilineImplicitObject: a
-
-      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression /( *\n)+/ multilineImplicitObject"
-      m pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
+      pattern: "propertyList"
 
     implicitObjectWithTwoOrMorePropsOnOneLine: a
       pattern: "literalProp _ propertyList"
@@ -43,11 +46,11 @@ module.exports = ->
     propertyList: a
       pattern: "valueProp _comma_ propertyList"
       m pattern: "literalProp _ propertyList"
-      m pattern: "valueProp"
+      m pattern: "valuePropWithComplexExpression"
 
   @rule
-    literalProp:  "propName _colon_ propValue:literal"
-    valueProp:    "propName _colon_ propValue:expression"
+    literalProp:        "propName _colon_ propValue:literal"
+    valueProp:          "propName _colon_ propValue:expression"
 
     valuePropWithComplexExpression: a
       pattern:    "propName _colon_ propValue:complexExpression"

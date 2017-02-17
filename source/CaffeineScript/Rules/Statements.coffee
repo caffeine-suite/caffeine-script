@@ -10,7 +10,8 @@ module.exports =
   tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
 
   statementWithoutEnd: a
-    pattern: 'complexExpression !tailControlOperator'
+    pattern: 'lineStartExpression'
+    m pattern: 'complexExpression !tailControlOperator'
     "importStatement"
     m
       pattern: 'complexExpression tailControlOperatorComplexExpression+',

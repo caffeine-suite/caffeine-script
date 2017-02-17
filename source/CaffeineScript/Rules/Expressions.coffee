@@ -8,6 +8,8 @@ upToButNotEol = /[^\n]*/y
 module.exports = ->
   @rule
 
+    lineStartExpression: "multilineImplicitObject"
+
     complexExpression: a
       pattern: "implicitArray"
 
