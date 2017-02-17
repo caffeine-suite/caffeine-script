@@ -15,7 +15,7 @@ module.exports = ->
     openParen_:     /\( */
     _closeParen:    /\ *\)/
 
-    openBracket_:   /\[[ \n]*/
+    openBracket_:   /\[ *(\n*(?!\s))?/
     _closeBracket:  /[ \n]*\]/
 
     openCurly_:     /\{ */
@@ -24,6 +24,8 @@ module.exports = ->
 
     reservedWord: ///
       (
+      instanceof |
+
       import |
 
       throw |
@@ -90,7 +92,7 @@ module.exports = ->
       \? |
 
       # cs english logic
-      ((and | or | isnt | is | in)\b) |
+      ((and | or | isnt | is | in | instanceof)\b) |
 
       # shift
       << | >>> | >> |

@@ -6,6 +6,7 @@ import &ArtFoundation, &BabelBridge
 
     array:
       {} pattern: "openBracket_ valueList _comma_? _closeBracket"
+      {} pattern: "openBracket_ valueListBlock _closeBracket"
       {} pattern: "'[]' _? valueListToEolAndBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
       {} pattern: "'[]'"
 

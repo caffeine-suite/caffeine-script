@@ -13,6 +13,7 @@ Caf.defMod(module, () => {
       {
         array: [
           { pattern: "openBracket_ valueList _comma_? _closeBracket" },
+          { pattern: "openBracket_ valueListBlock _closeBracket" },
           {
             pattern: "'[]' _? valueListToEolAndBlock",
             getImplicitArray: function() {
