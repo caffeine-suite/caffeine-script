@@ -1,0 +1,45 @@
+|caffeine-script
+import &ArtFoundation, &BabelBridge
+
+->
+  @rule
+
+    array:
+      {} pattern: "openBracket_ valueList _comma_? _closeBracket"
+      {} pattern: "'[]' _? valueListToEolAndBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
+      {} pattern: "'[]'"
+
+    implicitArray:
+      {}
+        pattern:          "start:expression _comma_ valueList _comma_?"
+        getImplicitArray: -> @
+        stnFactory:       :ArrayStn
+        stnProps:         implicitArray: true
+
+      {}
+        pattern:          "start:literal _ valueList _comma_?"
+        getImplicitArray: -> @
+        stnFactory:       :ArrayStn
+        stnProps:         implicitArray: true
+
+    {}
+      stnFactory: :ArrayStn
+
+  @rule
+    valueListBlock:         Extensions.IndentBlocks.getPropsToSubparseBlock rule: "valueListBlockSubParse"
+    valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "valueListBlockSubParse"
+    valueListBlockSubParse: "end* statement*"
+
+  @rule
+    valueList:
+      {} pattern: "element:arrayValue _comma_ valueList"
+      {} pattern: "element:literal _ valueList"
+      {} pattern: "element:arrayValue"
+
+  @rule
+    arrayValue:
+      {}
+        pattern: "identifier etc"
+        stnFactory: :ArraySpreadElementStn
+      {}
+        pattern: "expression"
