@@ -5,11 +5,25 @@
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive.
 
-CaffeineScript is a lean, high-level programming language that compiles to JavaScript that is inspired by CoffeeScript, Ruby and ES6.
+CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters. It is a lean, high-level language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
 
 #### Motivation
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
+
+All my projects are in CoffeeScript. At last count I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumultating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to frutition in CaffeineScript.
+
+Really, they all come down to one thing:
+
+* **maximize programmer (my) productivity**
+
+With a few common themes:
+
+- minimize tokens
+- maximize use of blocks / minimize tokens which need matching
+- minimize refactor effort
+- npm / CommonJs integration
+- If a syntax error has a reasonable, obvious interpretation, maybe it should be supported rather than be a syntax error.
 
 #### Wiki
 
