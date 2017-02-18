@@ -19,7 +19,7 @@ Really, they all come down to trying to figure out how to maximizing my producti
 - maximize use of blocks
 - minimize tokens which need matching
 - minimize refactor effort
-- consistency
+- maximize consistency
 - everything returns a value
 - patching Javscript's warts
 - npm / CommonJs integration
@@ -48,21 +48,21 @@ class Login extends Component
 
 ```javascript
 // ES6 - 70 tokens and 11 matching-token-pairs
-let {                                                                           // 2
-  Component,                                                                    // 2
-  Dialog,                                                                       // 2
-  TextElement,                                                                  // 2
-  TextInput                                                                     // 1
-} = require('art-suite');                                                       // 7 tokens (17 total)
+let {
+  Component,
+  Dialog,
+  TextElement,
+  TextInput
+} = require('art-suite');
 
-module.exports = class Login extends Component {                                // 9
-  render() {                                                                    // 3
-    Dialog(                                                                     // 2
-      TextElement({text: 'username', size: {ww: 1, hch: 1}}),                   // 17
-      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})    // 16
-    );                                                                          // 2
-  };                                                                            // 2
-};                                                                              // 2 tokens (53 total)
+module.exports = class Login extends Component {
+  render() {
+    Dialog(
+      TextElement({text: 'username', size: {ww: 1, hch: 1}}),
+      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
+    );
+  };
+};
 ```
 
 * Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
