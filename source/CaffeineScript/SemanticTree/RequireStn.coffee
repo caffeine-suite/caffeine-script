@@ -21,9 +21,9 @@ defineModule module, class RequireStn extends require './BaseStn'
         @npmIdentifier
 
 
-  findFileInPackage: ({sourceFiles, sourceRoot} = @parser.options) ->
+  findFileInPackage: ({sourceFile, sourceFiles, sourceRoot} = @parser.options) ->
     # log findFileInPackageA: {sourceRoot, sourceFiles}
-    return unless (sourceFile = sourceFiles?[0]) && sourceRoot
+    return unless (sourceFile ||= sourceFiles?[0]) && sourceRoot
     Path ||= require 'path'
     Fs ||= require 'fs'
 

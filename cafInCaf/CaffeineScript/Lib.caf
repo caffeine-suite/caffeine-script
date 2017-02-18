@@ -1,5 +1,3 @@
-|caffeine-script
-
 deescapeSpaces: (string) -> string.replace /\\ /g, ' '
 escapeNewLines: (string) -> string.replace /\n/g,  "\\n"
 
