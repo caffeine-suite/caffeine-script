@@ -3,9 +3,9 @@
 > WARNING:
 > CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
 
-CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive.
+CaffeineScript, or CafScript for short, makes programming more wonderful, code more beautiful and programmers more productive.
 
-CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters. It is a lean, high-level language that compiles to JavaScript. It is inspired by CoffeeScript, Ruby and ES6.
+CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters. It is a lean, high-level language that compiles to JavaScript. My primary inspirations are CoffeeScript, Ruby and ES6.
 
 ### Maximizing Programmer (My) Productivity
 
@@ -15,15 +15,14 @@ All my projects are in CoffeeScript. At last count I am maintaining almost 1700 
 
 Really, they all come down to trying to figure out how to maximizing my productivity. To that end, I've found some common themes:
 
-- minimize tokens
+- minimize tokens, and especially tokens which require matching
 - maximize use of blocks
-- minimize tokens which need matching
-- minimize refactor effort
 - maximize consistency
-- everything returns a value
-- patching Javscript's warts
-- npm / CommonJs integration
-- If a syntax error has a reasonable, obvious interpretation, maybe it should be supported rather than be a syntax error.
+- maximize elegant, clean OO programming
+- maximize elegant, clean functional programming
+- minimize Javscript's warts
+- streamline npm / CommonJs support
+- syntax errors suggest opportunities
 
 ### Wiki
 
@@ -58,8 +57,15 @@ let {
 module.exports = class Login extends Component {
   render() {
     Dialog(
-      TextElement({text: 'username', size: {ww: 1, hch: 1}}),
-      TextInput({placeholder: 'enter username here', size: {ww: 1, hch: 1}})
+      TextElement({
+        text: 'username',
+        size: {ww: 1, hch: 1}
+      }),
+
+      TextInput({
+        placeholder: 'enter username here',
+        size: {ww: 1, hch: 1}
+      })
     );
   };
 };
