@@ -1,4 +1,3 @@
-|caffeine-script
 import &ArtFoundation, &SemanticTree, &Lib
 
 dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///

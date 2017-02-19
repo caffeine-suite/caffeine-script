@@ -36,3 +36,94 @@ module.exports = suite: parseTestSuite
   spaceAfterSlashIsNotRegExp:
     "a / b/ c":  "(a / b) / c;"
     "a /b/ c":    "a(/b/, c);"
+
+  multiline:
+    basics:
+      "///hi///": "/hi/;"
+      "///  hi  ///": "/hi/;"
+      "///  hi//  ///": "/hi\\/\\//;"
+      """
+      ///
+      a
+      ///
+      """: "/a/;"
+    comments:
+      """
+      ///
+      # only
+      ///
+      """: "/(?:)/;"
+
+      """
+      ///
+      # first
+      a
+      ///
+      """: "/a/;"
+
+      """
+      ///
+      a
+      # second
+      ///
+      """: "/a/;"
+
+      """
+      ///
+      a
+      # middle
+      b
+      ///
+      """: "/ab/;"
+
+      """
+      ///
+      a # tail
+      ///
+      """: "/a/;"
+
+      """
+      ///
+      a# tail
+      ///
+      """: "/a#tail/;"
+
+    escapes:
+
+      "///\\ ///": "/ /;"
+      "///\\////": "/\\//;"
+      "/// / ///": "/\\//;"
+      "/// // ///": "/\\/\\//;"
+      "/// //\\/ ///": "/\\/\\/\\//;"
+
+    complex:
+      """
+      ///
+        (
+          # don't end sequence
+          (?!//\\/)
+          (
+            # escape sequence
+            \\\\. |
+
+            # or
+            (
+              (?!
+                # dont match backslash
+                \\\\
+                # dont match comment
+                | [\\s\\n]\\#
+
+                # dont match interpolation
+                | \\#\\{
+              )
+              (.|\\n)
+            )
+          )
+        )+
+      ///
+
+      """: "/((?!\\/\\/\\/)(\\\\.|((?!\\\\|[\\s\\n]\\#|\\#\\{)(.|\\n))))+/;"
+
+  # multiline:
+
