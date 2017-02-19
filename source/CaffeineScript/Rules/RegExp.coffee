@@ -12,6 +12,9 @@ module.exports =
       stnFactory: "RegExpStn"
       stnProps: -> modifiers: @regExpModifiers?.toString()
 
+  # TODO: we could accept many regexps starting with space, / f/,
+  # if we actually parsed the internals of the regexp and ensured matching (), {} and []
+  # The problem cases are listed in the tests under spaceAfterSlashIsNotRegExp - with comments.
   regExpStart:      "'/' !/[ \\/]/"
   regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )* ///
   regExpEnd:        /// / ///

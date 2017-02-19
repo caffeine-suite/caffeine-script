@@ -109,4 +109,4 @@ normalizeHereDoc = (hereDoc) ->
     hereDocDqStringEnd: /(\n *)?"""/
     hereDocSqStringEnd: /(\n *)?'''/
     dqStringEnd: /"/
-    eolStringEnd: / *(?=\n|$)/
+    eolStringEnd: /\ *(?=\n|$)/
