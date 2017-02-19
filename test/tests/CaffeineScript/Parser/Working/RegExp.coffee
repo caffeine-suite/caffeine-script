@@ -95,6 +95,11 @@ module.exports = suite: parseTestSuite
       "/// / ///": "/\\//;"
       "/// // ///": "/\\/\\//;"
       "/// //\\/ ///": "/\\/\\/\\//;"
+      """
+      ///
+      \\\\\\ \\ foo
+      ///
+      """:"/\\\\  foo/;"
 
     complex:
       """
@@ -125,5 +130,24 @@ module.exports = suite: parseTestSuite
 
       """: "/((?!\\/\\/\\/)(\\\\.|((?!\\\\|[\\s\\n]\\#|\\#\\{)(.|\\n))))+/;"
 
-  # multiline:
+    interpolation:
+      '///#{a}///': "RegExp(`${a}`);";
+      '///#{a}#{b}///': "RegExp(`${a}${b}`);";
+      '///#{a}\\ #{b}///': "RegExp(`${a} ${b}`);";
+      '///this#{a}that///': "RegExp(`this${a}that`);";
 
+    modifiers:
+      "///a///i":       "/a/i;";
+      "///a///g":       "/a/g;";
+      "///a///m":       "/a/m;";
+      "///a///u":       "/a/u;";
+      "///a///y":       "/a/y;";
+      "///a///igmuy":   "/a/igmuy;";
+
+    "modifiers and interpolation":
+      '///#{a}///i':       "RegExp(`${a}`, 'i');";
+      '///#{a}///g':       "RegExp(`${a}`, 'g');";
+      '///#{a}///m':       "RegExp(`${a}`, 'm');";
+      '///#{a}///u':       "RegExp(`${a}`, 'u');";
+      '///#{a}///y':       "RegExp(`${a}`, 'y');";
+      '///#{a}///igmuy':   "RegExp(`${a}`, 'igmuy');";

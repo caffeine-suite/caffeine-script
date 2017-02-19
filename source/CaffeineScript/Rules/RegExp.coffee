@@ -6,56 +6,51 @@ module.exports =
   regExpLiteral: a
     pattern: "regExpStart regExpMiddle regExpEnd regExpModifiers?"
     stnFactory: "RegExpStn"
-    stnProps: -> value: @toString()
+    stnProps: -> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
     m
-      pattern: "multilineRegExp"
+      pattern: "'///' multilineRegExpMiddle* '///' regExpModifiers?"
       stnFactory: "RegExpStn"
+      stnProps: -> modifiers: @regExpModifiers?.toString()
 
   regExpStart:      "'/' !/[ \\/]/"
   regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )* ///
   regExpEnd:        /// / ///
   regExpModifiers:  /([igmuy]*)/
 
-  multilineRegExp: "'///' multilineRegExpMiddle* '///'"
-
   multilineRegExpMiddle: [
     "multilineRegExpText"
+    "multilineRegExpEscape"
+    "multilineRegExpForwardSlashes"
     "multilineRegExpComment"
+    "multilineRegExpInterpolation"
   ]
 
+  # match as much as we can with no escapes, no comments or end /// marker
   multilineRegExpText:
-    pattern:
-      ///
-        (
-          # don't end sequence
-          (?!//\/)
-          (
-            # escape sequence
-            \\. |
+    pattern: /((?!((^|\n|\s)#|#\{))[^\\\/])+/
 
-            # or
-            (
-              (?!
-                # dont match backslash
-                \\
-                # dont match comment
-                | [\s\n]\#
-
-                # dont match interpolation
-                | \#\{
-              )
-              (.|\n)
-            )
-          )
-        )+
-      ///
     stnFactory: "StringStn"
-    stnProps: -> value: @text
+    stnProps: -> value: @text.replace /[\n\s]+/g, ''
+
+  multilineRegExpForwardSlashes:
+    pattern: /\/\/?(?!\/)/
+    stnFactory: "StringStn"
+    stnProps: -> value: @text.replace /\//g, '\\/'
+
+  multilineRegExpEscape:
+    pattern: /(\\.)/
+
+    stnFactory: "StringStn"
+    stnProps: ->
+      value: if @text == "\\ " then ' ' else @text
 
   multilineRegExpComment:
     pattern: /(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
     stnFactory: "StringStn"
     stnProps: -> value: ""
+
+  multilineRegExpInterpolation:
+    pattern: "interpolationStart expression interpolationEnd"
 
   # CoffeeScript only allows interpolation in /// blocks...
   # regExpInterpolation:

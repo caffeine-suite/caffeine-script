@@ -1,33 +1,33 @@
 Foundation = require 'art-foundation'
 {escapeUnEscapedQuotes, escapeNewLines, deescapeSpaces} = require '../Lib'
 
-{log, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject, isString} = Foundation
+{log, a, w, m, defineModule, array, find, compactFlatten, present, escapeJavascriptString, BaseObject, isString} = Foundation
 
 defineModule module, class RegExpStn extends require './BaseStn'
 
-  convertToNormalRegExp = (str) ->
-    str.replace /((^|[^\\])(\\\\)*)[\s\n]+/g, '$1'
-    .replace /\\ /g, ' '
-    .replace /\\\//g, '/'
-    .replace /\//g, '\\/'
-
   toJs: ->
-    if @children
-      hasNonStringChild = false
-      list = for child in @children
-        if isString v = child.props.value
-          v
-        else
-          hasNonStringChild = true
-          child
-      if hasNonStringChild
-        "something new"
-      else
-        # TODO: convert /// /// to / /
+    {value, modifiers} = @props
 
-        if (str = convertToNormalRegExp list.join '').length == 0
-          "/(?:)/"
+    str = if @children?.length > 0
+      hasInterpolation = find @children, (child) -> !isString child.props.value
+      array @children, (child) ->
+        if isString v = child.props.value
+          if hasInterpolation
+            v.replace /([`$])/g, "\\$1"
+          else
+            v
         else
-          "/#{str}/"
+          "${#{child.toJsExpression()}}"
+      .join ''
     else
-      @props.value
+      value
+
+    if str.length == 0
+      "/(?:)/"
+    else if hasInterpolation
+      if modifiers
+        "RegExp(`#{str}`, '#{modifiers}')"
+      else
+        "RegExp(`#{str}`)"
+    else
+      "/#{str}/#{modifiers || ''}"
