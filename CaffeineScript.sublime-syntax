@@ -10,21 +10,17 @@ scope: source.caffeine
 contexts:
   main:
 
+    - match: '/([^\\]|\\.)+/[igmuy]*'
+      scope: string.regexp.caffeine
+
     - match: '(?:^( *))##'
       push: block_comment
-
 
     - match: '(?:^( *))"" *\n'
       push: block_string
 
     - match: '^[|]'
       push: caffeine_mc_block
-
-
-    # - match: '##(?: *\n)+( *)([^ \n][^\n]*)(\n( *\n)*\1[^\n]*)*'
-    # - match: '##'
-    #   scope: punctuation.definition.comment.caffeine
-
 
     # Numbers
     - match: '[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
@@ -52,6 +48,7 @@ contexts:
     - match: '\b(false|true)\b'
       scope: constant.language.boolean.caffeine
 
+
     # Comments begin with a '#' and finish at the end of the line
     - match: '#'
       scope: punctuation.definition.comment.caffeine
@@ -66,6 +63,10 @@ contexts:
       scope: punctuation.definition.string.begin.caffeine
       push: double_quoted_string
 
+    - match: "'"
+      scope: punctuation.definition.string.begin.caffeine
+      push: single_quoted_string
+
     # Keywords are if, else for and while.
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
@@ -76,9 +77,6 @@ contexts:
 
     - match: '[.,\[\]\(\)]'
       scope: comment.line_comment
-
-    - match: '/[^ ]([^\\]|\\.)+/[igmuy]*'
-      scope: string.regexp.caffeine
 
   caffeine_mc_block:
     - meta_scope: comment.block
@@ -100,6 +98,14 @@ contexts:
     - match: '\\.'
       scope: constant.character.escape.caffeine
     - match: '"'
+      scope: punctuation.definition.string.end.caffeine
+      pop: true
+
+  single_quoted_string:
+    - meta_scope: string.quoted.double.caffeine
+    - match: '\\.'
+      scope: constant.character.escape.caffeine
+    - match: "'"
       scope: punctuation.definition.string.end.caffeine
       pop: true
 
