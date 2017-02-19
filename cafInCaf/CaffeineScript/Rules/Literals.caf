@@ -13,7 +13,7 @@ import &ArtFoundation
   @rule
     boolLiteral:   :true :false
     nullLiteral:   "/null/"
-    numberLiteral: pattern: /-?[0-9]+/
+    numberLiteral: pattern: /-?[0-9]+/ # [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
 
     true:   "/(true|yes|on)(?![a-zA-Z0-9]+)/"
     false:  "/(false|no|off)(?![a-zA-Z0-9]+)/"

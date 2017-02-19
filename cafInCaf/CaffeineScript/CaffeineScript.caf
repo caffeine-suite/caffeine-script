@@ -1,4 +1,2 @@
-|caffeine-script
-
 compile: (source, options) ->
   compiled: js: &Parser.parse(source, options).getStn().transform().toJsModule()

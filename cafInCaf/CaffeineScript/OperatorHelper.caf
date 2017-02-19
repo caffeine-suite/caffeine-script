@@ -1,10 +1,7 @@
-|caffeine-script
-
 import &ArtFoundation
 
 class OperatorHelper
   @CoffeeScriptGlobal: CoffeeScriptGlobal = "Caf"
-
 
   @operatorMap:
     **: (a, b) -> "#{CoffeeScriptGlobal}.pow(#{a}, #{b})"

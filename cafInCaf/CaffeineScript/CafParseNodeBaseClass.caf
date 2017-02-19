@@ -11,7 +11,11 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
     toJsExpressionInList - add parens if a following comma would confusing things
     toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
 
+
 class CafParseNodeBaseClass extends Nodes.Node
+  ##
+    asdf
+    sadf
 
   @_createSubclassBase: ->
     class NodeSubclass extends @
