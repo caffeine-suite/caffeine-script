@@ -1,0 +1,65 @@
+import &ArtFoundation, &BabelBridge
+
+->
+  @rule
+    value: "simpleValue valueExtension*"
+
+  @rule
+    valueExtension: :dotAccessor :bracketAccessor :functionInvocation :blockValueExtension
+    simpleValue: :require :global :this :thisProperty :literal :super :unqualifiedIdentifier :parentheticalExpression
+
+  @rule
+    parentheticalExpression: "'(' __? expression __? ')'"
+
+  @rule
+    require:
+      pattern:    "/&/ identifier"
+      stnFactory: :RequireStn
+
+  @rule
+    unqualifiedIdentifier:
+      pattern: "!reservedWord identifierReference assignmentExtension?"
+
+  @rule
+    identifierReference:
+      pattern:    :identifier
+      stnFactory: :ReferenceStn
+
+  @rule
+    this:         "/@/ !identifier"
+    thisProperty: "/@/ identifier assignmentExtension?"
+    {} stnFactory: :ThisStn
+
+  @rule
+    global:
+      pattern: /global/
+      stnFactory: :GlobalStn
+
+  @rule
+    super:
+      pattern:"/super/ superFunctionInvocation"
+      stnFactory: :SuperStn
+
+  @rule
+    super:
+      pattern:    /super/
+      stnFactory: :SuperStn
+      stnProps:   passArguments: true
+
+  @rule
+    assignmentExtension:
+      "assignmentOperator:_assignmentOperator_ complexExpression"
+      "assignmentOperator:_assignmentOperator_ rValueBlock"
+    {}
+      stnFactory:   :AssignmentStn
+      stnExtension: true
+      stnProps: ->
+        rawOp = @assignmentOperator.toString()
+        operator: (match = rawOp.match /(\S*)=/) && match[1]
+
+  @rule
+    blockValueExtension: "_? blockValueExtensionBlock"
+    blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
+    blockValueExtensionSubparse:
+      "end? lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
+      "end? &dot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"

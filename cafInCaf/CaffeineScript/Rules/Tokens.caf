@@ -1,11 +1,8 @@
-{a, m, w} = require "art-foundation"
+##
+  Note that "_" in rule-names is used consistently to indicate one or more spaces will be matched before or after the rule or both.
+  Most rules (rules with no "_" suffix or prefix) do not consume spaces before or after themselves.
 
-###
-Note that "_" in rule-names is used consistently to indicate one or more spaces will be matched before or after the rule or both.
-Most rules (rules with no "_" suffix or prefix) do not consume spaces before or after themselves.
-###
-module.exports = ->
-
+->
   @rule
     _equals_:       /\ *= */
     _colon_:        /\ *: */
@@ -71,22 +68,24 @@ module.exports = ->
         (?!\d)
         ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
         ///
-      stnFactory: "IdentifierStn"
+      stnFactory: :IdentifierStn
       stnProps: -> identifier: @toString()
 
-    # definitly not: space, comma, [], (), {}
-    # could, could not: '', "", ``
-    # questionables: |, \
+    ##
+      SBD Feb2017: still debating exactly what should be included in unquoted strings
+
+      - definitly not: space, comma, [], (), {}
+      - could, could not: '', "", ``
+      - questionables: |, \
     unquotedString:
       ///
       ((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\x7f-\uffff])+
       ///
 
-
     unaryTailOperator: /\?/
     unaryOperator_:    /// (! | ~ | not\b) \ * ///
 
-    binaryOperator: binaryOperatorRegEx = ///
+    binaryOperator: ///
 
       # js logic
       && | \|\| | &(?=\s) | \| | \^ |
@@ -153,4 +152,4 @@ module.exports = ->
     # comprehensionIterationType: /from( +(object|array|iter))?/
     dot: /\??\./
     questionMark: /\?/
-  , stnFactory: "SemanticTokenStn"
+    {} stnFactory: :SemanticTokenStn

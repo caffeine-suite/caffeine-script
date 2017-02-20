@@ -1,0 +1,39 @@
+import &ArtFoundation, &BabelBridge, &SemanticTree
+
+statement: "statementWithoutEnd newLineStatementExtension* end"
+
+tailControlOperator: /\ +(if|while|until|unless) +/
+tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
+
+statementWithoutEnd:
+  :lineStartExpression
+  'complexExpression !tailControlOperator'
+  :importStatement
+
+  pattern: 'complexExpression tailControlOperatorComplexExpression+',
+  getStn: ->
+    stn = @complexExpression.getStn()
+    each tco in @tailControlOperatorComplexExpressions
+      stn = ControlOperatorStn
+        operand: tco.tailControlOperator.toString().trim()
+        tco.complexExpression.getStn()
+        stn
+    stn
+
+newLineStart:
+  pattern: /( *\n)+/
+  getPresent: -> false
+
+importStatement:
+  pattern: '/import/ _ valueList functionDefinitionBodyBlockSubParse'
+  stnFactory: :ImportStn
+
+newLineStatementExtension:
+  "end lineStartBinaryOperatorAndExpression"
+  "end &dot valueExtension+ binaryOperatorSequenceExtension?"
+
+lineOfStatements:
+  pattern: "statementSemi* statementWithoutEnd"
+  stnFactory: :StatementsStn
+
+statementSemi: "statementWithoutEnd _? ';' _?"

@@ -14,11 +14,12 @@ module.exports = suite:
   multiline:
     doubleQuotes: ->
       parseTests
-        '"\na"': '"\\na";'
-        '"\na\n"': '"\\na\\n";'
-        '"a\n"': '"a\\n";'
-        '"  a\n"': '"  a\\n";'
+        '"\na"':    '"\\na";'
+        '"\na\n"':  '"\\na\\n";'
+        '"a\n"':    '"a\\n";'
+        '"  a\n"':  '"  a\\n";'
         '"  a\nb"': '"  a\\nb";'
+        '"\\\\ "':  '"\\\\ ";'
 
     singleQuotes: ->
       parseTests

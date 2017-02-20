@@ -54,13 +54,3 @@ module.exports =
 
   multilineRegExpInterpolation:
     pattern: "interpolationStart expression interpolationEnd"
-
-  # CoffeeScript only allows interpolation in /// blocks...
-  # regExpInterpolation:
-  #   pattern: "interpolationStart expression interpolationEnd mid:regExpMiddle interpolation:dqStringInterpolation?"
-  #   getStnChildren: (appendTo = [])->
-  #     appendTo.push @expression.getStn()
-  #     appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
-  #     @interpolation?.getStnChildren appendTo
-  #     appendTo
-

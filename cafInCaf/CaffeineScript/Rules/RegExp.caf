@@ -1,0 +1,53 @@
+import &ArtFoundation, &BabelBridge, &SemanticTree
+
+regExpLiteral:
+  {}
+    pattern:    "regExpStart regExpMiddle regExpEnd regExpModifiers?"
+    stnFactory: :RegExpStn
+    stnProps:   -> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
+  {}
+    pattern:    "'///' multilineRegExpMiddle* '///' regExpModifiers?"
+    stnFactory: :RegExpStn
+    stnProps:   -> modifiers: @regExpModifiers?.toString()
+
+##
+  TODO: we could accept many regexps starting with space, / f/,
+
+  if we actually parsed the internals of the regexp and ensured matching (), {} and []
+  The problem cases are listed in the tests under spaceAfterSlashIsNotRegExp - with comments.
+
+regExpStart:      "'/' !/[ \\/]/"
+regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )* ///
+regExpEnd:        /// / ///
+regExpModifiers:  /([igmuy]*)/
+
+multilineRegExpMiddle:
+  :multilineRegExpText
+  :multilineRegExpEscape
+  :multilineRegExpForwardSlashes
+  :multilineRegExpComment
+  :multilineRegExpInterpolation
+
+# match as much as we can with no escapes, no comments or end /// marker
+multilineRegExpText:
+  pattern:    /((?!((^|\n|\s)#|#\{))[^\\\/])+/
+  stnFactory: :StringStn
+  stnProps:   -> value: @text.replace /[\n\s]+/g, ''
+
+multilineRegExpEscape:
+  pattern:    /(\\.)/
+  stnFactory: :StringStn
+  stnProps:   -> value: if @text == "\\ " then ' ' else @text
+
+multilineRegExpComment:
+  pattern:    /(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
+  stnFactory: :StringStn
+  stnProps:   -> value: ""
+
+multilineRegExpInterpolation:
+  pattern: "interpolationStart expression interpolationEnd"
+
+multilineRegExpForwardSlashes:
+  pattern:    /\/\/?(?!\/)/
+  stnFactory: :StringStn
+  stnProps:   -> value: @text.replace /\//g, '\\/'
