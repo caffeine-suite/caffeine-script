@@ -4,6 +4,10 @@ Foundation = require 'art-foundation'
 
 defineModule module, class SuperStn extends require './BaseStn'
 
+  ###
+  props:
+    calledInConstructor: t/f
+  ###
   constructor: (props, @args) ->
     # collapse implicit arrays into parents
     if @args.length == 1 && @args[0].props.implicitArray
@@ -22,11 +26,21 @@ defineModule module, class SuperStn extends require './BaseStn'
 
   toJs: ->
     {args} = @
-    method = if @props.passArguments
-      args = "arguments"
-      "apply"
-    else
-      args = (a.toJsExpression() for a in args)
-      "call"
+    if @props.calledInConstructor
+      args = if @props.passArguments
+        ["...arguments"]
+      else
+        (a.toJsExpression() for a in args)
 
-    "Caf.getSuper(this).#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+      "super(#{args.join ', '})"
+
+    else
+
+      method = if @props.passArguments
+        args = "arguments"
+        "apply"
+      else
+        args = (a.toJsExpression() for a in args)
+        "call"
+
+      "Caf.getSuper(this).#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"

@@ -1,8 +1,9 @@
-Foundation = require 'art-foundation'
-
-{inspect, log, a, w, m, mergeInto, inspectedObjectLiteral, defineModule, compactFlatten, present, arrayToTruthMap, merge, escapeJavascriptString, BaseObject, object} = Foundation
-StatementsStn = require './StatementsStn'
-LetStn = require './LetStn'
+{
+  BaseObject
+  defineModule
+  inspectedObjectLiteral
+  inspect
+} = require 'art-foundation'
 
 defineModule module, ->
   class UniqueIdentifierHandle extends BaseObject

@@ -1,6 +1,6 @@
 import &ArtFoundation
 
-
+# CONVERSION NOTE: do this one last; CoffeeScript classes can't inherit from ES6 classes
 
 class BaseStn extends BaseObject
   ####################

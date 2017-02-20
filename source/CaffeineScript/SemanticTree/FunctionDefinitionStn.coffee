@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, defineModule, compactFlatten, merge, present, escapeJavascriptString, BaseObject} = Foundation
+{log, find, a, w, m, defineModule, compactFlatten, merge, present, escapeJavascriptString, BaseObject} = Foundation
 
 FunctionDefinitionArgsStn = require './FunctionDefinitionArgsStn'
 ScopeStnMixin = require './ScopeStnMixin'
@@ -52,8 +52,21 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       argsDef.toJs()
     else "()"
 
-    bodyJs = body?.toFunctionBodyJs()
-    statements = compactFlatten [@getAutoLets(), statements, bodyJs]
+    bodyJs = body?.toFunctionBodyJsArray !@props.isConstructor
+    if @props.isConstructor
+      constructorSuperIndex = find bodyJs,
+        when: (v) -> v.match /^super\(/
+        with: (v, i) -> i
+
+    statements = compactFlatten if constructorSuperIndex >= 0
+      beforeSuper = bodyJs.slice 0, constructorSuperIndex
+      afterSuper = bodyJs.slice constructorSuperIndex + 1, bodyJs.length
+      superJs = bodyJs[constructorSuperIndex]
+      [@getAutoLets(), beforeSuper, superJs, statements, afterSuper]
+
+    else
+      [@getAutoLets(), @props.isConstructor && "super(...arguments)", statements, bodyJs]
+
     body = if statements.length > 0
       "{#{statements.join '; '};}"
     else "{}"
@@ -61,4 +74,5 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
     if @props.bound
       "#{argsDef} => #{body}"
     else
-      "function#{argsDef} #{body}"
+      {defineWithKeyword = "function"} = @props
+      "#{defineWithKeyword}#{argsDef} #{body}"

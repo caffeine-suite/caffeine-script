@@ -9,7 +9,10 @@ defineModule module, class StatementsStn extends require './BaseStn'
     @getChildrenStatementsJsArray().join "; "
 
   toFunctionBodyJs: (returnAction = true)->
-    @getChildrenStatementsJsArray(true, returnAction).join "; "
+    @toFunctionBodyJsArray(returnAction).join "; "
+
+  toFunctionBodyJsArray: (returnAction = true)->
+    @getChildrenStatementsJsArray true, returnAction
 
   getChildrenStatementsJsArray: (returnLastValue = false, returnAction = "return", generateStatements = true)->
     if returnAction == true

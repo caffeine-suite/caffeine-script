@@ -1,0 +1,9 @@
+import &ArtFoundation
+
+class UnaryOperatorStn extends &BaseStn
+
+  toJs: ->
+    if @props.operand == "?"
+      "#{@applyParens @children[0].toJsExpression()} != null"
+    else
+      "#{@normalizedOperand}#{@applyParens @children[0].toJsExpression()}"

@@ -79,17 +79,39 @@ module.exports = suite: parseTestSuite
       """: "Foo = Caf.defClass(class Foo extends Bar {},
         function() {this.prototype.foo = function() {return Caf.getSuper(this).foo.apply(this, arguments);}; return this;});"
 
-      """
-      class Foo extends Bar
-        constructor: -> super
-      """: "Foo = Caf.defClass(class Foo extends Bar {},
-        function() {this.prototype.constructor = function() {return Caf.getSuper(this).constructor.apply(this, arguments);}; return this;});"
 
       "foo: -> super":    "({foo: function() {return Caf.getSuper(this).foo.apply(this, arguments);}});"
       "foo: -> super()":  "({foo: function() {return Caf.getSuper(this).foo.call(this);}});"
       "@foo: -> super":   '({"@foo": function() {return Caf.getSuper(this).foo.apply(this, arguments);}});'
       "foo: -> super 1":  "({foo: function() {return Caf.getSuper(this).foo.call(this, 1);}});"
 
+    constructors:
+      """
+      class Foo extends Bar
+        constructor: ->
+      """: "Foo = Caf.defClass(class Foo extends Bar
+        {constructor() {super(...arguments);}},
+        function() {return this;});"
+
+      """
+      class Foo extends Bar
+        constructor: (@foo) ->
+      """: "
+        Foo = Caf.defClass(class Foo extends Bar
+        {constructor(foo) {super(...arguments); this.foo = foo;}},
+        function() {return this;});"
+
+      """
+      class Foo extends Bar
+        constructor: -> super 123
+      """: "Foo = Caf.defClass(class Foo extends Bar {constructor() {super(123);}}, function() {return this;});"
+
+      """
+      class Foo extends Bar
+        constructor: (@foo) -> super 123
+      """: "Foo = Caf.defClass(class Foo extends Bar
+        {constructor(foo) {super(123); this.foo = foo;}},
+        function() {return this;});"
 
     unusualProps:
       """

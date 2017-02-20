@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
+{log, a, w, m, defineModule, compactFlatten, compact, present, escapeJavascriptString, BaseObject} = Foundation
 AssignmentStn = require './AssignmentStn'
 AccessorStn = require './AccessorStn'
 ThisStn = require './ThisStn'
@@ -17,6 +17,7 @@ defineModule module, class ClassStn extends require './BaseStn'
     classExtends = classExtends?.transform()
 
     if body = body?.transform()
+      constructor = null
       body = FunctionDefinitionStn label: "body", StatementsStn null,
         for stn in body.children
           if stn.type == "Object"
@@ -29,34 +30,51 @@ defineModule module, class ClassStn extends require './BaseStn'
                     [__, classPropName] = m
                     ThisStn IdentifierStn identifier: classPropName
                   else
-                    AccessorStn null,
-                      ThisStn IdentifierStn identifier: "prototype"
-                      IdentifierStn identifier: propName
+                    if propName == "constructor"
+                      constructor = propValueStn
+                      null
+                    else
+                      AccessorStn null,
+                        ThisStn IdentifierStn identifier: "prototype"
+                        IdentifierStn identifier: propName
                 when "Accessor"
                   AccessorStn null,
                     ThisStn IdentifierStn identifier: "prototype"
                     propNameStn.children
                 else
                   throw new Error "unknown object property name Stn type: #{propNameStn.type}"
-              AssignmentStn assignToStn, propValueStn
+              assignToStn && AssignmentStn assignToStn, propValueStn
           else
             stn
         ThisStn()
 
-      children = compactFlatten [className, classExtends, body]
+      if constructor
+        constructor.props.defineWithKeyword = "constructor"
+        constructor.props.isConstructor = true
+        if superCallChildren = constructor.find "Super"
+          throw new Error "at most one super call in constructor" unless superCallChildren.length == 1
+          superCallChildren[0].props.calledInConstructor = true
+
+        classBody = StatementsStn
+          label: "classBody"
+          constructor
+
+      children = compactFlatten [className, classExtends, body, classBody]
     else
-      children = @children
+      children = @transformChildren()
     new ClassStn @props, children
 
 
   toJs: ->
-    {className, classExtends, body} = @labeledChildren
+    {className, classExtends, body, classBody} = @labeledChildren
     className = className.toJs()
     out = "#{className} = Caf.defClass(class #{className}"
     if classExtends
       out += " extends #{classExtends.toJsExpression()}"
 
+    classBodyJs = "{#{classBody?.toJs()||''}}"
+
     if body
-      out + " {}, #{body.toJs()})"
+      out + " #{classBodyJs}, #{body.toJs()})"
     else
-      out + " {})"
+      out + " #{classBodyJs})"

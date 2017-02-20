@@ -1,0 +1,30 @@
+import &ArtFoundation
+
+# CONVERSION NOTE: do this one later; CoffeeScript classes can't inherit from ES6 classes
+
+# why don't we just put &SemanticTree into the else-clause below?
+SemanticTree = require './namespace'
+
+class ValueBaseCaptureStn extends &BaseStn
+  @abstractClass()
+
+  getValueWithBaseCapture: (accessorStn)->
+    if accessorStn.isAccessor && !accessorStn.children[0].isReference
+      value1: accessorStn, value2: accessorStn
+
+    else
+      # import &SemanticTree
+      {AssignmentStn, ReferenceStn, IdentifierStn, UniqueIdentifierHandle} = SemanticTree
+
+      {value, key} = accessorStn
+
+      value1: new accessorStn.class accessorStn.props, []
+        AssignmentStn
+          {}
+          IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "base"
+          value
+        key
+
+      value2: new accessorStn.class accessorStn.props, []
+        ReferenceStn identifierHandle: baseIdentifierHandle
+        key
