@@ -6,7 +6,7 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     valueExtension: :dotAccessor :bracketAccessor :functionInvocation :blockValueExtension
-    simpleValue: :require :global :this :thisProperty :literal :super :unqualifiedIdentifier :parentheticalExpression
+    simpleValue: :require :globalIdentifier :this :thisProperty :literal :super :unqualifiedIdentifier :parentheticalExpression
 
   @rule
     parentheticalExpression: "'(' __? expression __? ')'"
@@ -31,9 +31,10 @@ import &ArtFoundation, &BabelBridge
     {} stnFactory: :ThisStn
 
   @rule
-    global:
-      pattern: /global/
-      stnFactory: :GlobalStn
+    globalIdentifier:
+      pattern: /(global|require|module)\b/
+      stnFactory: :GlobalIdentifierStn
+      stnProps: -> identifier: @text
 
   @rule
     super:

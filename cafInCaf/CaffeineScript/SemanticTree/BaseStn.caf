@@ -54,6 +54,7 @@ class BaseStn extends BaseObject
     type: -> @class.type
 
   @postCreate: ->
+    console.log postCreate: klass: @getName()
     parts = @getName().split /Stn$/
     @type = parts[0]
     super
@@ -63,6 +64,7 @@ class BaseStn extends BaseObject
     new @ props, children
 
   @postCreateConcreteClass: (options)->
+    console.log postCreateConcreteClass: klass: @getName()
     {classModuleState, hotReloadEnabled} = options
     super
     createObjectTreeFactory

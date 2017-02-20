@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
       ],
       simpleValue: [
         "require",
-        "global",
+        "globalIdentifier",
         "this",
         "thisProperty",
         "literal",
@@ -47,7 +47,15 @@ Caf.defMod(module, () => {
       },
       { stnFactory: "ThisStn" }
     );
-    this.rule({ global: { pattern: /global/, stnFactory: "GlobalStn" } });
+    this.rule({
+      globalIdentifier: {
+        pattern: /(global|require|module)\b/,
+        stnFactory: "GlobalIdentifierStn",
+        stnProps: function() {
+          return { identifier: this.text };
+        }
+      }
+    });
     this.rule({
       super: {
         pattern: "/super/ superFunctionInvocation",

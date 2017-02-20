@@ -29,4 +29,4 @@ defineModule module, class SuperStn extends require './BaseStn'
       args = (a.toJsExpression() for a in args)
       "call"
 
-    "Caf.getSuper().#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+    "Caf.getSuper(this).#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"

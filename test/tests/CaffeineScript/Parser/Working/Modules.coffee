@@ -27,6 +27,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
       "a -> b":       applyModuleWrapper "let a = global.a, b = global.b; return a(function() {return b;});"
       "a -> b = 1":   applyModuleWrapper "let a = global.a; return a(function() {let b; return b = 1;});"
 
+    exceptions:
+      "global.Math":        applyModuleWrapper "return global.Math;"
+      "require 'foo'":      applyModuleWrapper 'return require("foo");'
+      "module.exports = 1": applyModuleWrapper "return module.exports = 1;"
     # complex:
     #   """
     #   b = a;
