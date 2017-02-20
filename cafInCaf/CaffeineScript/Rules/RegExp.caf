@@ -25,8 +25,8 @@ multilineRegExpMiddle:
   :multilineRegExpText
   :multilineRegExpEscape
   :multilineRegExpForwardSlashes
-  :multilineRegExpComment
   :multilineRegExpInterpolation
+  :multilineRegExpComment
 
 # match as much as we can with no escapes, no comments or end /// marker
 multilineRegExpText:
@@ -40,7 +40,7 @@ multilineRegExpEscape:
   stnProps:   -> value: if @text == "\\ " then ' ' else @text
 
 multilineRegExpComment:
-  pattern:    /(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
+  pattern:    "/^|\\n|\\s/ comment" #/(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
   stnFactory: :StringStn
   stnProps:   -> value: ""
 

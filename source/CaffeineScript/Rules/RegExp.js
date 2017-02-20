@@ -35,8 +35,8 @@ Caf.defMod(module, () => {
       "multilineRegExpText",
       "multilineRegExpEscape",
       "multilineRegExpForwardSlashes",
-      "multilineRegExpComment",
-      "multilineRegExpInterpolation"
+      "multilineRegExpInterpolation",
+      "multilineRegExpComment"
     ],
     multilineRegExpText: {
       pattern: /((?!((^|\n|\s)#|#\{))[^\\\/])+/,
@@ -53,7 +53,7 @@ Caf.defMod(module, () => {
       }
     },
     multilineRegExpComment: {
-      pattern: /(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/,
+      pattern: "/^|\\n|\\s/ comment",
       stnFactory: "StringStn",
       stnProps: function() {
         return { value: "" };
