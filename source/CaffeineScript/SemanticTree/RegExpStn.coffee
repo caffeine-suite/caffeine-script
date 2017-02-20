@@ -1,5 +1,5 @@
 Foundation = require 'art-foundation'
-{escapeUnEscapedQuotes, escapeNewLines, deescapeSpaces} = require '../Lib'
+{escapeUnescaped, escapeNewLines, deescapeSpaces} = require '../Lib'
 
 {log, a, w, m, defineModule, array, find, compactFlatten, present, escapeJavascriptString, BaseObject, isString} = Foundation
 

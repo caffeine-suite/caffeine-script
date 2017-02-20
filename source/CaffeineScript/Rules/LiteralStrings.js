@@ -10,20 +10,20 @@ Caf.defMod(module, () => {
     StringStn,
     InterpolatedStringStn,
     deescapeSpaces,
-    escapeUnEscapedQuotes;
+    escapeUnescaped;
   ({
     escapeJavascriptString,
     StringStn,
     InterpolatedStringStn,
     deescapeSpaces,
-    escapeUnEscapedQuotes
+    escapeUnescaped
   } = Caf.i(
     [
       "escapeJavascriptString",
       "StringStn",
       "InterpolatedStringStn",
       "deescapeSpaces",
-      "escapeUnEscapedQuotes"
+      "escapeUnescaped"
     ],
     [ArtFoundation, SemanticTree, Lib, global]
   ));
@@ -118,13 +118,13 @@ Caf.defMod(module, () => {
       },
       {
         toEscapedQuotes: function(quote) {
-          return deescapeSpaces(escapeUnEscapedQuotes(this.toString(), quote));
+          return deescapeSpaces(escapeUnescaped(this.toString(), quote));
         },
         toEscapedBackTicks: function() {
-          return deescapeSpaces(escapeUnEscapedQuotes(this.toString(), "`"));
+          return deescapeSpaces(escapeUnescaped(this.toString(), "`"));
         },
         toEscapedDoubleQuotes: function() {
-          return deescapeSpaces(escapeUnEscapedQuotes(this.toString(), '"'));
+          return deescapeSpaces(escapeUnescaped(this.toString(), '"'));
         }
       }
     );
