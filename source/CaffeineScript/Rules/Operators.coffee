@@ -1,4 +1,4 @@
-{a, m, w, compactFlatten, log, min, arrayWithout} = require "art-foundation"
+{compactFlatten, log, min, arrayWithout} = require "art-foundation"
 
 {resolveOperatorPrecidence, getNormalizedOperator} = require "../OperatorHelper"
 {BinaryOperatorStn, UnaryOperatorStn} = require '../SemanticTree'
@@ -20,9 +20,6 @@ module.exports =
 
   binaryOperatorAndExpression:
     pattern: "_? binaryOperator _? unaryOpExpression"
-    # stnProps: -> operator: getNormalizedOperator @binaryOperator
-    # stnFactory: "BinaryOperatorStn"
-    # stnExtension: true
 
   lineStartBinaryOperatorAndExpression:
     pattern: "binaryOperator _? binOpExpression"
@@ -30,7 +27,7 @@ module.exports =
     stnFactory: "BinaryOperatorStn"
     stnExtension: true
 
-  unaryOpExpression: a
+  unaryOpExpression:
     pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"
 
     getStn: ->
@@ -39,7 +36,7 @@ module.exports =
         stn = UnaryOperatorStn
           operand: operand.toString().trim()
           stn
-      for operand in @unaryOperator_s || [] by -1
+      for operand in (@unaryOperator_s || []).slice().reverse()
         stn = UnaryOperatorStn
           operand: operand.toString().trim()
           stn

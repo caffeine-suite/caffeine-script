@@ -1,0 +1,47 @@
+import &ArtFoundation, &OperatorHelper, &SemanticTree
+
+binOpExpression:
+  pattern: "unaryOpExpression binaryOperatorSequenceExtension?"
+
+binaryOperatorSequenceExtension:
+  pattern: "binaryOperatorAndExpression+"
+  stnExtension: true
+  getStn: (left)->
+    throw new Error "expecting left" unless left
+    resolveOperatorPrecidence
+
+      array opAndExp in @binaryOperatorAndExpressions
+        getNormalizedOperator opAndExp.binaryOperator
+
+      compactFlatten [] left, array opAndExp in @binaryOperatorAndExpressions
+        opAndExp.unaryOpExpression.getStn()
+
+      (operandA, operandB, operator) ->
+        BinaryOperatorStn
+          operator: operator
+          operandA
+          operandB
+
+binaryOperatorAndExpression:
+  pattern: "_? binaryOperator _? unaryOpExpression"
+
+lineStartBinaryOperatorAndExpression:
+  pattern:      "binaryOperator _? binOpExpression"
+  stnProps:     -> operator: getNormalizedOperator @binaryOperator
+  stnFactory:   "BinaryOperatorStn"
+  stnExtension: true
+
+unaryOpExpression:
+  pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"
+
+  getStn: ->
+    stn = @expressionWithoutBinOps.getStn()
+    each operand in @unaryTailOperators || []
+      stn = UnaryOperatorStn
+        operand: operand.toString().trim()
+        stn
+    each operand in (@unaryOperator_s || []).slice().reverse()
+      stn = UnaryOperatorStn
+        operand: operand.toString().trim()
+        stn
+    stn

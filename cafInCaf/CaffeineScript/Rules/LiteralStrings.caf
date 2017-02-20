@@ -46,10 +46,10 @@ normalizeHereDoc = (hereDoc) ->
 
   @rule
     stringLiteral:
-      {} pattern: "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
-      {} pattern: "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
-      {} pattern: 'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
-      {} pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
+      "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
+      "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
+      'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
+      "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
 
     {}
       getStnChildren: (appendTo = [])->
@@ -67,8 +67,8 @@ normalizeHereDoc = (hereDoc) ->
 
   @rule
     stringLiteral:
-      {} pattern:   "/'/ string:/([^\\']|\\.)*/ /'/"
-      {} pattern:   "':' string:unquotedString"
+      "/'/ string:/([^\\']|\\.)*/ /'/"
+      "':' string:unquotedString"
 
     {}
       getStn: -> StringStn value: @string.toString()

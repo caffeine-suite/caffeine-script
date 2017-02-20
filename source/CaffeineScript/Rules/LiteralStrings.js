@@ -64,18 +64,10 @@ Caf.defMod(module, () => {
     this.rule(
       {
         stringLiteral: [
-          {
-            pattern: "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
-          },
-          {
-            pattern: "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
-          },
-          {
-            pattern: "eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd"
-          },
-          {
-            pattern: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
-          }
+          "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd",
+          "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd",
+          "eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd",
+          "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
         ]
       },
       {
@@ -99,8 +91,8 @@ Caf.defMod(module, () => {
     this.rule(
       {
         stringLiteral: [
-          { pattern: "/'/ string:/([^\\']|\\.)*/ /'/" },
-          { pattern: "':' string:unquotedString" }
+          "/'/ string:/([^\\']|\\.)*/ /'/",
+          "':' string:unquotedString"
         ]
       },
       {
