@@ -2,11 +2,6 @@ import &ArtFoundation, &SemanticTree, &Lib
 
 dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
 
-normalizeString = (string) ->
-  string = escapeJavascriptString string.toString().trim()
-  string = string.replace /\\\\/g, "\\"
-  string = string.replace /\\ /g, " "
-
 normalizeHereDoc = (hereDoc) ->
   [all, firstLine, rest] = hereDoc.match /^([^\n]*)(?=\n|$)((?:.|\n)*)/
 
@@ -88,10 +83,10 @@ normalizeHereDoc = (hereDoc) ->
     hereDocDqStringMiddle:  /// ((?!(\n\ *)?""") ( [^\\#] | \\. | \#(?!\{) )) * ///
     hereDocSqStringMiddle:  /// ((?!(\n\ *)?''') ( [^\\#] | \\. | \#(?!\{) )) * ///
     {}
-      toEscapedQuotes: (quote) -> deescapeSpaces escapeUnEscapedQuotes @toString(), quote
+      toEscapedQuotes: (quote) -> deescapeSpaces escapeUnescaped @toString(), quote
 
-      toEscapedBackTicks:    -> deescapeSpaces escapeUnEscapedQuotes @toString(), '`'
-      toEscapedDoubleQuotes: -> deescapeSpaces escapeUnEscapedQuotes @toString(), '"'
+      toEscapedBackTicks:    -> deescapeSpaces escapeUnescaped @toString(), '`'
+      toEscapedDoubleQuotes: -> deescapeSpaces escapeUnescaped @toString(), '"'
 
   @rule
     dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"

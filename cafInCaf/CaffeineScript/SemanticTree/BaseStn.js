@@ -43,7 +43,7 @@ Caf.defMod(module, () => {
   return BaseStn = Caf.defClass(
     class BaseStn extends BaseObject {},
     function() {
-      let noChildren;
+      let noChildren, applyRequiredParens, applyParens;
       this.abstractClass();
       noChildren = [];
       this.prototype.constructor = function(props, children = noChildren) {
@@ -209,7 +209,57 @@ Caf.defMod(module, () => {
         return this.toJs();
       };
       this.prototype.toInterpolatedJsStringPart = function() {
-        return `{${this.toJsExpression({ skipParens: true })}}`;
+        return `\${${this.toJsExpression({ skipParens: true })}}`;
+      };
+      this.prototype.needsParens = true;
+      this.prototype.needsParensAsStatement = false;
+      this.prototype.getNeedsParens = function() {
+        return this.needsParens;
+      };
+      this.prototype.getNeedsParensAsStatement = function() {
+        return this.needsParensAsStatement;
+      };
+      this.applyRequiredParens = applyRequiredParens = function(expr) {
+        return `(${expr})`;
+      };
+      this.applyParens = applyParens = function(expr) {
+        return expr.match(
+          /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
+        )
+          ? expr
+          : `(${expr})`;
+      };
+      this.prototype.applyRequiredParens = applyRequiredParens;
+      this.prototype.applyParens = applyParens;
+      this.getter({
+        normalizedOperand: function() {
+          let op;
+          return (() => {
+            switch (op = this.props.operand) {
+              case "and":
+                return "&&";
+              case "or":
+                return "||";
+              case "==":
+              case "is":
+                return "===";
+              case "!=":
+              case "isnt":
+                return "!==";
+              case "not":
+                return "!";
+              default:
+                return op;
+            }
+          })();
+        }
+      });
+      this.prototype.updateScope = function(scope) {
+        this.scope = scope;
+        Caf.e(this.children, undefined, (child, k, into) => {
+          return child.updateScope(this.scope);
+        });
+        return null;
       };
       return this;
     }

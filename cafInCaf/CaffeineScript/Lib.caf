@@ -1,14 +1,38 @@
-deescapeSpaces: (string) -> string.replace
-  ///
-    (?:^|[^\\])
-    ((\\\\)*)
-    (\\\ )
-  ///g
-  '$1 '
+import &ArtFoundation
+
+deescapeSpaces: (string) ->
+  array str, i from string.split /((?:\\\\)+)/
+    if i %% 2 == 0
+      str.replace /\\ /g, ' '
+    else
+      str
+  .join ''
+
 
 escapeNewLines: (string) -> string.replace /\n/g,  "\\n"
 
-escapeUnEscapedQuotes: (string, quote = '"') ->
-  string.replace
-    RegExp "([^#{quote}\\\\]*(?:\\\\.[^#{quote}\\\\]*)*)#{quote}", "g"
-    "$1#{quote}"
+##
+  IN:
+    string - any string
+    charsToEscape - string listing all the chars you want to escape
+      Example: " $" escapes all not-already-escaped spaces and $
+
+      Note, if charsToEscape contains a backslash, then we don't consider anything escaped.
+      We simply escape every character specified in charsToEscape across string.
+
+escapeUnescaped: (string, charsToEscape = '"') ->
+  charsRegExp = /// ([#{escapeRegExp charsToEscape}]) ///g
+  split = if charsToEscape.match /\\/
+    [string]
+  else
+    string.split /((?:\\.)+)/
+
+  array str, i from split
+    if i %% 2 == 0
+      str.replace
+        charsRegExp
+        '\\$1'
+    else
+      str
+
+  .join ''

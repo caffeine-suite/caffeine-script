@@ -7,4 +7,4 @@ defineModule module, class StringStn extends require './BaseStn'
 
   toJs: -> escapeJavascriptString(deescapeSpaces @props.value).replace /\\\\/g, '\\'
 
-  toInterpolatedJsStringPart: -> escapeNewLines deescapeSpaces escapeUnescaped @props.value, "`"
+  toInterpolatedJsStringPart: -> deescapeSpaces escapeUnescaped @props.value, "`$\n"

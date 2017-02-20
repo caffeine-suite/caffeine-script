@@ -1,5 +1,7 @@
 import &ArtFoundation
 
+
+
 class BaseStn extends BaseObject
   ####################
   # could go in BabelBridge standard BaseStn
@@ -149,7 +151,6 @@ class BaseStn extends BaseObject
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
-##
 
   needsParens: true
   needsParensAsStatement: false
