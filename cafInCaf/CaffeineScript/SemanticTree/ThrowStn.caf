@@ -1,0 +1,6 @@
+import &ArtFoundation
+
+class ThrowStn extends &BaseStn
+
+  toJs: ->  "throw #{@childrenToJs()}"
+  toJsExpression: -> "(()=>{#{@toJs()};})()"

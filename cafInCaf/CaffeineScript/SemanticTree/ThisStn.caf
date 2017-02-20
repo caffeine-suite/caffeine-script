@@ -1,0 +1,11 @@
+import &ArtFoundation
+
+class ThisStn extends &BaseStn
+
+  needsParens: false
+
+  toJs: ->
+    if @children[0]
+      "this.#{@children[0].toJs()}"
+    else
+      "this"
