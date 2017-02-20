@@ -10,11 +10,11 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
   @rule
 
     object:
-      {} pattern: "openCurly_ props:propertyList _closeCurly"
-      {} pattern: "props:implicitObject"
-      {} pattern: "'{}' _? props:propertyList"
-      {} pattern: "'{}' _? props:objectLiteralBlock"
-      {} pattern: "'{}'"
+      "openCurly_ props:propertyList _closeCurly"
+      "props:implicitObject"
+      "'{}' _? props:propertyList"
+      "'{}' _? props:objectLiteralBlock"
+      "'{}'"
 
     multilineImplicitObject:
       pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
@@ -31,7 +31,7 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
 
   @rule
     multilineImplicitObjectExtension:
-      "/( *\n)+/ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
+      "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
 
     objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "singleOrMultilineImplicitObject"
 
@@ -39,21 +39,21 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
       pattern: "propertyList"
 
     implicitObjectWithTwoOrMorePropsOnOneLine:
-      {} pattern: "literalProp _ propertyList"
-      {} pattern: "valueProp _comma_ propertyList"
+      "literalProp _ propertyList"
+      "valueProp _comma_ propertyList"
 
     propertyList:
-      {} pattern: "valueProp _comma_ propertyList"
-      {} pattern: "literalProp _ propertyList"
-      {} pattern: "valuePropWithComplexExpression"
+      "valueProp _comma_ propertyList"
+      "literalProp _ propertyList"
+      "valuePropWithComplexExpression"
 
   @rule
     literalProp:  "propName _colon_ propValue:literal"
     valueProp:    "propName _colon_ propValue:expression"
 
     valuePropWithComplexExpression:
-      {} pattern: "propName _colon_ propValue:complexExpression"
-      {} pattern: "propName _colon_ propValue:propertyValueBlock"
+      "propName _colon_ propValue:complexExpression"
+      "propName _colon_ propValue:propertyValueBlock"
 
     {}
       name: "literalObjectProperty"
@@ -74,9 +74,9 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
 
   @rule
     propName:
-      {} pattern: "!/then\\s/ str:identifier &_colon_"
-      {} pattern: "!/then\\s/ str:unquotedString &/:/"
-      {} pattern: "str:stringLiteral &stringLiteralPropNameTail"
+      "!/then\\s/ str:identifier &_colon_"
+      "!/then\\s/ str:unquotedString &/:/"
+      "str:stringLiteral &stringLiteralPropNameTail"
 
     {}
       stnFactory: "ObjectPropNameStn"

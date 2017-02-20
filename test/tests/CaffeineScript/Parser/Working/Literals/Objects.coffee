@@ -75,6 +75,11 @@ module.exports = suite: parseTestSuite
     multiline:
       "a:1\nb:2"      : "({a: 1, b: 2});"
 
+      """
+      a: 1 # comment
+      c: 2
+      """: '({a: 1, c: 2});'
+
     both:
       """
       a:1, b:2
