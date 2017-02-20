@@ -13,7 +13,7 @@ defineModule module, class RegExpStn extends require './BaseStn'
       array @children, (child) ->
         if isString v = child.props.value
           if hasInterpolation
-            v.replace /([`$])/g, "\\$1"
+            v.replace /([`$\\])/g, "\\$1"
           else
             v
         else

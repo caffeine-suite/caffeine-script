@@ -168,6 +168,7 @@ module.exports = suite: parseTestSuite
       '///#{a}#{b}///': "RegExp(`${a}${b}`);";
       '///#{a}\\ #{b}///': "RegExp(`${a} ${b}`);";
       '///this#{a}that///': "RegExp(`this${a}that`);";
+      '///\\n#{a}///': "RegExp(`\\\\n${a}`);"
 
     modifiers:
       "///a///i":       "/a/i;";
