@@ -220,6 +220,7 @@ module.exports = suite:
   interpolated: ->
     parseTests
       '"#{foo}"':                        '`${foo}`;'
+      '"${#{foo}}"':                     '`\\${${foo}}`;'
       '"#{foo}after"':                   '`${foo}after`;'
       '"before#{foo}"':                  '`before${foo}`;'
       '"before#{foo}after"':             '`before${foo}after`;'
