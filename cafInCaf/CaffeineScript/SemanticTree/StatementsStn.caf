@@ -6,7 +6,8 @@ class StatementsStn extends &BaseStn
     @getChildrenStatementsJsArray().join "; "
 
   toFunctionBodyJs: (returnAction = true)->
-    @toFunctionBodyJsArray(returnAction).join "; "
+    @toFunctionBodyJsArray returnAction
+    .join "; "
 
   toFunctionBodyJsArray: (returnAction = true)->
     @getChildrenStatementsJsArray true, returnAction
@@ -20,6 +21,7 @@ class StatementsStn extends &BaseStn
         if returnAction && !c.jsExpressionUsesReturn
           "#{returnAction} #{c.toJsExpression()}"
         else c.toJsExpression()
+
       else
         if generateStatements
           statement = c.toJsStatement()
@@ -34,5 +36,7 @@ class StatementsStn extends &BaseStn
     if @children.length == 1
       @children[0].toJsParenExpression()
     else
-      @applyRequiredParens (@getChildrenStatementsJsArray(true, false, false)).join(", ")
+      @applyRequiredParens
+        @getChildrenStatementsJsArray true, false, false
+        .join ", "
 
