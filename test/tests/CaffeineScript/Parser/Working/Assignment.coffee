@@ -87,26 +87,26 @@ module.exports = suite: parseTestSuite
       "a %= b":  "let a; a %= b;"
 
     basic:
-      "a &&= b":  "let a; a = a && b;"
-      "a ||= b":  "let a; a = a || b;"
-      "a ?= b":   "let a; a = a != null ? a : b;"
+      "a &&= b":  "let a; a && (a = b);"
+      "a ||= b":  "let a; a || (a = b);"
+      "a ?= b":   "let a; a != null ? a : (a = b);"
 
     complexBase:
-      "a.c ||= d": "a.c = a.c || d;"
-      "a.b.c ||= d": "let base; base.c = ((base = a.b).c) || d;"
+      "a.c ||= d": "a.c || (a.c = d);"
+      "a.b.c ||= d": "let base; ((base = a.b).c) || (base.c = d);"
       """
       a.b.c ||= d
       foo.bar.c ||= d
       """:
         "let base, base1;
-        base.c = ((base = a.b).c) || d;
-        base1.c = ((base1 = foo.bar).c) || d;"
+        ((base = a.b).c) || (base.c = d);
+        ((base1 = foo.bar).c) || (base1.c = d);"
 
-      "a ||= -> foo.bar.c &&= d": "let a; a = a || (function() {let base; return base.c = ((base = foo.bar).c) && d;});"
+      "a ||= -> foo.bar.c &&= d": "let a; a || (a = function() {let base; return ((base = foo.bar).c) && (base.c = d);});"
 
       """
       a.b.c ||= -> foo.bar.c ||= d
       """:
         "let base;
-        base.c = ((base = a.b).c) ||
-        (function() {let base1; return base1.c = ((base1 = foo.bar).c) || d;});"
+        ((base = a.b).c) || (base.c =
+        function() {let base1; return ((base1 = foo.bar).c) || (base1.c = d);});"

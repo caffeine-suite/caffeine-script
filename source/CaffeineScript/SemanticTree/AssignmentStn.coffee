@@ -26,11 +26,11 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
     unless @operator.match supportedOperatorsRegExp
       {value1, value2} = @getValueWithBaseCapture @lValue
 
-      AssignmentStn.Factory {},
-        value2
-        BinaryOperatorStn
-          operator: @operator
-          value1
+      BinaryOperatorStn
+        operator: @operator
+        value1
+        AssignmentStn.Factory {},
+          value2
           @rValue
     else
       @
@@ -39,4 +39,4 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
     if @operator.match supportedOperatorsRegExp
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
-      "#{@lValue.toJs()} = #{@lValue.toJsExpression()} #{@operator} #{@rValue.toJsExpression()}"
+      "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"

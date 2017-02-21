@@ -1,0 +1,11 @@
+class SemanticTokenStn extends &BaseStn
+
+  constructor: ->
+    super
+    @props.token ||= @parseTreeNode.toString()
+
+  @getter
+    token: -> @props.token
+
+  toJs: ->
+    throw new Error "SemanticTokenStn is not intended to output Js directly"
