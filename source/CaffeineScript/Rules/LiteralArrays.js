@@ -12,16 +12,16 @@ Caf.defMod(module, () => {
     this.rule(
       {
         array: [
-          { pattern: "openBracket_ valueList _comma_? _closeBracket" },
-          { pattern: "openBracket_ valueListBlock _closeBracket" },
+          "openBracket_ valueListBlock _closeBracket",
           {
             pattern: "'[]' _? valueListToEolAndBlock",
             getImplicitArray: function() {
               return false;
             }
           },
-          { pattern: "'[]'" }
+          "'[]'"
         ],
+        brackedArray: "openBracket_ valueList _comma_? _closeBracket",
         implicitArray: [
           {
             pattern: "start:expression _comma_ valueList _comma_?",

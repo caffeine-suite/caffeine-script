@@ -9,10 +9,10 @@ defineModule module, class SuperStn extends require './BaseStn'
     calledInConstructor: t/f
   ###
   constructor: (props, @args) ->
+    super
     # collapse implicit arrays into parents
     if @args.length == 1 && @args[0].props.implicitArray
       @args = @args[0].children
-    super
 
   needsParens: false
 

@@ -18,12 +18,12 @@ Caf.defMod(module, () => {
     this.rule(
       {
         object: [
-          "openCurly_ props:propertyList _closeCurly",
           "props:implicitObject",
           "'{}' _? props:propertyList",
           "'{}' _? props:objectLiteralBlock",
           "'{}'"
         ],
+        bracketedObject: "openCurly_ props:propertyList _closeCurly",
         multilineImplicitObject: {
           pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
         }

@@ -9,6 +9,8 @@ import &ArtFoundation
       :numberLiteral
       :stringLiteral
       :regExpLiteral
+      :bracketedObject
+      :brackedArray
 
   @rule
     boolLiteral:   :true :false

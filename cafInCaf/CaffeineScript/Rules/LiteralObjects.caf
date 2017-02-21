@@ -10,11 +10,13 @@ import &ArtFoundation, &BabelBridge, &SemanticTree
   @rule
 
     object:
-      "openCurly_ props:propertyList _closeCurly"
       "props:implicitObject"
       "'{}' _? props:propertyList"
       "'{}' _? props:objectLiteralBlock"
       "'{}'"
+      # :bracketedObject
+
+    bracketedObject: "openCurly_ props:propertyList _closeCurly"
 
     multilineImplicitObject:
       pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"

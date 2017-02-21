@@ -8,7 +8,9 @@ Caf.defMod(module, () => {
         "boolLiteral",
         "numberLiteral",
         "stringLiteral",
-        "regExpLiteral"
+        "regExpLiteral",
+        "bracketedObject",
+        "brackedArray"
       ]
     });
     return this.rule(

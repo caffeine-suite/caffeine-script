@@ -4,35 +4,21 @@ Caf.defMod(module, () => {
     SemanticTree = require("../SemanticTree"),
     Lib = require("../Lib"),
     dqStringStartRegexp,
-    normalizeString,
     normalizeHereDoc,
-    escapeJavascriptString,
     StringStn,
     InterpolatedStringStn,
     deescapeSpaces,
     escapeUnescaped;
   ({
-    escapeJavascriptString,
     StringStn,
     InterpolatedStringStn,
     deescapeSpaces,
     escapeUnescaped
   } = Caf.i(
-    [
-      "escapeJavascriptString",
-      "StringStn",
-      "InterpolatedStringStn",
-      "deescapeSpaces",
-      "escapeUnescaped"
-    ],
+    ["StringStn", "InterpolatedStringStn", "deescapeSpaces", "escapeUnescaped"],
     [ArtFoundation, SemanticTree, Lib, global]
   ));
   dqStringStartRegexp = /"([^\\"\#]|\\[\s\S]|\#(?!\{))*/;
-  normalizeString = function(string) {
-    string = escapeJavascriptString(string.toString().trim());
-    string = string.replace(/\\\\/g, "\\");
-    return string = string.replace(/\\ /g, " ");
-  };
   normalizeHereDoc = function(hereDoc) {
     let all, firstLine, rest, indents, minIndent;
     [all, firstLine, rest] = hereDoc.match(/^([^\n]*)(?=\n|$)((?:.|\n)*)/);
@@ -46,7 +32,7 @@ Caf.defMod(module, () => {
               return !(minIndent != null) || len < minIndent
                 ? minIndent = len
                 : undefined;
-            }), rest = rest.replace(RegExp(`\n {${minIndent}}`, "g"), "\n"))
+            }), rest = rest.replace(RegExp(`\\n {${minIndent}}`, "g"), "\n"))
           : undefined, rest = rest.replace(/^\n/, ""), !(!firstLine ||
           firstLine != null && firstLine.match(/\ */))
           ? rest = firstLine + "\\n" + rest
