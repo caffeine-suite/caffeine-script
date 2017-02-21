@@ -3,9 +3,11 @@ Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"),
     Error,
     OperatorHelper,
+    op,
+    p,
     arrayWithout;
-  ({ Error, OperatorHelper, arrayWithout } = Caf.i(
-    ["Error", "OperatorHelper", "arrayWithout"],
+  ({ Error, OperatorHelper, op, p, arrayWithout } = Caf.i(
+    ["Error", "OperatorHelper", "op", "p", "arrayWithout"],
     [ArtFoundation, global]
   ));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function() {
@@ -40,7 +42,7 @@ Caf.defMod(module, () => {
       ["left", "+", "-"],
       ["left", "<<", ">>", ">>>"],
       ["left", "<", "<=", ">", ">=", "instanceof", "in"],
-      ["left", "===", "!=="],
+      ["left", "===", "!==", "!=", "=="],
       ["left", "&"],
       ["left", "^"],
       ["left", "|"],
@@ -48,13 +50,17 @@ Caf.defMod(module, () => {
       ["left", "||", "?"]
     ];
     this.opsToPrecidence = {};
-    this.direction = Caf.e(this.precidence, [], (v, i, into) => {
-      let direction, operators;
-      [direction, ...operators] = v;
+    this.leftAssociativityByPrecidence = Caf.e(this.precidence, [], (
+      v,
+      i,
+      into
+    ) => {
+      let leftAssociativityByPrecidence, operators;
+      [leftAssociativityByPrecidence, ...operators] = v;
       Caf.e(operators, undefined, (op, k, into) => {
-        return this.opsToPrecidence[op] = i;
+        this.opsToPrecidence[op] = i;
       });
-      return into.push(direction);
+      into.push(leftAssociativityByPrecidence === "left");
     });
     this.validateOperator = validateOperator = operator => {
       if (!this.opsToPrecidence[operator]) {
@@ -88,11 +94,16 @@ Caf.defMod(module, () => {
       return f(a, b, operand);
     };
     this.getOpPrecidence = op => {
-      let p;
       if (!((p = this.opsToPrecidence[op]) != null)) {
         throw new Error(`OperatorHelper: operator '${op}' not defined`);
       }
       return p;
+    };
+    this.getPrecidenceLevelIsLeftAssociative = p => {
+      return this.leftAssociativityByPrecidence[p];
+    };
+    this.operatorIsInfixJs = operator => {
+      return !this.operatorMap[op];
     };
     this.resolveOperatorPrecidence = (
       operators,
@@ -105,7 +116,6 @@ Caf.defMod(module, () => {
         opIndexToResolve,
         opsBefore,
         operandsBefore,
-        op,
         operandA,
         operandB,
         combiner;
@@ -118,12 +128,16 @@ Caf.defMod(module, () => {
         lowestPrecidence = this.getOpPrecidence(operators[0]);
         firstOccurance = lastOccurance = 0;
         Caf.e(operators, undefined, (op, i, into) => {
-          let p;
-          return lowestPrecidence > (p = this.getOpPrecidence(op))
-            ? (firstOccurance = lastOccurance = i, lowestPrecidence = p)
-            : lowestPrecidence === p ? lastOccurance = i : undefined;
+          if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
+            firstOccurance = lastOccurance = i;
+            lowestPrecidence = p;
+          } else {
+            if (lowestPrecidence === p) {
+              lastOccurance = i;
+            }
+          }
         });
-        opIndexToResolve = this.direction[lowestPrecidence] === "left"
+        opIndexToResolve = this.getPrecidenceLevelIsLeftAssociative(p)
           ? firstOccurance
           : lastOccurance;
         opsBefore = operators;

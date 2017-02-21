@@ -22,7 +22,7 @@ class OperatorHelper
     :left  :+     :-
     :left  :<<    :>>   :>>>
     :left  :<     :<=   :>    :>=   :instanceof :in
-    :left  :===   :!==
+    :left  :===   :!==  :!=   :== # :!= and :== are included only for internal use
     :left  :&
     :left  :^
     :left  :|
@@ -30,11 +30,11 @@ class OperatorHelper
     :left  :||    :?
   @opsToPrecidence: {}
 
-  @direction = array v, i in @precidence
-    [direction, operators...] = v
+  @leftAssociativityByPrecidence = array v, i in @precidence
+    [leftAssociativityByPrecidence, operators...] = v
     each op in operators
       @opsToPrecidence[op] = i
-    direction
+    leftAssociativityByPrecidence == :left
 
   @validateOperator: validateOperator = (operator) =>
     throw new Error "OperatorHelper: operator '#{operator}' is not defined" unless @opsToPrecidence[operator]
@@ -58,6 +58,10 @@ class OperatorHelper
       throw new Error "OperatorHelper: operator '#{op}' not defined"
     p
 
+  @getPrecidenceLevelIsLeftAssociative: (p) => @leftAssociativityByPrecidence[p]
+
+  @operatorIsInfixJs: (operator) => !@operatorMap[op]
+
   @resolveOperatorPrecidence: (operators, operands, combinerOverride) =>
     throw new Error "expecting: operands.length:#{operands.length} == operators.length:#{operators.length} + 1" unless operands.length == operators.length + 1
     while operators.length > 0
@@ -71,7 +75,7 @@ class OperatorHelper
         else if lowestPrecidence == p
           lastOccurance = i
 
-      opIndexToResolve = if @direction[lowestPrecidence] == "left" then firstOccurance else lastOccurance
+      opIndexToResolve = if @getPrecidenceLevelIsLeftAssociative(p) then firstOccurance else lastOccurance
 
       opsBefore = operators
       operandsBefore = operands

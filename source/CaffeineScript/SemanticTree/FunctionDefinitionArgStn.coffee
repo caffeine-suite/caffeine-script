@@ -6,6 +6,8 @@ FunctionDefinitionArgsStn = require './FunctionDefinitionArgsStn'
 
 defineModule module, class FunctionDefinitionArgStn extends require './BaseStn'
 
+  needsParens: false
+
   constructor: ({@assignThisProperty, @rest}, [@identifier, @defaultValue]) ->
     super
 

@@ -35,12 +35,12 @@ module.exports = suite: parseTestSuite
 
   existanceAccessor:
     basic:
-      "a?.b":   "(a != null) && a.b;"
-      "a?[b]":  "(a != null) && (a[b]);"
+      "a?.b":   "a != null && a.b;"
+      "a?[b]":  "a != null && a[b];"
 
     withBase:
-      "a.foo.bar?.b":  "let base; (((base = a.foo).bar) != null) && base.bar.b;"
-      "a.foo.bar?[b]": "let base; (((base = a.foo).bar) != null) && (base.bar[b]);"
+      "a.foo.bar?.b":  "let base; (base = a.foo).bar != null && base.bar.b;"
+      "a.foo.bar?[b]": "let base; (base = a.foo).bar != null && base.bar[b];"
 
   multiline:
     basic:
@@ -91,12 +91,12 @@ module.exports = suite: parseTestSuite
         """
         foo
           .bar * 2 + 3
-        """: "(foo.bar * 2) + 3;"
+        """: "foo.bar * 2 + 3;"
 
         """
         foo
           .bar + 2 * 3
-        """: "foo.bar + (2 * 3);"
+        """: "foo.bar + 2 * 3;"
 
     compound:
       """

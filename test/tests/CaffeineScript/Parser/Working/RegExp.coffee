@@ -34,8 +34,8 @@ module.exports = suite: parseTestSuite
     "/a/ /b/": "[/a/, /b/];"
 
   spaceAfterSlashIsNotRegExp:
-    "a / b/ c":     "(a / b) / c;" # TODO - it would be nice to interpret this as a regex
-    "(a / b)/ c":   "(a / b) / c;" # but not this
+    "a / b/ c":     "a / b / c;" # TODO - it would be nice to interpret this as a regex
+    "(a / b)/ c":   "a / b / c;" # but not this
     "a / (b/ c)":   "a / (b / c);" # or this
     "a /b/ c":      "a(/b/, c);"
 

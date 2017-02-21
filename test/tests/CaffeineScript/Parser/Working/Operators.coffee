@@ -46,10 +46,12 @@ module.exports = suite:
 
     precedence: ->
       parseTests
-        "1 +  2 +  3":  "(1 + 2) + 3;";
+        "1 +  2 +  3":  "1 + 2 + 3;";
         "1 ** 2 ** 3":  "Caf.pow(1, Caf.pow(2, 3));";
-        "1 +  2 *  3":  "1 + (2 * 3);";
-        "1 *  2 +  3":  "(1 * 2) + 3;";
+        "1 +  2 *  3":  "1 + 2 * 3;";
+        "1 *  2 +  3":  "1 * 2 + 3;";
+        "(1 + 2) * 3":  "(1 + 2) * 3;";
+        "1 * (2  + 3)": "1 * (2 + 3);";
 
     unary: ->
       parseTests
@@ -85,7 +87,7 @@ module.exports = suite:
           foo
           || bar
           || baz
-          """: "(foo || bar) || baz;"
+          """: "foo || bar || baz;"
 
       mixed: ->
         parseTests
@@ -153,12 +155,12 @@ module.exports = suite:
           """
           foo
             || bar + 2 * 3
-          """: "foo || (bar + (2 * 3));"
+          """: "foo || bar + 2 * 3;"
 
           """
           foo
             || bar * 2 + 3
-          """: "foo || ((bar * 2) + 3);"
+          """: "foo || bar * 2 + 3;"
 
       comments: ->
         parseTests
@@ -196,12 +198,12 @@ module.exports = suite:
         """
         a && b
         || c && d
-        """: "(a && b) || (c && d);"
+        """: "a && b || c && d;"
 
         """
         a && b
           || c && d
-        """: "a && (b || (c && d));"
+        """: "a && (b || c && d);"
 
         """
         a || b
@@ -211,7 +213,7 @@ module.exports = suite:
         """
         a || b
           && c || d
-        """: "a || (b && (c || d));"
+        """: "a || b && (c || d);"
 
     englishOperators: ->
       parseTests
@@ -235,19 +237,19 @@ module.exports = suite:
             foo
               || bar
             || baz
-            """: "(foo || bar) || baz;"
+            """: "foo || bar || baz;"
 
             """
             foo
               || bar
               || baz
-            """: "(foo || bar) || baz;"
+            """: "foo || bar || baz;"
 
             """
             foo
             || bar
             || baz
-            """: "(foo || bar) || baz;"
+            """: "foo || bar || baz;"
 
             """
             foo
@@ -261,33 +263,34 @@ module.exports = suite:
             a || b
             && c || d
             && e || f
-            """: "((a || b) && (c || d)) && (e || f);"
+            """: "(a || b) && (c || d) && (e || f);"
 
           parseTests
             """
             a + b
             || c + d
               || e + f
-            """: "(a + b) || (c + (d || (e + f)));"
+            """: "a + b || c + (d || e + f);"
 
           parseTests
             """
             a || b
               && c || d
             && e || f
-            """: "(a || (b && (c || d))) && (e || f);"
+            """: "(a || b && (c || d)) && (e || f);"
 
           parseTests
             """
             a || b
               && c || d
               && e || f
-            """: "a || ((b && (c || d)) && (e || f));"
+            """: "a || b && (c || d) && (e || f);"
 
           parseTests
             """
             a || b && c || d && e || f
-            """: "((a || (b && c)) || (d && e)) || f;"
+            """: "a || b && c || d && e || f;"
+
       operatorsAndAccess:
         newLineOnly: ->
           parseTests
@@ -295,13 +298,13 @@ module.exports = suite:
             a || b
             && c || d
             .e || f
-            """: "(((a || b) && (c || d)).e) || f;"
+            """: "((a || b) && (c || d)).e || f;"
 
             """
             a || b
             .c || d
             && e || f
-            """: "(((a || b).c) || d) && (e || f);"
+            """: "((a || b).c || d) && (e || f);"
 
         mixedMultiline: ->
           parseTests
@@ -315,13 +318,13 @@ module.exports = suite:
             a || b
             .c || d
               && e || f
-            """: "((a || b).c) || (d && (e || f));"
+            """: "(a || b).c || d && (e || f);"
 
             """
             a || b
               && c || d
             .e || f
-            """: "((a || (b && (c || d))).e) || f;"
+            """: "(a || b && (c || d)).e || f;"
 
             """
             a || b
@@ -333,10 +336,16 @@ module.exports = suite:
             a || b
               && c || d
               .e || f
-            """: "a || (((b && (c || d)).e) || f);"
+            """: "a || ((b && (c || d)).e || f);"
 
             """
             a || b
               .c || d
               && e || f
-            """: "a || ((b.c || d) && (e || f));"
+            """: "a || (b.c || d) && (e || f);"
+
+      withAssignment: ->
+        parseTests
+          """
+          a && b = c
+          """: "let b; a && (b = c);"

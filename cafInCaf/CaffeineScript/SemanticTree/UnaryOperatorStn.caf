@@ -2,6 +2,7 @@ import &ArtFoundation
 
 class UnaryOperatorStn extends &BaseStn
 
+  needsParens: false
   toJs: ->
     if @props.operand == "?"
       "#{@applyParens @children[0].toJsExpression()} != null"

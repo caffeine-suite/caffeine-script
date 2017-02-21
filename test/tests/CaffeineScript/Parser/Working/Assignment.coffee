@@ -83,7 +83,7 @@ module.exports = suite: parseTestSuite
       a = if b
         c
         {d} = e
-      """: "let a, d; a = b && (c, ({d} = e));"
+      """: "let a, d; a = b ? (c, ({d} = e)) : null;"
 
   binopAssignment:
     javascriptSupported:
@@ -99,21 +99,23 @@ module.exports = suite: parseTestSuite
       "a ?= b":   "let a; a != null ? a : (a = b);"
 
     complexBase:
-      "a.c ||= d": "a.c || (a.c = d);"
-      "a.b.c ||= d": "let base; ((base = a.b).c) || (base.c = d);"
+      "a.c ||= d":    "a.c || (a.c = d);"
+      "a.b.c ||= d":  "let base; (base = a.b).c || (base.c = d);"
       """
       a.b.c ||= d
       foo.bar.c ||= d
       """:
         "let base, base1;
-        ((base = a.b).c) || (base.c = d);
-        ((base1 = foo.bar).c) || (base1.c = d);"
+        (base = a.b).c || (base.c = d);
+        (base1 = foo.bar).c || (base1.c = d);"
 
-      "a ||= -> foo.bar.c &&= d": "let a; a || (a = function() {let base; return ((base = foo.bar).c) && (base.c = d);});"
+      "a ||= -> foo.bar.c &&= d":
+        "let a; a || (a = function()
+        {let base; return (base = foo.bar).c && (base.c = d);});"
 
       """
       a.b.c ||= -> foo.bar.c ||= d
       """:
         "let base;
-        ((base = a.b).c) || (base.c =
-        function() {let base1; return ((base1 = foo.bar).c) || (base1.c = d);});"
+        (base = a.b).c || (base.c =
+        function() {let base1; return (base1 = foo.bar).c || (base1.c = d);});"

@@ -47,8 +47,8 @@ module.exports = suite: parseTestSuite
   parenthesis:
     "(1)": "1;"
     "(1 + 2) * 5":    "(1 + 2) * 5;"
-    "1 + 2 * 5":      "1 + (2 * 5);"
-    "1 + (2 * 5)":    "1 + (2 * 5);"
+    "1 + 2 * 5":      "1 + 2 * 5;"
+    "1 + (2 * 5)":    "1 + 2 * 5;"
     "(new Foo).bar":  "(new Foo).bar;"
 
     """

@@ -22,21 +22,18 @@ defineModule module, class FunctionInvocationStn extends require './ValueBaseCap
 
     if @conditional
       {value1, value2} = @getValueWithBaseCapture @functionValue
-      if value1 != value2
-        return BinaryOperatorStn
-          operator: "&&"
-          SemanticTree.FunctionInvocationStn null,
-            AccessorStn null,
-              IdentifierStn identifier: "Caf"
-              IdentifierStn identifier: "isF"
-            value1
-          SemanticTree.FunctionInvocationStn null, value2, @args...
-    super
+      BinaryOperatorStn
+        operator: "&&"
+        SemanticTree.FunctionInvocationStn null,
+          AccessorStn null,
+            IdentifierStn identifier: "Caf"
+            IdentifierStn identifier: "isF"
+          value1
+        SemanticTree.FunctionInvocationStn value2, @args...
+    else
+      super
 
   toJs: ->
-    invocationJs = "#{valueJs = @functionValue.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"
-    if @conditional
-      "Caf.isF(#{valueJs}) && #{invocationJs}"
-    else
-      invocationJs
+    throw new Error "can't be conditional here" if @conditional
+    "#{valueJs = @functionValue.toJsExpression()}#{@applyRequiredParens (a.toJsExpression() for a in @args).join ', '}"
 

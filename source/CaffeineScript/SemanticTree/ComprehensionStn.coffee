@@ -97,6 +97,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
       ArrayStn
       AccessorStn
       ControlOperatorStn
+      BinaryOperatorStn
       StatementsStn
     } = SemanticTree
     # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
@@ -201,8 +202,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
           when "find"
             if whenClause
               if body
-                ControlOperatorStn
-                  operand: "if"
+                BinaryOperatorStn
+                  operator: "&&"
                   whenClause
 
                   StatementsStn null,
@@ -210,8 +211,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                       IdentifierStn identifier: brkIdentifer
                     body
               else
-                ControlOperatorStn
-                  operand: "if"
+                BinaryOperatorStn
+                  operator: "&&"
                   whenClause
 
                   StatementsStn null,
@@ -226,8 +227,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                   allButLast = StatementsStn body.children.slice 0, body.children.length - 1
                   body = peek body.children
 
-                foundTest = ControlOperatorStn
-                  operand: "if"
+                foundTest = BinaryOperatorStn
+                  operator: "&&"
 
                   AssignmentStn null,
                     IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
@@ -245,8 +246,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                   foundTest
 
               else
-                ControlOperatorStn
-                  operand: "if"
+                BinaryOperatorStn
+                  operator: "&&"
                   valueVarDef
 
                   StatementsStn null,

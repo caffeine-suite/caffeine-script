@@ -40,3 +40,5 @@ class StatementsStn extends &BaseStn
         @getChildrenStatementsJsArray "", false
         .join ", "
 
+  toJsExpressionWithParens: -> @toJsParenExpression()
+

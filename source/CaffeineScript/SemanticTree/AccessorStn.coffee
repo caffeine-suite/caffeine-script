@@ -44,6 +44,6 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
       if (identierString = @key.toJs()).match /['"`]/
         "#{@value.toJsExpressionWithParens()}[#{identierString}]"
       else
-        "#{@value.toJsExpressionWithParens()}.#{identierString}"
+        "#{@value.toJsExpressionWithParens dotBase: true}.#{identierString}"
     else
       "#{@value?.toJsExpressionWithParens() || ""}[#{@key.toJsExpression()}]"

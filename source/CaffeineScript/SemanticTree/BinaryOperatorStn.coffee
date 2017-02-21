@@ -1,7 +1,7 @@
 Foundation = require 'art-foundation'
 
 {log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject, formattedInspect} = Foundation
-{binaryOperatorToJs} = require '../OperatorHelper'
+{binaryOperatorToJs, getOpPrecidence, getPrecidenceLevelIsLeftAssociative, operatorIsInfixJs} = require '../OperatorHelper'
 
 defineModule module, class BinaryOperatorStn extends require './BaseStn'
 
@@ -22,7 +22,28 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
     if @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
       "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
-    else
+    else if !operatorIsInfixJs @operator
       binaryOperatorToJs @operator,
-        left = @applyParens @left.toJsExpression()
-        right = @applyParens @right.toJsExpression()
+        @left.toJsExpression()
+        @right.toJsExpression()
+    else
+      parentOperatorPrecidence = getOpPrecidence @operator
+      binaryOperatorToJs @operator,
+        @left.toJsExpressionWithParens  {parentOperatorPrecidence, isLeftOperand: true}
+        @right.toJsExpressionWithParens {parentOperatorPrecidence, isLeftOperand: false}
+
+  toJsExpressionWithParens: ({parentOperatorPrecidence, isLeftOperand}) ->
+    operatorPrecidence = getOpPrecidence @operator
+    # log toJsExpressionWithParens: {
+    #   @operator
+    #   operatorPrecidence
+    #   parentOperatorPrecidence
+    #   isLeftOperand
+    #   operatorPrecidenceIsLeft: getPrecidenceLevelIsLeftAssociative operatorPrecidence
+    # }
+    if parentOperatorPrecidence? && operatorPrecidence < parentOperatorPrecidence
+      @toJsExpression()
+    else if parentOperatorPrecidence? && operatorPrecidence == parentOperatorPrecidence && isLeftOperand == getPrecidenceLevelIsLeftAssociative operatorPrecidence
+      @toJsExpression()
+    else
+      "(#{@toJsExpression()})"

@@ -92,7 +92,7 @@ module.exports = suite:
 
   operatorsAndAliases: ->
     parseTests
-      "-7 % 5 == -2": "(-7 % 5) === -2;"
+      "-7 % 5 == -2": "-7 % 5 === -2;"
 
       "launch() if ignition is on": "if (ignition === true) {launch();};"
 
@@ -172,5 +172,5 @@ module.exports = suite:
 
   existentialOperator: ->
     parseTests
-      "solipsism = true if mind? and not world?": "let solipsism; if ((mind != null) && !(world != null)) {solipsism = true;};"
-      'footprints = yeti ? "bear"': "let footprints; footprints = yeti != null ? yeti : (\"bear\");"
+      "solipsism = true if mind? and not world?": "let solipsism; if (mind != null && !(world != null)) {solipsism = true;};"
+      'footprints = yeti ? "bear"': "let footprints; footprints = yeti != null ? yeti : \"bear\";"
