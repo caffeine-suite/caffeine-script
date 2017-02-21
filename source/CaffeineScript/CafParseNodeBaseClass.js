@@ -24,17 +24,17 @@ Caf.defMod(module, () => {
       };
       this.prototype.getImplicitArray = function() {
         return Caf.ee(this.matches, null, (match, k, into, brk) => {
-          return (todoRealTemp = Caf.isF(match.getImplicitArray) &&
-            match.getImplicitArray())
-            ? brk(todoRealTemp)
-            : undefined;
+          let _ret;
+          return (_ret = Caf.isF(match.getImplicitArray) &&
+            match.getImplicitArray()) &&
+            (brk(), _ret);
         });
       };
       this.prototype.getMatchStns = function() {
         return Caf.e(this.matches, [], (m, k, into) => {
-          return (m = Caf.isF(m.getStn) && m.getStn())
-            ? into.push(m)
-            : undefined;
+          if (m = Caf.isF(m.getStn) && m.getStn()) {
+            into.push(m);
+          }
         });
       };
       this.prototype.getStnFactory = function() {
@@ -47,7 +47,9 @@ Caf.defMod(module, () => {
         return this.stnChildren
           ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
           : Caf.e(this.nonStnExtensionMatches, [], (m, k, into) => {
-              return (m = m.getStn(left)) ? into.push(m) : undefined;
+              if (m = m.getStn(left)) {
+                into.push(m);
+              }
             });
       };
       this.getter({
@@ -58,12 +60,16 @@ Caf.defMod(module, () => {
         },
         stnExtensionMatches: function() {
           return Caf.e(this.presentMatches, [], (m, k, into) => {
-            return m.getStn && m.isStnExtension ? into.push(m) : undefined;
+            if (m.getStn && m.isStnExtension) {
+              into.push(m);
+            }
           });
         },
         nonStnExtensionMatches: function() {
           return Caf.e(this.presentMatches, [], (m, k, into) => {
-            return m.getStn && !m.isStnExtension ? into.push(m) : undefined;
+            if (m.getStn && !m.isStnExtension) {
+              into.push(m);
+            }
           });
         }
       });
@@ -80,7 +86,7 @@ Caf.defMod(module, () => {
               ? x[0]
               : x.length === 0 ? left : x);
         Caf.e(this.stnExtensionMatches, undefined, (extension, k, into) => {
-          return stn = extension.getStn(stn);
+          stn = extension.getStn(stn);
         });
         if (stn != null && stn.props) {
           currentStnLabel = stn.props.label;

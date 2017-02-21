@@ -17,7 +17,11 @@ Caf.defMod(module, () => {
       let Rules = require("./Rules");
       this.nodeBaseClass = CafParseNodeBaseClass;
       Caf.e(Rules.modules, undefined, (mod, k, into) => {
-        return isFunction(mod) ? mod.call(this) : this.rule(mod);
+        if (isFunction(mod)) {
+          mod.call(this);
+        } else {
+          this.rule(mod);
+        }
       });
       return this;
     }
