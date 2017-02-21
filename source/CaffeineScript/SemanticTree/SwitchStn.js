@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
         falsifyCases = !condition;
         options = { falsifyCases: falsifyCases };
         cases = Caf.e(switchWhens, [], (clause, k, into) => {
-          return into.push(clause.toJs(options));
+          into.push(clause.toJs(options));
         });
         if (switchElse) {
           cases.push(`default: ${switchElse.toJs()}`);
@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
         falsifyCases = !condition;
         options = { falsifyCases: falsifyCases };
         cases = Caf.e(switchWhens, [], (clause, k, into) => {
-          return into.push(clause.toFunctionBodyJs(options));
+          into.push(clause.toFunctionBodyJs(options));
         });
         if (switchElse) {
           cases.push(`default: ${switchElse.toFunctionBodyJs()}`);

@@ -10,9 +10,9 @@ Caf.defMod(module, () => {
       constructor(props, args) {
         super(...arguments);
         this.args = args;
-        this.args.length === 1 && this.args[0].props.implicitArray
-          ? this.args = this.args[0].children
-          : undefined;
+        if (this.args.length === 1 && this.args[0].props.implicitArray) {
+          this.args = this.args[0].children;
+        }
       }
     },
     function() {
@@ -38,12 +38,12 @@ Caf.defMod(module, () => {
           ? (args = this.props.passArguments
               ? ["...arguments"]
               : Caf.e(args, [], (a, k, into) => {
-                  return into.push(a.toJsExpression());
+                  into.push(a.toJsExpression());
                 }), `super(${args.join(", ")})`)
           : (method = this.props.passArguments
               ? (args = "arguments", "apply")
               : (args = Caf.e(args, [], (a, k, into) => {
-                  return into.push(a.toJsExpression());
+                  into.push(a.toJsExpression());
                 }), "call"), `Caf.getSuper(this).${this.props.methodName}.${method}${this.applyRequiredParens(
               ["this"].concat(args).join(", ")
             )}`);

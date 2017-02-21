@@ -26,8 +26,11 @@ Caf.defMod(module, () => {
           );
         },
         identifier: function() {
-          return this._identifier = this._identifier ||
-            this.scope.bindUniqueIdentifier(this.preferredName, this);
+          return this._identifier ||
+            (this._identifier = this.scope.bindUniqueIdentifier(
+              this.preferredName,
+              this
+            ));
         }
       });
       return this;

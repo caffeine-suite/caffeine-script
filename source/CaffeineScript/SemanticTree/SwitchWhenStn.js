@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
         ({ whenValue } = this.labeledChildren);
         cases = whenValue.implicitArray
           ? Caf.e(whenValue.children, [], (m, k, into) => {
-              return into.push(m.toJsExpression());
+              into.push(m.toJsExpression());
             })
           : [whenValue.toJsExpression()];
         return falsifyCases

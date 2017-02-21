@@ -55,40 +55,44 @@ Caf.defMod(module, () => {
         ({ sourceFile, sourceFiles, sourceRoot } = options);
         return (sourceFile ||
           (sourceFile = sourceFiles != null && sourceFiles[0])) &&
-          sourceRoot &&
-          ({
-            normalizedIdentifier
-          } = this, directory = sourceDir = Path.resolve(
-            Path.dirname(sourceFile)
-          ), sourceRoot = Path.resolve(
-            sourceRoot
-          ), found = null, shouldContinue = true, (() => {
-            while (shouldContinue) {
-              found = Caf.ee(files = Fs.readdirSync(directory), null, (
-                name,
-                k,
-                into,
-                brk
-              ) => {
-                let baseName, normalizedName, relative, _ret;
-                [baseName] = name.split(".");
-                normalizedName = upperCamelCase(baseName);
-                return (_ret = normalizedName === normalizedIdentifier &&
-                  (relative = Path.relative(
-                    sourceDir,
-                    directory
-                  ), relative = Path.join(relative, baseName), !relative.match(
-                    /^\./
-                  ) &&
-                    (relative = `./${relative}`), relative)) &&
-                  (brk(), _ret);
-              });
-              if (found || directory === sourceRoot) {
-                shouldContinue = false;
+          sourceRoot
+          ? ({
+              normalizedIdentifier
+            } = this, directory = sourceDir = Path.resolve(
+              Path.dirname(sourceFile)
+            ), sourceRoot = Path.resolve(
+              sourceRoot
+            ), found = null, shouldContinue = true, (() => {
+              while (shouldContinue) {
+                found = Caf.ee(files = Fs.readdirSync(directory), null, (
+                  name,
+                  k,
+                  into,
+                  brk
+                ) => {
+                  let baseName, normalizedName, relative, _ret;
+                  [baseName] = name.split(".");
+                  normalizedName = upperCamelCase(baseName);
+                  return (_ret = normalizedName === normalizedIdentifier
+                    ? (relative = Path.relative(
+                        sourceDir,
+                        directory
+                      ), relative = Path.join(
+                        relative,
+                        baseName
+                      ), !relative.match(/^\./)
+                        ? relative = `./${relative}`
+                        : null, relative)
+                    : null) &&
+                    (brk(), _ret);
+                });
+                if (found || directory === sourceRoot) {
+                  shouldContinue = false;
+                }
+                directory = Path.dirname(directory);
               }
-              directory = Path.dirname(directory);
-            }
-          })(), found);
+            })(), found)
+          : null;
       };
       this.prototype.toJs = function() {
         return this.rawIdentifier;

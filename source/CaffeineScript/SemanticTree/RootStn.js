@@ -37,7 +37,7 @@ Caf.defMod(module, () => {
           identifiersUsedButNotAssigned,
           [],
           (v, k, into) => {
-            return into.push(`${k} = global.${k}`);
+            into.push(`${k} = global.${k}`);
           }
         );
         statementsJs = this.statements.toFunctionBodyJs();
@@ -46,7 +46,7 @@ Caf.defMod(module, () => {
           this.requiredIdentifierLets
         ]);
         statements = compactFlatten([
-          lets.length > 0 ? `let ${lets.join(", ")}` : undefined,
+          lets.length > 0 ? `let ${lets.join(", ")}` : null,
           statementsJs
         ]);
         return `\
