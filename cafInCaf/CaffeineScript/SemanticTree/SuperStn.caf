@@ -1,0 +1,43 @@
+import &ArtFoundation
+
+class SuperStn extends &BaseStn
+  ##
+    props:
+      calledInConstructor: t/f
+
+  constructor: (props, @args) ->
+    super
+    # collapse implicit arrays into parents
+    if @args.length == 1 && @args[0].props.implicitArray
+      @args = @args[0].children
+
+  needsParens: false
+
+  transform: ->
+    throw new Error "super must be used inside an object-literal value" unless propValue = @findParent "ObjectPropValue"
+    # TODO: we should validate that propName has a legal value string
+
+    methodName = propValue.labeledChildren.propName.props.value
+    [__, methodName] = m if m = methodName.match /^@(.*)/
+    new @class merge(@props, methodName: methodName), @transformChildren()
+
+  toJs: ->
+    {args} = @
+    if @props.calledInConstructor
+      args = if @props.passArguments
+        ["...arguments"]
+      else
+        array a in args with a.toJsExpression()
+
+      "super(#{args.join ', '})"
+
+    else
+
+      method = if @props.passArguments
+        args = "arguments"
+        "apply"
+      else
+        args = array a in args with a.toJsExpression()
+        "call"
+
+      "Caf.getSuper(this).#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
