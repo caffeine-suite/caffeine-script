@@ -1,0 +1,7 @@
+import &ArtFoundation, &Lib
+
+class StringStn extends &BaseStn
+
+  toJs: -> escapeJavascriptString(deescapeSpaces @props.value).replace /\\\\/g, '\\'
+
+  toInterpolatedJsStringPart: -> deescapeSpaces escapeUnescaped @props.value, "`$\n"
