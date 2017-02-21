@@ -1,0 +1,26 @@
+import &ArtFoundation
+
+class SwitchStn extends &BaseStn
+
+  toJs: ->
+    {condition, switchWhens, switchElse} = @labeledChildren
+    falsifyCases = !condition
+    options = falsifyCases: falsifyCases
+    cases = array clause in switchWhens with clause.toJs options
+    cases.push "default: #{switchElse.toJs()}" if switchElse
+    "switch (#{@getConditionJs()}) {#{cases.join ' break; '}}"
+
+  toJsExpression: ->
+    {condition, switchWhens, switchElse} = @labeledChildren
+    falsifyCases = !condition
+    options = falsifyCases: falsifyCases
+    cases = array clause in switchWhens with clause.toFunctionBodyJs options
+    cases.push "default: #{switchElse.toFunctionBodyJs()}" if switchElse
+    "(() => {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
+
+  getConditionJs: ->
+    {condition} = @labeledChildren
+    if condition
+      condition.toJsExpression()
+    else
+      "false"
