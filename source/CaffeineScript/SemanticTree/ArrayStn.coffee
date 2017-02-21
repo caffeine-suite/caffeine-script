@@ -13,4 +13,4 @@ defineModule module, class ArrayStn extends require './BaseStn'
       children = children[0].children
     super props, children
 
-  toJs: ->  "[#{(c.toJs() for c in @children).join ', '}]"
+  toJs: ->  "[#{(c.toJsExpression() for c in @children).join ', '}]"
