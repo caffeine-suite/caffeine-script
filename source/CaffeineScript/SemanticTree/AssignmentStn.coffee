@@ -40,3 +40,6 @@ defineModule module, class AssignmentStn extends require './ValueBaseCaptureStn'
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
       "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+
+  toJsParenExpression: ->
+    "(#{@toJs()})"

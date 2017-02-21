@@ -87,6 +87,11 @@ module.exports = suite: parseTestSuite
         if true then x else x
       """: "let y, x; y = true && (x = 1, true ? x : x);"
 
+      """
+      ret = if a
+        b = c
+      """: "let ret, b; ret = a && (b = c);"
+
     nested:
       """
       if a
@@ -106,22 +111,29 @@ module.exports = suite: parseTestSuite
       "if false then :mytrue": 'if (false) {"mytrue";};'
 
   unless:
-    """
-    unless foo
-      bar
-    """: "if (!foo) {bar;};"
+    basic:
+      """
+      unless foo
+        bar
+      """: "if (!foo) {bar;};"
 
-    """
-    unless foo + bar
-      bar
-    """: "if (!(foo + bar)) {bar;};"
+      """
+      unless foo + bar
+        bar
+      """: "if (!(foo + bar)) {bar;};"
 
-    """
-    unless foo
-      bar
-    else
-      baz
-    """: "if (!foo) {bar;} else {baz;};"
+      """
+      unless foo
+        bar
+      else
+        baz
+      """: "if (!foo) {bar;} else {baz;};"
+
+    expressions:
+      """
+      a = unless foo
+        bar
+      """: "let a; a = !foo && bar;"
 
   while:
     "while foo\n  bar": "while (foo) {bar;};"
