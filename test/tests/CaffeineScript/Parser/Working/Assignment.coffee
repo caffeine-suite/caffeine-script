@@ -78,6 +78,13 @@ module.exports = suite: parseTestSuite
         "{c:{a}} = b": "let a; ({c: {a}} = b);"
         "{c:[a]} = b": "let a; ({c: [a]} = b);"
 
+    inLists:
+      """
+      a = if b
+        c
+        {d} = e
+      """: "let a, d; a = b && (c, ({d} = e));"
+
   binopAssignment:
     javascriptSupported:
       "a += b":  "let a; a += b;"

@@ -175,7 +175,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
 
       FunctionDefinitionStn
         bound: true
-        returnIgnored: true
+        returnIgnored: outputType != "find"
         variableDefinition
 
         switch outputType
@@ -205,16 +205,19 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                   operand: "if"
                   whenClause
 
-                  FunctionInvocationStn null,
-                    IdentifierStn identifier: brkIdentifer
+                  StatementsStn null,
+                    FunctionInvocationStn null,
+                      IdentifierStn identifier: brkIdentifer
                     body
               else
                 ControlOperatorStn
                   operand: "if"
                   whenClause
 
-                  FunctionInvocationStn null,
-                    IdentifierStn identifier: brkIdentifer
+                  StatementsStn null,
+                    FunctionInvocationStn null,
+                      IdentifierStn identifier: brkIdentifer
+
                     valueVarDef
             else
               if body
@@ -227,12 +230,14 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                   operand: "if"
 
                   AssignmentStn null,
-                    IdentifierStn identifier: "todoRealTemp"
+                    IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
                     body
 
-                  FunctionInvocationStn null,
-                    IdentifierStn identifier: brkIdentifer
-                    IdentifierStn identifier: "todoRealTemp"
+                  StatementsStn null,
+                    FunctionInvocationStn null,
+                      IdentifierStn identifier: brkIdentifer
+
+                    IdentifierStn identifierHandle: baseIdentifierHandle
 
                 if allButLast
                   StatementsStn allButLast, foundTest
@@ -244,6 +249,8 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                   operand: "if"
                   valueVarDef
 
-                  FunctionInvocationStn null,
-                    IdentifierStn identifier: brkIdentifer
+                  StatementsStn null,
+                    FunctionInvocationStn null,
+                      IdentifierStn identifier: brkIdentifer
+
                     valueVarDef

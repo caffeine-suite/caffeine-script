@@ -65,13 +65,18 @@ module.exports = suite: parseTestSuite
       """
       bar = if foo
         1
-      """: "let bar; bar = foo ? 1 : undefined;"
+      """: "let bar; bar = foo && 1;"
+
+      """
+      bar = if foo = baz
+        1
+      """: "let bar, foo; bar = (foo = baz) && 1;"
 
       """
       bar = if foo
         1
         2
-      """: "let bar; bar = foo ? (1, 2) : undefined;"
+      """: "let bar; bar = foo && (1, 2);"
 
       "bar = if foo then 1 else 2": "let bar; bar = foo ? 1 : 2;"
 
@@ -80,7 +85,7 @@ module.exports = suite: parseTestSuite
         x = 1
 
         if true then x else x
-      """: "let y, x; y = true ? (x = 1, true ? x : x) : undefined;"
+      """: "let y, x; y = true && (x = 1, true ? x : x);"
 
     nested:
       """
@@ -95,7 +100,7 @@ module.exports = suite: parseTestSuite
         b
         if c
           d
-      """: "let out; out = a ? (b, c ? d : undefined) : undefined;"
+      """: "let out; out = a && (b, c && d);"
 
     regressions:
       "if false then :mytrue": 'if (false) {"mytrue";};'
@@ -237,4 +242,4 @@ module.exports = suite: parseTestSuite
       "foo while bar if baz": "if (baz) {while (bar) {foo;};};"
 
     asExpressions:
-      "=>\n foo if bar": "() => {return bar ? foo : undefined;};"
+      "=>\n foo if bar": "() => {return bar && foo;};"

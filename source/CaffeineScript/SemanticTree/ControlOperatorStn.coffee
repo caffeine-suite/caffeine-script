@@ -46,11 +46,17 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
           return #{tempVarIdentifier}})()
           "
       else
-        "
-        #{@applyParens expression} ?
-        #{@body.toJsParenExpression()} :
-        #{@elseBody?.toJsParenExpression() || 'undefined'}
-        "
+        if @elseBody
+          "
+          #{@applyParens expression} ?
+          #{@body.toJsParenExpression()} :
+          #{@elseBody.toJsParenExpression()}
+          "
+        else
+          "
+          #{@applyParens expression} &&
+          #{@body.toJsParenExpression()}
+          "
     else
       "
       #{operand}

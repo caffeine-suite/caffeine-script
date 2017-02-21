@@ -10,7 +10,7 @@ module.exports = suite: parseTestSuite
       "array b":        "Caf.e(b, [], (v, k, into) => {into.push(v);});"
       "object b":       "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
       "each b":         "Caf.e(b, undefined, (v, k, into) => {v;});"
-      "find b":         "Caf.ee(b, null, (v, k, into, brk) => {if (v) {brk(v);};});"
+      "find b":         "Caf.ee(b, null, (v, k, into, brk) => {return v && (brk(), v);});"
 
     multipleArgs:
       """
@@ -72,7 +72,7 @@ module.exports = suite: parseTestSuite
         c
       """: "
         Caf.ee(a, null, (v, k, into, brk) =>
-        {b; if (todoRealTemp = c) {brk(todoRealTemp);};});"
+        {let _ret; b; return (_ret = c) && (brk(), _ret);});"
 
     nested:
       """
@@ -147,13 +147,13 @@ module.exports = suite: parseTestSuite
       "object a into b": "Caf.e(a, b, (v, k, into) => {into[k] = v;});"
 
     find:
-      "find a from b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {if (a > 10) {brk(a);};});"
-      "find a from b with a > 10": "Caf.ee(b, null, (a, k, into, brk) => {if (todoRealTemp = a > 10) {brk(todoRealTemp);};});"
-      "find a from b when a > 10 with 123": "Caf.ee(b, null, (a, k, into, brk) => {if (a > 10) {brk(123);};});"
+      "find a from b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) && (brk(), a);});"
+      "find a from b with a > 10": "Caf.ee(b, null, (a, k, into, brk) => {let _ret; return (_ret = a > 10) && (brk(), _ret);});"
+      "find a from b when a > 10 with 123": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) && (brk(), 123);});"
 
     alternativeKeywords:
       in:
-        "find a in b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {if (a > 10) {brk(a);};});"
+        "find a in b when a > 10": "Caf.ee(b, null, (a, k, into, brk) => {return (a > 10) && (brk(), a);});"
       do:
         "object a from b do a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
 

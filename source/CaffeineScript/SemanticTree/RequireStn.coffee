@@ -21,30 +21,33 @@ defineModule module, class RequireStn extends require './BaseStn'
         @npmIdentifier
 
 
-  findFileInPackage: ({sourceFile, sourceFiles, sourceRoot} = @parser.options) ->
-    # log findFileInPackageA: {sourceRoot, sourceFiles}
-    return unless (sourceFile ||= sourceFiles?[0]) && sourceRoot
-    Path ||= require 'path'
-    Fs ||= require 'fs'
+  findFileInPackage: (options = @parser.options) ->
+    {sourceFile, sourceFiles, sourceRoot} = options
 
-    {normalizedIdentifier} = @
+    if (sourceFile ||= sourceFiles?[0]) && sourceRoot
+      Path ||= require 'path'
+      Fs ||= require 'fs'
 
-    directory = sourceDir = Path.resolve Path.dirname sourceFile
-    sourceRoot = Path.resolve sourceRoot
-    # log findFileInPackageB: {sourceRoot, sourceDir}
-    while true
-      found = find files = Fs.readdirSync(directory), (name) ->
-        [baseName] = name.split '.'
-        normalizedName = upperCamelCase baseName
-        if normalizedName == normalizedIdentifier
-          relative = Path.relative sourceDir, directory
-          relative = Path.join relative, baseName
-          relative = "./#{relative}" unless relative.match /^\./
-          relative
-      return found if found
-      break if directory == sourceRoot
-      directory = Path.dirname directory
-    null
+      {normalizedIdentifier} = @
+
+      directory = sourceDir = Path.resolve Path.dirname sourceFile
+      sourceRoot = Path.resolve sourceRoot
+
+      found = null
+      shouldContinue = true
+      while shouldContinue
+        found = find files = Fs.readdirSync(directory), (name) ->
+          [baseName] = name.split '.'
+          normalizedName = upperCamelCase baseName
+          if normalizedName == normalizedIdentifier
+            relative = Path.relative sourceDir, directory
+            relative = Path.join relative, baseName
+            relative = "./#{relative}" unless relative.match /^\./
+            relative
+        if found || directory == sourceRoot
+          shouldContinue = false
+        directory = Path.dirname directory
+      found
 
   toJs: ->
     @rawIdentifier
