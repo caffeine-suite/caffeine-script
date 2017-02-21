@@ -2,18 +2,13 @@ import &ArtFoundation
 
 &StatementsStn
 
-[]
-  b if c
-
-
-#class RootStn extends &ScopeStnMixin &BaseStn
-##
+class RootStn extends &ScopeStnMixin &BaseStn
   constructor: (props, children) ->
     super
     @statements = children[0]
 
   cloneWithNewStatements: (statements)->
-    new RootStn @props, [StatementsStn compactFlatten statements]
+    new RootStn @props, [] StatementsStn compactFlatten statements
 
   transform: ->
     ret = super
@@ -23,28 +18,24 @@ import &ArtFoundation
 
   toJsModule: ->
     {identifiersUsedButNotAssigned} = @
-    identifiersUsedButNotAssigned = array k, v in identifiersUsedButNotAssigned with "#{k} = global.#{k}"
+    identifiersUsedButNotAssigned = array v, k in identifiersUsedButNotAssigned with "#{k} = global.#{k}"
 
     statementsJs = @statements.toFunctionBodyJs()
 
-    lets = compactFlatten [identifiersUsedButNotAssigned, @requiredIdentifierLets]
-    statements = compactFlatten [
+    lets = compactFlatten [] identifiersUsedButNotAssigned, @requiredIdentifierLets
+    statements = compactFlatten []
       "let #{lets.join ', '}" if lets.length > 0
       statementsJs
-    ]
-##
 
-    ""
-      let Caf = require('caffeine-script-runtime');
-      Caf.defMod(module, () => {#{statements.join '; '};});
-
+    "
+    let Caf = require('caffeine-script-runtime');\n
+    Caf.defMod(module, () => {#{statements.join '; '};});
+    "
 
   toJs: ->
     statementsJs = @statements.toJs()
-    compactFlatten([
+    compactFlatten []
       @getAutoLets()
       statementsJs
-    ]).join('; ') + ";"
-
-
-
+    .join '; '
+    + ";"
