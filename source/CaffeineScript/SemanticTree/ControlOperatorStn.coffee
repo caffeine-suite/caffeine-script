@@ -1,11 +1,12 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
+{log, a, w, m, defineModule, compactFlatten, present, formattedInspect, isFunction, BaseObject} = Foundation
 
 defineModule module, class ControlOperatorStn extends require './BaseStn'
 
   constructor: ({@operand, @joiner}, [@expression, @body, @elseBody]) ->
     super
+    @validate()
 
   validate: ->
     switch @operand
@@ -15,7 +16,7 @@ defineModule module, class ControlOperatorStn extends require './BaseStn'
       when "if", "unless"
         throw new Error "do not expected after #{@operand}" if @joiner == "do"
       else
-        throw new Error "INTERNAL: invalid control-operator: #{inspect @operand}"
+        throw new Error "INTERNAL: invalid control-operator: #{formattedInspect @operand}"
 
   toJs: (options = {})->
     {returnExpression, returnValueIsIgnored} = options

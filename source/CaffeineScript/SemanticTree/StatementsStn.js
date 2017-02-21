@@ -13,11 +13,10 @@ Caf.defMod(module, () => {
         return this.toFunctionBodyJsArray(returnAction).join("; ");
       };
       this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
-        return this.getChildrenStatementsJsArray(true, returnAction);
+        return this.getChildrenStatementsJsArray(returnAction);
       };
       this.prototype.getChildrenStatementsJsArray = function(
-        returnLastValue = false,
-        returnAction = "return",
+        returnAction,
         generateStatements = true
       ) {
         let lines;
@@ -26,11 +25,11 @@ Caf.defMod(module, () => {
         }
         return Caf.e(lines = this.children, [], (c, i, into) => {
           let statement;
-          return into.push(
-            returnLastValue && i === lines.length - 1
-              ? returnAction && !c.jsExpressionUsesReturn
+          into.push(
+            returnAction && i === lines.length - 1
+              ? !c.jsExpressionUsesReturn
                   ? `${returnAction} ${c.toJsExpression()}`
-                  : c.toJsExpression()
+                  : c.toJs()
               : generateStatements
                   ? (statement = c.toJsStatement(), statement.match(/^function/)
                       ? this.applyRequiredParens(statement)
@@ -43,7 +42,7 @@ Caf.defMod(module, () => {
         return this.children.length === 1
           ? this.children[0].toJsParenExpression()
           : this.applyRequiredParens(
-              this.getChildrenStatementsJsArray(true, false, false).join(", ")
+              this.getChildrenStatementsJsArray("", false).join(", ")
             );
       };
       return this;

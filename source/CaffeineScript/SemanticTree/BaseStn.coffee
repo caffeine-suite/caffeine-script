@@ -122,11 +122,14 @@ defineModule module, class BaseStn extends BaseObject
 
     "(() => {#{body};})()"
 
-  toFunctionBodyJsArray: ->
-    ["return #{@toJsExpression()}"]
+  toFunctionBodyJsArray: (returnAction = true)->
+    if returnAction
+      ["return #{@toJsExpression()}"]
+    else
+      [@toJs()]
 
-  toFunctionBodyJs: ->
-    @toFunctionBodyJsArray().join ''
+  toFunctionBodyJs: (returnAction = true)->
+    @toFunctionBodyJsArray(returnAction).join ''
 
   transformChildren: ->
     ret = null

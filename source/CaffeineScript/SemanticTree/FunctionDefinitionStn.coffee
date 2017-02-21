@@ -22,9 +22,20 @@ but are implemented with function-defs in javascript:
   - iterators (each, array, object, etc...)
   - promises
   - do block (?)
+
 ###
 defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require './BaseStn'
 
+  ###
+  IN:
+    props:
+      bound: if true, use () => {} form, else function() {}
+      returnIgnored: if true, no return statement is generated
+      isConstructor: if true
+        - ensure there is a super and put it in the right order
+        - returnIgnored: true is implicit
+
+  ###
   constructor: (props, children) ->
     if children.length == 1
       [onlyChild] = children
@@ -44,6 +55,9 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       @arguments?.argumentNames || []
 
   toJs: ->
+    {returnIgnored, isConstructor, bound} = @props
+    returnIgnored ||= isConstructor
+
     [argsDef, body] = @children
     statements = []
     argsDef = if argsDef
@@ -52,7 +66,9 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       argsDef.toJs()
     else "()"
 
-    bodyJs = body?.toFunctionBodyJsArray !@props.isConstructor
+
+    bodyJs = body?.toFunctionBodyJsArray !returnIgnored
+    # log {bodyJs, returnIgnored, body}
     if @props.isConstructor
       constructorSuperIndex = find bodyJs,
         when: (v) -> v.match /^super\(/
@@ -65,14 +81,13 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
       [@getAutoLets(), beforeSuper, superJs, statements, afterSuper]
 
     else
-      [@getAutoLets(), @props.isConstructor && "super(...arguments)", statements, bodyJs]
+      [@getAutoLets(), isConstructor && "super(...arguments)", statements, bodyJs]
 
     body = if statements.length > 0
       "{#{statements.join '; '};}"
     else "{}"
 
-    if @props.bound
+    if bound
       "#{argsDef} => #{body}"
     else
-      {defineWithKeyword = "function"} = @props
-      "#{defineWithKeyword}#{argsDef} #{body}"
+      "#{if isConstructor then "constructor" else "function"}#{argsDef} #{body}"

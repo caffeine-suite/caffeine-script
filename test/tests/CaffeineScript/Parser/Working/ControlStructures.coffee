@@ -82,6 +82,21 @@ module.exports = suite: parseTestSuite
         if true then x else x
       """: "let y, x; y = true ? (x = 1, true ? x : x) : undefined;"
 
+    nested:
+      """
+      if a
+        b
+        if c
+          d
+      """: "if (a) {b; if (c) {d;};};"
+
+      """
+      out = if a
+        b
+        if c
+          d
+      """: "let out; out = a ? (b, c ? d : undefined) : undefined;"
+
     regressions:
       "if false then :mytrue": 'if (false) {"mytrue";};'
 

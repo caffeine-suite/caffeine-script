@@ -49,7 +49,6 @@ defineModule module, class ClassStn extends require './BaseStn'
         ThisStn()
 
       if constructor
-        constructor.props.defineWithKeyword = "constructor"
         constructor.props.isConstructor = true
         if superCallChildren = constructor.find "Super"
           throw new Error "at most one super call in constructor" unless superCallChildren.length == 1

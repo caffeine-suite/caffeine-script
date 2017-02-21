@@ -155,7 +155,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
     whenClauseWrapper = if whenClause
       (actionStn) ->
         ControlOperatorStn
-          operator: "if"
+          operand: "if"
           whenClause
           actionStn
 
@@ -175,6 +175,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
 
       FunctionDefinitionStn
         bound: true
+        returnIgnored: true
         variableDefinition
 
         switch outputType
@@ -201,7 +202,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
             if whenClause
               if body
                 ControlOperatorStn
-                  operator: "if"
+                  operand: "if"
                   whenClause
 
                   FunctionInvocationStn null,
@@ -209,7 +210,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                     body
               else
                 ControlOperatorStn
-                  operator: "if"
+                  operand: "if"
                   whenClause
 
                   FunctionInvocationStn null,
@@ -217,8 +218,14 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                     valueVarDef
             else
               if body
-                ControlOperatorStn
-                  operator: "if"
+
+                if body.type == "Statements" && body.children.length > 1
+                  allButLast = StatementsStn body.children.slice 0, body.children.length - 1
+                  body = peek body.children
+
+                foundTest = ControlOperatorStn
+                  operand: "if"
+
                   AssignmentStn null,
                     IdentifierStn identifier: "todoRealTemp"
                     body
@@ -227,9 +234,14 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
                     IdentifierStn identifier: brkIdentifer
                     IdentifierStn identifier: "todoRealTemp"
 
+                if allButLast
+                  StatementsStn allButLast, foundTest
+                else
+                  foundTest
+
               else
                 ControlOperatorStn
-                  operator: "if"
+                  operand: "if"
                   valueVarDef
 
                   FunctionInvocationStn null,
