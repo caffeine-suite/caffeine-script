@@ -78,7 +78,7 @@ Caf.defMod(module, () => {
                 originalOffset: originalOffset,
                 originalMatchLength: endOffset - originalOffset
               }))
-            : undefined;
+            : null;
         }
       },
       rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock({

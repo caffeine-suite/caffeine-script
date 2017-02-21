@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
         list.push(prop);
       } else {
         Caf.e(node.matches, undefined, (match, k, into) => {
-          return getPropertySetters(match, list);
+          getPropertySetters(match, list);
         });
       }
     }

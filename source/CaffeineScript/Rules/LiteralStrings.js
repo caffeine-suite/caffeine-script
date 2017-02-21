@@ -29,14 +29,14 @@ Caf.defMod(module, () => {
           ? (minIndent = null, Caf.e(indents, undefined, (i, k, into) => {
               let len;
               len = i.length - 1;
-              return !(minIndent != null) || len < minIndent
-                ? minIndent = len
-                : undefined;
+              if (!(minIndent != null) || len < minIndent) {
+                minIndent = len;
+              }
             }), rest = rest.replace(RegExp(`\\n {${minIndent}}`, "g"), "\n"))
-          : undefined, rest = rest.replace(/^\n/, ""), !(!firstLine ||
+          : null, rest = rest.replace(/^\n/, ""), !(!firstLine ||
           firstLine != null && firstLine.match(/\ */))
           ? rest = firstLine + "\\n" + rest
-          : undefined, rest);
+          : null, rest);
   };
   return function() {
     this.rule({

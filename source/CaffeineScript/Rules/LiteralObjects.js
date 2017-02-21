@@ -32,7 +32,7 @@ Caf.defMod(module, () => {
         getStn: function() {
           let children;
           children = Caf.e(this.getMatchStns(), [], (m, k, into) => {
-            return into.push(m instanceof ObjectStn.class ? m.children : m);
+            into.push(m instanceof ObjectStn.class ? m.children : m);
           });
           return ObjectStn(children);
         }

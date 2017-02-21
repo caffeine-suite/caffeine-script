@@ -40,7 +40,7 @@ Caf.defMod(module, () => {
         }
         return resolveOperatorPrecidence(
           Caf.e(this.binaryOperatorAndExpressions, [], (opAndExp, k, into) => {
-            return into.push(getNormalizedOperator(opAndExp.binaryOperator));
+            into.push(getNormalizedOperator(opAndExp.binaryOperator));
           }),
           compactFlatten([
             left,
@@ -49,7 +49,7 @@ Caf.defMod(module, () => {
               k,
               into
             ) => {
-              return into.push(opAndExp.unaryOpExpression.getStn());
+              into.push(opAndExp.unaryOpExpression.getStn());
             })
           ]),
           function(operandA, operandB, operator) {
@@ -79,20 +79,14 @@ Caf.defMod(module, () => {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
         Caf.e(this.unaryTailOperators || [], undefined, (operand, k, into) => {
-          return stn = UnaryOperatorStn(
-            { operand: operand.toString().trim() },
-            stn
-          );
+          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
         });
         Caf.e((this.unaryOperator_s || []).slice().reverse(), undefined, (
           operand,
           k,
           into
         ) => {
-          return stn = UnaryOperatorStn(
-            { operand: operand.toString().trim() },
-            stn
-          );
+          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
         });
         return stn;
       }

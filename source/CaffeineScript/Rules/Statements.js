@@ -28,7 +28,7 @@ Caf.defMod(module, () => {
             k,
             into
           ) => {
-            return stn = ControlOperatorStn(
+            stn = ControlOperatorStn(
               { operand: tco.tailControlOperator.toString().trim() },
               tco.complexExpression.getStn(),
               stn
