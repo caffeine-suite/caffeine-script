@@ -41,7 +41,7 @@ module.exports = suite: parseTestSuite {
 
   regressions:
     """
-    import &Foo
-    &Bar
-    """: "let Foo = require('foo'), Bar = require('bar'); return Bar;"
+    import &ArtFoundation
+    &BabelBridge
+    """: "let ArtFoundation = require('art-foundation'), BabelBridge = require('babel-bridge'); return BabelBridge;"
 

@@ -14,7 +14,12 @@ class RequireStn extends &BaseStn
 
   @getter
     normalizedIdentifier: -> upperCamelCase @rawIdentifier
-    npmIdentifier: -> dashCase @rawIdentifier
+
+    # throws errors if the module cannot be resolved
+    npmIdentifier: ->
+      require.resolve name = dashCase @rawIdentifier
+      name
+
     rawIdentifier: -> @children[0].props.identifier
     requireString: ->
       if relativeFile = @findFileInPackage()

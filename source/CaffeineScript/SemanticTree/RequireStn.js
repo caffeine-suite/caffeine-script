@@ -28,7 +28,9 @@ Caf.defMod(module, () => {
           return upperCamelCase(this.rawIdentifier);
         },
         npmIdentifier: function() {
-          return dashCase(this.rawIdentifier);
+          let name;
+          require.resolve(name = dashCase(this.rawIdentifier));
+          return name;
         },
         rawIdentifier: function() {
           return this.children[0].props.identifier;
