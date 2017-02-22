@@ -1,0 +1,69 @@
+import &ArtFoundation
+
+##
+  TODO!!! This file still doesn't work.
+  I need to rework quotes, the block-quote has the wrong spacing.
+  Something else is broken, though.
+
+&ScopeStnMixin
+
+class ImportStn extends ScopeStnMixin &BaseStn
+
+  updateScope: (@scope)->
+    @bindAllUniqueIdentifiersRequested()
+
+    @statementsChild = peek @children
+    @importChildren = @children.slice 0, @children.length - 1
+
+    each child in @importChildren
+      child.updateScope @scope
+
+    @scope.addChildScope @
+
+    @statementsChild.updateScope @
+    @importing = Object.keys @identifiersUsedButNotAssigned
+    each id in @identifiersUsedButNotAssigned
+      @scope.addIdentifierAssigned id
+    null
+
+  addIdentifierAssigned: (id, init) ->
+    @scope.addIdentifierAssigned id, init
+
+  jsExpressionUsesReturn: true
+
+  @getter
+    nonImportScope: ->
+      {scope} = @
+      {scope} = scope while scope.class == ImportStn
+      scope
+
+    importFromCaptureIdentifier: ->
+      @_importFromCaptureIdentifier ||= @nonImportScope.bindUniqueIdentifier "parentImports"
+
+  toJs: ->
+    importFromCaptureIdentifier = null
+    if p = @findParent "Import"
+      {importFromCaptureIdentifier} = p
+      true
+
+    importFromCaptureIdentifier ||= "global"
+
+    bodyJs = @statementsChild.toFunctionBodyJs();
+
+    importsJs = array c in @importChildren with c.toJsExpression()
+
+    list = array i in @importing with "" "#{i}"
+    importingJs = "" [#{list.join ', '}]
+
+    imports = if @importing?.length > 0
+      ""
+        ({#{@importing.join ', '}} =
+
+        Caf.i(#{importingJs},
+        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '},
+
+        #{importFromCaptureIdentifier}]));
+
+    else ""
+
+    "#{imports}#{bodyJs}"
