@@ -1,0 +1,6 @@
+import &ArtFoundation
+
+class ObjectDestructuringStn extends &BaseStn
+
+  toJs: ->
+    "{#{@childrenToJs ', '}}"

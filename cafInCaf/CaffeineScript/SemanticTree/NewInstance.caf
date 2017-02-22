@@ -1,0 +1,5 @@
+import &ArtFoundation
+
+class NewInstanceStn extends &BaseStn
+
+  toJs: ->  "new #{@childrenToJs()}"
