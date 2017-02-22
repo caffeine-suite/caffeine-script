@@ -217,6 +217,19 @@ module.exports = suite:
           def
         """: '"abc\\n\\ndef";'
 
+    interpolation: -> parseTests
+      """
+      ""
+        \#{b}
+      """: '"\#{b}";'
+
+      """
+      ""
+        This
+        that and the \#{b}
+        thing.
+      """: '"This\\nthat and the #{b}\\nthing.";'
+
   interpolated: ->
     parseTests
       '"#{foo}"':                        '`${foo}`;'
