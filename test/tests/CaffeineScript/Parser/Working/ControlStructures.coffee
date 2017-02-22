@@ -235,6 +235,10 @@ module.exports = suite: parseTestSuite
 
   throw:
     "throw new Error": "throw new Error;"
+    """
+    a = if foo
+      throw new Error
+    """: "let a; a = foo ? (()=>{throw new Error;})() : null;"
 
   ################################
   # tail control structures

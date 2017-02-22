@@ -1,0 +1,12 @@
+# import &ArtFoundation
+
+class LetStn extends &BaseStn
+
+  toJs: ->
+    {identifiers, identifier} = @props
+    if identifiers
+      throw new Error "LetStn identifiers empty" unless identifiers.length > 0
+      "let #{identifiers.join ', '}"
+    else if identifier
+      "let #{identifier}"
+    else throw new Error "LetStn needs props!"

@@ -8,6 +8,9 @@ Caf.defMod(module, () => {
     this.prototype.toJsExpression = function() {
       return `(()=>{${this.toJs()};})()`;
     };
+    this.prototype.toJsParenExpression = function() {
+      return this.toJsExpression();
+    };
     return this;
   });
 });

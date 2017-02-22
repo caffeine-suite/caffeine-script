@@ -4,3 +4,5 @@ class ThrowStn extends &BaseStn
 
   toJs: ->  "throw #{@childrenToJs()}"
   toJsExpression: -> "(()=>{#{@toJs()};})()"
+
+  toJsParenExpression: -> @toJsExpression()
