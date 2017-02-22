@@ -1,0 +1,30 @@
+import &ArtFoundation, &Lib
+
+class RegExpStn extends &BaseStn
+
+  toJs: ->
+    {value, modifiers} = @props
+
+    str = if @children?.length > 0
+      hasInterpolation = find child in @children with !isString child.props.value
+      array child in @children
+        if isString v = child.props.value
+          if hasInterpolation
+            v.replace /([`$\\])/g, "\\$1"
+          else
+            v
+        else
+          "${#{child.toJsExpression()}}"
+      .join ''
+    else
+      value
+
+    if str.length == 0
+      "/(?:)/"
+    else if hasInterpolation
+      if modifiers
+        "RegExp(`#{str}`, '#{modifiers}')"
+      else
+        "RegExp(`#{str}`)"
+    else
+      "/#{str}/#{modifiers || ''}"
