@@ -17,7 +17,12 @@ contexts:
       push: block_comment
 
     - match: '(?:^( *))"" *\n'
+      scope: string.quoted.double.caffeine
       push: block_string
+
+    - match: '""'
+      scope: string.quoted.double.caffeine
+      push: to_eol_string
 
     - match: '^[|]'
       push: caffeine_mc_block
@@ -54,8 +59,8 @@ contexts:
       scope: punctuation.definition.comment.caffeine
       push: line_comment
 
-    - match: '"".*'
-      scope: string.quoted.double.caffeine
+    # - match: '"".*'
+    #   scope: string.quoted.double.caffeine
 
     # Strings begin and end with quotes, and use backslashes as an escape
     # character
@@ -67,16 +72,38 @@ contexts:
       scope: punctuation.definition.string.begin.caffeine
       push: single_quoted_string
 
+    - match: '\.[_a-zA-Z0-9]'
+
     # Keywords are if, else for and while.
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
     # need to be escaped: this is done by using two single quotes next to each
     # other.
-    - match: '\b(super|instanceof|return|break|into|try|catch|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|in|from|with|do|case|when|import)\b'
-      scope: keyword.control.caffeine
+    - match: '\b(null|super|instanceof|return|break|into|try|catch|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|in|from|with|do|case|when|import)\b'
+      scope: keyword.caffeine
 
     - match: '[.,\[\]\(\)]'
       scope: comment.line_comment
+
+    - match: "\\{"
+      push: main
+
+    - match: "\\}"
+      pop: true
+
+    - match: '\bfor.*\b(in|of)\b'
+      scope: invalid constant.character.escape.caffeine
+
+  interpolation:
+    - match: "\\}"
+      scope: keyword.operator.caffeine
+      pop: true
+    - include: main
+
+  interpolatable:
+    - match: "\\#\\{"
+      scope: keyword.operator.caffeine
+      push: interpolation
 
   caffeine_mc_block:
     - meta_scope: comment.block
@@ -89,17 +116,28 @@ contexts:
       pop: true
 
   block_string:
-    - meta_scope: string.quoted.double.caffeine
     - match: '^(?!\1 +[^ ])(?= *[^ \n])'
       pop: true
+    - include: interpolatable
+    - match: "."
+      scope: string.quoted.double.caffeine
+
+  to_eol_string:
+    - match: '\n'
+      pop: true
+    - include: interpolatable
+    - match: "."
+      scope: string.quoted.double.caffeine
 
   double_quoted_string:
-    - meta_scope: string.quoted.double.caffeine
     - match: '\\.'
       scope: constant.character.escape.caffeine
     - match: '"'
       scope: punctuation.definition.string.end.caffeine
       pop: true
+    - include: interpolatable
+    - match: "."
+      scope: string.quoted.double.caffeine
 
   single_quoted_string:
     - meta_scope: string.quoted.double.caffeine
