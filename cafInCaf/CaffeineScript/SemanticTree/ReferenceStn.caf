@@ -1,0 +1,18 @@
+import &ArtFoundation
+
+class ReferenceStn extends &BaseStn
+
+  updateScope: (@scope) ->
+    if @props.identifierHandle
+      @scope.addUniqueIdentifierHandle @props.identifierHandle
+    else
+      @scope.addIdentifierUsed @toJs()
+    super
+
+  @getter
+    isReference: -> true
+
+  needsParens: false
+  toJs: ->
+    @props.identifierHandle?.identifier
+    || @labeledChildren.identifier.toJs()
