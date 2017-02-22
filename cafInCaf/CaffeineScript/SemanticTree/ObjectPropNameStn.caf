@@ -1,0 +1,26 @@
+import &ArtFoundation
+
+legalUnquotedPropName = /^(0|[1-9a-z_][0-9_a-z]*)$/i
+
+class ObjectPropNameStn extends &BaseStn
+
+  constructor: ->
+    super
+    [nameStn] = @children
+    @props.value = if nameStn
+      nameStn.toJs() # TODO: we should validate
+    else
+      @parseTreeNode.toString()
+
+  toJs: ->
+    [nameStn] = @children
+    if nameStn
+      str = nameStn.toJs()
+      if nameStn.children.length > 0
+        "[#{str}]"
+      else
+        str
+    else
+      value = @parseTreeNode.toString()
+      value = escapeJavascriptString value unless value.match legalUnquotedPropName
+      value

@@ -1,0 +1,37 @@
+import &ArtFoundation
+
+ArrayStn = require './ArrayStn'
+
+class ObjectStn extends &BaseStn
+
+  toJs: -> "{#{(array c in @children with c.toJs()).join ', '}}"
+  toJsStatement: -> "(#{@toJs()})"
+
+  ##
+    TODO: sometimes this should merge with a parent implicit array OR
+    a parent argument list
+
+  splitObjectsAtSameProps = (children) ->
+    currentDefined = {}
+    listOfObjectLiterals = [currentOrder = []]
+
+    each child in children
+      if found = child.find /ObjectPropNameStn/
+        [{props:{value}}] = found
+        if currentDefined[value]
+          currentDefined = {}
+          listOfObjectLiterals.push currentOrder = []
+        currentDefined[value] = true
+      currentOrder.push child
+
+    listOfObjectLiterals
+
+  @newInstance: (props, children) ->
+    listOfObjectLiterals = splitObjectsAtSameProps children
+
+    if listOfObjectLiterals.length == 1
+      new @ props, children
+    else
+      new ArrayStn
+        array c in listOfObjectLiterals
+          new @ props, c

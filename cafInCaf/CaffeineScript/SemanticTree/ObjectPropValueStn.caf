@@ -1,0 +1,10 @@
+import &ArtFoundation
+
+class ObjectPropValueStn extends &BaseStn
+
+  @getter isObject: true
+
+  toJs: ->
+    [prop, value] = @children
+    "#{prop.toJs()}: #{value.toJsExpression()}"
+
