@@ -20,6 +20,9 @@ escapeNewLines: (string) -> string.replace /\n/g,  "\\n"
       Note, if charsToEscape contains a backslash, then we don't consider anything escaped.
       We simply escape every character specified in charsToEscape across string.
 
+escapeMustEscapes: (string) ->
+  string.replace /[\n]/g, '\\n'
+
 escapeUnescaped: (string, charsToEscape = '"') ->
   charsRegExp = /// ([#{escapeRegExp charsToEscape}]) ///g
   split = if charsToEscape.match /\\/

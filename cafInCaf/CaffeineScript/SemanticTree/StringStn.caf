@@ -2,6 +2,22 @@ import &ArtFoundation, &Lib
 
 class StringStn extends &BaseStn
 
-  toJs: -> escapeJavascriptString(deescapeSpaces @props.value).replace /\\\\/g, '\\'
+  toJs: ->
+    escapeJavascriptString
+      deescapeSpaces @value
 
-  toInterpolatedJsStringPart: -> deescapeSpaces escapeUnescaped @props.value, "`$\n"
+    .replace /\\\\/g, '\\'
+
+
+  compactNewLines: ->
+    @props.value = @value.replace /\ *\n */g, " "
+
+  trimRight: -> @props.value = @value.trimRight()
+
+  @getter
+    value: -> @props.value
+
+  toInterpolatedJsStringPart: ->
+    deescapeSpaces escapeUnescaped
+      escapeMustEscapes @value
+      "`$\n"

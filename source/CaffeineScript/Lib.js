@@ -13,6 +13,9 @@ Caf.defMod(module, () => {
     escapeNewLines: function(string) {
       return string.replace(/\n/g, "\\n");
     },
+    escapeMustEscapes: function(string) {
+      return string.replace(/[\n]/g, "\\n");
+    },
     escapeUnescaped: function(string, charsToEscape = '"') {
       let charsRegExp, split;
       charsRegExp = RegExp(`([${escapeRegExp(charsToEscape)}])`, "g");

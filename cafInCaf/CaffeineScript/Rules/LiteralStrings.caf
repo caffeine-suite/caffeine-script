@@ -1,27 +1,6 @@
-import &ArtFoundation, &SemanticTree, &Lib
+import &ArtFoundation, &BabelBridge, &SemanticTree, &Lib
 
 dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
-
-normalizeHereDoc = (hereDoc) ->
-  [all, firstLine, rest] = hereDoc.match /^([^\n]*)(?=\n|$)((?:.|\n)*)/
-
-  if !rest || rest.length == 0
-    firstLine
-  else
-
-    indents = rest.match /\n *(?=[^ \n])/g
-
-    if indents?.length > 0
-      minIndent = null
-      each i in indents
-        len = i.length - 1
-        minIndent = len if !minIndent? || len < minIndent
-      rest = rest.replace ///\n\ {#{minIndent}}///g, "\n"
-
-    rest = rest.replace /^\n/, ''
-    unless !firstLine || firstLine?.match /\ */
-      rest = firstLine + "\\n" + rest
-    rest
 
 ##
   Notes:
@@ -35,16 +14,38 @@ normalizeHereDoc = (hereDoc) ->
 
   @rule
     stringLiteral:
-      pattern: '/"" */ unparsedBlock'
-      getStn: ->
-        StringStn value: @unparsedBlock.toString().trim()
+      {}
+        pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock'
+        getStn: ->
+          ret = super
+
+          unless @tripple
+            if ret.type == "String"
+              ret.compactNewLines()
+            else
+              each child in ret.children when child.type == "String"
+                child.compactNewLines()
+
+          peek ret.children
+          || ret
+          .trimRight?()
+
+          ret
+
+      {}
+        pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock"
+        getStn: ->
+          ret = StringStn value: @unparsedBlock.toString()
+          ret.compactNewLines() unless @tripple
+          ret
+
+    stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "stringBlockBody"
 
   @rule
     stringLiteral:
-      "hereDocDqStringStart mid:hereDocDqStringMiddle interpolation:hereDocDqStringInterpolation? hereDoc:hereDocDqStringEnd"
-      "hereDocSqStringStart mid:hereDocSqStringMiddle interpolation:hereDocSqStringInterpolation? hereDoc:hereDocSqStringEnd"
-      'eolStringStart mid:eolStringMiddle interpolation:eolStringInterpolation? eolStringEnd'
       "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
+
+    stringBlockBody: "/[ \\n]*/ mid:blockStringMiddle interpolation:blockStringInterpolation?"
 
     {}
       getStnChildren: (appendTo = [])->
@@ -53,9 +54,7 @@ normalizeHereDoc = (hereDoc) ->
         appendTo
 
       getStn: ->
-        if @hereDoc
-          StringStn value: normalizeHereDoc @mid.toString()
-        else if @interpolation
+        if @interpolation
           InterpolatedStringStn @getStnChildren()
         else
           StringStn value: @mid.toString()
@@ -69,19 +68,14 @@ normalizeHereDoc = (hereDoc) ->
       getStn: -> StringStn value: @string.toString()
 
   @rule
-    hereDocDqStringStart:   /"""( *(?=\n))?/
-    hereDocSqStringStart:   /'''( *(?=\n))?/
-    eolStringStart:         /"" +/
     dqStringStart:          /"/
 
     interpolationStart:     /\#\{/
     interpolationEnd:       /\}/
 
   @rule
-    eolStringMiddle:        /// ( ([\ ]*(?=\S)) | [^\ \n\\#] | \\[^\n] | \#(?!\{) )* ///
-    dqStringMiddle:         /// ( [^"\\#] | \\. | \#(?!\{) )* ///
-    hereDocDqStringMiddle:  /// ((?!(\n\ *)?""") ( [^\\#] | \\. | \#(?!\{) )) * ///
-    hereDocSqStringMiddle:  /// ((?!(\n\ *)?''') ( [^\\#] | \\. | \#(?!\{) )) * ///
+    dqStringMiddle:         /// ( [^"\\#]    | \\. | \#(?!\{) )* ///
+    blockStringMiddle:      /// ( [^\\#]     | \\.     | \#(?!\{) )* ///
     {}
       toEscapedQuotes: (quote) -> deescapeSpaces escapeUnescaped @toString(), quote
 
@@ -89,10 +83,8 @@ normalizeHereDoc = (hereDoc) ->
       toEscapedDoubleQuotes: -> deescapeSpaces escapeUnescaped @toString(), '"'
 
   @rule
-    dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
-    eolStringInterpolation: "interpolationStart expression interpolationEnd mid:eolStringMiddle interpolation:eolStringInterpolation?"
-    hereDocDqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
-    hereDocSqStringInterpolation: "interpolationStart expression interpolationEnd mid:hearDocDqStringMiddle interpolation:hearDocDqStringInterpolation?"
+    dqStringInterpolation:    "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
+    blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
     {}
       getStnChildren: (appendTo = [])->
         appendTo.push @expression.getStn()
@@ -101,7 +93,4 @@ normalizeHereDoc = (hereDoc) ->
         appendTo
 
   @rule
-    hereDocDqStringEnd: /(\n *)?"""/
-    hereDocSqStringEnd: /(\n *)?'''/
     dqStringEnd: /"/
-    eolStringEnd: /\ *(?=\n|$)/

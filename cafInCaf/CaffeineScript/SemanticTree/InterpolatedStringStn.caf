@@ -2,4 +2,5 @@ import &ArtFoundation
 
 class InterpolatedStringStn extends &BaseStn
 
-  toJs: -> "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"
+  toJs: ->
+    "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"

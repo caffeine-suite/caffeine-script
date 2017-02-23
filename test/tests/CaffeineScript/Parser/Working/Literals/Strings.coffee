@@ -2,18 +2,20 @@
 {log, formattedInspect} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../../Helper'
+{parseTests, parseTestSuite} = require '../../../Helper'
 
-module.exports = suite:
-  basic: ->
-    parseTests
+module.exports = suite: parseTestSuite
+  basic:
       '"hi"':   '"hi";'
       "'hi'":   '"hi";'
       ":hi":    '"hi";'
 
+  empty:
+    '""': '"";'
+    "''": '"";'
+
   multiline:
-    doubleQuotes: ->
-      parseTests
+    doubleQuotes:
         '"\na"':    '"\\na";'
         '"\na\n"':  '"\\na\\n";'
         '"a\n"':    '"a\\n";'
@@ -21,16 +23,14 @@ module.exports = suite:
         '"  a\nb"': '"  a\\nb";'
         '"\\\\ "':  '"\\\\ ";'
 
-    singleQuotes: ->
-      parseTests
+    singleQuotes:
         '"\na"': '"\\na";'
         '"\na\n"': '"\\na\\n";'
         '"a\n"': '"a\\n";'
         '"  a\n"': '"  a\\n";'
         '"  a\nb"': '"  a\\nb";'
 
-  unusualUnquotedStrings: ->
-    parseTests
+  unusualUnquotedStrings:
       ':0':         '"0";'
       ':01':        '"01";'
       ':0a':        '"0a";'
@@ -49,50 +49,20 @@ module.exports = suite:
       ':hi.there':  '"hi.there";'
       ':hi-there':  '"hi-there";'
 
-  hereDocsDoubleQuotes: ->
-    parseTests
-      '"""here"""':       '"here";'
-      '"""\nhere"""':     '"here";'
-      '"""    \nhere"""': '"here";'
-      '"""here\n"""':     '"here";'
-      '"""here\n    """': '"here";'
-
-      '''
-      """
-        here
-        there
-      """
-      ''': '"here\\nthere";'
-
-  hereDocsSingleQuotes: ->
-    parseTests
-      "'''here'''":       '"here";'
-      "'''\nhere'''":     '"here";'
-      "'''    \nhere'''": '"here";'
-      "'''here\n'''":     '"here";'
-      "'''here\n    '''": '"here";'
-
-      """
-      '''
-        here
-        there
-      '''
-      """: '"here\\nthere";'
-
   toEolStrings:
-    "single quote exempt so it can be used in implicit arrays": ->
-      parseTests
-        "'' 0 '' 2":      '["", 0, "", 2];'
+    "single quote exempt so it can be used in implicit arrays":
+        "''  0, '', 2":   '["", 0, "", 2];'
+        "'', 0, '', 2":   '["", 0, "", 2];'
+
+        '""  0, "", 2':   '\'0, "", 2\';'
         '"", 0, "", 2':   '["", 0, "", 2];'
 
-    basic: ->
-      parseTests
+    basic:
         '"" 0':         '"0";'
         '"" hi.there':  '"hi.there";'
         '"" hi-there':  '"hi-there";'
 
-    interpolation: ->
-      parseTests
+    interpolation:
         '"" #{name}':               '`${name}`;'
         '"" a#{name}':              '`a${name}`;'
         '"" #{name}b':              '`${name}b`;'
@@ -102,8 +72,7 @@ module.exports = suite:
         '"" #{a}#{b} -':            '`${a}${b} -`;'
         '"" Hello #{@props.name}.': '`Hello ${this.props.name}.`;'
 
-    escaping: ->
-      parseTests
+    escaping:
         """
         "" \\ abc
         """: '" abc";'
@@ -112,8 +81,7 @@ module.exports = suite:
         "" abc\\tdef\\n
         """: '"abc\\tdef\\n";'
 
-    areTrimmed: ->
-      parseTests
+    areTrimmed:
         '"" abc'      : '"abc";'
 
         '""   abc'    : '"abc";'
@@ -121,117 +89,192 @@ module.exports = suite:
         '""   abc  '  : '"abc";'
 
   blockStrings:
-    basic: ->
-      parseTests
+    singleQuotes:
+      basic:
         """
-        ""
-          abc
-        """: '"abc";'
+        ''
+          hi
+        """: '"hi";'
 
-    quotesDontNeedEscaping: ->
-      parseTests
         """
-        ""
-          "foo"
-        """: """
-          '"foo"';
+        ''
+          hi\\n
+        """: '"hi\\n";'
+
+        """
+        ''
+          hi
+            \#{bye friend}
+        """: '"hi \#{bye friend}";'
+
+        """
+        '''
+          hi
+            \#{bye friend}
+        """: '"hi\\n  \#{bye friend}";'
+
+    doubleQuotes:
+      basic:
           """
-
-      parseTests
-        """
-        ""
-          'foo'
-        """: """
-          "'foo'";
-          """
-
-      parseTests
-        """
-        ""
-          "
           ""
-          ""\"
-        """: '''
-          '"\\n""\\n"""';
+            abc
+          """: '"abc";'
+
           '''
+          """
+            abc
 
-    escapes:
-      escapedNewLines: -> parseTests
-        """
-        ""
-          foo\\nbar
-        """: "\"foo\\nbar\";"
+          ''': '"abc";'
+          """
+          ""
+            hi
+              \#{bye friend}
+          """: '`hi ${bye(friend)}`;'
 
-        """
-        ""
-          foo
-          bar\\n
-        """: "\"foo\\nbar\\n\";"
+      quotesDontNeedEscaping:
+          """
+          ""
+            "foo"
+          """: """
+            '"foo"';
+            """
 
-      escapedTabs: -> parseTests
-        """
-        ""
-          foo\\tbar
-        """: "\"foo\\tbar\";"
+          """
+          ""
+            'foo'
+          """: """
+            "'foo'";
+            """
+
+          """
+          ""
+            "
+            ""
+            ""\"
+          """: '''
+            '" "" """';
+            '''
+
+      escapes:
+        escapedNewLines:
+          """
+          ""
+            foo\\nbar
+          """: "\"foo\\nbar\";"
+
+          '''
+          """
+            foo
+            bar\\n
+          ''': "\"foo\\nbar\\n\";"
+
+        escapedTabs:
+          """
+          ""
+            foo\\tbar
+          """: "\"foo\\tbar\";"
 
 
-    whitespace:
-      basic: -> parseTests
-        """
-        ""
-          abc
-          def
-        """: '"abc\\ndef";'
+      whitespace:
+        twoDoubleQuote:
+          basic:
+            '''
+            ""
+              abc
+              def
+            ''': '"abc def";'
 
-      preNewLine: -> parseTests
-        """
-        ""
+            '''
+            ""
 
-          abc
-          def
-        """: '"abc\\ndef";'
+              abc
+              def
 
-      postNewLine: -> parseTests
+            ''': '"abc def";'
 
-        """
-        ""
-          abc
-          def
+            '''
+            ""
 
-        123
-        """: '"abc\\ndef"; 123;'
+              abc
+                asdf
+              def
 
-      nonFirstLineExtraIndent: -> parseTests
+            ''': '"abc asdf def";'
 
-        """
-        ""
-          abc
-            def
-        """: '"abc\\n  def";'
+            '''
+            ""
 
-      middleNewLine: -> parseTests
-        """
-        ""
-          abc
+              abc
+                \#{a b}
+              def
 
-          def
-        """: '"abc\\n\\ndef";'
+            ''': '`abc ${a(b)} def`;'
 
-    interpolation: -> parseTests
-      """
-      ""
-        \#{b}
-      """: '"\#{b}";'
 
-      """
-      ""
-        This
-        that and the \#{b}
-        thing.
-      """: '"This\\nthat and the #{b}\\nthing.";'
+        threeDoubleQuote:
+          basic:
+            '''
+            """
+              abc
+              def
+            ''': '"abc\\ndef";'
 
-  interpolated: ->
-    parseTests
+          preNewLine:
+            '''
+            """
+
+              abc
+              def
+            ''': '"abc\\ndef";'
+
+          postNewLine:
+
+            '''
+            """
+              abc
+              def
+
+            123
+            ''': '"abc\\ndef"; 123;'
+
+          nonFirstLineExtraIndent:
+
+            '''
+            """
+              abc
+                def
+            ''': '"abc\\n  def";'
+
+          middleNewLine:
+            '''
+            """
+              abc
+
+              def
+            ''': '"abc\\n\\ndef";'
+
+          interpolation:
+            '''
+            """
+              abc
+              #{a b}
+              def
+            ''': '`abc\\n${a(b)}\\ndef`;'
+
+        interpolation:
+          """
+          ""
+            \#{b}
+          """: '`${b}`;'
+
+          '''
+          """
+            This
+            that and the \#{b}
+            thing.
+          ''': '`This\\nthat and the ${b}\\nthing.`;'
+
+  interpolated:
       '"#{foo}"':                        '`${foo}`;'
       '"${#{foo}}"':                     '`\\${${foo}}`;'
       '"#{foo}after"':                   '`${foo}after`;'
