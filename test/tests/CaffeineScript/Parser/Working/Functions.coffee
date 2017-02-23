@@ -57,7 +57,7 @@ module.exports = suite: parseTestSuite
 
   invocation:
     noParens:
-      "foo 1"    : "foo(1);"
+      "foo 5"    : "foo(5);"
       "foo 1, 2" : "foo(1, 2);"
       "foo 1 2"  : "foo(1, 2);"
       "foo 'bar'": 'foo("bar");'
@@ -158,3 +158,15 @@ module.exports = suite: parseTestSuite
         foo # comment 1
           not a comment
         """: "foo(!a(comment));"
+
+      # TODO
+      # ellipsis:
+      #   "a b...": "a(...b);"
+      #   "a b..., c": "a(...b, c);"
+      #   "a b..., c...": "a(...b, ...c);"
+      #   """
+      #   a
+      #     b
+      #     c...
+      #     d
+      #   """: "a(b, ...c, d);"
