@@ -1,0 +1,7 @@
+import &ArtFoundation
+
+class GlobalIdentifierStn extends &BaseStn
+
+  needsParens: false
+
+  toJs: -> @props.identifier

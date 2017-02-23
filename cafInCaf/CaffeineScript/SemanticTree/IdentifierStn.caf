@@ -1,0 +1,15 @@
+import &ArtFoundation
+
+class IdentiferStn extends &BaseStn
+
+  @getter
+    name: -> @props.identifier
+    isIdentifier: -> true
+
+  updateScope: (@scope) ->
+    if @props.identifierHandle
+      @scope.addUniqueIdentifierHandle @props.identifierHandle
+    super
+
+  needsParens: false
+  toJs: -> (@props.identifierHandle || @props).identifier

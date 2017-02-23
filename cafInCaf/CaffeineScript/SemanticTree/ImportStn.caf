@@ -1,10 +1,5 @@
 import &ArtFoundation
 
-##
-  TODO!!! This file still doesn't work.
-  I need to rework quotes, the block-quote has the wrong spacing.
-  Something else is broken, though.
-
 class ImportStn extends &ScopeStnMixin &BaseStn
 
   updateScope: (@scope)->
