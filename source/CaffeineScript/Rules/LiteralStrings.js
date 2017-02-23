@@ -13,6 +13,15 @@ Caf.defMod(module, () => {
   ));
   return function() {
     this.rule({
+      doubleQuote: /"/,
+      singleQuote: /'/,
+      interpolationStart: /\#\{/,
+      interpolationEnd: /\}/,
+      dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
+      sqStringMiddle: /([^'\\#]|\\.|\#(?!\{))*/,
+      blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
+    });
+    this.rule({
       stringLiteral: [
         {
           pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock',
@@ -35,6 +44,15 @@ Caf.defMod(module, () => {
               ret.compactNewLines();
             }
             return ret;
+          }
+        },
+        {
+          pattern: "':' string:unquotedString",
+          getStn: function() {
+            return StringStn({ value: this.string.toString() }).compactNewLines(
+              true,
+              true
+            );
           }
         }
       ],
@@ -71,23 +89,6 @@ Caf.defMod(module, () => {
         }
       }
     );
-    this.rule({ stringLiteral: "':' string:unquotedString" }, {
-      getStn: function() {
-        return StringStn({ value: this.string.toString() }).compactNewLines(
-          true,
-          true
-        );
-      }
-    });
-    this.rule({
-      doubleQuote: /"/,
-      singleQuote: /'/,
-      interpolationStart: /\#\{/,
-      interpolationEnd: /\}/,
-      dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
-      sqStringMiddle: /([^'\\#]|\\.|\#(?!\{))*/,
-      blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
-    });
     return this.rule(
       {
         dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?",
