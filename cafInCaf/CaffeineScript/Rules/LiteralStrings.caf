@@ -1,15 +1,5 @@
 import &ArtFoundation, &BabelBridge, &SemanticTree, &Lib
 
-dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
-
-##
-  Notes:
-
-    1) generate ES6 interpolations: `foo#{bar}`
-    2) unparsedBlock needs to be interpolated (create a new block-type that starts the sub-parse on rule: stringBlock)
-    3) "" EOL needs interpolation
-    4) #tripples """ and ''' need interpolation
-
 ->
 
   @rule
@@ -18,18 +8,8 @@ dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
         pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock'
         getStn: ->
           ret = super
-
-          unless @tripple
-            if ret.type == "String"
-              ret.compactNewLines()
-            else
-              each child in ret.children when child.type == "String"
-                child.compactNewLines()
-
-          peek ret.children
-          || ret
-          .trimRight?()
-
+          ret.compactNewLines() unless @tripple
+          ret.trimRight?()
           ret
 
       {}
@@ -43,7 +23,8 @@ dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
 
   @rule
     stringLiteral:
-      "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd"
+      "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote"
+      "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
 
     stringBlockBody: "/[ \\n]*/ mid:blockStringMiddle interpolation:blockStringInterpolation?"
 
@@ -54,36 +35,38 @@ dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
         appendTo
 
       getStn: ->
-        if @interpolation
+        ret = if @interpolation
           InterpolatedStringStn @getStnChildren()
         else
           StringStn value: @mid.toString()
 
+        if @bracketStart
+          ret.compactNewLines true, true
+        ret
+
   @rule
     stringLiteral:
-      "/'/ string:/([^\\']|\\.)*/ /'/"
       "':' string:unquotedString"
 
     {}
-      getStn: -> StringStn value: @string.toString()
+      getStn: ->
+        StringStn value: @string.toString()
+        .compactNewLines true, true
 
   @rule
-    dqStringStart:          /"/
+    doubleQuote:          /"/
+    singleQuote:          /'/
 
     interpolationStart:     /\#\{/
     interpolationEnd:       /\}/
 
-  @rule
     dqStringMiddle:         /// ( [^"\\#]    | \\. | \#(?!\{) )* ///
+    sqStringMiddle:         /// ( [^'\\#]    | \\. | \#(?!\{) )* ///
     blockStringMiddle:      /// ( [^\\#]     | \\.     | \#(?!\{) )* ///
-    {}
-      toEscapedQuotes: (quote) -> deescapeSpaces escapeUnescaped @toString(), quote
-
-      toEscapedBackTicks:    -> deescapeSpaces escapeUnescaped @toString(), '`'
-      toEscapedDoubleQuotes: -> deescapeSpaces escapeUnescaped @toString(), '"'
 
   @rule
     dqStringInterpolation:    "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
+    sqStringInterpolation:    "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?"
     blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
     {}
       getStnChildren: (appendTo = [])->
@@ -91,6 +74,3 @@ dqStringStartRegexp = /// " ( [^\\"\#] | \\[\s\S] | \#(?!\{) )* ///
         appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
         @interpolation?.getStnChildren appendTo
         appendTo
-
-  @rule
-    dqStringEnd: /"/

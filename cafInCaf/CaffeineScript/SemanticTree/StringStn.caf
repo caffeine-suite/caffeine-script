@@ -8,9 +8,11 @@ class StringStn extends &BaseStn
 
     .replace /\\\\/g, '\\'
 
-
-  compactNewLines: ->
+  compactNewLines: (compactLeft, compactRight) ->
+    @props.value = @value.replace /^\ *\n */, '' if compactLeft
+    @props.value = @value.replace /\ *\n *$/, '' if compactRight
     @props.value = @value.replace /\ *\n */g, " "
+    @
 
   trimRight: -> @props.value = @value.trimRight()
 

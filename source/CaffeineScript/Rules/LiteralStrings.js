@@ -4,53 +4,25 @@ Caf.defMod(module, () => {
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("../SemanticTree"),
     Lib = require("../Lib"),
-    dqStringStartRegexp,
     Extensions,
-    peek,
     StringStn,
-    InterpolatedStringStn,
-    deescapeSpaces,
-    escapeUnescaped;
-  ({
-    Extensions,
-    peek,
-    StringStn,
-    InterpolatedStringStn,
-    deescapeSpaces,
-    escapeUnescaped
-  } = Caf.i(
-    [
-      "Extensions",
-      "peek",
-      "StringStn",
-      "InterpolatedStringStn",
-      "deescapeSpaces",
-      "escapeUnescaped"
-    ],
+    InterpolatedStringStn;
+  ({ Extensions, StringStn, InterpolatedStringStn } = Caf.i(
+    ["Extensions", "StringStn", "InterpolatedStringStn"],
     [ArtFoundation, BabelBridge, SemanticTree, Lib, global]
   ));
-  dqStringStartRegexp = /"([^\\"\#]|\\[\s\S]|\#(?!\{))*/;
   return function() {
     this.rule({
       stringLiteral: [
         {
           pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock',
           getStn: function() {
-            let ret, base;
+            let ret;
             ret = Caf.getSuper(this).getStn.apply(this, arguments);
             if (!this.tripple) {
-              if (ret.type === "String") {
-                ret.compactNewLines();
-              } else {
-                Caf.e(ret.children, undefined, (child, k, into) => {
-                  if (child.type === "String") {
-                    child.compactNewLines();
-                  }
-                });
-              }
+              ret.compactNewLines();
             }
-            Caf.isF((base = peek(ret.children) || ret).trimRight) &&
-              base.trimRight();
+            Caf.isF(ret.trimRight) && ret.trimRight();
             return ret;
           }
         },
@@ -72,7 +44,10 @@ Caf.defMod(module, () => {
     });
     this.rule(
       {
-        stringLiteral: "dqStringStart mid:dqStringMiddle interpolation:dqStringInterpolation? dqStringEnd",
+        stringLiteral: [
+          "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
+          "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
+        ],
         stringBlockBody: "/[ \\n]*/ mid:blockStringMiddle interpolation:blockStringInterpolation?"
       },
       {
@@ -85,50 +60,38 @@ Caf.defMod(module, () => {
           return appendTo;
         },
         getStn: function() {
-          return this.interpolation
+          let ret;
+          ret = this.interpolation
             ? InterpolatedStringStn(this.getStnChildren())
             : StringStn({ value: this.mid.toString() });
+          if (this.bracketStart) {
+            ret.compactNewLines(true, true);
+          }
+          return ret;
         }
       }
     );
-    this.rule(
-      {
-        stringLiteral: [
-          "/'/ string:/([^\\']|\\.)*/ /'/",
-          "':' string:unquotedString"
-        ]
-      },
-      {
-        getStn: function() {
-          return StringStn({ value: this.string.toString() });
-        }
+    this.rule({ stringLiteral: "':' string:unquotedString" }, {
+      getStn: function() {
+        return StringStn({ value: this.string.toString() }).compactNewLines(
+          true,
+          true
+        );
       }
-    );
-    this.rule({
-      dqStringStart: /"/,
-      interpolationStart: /\#\{/,
-      interpolationEnd: /\}/
     });
-    this.rule(
-      {
-        dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
-        blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
-      },
-      {
-        toEscapedQuotes: function(quote) {
-          return deescapeSpaces(escapeUnescaped(this.toString(), quote));
-        },
-        toEscapedBackTicks: function() {
-          return deescapeSpaces(escapeUnescaped(this.toString(), "`"));
-        },
-        toEscapedDoubleQuotes: function() {
-          return deescapeSpaces(escapeUnescaped(this.toString(), '"'));
-        }
-      }
-    );
-    this.rule(
+    this.rule({
+      doubleQuote: /"/,
+      singleQuote: /'/,
+      interpolationStart: /\#\{/,
+      interpolationEnd: /\}/,
+      dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
+      sqStringMiddle: /([^'\\#]|\\.|\#(?!\{))*/,
+      blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
+    });
+    return this.rule(
       {
         dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?",
+        sqStringInterpolation: "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?",
         blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
       },
       {
@@ -143,6 +106,5 @@ Caf.defMod(module, () => {
         }
       }
     );
-    return this.rule({ dqStringEnd: /"/ });
   };
 });

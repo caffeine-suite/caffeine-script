@@ -30,8 +30,15 @@ Caf.defMod(module, () => {
           "\\"
         );
       };
-      this.prototype.compactNewLines = function() {
-        return this.props.value = this.value.replace(/\ *\n */g, " ");
+      this.prototype.compactNewLines = function(compactLeft, compactRight) {
+        if (compactLeft) {
+          this.props.value = this.value.replace(/^\ *\n */, "");
+        }
+        if (compactRight) {
+          this.props.value = this.value.replace(/\ *\n *$/, "");
+        }
+        this.props.value = this.value.replace(/\ *\n */g, " ");
+        return this;
       };
       this.prototype.trimRight = function() {
         return this.props.value = this.value.trimRight();

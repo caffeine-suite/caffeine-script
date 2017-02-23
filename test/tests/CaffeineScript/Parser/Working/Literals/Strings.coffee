@@ -5,32 +5,43 @@
 {parseTests, parseTestSuite} = require '../../../Helper'
 
 module.exports = suite: parseTestSuite
-  basic:
-      '"hi"':   '"hi";'
-      "'hi'":   '"hi";'
+  bracketStrings:
+    basic:
+        '"hi"':   '"hi";'
+        "'hi'":   '"hi";'
+
+    empty:
+      '""': '"";'
+      "''": '"";'
+
+    multiline:
+      doubleQuotes:
+          '"\na"':    '"a";'
+          '"\na\n"':  '"a";'
+          '"a\n"':    '"a";'
+          '"  a\n"':  '"  a";'
+          '"  a\nb"': '"  a b";'
+          '"\\\\ "':  '"\\\\ ";'
+
+      singleQuotes:
+          "'\na'":    '"a";'
+          "'\na\n'":  '"a";'
+          "'a\n'":    '"a";'
+          "'  a\n'":  '"  a";'
+          "'  a\nb'": '"  a b";'
+
+    interpolation:
+      '"\#{a b}"':    "`${a(b)}`;"
+      '"a\#{a b}b"':  "`a${a(b)}b`;"
+
+      "'\#{a b}'":    "`${a(b)}`;"
+      "'a\#{a b}b'":  "`a${a(b)}b`;"
+
+  unquotedStrings:
+    basic:
       ":hi":    '"hi";'
 
-  empty:
-    '""': '"";'
-    "''": '"";'
-
-  multiline:
-    doubleQuotes:
-        '"\na"':    '"\\na";'
-        '"\na\n"':  '"\\na\\n";'
-        '"a\n"':    '"a\\n";'
-        '"  a\n"':  '"  a\\n";'
-        '"  a\nb"': '"  a\\nb";'
-        '"\\\\ "':  '"\\\\ ";'
-
-    singleQuotes:
-        '"\na"': '"\\na";'
-        '"\na\n"': '"\\na\\n";'
-        '"a\n"': '"a\\n";'
-        '"  a\n"': '"  a\\n";'
-        '"  a\nb"': '"  a\\nb";'
-
-  unusualUnquotedStrings:
+    unusual:
       ':0':         '"0";'
       ':01':        '"01";'
       ':0a':        '"0a";'

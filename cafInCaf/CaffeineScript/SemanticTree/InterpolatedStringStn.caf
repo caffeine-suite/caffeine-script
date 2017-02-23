@@ -2,5 +2,15 @@ import &ArtFoundation
 
 class InterpolatedStringStn extends &BaseStn
 
+  compactNewLines: (compactLeft, compactRight)->
+    each child, i in @children when child.type == "String"
+      child.compactNewLines
+        compactLeft && i == 0
+        compactRight && i == @children.length - 1
+
+  trimRight: ->
+    peek @children
+    ?.trimRight?()
+
   toJs: ->
     "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"
