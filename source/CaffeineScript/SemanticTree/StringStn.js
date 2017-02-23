@@ -37,7 +37,7 @@ Caf.defMod(module, () => {
         if (compactRight) {
           this.props.value = this.value.replace(/\ *\n *$/, "");
         }
-        this.props.value = this.value.replace(/\ *\n */g, " ");
+        this.props.value = this.value.replace(/(\ *\n *)+/g, " ");
         return this;
       };
       this.prototype.trimRight = function() {

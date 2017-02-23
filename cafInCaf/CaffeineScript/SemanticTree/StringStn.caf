@@ -11,7 +11,7 @@ class StringStn extends &BaseStn
   compactNewLines: (compactLeft, compactRight) ->
     @props.value = @value.replace /^\ *\n */, '' if compactLeft
     @props.value = @value.replace /\ *\n *$/, '' if compactRight
-    @props.value = @value.replace /\ *\n */g, " "
+    @props.value = @value.replace /(\ *\n *)+/g, " "
     @
 
   trimRight: -> @props.value = @value.trimRight()

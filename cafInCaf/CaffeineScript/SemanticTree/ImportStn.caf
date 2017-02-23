@@ -5,9 +5,7 @@ import &ArtFoundation
   I need to rework quotes, the block-quote has the wrong spacing.
   Something else is broken, though.
 
-&ScopeStnMixin
-
-class ImportStn extends ScopeStnMixin &BaseStn
+class ImportStn extends &ScopeStnMixin &BaseStn
 
   updateScope: (@scope)->
     @bindAllUniqueIdentifiersRequested()
@@ -22,7 +20,7 @@ class ImportStn extends ScopeStnMixin &BaseStn
 
     @statementsChild.updateScope @
     @importing = Object.keys @identifiersUsedButNotAssigned
-    each id in @identifiersUsedButNotAssigned
+    each v, id in @identifiersUsedButNotAssigned
       @scope.addIdentifierAssigned id
     null
 
@@ -34,7 +32,8 @@ class ImportStn extends ScopeStnMixin &BaseStn
   @getter
     nonImportScope: ->
       {scope} = @
-      {scope} = scope while scope.class == ImportStn
+      {scope} = scope while scope.type == "Import"
+      # {scope} = scope while scope.class == ImportStn
       scope
 
     importFromCaptureIdentifier: ->

@@ -197,6 +197,14 @@ module.exports = suite: parseTestSuite
 
             '''
             ""
+              abc
+
+
+              def
+            ''': '"abc def";'
+
+            '''
+            ""
 
               abc
               def
