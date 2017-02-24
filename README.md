@@ -92,7 +92,7 @@ I believe syntax matters. In my experience every line of code written gets edite
 
 ### Code is a Liability
 
-While the product of code is an asset - it creates value in the world, code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
+The product of code is an asset. It creates value in the world. However, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
 
 ## Good Design and Programming Languages
 
