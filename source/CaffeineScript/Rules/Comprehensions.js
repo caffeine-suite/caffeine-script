@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        comprehension: "\n  outputType:comprehensionOutputType _\n  variableDefinition:comprehensionVariableDef_?\n  iterationType:comprehensionIterationTypeClause_?\n\n  iterable:comprehensionIterable\n  into:comprehensionInto?\n  whenClause:comprehensionWhen?\n  body:comprehensionBody?\n  "
+        comprehension: "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
       },
       { stnFactory: "ComprehensionStn" }
     );

@@ -51,9 +51,3 @@ module.exports = suite: parseTestSuite
     "1 + (2 * 5)":    "1 + 2 * 5;"
     "(new Foo).bar":  "(new Foo).bar;"
 
-    """
-    (
-      1 + 2
-    ) * 5
-    """: "(1 + 2) * 5;"
-

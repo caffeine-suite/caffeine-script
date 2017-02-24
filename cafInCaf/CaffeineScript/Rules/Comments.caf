@@ -14,4 +14,4 @@ import &ArtFoundation
     lineStartComment: "comment _end" "_end"
     lineEndComment:   "_? comment? _end lineStartComment*"
 
-    # {} getPresent: -> false
+    {} getPresent: -> false
