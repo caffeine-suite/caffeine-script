@@ -58,13 +58,13 @@ Caf.defMod(module, () => {
     });
     this.rule({
       super: {
-        pattern: "/super/ superFunctionInvocation",
+        pattern: "/super\\b/ superFunctionInvocation",
         stnFactory: "SuperStn"
       }
     });
     this.rule({
       super: {
-        pattern: /super/,
+        pattern: /super\b/,
         stnFactory: "SuperStn",
         stnProps: { passArguments: true }
       }

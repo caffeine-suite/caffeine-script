@@ -38,12 +38,12 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     super:
-      pattern:"/super/ superFunctionInvocation"
+      pattern:"/super\\b/ superFunctionInvocation"
       stnFactory: :SuperStn
 
   @rule
     super:
-      pattern:    /super/
+      pattern:    /super\b/
       stnFactory: :SuperStn
       stnProps:   passArguments: true
 

@@ -79,11 +79,11 @@ module.exports = suite: parseTestSuite
       # """: "Foo = Caf.defClass(class Foo extends Bar {},
       #   function() {this.prototype.foo = function() {return Caf.getSuper(this).foo.apply(this, arguments);}; return this;});"
 
-
       "foo: -> super":    "({foo: function() {return Caf.getSuper(this).foo.apply(this, arguments);}});"
-      # "foo: -> super()":  "({foo: function() {return Caf.getSuper(this).foo.call(this);}});"
-      # "@foo: -> super":   '({"@foo": function() {return Caf.getSuper(this).foo.apply(this, arguments);}});'
-      # "foo: -> super 1":  "({foo: function() {return Caf.getSuper(this).foo.call(this, 1);}});"
+      "foo: -> super()":  "({foo: function() {return Caf.getSuper(this).foo.call(this);}});"
+      "@foo: -> super":   '({"@foo": function() {return Caf.getSuper(this).foo.apply(this, arguments);}});'
+      "foo: -> super 1":  "({foo: function() {return Caf.getSuper(this).foo.call(this, 1);}});"
+      "foo: -> superFoo": "({foo: function() {return superFoo;}});"
 
     constructors:
       """
