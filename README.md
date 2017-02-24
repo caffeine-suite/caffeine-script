@@ -2,12 +2,14 @@
 
 ### Programming with Caffeine
 
+CaffeineScript, or CafScript for short, makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript.
+
+CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters*. My primary inspirations are CoffeeScript, Ruby and ES6.
+
 > WARNING:
 > CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
 
-CaffeineScript, or CafScript for short, makes programming more wonderful, code more beautiful and programmers more productive.
-
-CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters. It is a lean, high-level language that compiles to JavaScript. My primary inspirations are CoffeeScript, Ruby and ES6.
+(*) Assuming the language + runtime is capable of meeting your requirements, such as performance.
 
 ### Maximizing Programmer (My) Productivity
 
@@ -33,14 +35,18 @@ After you've read this short intro file, check out the [CaffeineScript Wiki](htt
 ### Example
 
 ```coffeescript
-# CaffeineScript - 28 tokens and 0 matching-token-pairs
+# CaffeineScript
+# - 28 tokens
+# - 0 matching-token-pairs
 import &ArtSuite
 
 class Login extends Component
 
   render: ->
     Dialog
-      TextElement text: :username size: ww: 1 hch: 1
+      TextElement
+        text: :username
+        size: ww: 1 hch: 1
 
       TextInput
         placeholder: "" enter username here
@@ -48,7 +54,9 @@ class Login extends Component
 ```
 
 ```javascript
-// ES6 - 70 tokens and 11 matching-token-pairs
+// ES6
+// - 70 tokens
+// - 11 matching-token-pairs
 let {
   Component,
   Dialog,
