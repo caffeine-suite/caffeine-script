@@ -19,10 +19,7 @@ getPropertySetters = (node, list = []) ->
       stnProps: -> bound: @_arrow_.text.match /=>/
 
   @rule
-    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "functionDefinitionBodyBlockSubParse"
-    functionDefinitionBodyBlockSubParse:
-      pattern: "end? statement* end?"
-      stnFactory: :StatementsStn
+    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
 
   @rule
     argsDefinition:

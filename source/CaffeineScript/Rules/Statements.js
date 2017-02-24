@@ -11,13 +11,15 @@ Caf.defMod(module, () => {
     global
   ]));
   return {
-    statement: "statementWithoutEnd newLineStatementExtension* end",
+    statement: [
+      "statementWithoutEnd newLineStatementExtension* end",
+      "importStatement"
+    ],
     tailControlOperator: /\ +(if|while|until|unless) +/,
     tailControlOperatorComplexExpression: "tailControlOperator complexExpression",
     statementWithoutEnd: [
       "lineStartExpression",
       "complexExpression !tailControlOperator",
-      "importStatement",
       {
         pattern: "complexExpression tailControlOperatorComplexExpression+",
         getStn: function() {
@@ -45,7 +47,7 @@ Caf.defMod(module, () => {
       }
     },
     importStatement: {
-      pattern: "/import/ _ valueList functionDefinitionBodyBlockSubParse",
+      pattern: "/import/ _ valueList end root",
       stnFactory: "ImportStn"
     },
     newLineStatementExtension: [

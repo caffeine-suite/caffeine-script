@@ -37,13 +37,7 @@ Caf.defMod(module, () => {
       }
     );
     this.rule({
-      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-        { rule: "functionDefinitionBodyBlockSubParse" }
-      ),
-      functionDefinitionBodyBlockSubParse: {
-        pattern: "end? statement* end?",
-        stnFactory: "StatementsStn"
-      }
+      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
     });
     this.rule(
       { argsDefinition: { pattern: "openParen_ argDefList? _closeParen" } },

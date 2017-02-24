@@ -112,16 +112,33 @@ module.exports = suite:
           hello
         a
       """: "(function() {return a;});"
+
   failures: illegalSyntaxTests
-    basic:
-      """
-        # hi
-      a
-      """
-    functions:
-      """
-      ->
-        ##
-          hello
-        for
-      """
+      basic:
+        """
+          # hi
+        a
+        """
+      functions: [
+        """
+        ->
+          ##
+            hello
+          for
+        """
+        """
+        ->
+          abc
+          ->
+            ##
+              wtf
+            for
+        """
+        """
+        import a
+        ->
+          ##
+            wtf
+          for
+        """
+      ]
