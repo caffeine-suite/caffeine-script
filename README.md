@@ -88,13 +88,11 @@ module.exports = class Login extends Component {
 
 ## Syntax Matters
 
-I believe syntax matters. Every line of code we write, throughout the product lifecycle, will get edited at approximately 10 times and read approximately 100 times. Therefor every token costs 10x - 100x more programmer-time overall compared to the initial cost of adding it. (1)
+I believe syntax matters. In my experience every line of code written gets edited at least 10 times and read at least 100 over the product's lifetime. Therefor, every token costs 10x - 100x more programmer-time overall compared to the initial cost of adding it.
 
 ### Code is a Liability
 
-While the product of code is an asset - it creates value in the world, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
-
-(1) These are, of course, rough numbers with no study backing them up. They are based on personal experience.
+While the product of code is an asset - it creates value in the world, code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
 
 ## Good Design and Programming Languages
 
