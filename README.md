@@ -43,7 +43,7 @@ import &ArtSuite
 class Login extends Component
 
   render: ->
-    Dialog
+    Element
       TextElement
         text: :username
         size: ww: 1 hch: 1
@@ -59,14 +59,14 @@ class Login extends Component
 // - 11 matching-token-pairs
 let {
   Component,
-  Dialog,
+  Element,
   TextElement,
   TextInput
 } = require('art-suite');
 
 module.exports = class Login extends Component {
   render() {
-    Dialog(
+    Element(
       TextElement({
         text: 'username',
         size: {ww: 1, hch: 1}
