@@ -28,7 +28,7 @@ Caf.defMod(module, () => {
         "parentheticalExpression"
       ]
     });
-    this.rule({ parentheticalExpression: "'(' __? expression __? ')'" });
+    this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
       require: { pattern: "/&/ identifier", stnFactory: "RequireStn" }
     });

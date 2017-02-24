@@ -9,7 +9,7 @@ import &ArtFoundation, &BabelBridge
     simpleValue: :require :globalIdentifier :this :thisProperty :literal :super :unqualifiedIdentifier :parentheticalExpression
 
   @rule
-    parentheticalExpression: "'(' __? expression __? ')'"
+    parentheticalExpression: "'(' _? expression _? ')'"
 
   @rule
     require:

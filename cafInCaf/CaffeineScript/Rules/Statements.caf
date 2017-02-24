@@ -7,7 +7,7 @@ tailControlOperatorComplexExpression: "tailControlOperator complexExpression"
 
 statementWithoutEnd:
   :lineStartExpression
-  'complexExpression !tailControlOperator'
+  "" complexExpression !tailControlOperator
   :importStatement
 
   pattern: 'complexExpression tailControlOperatorComplexExpression+',

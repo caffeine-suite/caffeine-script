@@ -1,5 +1,5 @@
 {CaffeineScript} = Neptune
-{log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.Foundation
+{each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.Foundation
 {Parser} = CaffeineScript
 require "colors"
 
@@ -73,8 +73,18 @@ module.exports =
     Caf.defMod(module, () => {#{body}});
     """
 
-  illegalSyntaxTests: (array) ->
-    for source in array
-      do (source) ->
+  illegalSyntaxTests: illegalSyntaxTests = (a) ->
+    # log illegalSyntaxTests: {a}
+    if isString source = a
+      ->
         test "illegal: #{source.replace(/\n/g, "\\n")}", ->
-          assert.throws -> Parse.parse source, verbose: true
+          assert.rejects -> Parser.parse source, verbose: true
+
+    else if isArray a
+      object a, illegalSyntaxTests
+
+    else if isPlainObject a
+      object (a), (v, k) ->
+        illegalSyntaxTests v
+
+    else throw new Error "invalid type: #{formattedInspect a}"
