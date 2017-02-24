@@ -105,7 +105,7 @@ Good design in programming, just like in anything else, is important. Sadly, goo
   * less is more
   * hide clutter
   * streamline the most common work flows
-  * place uncommon work-flows 'off-screen' so they don't distract
+  * place uncommon work-flows 'off-screen' so they don't distract, or in the case of programming languages, behind more verbose syntax so we can reserve the limited, streamlined syntax options for the most common use-cases
 
 I look forward to the day when there are design awards for programing languages, editors, IDEs, compilers, debuggers, etc.
 
