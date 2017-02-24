@@ -62,7 +62,7 @@ defineModule module, class FunctionDefinitionStn extends ScopeStnMixin require '
     statements = []
     argsDef = if argsDef
 
-      statements = (statements for arg in argsDef.children when statements = arg.getFunctionPreBodyStatementsJs())
+      statements = (preBodyStatements for arg in argsDef.children when preBodyStatements = arg.getFunctionPreBodyStatementsJs())
       argsDef.toJs()
     else "()"
 
