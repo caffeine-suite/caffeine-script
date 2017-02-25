@@ -73,7 +73,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          this.interpolation != null &&
+          Caf.exists(this.interpolation) &&
             this.interpolation.getStnChildren(appendTo);
           return appendTo;
         },
@@ -101,7 +101,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          this.interpolation != null &&
+          Caf.exists(this.interpolation) &&
             this.interpolation.getStnChildren(appendTo);
           return appendTo;
         }

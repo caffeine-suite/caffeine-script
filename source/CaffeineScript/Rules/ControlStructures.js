@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
         stnProps: function() {
           return {
             operand: this.ifUnlessWhileUntil.toString(),
-            joiner: this.thenDo != null && this.thenDo.toString()
+            joiner: Caf.exists(this.thenDo) && this.thenDo.toString()
           };
         }
       }

@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
         stnProps: function() {
           return {
             value: this.regExpMiddle.toString(),
-            modifiers: this.regExpModifiers != null &&
+            modifiers: Caf.exists(this.regExpModifiers) &&
               this.regExpModifiers.toString()
           };
         }
@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
         stnFactory: "RegExpStn",
         stnProps: function() {
           return {
-            modifiers: this.regExpModifiers != null &&
+            modifiers: Caf.exists(this.regExpModifiers) &&
               this.regExpModifiers.toString()
           };
         }
