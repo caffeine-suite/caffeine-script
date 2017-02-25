@@ -142,3 +142,16 @@ module.exports = suite: parseTestSuite
         foo = switch a
         when b then c; d
         """: "let foo; foo = (() => {switch (a) {case b: c; return d;};})();"
+
+  regressions:
+    """
+    switch a
+    when c then d
+    else b c
+    """: "switch (a) {case c: d; break; default: b(c)};"
+
+    """
+    switch a
+    when c then d
+    else b?.c
+    """: "switch (a) {case c: d; break; default: Caf.exists(b) && b.c};"

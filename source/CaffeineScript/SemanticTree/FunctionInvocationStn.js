@@ -12,8 +12,8 @@ Caf.defMod(module, () => {
         let functionValue, argStns, base;
         super(...arguments);
         [functionValue, ...argStns] = children;
-        this.argStns = argStns;
-        this.functionValue = functionValue;
+        this.key = this.argStns = argStns;
+        this.value = this.functionValue = functionValue;
         if (this.argStns.length === 1 && this.argStns[0].props.implicitArray) {
           this.argStns = this.argStns[0].children;
         }
@@ -30,35 +30,13 @@ Caf.defMod(module, () => {
       this.getter({
         existanceTest: function() {
           return this.props.existanceTest;
+        },
+        isFunctionInvocation: function() {
+          return true;
         }
       });
       this.prototype.transform = function() {
-        let BinaryOperatorStn,
-          AccessorStn,
-          IdentifierStn,
-          SimpleLiteralStn,
-          SemanticTokenStn,
-          value1,
-          value2;
-        ({
-          BinaryOperatorStn,
-          AccessorStn,
-          IdentifierStn,
-          SimpleLiteralStn,
-          SemanticTokenStn
-        } = SemanticTree);
-        return this.existanceTest
-          ? ({ value1, value2 } = this.getValueWithBaseCapture(
-              this.functionValue.transform()
-            ), BinaryOperatorStn(
-              { operator: "&&" },
-              SemanticTree.FunctionInvocationStn(
-                IdentifierStn({ identifier: "Caf.isF" }),
-                value1
-              ),
-              SemanticTree.FunctionInvocationStn(value2, this.argStns)
-            ))
-          : Caf.getSuper(this).transform.apply(this, arguments);
+        return this.transformAccessorChain();
       };
       this.prototype.toJs = function() {
         let valueJs;

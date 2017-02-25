@@ -7,8 +7,8 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
   constructor: (props, children) ->
     super
     [functionValue, argStns...] = children
-    @argStns = argStns
-    @functionValue = functionValue
+    @key = @argStns = argStns
+    @value = @functionValue = functionValue
 
     # collapse implicit arrays into parents
     if @argStns.length == 1 && @argStns[0].props.implicitArray
@@ -20,9 +20,11 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
 
   @getter
     existanceTest: -> @props.existanceTest
+    isFunctionInvocation: -> true
 
   transform: ->
-    {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
+    @transformAccessorChain();
+  ##  {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
 
     if @existanceTest
       {value1, value2} = @getValueWithBaseCapture @functionValue
