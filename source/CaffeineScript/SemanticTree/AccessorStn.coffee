@@ -6,12 +6,17 @@ SemanticTree = require './namespace'
 defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
 
   constructor: (props, children) ->
-    switch children.length
-      when 1 then [@key] = children
-      when 2 then [@value, @key] = children
-      when 3 then [@value, @dot, @key] = children
-      else throw new Error "expected <=3 children"
     super
+    switch children.length
+      when 1 then @key = children[0]
+      when 2
+        @value = children[0]
+        @key = children[1]
+      else throw new Error "expected 1 or 2 children"
+
+    unless @key
+      log {@props, @children}
+      throw new Error "need key"
 
   needsParens: false
 
@@ -21,8 +26,12 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
   transform: ->
     {BinaryOperatorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn, FunctionInvocationStn} = SemanticTree
 
-    if @dot?.token == "?." || @dot?.token == "?"
-      {value1, value2} = @getValueWithBaseCapture @value
+    dot = @dot?.transform()
+    value = @value?.transform()
+    key = @key?.transform()
+
+    if @props.existanceTest
+      {value1, value2} = @getValueWithBaseCapture value
 
       BinaryOperatorStn
         operator: "&&"
@@ -31,7 +40,7 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
           value1
         AccessorStn.Factory null,
           value2
-          @key
+          key
     else
       super
 

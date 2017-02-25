@@ -17,16 +17,19 @@ Caf.defMod(module, () => {
         if (this.argStns.length === 1 && this.argStns[0].props.implicitArray) {
           this.argStns = this.argStns[0].children;
         }
-        if (this.parseTreeNode != null && this.parseTreeNode.conditional) {
-          (base = this.props).conditional || (base.conditional = true);
+        if (
+          Caf.exists(this.parseTreeNode) && this.parseTreeNode.conditional ||
+          Caf.exists(this.parseTreeNode) && this.parseTreeNode.existanceTest
+        ) {
+          (base = this.props).existanceTest || (base.existanceTest = true);
         }
       }
     },
     function() {
       this.prototype.needsParens = false;
       this.getter({
-        conditional: function() {
-          return this.props.conditional;
+        existanceTest: function() {
+          return this.props.existanceTest;
         }
       });
       this.prototype.transform = function() {
@@ -44,16 +47,13 @@ Caf.defMod(module, () => {
           SimpleLiteralStn,
           SemanticTokenStn
         } = SemanticTree);
-        return this.conditional
+        return this.existanceTest
           ? ({ value1, value2 } = this.getValueWithBaseCapture(
               this.functionValue
             ), BinaryOperatorStn(
               { operator: "&&" },
               SemanticTree.FunctionInvocationStn(
-                AccessorStn(
-                  IdentifierStn({ identifier: "Caf" }),
-                  IdentifierStn({ identifier: "isF" })
-                ),
+                IdentifierStn({ identifier: "Caf.isF" }),
                 value1
               ),
               SemanticTree.FunctionInvocationStn(value2, this.argStns)
@@ -62,8 +62,8 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let valueJs;
-        if (this.conditional) {
-          throw new Error("can't be conditional here");
+        if (this.existanceTest) {
+          throw new Error("can't be existanceTest here");
         }
         return `${valueJs = this.functionValue.toJsExpression()}${this.applyRequiredParens(
           Caf

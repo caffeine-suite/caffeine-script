@@ -150,6 +150,6 @@
     comprehensionIterationType: /from|in\b/
 
     # comprehensionIterationType: /from( +(object|array|iter))?/
-    dot: /\??\./
+    dot: /\./
     questionMark: /\?/
     {} stnFactory: :SemanticTokenStn

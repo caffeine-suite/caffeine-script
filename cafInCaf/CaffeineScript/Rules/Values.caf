@@ -62,5 +62,7 @@ import &ArtFoundation, &BabelBridge
     blockValueExtension: "_? blockValueExtensionBlock"
     blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
     blockValueExtensionSubparse:
+      "lineStartComment* &dotOrQuestionDot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
       "lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
-      "lineStartComment* &dot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
+
+    dotOrQuestionDot: /\??\./

@@ -92,9 +92,10 @@ Caf.defMod(module, () => {
         { rule: "blockValueExtensionSubparse" }
       ),
       blockValueExtensionSubparse: [
-        "lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end",
-        "lineStartComment* &dot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
-      ]
+        "lineStartComment* &dotOrQuestionDot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end",
+        "lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
+      ],
+      dotOrQuestionDot: /\??\./
     });
   };
 });

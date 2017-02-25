@@ -37,7 +37,7 @@ Caf.defMod(module, () => {
       {
         comprehensionOutputType: /object|array|reduce|each|find/,
         comprehensionIterationType: /from|in\b/,
-        dot: /\??\./,
+        dot: /\./,
         questionMark: /\?/
       },
       { stnFactory: "SemanticTokenStn" }

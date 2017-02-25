@@ -32,7 +32,9 @@ defineModule module, class BinaryOperatorStn extends require './BaseStn'
         @left.toJsExpressionWithParens  {parentOperatorPrecidence, isLeftOperand: true}
         @right.toJsExpressionWithParens {parentOperatorPrecidence, isLeftOperand: false}
 
-  toJsExpressionWithParens: ({parentOperatorPrecidence, isLeftOperand}) ->
+  toJsExpressionWithParens: (options) ->
+    {parentOperatorPrecidence, isLeftOperand} = options if options
+
     operatorPrecidence = getOpPrecidence @operator
     # log toJsExpressionWithParens: {
     #   @operator

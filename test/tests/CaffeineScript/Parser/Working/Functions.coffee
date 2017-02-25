@@ -103,6 +103,13 @@ module.exports = suite: parseTestSuite
           2
         """: "foo(1, 2);"
 
+      multiple:
+        """
+        foo
+            1
+          2
+        """: "foo(1)(2);"
+
       regressions:
         """
         foo bar,
@@ -170,3 +177,4 @@ module.exports = suite: parseTestSuite
       #     c...
       #     d
       #   """: "a(b, ...c, d);"
+

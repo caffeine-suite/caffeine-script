@@ -37,10 +37,26 @@ module.exports = suite: parseTestSuite
     basic:
       "a?.b":   "Caf.exists(a) && a.b;"
       "a?[b]":  "Caf.exists(a) && a[b];"
+      "a? b":   "Caf.isF(a) && a(b);"
+      """
+      a?
+        b
+       c
+      """: "Caf.isF(a) && a(b)(c);"
+      """
+      a
+        ?.b
+      """: "Caf.exists(a) && a.b;"
 
     withBase:
       "a.foo.bar?.b":  "let base; Caf.exists((base = a.foo).bar) && base.bar.b;"
       "a.foo.bar?[b]": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
+
+    # withChain:
+    #   """
+    #   a?.b?.c
+    #   """: ""
+
 
   multiline:
     basic:
@@ -130,3 +146,7 @@ module.exports = suite: parseTestSuite
       """: "let foo; (foo = baz.dood(1, 2)).then(function() {return 123;}).catch(function() {return 456;});"
 
 
+  # regressions:
+  #   """
+  #   b?.c[0]
+  #   """: "Caf.exists(b) && b.c[0];"

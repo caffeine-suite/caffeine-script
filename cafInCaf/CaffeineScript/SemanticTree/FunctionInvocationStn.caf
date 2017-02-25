@@ -14,24 +14,22 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
     if @argStns.length == 1 && @argStns[0].props.implicitArray
       @argStns = @argStns[0].children
 
-    @props.conditional ||= true if @parseTreeNode?.conditional
+    @props.existanceTest ||= true if @parseTreeNode?.conditional || @parseTreeNode?.existanceTest
 
   needsParens: false
 
   @getter
-    conditional: -> @props.conditional
+    existanceTest: -> @props.existanceTest
 
   transform: ->
     {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
 
-    if @conditional
+    if @existanceTest
       {value1, value2} = @getValueWithBaseCapture @functionValue
       BinaryOperatorStn
         operator: "&&"
         SemanticTree.FunctionInvocationStn
-          AccessorStn
-            IdentifierStn identifier: "Caf"
-            IdentifierStn identifier: "isF"
+          IdentifierStn identifier: "Caf.isF"
           value1
 
         SemanticTree.FunctionInvocationStn value2, @argStns
@@ -40,6 +38,6 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
       super
 
   toJs: ->
-    throw new Error "can't be conditional here" if @conditional
+    throw new Error "can't be existanceTest here" if @existanceTest
     "#{valueJs = @functionValue.toJsExpression()}#{@applyRequiredParens (array a in @argStns with a.toJsExpression()).join ', '}"
 

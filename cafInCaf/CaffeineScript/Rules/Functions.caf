@@ -55,9 +55,10 @@ getPropertySetters = (node, list = []) ->
 
   @rule
     functionInvocation:
-      {} pattern: "conditional:'?'? openParen_ valueList? _closeParen"
-      {} pattern: "conditional:'?'? _? complexExpression"
-      {} pattern: "conditional:'?'? _? valueListBlock"
+      {} pattern: "existanceTest:questionMark? openParen_ valueList? _closeParen"
+      {} pattern: "existanceTest:questionMark? _? complexExpression"
+      {} pattern: "existanceTest:questionMark? _? valueListBlock"
     {}
       stnFactory: "FunctionInvocationStn"
       stnExtension: true
+      stnProps: -> existanceTest: !!@existanceTest
