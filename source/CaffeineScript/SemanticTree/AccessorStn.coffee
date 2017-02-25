@@ -23,24 +23,61 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
   @getter
     isAccessor: -> true
 
-  transform: ->
-    {BinaryOperatorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn, FunctionInvocationStn} = SemanticTree
+  leftMostExistanceTestTransform: ->
+    leftMostExistanceTest = null
+    current = @
+    leftValues = while current
+      leftMostExistanceTest = current if current.props.existanceTest
+      current = current.value
 
-    dot = @dot?.transform()
+    if leftMostExistanceTest
+      log leftMostExistanceTestTransform: needsFix: {self: @, leftMostExistanceTest, leftValues}
+
+      {parent} = leftMostExistanceTest
+
+      # needs a-fix'n
+      leftMostExistanceTest.createTransformedExistanceTestStns (checkedValueStn) =>
+
+        if leftMostExistanceTest == @
+          SemanticTree.AccessorStn null,
+            checkedValueStn
+            @key.transform()
+
+        else
+
+          # replace parent's value-child with checkedValueStn
+          parent.value = checkedValueStn
+          parent.children = array parent.children, (child) ->
+            if child == leftMostExistanceTest
+              checkedValueStn
+            else
+              child
+
+          @transform()
+
+
+  createTransformedExistanceTestStns: (createRightStn) ->
+    throw new Error unless @props.existanceTest
     value = @value?.transform()
-    key = @key?.transform()
+    {value1:toCheckValue, value2:checkedValueStn} = @getValueWithBaseCapture value
 
+    SemanticTree.BinaryOperatorStn
+      operator: "&&"
+      SemanticTree.FunctionInvocationStn null,
+        SemanticTree.IdentifierStn identifier: "Caf.exists"
+        toCheckValue
+      createRightStn checkedValueStn
+
+  transform: ->
+    # if transformed = @leftMostExistanceTestTransform()
+    #   transformed
+
+    # else
     if @props.existanceTest
-      {value1, value2} = @getValueWithBaseCapture value
-
-      BinaryOperatorStn
-        operator: "&&"
-        FunctionInvocationStn null,
-          IdentifierStn identifier: "Caf.exists"
-          value1
-        AccessorStn.Factory null,
-          value2
-          key
+      @createTransformedExistanceTestStns (checkedValueStn) =>
+        SemanticTree.AccessorStn null,
+          checkedValueStn
+          @key.transform()
     else
       super
 

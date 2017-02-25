@@ -52,10 +52,10 @@ module.exports = suite: parseTestSuite
       "a.foo.bar?.b":  "let base; Caf.exists((base = a.foo).bar) && base.bar.b;"
       "a.foo.bar?[b]": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
 
-    # withChain:
-    #   """
-    #   a?.b?.c
-    #   """: ""
+    withChain:
+      """
+      a?.b?.c
+      """: "let base; Caf.exists(a) && Caf.exists(base = a.b) && base.c;"
 
 
   multiline:
