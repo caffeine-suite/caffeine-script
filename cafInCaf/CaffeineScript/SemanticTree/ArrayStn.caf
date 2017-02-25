@@ -1,0 +1,14 @@
+import &ArtFoundation
+
+class ArrayStn extends &BaseStn
+
+  @getter
+    implicitArray: -> @props.implicitArray
+
+  constructor: (props, children) ->
+    # collapse implicit arrays into parents
+    if children.length == 1 && children[0].props.implicitArray
+      children = children[0].children
+    super props, children
+
+  toJs: ->  "[#{(c.toJsExpression() for c in @children).join ', '}]"
