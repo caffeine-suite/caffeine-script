@@ -1,13 +1,9 @@
-# import &ArtFoundation
+import &ArtFoundation
 
-# SemanticTree = require './namespace'
-
-FunctionDefinitionArgsStn
-  variableDefinition?.children[0] #|| FunctionDefinitionArgStn IdentifierStn identifier: valueIdentifer
+SemanticTree = require './namespace'
 
 
-## class ComprehensionStn extends &ScopeStnMixin &BaseStn
-
+class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   ###
     TODO
@@ -61,16 +57,18 @@ FunctionDefinitionArgsStn
       oFromI
 
       and so on for o, a, f, r, e >> 3x the functions
+
   transform: ->
     @children = @transformChildren()
     @initLabeledChildren()
     {outputType, variableDefinition, body, iterable, whenClause} = @labeledChildren
-    intoStn = @labeledChildren.into
+    intoChild = @labeledChildren.into
 
     outputType = outputType?.props.token
     iterationFunction = outputType.slice 0,1
 
-    import SemanticTree
+    {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn, FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn, FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn, ValueStn} = SemanticTree
+    # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
 
 
     ###
@@ -102,6 +100,7 @@ FunctionDefinitionArgsStn
       when "find" then true
       else false
 
+
     variableDefinition = FunctionDefinitionArgsStn
       valueVarDef = variableDefinition?.children[0] || FunctionDefinitionArgStn IdentifierStn identifier: valueIdentifer
       keyVarDef   = variableDefinition?.children[1] || FunctionDefinitionArgStn IdentifierStn identifier: keyIdentifer
@@ -110,17 +109,17 @@ FunctionDefinitionArgsStn
 
 
     if outputType == "object" || outputType == "array"
-      if body
+      lastBodyStatement = if body
         if body.className == "StatementsStn"
-          [bodyStatementsExceptLast..., lastBodyStatement] = body.children
+          bodyStatementsExceptLast = arrayWithAllButLast body.children
+          peek body.children
         else
-          lastBodyStatement = body
+          body
       else
         bodyStatementsExceptLast = null
-        lastBodyStatement = ValueStn valueVarDef
+        ValueStn valueVarDef
     else
       bodyWithDefault = body || ValueStn valueVarDef
-
 
     whenClauseWrapper = if whenClause
       (actionStn) ->
@@ -132,10 +131,11 @@ FunctionDefinitionArgsStn
     else
       (actionStn) -> actionStn
 
+
     FunctionInvocationStn
       IdentifierStn identifier: "Caf.#{if useExtendedEach then 'ee' else 'e'}"
       iterable
-      intoStn || switch outputType
+      intoChild || switch outputType
       when "object" then ObjectStn()
       when "array" then ArrayStn()
       when "each" then SimpleLiteralStn value: "undefined"
@@ -149,80 +149,78 @@ FunctionDefinitionArgsStn
         variableDefinition
 
         switch outputType
-        when "object"
-          whenClauseWrapper StatementsStn compactFlatten []
-            bodyStatementsExceptLast
-            AssignmentStn
+          when "object"
+            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, AssignmentStn
               AccessorStn
                 IdentifierStn identifier: intoIdentifer
                 ValueStn keyVarDef
               lastBodyStatement
+            ]
 
-        when "array"
-          whenClauseWrapper StatementsStn compactFlatten []
-            bodyStatementsExceptLast
-            FunctionInvocationStn
+          when "array"
+            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, FunctionInvocationStn
               AccessorStn
                 IdentifierStn identifier: intoIdentifer
                 IdentifierStn identifier: "push"
               lastBodyStatement
+            ]
 
-        when "each"
-          whenClauseWrapper bodyWithDefault
+          when "each"
+            whenClauseWrapper bodyWithDefault
 
-        when "find"
-          if whenClause
-            if body
-              BinaryOperatorStn
-                operator: "&&"
-                whenClause
+          when "find"
+            if whenClause
+              if body
+                BinaryOperatorStn
+                  operator: "&&"
+                  whenClause
 
-                StatementsStn
-                  FunctionInvocationStn
-                    IdentifierStn identifier: brkIdentifer
-                  body
-            else
-              BinaryOperatorStn
-                operator: "&&"
-                whenClause
-
-                StatementsStn
-                  FunctionInvocationStn
-                    IdentifierStn identifier: brkIdentifer
-
-                  valueVarDef
-          else
-            if body
-
-              if body.type == "Statements" && body.children.length > 1
-                allButLast = StatementsStn body.children.slice 0, body.children.length - 1
-                body = peek body.children
-
-              foundTest = BinaryOperatorStn
-                operator: "&&"
-
-                AssignmentStn
-                  IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
-                  body
-
-                StatementsStn
-                  FunctionInvocationStn
-                    IdentifierStn identifier: brkIdentifer
-
-                  IdentifierStn identifierHandle: baseIdentifierHandle
-
-              if allButLast
-                StatementsStn allButLast, foundTest
+                  StatementsStn
+                    FunctionInvocationStn
+                      IdentifierStn identifier: brkIdentifer
+                    body
               else
-                foundTest
+                BinaryOperatorStn
+                  operator: "&&"
+                  whenClause
 
+                  StatementsStn
+                    FunctionInvocationStn
+                      IdentifierStn identifier: brkIdentifer
+
+                    valueVarDef
             else
-              BinaryOperatorStn
-                operator: "&&"
-                valueVarDef
+              if body
 
-                StatementsStn
-                  FunctionInvocationStn
-                    IdentifierStn identifier: brkIdentifer
+                if body.type == "Statements" && body.children.length > 1
+                  allButLast = StatementsStn body.children.slice 0, body.children.length - 1
+                  body = peek body.children
 
+                foundTest = BinaryOperatorStn
+                  operator: "&&"
+
+                  AssignmentStn
+                    IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
+                    body
+
+                  StatementsStn
+                    FunctionInvocationStn
+                      IdentifierStn identifier: brkIdentifer
+
+                    IdentifierStn identifierHandle: baseIdentifierHandle
+
+                if allButLast
+                  StatementsStn allButLast, foundTest
+                else
+                  foundTest
+
+              else
+                BinaryOperatorStn
+                  operator: "&&"
                   valueVarDef
+
+                  StatementsStn
+                    FunctionInvocationStn
+                      IdentifierStn identifier: brkIdentifer
+
+                    valueVarDef
