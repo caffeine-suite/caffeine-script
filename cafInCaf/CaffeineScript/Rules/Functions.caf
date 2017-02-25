@@ -1,4 +1,3 @@
-|caffeine-script
 import &ArtFoundation, &BabelBridge
 
 getPropertySetters = (node, list = []) ->
@@ -23,15 +22,15 @@ getPropertySetters = (node, list = []) ->
 
   @rule
     argsDefinition:
-      pattern: "openParen_ argDefList? _closeParen"
+      "openParen_ argDefList? _closeParen"
     {}
       stnFactory: :FunctionDefinitionArgsStn
 
   @rule
     argDefList:
-      {} pattern: "argDef _comma_ argDefList"
-      {} pattern: "argDef _ argDefList"
-      {} pattern: "argDef"
+      "argDef _comma_ argDefList"
+      "argDef _ argDefList"
+      "argDef"
 
     argDef:
       pattern: "at:/@/? identifier argIdentifierExtension?"
@@ -49,16 +48,17 @@ getPropertySetters = (node, list = []) ->
     etc: "'...'"
 
   @rule superFunctionInvocation:
-    {} pattern: "openParen_ valueList? _closeParen"
-    {} pattern: "_? complexExpression"
-    {} pattern: "_? valueListBlock"
+    "openParen_ valueList? _closeParen"
+    "_? complexExpression"
+    "_? valueListBlock"
 
   @rule
     functionInvocation:
-      {} pattern: "existanceTest:questionMark? openParen_ valueList? _closeParen"
-      {} pattern: "existanceTest:questionMark? _? complexExpression"
-      {} pattern: "existanceTest:questionMark? _? valueListBlock"
+      "existanceTest:questionMark? openParen_ values:valueList? _closeParen"
+      "existanceTest:questionMark? _? values:complexExpression"
+      "existanceTest:questionMark? _? values:valueListBlock"
     {}
       stnFactory: "FunctionInvocationStn"
       stnExtension: true
       stnProps: -> existanceTest: !!@existanceTest
+      stnChildren: -> @values?.getStn()

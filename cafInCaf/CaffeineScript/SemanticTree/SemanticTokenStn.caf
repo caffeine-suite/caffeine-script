@@ -1,3 +1,5 @@
+import &ArtFoundation
+
 class SemanticTokenStn extends &BaseStn
 
   constructor: ->
@@ -8,4 +10,4 @@ class SemanticTokenStn extends &BaseStn
     token: -> @props.token
 
   toJs: ->
-    throw new Error "SemanticTokenStn is not intended to output Js directly"
+    throw new Error "SemanticTokenStn is not intended to output Js directly. Token: #{formattedInspect @props.token}"

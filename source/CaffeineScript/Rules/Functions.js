@@ -39,22 +39,21 @@ Caf.defMod(module, () => {
     this.rule({
       functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
     });
-    this.rule(
-      { argsDefinition: { pattern: "openParen_ argDefList? _closeParen" } },
-      { stnFactory: "FunctionDefinitionArgsStn" }
-    );
+    this.rule({ argsDefinition: "openParen_ argDefList? _closeParen" }, {
+      stnFactory: "FunctionDefinitionArgsStn"
+    });
     this.rule({
       argDefList: [
-        { pattern: "argDef _comma_ argDefList" },
-        { pattern: "argDef _ argDefList" },
-        { pattern: "argDef" }
+        "argDef _comma_ argDefList",
+        "argDef _ argDefList",
+        "argDef"
       ],
       argDef: {
         pattern: "at:/@/? identifier argIdentifierExtension?",
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
           return {
-            rest: !!(this.argIdentifierExtension != null &&
+            rest: !!(Caf.exists(this.argIdentifierExtension) &&
               this.argIdentifierExtension.etc),
             assignThisProperty: !!this.at
           };
@@ -66,20 +65,29 @@ Caf.defMod(module, () => {
     this.rule({ etc: "'...'" });
     this.rule({
       superFunctionInvocation: [
-        { pattern: "openParen_ valueList? _closeParen" },
-        { pattern: "_? complexExpression" },
-        { pattern: "_? valueListBlock" }
+        "openParen_ valueList? _closeParen",
+        "_? complexExpression",
+        "_? valueListBlock"
       ]
     });
     return this.rule(
       {
         functionInvocation: [
-          { pattern: "conditional:'?'? openParen_ valueList? _closeParen" },
-          { pattern: "conditional:'?'? _? complexExpression" },
-          { pattern: "conditional:'?'? _? valueListBlock" }
+          "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
+          "existanceTest:questionMark? _? values:complexExpression",
+          "existanceTest:questionMark? _? values:valueListBlock"
         ]
       },
-      { stnFactory: "FunctionInvocationStn", stnExtension: true }
+      {
+        stnFactory: "FunctionInvocationStn",
+        stnExtension: true,
+        stnProps: function() {
+          return { existanceTest: !!this.existanceTest };
+        },
+        stnChildren: function() {
+          return Caf.exists(this.values) && this.values.getStn();
+        }
+      }
     );
   };
 });
