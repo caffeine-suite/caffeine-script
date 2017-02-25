@@ -49,7 +49,7 @@ Caf.defMod(module, () => {
         } = SemanticTree);
         return this.existanceTest
           ? ({ value1, value2 } = this.getValueWithBaseCapture(
-              this.functionValue
+              this.functionValue.transform()
             ), BinaryOperatorStn(
               { operator: "&&" },
               SemanticTree.FunctionInvocationStn(

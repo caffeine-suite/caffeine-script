@@ -49,14 +49,42 @@ module.exports = suite: parseTestSuite
       """: "Caf.exists(a) && a.b;"
 
     withBase:
-      "a.foo.bar?.b":  "let base; Caf.exists((base = a.foo).bar) && base.bar.b;"
-      "a.foo.bar?[b]": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
+      "a.foo.bar?.b":  "let base; Caf.exists(base = a.foo.bar) && base.b;"
+      "a.foo.bar?[b]": "let base; Caf.exists(base = a.foo.bar) && base[b];"
+      # "a.foo.bar? b": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
 
     withChain:
-      """
-      a?.b?.c
-      """: "let base; Caf.exists(a) && Caf.exists(base = a.b) && base.c;"
+      dots:
+        """
+        a?.b?.c
+        """: "let base; Caf.exists(a) && (Caf.exists(base = a.b) && base.c);"
 
+        """
+        a?.b?.c?.d
+        """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a.b) && (Caf.exists(base1 = base.c) && base1.d));"
+
+      brackets:
+        """
+        a?[b]?[c]
+        """: "let base; Caf.exists(a) && (Caf.exists(base = a[b]) && base[c]);"
+
+        """
+        a?[b]?[c]?[d]
+        """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a[b]) && (Caf.exists(base1 = base[c]) && base1[d]));"
+
+      # tailFunctionInvocation:
+      #   """
+      #   a?.b? c
+      #   """: "Caf.exists(a) && Caf.isF(a.b) && a.b(c);"
+
+        # """
+        # a?[b]? c
+        # """: "Caf.isF(a[b]) && a[b](c);"
+
+
+        # """
+        # a?[b]?[c]? d
+        # """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a[b]) && (Caf.exists(base1 = base[c]) && base1[d]));"
 
   multiline:
     basic:

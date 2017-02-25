@@ -1,6 +1,6 @@
 Foundation = require 'art-foundation'
 
-{log, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
+{log, array, a, w, m, defineModule, compactFlatten, present, isFunction, BaseObject} = Foundation
 SemanticTree = require './namespace'
 
 defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
@@ -21,45 +21,58 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
   needsParens: false
 
   @getter
+    existanceTest: -> @props.existanceTest
     isAccessor: -> true
 
-  leftMostExistanceTestTransform: ->
-    leftMostExistanceTest = null
+  ###
+  OUT:
+    either
+      in-place transform - doesn't effect parents
+    or
+      re-rooting transform
+      the returned node needs to become the new root
+      of the
+  ###
+  transformAccessorChain: ->
     current = @
-    leftValues = while current
-      leftMostExistanceTest = current if current.props.existanceTest
+    accessorChain = while current?.type == "Accessor"
+      accessor = current
       current = current.value
+      accessor
 
-    if leftMostExistanceTest
-      log leftMostExistanceTestTransform: needsFix: {self: @, leftMostExistanceTest, leftValues}
+    accessorChain = accessorChain.reverse()
+    # log transformAccessorChain: {accessorChain}
 
-      {parent} = leftMostExistanceTest
+    @transformAccessorChainR accessorChain[0].value.transform(), accessorChain
 
-      # needs a-fix'n
-      leftMostExistanceTest.createTransformedExistanceTestStns (checkedValueStn) =>
+  transformAccessorChainR: (value, accessorChain) ->
+    # log transformAccessorChainR: {value, accessorChain}
+    # TODO: transform value
 
-        if leftMostExistanceTest == @
-          SemanticTree.AccessorStn null,
-            checkedValueStn
-            @key.transform()
+    for accessor, i in accessorChain
+      # TODO: transform key
+      {key} = accessor
+      key = key.transform()
+      if accessor.existanceTest
+        reset = accessorChain.slice i
 
-        else
-
-          # replace parent's value-child with checkedValueStn
-          parent.value = checkedValueStn
-          parent.children = array parent.children, (child) ->
-            if child == leftMostExistanceTest
+        return @createTransformedExistanceTestStns value, (checkedValueStn) =>
+          access =
+            SemanticTree.AccessorStn null,
               checkedValueStn
-            else
-              child
+              key
+          if i < accessorChain.length - 1
+            @transformAccessorChainR access, accessorChain.slice i + 1
+          else
+            access
 
-          @transform()
+      else
+        value = SemanticTree.AccessorStn value, key
 
+    value
 
-  createTransformedExistanceTestStns: (createRightStn) ->
-    throw new Error unless @props.existanceTest
-    value = @value?.transform()
-    {value1:toCheckValue, value2:checkedValueStn} = @getValueWithBaseCapture value
+  createTransformedExistanceTestStns: (value, createRightStn) ->
+    {value1:toCheckValue, value2:checkedValueStn} = @getValueWithCapture value
 
     SemanticTree.BinaryOperatorStn
       operator: "&&"
@@ -68,18 +81,24 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
         toCheckValue
       createRightStn checkedValueStn
 
-  transform: ->
-    # if transformed = @leftMostExistanceTestTransform()
+  transform: (options = {})->
+    # if transformed = @leftMostExistanceTestTransform options
     #   transformed
 
-    # else
-    if @props.existanceTest
-      @createTransformedExistanceTestStns (checkedValueStn) =>
-        SemanticTree.AccessorStn null,
-          checkedValueStn
-          @key.transform()
+    if @value
+      @transformAccessorChain()
     else
+      # special case for computed-keys in object literals. Ex: [foo]: 123
+      # computed-keys may just need its own Stn, it's an awkward overloading
       super
+
+    # if @props.existanceTest
+    #   @createTransformedExistanceTestStns @value.transform(), (checkedValueStn) =>
+    #     SemanticTree.AccessorStn null,
+    #       checkedValueStn
+    #       @key.transform()
+    # else
+    #   super
 
   ###
   @value is only ever not set for object literal computed property names.

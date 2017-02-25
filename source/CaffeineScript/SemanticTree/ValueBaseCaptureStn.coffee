@@ -28,3 +28,16 @@ defineModule module, class ValueBaseCaptureStn extends require './BaseStn'
         ReferenceStn identifierHandle: baseIdentifierHandle
         key
       ]
+
+  getValueWithCapture: (accessorStn)->
+    unless accessorStn.isAccessor
+      return value1: accessorStn, value2: accessorStn
+
+    {AssignmentStn, ReferenceStn, IdentifierStn} = SemanticTree
+
+    value1:
+      AssignmentStn {},
+        IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "base"
+        accessorStn
+
+    value2: ReferenceStn identifierHandle: baseIdentifierHandle
