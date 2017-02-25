@@ -1,1 +1,11 @@
-# PLACEHOLDER
+import &ArtFoundation
+
+class FunctionDefinitionArgsStn extends &BaseStn
+
+  @getter
+    argumentNames: ->
+      array c in @children
+        c.argumentName
+
+  toJs: ->
+    "(#{(array c in @children with c.toJs()).join(', ')})"
