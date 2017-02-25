@@ -1,0 +1,6 @@
+import &ArtFoundation
+
+class ArrayDestructuringStn extends &BaseStn
+
+  toJs: ->
+    "[#{@childrenToJs ', '}]"

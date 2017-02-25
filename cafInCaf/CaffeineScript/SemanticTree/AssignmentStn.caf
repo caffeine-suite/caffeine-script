@@ -1,1 +1,46 @@
-# PLACEHOLDER
+import &ArtFoundation
+&BinaryOperatorStn
+&IdentifierStn
+&ReferenceStn
+&ArrayStn
+SemanticTree = require './namespace'
+
+supportedOperatorsRegExp = /^([-+*\/%]|)$/
+
+class AssignmentStn extends &ValueBaseCaptureStn
+  constructor: (props, children) ->
+    super
+    @operator =  props.operator || ""
+    @lValue = children[0]
+    @rValue = children[1]
+
+  updateScope: (@scope) ->
+    if @lValue.type == "Reference"
+      @scope.addIdentifierAssigned @lValue.toJs()
+    super
+
+  transform: ->
+    super.postSuperTransform()
+
+  # TODO - I need a better way of saying "do all the transforms for the children, and then maybe I'll do some more transforms here"
+  postSuperTransform: ->
+    unless @operator.match supportedOperatorsRegExp
+      {value1, value2} = @getValueWithBaseCapture @lValue
+
+      BinaryOperatorStn
+        operator: @operator
+        value1
+        SemanticTree.AssignmentStn
+          value2
+          @rValue
+    else
+      @
+
+  toJs: ->
+    if @operator.match supportedOperatorsRegExp
+      "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
+    else
+      "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+
+  toJsParenExpression: ->
+    "(#{@toJs()})"
