@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
   return FunctionInvocationStn = Caf.defClass(
     class FunctionInvocationStn extends ValueBaseCaptureStn {
       constructor(props, children) {
-        let functionValue, argStns, base;
+        let functionValue, argStns, base, base1, base2;
         super(...arguments);
         [functionValue, ...argStns] = children;
         this.key = this.argStns = argStns;
@@ -18,10 +18,10 @@ Caf.defMod(module, () => {
           this.argStns = this.argStns[0].children;
         }
         if (
-          Caf.exists(this.parseTreeNode) && this.parseTreeNode.conditional ||
-          Caf.exists(this.parseTreeNode) && this.parseTreeNode.existanceTest
+          Caf.exists(base = this.parseTreeNode) && base.conditional ||
+          Caf.exists(base1 = this.parseTreeNode) && base1.existanceTest
         ) {
-          (base = this.props).existanceTest || (base.existanceTest = true);
+          (base2 = this.props).existanceTest || (base2.existanceTest = true);
         }
       }
     },
