@@ -19,17 +19,16 @@ defineModule module, class AccessorStn extends require './ValueBaseCaptureStn'
     isAccessor: -> true
 
   transform: ->
-    {BinaryOperatorStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
+    {BinaryOperatorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn, FunctionInvocationStn} = SemanticTree
 
     if @dot?.token == "?." || @dot?.token == "?"
       {value1, value2} = @getValueWithBaseCapture @value
 
       BinaryOperatorStn
         operator: "&&"
-        BinaryOperatorStn
-          operator: "!="
+        FunctionInvocationStn null,
+          IdentifierStn identifier: "Caf.exists"
           value1
-          SimpleLiteralStn value: "null"
         AccessorStn.Factory null,
           value2
           @key

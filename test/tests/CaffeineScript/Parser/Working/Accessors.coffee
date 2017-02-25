@@ -35,12 +35,12 @@ module.exports = suite: parseTestSuite
 
   existanceAccessor:
     basic:
-      "a?.b":   "a != null && a.b;"
-      "a?[b]":  "a != null && a[b];"
+      "a?.b":   "Caf.exists(a) && a.b;"
+      "a?[b]":  "Caf.exists(a) && a[b];"
 
     withBase:
-      "a.foo.bar?.b":  "let base; (base = a.foo).bar != null && base.bar.b;"
-      "a.foo.bar?[b]": "let base; (base = a.foo).bar != null && base.bar[b];"
+      "a.foo.bar?.b":  "let base; Caf.exists((base = a.foo).bar) && base.bar.b;"
+      "a.foo.bar?[b]": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
 
   multiline:
     basic:

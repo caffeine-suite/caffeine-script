@@ -170,7 +170,7 @@ defineModule module, class ComprehensionStn extends ScopeStnMixin require './Bas
         when "object" then ObjectStn()
         when "array" then ArrayStn()
         when "each" then SimpleLiteralStn value: "undefined"
-        when "find" then SimpleLiteralStn value: "null"
+        when "find" then SimpleLiteralStn value: "undefined"
         when "reduce" then
         else throw new Error "not supported yet: #{outputType}"
 

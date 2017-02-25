@@ -83,7 +83,7 @@ module.exports = suite: parseTestSuite
       a = if b
         c
         {d} = e
-      """: "let a, d; a = b ? (c, ({d} = e)) : null;"
+      """: "let a, d; a = b ? (c, ({d} = e)) : undefined;"
 
   binopAssignment:
     javascriptSupported:

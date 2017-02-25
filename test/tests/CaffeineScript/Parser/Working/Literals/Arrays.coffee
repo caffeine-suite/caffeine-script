@@ -118,7 +118,7 @@ module.exports = suite:
       """
       []
         b if c
-      """: "[c ? b : null];"
+      """: "[c ? b : undefined];"
 
   implicitCombos: ->
     parseTests
