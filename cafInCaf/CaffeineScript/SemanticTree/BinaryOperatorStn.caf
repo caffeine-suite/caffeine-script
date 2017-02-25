@@ -1,0 +1,46 @@
+import &ArtFoundation, &OperatorHelper
+
+class BinaryOperatorStn extends &BaseStn
+
+  constructor: (props, children) ->
+    super
+    @operator = props.operator
+    @left = children[0]
+    @right = children[1]
+    throw new Error "left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right
+
+  toJs: -> @toJsExpression()
+
+  toJsStatement: -> @toJsExpression skipParens: true
+
+  updateScope: (@scope) ->
+    if @operator == "?" && !@left.isReference
+      @uniqueIdentifierHandle = @scope.uniqueIdentifierHandle
+    super
+
+  toJsExpression: ->
+    if @operator == "?" && @uniqueIdentifierHandle
+      {identifier} = @uniqueIdentifierHandle
+      "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
+    else if !operatorIsInfixJs @operator
+      binaryOperatorToJs
+        @operator
+        @left.toJsExpression()
+        @right.toJsExpression()
+    else
+      parentOperatorPrecidence = getOpPrecidence @operator
+      binaryOperatorToJs
+        @operator
+        @left.toJsExpressionWithParens  {parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: true}
+        @right.toJsExpressionWithParens {parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: false}
+
+  toJsExpressionWithParens: (options) ->
+    {parentOperatorPrecidence, isLeftOperand} = options if options
+
+    operatorPrecidence = getOpPrecidence @operator
+    if parentOperatorPrecidence? && operatorPrecidence < parentOperatorPrecidence
+      @toJsExpression()
+    else if parentOperatorPrecidence? && operatorPrecidence == parentOperatorPrecidence && isLeftOperand == getPrecidenceLevelIsLeftAssociative operatorPrecidence
+      @toJsExpression()
+    else
+      "(#{@toJsExpression()})"
