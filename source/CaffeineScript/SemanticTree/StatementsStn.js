@@ -29,7 +29,7 @@ Caf.defMod(module, () => {
             returnAction && i === lines.length - 1
               ? !c.jsExpressionUsesReturn
                   ? `${returnAction} ${c.toJsExpression()}`
-                  : c.toJs()
+                  : c.toJs({ generateReturnStatement: true })
               : generateStatements
                   ? (statement = c.toJsStatement(), statement.match(/^function/)
                       ? this.applyRequiredParens(statement)

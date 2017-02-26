@@ -6,6 +6,9 @@ class IdentiferStn extends &BaseStn
     name: -> @props.identifier
     isIdentifier: -> true
 
+    # explicitly in the source-code
+    explicitIdentifier: -> @props.identifier
+
   updateScope: (@scope) ->
     if @props.identifierHandle
       @scope.addUniqueIdentifierHandle @props.identifierHandle

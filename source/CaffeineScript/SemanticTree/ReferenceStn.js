@@ -16,13 +16,18 @@ Caf.defMod(module, () => {
       this.getter({
         isReference: function() {
           return true;
+        },
+        explicitIdentifier: function() {
+          let base;
+          return Caf.exists(base = this.labeledChildren.identifier) &&
+            base.explicitIdentifier;
         }
       });
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
         let base;
-        return (base = this.props).identifierHandle != null &&
-          base.identifierHandle.identifier ||
+        return Caf.exists(base = this.props.identifierHandle) &&
+          base.identifier ||
           this.labeledChildren.identifier.toJs();
       };
       return this;

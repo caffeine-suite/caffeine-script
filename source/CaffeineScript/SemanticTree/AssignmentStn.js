@@ -25,10 +25,11 @@ Caf.defMod(module, () => {
     },
     function() {
       this.prototype.updateScope = function(scope) {
+        let base;
         this.scope = scope;
-        if (this.lValue.type === "Reference") {
-          this.scope.addIdentifierAssigned(this.lValue.toJs());
-        }
+        this.scope.addIdentifierAssigned(
+          Caf.exists(base = this.lValue) && base.explicitIdentifier
+        );
         return Caf.getSuper(this).updateScope.apply(this, arguments);
       };
       this.prototype.transform = function() {

@@ -18,12 +18,16 @@ Caf.defMod(module, () => {
           child.updateScope(this.scope);
         });
         this.scope.addChildScope(this);
+        this._scopeUpdated = true;
         this.statementsChild.updateScope(this);
         this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        Caf.e(this.identifiersUsedButNotAssigned, undefined, (v, id, into) => {
+        return Caf.e(this.identifiersUsedButNotAssigned, undefined, (
+          v,
+          id,
+          into
+        ) => {
           this.scope.addIdentifierAssigned(id);
         });
-        return null;
       };
       this.prototype.addIdentifierAssigned = function(id, init) {
         return this.scope.addIdentifierAssigned(id, init);
@@ -45,21 +49,26 @@ Caf.defMod(module, () => {
             ));
         }
       });
-      this.prototype.toJs = function() {
-        let importFromCaptureIdentifier,
+      this.prototype.toJs = function(options = {}) {
+        let generateReturnStatement,
+          importFromCaptureIdentifier,
           p,
           bodyJs,
           importsJs,
           list,
           importingJs,
-          imports;
+          imports,
+          base;
+        ({ generateReturnStatement } = options);
         importFromCaptureIdentifier = null;
         if (p = this.findParent("Import")) {
           ({ importFromCaptureIdentifier } = p);
           true;
         }
         importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
-        bodyJs = this.statementsChild.toFunctionBodyJs();
+        bodyJs = this.statementsChild.toFunctionBodyJs(
+          !!generateReturnStatement
+        );
         importsJs = Caf.e(this.importChildren, [], (c, k, into) => {
           into.push(c.toJsExpression());
         });
@@ -67,7 +76,7 @@ Caf.defMod(module, () => {
           into.push(`"${i}"`);
         });
         importingJs = `[${list.join(", ")}]`;
-        imports = (this.importing != null && this.importing.length) > 0
+        imports = (Caf.exists(base = this.importing) && base.length) > 0
           ? `({${this.importing.join(
               ", "
             )}} = Caf.i(${importingJs}, ${this._importFromCaptureIdentifier
@@ -75,6 +84,9 @@ Caf.defMod(module, () => {
               : ""}[${importsJs.join(", ")}, ${importFromCaptureIdentifier}]));`
           : "";
         return `${imports}${bodyJs}`;
+      };
+      this.prototype.toJsExpression = function() {
+        return this.toJs({ returnExpression: true });
       };
       return this;
     }

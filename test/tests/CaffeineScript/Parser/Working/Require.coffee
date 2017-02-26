@@ -43,5 +43,5 @@ module.exports = suite: parseTestSuite {
     """
     import &ArtFoundation
     &BabelBridge
-    """: "let ArtFoundation = require('art-foundation'), BabelBridge = require('babel-bridge'); return BabelBridge;"
+    """: "let ArtFoundation = require('art-foundation'), BabelBridge = require('babel-bridge'); BabelBridge;"
 

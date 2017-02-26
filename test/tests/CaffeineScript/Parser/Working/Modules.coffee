@@ -31,6 +31,17 @@ module.exports = suite: parseTestSuite {compileModule: true},
       "global.Math":        applyModuleWrapper "return global.Math;"
       "require 'foo'":      applyModuleWrapper 'return require("foo");'
       "module.exports = 1": applyModuleWrapper "return module.exports = 1;"
+
+  withImport:
+    """
+    import Foo
+    a
+    """:
+      """
+      let Caf = require('caffeine-script-runtime');
+      Caf.defMod(module, () => {let Foo = global.Foo, a; ({a} = Caf.i([\"a\"], [Foo, global]));return a;});
+      """
+
     # complex:
     #   """
     #   b = a;

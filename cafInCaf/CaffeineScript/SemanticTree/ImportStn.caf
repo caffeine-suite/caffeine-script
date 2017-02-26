@@ -3,21 +3,22 @@ import &ArtFoundation
 class ImportStn extends &ScopeStnMixin &BaseStn
 
   updateScope: (@scope)->
-    @bindAllUniqueIdentifiersRequested()
+    @bindAllUniqueIdentifiersRequested()  # identical to super
 
     @statementsChild = peek @children
     @importChildren = @children.slice 0, @children.length - 1
 
-    each child in @importChildren
+    each child in @importChildren # slightly different from super
       child.updateScope @scope
 
-    @scope.addChildScope @
+    @scope.addChildScope @  # identical to super other than order
+    @_scopeUpdated = true   # identical to super
 
     @statementsChild.updateScope @
     @importing = Object.keys @identifiersUsedButNotAssigned
+
     each v, id in @identifiersUsedButNotAssigned
       @scope.addIdentifierAssigned id
-    null
 
   addIdentifierAssigned: (id, init) ->
     @scope.addIdentifierAssigned id, init
@@ -34,7 +35,8 @@ class ImportStn extends &ScopeStnMixin &BaseStn
     importFromCaptureIdentifier: ->
       @_importFromCaptureIdentifier ||= @nonImportScope.bindUniqueIdentifier "parentImports"
 
-  toJs: ->
+  toJs: (options = {})->
+    {generateReturnStatement} = options
     importFromCaptureIdentifier = null
     if p = @findParent "Import"
       {importFromCaptureIdentifier} = p
@@ -42,7 +44,7 @@ class ImportStn extends &ScopeStnMixin &BaseStn
 
     importFromCaptureIdentifier ||= "global"
 
-    bodyJs = @statementsChild.toFunctionBodyJs();
+    bodyJs = @statementsChild.toFunctionBodyJs !!generateReturnStatement
 
     importsJs = array c in @importChildren with c.toJsExpression()
 
@@ -61,3 +63,6 @@ class ImportStn extends &ScopeStnMixin &BaseStn
     else ""
 
     "#{imports}#{bodyJs}"
+
+  toJsExpression: ->
+    @toJs returnExpression: true

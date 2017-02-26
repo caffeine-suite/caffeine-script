@@ -46,7 +46,7 @@ Caf.defMod(module, () => {
                 key
               ])
             })
-          : accessorStn.isAccessor
+          : accessorStn.isAccessor || accessorStn.type === "This"
               ? { value1: accessorStn, value2: accessorStn }
               : this.getValueWithCapture(accessorStn);
       };

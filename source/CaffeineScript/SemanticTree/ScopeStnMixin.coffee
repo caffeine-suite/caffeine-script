@@ -14,6 +14,7 @@ defineModule module, ->
       super
       @_uniqueIdentifierHandles =
       @_boundUniqueIdentifiers = null
+      @_scopeUpdated = false
 
 
     addIdentifierUsed: (identifier)->
@@ -21,6 +22,7 @@ defineModule module, ->
       @identifiersUsed[identifier] = true
 
     addIdentifierAssigned: (identifier, initializer)->
+      return unless identifier
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
       @identifiersAssigned[identifier] = initializer || true
 
@@ -47,6 +49,8 @@ defineModule module, ->
       identifier
 
     getAvailableIdentifierName: (preferredName) ->
+      unless @_scopeUpdated
+        log.error ScopeStnMixin: getAvailableIdentifierName: "cannot be called before updateScope completes: #{@className}", new Error
       identifiersUsed = @identifiersUsedOrAssigned
       return preferredName unless identifiersUsed[preferredName]
       count = 1
@@ -72,6 +76,7 @@ defineModule module, ->
       @bindAllUniqueIdentifiersRequested()
       @scope.addChildScope @
       child.updateScope @ for child in @children
+      @_scopeUpdated = true
       null
 
     @getter
@@ -79,7 +84,9 @@ defineModule module, ->
 
       uniqueIdentifierHandles: -> @_uniqueIdentifierHandles ||= []
 
-      boundUniqueIdentifiers: -> @_boundUniqueIdentifiers ||= {}
+      boundUniqueIdentifiers: ->
+        # log.error "boundUniqueIdentifiers initialized", new Error
+        @_boundUniqueIdentifiers ||= {}
 
       requiredIdentifierLets: ->
         {identifiersAssignedInParentScopes} = @

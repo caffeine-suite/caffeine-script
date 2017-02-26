@@ -46,13 +46,12 @@ Caf.defMod(module, () => {
           this.requiredIdentifierLets
         ]);
         statements = compactFlatten([
-          lets.length > 0 ? `let ${lets.join(", ")}` : null,
+          lets.length > 0 ? `let ${lets.join(", ")}` : undefined,
           statementsJs
         ]);
-        return `\
-let Caf = require('caffeine-script-runtime');\n\
-Caf.defMod(module, () => {${statements.join("; ")};});\
-`;
+        return `let Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${statements.join(
+          "; "
+        )};});`;
       };
       this.prototype.toJs = function() {
         let statementsJs;

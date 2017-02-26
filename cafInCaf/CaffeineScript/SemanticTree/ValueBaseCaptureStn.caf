@@ -23,7 +23,7 @@ class ValueBaseCaptureStn extends &BaseStn
           ReferenceStn identifierHandle: baseIdentifierHandle
           key
         ]
-    else if accessorStn.isAccessor
+    else if accessorStn.isAccessor || accessorStn.type == "This"
       value1: accessorStn, value2: accessorStn
     else
       @getValueWithCapture accessorStn

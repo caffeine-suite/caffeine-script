@@ -20,7 +20,7 @@ class StatementsStn extends &BaseStn
       if returnAction && i == lines.length - 1
         if !c.jsExpressionUsesReturn
           "#{returnAction} #{c.toJsExpression()}"
-        else c.toJs()
+        else c.toJs generateReturnStatement: true
 
       else
         if generateStatements
@@ -33,8 +33,9 @@ class StatementsStn extends &BaseStn
           c.toJsExpression true
 
   toJsParenExpression: ->
-    if @children.length == 1
-      @children[0].toJsParenExpression()
+    switch @children.length
+    when 0 then "undefined"
+    when 1 then @children[0].toJsParenExpression()
     else
       @applyRequiredParens
         @getChildrenStatementsJsArray "", false

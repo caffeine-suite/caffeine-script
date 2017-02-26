@@ -15,8 +15,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
     @rValue = children[1]
 
   updateScope: (@scope) ->
-    if @lValue.type == "Reference"
-      @scope.addIdentifierAssigned @lValue.toJs()
+    @scope.addIdentifierAssigned @lValue?.explicitIdentifier
     super
 
   transform: ->

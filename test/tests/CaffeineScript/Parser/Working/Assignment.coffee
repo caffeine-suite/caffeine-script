@@ -119,3 +119,7 @@ module.exports = suite: parseTestSuite
         "let base;
         (base = a.b).c || (base.c =
         function() {let base1; return (base1 = foo.bar).c || (base1.c = d);});"
+
+  regressions:
+    "@b ||= 1":   "this.b || (this.b = 1);"
+    "a.b ||= 1":  "a.b || (a.b = 1);"

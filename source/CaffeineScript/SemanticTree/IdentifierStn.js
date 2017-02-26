@@ -10,6 +10,9 @@ Caf.defMod(module, () => {
         },
         isIdentifier: function() {
           return true;
+        },
+        explicitIdentifier: function() {
+          return this.props.identifier;
         }
       });
       this.prototype.updateScope = function(scope) {
