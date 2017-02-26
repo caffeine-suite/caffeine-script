@@ -39,11 +39,18 @@ Caf.defMod(module, () => {
         });
       };
       this.prototype.toJsParenExpression = function() {
-        return this.children.length === 1
-          ? this.children[0].toJsParenExpression()
-          : this.applyRequiredParens(
-              this.getChildrenStatementsJsArray("", false).join(", ")
-            );
+        return (() => {
+          switch (this.children.length) {
+            case 0:
+              return "undefined";
+            case 1:
+              return this.children[0].toJsParenExpression();
+            default:
+              return this.applyRequiredParens(
+                this.getChildrenStatementsJsArray("", false).join(", ")
+              );
+          }
+        })();
       };
       this.prototype.toJsExpressionWithParens = function() {
         return this.toJsParenExpression();
