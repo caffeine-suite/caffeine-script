@@ -96,13 +96,13 @@ contexts:
 
   interpolation:
     - match: "\\}"
-      scope: keyword.operator.caffeine
+      scope: string.quoted.double.caffeine
       pop: true
     - include: main
 
   interpolatable:
     - match: "\\#\\{"
-      scope: keyword.operator.caffeine
+      scope: string.quoted.double.caffeine
       push: interpolation
 
   caffeine_mc_block:
@@ -123,7 +123,7 @@ contexts:
       scope: string.quoted.double.caffeine
 
   to_eol_string:
-    - match: '\n'
+    - match: '(?:\n)'
       pop: true
     - include: interpolatable
     - match: "."
