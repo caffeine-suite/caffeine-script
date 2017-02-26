@@ -1,0 +1,127 @@
+import &ArtFoundation
+
+&StatementsStn
+&LetStn
+&UniqueIdentifierHandle
+
+
+(toExtend) -> class ScopeStnMixin extends toExtend
+  @abstractClass()
+
+  constructor: ->
+    super
+    @_uniqueIdentifierHandles = @_boundUniqueIdentifiers = null
+    @_scopeUpdated = false
+
+
+  addIdentifierUsed: (identifier)->
+    throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
+    @identifiersUsed[identifier] = true
+
+  addIdentifierAssigned: (identifier, initializer)->
+    if identifier
+      throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
+      @identifiersAssigned[identifier] = initializer || true
+
+  @getter
+    # call during toJs
+    uniqueIdentifier: (preferredName = "_temp") ->
+      @getUniqueIdentifierHandle(preferredName).identifier
+
+    # call during transform
+    uniqueIdentifierHandle: (preferredName = "_temp") ->
+      @addUniqueIdentifierHandle new UniqueIdentifierHandle preferredName
+
+  addUniqueIdentifierHandle: (uih) ->
+    unless uih.scope
+      uih.scope = @
+      @uniqueIdentifierHandles.push uih
+      uih
+
+  # must be called after all calls to addIdentifierAssigned && addIdentifierUsed
+  bindUniqueIdentifier: (preferredName, uniqueIdentifierHandle ) ->
+    identifier = @getAvailableIdentifierName preferredName
+    @boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle
+    @identifiersAssigned[identifier] = true
+    identifier
+
+  getAvailableIdentifierName: (preferredName) ->
+    unless @_scopeUpdated
+      log.error ScopeStnMixin: getAvailableIdentifierName: "cannot be called before updateScope completes: #{@className}", new Error
+    else
+      identifiersUsed = @identifiersUsedOrAssigned
+      unless identifiersUsed[preferredName]
+        preferredName
+      else
+        count = 0
+        name while identifiersUsed[name = "#{preferredName}#{count+=1}"]
+        name
+
+  addChildScope: (child) ->
+    unless child == @
+      (@childScopes ||= []).push child
+
+  bindAllUniqueIdentifiersRequested: ->
+    if @_uniqueIdentifierHandles
+      each uniqueIdentifierHandle in @_uniqueIdentifierHandles
+        uniqueIdentifierHandle.identifier
+
+  getAutoLets: ->
+    @bindAllUniqueIdentifiersRequested()
+    if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
+      "let #{identifiers.join ', '}"
+
+  updateScope: (@scope)->
+    @bindAllUniqueIdentifiersRequested()
+    @scope.addChildScope @
+    each child in @children do child.updateScope @
+    @_scopeUpdated = true
+
+  @getter
+    argumentNames: -> []
+
+    uniqueIdentifierHandles: -> @_uniqueIdentifierHandles ||= []
+
+    boundUniqueIdentifiers: ->
+      @_boundUniqueIdentifiers ||= {}
+
+    requiredIdentifierLets: ->
+      {identifiersAssignedInParentScopes} = @
+      array initializer, identifier from @identifiersAssigned when !identifiersAssignedInParentScopes || !identifiersAssignedInParentScopes[identifier]
+        if isString initializer
+          "#{identifier} = #{initializer}"
+        else if initializer.toJsExpression?
+          "#{identifier} = #{initializer.toJsExpression()}"
+        else
+          identifier
+
+    identifiersUsed: -> @props.identifiersUsed ||= {}
+    identifiersAssigned: -> @props.identifiersAssigned ||= {}
+
+    identifiersUsedOrAssigned: ->
+      out = merge @identifiersUsed, @identifiersAssigned
+      {scope} = @
+
+      notDone = true
+      while scope && notDone
+        mergeInto out, scope.identifiersAssigned
+        if scope == scope.scope
+          notDone = false
+        else
+          {scope} = scope
+
+      out
+
+    identifiersUsedButNotAssigned: ->
+      assigned = @identifiersAssignedInParentThisOrChildrenScopes
+      ret = object v, k from @identifiersUsed when !assigned[k] with true
+
+      each childScope in @childScopes
+        mergeInto ret, childScope.identifiersUsedButNotAssigned
+
+      @props.identifiersUsedButNotAssigned = ret
+
+    identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
+    identifiersAssignedInParentScopes: ->
+      if @scope && @scope != @
+        merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, arrayToTruthMap @argumentNames
