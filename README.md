@@ -12,6 +12,14 @@ CaffeineScript is now written in itself! (2017-02-26)
 
 That means it is basically real and usable. See the [issues](https://github.com/shanebdavis/caffeine-script/issues) for what is left to take this baby to Beta and finally a release-candidate.
 
+Try it out:
+
+```
+git clone https://github.com/shanebdavis/caffeine-script.git
+npm install
+# make sure node_modules/.bin/caf is in your path
+```
+
 ### Maximizing Programmer (My) Productivity
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.

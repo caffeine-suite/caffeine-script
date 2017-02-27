@@ -1,6 +1,6 @@
 {CaffeineScript} = Neptune
 {each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.Foundation
-{Parser} = CaffeineScript
+{CaffeineScriptParser} = CaffeineScript
 require "colors"
 
 module.exports =
@@ -8,7 +8,7 @@ module.exports =
     for k, v of map
       do (k, v) ->
         test "ast: " + k.replace(/\n/g, "\\n"), ->
-          p = Parser.parse k, verbose: true
+          p = CaffeineScriptParser.parse k, verbose: true
           assert.eq p.getStn(), v
 
   parseTests: parseTests = (a, b) ->
@@ -23,7 +23,7 @@ module.exports =
     object map, (expectedJs, source) ->
       test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
         js = try
-          stn = (p = Parser.parse(source, parseOptions)).getStn()
+          stn = (p = CaffeineScriptParser.parse(source, parseOptions)).getStn()
           transformedStn = stn.transform()
           if compileModule
             transformedStn.toJsModule()
@@ -78,7 +78,7 @@ module.exports =
     if isString source = a
       ->
         test "illegal: #{source.replace(/\n/g, "\\n")}", ->
-          assert.rejects -> Parser.parse source
+          assert.rejects -> CaffeineScriptParser.parse source
 
     else if isArray a
       object a, illegalSyntaxTests

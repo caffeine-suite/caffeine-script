@@ -2,10 +2,13 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return {
     compile: function(source, options) {
-      let Parser = require("./Parser");
+      let CaffeineScriptParser = require("./CaffeineScriptParser");
       return {
         compiled: {
-          js: Parser.parse(source, options).getStn().transform().toJsModule()
+          js: CaffeineScriptParser.parse(source, options)
+            .getStn()
+            .transform()
+            .toJsModule()
         }
       };
     }

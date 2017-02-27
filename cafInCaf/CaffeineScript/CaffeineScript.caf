@@ -1,2 +1,2 @@
 compile: (source, options) ->
-  compiled: js: &Parser.parse(source, options).getStn().transform().toJsModule()
+  compiled: js: &CaffeineScriptParser.parse(source, options).getStn().transform().toJsModule()
