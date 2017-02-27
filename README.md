@@ -18,6 +18,7 @@ Try it out:
 git clone https://github.com/shanebdavis/caffeine-script.git
 npm install
 # make sure node_modules/.bin/caf is in your path
+caf demo.caf
 ```
 
 ### Maximizing Programmer (My) Productivity
