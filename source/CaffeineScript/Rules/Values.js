@@ -19,6 +19,7 @@ Caf.defMod(module, () => {
       ],
       simpleValue: [
         "require",
+        "tagMacro",
         "globalIdentifier",
         "this",
         "thisProperty",

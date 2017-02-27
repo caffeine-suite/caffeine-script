@@ -6,7 +6,16 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     valueExtension: :dotAccessor :bracketAccessor :functionInvocation :blockValueExtension
-    simpleValue: :require :globalIdentifier :this :thisProperty :literal :super :unqualifiedIdentifier :parentheticalExpression
+    simpleValue:
+      :require
+      :tagMacro
+      :globalIdentifier
+      :this
+      :thisProperty
+      :literal
+      :super
+      :unqualifiedIdentifier
+      :parentheticalExpression
 
   @rule
     parentheticalExpression: "'(' _? expression _? ')'"

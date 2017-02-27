@@ -1,28 +1,16 @@
 import &ArtFoundation, &colors
 
-# <capture>
-{source, evaluate} =
-  source:
-    """
-      a:
-        1 2 3
-        4 5 6
-        7 8 9
+{source, value} = <capture>
+  # implicit arrays
+  a:
+    1 2 3
+    4 5 6
+    7 8 9
 
-      match:
-        pattern: :blah  action: :boring
-        pattern: :zoom  action: :yay!
-
-  evaluate: ->
-    a:
-      1 2 3
-      4 5 6
-      7 8 9
-
-    match:
-      pattern: :blah  action: :boring
-      pattern: :zoom  action: :yay!
-
+  # :unquotedStrings and more implicit arrays
+  match:
+    pattern: :blah  action: :boring
+    pattern: :zoom  action: :yay!
 
 log
   []
@@ -31,11 +19,13 @@ log
 
     "" Where this code:
 
-    source.green
+    source
+    .replace /(^|\n)/g, "$1  "  # indent
+    .green
 
     "" generates this:
 
-    "  " + JSON.stringify evaluate()
+    "  " + JSON.stringify value
     .green
 
   .join '\n\n'

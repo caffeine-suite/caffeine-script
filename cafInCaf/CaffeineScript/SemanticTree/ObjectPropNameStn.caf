@@ -2,12 +2,20 @@ import &ArtFoundation
 
 legalUnquotedPropName = /^(0|[1-9a-z_][0-9_a-z]*)$/i
 
+escapePropName = (rawPropName) ->
+  if rawPropName.match legalUnquotedPropName
+    rawPropName
+  else
+    escapeJavascriptString rawPropName
+
 class ObjectPropNameStn extends &BaseStn
 
   constructor: ->
     super
     [nameStn] = @children
-    @props.value = if nameStn
+
+    # NOTE: props.value is used by SuperStn even it if isn't used in @toJs here.
+    @props.value ||= if nameStn
       nameStn.toJs() # TODO: we should validate
     else
       @parseTreeNode.toString()
@@ -19,8 +27,8 @@ class ObjectPropNameStn extends &BaseStn
       if nameStn.children.length > 0
         "[#{str}]"
       else
+        unless nameStn.type == "String" || nameStn.type == "Identifer"
+          throw new Error "internal error - should be a StringStn or IdentifierStn. Actual type: #{nameStn.type}"
         str
     else
-      value = @parseTreeNode.toString()
-      value = escapeJavascriptString value unless value.match legalUnquotedPropName
-      value
+      escapePropName @props.value

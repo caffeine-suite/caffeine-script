@@ -1,0 +1,33 @@
+import &ArtFoundation
+
+&StringStn
+&ObjectStn
+&ObjectPropValueStn
+&ObjectPropNameStn
+
+##
+  ObjectStn
+    ObjectPropValueStn
+      ObjectPropNameStn
+        value:            "source"
+
+    ObjectPropValueStn
+      ObjectPropNameStn:
+        - value:            "value"
+        - str.IdentiferStn: identifier: "value"
+
+      - propValue.ReferenceStn: - identifier.IdentiferStn: identifier: "foo"
+
+class CaptureStn extends &BaseStn
+
+  transform: ->
+    # log CaptureStn: parseTreeNode:
+    ObjectStn
+      @props
+      ObjectPropValueStn
+        ObjectPropNameStn value: "source"
+        StringStn value: @children[1].parseTreeNode.text
+
+      ObjectPropValueStn
+        ObjectPropNameStn value: "value"
+        @children[1]
