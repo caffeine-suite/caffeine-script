@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
   ]));
   return CaffeineScriptParser = Caf.defClass(
     class CaffeineScriptParser extends Parser {},
-    function() {
+    function(CaffeineScriptParser, classSuper, instanceSuper) {
       let Rules = require("./Rules");
       this.nodeBaseClass = CafParseNodeBaseClass;
       Caf.e(Rules.modules, undefined, (mod, k, into) => {
@@ -23,7 +23,6 @@ Caf.defMod(module, () => {
           this.rule(mod);
         }
       });
-      return this;
     }
   );
 });

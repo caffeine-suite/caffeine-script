@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
   SemanticTree = require("./namespace");
   return ValueBaseCaptureStn = Caf.defClass(
     class ValueBaseCaptureStn extends BaseStn {},
-    function() {
+    function(ValueBaseCaptureStn, classSuper, instanceSuper) {
       this.abstractClass();
       this.prototype.getValueWithBaseCapture = function(accessorStn) {
         let AssignmentStn,
@@ -158,7 +158,6 @@ Caf.defMod(module, () => {
           createRightStn(value2)
         );
       };
-      return this;
     }
   );
 });

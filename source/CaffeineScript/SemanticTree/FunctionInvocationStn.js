@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
         }
       }
     },
-    function() {
+    function(FunctionInvocationStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
       this.getter({
         existanceTest: function() {
@@ -51,7 +51,6 @@ Caf.defMod(module, () => {
             .join(", ")
         )}`;
       };
-      return this;
     }
   );
 });

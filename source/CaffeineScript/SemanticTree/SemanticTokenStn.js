@@ -17,7 +17,7 @@ Caf.defMod(module, () => {
           (base.token = this.parseTreeNode.toString());
       }
     },
-    function() {
+    function(SemanticTokenStn, classSuper, instanceSuper) {
       this.getter({
         token: function() {
           return this.props.token;
@@ -32,7 +32,6 @@ Caf.defMod(module, () => {
           );
         })();
       };
-      return this;
     }
   );
 });

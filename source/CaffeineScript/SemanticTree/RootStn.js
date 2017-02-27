@@ -4,12 +4,8 @@ Caf.defMod(module, () => {
     StatementsStn = require("./StatementsStn"),
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
-    RootStn,
     compactFlatten;
-  ({ RootStn, compactFlatten } = Caf.i(["RootStn", "compactFlatten"], [
-    ArtFoundation,
-    global
-  ]));
+  ({ compactFlatten } = Caf.i(["compactFlatten"], [ArtFoundation, global]));
   StatementsStn;
   return RootStn = Caf.defClass(
     class RootStn extends ScopeStnMixin(BaseStn) {
@@ -18,7 +14,7 @@ Caf.defMod(module, () => {
         this.statements = children[0];
       }
     },
-    function() {
+    function(RootStn, classSuper, instanceSuper) {
       this.prototype.cloneWithNewStatements = function(statements) {
         return new RootStn(this.props, [
           StatementsStn(compactFlatten(statements))
@@ -26,7 +22,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.transform = function() {
         let ret;
-        ret = Caf.getSuper(this).transform.apply(this, arguments);
+        ret = instanceSuper.transform.apply(this, arguments);
         ret.updateScope(ret);
         return ret;
       };
@@ -59,7 +55,6 @@ Caf.defMod(module, () => {
         return compactFlatten([this.getAutoLets(), statementsJs]).join("; ") +
           ";";
       };
-      return this;
     }
   );
 });

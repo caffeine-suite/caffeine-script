@@ -52,9 +52,10 @@ Caf.defMod(module, () => {
         pattern: "at:/@/? identifier argIdentifierExtension?",
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
+          let base;
           return {
-            rest: !!(Caf.exists(this.argIdentifierExtension) &&
-              this.argIdentifierExtension.etc),
+            rest: !!(Caf.exists(base = this.argIdentifierExtension) &&
+              base.etc),
             assignThisProperty: !!this.at
           };
         }
@@ -85,7 +86,8 @@ Caf.defMod(module, () => {
           return { existanceTest: !!this.existanceTest };
         },
         stnChildren: function() {
-          return Caf.exists(this.values) && this.values.getStn();
+          let base;
+          return Caf.exists(base = this.values) && base.getStn();
         }
       }
     );

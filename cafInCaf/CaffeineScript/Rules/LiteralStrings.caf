@@ -17,7 +17,7 @@ import &ArtFoundation, &BabelBridge, &SemanticTree, &Lib
       {}
         pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock'
         getStn: ->
-          ret = super
+          ret = @stringBlock.getStn()
           ret.compactNewLines() unless @tripple
           ret.trimRight?()
           ret

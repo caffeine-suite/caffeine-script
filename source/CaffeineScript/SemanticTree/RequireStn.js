@@ -14,14 +14,14 @@ Caf.defMod(module, () => {
   Fs;
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
-    function() {
+    function(RequireStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         this.scope.addIdentifierAssigned(
           this.rawIdentifier,
           `require('${this.requireString}')`
         );
-        return Caf.getSuper(this).updateScope.apply(this, arguments);
+        return instanceSuper.updateScope.apply(this, arguments);
       };
       this.getter({
         normalizedIdentifier: function() {
@@ -56,7 +56,7 @@ Caf.defMod(module, () => {
           files;
         ({ sourceFile, sourceFiles, sourceRoot } = options);
         return (sourceFile ||
-          (sourceFile = sourceFiles != null && sourceFiles[0])) &&
+          (sourceFile = Caf.exists(sourceFiles) && sourceFiles[0])) &&
           sourceRoot
           ? ({
               normalizedIdentifier
@@ -66,7 +66,7 @@ Caf.defMod(module, () => {
               sourceRoot
             ), found = null, shouldContinue = true, (() => {
               while (shouldContinue) {
-                found = Caf.ee(files = Fs.readdirSync(directory), null, (
+                found = Caf.ee(files = Fs.readdirSync(directory), undefined, (
                   name,
                   k,
                   into,
@@ -84,8 +84,8 @@ Caf.defMod(module, () => {
                         baseName
                       ), !relative.match(/^\./)
                         ? relative = `./${relative}`
-                        : null, relative)
-                    : null) &&
+                        : undefined, relative)
+                    : undefined) &&
                     (brk(), _ret);
                 });
                 if (found || directory === sourceRoot) {
@@ -94,12 +94,11 @@ Caf.defMod(module, () => {
                 directory = Path.dirname(directory);
               }
             })(), found)
-          : null;
+          : undefined;
       };
       this.prototype.toJs = function() {
         return this.rawIdentifier;
       };
-      return this;
     }
   );
 });

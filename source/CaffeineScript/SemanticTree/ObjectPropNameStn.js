@@ -20,7 +20,7 @@ Caf.defMod(module, () => {
           : this.parseTreeNode.toString();
       }
     },
-    function() {
+    function(ObjectPropNameStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         let nameStn, str, value;
         [nameStn] = this.children;
@@ -32,9 +32,8 @@ Caf.defMod(module, () => {
               legalUnquotedPropName
             )
               ? value = escapeJavascriptString(value)
-              : null, value);
+              : undefined, value);
       };
-      return this;
     }
   );
 });

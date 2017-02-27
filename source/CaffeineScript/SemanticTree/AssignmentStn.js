@@ -23,18 +23,18 @@ Caf.defMod(module, () => {
         this.rValue = children[1];
       }
     },
-    function() {
+    function(AssignmentStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         let base;
         this.scope = scope;
         this.scope.addIdentifierAssigned(
           Caf.exists(base = this.lValue) && base.explicitIdentifier
         );
-        return Caf.getSuper(this).updateScope.apply(this, arguments);
+        return instanceSuper.updateScope.apply(this, arguments);
       };
       this.prototype.transform = function() {
-        return Caf.getSuper(this)
-          .transform.apply(this, arguments)
+        return instanceSuper.transform
+          .apply(this, arguments)
           .postSuperTransform();
       };
       this.prototype.postSuperTransform = function() {
@@ -57,7 +57,6 @@ Caf.defMod(module, () => {
       this.prototype.toJsParenExpression = function() {
         return `(${this.toJs()})`;
       };
-      return this;
     }
   );
 });

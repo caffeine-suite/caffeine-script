@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     BaseStn = require("./BaseStn");
   return StatementsStn = Caf.defClass(
     class StatementsStn extends BaseStn {},
-    function() {
+    function(StatementsStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return this.getChildrenStatementsJsArray().join("; ");
       };
@@ -55,7 +55,6 @@ Caf.defMod(module, () => {
       this.prototype.toJsExpressionWithParens = function() {
         return this.toJsParenExpression();
       };
-      return this;
     }
   );
 });

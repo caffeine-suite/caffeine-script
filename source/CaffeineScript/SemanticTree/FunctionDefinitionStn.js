@@ -24,7 +24,7 @@ Caf.defMod(module, () => {
         this.statements = children[1];
       }
     },
-    function() {
+    function(FunctionDefinitionStn, classSuper, instanceSuper) {
       this.prototype.cloneWithNewStatements = function(statements) {
         return new this.class(this.props, [
           this.arguments,
@@ -39,8 +39,8 @@ Caf.defMod(module, () => {
           return !this.props.bound;
         },
         argumentNames: function() {
-          return Caf.exists(this.arguments) && this.arguments.argumentNames || [
-          ];
+          let base;
+          return Caf.exists(base = this.arguments) && base.argumentNames || [];
         }
       });
       this.prototype.toJs = function() {
@@ -105,7 +105,6 @@ Caf.defMod(module, () => {
           ? `${argsDef} => ${body}`
           : `${isConstructor ? "constructor" : "function"}${argsDef} ${body}`;
       };
-      return this;
     }
   );
 });

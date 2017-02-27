@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
   ({ peek } = Caf.i(["peek"], [ArtFoundation, global]));
   return InterpolatedStringStn = Caf.defClass(
     class InterpolatedStringStn extends BaseStn {},
-    function() {
+    function(InterpolatedStringStn, classSuper, instanceSuper) {
       this.prototype.compactNewLines = function(compactLeft, compactRight) {
         return Caf.e(this.children, undefined, (child, i, into) => {
           if (child.type === "String") {
@@ -19,8 +19,8 @@ Caf.defMod(module, () => {
       };
       this.prototype.trimRight = function() {
         let base;
-        return Caf.isF((base = peek(this.children)).trimRight) &&
-          base.trimRight();
+        return Caf.exists(base = peek(this.children)) &&
+          (Caf.isF(base.trimRight) && base.trimRight());
       };
       this.prototype.toJs = function() {
         return `\`${Caf
@@ -29,7 +29,6 @@ Caf.defMod(module, () => {
           })
           .join("")}\``;
       };
-      return this;
     }
   );
 });

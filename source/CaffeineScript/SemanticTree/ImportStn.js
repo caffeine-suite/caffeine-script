@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
   ({ peek, Object } = Caf.i(["peek", "Object"], [ArtFoundation, global]));
   return ImportStn = Caf.defClass(
     class ImportStn extends ScopeStnMixin(BaseStn) {},
-    function() {
+    function(ImportStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         this.bindAllUniqueIdentifiersRequested();
@@ -88,7 +88,6 @@ Caf.defMod(module, () => {
       this.prototype.toJsExpression = function() {
         return this.toJs({ returnExpression: true });
       };
-      return this;
     }
   );
 });

@@ -28,7 +28,7 @@ Caf.defMod(module, () => {
   SemanticTree = require("./namespace");
   return ComprehensionStn = Caf.defClass(
     class ComprehensionStn extends ScopeStnMixin(BaseStn) {},
-    function() {
+    function(ComprehensionStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
         let outputType,
           variableDefinition,
@@ -273,7 +273,6 @@ Caf.defMod(module, () => {
           )
         );
       };
-      return this;
     }
   );
 });

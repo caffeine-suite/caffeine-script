@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
         super(props, children);
       }
     },
-    function() {
+    function(ArrayStn, classSuper, instanceSuper) {
       this.getter({
         implicitArray: function() {
           return this.props.implicitArray;
@@ -23,7 +23,6 @@ Caf.defMod(module, () => {
           })
           .join(", ")}]`;
       };
-      return this;
     }
   );
 });

@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
         this.scope = scope;
       }
     },
-    function() {
+    function(UniqueIdentifierHandle, classSuper, instanceSuper) {
       this.getter({
         inspectedObjects: function() {
           return inspectedObjectLiteral(
@@ -33,7 +33,9 @@ Caf.defMod(module, () => {
             ));
         }
       });
-      return this;
+      this.prototype.toString = function() {
+        return this.identifier;
+      };
     }
   );
 });

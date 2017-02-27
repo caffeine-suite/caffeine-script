@@ -26,7 +26,7 @@ Caf.defMod(module, () => {
           this._scopeUpdated = false;
         }
       },
-      function() {
+      function(ScopeStnMixin, classSuper, instanceSuper) {
         this.abstractClass();
         this.prototype.addIdentifierUsed = function(identifier) {
           if (this._boundUniqueIdentifiers) {
@@ -221,7 +221,6 @@ Caf.defMod(module, () => {
               : undefined;
           }
         });
-        return this;
       }
     );
   };

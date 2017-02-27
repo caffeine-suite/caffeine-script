@@ -4,7 +4,11 @@ Caf.defMod(module, () => {
     BaseStn = require("./BaseStn"),
     compactFlatten;
   ({ compactFlatten } = Caf.i(["compactFlatten"], [ArtFoundation, global]));
-  return CatchStn = Caf.defClass(class CatchStn extends BaseStn {}, function() {
+  return CatchStn = Caf.defClass(class CatchStn extends BaseStn {}, function(
+    CatchStn,
+    classSuper,
+    instanceSuper
+  ) {
     this.prototype.updateScope = function(scope) {
       let id;
       this.scope = scope;
@@ -15,7 +19,7 @@ Caf.defMod(module, () => {
         this.scope.addIdentifierAssigned(id.name);
         this.scope.addIdentifierUsed(id.name);
       }
-      return Caf.getSuper(this).updateScope.apply(this, arguments);
+      return instanceSuper.updateScope.apply(this, arguments);
     };
     this.prototype.toJs = function(options = {}) {
       let returnExpression, identifier, body, tempName;
@@ -28,6 +32,5 @@ Caf.defMod(module, () => {
           ).join("; "), `catch (${tempName}) {${body};}`)
         : undefined;
     };
-    return this;
   });
 });

@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
   ));
   return CafParseNodeBaseClass = Caf.defClass(
     class CafParseNodeBaseClass extends Nodes.Node {},
-    function() {
+    function(CafParseNodeBaseClass, classSuper, instanceSuper) {
       this._createSubclassBase = function() {
         return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
       };
@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
         return !!this.getImplicitArray();
       };
       this.prototype.getImplicitArray = function() {
-        return Caf.ee(this.matches, null, (match, k, into, brk) => {
+        return Caf.ee(this.matches, undefined, (match, k, into, brk) => {
           let _ret;
           return (_ret = Caf.isF(match.getImplicitArray) &&
             match.getImplicitArray()) &&
@@ -56,7 +56,7 @@ Caf.defMod(module, () => {
         isStnExtension: function() {
           let base;
           return this.stnExtension ||
-            (base = this.presentMatches)[0] != null && base[0].isStnExtension;
+            Caf.exists(base = this.presentMatches[0]) && base.isStnExtension;
         },
         stnExtensionMatches: function() {
           return Caf.e(this.presentMatches, [], (m, k, into) => {
@@ -88,7 +88,7 @@ Caf.defMod(module, () => {
         Caf.e(this.stnExtensionMatches, undefined, (extension, k, into) => {
           stn = extension.getStn(stn);
         });
-        if (stn != null && stn.props) {
+        if (Caf.exists(stn) && stn.props) {
           currentStnLabel = stn.props.label;
           if (!currentStnLabel || this.label) {
             stn.props.label = this.label || this.ruleName;
@@ -103,7 +103,6 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         return this.getTransformedSemanticTree().toJs();
       };
-      return this;
     }
   );
 });

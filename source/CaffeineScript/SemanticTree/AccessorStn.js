@@ -26,7 +26,7 @@ Caf.defMod(module, () => {
         }
       }
     },
-    function() {
+    function(AccessorStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
       this.getter({
         existanceTest: function() {
@@ -39,7 +39,7 @@ Caf.defMod(module, () => {
       this.prototype.transform = function() {
         return this.value
           ? this.transformAccessorChain()
-          : Caf.getSuper(this).transform.apply(this, arguments);
+          : instanceSuper.transform.apply(this, arguments);
       };
       this.prototype.toJs = function() {
         let identierString, base;
@@ -53,7 +53,6 @@ Caf.defMod(module, () => {
               base.toJsExpressionWithParens() ||
               ""}[${this.key.toJsExpression()}]`;
       };
-      return this;
     }
   );
 });

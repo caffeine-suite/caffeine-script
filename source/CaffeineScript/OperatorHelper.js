@@ -1,16 +1,15 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
-    Error,
-    OperatorHelper,
-    op,
-    p,
-    arrayWithout;
-  ({ Error, OperatorHelper, op, p, arrayWithout } = Caf.i(
-    ["Error", "OperatorHelper", "op", "p", "arrayWithout"],
+  let ArtFoundation = require("art-foundation"), Error, op, p, arrayWithout;
+  ({ Error, op, p, arrayWithout } = Caf.i(
+    ["Error", "op", "p", "arrayWithout"],
     [ArtFoundation, global]
   ));
-  return OperatorHelper = Caf.defClass(class OperatorHelper {}, function() {
+  return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(
+    OperatorHelper,
+    classSuper,
+    instanceSuper
+  ) {
     let CoffeeScriptGlobal, infix, validateOperator;
     this.CoffeeScriptGlobal = CoffeeScriptGlobal = "Caf";
     this.operatorMap = {
@@ -155,6 +154,5 @@ Caf.defMod(module, () => {
       }
       return operands[0];
     };
-    return this;
   });
 });

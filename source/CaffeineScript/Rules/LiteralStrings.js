@@ -27,7 +27,7 @@ Caf.defMod(module, () => {
           pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock',
           getStn: function() {
             let ret;
-            ret = Caf.getSuper(this).getStn.apply(this, arguments);
+            ret = this.stringBlock.getStn();
             if (!this.tripple) {
               ret.compactNewLines();
             }
@@ -70,11 +70,12 @@ Caf.defMod(module, () => {
       },
       {
         getStnChildren: function(appendTo = []) {
+          let base;
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(this.interpolation) &&
-            this.interpolation.getStnChildren(appendTo);
+          Caf.exists(base = this.interpolation) &&
+            base.getStnChildren(appendTo);
           return appendTo;
         },
         getStn: function() {
@@ -97,12 +98,13 @@ Caf.defMod(module, () => {
       },
       {
         getStnChildren: function(appendTo = []) {
+          let base;
           appendTo.push(this.expression.getStn());
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(this.interpolation) &&
-            this.interpolation.getStnChildren(appendTo);
+          Caf.exists(base = this.interpolation) &&
+            base.getStnChildren(appendTo);
           return appendTo;
         }
       }

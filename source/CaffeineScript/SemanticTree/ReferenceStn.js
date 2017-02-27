@@ -3,7 +3,7 @@ Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"), BaseStn = require("./BaseStn");
   return ReferenceStn = Caf.defClass(
     class ReferenceStn extends BaseStn {},
-    function() {
+    function(ReferenceStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         if (this.props.identifierHandle) {
@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
         } else {
           this.scope.addIdentifierUsed(this.toJs());
         }
-        return Caf.getSuper(this).updateScope.apply(this, arguments);
+        return instanceSuper.updateScope.apply(this, arguments);
       };
       this.getter({
         isReference: function() {
@@ -30,7 +30,6 @@ Caf.defMod(module, () => {
           base.identifier ||
           this.labeledChildren.identifier.toJs();
       };
-      return this;
     }
   );
 });

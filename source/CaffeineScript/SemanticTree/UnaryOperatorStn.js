@@ -3,7 +3,7 @@ Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"), BaseStn = require("./BaseStn");
   return UnaryOperatorStn = Caf.defClass(
     class UnaryOperatorStn extends BaseStn {},
-    function() {
+    function(UnaryOperatorStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
         return this.props.operand === "?"
@@ -12,7 +12,6 @@ Caf.defMod(module, () => {
               this.children[0].toJsExpression()
             )}`;
       };
-      return this;
     }
   );
 });

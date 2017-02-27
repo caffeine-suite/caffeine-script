@@ -1,7 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"), BaseStn = require("./BaseStn");
-  return ThrowStn = Caf.defClass(class ThrowStn extends BaseStn {}, function() {
+  return ThrowStn = Caf.defClass(class ThrowStn extends BaseStn {}, function(
+    ThrowStn,
+    classSuper,
+    instanceSuper
+  ) {
     this.prototype.toJs = function() {
       return `throw ${this.childrenToJs()}`;
     };
@@ -11,6 +15,5 @@ Caf.defMod(module, () => {
     this.prototype.toJsParenExpression = function() {
       return this.toJsExpression();
     };
-    return this;
   });
 });

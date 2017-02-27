@@ -9,10 +9,11 @@ Caf.defMod(module, () => {
         pattern: "regExpStart regExpMiddle regExpEnd regExpModifiers?",
         stnFactory: "RegExpStn",
         stnProps: function() {
+          let base;
           return {
             value: this.regExpMiddle.toString(),
-            modifiers: Caf.exists(this.regExpModifiers) &&
-              this.regExpModifiers.toString()
+            modifiers: Caf.exists(base = this.regExpModifiers) &&
+              base.toString()
           };
         }
       },
@@ -20,9 +21,10 @@ Caf.defMod(module, () => {
         pattern: "'///' multilineRegExpMiddle* '///' regExpModifiers?",
         stnFactory: "RegExpStn",
         stnProps: function() {
+          let base;
           return {
-            modifiers: Caf.exists(this.regExpModifiers) &&
-              this.regExpModifiers.toString()
+            modifiers: Caf.exists(base = this.regExpModifiers) &&
+              base.toString()
           };
         }
       }

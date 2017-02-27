@@ -20,7 +20,7 @@ Caf.defMod(module, () => {
         this.validate();
       }
     },
-    function() {
+    function(ControlOperatorStn, classSuper, instanceSuper) {
       this.prototype.validate = function() {
         return (() => {
           switch (this.operand) {
@@ -57,7 +57,9 @@ Caf.defMod(module, () => {
           returnValueIsIgnored,
           expression,
           operand,
-          tempVarIdentifier;
+          tempVarIdentifier,
+          base,
+          base1;
         ({ returnExpression, returnValueIsIgnored } = options);
         expression = this.expression.toJsExpression();
         ({ operand } = this);
@@ -85,14 +87,14 @@ Caf.defMod(module, () => {
               : `${this.applyParens(
                   expression
                 )} ? ${this.body.toJsParenExpression()} : ${Caf.exists(
-                  this.elseBody
+                  base = this.elseBody
                 ) &&
-                  this.elseBody.toJsParenExpression() ||
+                  base.toJsParenExpression() ||
                   "undefined"}`
           : `${operand} ${this.applyRequiredParens(
               expression
             )} {${this.body.toJs()};}${this.elseBody
-              ? ` else {${Caf.exists(this.elseBody) && this.elseBody.toJs()};}`
+              ? ` else {${Caf.exists(base1 = this.elseBody) && base1.toJs()};}`
               : ""}`;
       };
       this.prototype.toJsParenExpression = function() {
@@ -104,7 +106,6 @@ Caf.defMod(module, () => {
           returnValueIsIgnored: returnValueIsIgnored
         });
       };
-      return this;
     }
   );
 });

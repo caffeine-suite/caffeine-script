@@ -9,8 +9,7 @@ class InterpolatedStringStn extends &BaseStn
         compactRight && i == @children.length - 1
 
   trimRight: ->
-    peek @children
-    ?.trimRight?()
+    peek(@children)?.trimRight?()
 
   toJs: ->
     "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"

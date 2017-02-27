@@ -3,7 +3,7 @@ Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"), BaseStn = require("./BaseStn");
   return SwitchWhenStn = Caf.defClass(
     class SwitchWhenStn extends BaseStn {},
-    function() {
+    function(SwitchWhenStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
         let thenDo;
         ({ thenDo } = this.labeledChildren);
@@ -27,7 +27,6 @@ Caf.defMod(module, () => {
         ({ thenDo } = this.labeledChildren);
         return `${this.getCasesJs(options)}: ${thenDo.toFunctionBodyJs()};`;
       };
-      return this;
     }
   );
 });

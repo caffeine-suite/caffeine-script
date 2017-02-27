@@ -1,7 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let Error = global.Error, BaseStn = require("./BaseStn");
-  return LetStn = Caf.defClass(class LetStn extends BaseStn {}, function() {
+  return LetStn = Caf.defClass(class LetStn extends BaseStn {}, function(
+    LetStn,
+    classSuper,
+    instanceSuper
+  ) {
     this.prototype.toJs = function() {
       let identifiers, identifier;
       ({ identifiers, identifier } = this.props);
@@ -10,13 +14,12 @@ Caf.defMod(module, () => {
             ? (() => {
                 throw new Error("LetStn identifiers empty");
               })()
-            : null, `let ${identifiers.join(", ")}`)
+            : undefined, `let ${identifiers.join(", ")}`)
         : identifier
             ? `let ${identifier}`
             : (() => {
                 throw new Error("LetStn needs props!");
               })();
     };
-    return this;
   });
 });
