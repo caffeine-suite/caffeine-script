@@ -10,7 +10,7 @@ CaffeineScript is obsessivly focused on programmer productivity, the only thing 
 
 CaffeineScript is now written in itself! (2017-02-26)
 
-That means it is basically real and usable. See the (issues)[https://github.com/shanebdavis/caffeine-script/issues] for what is left to take this baby to Beta and finally a release-candidate.
+That means it is basically real and usable. See the [issues](https://github.com/shanebdavis/caffeine-script/issues) for what is left to take this baby to Beta and finally a release-candidate.
 
 ### Maximizing Programmer (My) Productivity
 
