@@ -16,7 +16,7 @@ contexts:
     - match: '(?:^( *))##'
       push: block_comment
 
-    - match: '(?:^( *))"" *\n'
+    - match: '(?:^( *))"""? *\n'
       scope: string.quoted.double.caffeine
       push: block_string
 
