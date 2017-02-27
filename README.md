@@ -26,7 +26,10 @@ ln -s ../../caffeine-script
 cd ..
 
 # make sure node_modules/.bin/caf is in your path
-caf demo.caf
+node_modules/.bin/caf demo.caf
+
+# you can also run the tests:
+npm test
 ```
 
 ### Maximizing Programmer (My) Productivity
