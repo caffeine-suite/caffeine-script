@@ -85,6 +85,9 @@ module.exports = suite: parseTestSuite
         {d} = e
       """: "let a, d; a = b ? (c, ({d} = e)) : undefined;"
 
+    regressions:
+      "{a} = if true\n 1": "let a; ({a} = true ? 1 : undefined);"
+
   binopAssignment:
     javascriptSupported:
       "a += b":  "let a; a += b;"

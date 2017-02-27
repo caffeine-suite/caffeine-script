@@ -52,7 +52,7 @@ Caf.defMod(module, () => {
     },
     newLineStatementExtension: [
       "end lineStartBinaryOperatorAndExpression",
-      "end &dot valueExtension+ binaryOperatorSequenceExtension?"
+      "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
     ],
     lineOfStatements: {
       pattern: "statementSemi* statementWithoutEnd",

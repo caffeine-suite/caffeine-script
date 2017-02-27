@@ -4,4 +4,4 @@ class DestructuringAssignmentStn extends &BaseStn
 
   toJs: ->
     {structure, value} = @labeledChildren
-    "(#{structure.toJs()} = #{value.toJs()})"
+    "(#{structure.toJs()} = #{value.toJsExpression()})"

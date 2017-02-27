@@ -121,6 +121,11 @@ module.exports = suite: parseTestSuite
       .bar
       """: "foo.bar;"
 
+      """
+      foo
+      ?.bar
+      """: "Caf.exists(foo) && foo.bar;"
+
     binaryOperatorExtensions:
       """
       foo
