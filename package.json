@@ -14,10 +14,10 @@
   "name": "caffeine-script",
   "scripts": {
     "build": "webpack --progress",
-    "nn": "neptune-namespaces --std",
-    "perf": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register perf",
+    "nn": "nn -s",
+    "perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
     "start": "webpack-dev-server --hot --inline --progress",
-    "test": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
+    "test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
   },
   "version": "0.26.0"
 }

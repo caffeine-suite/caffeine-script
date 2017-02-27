@@ -48,9 +48,11 @@ import &ArtFoundation, &BabelBridge
       stnProps:   passArguments: true
 
   @rule
+    assignedValue: :complexExpression :rValueBlock
+
+  @rule
     assignmentExtension:
-      "assignmentOperator:_assignmentOperator_ complexExpression"
-      "assignmentOperator:_assignmentOperator_ rValueBlock"
+      "assignmentOperator:_assignmentOperator_ assignedValue"
     {}
       stnFactory:   :AssignmentStn
       stnExtension: true

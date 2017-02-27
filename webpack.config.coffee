@@ -22,6 +22,6 @@ module.exports = (require "art-foundation/configure_webpack")
       "colors":          "^1.1.2"
     ]
     scripts:
-      nn:       "neptune-namespaces --std"
-      test:     "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
-      perf:     "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register perf"
+      nn:       "nn -s"
+      test:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
+      perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"

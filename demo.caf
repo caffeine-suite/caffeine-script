@@ -1,28 +1,9 @@
 import &ArtFoundation, &colors
 
-log
-  []
-    "" Welcome to CaffeineScript!
-    .yellow
-
-    "" Where this code:
-
+# <capture>
+{source, evaluate} =
+  source:
     """
-      \  JSON.stringify
-          a:
-            1 2 3
-            4 5 6
-            7 8 9
-
-          match:
-            pattern: :blah  emotion: :boring
-            pattern: :zoom  emotion: :yay!
-
-    .green
-
-    "" generates out this:
-
-    "  " + JSON.stringify
       a:
         1 2 3
         4 5 6
@@ -31,6 +12,30 @@ log
       match:
         pattern: :blah  action: :boring
         pattern: :zoom  action: :yay!
+
+  evaluate: ->
+    a:
+      1 2 3
+      4 5 6
+      7 8 9
+
+    match:
+      pattern: :blah  action: :boring
+      pattern: :zoom  action: :yay!
+
+
+log
+  []
+    "" Welcome to CaffeineScript!
+    .yellow
+
+    "" Where this code:
+
+    source.green
+
+    "" generates this:
+
+    "  " + JSON.stringify evaluate()
     .green
 
   .join '\n\n'

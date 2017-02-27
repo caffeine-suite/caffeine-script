@@ -2,7 +2,7 @@ import &ArtFoundation
 
 ->
   @rule
-    destructuringAssignment: "structure:destructuringTarget _? '=' _? value:expression"
+    destructuringAssignment: "structure:destructuringTarget _? '=' _? value:assignedValue"
     {} stnFactory: :DestructuringAssignmentStn
 
   @rule
