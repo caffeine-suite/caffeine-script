@@ -5,6 +5,7 @@
     "babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git",
     "bluebird": "^3.4.7",
     "caffeine-mc": "git@github.com:shanebdavis/caffeine-mc.git",
+    "caffeine-script-runtime": "git@github.com:shanebdavis/caffeine-script-runtime.git",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",
     "chai": "^3.5.0",
     "coffee-loader": "^0.7.2",
