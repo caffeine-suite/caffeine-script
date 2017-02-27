@@ -19,5 +19,5 @@
     "start": "webpack-dev-server --hot --inline --progress",
     "test": "neptune-namespaces --std;mocha -u tdd --compilers coffee:coffee-script/register"
   },
-  "version": "0.25.0"
+  "version": "0.26.0"
 }
