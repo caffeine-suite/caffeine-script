@@ -1,0 +1,6 @@
+import &ArtFoundation
+
+class LabeledDestructuringTargetStn extends &BaseStn
+
+  toJs: ->
+    @childrenToJs ': '

@@ -1,0 +1,229 @@
+import &ArtFoundation
+
+class BaseStn extends BaseObject
+  ############################################
+    Could go in BabelBridge standard BaseStn
+
+  unless &CaffeineScriptRuntime.getSuper(@) == BaseObject
+    log
+      self: @
+      selfName: @getName()
+      Object.getPrototypeOf@: Object.getPrototypeOf @
+      badSuper: &CaffeineScriptRuntime.getSuper(@)
+      BaseObject: BaseObject
+      selfIsBaseObject?: @ == BaseObject
+    throw new Error "bad super"
+
+  @abstractClass()
+
+  ###
+    IN:
+      props should be a plain-object-structure with an object as the root
+      children should be a compact, flat array of Stns
+
+    TODO: I'd like to make setting the parseTreeNode cleaner.
+  noChildren = []
+  constructor: (props, @children = noChildren) ->
+    super
+    @parseTreeNode = props.parseTreeNode
+
+    @props = objectWithout props, "parseTreeNode"
+    @initLabeledChildren()
+
+  initLabeledChildren: ->
+    @labeledChildren = @children && {}
+    each child in @children
+      child.parent = @
+      {label, pluralLabel} = child
+      @labeledChildren[label] = child
+      if pluralLabel
+        (@labeledChildren[pluralLabel] ||= []).push child
+
+
+  @getter
+    parser: -> @parseTreeNode.parser.rootParser
+    sourceFile: -> @parser.sourceFile
+    label: -> @props.label
+    pluralLabel: -> @props.pluralLabel
+    inspectedObjects: ->
+      {label} = @
+
+      props = objectWithout @props, "label", "pluralLabel"
+      name = @class.getName()
+      name = "#{label}.#{name}" if label
+
+      "#{name}":
+        if @children.length == 0
+          toInspectedObjects props
+        else
+          a = []
+          a.push props if objectKeyCount(props) > 0
+          a.concat array c in @children with c.inspectedObjects
+
+    type: -> @class.type
+
+  @postCreate: ->
+    s = @getName().split /Stn$/
+    @type = s[0]
+    super
+
+  # so subclasses can add custom newInstance implementations
+  @newInstance: (props, children) ->
+    new @ props, children
+
+  @postCreateConcreteClass: (options)->
+    {classModuleState, hotReloadEnabled} = options
+    super
+    createObjectTreeFactory
+      class: @
+      (props, children) =>
+        @newInstance props, children
+
+  findParent: (stnTypePattern) ->
+    {parent} = @
+    found = null
+    while parent && !found
+      if parent.type.match stnTypePattern
+        found = parent
+      else
+        {parent} = parent
+    found
+
+    ## TODO - with "tap", this is just:
+      {parent} = @
+      while parent
+        if parent.type.match stnTypePattern
+          parent tap parent = null
+        else
+          parent extract parent
+
+      # - with "return", this is just:
+      {parent} = @
+      while parent
+        if parent.type.match stnTypePattern
+          return parent
+        else
+          parent extract parent
+
+      # recursion:
+      if parent.type.match stnTypePattern
+        parent
+      else
+        parent.findParent stnTypePattern
+
+  find: (stnTypePattern) ->
+    a = compactFlatten array child in @children
+      if child.type.match stnTypePattern
+        child
+      else
+        child.find stnTypePattern
+
+    if a.length == 0
+      null
+    else
+      a
+
+  ############################################
+    Unique to CafScript
+
+  childrenToJs: (joiner = '')->
+    array c in @children with c.toJs()
+    .join joiner
+
+  toJs: ->
+    throw new Error "must override one of the toJs* functions: #{@className}"
+
+  # return JS code that doesn't (have to) return a value
+  toJsStatement: ->
+    @toJs()
+
+  doJs: (args, body) ->
+    throw "TODO" if args
+    body = body.toFunctionBodyJs() unless isString body
+
+    "(() => {#{body};})()"
+
+  toFunctionBodyJsArray: (returnAction = true)->
+    if returnAction
+      ["return #{@toJsExpression()}"]
+    else
+      [@toJs()]
+
+  toFunctionBodyJs: (returnAction = true)->
+    @toFunctionBodyJsArray(returnAction).join ''
+
+  transformChildren: ->
+    ret = null
+    each child, i in @children
+      if child != newChild = child.transform()
+        ret ?= @children.slice()
+        ret[i] = newChild
+    ret || @children
+
+  transform: ->
+    if @children != newChildren = @transformChildren()
+      new @class @props, newChildren
+    else
+      @
+
+  # return JS code that can be used as js-expression (returns a value)
+  # for statements: a; b; return c;
+  toJsExpression: (returnValueIgnored = false)->
+    @toJs()
+
+  toJsExpressionWithParens: ->
+    js = @toJsExpression()
+    if @getNeedsParens()
+      "(#{js})"
+    else
+      js
+
+  # return JS code that can be used as js-expression (returns a value)
+  # for statements: (a,b,c)
+  toJsParenExpression: ->
+    @toJs()
+
+  # a string that can be inserted in the middle of an ES6 interpolation string: `...`
+  toInterpolatedJsStringPart: -> "${#{@toJsExpression(skipParens: true)}}"
+
+  needsParens: true
+  needsParensAsStatement: false
+
+  getNeedsParens: -> @needsParens
+  getNeedsParensAsStatement: -> @needsParensAsStatement
+
+  @applyRequiredParens: applyRequiredParens = (expr) ->
+    "(#{expr})"
+
+  @applyParens: applyParens = (expr) ->
+    if expr.match ///
+        ^(
+
+        \([^)]*\) |
+
+        \[[^\]]*\] |
+
+        ([!~-]*[_a-z0-9.]*)(\([^)]*\))?
+
+        )$
+        ///i
+      expr
+    else
+      "(#{expr})"
+
+  applyRequiredParens: applyRequiredParens
+  applyParens: applyParens
+
+  @getter
+    normalizedOperand: ->
+      switch op = @props.operand
+        when "and" then "&&"
+        when "or"  then "||"
+        when "==", "is"   then "==="
+        when "!=", "isnt" then "!=="
+        when "not" then "!"
+        else op
+
+  updateScope: (@scope) ->
+    each child in @children
+      child.updateScope @scope

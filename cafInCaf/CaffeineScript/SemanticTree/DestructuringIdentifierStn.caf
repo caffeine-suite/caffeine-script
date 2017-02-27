@@ -1,10 +1,9 @@
-Foundation = require 'art-foundation'
+import &ArtFoundation
 
-{log, a, w, m, defineModule, compactFlatten, present, escapeJavascriptString, BaseObject} = Foundation
+class DestructuringIdentifierStn extends &BaseStn
 
-defineModule module, class DestructuringIdentifierStn extends require './BaseStn'
-
-  updateScope: (@scope) ->
+  updateScope: (scope) ->
+    @scope = scope
     @scope.addIdentifierAssigned @labeledChildren.identifier.toJs()
     super
 
