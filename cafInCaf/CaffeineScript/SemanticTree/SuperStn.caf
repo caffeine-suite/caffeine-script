@@ -18,11 +18,12 @@ class SuperStn extends &BaseStn
     # TODO: we should validate that propName has a legal value string
 
     methodName = propValue.labeledChildren.propName.props.value
-    [__, methodName] = m if m = methodName.match /^@(.*)/
-    new @class merge(@props, methodName: methodName), @transformChildren()
+    [__, classMethod, methodName] = m if m = methodName.match /^(@)(.*)/
+    new @class merge(@props, methodName: methodName, classMethod: !!classMethod), @transformChildren()
 
   toJs: ->
     {args} = @
+
     if @props.calledInConstructor
       args = if @props.passArguments
         ["...arguments"]
@@ -32,12 +33,23 @@ class SuperStn extends &BaseStn
       "super(#{args.join ', '})"
 
     else
+      objectPropValue = @findParent "ObjectPropValue"
+      getSuperInput = if klass = @findParent "Class"
+        className = klass.labeledChildren.className.toJs()
 
-      method = if @props.passArguments
-        args = "arguments"
-        "apply"
+        superObject = if @props.classMethod
+          klass.props.classSuperHandle
+        else
+          klass.props.instanceSuperHandle
+
+        method = if @props.passArguments
+          args = "arguments"
+          "apply"
+        else
+          args = array a in args with a.toJsExpression()
+          "call"
+
+        "#{superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+
       else
-        args = array a in args with a.toJsExpression()
-        "call"
-
-      "Caf.getSuper(this).#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+        throw new Error "super not used in class"

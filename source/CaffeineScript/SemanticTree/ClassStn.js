@@ -7,12 +7,15 @@ Caf.defMod(module, () => {
     IdentifierStn = require("./IdentifierStn"),
     StatementsStn = require("./StatementsStn"),
     FunctionDefinitionStn = require("./FunctionDefinitionStn"),
+    FunctionDefinitionArgsStn = require("./FunctionDefinitionArgsStn"),
+    FunctionDefinitionArgStn = require("./FunctionDefinitionArgStn"),
+    UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
     BaseStn = require("./BaseStn"),
     Error,
     compactFlatten,
-    ClassStn;
-  ({ Error, compactFlatten, ClassStn } = Caf.i(
-    ["Error", "compactFlatten", "ClassStn"],
+    merge;
+  ({ Error, compactFlatten, merge } = Caf.i(
+    ["Error", "compactFlatten", "merge"],
     [ArtFoundation, global]
   ));
   AssignmentStn;
@@ -21,18 +24,47 @@ Caf.defMod(module, () => {
   IdentifierStn;
   StatementsStn;
   FunctionDefinitionStn;
-  return ClassStn = Caf.defClass(class ClassStn extends BaseStn {}, function() {
+  FunctionDefinitionArgsStn;
+  FunctionDefinitionArgStn;
+  UniqueIdentifierHandle;
+  return ClassStn = Caf.defClass(class ClassStn extends BaseStn {}, function(
+    ClassStn,
+    classSuper,
+    instanceSuper
+  ) {
     this.prototype.transform = function() {
-      let className, classExtends, body, superCallChildren, classBody, children;
+      let className,
+        classExtends,
+        body,
+        classSuperHandle,
+        instanceSuperHandle,
+        statementsToCount,
+        statementCount,
+        superCallChildren,
+        classBody,
+        children;
       ({ className, classExtends, body } = this.labeledChildren);
       className = className.transform();
       classExtends = Caf.exists(classExtends) && classExtends.transform();
       if (body = Caf.exists(body) && body.transform()) {
         constructor = null;
         body = FunctionDefinitionStn(
-          { label: "body" },
+          { label: "body", returnIgnored: true },
+          FunctionDefinitionArgsStn(
+            FunctionDefinitionArgStn(
+              IdentifierStn({ identifier: className.toJs() })
+            ),
+            FunctionDefinitionArgStn(
+              IdentifierStn({ identifier: classSuperHandle = "classSuper" })
+            ),
+            FunctionDefinitionArgStn(
+              IdentifierStn({
+                identifier: instanceSuperHandle = "instanceSuper"
+              })
+            )
+          ),
           StatementsStn(
-            Caf.e(body.children, [], (stn, k, into) => {
+            statementsToCount = Caf.e(body.children, [], (stn, k, into) => {
               into.push(
                 stn.type === "Object"
                   ? Caf.e(stn.children, [], (objectPropValueStn, k, into) => {
@@ -83,11 +115,12 @@ Caf.defMod(module, () => {
                     })
                   : stn
               );
-            }),
-            ThisStn()
+            })
           )
         );
+        statementCount = statementsToCount.length;
         if (constructor) {
+          statementCount -= 1;
           constructor.props.isConstructor = true;
           if (superCallChildren = constructor.find("Super")) {
             if (!(superCallChildren.length === 1)) {
@@ -97,11 +130,20 @@ Caf.defMod(module, () => {
           }
           classBody = StatementsStn({ label: "classBody" }, constructor);
         }
+        if (statementsToCount <= 0) {
+          body = null;
+        }
         children = compactFlatten([className, classExtends, body, classBody]);
       } else {
         children = this.transformChildren();
       }
-      return new ClassStn(this.props, children);
+      return new ClassStn(
+        merge(this.props, {
+          classSuperHandle: classSuperHandle,
+          instanceSuperHandle: instanceSuperHandle
+        }),
+        children
+      );
     };
     this.prototype.toJs = function() {
       let className, classExtends, body, classBody, out, classBodyJs;
@@ -116,6 +158,5 @@ Caf.defMod(module, () => {
         ? out + ` ${classBodyJs}, ${body.toJs()})`
         : out + ` ${classBodyJs})`;
     };
-    return this;
   });
 });

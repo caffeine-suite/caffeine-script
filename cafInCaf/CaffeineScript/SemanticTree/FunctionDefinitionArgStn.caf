@@ -1,0 +1,23 @@
+import &ArtFoundation
+&FunctionDefinitionArgsStn
+
+class FunctionDefinitionArgStn extends &BaseStn
+
+  needsParens: false
+
+  constructor: (props, children) ->
+    super
+
+    @assignThisProperty = props.assignThisProperty
+    @rest = props.rest
+    @identifier = children[0]
+    @defaultValue = children[1]
+
+  @getter
+    argumentName: -> @identifier.name
+
+  getFunctionPreBodyStatementsJs: ->
+    "this.#{@identifier.toJs()} = #{@identifier.toJs()}" if @assignThisProperty
+
+  toJs: ->
+    "#{if @rest then '...' else ''}#{@identifier.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"

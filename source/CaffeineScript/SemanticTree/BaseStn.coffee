@@ -82,8 +82,7 @@ defineModule module, class BaseStn extends BaseObject
   findParent: (stnTypePattern) ->
     {parent} = @
     while parent
-      value = parent.class.type
-      if value == stnTypePattern || value.match stnTypePattern
+      if parent.class.type.match stnTypePattern
         return parent
       {parent} = parent
     null

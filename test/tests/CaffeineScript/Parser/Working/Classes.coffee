@@ -22,26 +22,21 @@ module.exports = suite: parseTestSuite
         foo: -> 1
       """: "Foo =
         Caf.defClass(class Foo {},
-        function()
-          {this.prototype.foo = function() {return 1;};
-          return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {this.prototype.foo = function() {return 1;};});"
 
     comments:
       """
       class Foo
         # one line
       """: "Foo =
-        Caf.defClass(class Foo {},
-        function()
-          {return this;});"
+        Caf.defClass(class Foo {});"
       """
       class Foo
         ##
           comment block
       """: "Foo =
-        Caf.defClass(class Foo {},
-        function()
-          {return this;});"
+        Caf.defClass(class Foo {});"
 
     body:
       """
@@ -49,18 +44,16 @@ module.exports = suite: parseTestSuite
         foo: 1
       """: "Foo =
         Caf.defClass(class Foo extends Bar {},
-        function()
-          {this.prototype.foo = 1;
-          return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {this.prototype.foo = 1;});"
 
       """
       class Foo extends Bar
         @foo: 1
       """: "Foo =
         Caf.defClass(class Foo extends Bar {},
-        function()
-          {this.foo = 1;
-          return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {this.foo = 1;});"
 
     withNormalStatemnts:
       """
@@ -68,9 +61,8 @@ module.exports = suite: parseTestSuite
         doSomething()
       """: "Foo =
         Caf.defClass(class Foo extends Bar {},
-        function()
-          {doSomething();
-          return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {doSomething();});"
 
     super:
       # """
@@ -79,39 +71,37 @@ module.exports = suite: parseTestSuite
       # """: "Foo = Caf.defClass(class Foo extends Bar {},
       #   function() {this.prototype.foo = function() {return Caf.getSuper(this).foo.apply(this, arguments);}; return this;});"
 
-      "foo: -> super":    "({foo: function() {return Caf.getSuper(this).foo.apply(this, arguments);}});"
-      "foo: -> super()":  "({foo: function() {return Caf.getSuper(this).foo.call(this);}});"
-      "@foo: -> super":   '({"@foo": function() {return Caf.getSuper(this).foo.apply(this, arguments);}});'
-      "foo: -> super 1":  "({foo: function() {return Caf.getSuper(this).foo.call(this, 1);}});"
-      "foo: -> superFoo": "({foo: function() {return superFoo;}});"
+      "class MyClass\n foo: -> super":      "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.apply(this, arguments);};});"
+      "class MyClass\n @foo: -> super":     "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.foo = function() {return classSuper.foo.apply(this, arguments);};});"
+      "class MyClass\n foo: -> super()":    "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this);};});"
+      "class MyClass\n foo: -> super 1":    "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1);};});"
+      "class MyClass\n foo: -> super 1 2":  "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1, 2);};});"
+      "class MyClass\n foo: -> superFoo":   "MyClass = Caf.defClass(class MyClass {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return superFoo;};});"
 
     constructors:
       """
       class Foo extends Bar
         constructor: ->
       """: "Foo = Caf.defClass(class Foo extends Bar
-        {constructor() {super(...arguments);}},
-        function() {return this;});"
+        {constructor() {super(...arguments);}});"
 
       """
       class Foo extends Bar
         constructor: (@foo) ->
       """: "
         Foo = Caf.defClass(class Foo extends Bar
-        {constructor(foo) {super(...arguments); this.foo = foo;}},
-        function() {return this;});"
+        {constructor(foo) {super(...arguments); this.foo = foo;}});"
 
       """
       class Foo extends Bar
         constructor: -> super 123
-      """: "Foo = Caf.defClass(class Foo extends Bar {constructor() {super(123);}}, function() {return this;});"
+      """: "Foo = Caf.defClass(class Foo extends Bar {constructor() {super(123);}});"
 
       """
       class Foo extends Bar
         constructor: (@foo) -> super 123
       """: "Foo = Caf.defClass(class Foo extends Bar
-        {constructor(foo) {super(123); this.foo = foo;}},
-        function() {return this;});"
+        {constructor(foo) {super(123); this.foo = foo;}});"
 
     unusualProps:
       """
@@ -119,18 +109,16 @@ module.exports = suite: parseTestSuite
         a-b: 1
       """: "Foo =
         Caf.defClass(class Foo extends Bar {},
-        function()
-          {this.prototype[\"a-b\"] = 1;
-        return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {this.prototype[\"a-b\"] = 1;});"
 
       """
       class Foo extends Bar
         [fooBar()]: 1
       """: "Foo =
         Caf.defClass(class Foo extends Bar {},
-        function()
-          {this.prototype[fooBar()] = 1;
-        return this;});"
+        function(Foo, classSuper, instanceSuper)
+          {this.prototype[fooBar()] = 1;});"
 
     realworld:
       """
@@ -139,7 +127,6 @@ module.exports = suite: parseTestSuite
           foo: -> @_foo
       """: "
         Foo = Caf.defClass(class Foo extends BaseObject {},
-          function()
+          function(Foo, classSuper, instanceSuper)
             {this.getter({foo:
-              function() {return this._foo;}});
-            return this;});"
+              function() {return this._foo;}});});"

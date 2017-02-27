@@ -9,7 +9,7 @@ import &ArtFoundation
       {} pattern: "/##[^\n]*/ unparsedBlock*"
       {} pattern: "/#(?!#)[^\n]*/"
 
-    _end: /( *(\n|;|$))+/
+    _end: /( *(\n|; *|$))+/
 
     lineStartComment: "comment _end" "_end"
     lineEndComment:   "_? comment? _end lineStartComment*"

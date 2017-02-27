@@ -6,3 +6,5 @@ class UniqueIdentifierHandle extends BaseObject
   @getter
     inspectedObjects: -> inspectedObjectLiteral "<UniqueIdentifierHandle preferredName: '#{@preferredName}', scopeSet: #{!!@scope}, _identifier: #{inspect @_identifier}>"
     identifier: -> @_identifier ||= @scope.bindUniqueIdentifier @preferredName, @
+
+  toString: -> @identifier

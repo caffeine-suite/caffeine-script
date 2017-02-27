@@ -78,7 +78,7 @@ module.exports =
     if isString source = a
       ->
         test "illegal: #{source.replace(/\n/g, "\\n")}", ->
-          assert.rejects -> Parser.parse source, verbose: true
+          assert.rejects -> Parser.parse source
 
     else if isArray a
       object a, illegalSyntaxTests
