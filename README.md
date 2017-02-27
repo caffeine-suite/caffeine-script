@@ -1,15 +1,16 @@
-# ʃnɟıʇnɐǝq / Productive
-
-### Programming with Caffeine
+# Programming with Caffeine
 
 CaffeineScript, or CafScript for short, makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript.
 
 CaffeineScript is obsessivly focused on programmer productivity, the only thing that matters*. My primary inspirations are CoffeeScript, Ruby and ES6.
 
-> WARNING:
-> CaffeineScript is a work-in-progress. It isn't ready for use yet, but it is getting close.
-
 (*) Assuming the language + runtime is capable of meeting your requirements, such as performance.
+
+### Status - Alpha
+
+CaffeineScript is now written in itself! (2017-02-26)
+
+That means it is basically real and usable. See the (issues)[https://github.com/shanebdavis/caffeine-script/issues] for what is left to take this baby to Beta and finally a release-candidate.
 
 ### Maximizing Programmer (My) Productivity
 
@@ -122,7 +123,3 @@ No language has ever had this, as far as I'm aware. This isn't limited to Caffei
 ## CaffeineScript and CoffeeScript
 
 I owe a debt of gratitude to Jeremy Ashkenas, the author of CoffeeScript. It is my primary inspiration, and what the CaffeineScript compiler is currently written in.
-
-## Status
-
-CaffeineScript is still a work in progress. I am not using it in any code yet. Progress is very good, though, and it *may* be ready soon.
