@@ -1,0 +1,36 @@
+import &ArtFoundation, &colors
+
+log
+  []
+    "" Welcome to CaffeineScript!
+    .yellow
+
+    "" Where this code:
+
+    """
+      \  JSON.stringify
+          a:
+            1 2 3
+            4 5 6
+            7 8 9
+
+          match:
+            pattern: :blah  emotion: :boring
+            pattern: :zoom  emotion: :yay!
+
+    .green
+
+    "" generates out this:
+
+    "  " + JSON.stringify
+      a:
+        1 2 3
+        4 5 6
+        7 8 9
+
+      match:
+        pattern: :blah  action: :boring
+        pattern: :zoom  action: :yay!
+    .green
+
+  .join '\n\n'
