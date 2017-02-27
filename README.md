@@ -25,7 +25,7 @@ cd node_modules
 ln -s ../../caffeine-script
 cd ..
 
-# make sure node_modules/.bin/caf is in your path
+# if you install globally, caf will be in your path
 node_modules/.bin/caf demo.caf
 
 # you can also run the tests:
