@@ -1,5 +1,16 @@
+{object} = require 'art-foundation'
 module.exports = (require "art-foundation/configure_webpack")
-  entries: "index test"
+  entries: "index"
+  target: "node"
+  externals: [
+    # HRM - webpack's require isn't full-featured and RequireStn needs require's node-special features
+    object [
+      "colors"
+      "detect-node"
+      "bluebird/js/browser/bluebird.core"
+      "coffee-script"
+    ], (v) -> "require('#{v}')"
+  ]
   dirname: __dirname
   package:
     description: "atomic data-types such as Color, Point, Rectangle and Matrix"
