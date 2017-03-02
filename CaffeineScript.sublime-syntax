@@ -10,8 +10,11 @@ scope: source.caffeine
 contexts:
   main:
 
-    - match: '/([^\\]|\\.)+/[igmuy]*'
+    - match: '/([^\\/]|\\.)+/[igmuy]*'
       scope: string.regexp.caffeine
+
+    - match: '<[\w\u007f-\uffff]+>'
+      scope: keyword.macro.compileTime.caffeine
 
     - match: '(?:^( *))##'
       push: block_comment
