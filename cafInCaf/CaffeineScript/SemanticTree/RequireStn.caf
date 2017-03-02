@@ -6,6 +6,9 @@ import &ArtFoundation
 &Path
 &Fs
 
+# webpack hack
+realRequire = eval 'require'
+
 class RequireStn extends &BaseStn
 
   updateScope: (@scope) ->
@@ -17,7 +20,7 @@ class RequireStn extends &BaseStn
 
     # throws errors if the module cannot be resolved
     npmIdentifier: ->
-      require.resolve name = dashCase @rawIdentifier
+      realRequire.resolve name = dashCase @rawIdentifier
       name
 
     rawIdentifier: -> @children[0].props.identifier

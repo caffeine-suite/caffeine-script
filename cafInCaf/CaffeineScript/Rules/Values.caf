@@ -41,7 +41,7 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     globalIdentifier:
-      pattern: /(global|require|module)\b/
+      pattern: /(global|require|module|eval)\b/
       stnFactory: :GlobalIdentifierStn
       stnProps: -> identifier: @text
 

@@ -4,7 +4,6 @@ import &ArtFoundation
 &LetStn
 &UniqueIdentifierHandle
 
-
 (toExtend) -> class ScopeStnMixin extends toExtend
   @abstractClass()
 

@@ -31,6 +31,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
       "global.Math":        applyModuleWrapper "return global.Math;"
       "require 'foo'":      applyModuleWrapper 'return require("foo");'
       "module.exports = 1": applyModuleWrapper "return module.exports = 1;"
+      """eval "" console.log("hi")""": applyModuleWrapper """return eval('console.log("hi")');"""
 
   withImport:
     """

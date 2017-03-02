@@ -3,6 +3,7 @@ Caf.defMod(module, () => {
   let ArtFoundation = require("art-foundation"),
     Path = require("path"),
     Fs = require("fs"),
+    realRequire,
     BaseStn = require("./BaseStn"),
     upperCamelCase,
     dashCase;
@@ -12,6 +13,7 @@ Caf.defMod(module, () => {
   ]));
   Path;
   Fs;
+  realRequire = eval("require");
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
@@ -29,7 +31,7 @@ Caf.defMod(module, () => {
         },
         npmIdentifier: function() {
           let name;
-          require.resolve(name = dashCase(this.rawIdentifier));
+          realRequire.resolve(name = dashCase(this.rawIdentifier));
           return name;
         },
         rawIdentifier: function() {

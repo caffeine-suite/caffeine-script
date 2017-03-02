@@ -1,2 +1,3 @@
+version: &Package.version
 compile: (source, options) ->
   compiled: js: &CaffeineScriptParser.parse(source, options).getStn().transform().toJsModule()

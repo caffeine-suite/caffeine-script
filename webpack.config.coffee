@@ -1,15 +1,13 @@
 {object} = require 'art-foundation'
 module.exports = (require "art-foundation/configure_webpack")
-  entries: "index"
+  entries: "caffeine-script"
   target: "node"
+  output: libraryTarget: "commonjs2"
   externals: [
-    # HRM - webpack's require isn't full-featured and RequireStn needs require's node-special features
-    object [
-      "colors"
-      "detect-node"
-      "bluebird/js/browser/bluebird.core"
-      "coffee-script"
-    ], (v) -> "require('#{v}')"
+    "colors"
+    "detect-node"
+    "bluebird/js/browser/bluebird.core"
+    "coffee-script"
   ]
   dirname: __dirname
   package:
