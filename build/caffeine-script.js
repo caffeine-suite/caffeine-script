@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 218);
+/******/ 	return __webpack_require__(__webpack_require__.s = 219);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -3701,7 +3701,7 @@ module.exports = ParseUrl = (function() {
 
 /* WEBPACK VAR INJECTION */(function(module) {var BlueBirdPromise, ErrorWithInfo, deepEach, deepMap, defineModule, getEnv, isFunction, isPlainObject, promiseDebug, ref;
 
-BlueBirdPromise = __webpack_require__(214);
+BlueBirdPromise = __webpack_require__(215);
 
 ref = __webpack_require__(6), deepMap = ref.deepMap, deepEach = ref.deepEach, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject;
 
@@ -13941,7 +13941,9 @@ module.exports = __webpack_require__(1);
 
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
+  let Package = __webpack_require__(213);
   return {
+    version: Package.version,
     compile: function(source, options) {
       let CaffeineScriptParser = __webpack_require__(60);
       return {
@@ -16333,8 +16335,8 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   let ArtFoundation = __webpack_require__(2),
-    Path = __webpack_require__(217),
-    Fs = __webpack_require__(216),
+    Path = __webpack_require__(218),
+    Fs = __webpack_require__(217),
     realRequire,
     BaseStn = __webpack_require__(3),
     upperCamelCase,
@@ -20845,6 +20847,9 @@ Base = (function() {
   Base.getVersions = function() {
     var key, out, recurse, ref1, subNamespace;
     out = {};
+    if (this === Neptune) {
+      out.version = this.version;
+    }
     ref1 = this.namespaces;
     for (key in ref1) {
       subNamespace = ref1[key];
@@ -21000,7 +21005,7 @@ Base = (function() {
 
 })();
 
-module.exports = global.Neptune = Neptune = (function(superClass) {
+module.exports = global.Neptune || (global.Neptune = Neptune = (function(superClass) {
   var _package;
 
   extend(Neptune, superClass);
@@ -21019,15 +21024,15 @@ module.exports = global.Neptune = Neptune = (function(superClass) {
     return (klass != null ? klass.prototype : void 0) instanceof Base;
   };
 
-  Neptune.isNode = __webpack_require__(215);
+  Neptune.isNode = __webpack_require__(216);
 
-  Neptune["package"] = _package = __webpack_require__(213);
+  Neptune["package"] = _package = __webpack_require__(214);
 
   Neptune.version = _package.version;
 
   return Neptune;
 
-})(Base);
+})(Base));
 
 Base.namespace = Neptune;
 
@@ -21111,6 +21116,47 @@ module.exports = {
 /***/ (function(module, exports) {
 
 module.exports = {
+	"author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
+	"dependencies": {
+		"art-foundation": "git://github.com/imikimi/art-foundation.git",
+		"babel-bridge": "git@github.com:shanebdavis/babel-bridge-js.git",
+		"bluebird": "^3.4.7",
+		"caffeine-mc": "git@github.com:shanebdavis/caffeine-mc.git",
+		"caffeine-script-runtime": "git@github.com:shanebdavis/caffeine-script-runtime.git",
+		"case-sensitive-paths-webpack-plugin": "^1.1.4",
+		"chai": "^3.5.0",
+		"coffee-loader": "^0.7.2",
+		"coffee-script": "^1.12.3",
+		"colors": "^1.1.2",
+		"css-loader": "^0.26.1",
+		"json-loader": "^0.5.4",
+		"mocha": "^3.2.0",
+		"neptune-namespaces": "^1.7.4",
+		"pretty-error": "^2.0.1",
+		"script-loader": "^0.7.0",
+		"sourcemapped-stacktrace": "^1.1.5",
+		"style-loader": "^0.13.1",
+		"webpack": "^2.2.1",
+		"webpack-dev-server": "^2.3.0"
+	},
+	"description": "atomic data-types such as Color, Point, Rectangle and Matrix",
+	"license": "ISC",
+	"name": "caffeine-script",
+	"scripts": {
+		"build": "webpack --progress",
+		"nn": "nn -s",
+		"perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
+		"start": "webpack-dev-server --hot --inline --progress",
+		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
+	},
+	"version": "0.27.2"
+};
+
+/***/ }),
+/* 214 */
+/***/ (function(module, exports) {
+
+module.exports = {
 	"name": "neptune-namespaces",
 	"version": "1.8.1",
 	"description": "Generate index.coffee and namespace.coffee files from directory structures",
@@ -21145,31 +21191,31 @@ module.exports = {
 };
 
 /***/ }),
-/* 214 */
+/* 215 */
 /***/ (function(module, exports) {
 
 module.exports = require("bluebird/js/browser/bluebird.core");
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, exports) {
 
 module.exports = require("detect-node");
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(110);

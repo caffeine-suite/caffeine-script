@@ -1,8 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let Package = require("../../package");
   return {
-    version: Package.version,
+    version: require("../../package.json").version,
     compile: function(source, options) {
       let CaffeineScriptParser = require("./CaffeineScriptParser");
       return {
