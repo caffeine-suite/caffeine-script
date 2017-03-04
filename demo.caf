@@ -1,4 +1,5 @@
-import &ArtFoundation, &colors
+import &ArtFoundation
+&colors
 
 {source, value} = <capture>
   # implicit arrays
