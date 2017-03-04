@@ -12,7 +12,7 @@ That means it is basically real and usable. See the [issues](https://github.com/
 
 Try it out:
 
-```
+```bash
 # SBD: I'll make this try-out script nicer eventually!
 git clone https://github.com/shanebdavis/caffeine-script.git
 cd caffeine-script
