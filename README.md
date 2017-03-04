@@ -4,13 +4,13 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 ### Built on JavaScript
 
-CaffeineScript, or CafScript for short, is inspired by CoffeeScript and Ruby. CaffeineScript starts where CoffeeScript left off. Where CoffeeScript's motto is "it's just JavaScript," Caffeine is 'built on JavaScript.' JavaScript is a powerful, yet low-level assembly language. No-one should hand-code assembly-language. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations and maintaining excellent interoperability with pure JavaScript code.
+CaffeineScript, or CafScript for short, is inspired by CoffeeScript. CaffeineScript starts where CoffeeScript left off. If CoffeeScript's motto is "it's just JavaScript," Caffeine's is 'built on JavaScript.' JavaScript is a powerful, yet low-level assembly language. No-one should hand-code assembly-language. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations.
 
 With respect to JavaScript, CaffeineScript's priorities are:
 
 1. maximize programmer productivity
 2. generate fast JavaScript
-4. generate lean JavaScript (after uglification and gzip)
+4. generate lean JavaScript
 5. generate human-readable JavaScript
 
 ### Wiki and Documentation
@@ -99,9 +99,9 @@ module.exports = class Login extends Component {
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
-All my projects are in CoffeeScript. I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumultating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to frutition in CaffeineScript.
+All my projects are in CoffeeScript. I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumulating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to fruition in CaffeineScript.
 
-All these ideas service one primary goal: maximize my productivity. In order to do that, I've ruthlessly reduced syntax, all but elliminated the need for matching-tokens, elliminated the possibilty of certain common bugs, trivialized some common refactors and obessed over language consistency. The result, to my delight, is something beautiful.
+All these ideas service one primary goal: maximize my productivity. In order to do that, I've ruthlessly reduced syntax, all but eliminated the need for matching-tokens, eliminated the possibility of certain common bugs, trivialized some common refactors and obsessed over language consistency. The result, to my delight, is something beautiful.
 
 ## Good Design and Programming Languages
 
@@ -124,9 +124,9 @@ More on my design philosophy: [Amazingly Great Design @ EssenceAndArtifact.com](
 
 CaffeineScript is designed to take maximum advantage of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc). This means the language is extensible on a per-file or per-project basis. CaffeineMC enables this startling concept:
 
-* Any language can change *arbitrarilly* without breaking any existing code.
+* Any language can change *arbitrarily* without breaking any existing code.
 
-No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unlease the power of language evolution!
+No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unleash the power of language evolution!
 
 ## CaffeineScript and CoffeeScript
 
