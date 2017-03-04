@@ -4,14 +4,31 @@ Caf.defMod(module, () => {
     StatementsStn = require("./StatementsStn"),
     LetStn = require("./LetStn"),
     UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
+    lowerCamelCase,
     Error,
     log,
     isString,
     merge,
     mergeInto,
     arrayToTruthMap;
-  ({ Error, log, isString, merge, mergeInto, arrayToTruthMap } = Caf.i(
-    ["Error", "log", "isString", "merge", "mergeInto", "arrayToTruthMap"],
+  ({
+    lowerCamelCase,
+    Error,
+    log,
+    isString,
+    merge,
+    mergeInto,
+    arrayToTruthMap
+  } = Caf.i(
+    [
+      "lowerCamelCase",
+      "Error",
+      "log",
+      "isString",
+      "merge",
+      "mergeInto",
+      "arrayToTruthMap"
+    ],
     [ArtFoundation, global]
   ));
   StatementsStn;
@@ -27,7 +44,17 @@ Caf.defMod(module, () => {
         }
       },
       function(ScopeStnMixin, classSuper, instanceSuper) {
+        let normalizePerferredName;
         this.abstractClass();
+        this.normalizePerferredName = normalizePerferredName = function(
+          preferredName = "temp"
+        ) {
+          return lowerCamelCase(
+            preferredName.match(/^caf/i)
+              ? preferredName
+              : `caf ${preferredName}`
+          );
+        };
         this.prototype.addIdentifierUsed = function(identifier) {
           if (this._boundUniqueIdentifiers) {
             throw new Error(
@@ -53,10 +80,12 @@ Caf.defMod(module, () => {
             : undefined;
         };
         this.getter({
-          uniqueIdentifier: function(preferredName = "_temp") {
+          uniqueIdentifier: function(preferredName) {
+            preferredName = normalizePerferredName(preferredName);
             return this.getUniqueIdentifierHandle(preferredName).identifier;
           },
-          uniqueIdentifierHandle: function(preferredName = "_temp") {
+          uniqueIdentifierHandle: function(preferredName) {
+            preferredName = normalizePerferredName(preferredName);
             return this.addUniqueIdentifierHandle(
               new UniqueIdentifierHandle(preferredName)
             );
@@ -72,6 +101,7 @@ Caf.defMod(module, () => {
           uniqueIdentifierHandle
         ) {
           let identifier;
+          preferredName = normalizePerferredName(preferredName);
           identifier = this.getAvailableIdentifierName(preferredName);
           this.boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle;
           this.identifiersAssigned[identifier] = true;
@@ -79,6 +109,7 @@ Caf.defMod(module, () => {
         };
         this.prototype.getAvailableIdentifierName = function(preferredName) {
           let identifiersUsed, count, name;
+          preferredName = normalizePerferredName(preferredName);
           return !this._scopeUpdated
             ? log.error({
                 ScopeStnMixin: {

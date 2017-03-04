@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
       body = returnExpression ? body.toFunctionBodyJs() : body.toJs();
       optionalCatch = Caf.exists(optionalCatch) &&
         optionalCatch.toJs(options) ||
-        "catch (error) {}";
+        "catch (cafError) {}";
       return `try {${body};} ${optionalCatch}`;
     };
     this.prototype.toJsExpression = function() {

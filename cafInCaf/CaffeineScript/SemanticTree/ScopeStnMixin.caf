@@ -6,12 +6,16 @@ import &ArtFoundation
 
 (toExtend) -> class ScopeStnMixin extends toExtend
   @abstractClass()
+  @normalizePerferredName: normalizePerferredName = (preferredName = "temp") ->
+    lowerCamelCase if preferredName.match /^caf/i
+      preferredName
+    else
+      "caf #{preferredName}"
 
   constructor: ->
     super
     @_uniqueIdentifierHandles = @_boundUniqueIdentifiers = null
     @_scopeUpdated = false
-
 
   addIdentifierUsed: (identifier)->
     throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
@@ -24,11 +28,13 @@ import &ArtFoundation
 
   @getter
     # call during toJs
-    uniqueIdentifier: (preferredName = "_temp") ->
+    uniqueIdentifier: (preferredName) ->
+      preferredName = normalizePerferredName preferredName
       @getUniqueIdentifierHandle(preferredName).identifier
 
     # call during transform
-    uniqueIdentifierHandle: (preferredName = "_temp") ->
+    uniqueIdentifierHandle: (preferredName) ->
+      preferredName = normalizePerferredName preferredName
       @addUniqueIdentifierHandle new UniqueIdentifierHandle preferredName
 
   addUniqueIdentifierHandle: (uih) ->
@@ -39,12 +45,14 @@ import &ArtFoundation
 
   # must be called after all calls to addIdentifierAssigned && addIdentifierUsed
   bindUniqueIdentifier: (preferredName, uniqueIdentifierHandle ) ->
+    preferredName = normalizePerferredName preferredName
     identifier = @getAvailableIdentifierName preferredName
     @boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle
     @identifiersAssigned[identifier] = true
     identifier
 
   getAvailableIdentifierName: (preferredName) ->
+    preferredName = normalizePerferredName preferredName
     unless @_scopeUpdated
       log.error ScopeStnMixin: getAvailableIdentifierName: "cannot be called before updateScope completes: #{@className}", new Error
     else

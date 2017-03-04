@@ -148,7 +148,7 @@ module.exports = suite: parseTestSuite
     a = while foo
       1
       2
-    """: "let a, _temp; a = (() => {while (foo) {1; _temp = 2;}; return _temp})();"
+    """: "let a, cafTemp; a = (() => {while (foo) {1; cafTemp = 2;}; return cafTemp})();"
 
     """
     a = if true
@@ -174,70 +174,163 @@ module.exports = suite: parseTestSuite
   try:
     basic:
       oneliner:
-        "try foo": "try {foo;} catch (error) {};"
+        "try foo": "try {foo;} catch (cafError) {};"
 
       body:
         """
         try
           foo
-        """: "try {foo;} catch (error) {};"
+        """: "try {foo;} catch (cafError) {};"
 
         """
         try
           foo
           bar
-        """: "try {foo; bar;} catch (error) {};"
+        """: "try {foo; bar;} catch (cafError) {};"
 
-    conflictingName:
-      basic:
-        "error = try foo catch bar":
-          "let error, bar, error1; error = (() => {try {return foo;} catch (error1) {bar = error1;};})();"
-
-        "try foo catch error":
-          "let error, error1; try {foo;} catch (error1) {error = error1;};"
-
-        "try foo catch bar\n  error":
-          "let bar, error1; try {foo;} catch (error1) {bar = error1; error;};"
+    nameConflicts:
+      # It's OK! It actually doesn't matter when the catch-block is empty
+      # The catch-cafError-identifier doesn't effect anything - even if it matches.
+      """
+      cafError = null
+      try foo
+      """: "let cafError; cafError = null; try {foo;} catch (cafError) {};"
 
     asExpression:
-      "a = try foo": "let a; a = (() => {try {return foo;} catch (error) {};})();"
+      "a = try foo": "let a; a = (() => {try {return foo;} catch (cafError) {};})();"
       """
       a = try
         foo
         bar
-      """: "let a; a = (() => {try {foo; return bar;} catch (error) {};})();"
+      """: "let a; a = (() => {try {foo; return bar;} catch (cafError) {};})();"
 
-      "a = try foo catch bar": "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
+      "a = try foo catch bar": "let a, bar, cafError; a = (() => {try {return foo;} catch (cafError) {bar = cafError;};})();"
 
     catch:
       basic:
-        "try foo catch bar": "let bar, error; try {foo;} catch (error) {bar = error;};"
+        """
+        try foo catch
+        """: "try {foo;} catch (cafError) {};"
+
+        """
+        try foo
+        catch
+          bar
+        """: "let cafError; try {foo;} catch (cafError) {bar;};"
+
+        """
+        try foo
+        catch bar
+          bar
+        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; bar;};"
 
       body:
         """
         try foo catch bar
           baz
-        """: "let bar, error; try {foo;} catch (error) {bar = error; baz;};"
+        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz;};"
+
+        """
+        try
+          foo
+        catch bar
+          baz
+        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz;};"
 
         """
         try foo catch bar
           baz
           bud
-        """: "let bar, error; try {foo;} catch (error) {bar = error; baz; bud;};"
+        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz; bud;};"
 
       asExpression:
-        "a = try foo catch bar": "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error;};})();"
+        "a = try foo catch bar":
+          "let a, bar, cafError;
+          a = (() =>
+            {try
+              {return foo;}
+            catch (cafError)
+              {bar = cafError;};})();"
 
         """
         a = try foo catch bar
           baz
-        """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; return baz;};})();"
+        """: "let a, bar, cafError;
+          a = (() =>
+            {try
+              {return foo;}
+            catch (cafError)
+              {bar = cafError; return baz;};})();"
 
         """
         a = try foo catch bar
           baz
           bud
-        """: "let a, bar, error; a = (() => {try {return foo;} catch (error) {bar = error; baz; return bud;};})();"
+        """:
+          "let a, bar, cafError;
+          a = (() =>
+            {try {return foo;}
+            catch (cafError)
+              {bar = cafError; baz; return bud;};})();"
+
+      catchIdentifierNameConflicts:
+        catchIdentifierIsDefaultIdentifier:
+          """
+          result = try foo
+          catch cafError
+            1
+          """:
+            "let result, cafError, cafError1;
+            result = (() =>
+            {try
+              {return foo;}
+            catch (cafError1)
+              {cafError = cafError1; return 1;};})();"
+
+        catchIdentifierIsNotDefaultIdentifier:
+          """
+          result = try foo
+          catch error
+            1
+          """:   # TODO: this really shouldn't 'let' cafError
+            "let result, error, cafError;
+            result = (() =>
+            {try
+              {return foo;}
+            catch (cafError)
+              {error = cafError; return 1;};})();"
+
+        catchAndReturnError:
+          asExpression:
+            """
+            error = try foo catch cafError
+              cafError
+            """:
+              "let error, cafError, cafError1;
+              error = (() =>
+              {try
+                {return foo;}
+              catch (cafError1)
+                {cafError = cafError1; return cafError;};})();"
+
+          asStatement:
+            """
+            try foo catch cafError
+              cafError
+            """:
+              "let cafError, cafError1;
+              try
+                {foo;}
+              catch (cafError1)
+                {cafError = cafError1; cafError;};"
+
+        catchReturnValueIsDefaultIdentifier:
+          "try foo catch bar\n  cafError":
+            "let bar, cafError1;
+            try
+              {foo;}
+            catch (cafError1)
+              {bar = cafError1; cafError;};"
 
   throw:
     "throw new Error": "throw new Error;"

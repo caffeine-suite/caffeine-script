@@ -1,5 +1,14 @@
 import &ArtFoundation
 
+##
+  TODO:
+    I want all Stn constructors to only accept an object.
+    All children are labeled children.
+    Pros
+    - Positional is so fragile.
+    - Plural children still allow us to handle unbounded lists.
+    - It'll be much easier for writing code that generates Stns
+
 class BaseStn extends BaseObject
   ############################################
     Could go in BabelBridge standard BaseStn

@@ -35,9 +35,9 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import b
     foo()
     """:
-      applyModuleWrapper 'let a = global.a, foo, b, parentImports;
-      ({b} = Caf.i(["b"], parentImports = [a, global]));({foo}
-      = Caf.i(["foo"], [b, parentImports]));return foo();
+      applyModuleWrapper 'let a = global.a, foo, b, cafParentImports;
+      ({b} = Caf.i(["b"], cafParentImports = [a, global]));({foo}
+      = Caf.i(["foo"], [b, cafParentImports]));return foo();
       '
 
   scopes:
@@ -56,8 +56,8 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import c
     foo()
     """:
-      applyModuleWrapper 'let a = global.a, foo, c, b, parentImports, parentImports1;
-      ({b} = Caf.i(["b"], parentImports = [a, global]));({c}
-      = Caf.i(["c"], parentImports1 = [b, parentImports]));({foo}
-      = Caf.i(["foo"], [c, parentImports1]));return foo();
+      applyModuleWrapper 'let a = global.a, foo, c, b, cafParentImports, cafParentImports1;
+      ({b} = Caf.i(["b"], cafParentImports = [a, global]));({c}
+      = Caf.i(["c"], cafParentImports1 = [b, cafParentImports]));({foo}
+      = Caf.i(["foo"], [c, cafParentImports1]));return foo();
       '

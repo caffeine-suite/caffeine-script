@@ -49,9 +49,9 @@ module.exports = suite: parseTestSuite
       """: "Caf.exists(a) && a.b;"
 
     withBase:
-      "a.foo.bar?.b":  "let base; Caf.exists(base = a.foo.bar) && base.b;"
-      "a.foo.bar?[b]": "let base; Caf.exists(base = a.foo.bar) && base[b];"
-      # "a.foo.bar? b": "let base; Caf.exists((base = a.foo).bar) && base.bar[b];"
+      "a.foo.bar?.b":  "let cafBase; Caf.exists(cafBase = a.foo.bar) && cafBase.b;"
+      "a.foo.bar?[b]": "let cafBase; Caf.exists(cafBase = a.foo.bar) && cafBase[b];"
+      # "a.foo.bar? b": "let cafBase; Caf.exists((cafBase = a.foo).bar) && cafBase.bar[b];"
 
     withChain:
       baseline:
@@ -65,25 +65,25 @@ module.exports = suite: parseTestSuite
 
         """
         a()?.b
-        """: "let base; Caf.exists(base = a()) && base.b;"
+        """: "let cafBase; Caf.exists(cafBase = a()) && cafBase.b;"
 
       dots:
         """
         a?.b?.c
-        """: "let base; Caf.exists(a) && (Caf.exists(base = a.b) && base.c);"
+        """: "let cafBase; Caf.exists(a) && (Caf.exists(cafBase = a.b) && cafBase.c);"
 
         """
         a?.b?.c?.d
-        """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a.b) && (Caf.exists(base1 = base.c) && base1.d));"
+        """: "let cafBase, cafBase1; Caf.exists(a) && (Caf.exists(cafBase = a.b) && (Caf.exists(cafBase1 = cafBase.c) && cafBase1.d));"
 
       brackets:
         """
         a?[b]?[c]
-        """: "let base; Caf.exists(a) && (Caf.exists(base = a[b]) && base[c]);"
+        """: "let cafBase; Caf.exists(a) && (Caf.exists(cafBase = a[b]) && cafBase[c]);"
 
         """
         a?[b]?[c]?[d]
-        """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a[b]) && (Caf.exists(base1 = base[c]) && base1[d]));"
+        """: "let cafBase, cafBase1; Caf.exists(a) && (Caf.exists(cafBase = a[b]) && (Caf.exists(cafBase1 = cafBase[c]) && cafBase1[d]));"
 
       functionInvocation:
         """
@@ -92,7 +92,7 @@ module.exports = suite: parseTestSuite
 
         """
         a?(b)? c
-        """: "let base; Caf.isF(a) && (Caf.isF(base = a(b)) && base(c));"
+        """: "let cafBase; Caf.isF(a) && (Caf.isF(cafBase = a(b)) && cafBase(c));"
 
         """
         a? b? c
@@ -104,15 +104,15 @@ module.exports = suite: parseTestSuite
 
         """
         a?[b]?.c d
-        """: "let base; Caf.exists(a) && (Caf.exists(base = a[b]) && base.c(d));"
+        """: "let cafBase; Caf.exists(a) && (Caf.exists(cafBase = a[b]) && cafBase.c(d));"
 
         """
         a?.b?.c? d
-        """: "let base; Caf.exists(a) && (Caf.exists(base = a.b) && (Caf.isF(base.c) && base.c(d)));"
+        """: "let cafBase; Caf.exists(a) && (Caf.exists(cafBase = a.b) && (Caf.isF(cafBase.c) && cafBase.c(d)));"
 
         # """
         # a?[b]?[c]? d
-        # """: "let base, base1; Caf.exists(a) && (Caf.exists(base = a[b]) && (Caf.exists(base1 = base[c]) && base1[d]));"
+        # """: "let cafBase, cafBase1; Caf.exists(a) && (Caf.exists(cafBase = a[b]) && (Caf.exists(cafBase1 = cafBase[c]) && cafBase1[d]));"
 
   multiline:
     basic:

@@ -108,25 +108,25 @@ module.exports = suite: parseTestSuite
 
     complexBase:
       "a.c ||= d":    "a.c || (a.c = d);"
-      "a.b.c ||= d":  "let base; (base = a.b).c || (base.c = d);"
+      "a.b.c ||= d":  "let cafBase; (cafBase = a.b).c || (cafBase.c = d);"
       """
       a.b.c ||= d
       foo.bar.c ||= d
       """:
-        "let base, base1;
-        (base = a.b).c || (base.c = d);
-        (base1 = foo.bar).c || (base1.c = d);"
+        "let cafBase, cafBase1;
+        (cafBase = a.b).c || (cafBase.c = d);
+        (cafBase1 = foo.bar).c || (cafBase1.c = d);"
 
       "a ||= -> foo.bar.c &&= d":
         "let a; a || (a = function()
-        {let base; return (base = foo.bar).c && (base.c = d);});"
+        {let cafBase; return (cafBase = foo.bar).c && (cafBase.c = d);});"
 
       """
       a.b.c ||= -> foo.bar.c ||= d
       """:
-        "let base;
-        (base = a.b).c || (base.c =
-        function() {let base1; return (base1 = foo.bar).c || (base1.c = d);});"
+        "let cafBase;
+        (cafBase = a.b).c || (cafBase.c =
+        function() {let cafBase1; return (cafBase1 = foo.bar).c || (cafBase1.c = d);});"
 
   regressions:
     "@b ||= 1":   "this.b || (this.b = 1);"

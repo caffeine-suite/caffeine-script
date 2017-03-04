@@ -38,7 +38,7 @@ Caf.defMod(module, () => {
               : (!(nameStn.type === "String" || nameStn.type === "Identifer")
                   ? (() => {
                       throw new Error(
-                        `internal error - should be a StringStn: ${nameStn.type}`
+                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${nameStn.type}`
                       );
                     })()
                   : undefined, str))

@@ -10,27 +10,36 @@ Caf.defMod(module, () => {
     instanceSuper
   ) {
     this.prototype.updateScope = function(scope) {
-      let id;
+      let errorIdentifier, body;
       this.scope = scope;
-      if (id = this.labeledChildren.identifier) {
+      ({ errorIdentifier, body } = this.labeledChildren);
+      if (errorIdentifier || body) {
         this.uniqueIdentifierHandle = this.scope.getUniqueIdentifierHandle(
           "error"
         );
-        this.scope.addIdentifierAssigned(id.name);
-        this.scope.addIdentifierUsed(id.name);
+      }
+      if (errorIdentifier) {
+        this.scope.addIdentifierAssigned(errorIdentifier.name);
+        this.scope.addIdentifierUsed(errorIdentifier.name);
       }
       return instanceSuper.updateScope.apply(this, arguments);
     };
     this.prototype.toJs = function(options = {}) {
-      let returnExpression, identifier, body, tempName;
+      let returnExpression, errorIdentifier, body, errorIdentifierString, base;
       ({ returnExpression } = options);
-      ({ identifier, body } = this.labeledChildren);
+      ({ errorIdentifier, body } = this.labeledChildren);
       body = body && (returnExpression ? body.toFunctionBodyJs() : body.toJs());
-      return identifier
-        ? (tempName = this.uniqueIdentifierHandle.identifier, body = compactFlatten(
-            [`${identifier.name} = ${tempName}`, body]
-          ).join("; "), `catch (${tempName}) {${body};}`)
-        : undefined;
+      errorIdentifierString = Caf.exists(base = this.uniqueIdentifierHandle) &&
+        base.identifier ||
+        "cafError";
+      if (errorIdentifier) {
+        body = compactFlatten([
+          `${errorIdentifier.name} = ${errorIdentifierString}`,
+          body
+        ]).join("; ");
+      }
+      body = body ? body + ";" : "";
+      return `catch (${errorIdentifierString}) {${body}}`;
     };
   });
 });

@@ -72,7 +72,7 @@ module.exports = suite: parseTestSuite
         c
       """: "
         Caf.ee(a, undefined, (v, k, into, brk) =>
-        {let _ret; b; return (_ret = c) && (brk(), _ret);});"
+        {let cafRet; b; return (cafRet = c) && (brk(), cafRet);});"
 
     nested:
       """
@@ -148,7 +148,7 @@ module.exports = suite: parseTestSuite
 
     find:
       "find a from b when a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
-      "find a from b with a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {let _ret; return (_ret = a > 10) && (brk(), _ret);});"
+      "find a from b with a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {let cafRet; return (cafRet = a > 10) && (brk(), cafRet);});"
       "find a from b when a > 10 with 123": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), 123);});"
 
     alternativeKeywords:

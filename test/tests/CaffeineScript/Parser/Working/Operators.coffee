@@ -36,7 +36,7 @@ module.exports = suite:
         "1 ^    2":   "1 ^ 2;"
 
         "a ?    b":   "a != null ? a : b;"
-        "a.b ?  b":   "let _temp; ((_temp = a.b) != null ? _temp : b);"
+        "a.b ?  b":   "let cafTemp; ((cafTemp = a.b) != null ? cafTemp : b);"
         "1 and  2":   "1 && 2;"
         "1 or   2":   "1 || 2;"
         "1 isnt 2":   "1 !== 2;"

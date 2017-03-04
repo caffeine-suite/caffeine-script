@@ -3,8 +3,8 @@ import &ArtFoundation, &BabelBridge
 ->
   @rule
     controlStatement:
-      {} pattern: "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
-      {} pattern: "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
+      "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
+      "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
     {}
       stnFactory: :ControlOperatorStn
       stnProps: ->
@@ -13,12 +13,16 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     controlStatement:
-      {} pattern: "/try/ _ body:complexExpression _? optionalCatch:catchClause?"
-      {} pattern: "/try/ body:block"
+      "/try/ _ body:complexExpression _? optionalCatch:catchClause?"
+      "/try/ body:block optionalCatch:catchClause?"
     {} stnFactory: :TryStn
 
   @rule
-    catchClause: "/catch(?=[ \n])/ _? identifier? body:block?"
+    catchClause:
+      "_end? /catch/ _ errorIdentifier:identifier body:block?"
+      "_end? /catch/ _? body:block?"
+      # this won't be hard to do, but - ZEN
+      # "_end? catchMethod:/rescue/ _? body:expression"
     {} stnFactory: :CatchStn
 
   @rule
@@ -28,10 +32,10 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     controlStatement:
-      {} pattern: "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock"
-      {} pattern: "/switch/ _ condition:expression? switchBody"
-      {} pattern: "/switch/ switchBodyBlock"
-      {} pattern: "/switch/ switchBody"
+      "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock"
+      "/switch/ _ condition:expression? switchBody"
+      "/switch/ switchBodyBlock"
+      "/switch/ switchBody"
     {} stnFactory: :SwitchStn
 
   @rule
@@ -42,8 +46,8 @@ import &ArtFoundation, &BabelBridge
 
   @rule
     switchWhenClause:
-      {} pattern: "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"
-      {} pattern: "end? when _ whenValue:complexExpression thenDo:thenClause"
+      "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"
+      "end? when _ whenValue:complexExpression thenDo:thenClause"
     {} stnFactory: :SwitchWhenStn
 
   @rule
@@ -52,5 +56,5 @@ import &ArtFoundation, &BabelBridge
     when:               /when/
 
     elseClause:
-      {} pattern: "_else block"
-      {} pattern: "_else _ complexExpression"
+      "_else block"
+      "_else _ complexExpression"
