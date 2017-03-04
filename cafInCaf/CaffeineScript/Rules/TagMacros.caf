@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 &SemanticTree
 
 tagMacro:

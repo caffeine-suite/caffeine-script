@@ -1,9 +1,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"), Error, op, p, arrayWithout;
+  let StandardImport = require("./StandardImport"), Error, op, p, arrayWithout;
   ({ Error, op, p, arrayWithout } = Caf.i(
     ["Error", "op", "p", "arrayWithout"],
-    [ArtFoundation, global]
+    [StandardImport, global]
   ));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(
     OperatorHelper,

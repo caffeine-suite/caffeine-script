@@ -2,7 +2,7 @@
 # which breaks NODE v6 (but not chrome or safari).
 # See my NODE issue report: https://github.com/nodejs/node/issues/11480
 
-import &ArtFoundation
+import &StandardImport
 &Path
 &Fs
 

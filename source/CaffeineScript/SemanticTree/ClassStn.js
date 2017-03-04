@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     AssignmentStn = require("./AssignmentStn"),
     AccessorStn = require("./AccessorStn"),
     ThisStn = require("./ThisStn"),
@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
     merge;
   ({ Error, compactFlatten, merge } = Caf.i(
     ["Error", "compactFlatten", "merge"],
-    [ArtFoundation, global]
+    [StandardImport, global]
   ));
   AssignmentStn;
   AccessorStn;

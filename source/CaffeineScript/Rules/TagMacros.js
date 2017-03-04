@@ -1,11 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     SemanticTree = require("../SemanticTree"),
     upperCamelCase,
     Error;
   ({ upperCamelCase, Error } = Caf.i(["upperCamelCase", "Error"], [
-    ArtFoundation,
+    StandardImport,
     global
   ]));
   SemanticTree;

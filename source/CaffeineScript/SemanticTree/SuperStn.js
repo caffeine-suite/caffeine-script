@@ -1,10 +1,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BaseStn = require("./BaseStn"),
     Error,
     merge;
-  ({ Error, merge } = Caf.i(["Error", "merge"], [ArtFoundation, global]));
+  ({ Error, merge } = Caf.i(["Error", "merge"], [StandardImport, global]));
   return SuperStn = Caf.defClass(
     class SuperStn extends BaseStn {
       constructor(props, args) {

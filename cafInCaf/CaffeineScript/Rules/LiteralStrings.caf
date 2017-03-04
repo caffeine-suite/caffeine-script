@@ -1,4 +1,4 @@
-import &ArtFoundation, &BabelBridge, &SemanticTree, &Lib
+import &StandardImport, &BabelBridge, &SemanticTree, &Lib
 
 ->
   @rule

@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
     BaseStn = require("./BaseStn");
   return StatementsStn = Caf.defClass(

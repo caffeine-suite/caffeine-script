@@ -1,4 +1,4 @@
-import &ArtFoundation, &OperatorHelper
+import &StandardImport, &OperatorHelper
 
 class BinaryOperatorStn extends &BaseStn
 

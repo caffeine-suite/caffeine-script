@@ -1,4 +1,4 @@
-import &ArtFoundation, &BabelBridge
+import &StandardImport, &BabelBridge
 
 getPropertySetters = (node, list = []) ->
   if node

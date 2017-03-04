@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     legalUnquotedPropName,
     escapePropName,
     BaseStn = require("./BaseStn"),
@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
     Error;
   ({ escapeJavascriptString, Error } = Caf.i(
     ["escapeJavascriptString", "Error"],
-    [ArtFoundation, global]
+    [StandardImport, global]
   ));
   legalUnquotedPropName = /^(0|[1-9a-z_][0-9_a-z]*)$/i;
   escapePropName = function(rawPropName) {

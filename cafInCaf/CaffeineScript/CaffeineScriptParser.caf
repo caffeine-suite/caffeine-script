@@ -1,4 +1,4 @@
-import &ArtFoundation, &BabelBridge, &CafParseNodeBaseClass
+import &StandardImport, &BabelBridge, &CafParseNodeBaseClass
 
 ##
   Eventualy I want all AstNodes to respond to:

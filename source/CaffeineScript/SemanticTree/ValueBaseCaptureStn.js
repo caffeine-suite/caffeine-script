@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BinaryOperatorStn = require("./BinaryOperatorStn"),
     UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
     SemanticTree,
@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
     mergeInto,
     isArray;
   ({ mergeInto, isArray } = Caf.i(["mergeInto", "isArray"], [
-    ArtFoundation,
+    StandardImport,
     global
   ]));
   BinaryOperatorStn;

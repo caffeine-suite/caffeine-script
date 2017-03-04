@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 class ObjectPropValueStn extends &BaseStn
 

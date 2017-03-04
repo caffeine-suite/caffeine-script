@@ -1,6 +1,6 @@
-import &ArtFoundation
+import &StandardImport
 
-class UniqueIdentifierHandle extends BaseObject
+class UniqueIdentifierHandle extends BaseClass
   constructor: (@preferredName, @scope) ->
 
   @getter

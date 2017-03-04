@@ -1,10 +1,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
     BaseStn = require("./BaseStn"),
     isString;
-  ({ isString } = Caf.i(["isString"], [ArtFoundation, Lib, global]));
+  ({ isString } = Caf.i(["isString"], [StandardImport, Lib, global]));
   return RegExpStn = Caf.defClass(class RegExpStn extends BaseStn {}, function(
     RegExpStn,
     classSuper,

@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 class ImportStn extends &ScopeStnMixin &BaseStn
 

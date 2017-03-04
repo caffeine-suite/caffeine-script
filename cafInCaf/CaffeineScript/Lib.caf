@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 deescapeSpaces: (string) ->
   array str, i from string.split /((?:\\\\)+)/

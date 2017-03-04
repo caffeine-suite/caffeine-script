@@ -1,11 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BaseStn = require("./BaseStn"),
     Error,
     formattedInspect;
   ({ Error, formattedInspect } = Caf.i(["Error", "formattedInspect"], [
-    ArtFoundation,
+    StandardImport,
     global
   ]));
   return SemanticTokenStn = Caf.defClass(

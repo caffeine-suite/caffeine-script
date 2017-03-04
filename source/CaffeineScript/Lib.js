@@ -1,7 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"), escapeRegExp;
-  ({ escapeRegExp } = Caf.i(["escapeRegExp"], [ArtFoundation, global]));
+  let StandardImport = require("./StandardImport"), escapeRegExp;
+  ({ escapeRegExp } = Caf.i(["escapeRegExp"], [StandardImport, global]));
   return {
     deescapeSpaces: function(string) {
       return Caf

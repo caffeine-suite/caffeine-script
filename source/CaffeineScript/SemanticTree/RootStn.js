@@ -1,11 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     StatementsStn = require("./StatementsStn"),
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
     compactFlatten;
-  ({ compactFlatten } = Caf.i(["compactFlatten"], [ArtFoundation, global]));
+  ({ compactFlatten } = Caf.i(["compactFlatten"], [StandardImport, global]));
   StatementsStn;
   return RootStn = Caf.defClass(
     class RootStn extends ScopeStnMixin(BaseStn) {

@@ -1,7 +1,13 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let BabelBridge = require("babel-bridge"), Extensions;
-  ({ Extensions } = Caf.i(["Extensions"], [BabelBridge, global]));
+  let StandardImport = require("../StandardImport"),
+    BabelBridge = require("babel-bridge"),
+    Extensions;
+  ({ Extensions } = Caf.i(["Extensions"], [
+    StandardImport,
+    BabelBridge,
+    global
+  ]));
   return function() {
     this.rule({ blocks: "block+" });
     this.rule({

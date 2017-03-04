@@ -1,4 +1,5 @@
-import &ArtFoundation
+import &StandardImport
+{createObjectTreeFactory} = &ArtObjectTreeFactory
 
 ##
   TODO:
@@ -9,18 +10,18 @@ import &ArtFoundation
     - Plural children still allow us to handle unbounded lists.
     - It'll be much easier for writing code that generates Stns
 
-class BaseStn extends BaseObject
+class BaseStn extends BaseClass
   ############################################
     Could go in BabelBridge standard BaseStn
 
-  unless &CaffeineScriptRuntime.getSuper(@) == BaseObject
+  unless &CaffeineScriptRuntime.getSuper(@) == BaseClass
     log
       self: @
       selfName: @getName()
       Object.getPrototypeOf@: Object.getPrototypeOf @
       badSuper: &CaffeineScriptRuntime.getSuper(@)
-      BaseObject: BaseObject
-      selfIsBaseObject?: @ == BaseObject
+      BaseClass: BaseClass
+      selfIsBaseObject?: @ == BaseClass
     throw new Error "bad super"
 
   @abstractClass()

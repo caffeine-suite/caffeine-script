@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 class ArraySpreadElementStn extends &BaseStn
 

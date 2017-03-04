@@ -1,4 +1,4 @@
-import &BabelBridge
+import &StandardImport, &BabelBridge
 
 ->
   @rule

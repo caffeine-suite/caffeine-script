@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("../SemanticTree"),
     matchBlock,
@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
     Extensions,
     ArrayStn;
   ({ Extensions, ArrayStn } = Caf.i(["Extensions", "ArrayStn"], [
-    ArtFoundation,
+    StandardImport,
     BabelBridge,
     SemanticTree,
     global

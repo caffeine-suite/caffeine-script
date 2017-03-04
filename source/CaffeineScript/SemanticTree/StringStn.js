@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
     BaseStn = require("./BaseStn"),
     escapeJavascriptString,
@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
       "escapeUnescaped",
       "escapeMustEscapes"
     ],
-    [ArtFoundation, Lib, global]
+    [StandardImport, Lib, global]
   ));
   return StringStn = Caf.defClass(class StringStn extends BaseStn {}, function(
     StringStn,

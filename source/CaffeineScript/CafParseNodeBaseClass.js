@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("./StandardImport"),
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("./SemanticTree"),
     Nodes,
@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
     RootStn;
   ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.i(
     ["Nodes", "isString", "Error", "inspect", "isFunction", "RootStn"],
-    [ArtFoundation, BabelBridge, SemanticTree, global]
+    [StandardImport, BabelBridge, SemanticTree, global]
   ));
   return CafParseNodeBaseClass = Caf.defClass(
     class CafParseNodeBaseClass extends Nodes.Node {},
@@ -24,10 +24,10 @@ Caf.defMod(module, () => {
       };
       this.prototype.getImplicitArray = function() {
         return Caf.ee(this.matches, undefined, (match, k, into, brk) => {
-          let _ret;
-          return (_ret = Caf.isF(match.getImplicitArray) &&
+          let cafRet;
+          return (cafRet = Caf.isF(match.getImplicitArray) &&
             match.getImplicitArray()) &&
-            (brk(), _ret);
+            (brk(), cafRet);
         });
       };
       this.prototype.getMatchStns = function() {
@@ -54,9 +54,10 @@ Caf.defMod(module, () => {
       };
       this.getter({
         isStnExtension: function() {
-          let base;
+          let cafBase;
           return this.stnExtension ||
-            Caf.exists(base = this.presentMatches[0]) && base.isStnExtension;
+            Caf.exists(cafBase = this.presentMatches[0]) &&
+              cafBase.isStnExtension;
         },
         stnExtensionMatches: function() {
           return Caf.e(this.presentMatches, [], (m, k, into) => {

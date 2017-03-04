@@ -1,12 +1,12 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("./StandardImport"),
     BabelBridge = require("babel-bridge"),
     CafParseNodeBaseClass = require("./CafParseNodeBaseClass"),
     Parser,
     isFunction;
   ({ Parser, isFunction } = Caf.i(["Parser", "isFunction"], [
-    ArtFoundation,
+    StandardImport,
     BabelBridge,
     CafParseNodeBaseClass,
     global

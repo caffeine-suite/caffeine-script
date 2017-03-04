@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("../SemanticTree"),
     Lib = require("../Lib"),
@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
     InterpolatedStringStn;
   ({ Extensions, StringStn, InterpolatedStringStn } = Caf.i(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
-    [ArtFoundation, BabelBridge, SemanticTree, Lib, global]
+    [StandardImport, BabelBridge, SemanticTree, Lib, global]
   ));
   return function() {
     this.rule({

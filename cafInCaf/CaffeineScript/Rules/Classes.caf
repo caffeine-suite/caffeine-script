@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 classDefinition:
   pattern: "/class/ _ className:identifier classExtends:_extendsClause? body:block?"

@@ -1,47 +1,47 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
-    BaseObject,
+  let StandardImport = require("../StandardImport"),
+    createObjectTreeFactory,
+    ArtObjectTreeFactory = require("art-object-tree-factory"),
+    BaseClass,
     log,
     Object,
     Error,
     objectWithout,
     toInspectedObjects,
     objectKeyCount,
-    createObjectTreeFactory,
     compactFlatten,
     isString,
     noChildren;
   ({
-    BaseObject,
+    BaseClass,
     log,
     Object,
     Error,
     objectWithout,
     toInspectedObjects,
     objectKeyCount,
-    createObjectTreeFactory,
     compactFlatten,
     isString,
     noChildren
   } = Caf.i(
     [
-      "BaseObject",
+      "BaseClass",
       "log",
       "Object",
       "Error",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
-      "createObjectTreeFactory",
       "compactFlatten",
       "isString",
       "noChildren"
     ],
-    [ArtFoundation, global]
+    [StandardImport, global]
   ));
+  ({ createObjectTreeFactory } = ArtObjectTreeFactory);
   return BaseStn = Caf.defClass(
-    class BaseStn extends BaseObject {
+    class BaseStn extends BaseClass {
       constructor(props, children = noChildren) {
         super(...arguments);
         this.children = children;
@@ -54,14 +54,14 @@ Caf.defMod(module, () => {
       let CaffeineScriptRuntime = require("caffeine-script-runtime"),
         applyRequiredParens,
         applyParens;
-      if (!(CaffeineScriptRuntime.getSuper(this) === BaseObject)) {
+      if (!(CaffeineScriptRuntime.getSuper(this) === BaseClass)) {
         log({
           self: this,
           selfName: this.getName(),
           "Object.getPrototypeOf@": Object.getPrototypeOf(this),
           badSuper: CaffeineScriptRuntime.getSuper(this),
-          BaseObject: BaseObject,
-          "selfIsBaseObject?": this === BaseObject
+          BaseClass: BaseClass,
+          "selfIsBaseObject?": this === BaseClass
         });
         throw new Error("bad super");
       }

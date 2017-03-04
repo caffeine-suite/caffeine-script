@@ -1,10 +1,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     SemanticTree,
     ValueBaseCaptureStn = require("./ValueBaseCaptureStn"),
     Error;
-  ({ Error } = Caf.i(["Error"], [ArtFoundation, global]));
+  ({ Error } = Caf.i(["Error"], [StandardImport, global]));
   SemanticTree = require("./namespace");
   return AccessorStn = Caf.defClass(
     class AccessorStn extends ValueBaseCaptureStn {

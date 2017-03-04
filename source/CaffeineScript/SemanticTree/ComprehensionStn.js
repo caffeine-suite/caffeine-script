@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     SemanticTree,
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
       "compactFlatten",
       "UniqueIdentifierHandle"
     ],
-    [ArtFoundation, global]
+    [StandardImport, global]
   ));
   SemanticTree = require("./namespace");
   return ComprehensionStn = Caf.defClass(

@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     OperatorHelper = require("../OperatorHelper"),
     BaseStn = require("./BaseStn"),
     operatorIsInfixJs,
@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
       "Error",
       "formattedInspect"
     ],
-    [ArtFoundation, OperatorHelper, global]
+    [StandardImport, OperatorHelper, global]
   ));
   return BinaryOperatorStn = Caf.defClass(
     class BinaryOperatorStn extends BaseStn {

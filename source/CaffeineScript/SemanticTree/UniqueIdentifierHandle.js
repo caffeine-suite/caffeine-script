@@ -1,15 +1,15 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
-    BaseObject,
+  let StandardImport = require("../StandardImport"),
+    BaseClass,
     inspectedObjectLiteral,
     inspect;
-  ({ BaseObject, inspectedObjectLiteral, inspect } = Caf.i(
-    ["BaseObject", "inspectedObjectLiteral", "inspect"],
-    [ArtFoundation, global]
+  ({ BaseClass, inspectedObjectLiteral, inspect } = Caf.i(
+    ["BaseClass", "inspectedObjectLiteral", "inspect"],
+    [StandardImport, global]
   ));
   return UniqueIdentifierHandle = Caf.defClass(
-    class UniqueIdentifierHandle extends BaseObject {
+    class UniqueIdentifierHandle extends BaseClass {
       constructor(preferredName, scope) {
         super(...arguments);
         this.preferredName = preferredName;

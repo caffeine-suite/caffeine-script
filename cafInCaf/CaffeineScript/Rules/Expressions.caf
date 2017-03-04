@@ -1,4 +1,4 @@
-import &ArtFoundation, &BabelBridge, &SemanticTree
+import &StandardImport, &BabelBridge, &SemanticTree
 {matchBlock} = Extensions.IndentBlocks
 
 upToButNotEol = /[^\n]*/y

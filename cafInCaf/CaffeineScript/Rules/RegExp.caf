@@ -1,4 +1,4 @@
-import &ArtFoundation, &BabelBridge, &SemanticTree
+import &StandardImport, &BabelBridge, &SemanticTree
 
 regExpLiteral:
   {}

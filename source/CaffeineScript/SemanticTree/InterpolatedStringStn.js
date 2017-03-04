@@ -1,9 +1,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtFoundation = require("art-foundation"),
+  let StandardImport = require("../StandardImport"),
     BaseStn = require("./BaseStn"),
     peek;
-  ({ peek } = Caf.i(["peek"], [ArtFoundation, global]));
+  ({ peek } = Caf.i(["peek"], [StandardImport, global]));
   return InterpolatedStringStn = Caf.defClass(
     class InterpolatedStringStn extends BaseStn {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {

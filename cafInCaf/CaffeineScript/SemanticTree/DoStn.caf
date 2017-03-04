@@ -1,4 +1,4 @@
-import &ArtFoundation
+import &StandardImport
 
 class DoStn extends &BaseStn
 
