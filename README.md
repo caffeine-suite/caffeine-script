@@ -86,7 +86,7 @@ module.exports = class Login extends Component {
 * Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but eliminates the need for matching-token-pairs.
 * The JavaScript above is hand-coded. It is only roughly equivalent to the actual generated JavaScript. The generated JavaScript is a bit more capable and a bit longer than the JavaScript above.
 
-## Maximizing Programmer (My) Productivity
+## Maximizing Programmer Productivity
 
 I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
