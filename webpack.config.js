@@ -1,2 +1,2 @@
 require('coffee-script/register');
-module.exports = require("./webpack.config.coffee");
+module.exports = require("art-build-configurator").getWebpackConfig(__dirname);
