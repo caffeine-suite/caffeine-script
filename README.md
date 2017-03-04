@@ -56,8 +56,8 @@ class Login extends Component
 ```
 
 ```javascript
-// ES6
-// - 70 tokens
+// JavaScript ES6
+// - 71 tokens
 // - 11 matching-token-pairs
 let {
   Component,
@@ -68,7 +68,7 @@ let {
 
 module.exports = class Login extends Component {
   render() {
-    Element(
+    return Element(
       TextElement({
         text: 'username',
         size: {ww: 1, hch: 1}
