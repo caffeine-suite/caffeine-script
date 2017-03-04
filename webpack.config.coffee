@@ -11,7 +11,11 @@ module.exports = (require "art-foundation/configure_webpack")
   ]
   dirname: __dirname
   package:
-    description: "atomic data-types such as Color, Point, Rectangle and Matrix"
+    description: "
+      CaffeineScript makes programming more wonderful, code more beautiful and programmers more
+      productive. It is a lean, high-level language that compiles to JavaScript. CaffeineScript, or
+      CafScript for short, is obsessively focused on one thing: programmer productivity."
+
     dependencies:
       "art-foundation":           "git://github.com/imikimi/art-foundation.git"
       "caffeine-mc":              "git@github.com:shanebdavis/caffeine-mc.git"

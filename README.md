@@ -1,8 +1,8 @@
 # Programming with Caffeine
 
-CaffeineScript, or CafScript for short, makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript.
+CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript. CaffeineScript, or CafScript for short, is obsessively focused on one thing: programmer productivity.
 
-CaffeineScript is obsessively focused on programmer productivity, the only thing that matters. My primary inspirations are CoffeeScript, Ruby and ES6.
+CaffeineScript is inspirations by CoffeeScript and Ruby.
 
 ### Wiki Documentation
 
