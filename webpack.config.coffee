@@ -13,8 +13,7 @@ module.exports = (require "art-foundation/configure_webpack")
   package:
     description: "
       CaffeineScript makes programming more wonderful, code more beautiful and programmers more
-      productive. It is a lean, high-level language that compiles to JavaScript. CaffeineScript, or
-      CafScript for short, is obsessively focused on programmer productivity."
+      productive. It is a lean, high-level language that compiles to JavaScript."
 
     dependencies:
       "art-foundation":           "git://github.com/imikimi/art-foundation.git"

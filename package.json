@@ -22,7 +22,7 @@
     "webpack-dev-server": "^2.3.0",
     "webpack-merge": "^3.0.0"
   },
-  "description": "CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript. CaffeineScript, or CafScript for short, is obsessively focused on programmer productivity.",
+  "description": "CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that compiles to JavaScript.",
   "license": "ISC",
   "name": "caffeine-script",
   "scripts": {
