@@ -70,13 +70,13 @@ Caf.defMod(module, () => {
       this.prototype.initLabeledChildren = function() {
         this.labeledChildren = this.children && {};
         return Caf.e(this.children, undefined, (child, k, into) => {
-          let label, pluralLabel, base;
+          let label, pluralLabel, cafBase;
           child.parent = this;
           ({ label, pluralLabel } = child);
           this.labeledChildren[label] = child;
           if (pluralLabel) {
-            ((base = this.labeledChildren)[pluralLabel] ||
-              (base[pluralLabel] = [])).push(child);
+            ((cafBase = this.labeledChildren)[pluralLabel] ||
+              (cafBase[pluralLabel] = [])).push(child);
           }
         });
       };

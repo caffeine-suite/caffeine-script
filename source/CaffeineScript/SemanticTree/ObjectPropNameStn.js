@@ -19,11 +19,11 @@ Caf.defMod(module, () => {
   return ObjectPropNameStn = Caf.defClass(
     class ObjectPropNameStn extends BaseStn {
       constructor() {
-        let nameStn, base;
+        let nameStn, cafBase;
         super(...arguments);
         [nameStn] = this.children;
-        (base = this.props).value ||
-          (base.value = nameStn
+        (cafBase = this.props).value ||
+          (cafBase.value = nameStn
             ? nameStn.toJs()
             : this.parseTreeNode.toString());
       }

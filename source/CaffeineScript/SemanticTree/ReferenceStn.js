@@ -18,16 +18,16 @@ Caf.defMod(module, () => {
           return true;
         },
         explicitIdentifier: function() {
-          let base;
-          return Caf.exists(base = this.labeledChildren.identifier) &&
-            base.explicitIdentifier;
+          let cafBase;
+          return Caf.exists(cafBase = this.labeledChildren.identifier) &&
+            cafBase.explicitIdentifier;
         }
       });
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
-        let base;
-        return Caf.exists(base = this.props.identifierHandle) &&
-          base.identifier ||
+        let cafBase;
+        return Caf.exists(cafBase = this.props.identifierHandle) &&
+          cafBase.identifier ||
           this.labeledChildren.identifier.toJs();
       };
     }

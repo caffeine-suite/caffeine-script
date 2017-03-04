@@ -25,10 +25,10 @@ Caf.defMod(module, () => {
     },
     function(AssignmentStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
-        let base;
+        let cafBase;
         this.scope = scope;
         this.scope.addIdentifierAssigned(
-          Caf.exists(base = this.lValue) && base.explicitIdentifier
+          Caf.exists(cafBase = this.lValue) && cafBase.explicitIdentifier
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };

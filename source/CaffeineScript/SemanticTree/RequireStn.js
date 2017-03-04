@@ -74,10 +74,10 @@ Caf.defMod(module, () => {
                   into,
                   brk
                 ) => {
-                  let baseName, normalizedName, relative, _ret;
+                  let baseName, normalizedName, relative, cafRet;
                   [baseName] = name.split(".");
                   normalizedName = upperCamelCase(baseName);
-                  return (_ret = normalizedName === normalizedIdentifier
+                  return (cafRet = normalizedName === normalizedIdentifier
                     ? (relative = Path.relative(
                         sourceDir,
                         directory
@@ -88,7 +88,7 @@ Caf.defMod(module, () => {
                         ? relative = `./${relative}`
                         : undefined, relative)
                     : undefined) &&
-                    (brk(), _ret);
+                    (brk(), cafRet);
                 });
                 if (found || directory === sourceRoot) {
                   shouldContinue = false;

@@ -7,6 +7,7 @@ module.exports = (require "art-foundation/configure_webpack")
     "colors"
     "detect-node"
     "bluebird/js/browser/bluebird.core"
+    "bluebird/js/browser/bluebird.core.min"
     "coffee-script"
   ]
   dirname: __dirname

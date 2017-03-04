@@ -11,10 +11,10 @@ Caf.defMod(module, () => {
   return SemanticTokenStn = Caf.defClass(
     class SemanticTokenStn extends BaseStn {
       constructor() {
-        let base;
+        let cafBase;
         super(...arguments);
-        (base = this.props).token ||
-          (base.token = this.parseTreeNode.toString());
+        (cafBase = this.props).token ||
+          (cafBase.token = this.parseTreeNode.toString());
       }
     },
     function(SemanticTokenStn, classSuper, instanceSuper) {

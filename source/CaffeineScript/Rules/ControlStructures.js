@@ -19,10 +19,10 @@ Caf.defMod(module, () => {
       {
         stnFactory: "ControlOperatorStn",
         stnProps: function() {
-          let base;
+          let cafBase;
           return {
             operand: this.ifUnlessWhileUntil.toString(),
-            joiner: Caf.exists(base = this.thenDo) && base.toString()
+            joiner: Caf.exists(cafBase = this.thenDo) && cafBase.toString()
           };
         }
       }

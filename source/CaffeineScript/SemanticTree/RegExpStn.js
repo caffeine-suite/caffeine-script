@@ -11,17 +11,17 @@ Caf.defMod(module, () => {
     instanceSuper
   ) {
     this.prototype.toJs = function() {
-      let value, modifiers, str, hasInterpolation, base;
+      let value, modifiers, str, hasInterpolation, cafBase;
       ({ value, modifiers } = this.props);
-      str = (Caf.exists(base = this.children) && base.length) > 0
+      str = (Caf.exists(cafBase = this.children) && cafBase.length) > 0
         ? (hasInterpolation = Caf.ee(this.children, undefined, (
             child,
             k,
             into,
             brk
           ) => {
-            let _ret;
-            return (_ret = !isString(child.props.value)) && (brk(), _ret);
+            let cafRet;
+            return (cafRet = !isString(child.props.value)) && (brk(), cafRet);
           }), Caf
             .e(this.children, [], (child, k, into) => {
               let v;

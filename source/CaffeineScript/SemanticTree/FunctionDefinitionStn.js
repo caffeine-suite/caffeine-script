@@ -39,8 +39,9 @@ Caf.defMod(module, () => {
           return !this.props.bound;
         },
         argumentNames: function() {
-          let base;
-          return Caf.exists(base = this.arguments) && base.argumentNames || [];
+          let cafBase;
+          return Caf.exists(cafBase = this.arguments) &&
+            cafBase.argumentNames || [];
         }
       });
       this.prototype.toJs = function() {

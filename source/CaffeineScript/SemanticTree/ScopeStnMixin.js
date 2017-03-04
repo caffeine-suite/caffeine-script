@@ -199,14 +199,14 @@ Caf.defMod(module, () => {
             });
           },
           identifiersUsed: function() {
-            let base;
-            return (base = this.props).identifiersUsed ||
-              (base.identifiersUsed = {});
+            let cafBase;
+            return (cafBase = this.props).identifiersUsed ||
+              (cafBase.identifiersUsed = {});
           },
           identifiersAssigned: function() {
-            let base;
-            return (base = this.props).identifiersAssigned ||
-              (base.identifiersAssigned = {});
+            let cafBase;
+            return (cafBase = this.props).identifiersAssigned ||
+              (cafBase.identifiersAssigned = {});
           },
           identifiersUsedOrAssigned: function() {
             let out, scope, notDone;

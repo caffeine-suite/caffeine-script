@@ -18,9 +18,9 @@ Caf.defMod(module, () => {
         });
       };
       this.prototype.trimRight = function() {
-        let base;
-        return Caf.exists(base = peek(this.children)) &&
-          (Caf.isF(base.trimRight) && base.trimRight());
+        let cafBase;
+        return Caf.exists(cafBase = peek(this.children)) &&
+          (Caf.isF(cafBase.trimRight) && cafBase.trimRight());
       };
       this.prototype.toJs = function() {
         return `\`${Caf

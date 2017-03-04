@@ -70,12 +70,12 @@ Caf.defMod(module, () => {
       },
       {
         getStnChildren: function(appendTo = []) {
-          let base;
+          let cafBase;
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(base = this.interpolation) &&
-            base.getStnChildren(appendTo);
+          Caf.exists(cafBase = this.interpolation) &&
+            cafBase.getStnChildren(appendTo);
           return appendTo;
         },
         getStn: function() {
@@ -98,13 +98,13 @@ Caf.defMod(module, () => {
       },
       {
         getStnChildren: function(appendTo = []) {
-          let base;
+          let cafBase;
           appendTo.push(this.expression.getStn());
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(base = this.interpolation) &&
-            base.getStnChildren(appendTo);
+          Caf.exists(cafBase = this.interpolation) &&
+            cafBase.getStnChildren(appendTo);
           return appendTo;
         }
       }

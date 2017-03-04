@@ -58,7 +58,7 @@ Caf.defMod(module, () => {
           list,
           importingJs,
           imports,
-          base;
+          cafBase;
         ({ generateReturnStatement } = options);
         importFromCaptureIdentifier = null;
         if (p = this.findParent("Import")) {
@@ -76,7 +76,7 @@ Caf.defMod(module, () => {
           into.push(`"${i}"`);
         });
         importingJs = `[${list.join(", ")}]`;
-        imports = (Caf.exists(base = this.importing) && base.length) > 0
+        imports = (Caf.exists(cafBase = this.importing) && cafBase.length) > 0
           ? `({${this.importing.join(
               ", "
             )}} = Caf.i(${importingJs}, ${this._importFromCaptureIdentifier

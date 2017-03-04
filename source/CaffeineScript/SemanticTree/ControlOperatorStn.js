@@ -58,8 +58,8 @@ Caf.defMod(module, () => {
           expression,
           operand,
           tempVarIdentifier,
-          base,
-          base1;
+          cafBase,
+          cafBase1;
         ({ returnExpression, returnValueIsIgnored } = options);
         expression = this.expression.toJsExpression();
         ({ operand } = this);
@@ -87,14 +87,15 @@ Caf.defMod(module, () => {
               : `${this.applyParens(
                   expression
                 )} ? ${this.body.toJsParenExpression()} : ${Caf.exists(
-                  base = this.elseBody
+                  cafBase = this.elseBody
                 ) &&
-                  base.toJsParenExpression() ||
+                  cafBase.toJsParenExpression() ||
                   "undefined"}`
           : `${operand} ${this.applyRequiredParens(
               expression
             )} {${this.body.toJs()};}${this.elseBody
-              ? ` else {${Caf.exists(base1 = this.elseBody) && base1.toJs()};}`
+              ? ` else {${Caf.exists(cafBase1 = this.elseBody) &&
+                  cafBase1.toJs()};}`
               : ""}`;
       };
       this.prototype.toJsParenExpression = function() {
