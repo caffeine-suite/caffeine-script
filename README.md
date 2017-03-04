@@ -4,6 +4,10 @@ CaffeineScript, or CafScript for short, makes programming more wonderful, code m
 
 CaffeineScript is obsessively focused on programmer productivity, the only thing that matters. My primary inspirations are CoffeeScript, Ruby and ES6.
 
+### Wiki Documentation
+
+Check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for documentation and more.
+
 ### Status - Alpha
 
 CaffeineScript is now written in itself! (2017-02-26)
@@ -30,28 +34,7 @@ node_modules/.bin/caf demo.caf
 npm test
 ```
 
-### Maximizing Programmer (My) Productivity
-
-I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
-
-All my projects are in CoffeeScript. At last count I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumultating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to frutition in CaffeineScript.
-
-Really, they all come down to trying to figure out how to maximizing my productivity. To that end, I've found some common themes:
-
-- minimize tokens, and especially tokens which require matching
-- maximize use of blocks
-- maximize consistency
-- maximize elegant, clean OO programming
-- maximize elegant, clean functional programming
-- minimize Javscript's warts
-- streamline npm / CommonJs support
-- syntax errors suggest opportunities
-
-### Wiki
-
-After you've read this short intro file, check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for more details.
-
-### Example
+### CaffeineScript Example
 
 ```coffeescript
 # CaffeineScript
@@ -99,19 +82,17 @@ module.exports = class Login extends Component {
   };
 };
 ```
-
 * Tokens - code size is measured in tokens, the smallest semantically meaningful unit. Above all else, CaffeineScript minimizes tokens as much as possible with the goal of increasing clarity.
 * Matchings - matching "", /**/, (), {}, [] and others token-pairs demands a cognitive burden far larger than just two tokens. CaffeineScript all but eliminates the need for matching-token-pairs.
-
 * The JavaScript above is hand-coded. It is only roughly equivalent to the actual generated JavaScript. The generated JavaScript is a bit more capable and a bit longer than the JavaScript above.
 
-## Syntax Matters
+## Maximizing Programmer (My) Productivity
 
-I believe syntax matters. In my experience every line of code written gets edited at least 10 times and read at least 100 over the product's lifetime. Therefor, every token costs 10x - 100x more programmer-time overall compared to the initial cost of adding it.
+I'm making this language for me, much as Matz did with Ruby. If you agree with the philosophy behind the language, maybe it's for you too.
 
-### Code is a Liability
+All my projects are in CoffeeScript. I am maintaining almost 1700 coffee files. It's a great language, but I want more. I've been accumultating notes on how to make a better high-level language for Javascript since 2013. I now have over 200 notes. Most of them are coming to frutition in CaffeineScript.
 
-The product of code is an asset. It creates value in the world. However, the code itself is a liability. It requires maintenence, reading, understanding, and editing. All of these things *cost* programmer time. A good way to reduce the cost of code is to reduce its size, as long as you can do so without losing clarity. When in doubt, less code is better code.
+All these ideas service one primary goal: maximize my productivity. In order to do that, I've ruthlessly reduced syntax, all but elliminated the need for matching-tokens, elliminated the possibilty of certain common bugs, trivialized some common refactors and obessed over language consistency. The result, to my delight, is something beautiful.
 
 ## Good Design and Programming Languages
 
@@ -124,7 +105,7 @@ Good design in programming, just like in anything else, is important. Sadly, goo
   * less is more
   * hide clutter
   * streamline the most common work flows
-  * place uncommon work-flows 'off-screen' so they don't distract, or in the case of programming languages, behind more verbose syntax so we can reserve the limited, streamlined syntax options for the most common use-cases
+  * prioritize common work-flows over uncommon
 
 I look forward to the day when there are design awards for programing languages, editors, IDEs, compilers, debuggers, etc.
 
@@ -132,11 +113,11 @@ More on my design philosophy: [Amazingly Great Design @ EssenceAndArtifact.com](
 
 ## CaffeineMC (Meta-Compiler)
 
-CafScript is designed to take maximum advantage of CaffeineMC. This means the language is extensible on a per-file or per-project basis. CaffeineMC enables this startling concept:
+CaffeineScript is designed to take maximum advantage of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc). This means the language is extensible on a per-file or per-project basis. CaffeineMC enables this startling concept:
 
 * Any language can change *arbitrarilly* without breaking any existing code.
 
-No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unlease the power of language evolution! Learn more: [CaffeineMC](https://github.com/shanebdavis/caffeine-mc).
+No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unlease the power of language evolution!
 
 ## CaffeineScript and CoffeeScript
 
