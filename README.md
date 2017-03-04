@@ -4,7 +4,7 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 ### Built on JavaScript
 
-CaffeineScript, or CafScript for short, is inspired by CoffeeScript. CaffeineScript starts where CoffeeScript left off. If CoffeeScript's motto is "it's just JavaScript," Caffeine's is 'built on JavaScript.' JavaScript is a powerful, yet low-level assembly language. No-one should hand-code assembly-language. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations.
+CaffeineScript, or Caf for short, is inspired by CoffeeScript. If CoffeeScript is "just JavaScript," CaffeineScript is 'built on JavaScript.' JavaScript is a powerful, yet low-level assembly language. No-one should hand-code assembly-language. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations.
 
 With respect to JavaScript, CaffeineScript's priorities are:
 
@@ -17,7 +17,7 @@ With respect to JavaScript, CaffeineScript's priorities are:
 
 Check out the [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for documentation and more.
 
-### Status - Alpha
+### Status: Alpha
 
 CaffeineScript is now written in itself! (2017-02-26)
 
