@@ -1,6 +1,7 @@
 {CaffeineScript} = Neptune
-{log, formattedInspect} = Neptune.Art.Foundation
+{log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
+{BaseClass} = Neptune.Art.ClassSystem
 
 {parseTestSuite} = require '../../Helper'
 
@@ -122,11 +123,11 @@ module.exports = suite: parseTestSuite
 
     realworld:
       """
-      class Foo extends BaseObject
+      class Foo extends BaseClass
         @getter
           foo: -> @_foo
       """: "
-        Foo = Caf.defClass(class Foo extends BaseObject {},
+        Foo = Caf.defClass(class Foo extends BaseClass {},
           function(Foo, classSuper, instanceSuper)
             {this.getter({foo:
               function() {return this._foo;}});});"

@@ -1,6 +1,6 @@
 
 {CaffeineScript} = Neptune
-{log, formattedInspect} = Neptune.Art.Foundation
+{log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
 {parseTestSuite, illegalSyntaxTests} = require '../../Helper'

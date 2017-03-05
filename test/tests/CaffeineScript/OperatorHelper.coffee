@@ -1,5 +1,5 @@
 {OperatorHelper} = Neptune.CaffeineScript
-{log, w} = Neptune.Art.Foundation
+{log, w} = Neptune.Art.StandardLib
 
 module.exports = suite:
   # test "foo", ->

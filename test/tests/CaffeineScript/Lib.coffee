@@ -1,5 +1,5 @@
 {OperatorHelper} = Neptune.CaffeineScript
-{log, w, formattedInspect} = Neptune.Art.Foundation
+{log, w, formattedInspect} = Neptune.Art.StandardLib
 
 {escapeMustEscapes, escapeUnescaped, deescapeSpaces} = Neptune.CaffeineScript.Lib
 

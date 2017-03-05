@@ -1,5 +1,5 @@
 {applyParens} = Neptune.CaffeineScript.SemanticTree.BaseStn
-{log, inspectLean} = Neptune.Art.Foundation
+{log, inspectLean} = Neptune.Art.StandardLib
 
 testApplyParens = (map) ->
   for source, parensAdded of map

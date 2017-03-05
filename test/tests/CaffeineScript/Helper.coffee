@@ -1,5 +1,5 @@
 {CaffeineScript} = Neptune
-{each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.Foundation
+{each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
 {CaffeineScriptParser} = CaffeineScript
 require "colors"
 
