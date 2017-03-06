@@ -6,7 +6,7 @@ CaffeineScript makes programming more wonderful, code more beautiful and program
 
 CaffeineScript, or Caf for short, is inspired by CoffeeScript. If CoffeeScript is "just JavaScript," CaffeineScript is 'built on JavaScript.' JavaScript is a powerful, yet low-level assembly language. No-one should hand-code assembly-language. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations.
 
-With respect to JavaScript, CaffeineScript's priorities are:
+### CaffeineScript Priorities
 
 1. maximize programmer productivity
 2. generate fast JavaScript
@@ -122,9 +122,9 @@ More on my design philosophy: [Amazingly Great Design @ EssenceAndArtifact.com](
 
 ## CaffeineMC (Meta-Compiler)
 
-CaffeineScript is designed to take maximum advantage of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc). This means the language is extensible on a per-file or per-project basis. CaffeineMC enables this startling concept:
+CaffeineScript is designed to take maximum advantage of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc). This means the language is extensible on a per-file or per-project basis. 
 
-* Any language can change *arbitrarily* without breaking any existing code.
+> With CaffeineMC, any language can change *arbitrarily* without breaking any existing code.
 
 No language has ever had this, as far as I'm aware. This isn't limited to CaffeineScript. CafScript just takes advantage of CaffeineMC. Let's unleash the power of language evolution!
 
