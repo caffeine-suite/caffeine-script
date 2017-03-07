@@ -23,3 +23,5 @@ module.exports =
       # for buildling caf files:
       resolve: extensions: [".caf", ".caffeine"]
       module: rules: [test: /\.caf(feine)?$/, loader: "caffeine-mc/webpack-loader"]
+
+    targets: index: {}
