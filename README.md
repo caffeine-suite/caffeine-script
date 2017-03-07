@@ -1,12 +1,14 @@
 # Programming with Caffeine
 
-CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.
+CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
 
 ### Beyond JavaScript
 
-CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low level. It is effectively the assembly-language for the JavaScript runtime which power every browser and virtually every machine on the planet. No-one should hand-code assembly-language, and there is no reason to limit ourselves to only what our assembly language can express. CaffeineScript strives to get the most out of the *ideals* of JavaScript while moving beyond its limitations.
+CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low-level. It is effectively the assembly-language of the web. No-one should hand-code assembly-language. Coding in any assembly-language is error-prone and tedious. There is no reason to limit ourselves to only what our assembly language can express. 
 
-### CaffeineScript Priorities
+CaffeineScript embraces the *ideals* of JavaScript while moving beyond its limitations. 
+
+#### CaffeineScript Priorities
 
 1. maximize programmer productivity
 2. generate fast JavaScript
