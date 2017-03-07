@@ -1,3 +1,41 @@
 version: require('../../package.json').version
+
+##compile: (source, options) ->
+  import &StandardImport
+
+  {Stats} = &BabelBridge
+
+  countNodes = (node) ->
+    Stats?.add "finalNode"
+    if node.matches?.length > 0
+      each n in node.matches
+        countNodes n
+    else
+      Stats?.add "finalLeafNode"
+
+  parser = new &CaffeineScriptParser
+  Stats?.reset()
+  startTime = currentSecond()
+  rootNode = parser.parse source, options
+  parseTime = currentSecond()
+  rootStn = rootNode.getStn()
+  stnTime = currentSecond()
+  rootStn = rootStn.transform()
+  transformTime = currentSecond()
+  js = rootStn.toJsModule()
+  jsTime = currentSecond()
+
+  countNodes rootNode
+
+  log CaffeineScriptPerf:
+    source: options?.sourceFile || source
+    parsing: floor (parseTime - startTime) * 1000
+    toSt: floor (stnTime - parseTime) * 1000
+    stTransform: floor (transformTime - stnTime) * 1000
+    toJs: floor (jsTime - transformTime) * 1000
+    total: floor (jsTime - startTime) * 1000
+    stats: Stats?.get()
+  compiled: js: js
+
 compile: (source, options) ->
   compiled: js: &CaffeineScriptParser.parse(source, options).getStn().transform().toJsModule()
