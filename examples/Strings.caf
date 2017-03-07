@@ -1,0 +1,12 @@
+a = "" To end of line string.
+b = :word-string
+
+c = ""
+  This is
+  my multiline
+  string without newlines.
+
+d = """
+  This is
+  my multiline
+  string with newlines.
