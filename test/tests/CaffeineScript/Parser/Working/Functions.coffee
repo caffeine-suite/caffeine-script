@@ -8,11 +8,23 @@ module.exports = suite: parseTestSuite
   definition:
     unbound:
       "-> 321"             : "(function() {return 321;});"
+      "~> 321"             : "(function() {return 321;});"
       "(foo) -> 321"       : "(function(foo) {return 321;});"
       "(foo, bar) -> 321"  : "(function(foo, bar) {return 321;});"
       "->\n  321"          : "(function() {return 321;});"
       "->\n  321\n  456"   : "(function() {321; return 456;});"
       "->\n  321\n\n  456" : "(function() {321; return 456;});"
+
+    auto:
+      inFunction:
+        "-> ~> 321": "(function() {return function() {return 321;};});"
+        "-> -> 321": "(function() {return () => {return 321;};});"
+        "-> => 321": "(function() {return () => {return 321;};});"
+
+      inClass:
+        "class Foo\n  foo: ~> 123": "Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
+        "class Foo\n  foo: => 123": "Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = () => {return 123;};});"
+        "class Foo\n  foo: -> 123": "Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
 
     dontMissParse:
       "foo -> 321"         : "foo(function() {return 321;});"
@@ -54,6 +66,8 @@ module.exports = suite: parseTestSuite
       "(@foo = 123) =>":    "(foo = 123) => {this.foo = foo;};"
       "(@foo...) =>":       "(...foo) => {this.foo = foo;};"
       "(@foo, @bar) =>":    "(foo, bar) => {this.foo = foo; this.bar = bar;};"
+
+
 
   invocation:
     noParens:

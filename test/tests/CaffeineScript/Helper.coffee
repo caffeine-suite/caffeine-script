@@ -30,7 +30,8 @@ module.exports =
           else
             transformedStn.toJs()
         catch error
-          logPrettyError error
+          log.error error
+
           null
 
         if js != expectedJs

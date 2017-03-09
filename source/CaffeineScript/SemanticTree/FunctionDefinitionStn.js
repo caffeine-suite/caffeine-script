@@ -44,6 +44,17 @@ Caf.defMod(module, () => {
             cafBase.argumentNames || [];
         }
       });
+      this.prototype.transform = function() {
+        let foundParent;
+        if (this.props.bound === "auto") {
+          this.props.bound = (foundParent = this.findParent(
+            /Class|FunctionDefinition/
+          ))
+            ? foundParent.type === "Class" ? false : true
+            : false;
+        }
+        return instanceSuper.transform.apply(this, arguments);
+      };
       this.prototype.toJs = function() {
         let returnIgnored,
           isConstructor,

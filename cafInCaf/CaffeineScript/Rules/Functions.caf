@@ -15,7 +15,12 @@ getPropertySetters = (node, list = []) ->
       pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
     {}
       stnFactory: :FunctionDefinitionStn
-      stnProps: -> bound: @_arrow_.text.match /=>/
+      stnProps: ->
+        bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
+          when "=>" then true
+          when "~>" then false
+          when "->" then "auto"
+          else throw new Error
 
   @rule
     functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()

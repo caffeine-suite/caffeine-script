@@ -37,7 +37,7 @@ module.exports = suite:
       b = 1
       ->
         a = 1
-        ->
+        ~>
           a = 2
       """:
         "let b;

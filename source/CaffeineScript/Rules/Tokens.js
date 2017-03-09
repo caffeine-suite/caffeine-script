@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
       _equals_: /\ *= */,
       _colon_: /\ *: */,
       _comma_: /\ *, *\n*/,
-      _arrow_: /\ *[-=]> */,
+      _arrow_: /\ *[-~=]> */,
       openParen_: /\( */,
       _closeParen: /\ *\)/,
       openBracket_: /\[ *(\n*(?!\s))?/,

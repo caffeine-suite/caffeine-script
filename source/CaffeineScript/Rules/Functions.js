@@ -3,8 +3,9 @@ Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     BabelBridge = require("babel-bridge"),
     getPropertySetters,
-    Extensions;
-  ({ Extensions } = Caf.i(["Extensions"], [
+    Extensions,
+    Error;
+  ({ Extensions, Error } = Caf.i(["Extensions", "Error"], [
     StandardImport,
     BabelBridge,
     global
@@ -32,7 +33,22 @@ Caf.defMod(module, () => {
       {
         stnFactory: "FunctionDefinitionStn",
         stnProps: function() {
-          return { bound: this._arrow_.text.match(/=>/) };
+          return {
+            bound: (() => {
+              switch (this._arrow_.text.match(/(=>|~>|->)/)[0]) {
+                case "=>":
+                  return true;
+                case "~>":
+                  return false;
+                case "->":
+                  return "auto";
+                default:
+                  return (() => {
+                    throw new Error();
+                  })();
+              }
+            })()
+          };
         }
       }
     );

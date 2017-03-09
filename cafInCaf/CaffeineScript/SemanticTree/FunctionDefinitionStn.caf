@@ -50,6 +50,18 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     argumentNames: ->
       @arguments?.argumentNames || []
 
+  transform: ->
+    if @props.bound == "auto"
+      @props.bound = if foundParent = @findParent /Class|FunctionDefinition/
+        if foundParent.type == "Class"
+          false
+        else
+          true
+      else
+        false
+
+    super
+
   toJs: ->
     {returnIgnored, isConstructor, bound} = @props
     returnIgnored ||= isConstructor

@@ -5,5 +5,4 @@ module.exports = require './namespace'
 .addModules
   CoffeeScript: require './CoffeeScript'
 require './ControlStructures'
-require './NotWorking'
 require './Working'
