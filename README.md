@@ -2,11 +2,23 @@
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
 
-### Beyond JavaScript
+### Built to Fit My Brain
 
-CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low-level. It is effectively the assembly-language of the web. No-one should hand-code assembly-language. Coding in any assembly-language is error-prone and tedious. There is no reason to limit ourselves to only what our assembly language can express. 
+If you are visual, value reduced syntax and are looking for every productivity advantage, CaffeineScript may be for you.
 
-CaffeineScript embraces the *ideals* of JavaScript while moving beyond its limitations. 
+CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low-level. It is effectively the assembly-language of the web. It is excessively verbose and has many ways to shoot yourself in the foot. No-one should have to hand-code assembly-language. Coding in any assembly-language is error-prone and tedious. There is no reason to limit ourselves to only what our assembly language can express. 
+
+CaffeineScript embraces the *ideals* of JavaScript:
+
+* dynamic typing
+* functional programming
+* object oriented programming
+
+CaffeineScript Highlights
+
+* syntax: visual, expressive, minimal
+* functional: everything returns a value
+* truth: everything but null, undefined and false is true
 
 #### CaffeineScript Priorities
 
