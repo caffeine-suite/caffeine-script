@@ -1860,6 +1860,17 @@ Caf.defMod(module, () => {
             cafBase.argumentNames || [];
         }
       });
+      this.prototype.transform = function() {
+        let foundParent;
+        if (this.props.bound === "auto") {
+          this.props.bound = (foundParent = this.findParent(
+            /Class|FunctionDefinition/
+          ))
+            ? foundParent.type === "Class" ? false : true
+            : false;
+        }
+        return instanceSuper.transform.apply(this, arguments);
+      };
       this.prototype.toJs = function() {
         let returnIgnored,
           isConstructor,
@@ -2727,8 +2738,9 @@ Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     BabelBridge = __webpack_require__(4),
     getPropertySetters,
-    Extensions;
-  ({ Extensions } = Caf.i(["Extensions"], [
+    Extensions,
+    Error;
+  ({ Extensions, Error } = Caf.i(["Extensions", "Error"], [
     StandardImport,
     BabelBridge,
     global
@@ -2756,7 +2768,22 @@ Caf.defMod(module, () => {
       {
         stnFactory: "FunctionDefinitionStn",
         stnProps: function() {
-          return { bound: this._arrow_.text.match(/=>/) };
+          return {
+            bound: (() => {
+              switch (this._arrow_.text.match(/(=>|~>|->)/)[0]) {
+                case "=>":
+                  return true;
+                case "~>":
+                  return false;
+                case "->":
+                  return "auto";
+                default:
+                  return (() => {
+                    throw new Error();
+                  })();
+              }
+            })()
+          };
         }
       }
     );
@@ -3483,7 +3510,7 @@ Caf.defMod(module, () => {
       _equals_: /\ *= */,
       _colon_: /\ *: */,
       _comma_: /\ *, *\n*/,
-      _arrow_: /\ *[-=]> */,
+      _arrow_: /\ *[-~=]> */,
       openParen_: /\( */,
       _closeParen: /\ *\)/,
       openBracket_: /\[ *(\n*(?!\s))?/,
@@ -4082,16 +4109,16 @@ Caf.defMod(module, () => {
           bodyWithDefault = body || ValueStn(valueVarDef);
         }
         whenClauseWrapper = whenClause
-          ? (function(actionStn) {
+          ? actionStn => {
               return ControlOperatorStn(
                 { operand: "if" },
                 whenClause,
                 actionStn
               );
-            })
-          : (function(actionStn) {
+            }
+          : actionStn => {
               return actionStn;
-            });
+            };
         return FunctionInvocationStn(
           IdentifierStn({ identifier: `Caf.${useExtendedEach ? "ee" : "e"}` }),
           iterable,
@@ -5354,7 +5381,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.28.3"
+	"version": "0.29.0"
 };
 
 /***/ }),

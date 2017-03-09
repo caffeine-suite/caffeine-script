@@ -3,7 +3,7 @@ import &StandardImport
 
 tagMacro:
   pattern: '/</ identifier />/ actualToEolAndBlock'
-  getStnFactory: ->
+  getStnFactory: ~>
     factoryName = upperCamelCase @identifier.text
     factory = SemanticTree[factoryName] || SemanticTree[factoryName + "Stn"]
     throw new Error "TagMacro: cannot find factory for: #{@identifier.text}" unless factory

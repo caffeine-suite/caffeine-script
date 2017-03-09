@@ -139,16 +139,16 @@ Caf.defMod(module, () => {
           bodyWithDefault = body || ValueStn(valueVarDef);
         }
         whenClauseWrapper = whenClause
-          ? (function(actionStn) {
+          ? actionStn => {
               return ControlOperatorStn(
                 { operand: "if" },
                 whenClause,
                 actionStn
               );
-            })
-          : (function(actionStn) {
+            }
+          : actionStn => {
               return actionStn;
-            });
+            };
         return FunctionInvocationStn(
           IdentifierStn({ identifier: `Caf.${useExtendedEach ? "ee" : "e"}` }),
           iterable,

@@ -1,6 +1,6 @@
 import &StandardImport
 
-->
+~>
   @rule
     _:            '/ +/ comment?'
     end:          "lineEndComment"
@@ -15,4 +15,4 @@ import &StandardImport
     lineEndComment:   "_? comment? _end lineStartComment*"
 
     # commenting this out breacks compiling: LiteralStrings.caf
-    {} getPresent: -> false
+    {} getPresent: ~> false

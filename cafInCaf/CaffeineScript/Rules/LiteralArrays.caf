@@ -1,11 +1,11 @@
 import &StandardImport, &BabelBridge
 
-->
+~>
   @rule
 
     array:
       "openBracket_ valueListBlock _closeBracket"
-      pattern: "'[]' _? valueListToEolAndBlock", getImplicitArray: -> false # TODO: I shouldn't need to add this getImplicitArray!
+      pattern: "'[]' _? valueListToEolAndBlock", getImplicitArray: ~> false # TODO: I shouldn't need to add this getImplicitArray!
       "'[]'"
 
     brackedArray:
@@ -14,13 +14,13 @@ import &StandardImport, &BabelBridge
     implicitArray:
       {}
         pattern:          "start:expression _comma_ valueList _comma_?"
-        getImplicitArray: -> @
+        getImplicitArray: ~> @
         stnFactory:       :ArrayStn
         stnProps:         implicitArray: true
 
       {}
         pattern:          "start:literal _ valueList _comma_?"
-        getImplicitArray: -> @
+        getImplicitArray: ~> @
         stnFactory:       :ArrayStn
         stnProps:         implicitArray: true
 

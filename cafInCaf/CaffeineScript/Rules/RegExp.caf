@@ -4,11 +4,11 @@ regExpLiteral:
   {}
     pattern:    "regExpStart regExpMiddle regExpEnd regExpModifiers?"
     stnFactory: :RegExpStn
-    stnProps:   -> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
+    stnProps:   ~> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
   {}
     pattern:    "'///' multilineRegExpMiddle* '///' regExpModifiers?"
     stnFactory: :RegExpStn
-    stnProps:   -> modifiers: @regExpModifiers?.toString()
+    stnProps:   ~> modifiers: @regExpModifiers?.toString()
 
 ##
   TODO: we could accept many regexps starting with space, / f/,
@@ -32,17 +32,17 @@ multilineRegExpMiddle:
 multilineRegExpText:
   pattern:    /((?!((^|\n|\s)#|#\{))[^\\\/])+/
   stnFactory: :StringStn
-  stnProps:   -> value: @text.replace /[\n\s]+/g, ''
+  stnProps:   ~> value: @text.replace /[\n\s]+/g, ''
 
 multilineRegExpEscape:
   pattern:    /(\\.)/
   stnFactory: :StringStn
-  stnProps:   -> value: if @text == "\\ " then ' ' else @text
+  stnProps:   ~> value: if @text == "\\ " then ' ' else @text
 
 multilineRegExpComment:
   pattern:    "/^|\\n|\\s/ comment" #/(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
   stnFactory: :StringStn
-  stnProps:   -> value: ""
+  stnProps:   ~> value: ""
 
 multilineRegExpInterpolation:
   pattern: "interpolationStart expression interpolationEnd"
@@ -50,4 +50,4 @@ multilineRegExpInterpolation:
 multilineRegExpForwardSlashes:
   pattern:    /\/\/?(?!\/)/
   stnFactory: :StringStn
-  stnProps:   -> value: @text.replace /\//g, '\\/'
+  stnProps:   ~> value: @text.replace /\//g, '\\/'

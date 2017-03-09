@@ -6,7 +6,7 @@ binOpExpression:
 binaryOperatorSequenceExtension:
   pattern: "binaryOperatorAndExpression+"
   stnExtension: true
-  getStn: (left)->
+  getStn: (left)~>
     throw new Error "expecting left" unless left
     resolveOperatorPrecidence
 
@@ -16,7 +16,7 @@ binaryOperatorSequenceExtension:
       compactFlatten [] left, array opAndExp in @binaryOperatorAndExpressions
         opAndExp.unaryOpExpression.getStn()
 
-      (operandA, operandB, operator) ->
+      (operandA, operandB, operator) ~>
         BinaryOperatorStn
           operator: operator
           operandA
@@ -27,14 +27,14 @@ binaryOperatorAndExpression:
 
 lineStartBinaryOperatorAndExpression:
   pattern:      "binaryOperator _? binOpExpression"
-  stnProps:     -> operator: getNormalizedOperator @binaryOperator
+  stnProps:     ~> operator: getNormalizedOperator @binaryOperator
   stnFactory:   "BinaryOperatorStn"
   stnExtension: true
 
 unaryOpExpression:
   pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"
 
-  getStn: ->
+  getStn: ~>
     stn = @expressionWithoutBinOps.getStn()
     each operand in @unaryTailOperators || []
       stn = UnaryOperatorStn

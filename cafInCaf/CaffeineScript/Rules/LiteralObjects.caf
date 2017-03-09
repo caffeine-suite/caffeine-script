@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge, &SemanticTree
 
-->
+~>
   @rule
     singleOrMultilineImplicitObject:
       :multilineImplicitObject
@@ -21,7 +21,7 @@ import &StandardImport, &BabelBridge, &SemanticTree
       pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
 
     {}
-      getStn: ->
+      getStn: ~>
         children = array m in @getMatchStns()
           if m instanceof ObjectStn.class
             m.children

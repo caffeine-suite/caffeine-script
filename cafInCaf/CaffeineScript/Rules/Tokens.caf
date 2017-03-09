@@ -2,7 +2,7 @@
   Note that "_" in rule-names is used consistently to indicate one or more spaces will be matched before or after the rule or both.
   Most rules (rules with no "_" suffix or prefix) do not consume spaces before or after themselves.
 
-->
+~>
   @rule
     _equals_:       /\ *= */
     _colon_:        /\ *: */
@@ -69,7 +69,7 @@
         ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
         ///
       stnFactory: :IdentifierStn
-      stnProps: -> identifier: @toString()
+      stnProps: ~> identifier: @toString()
 
     ##
       SBD Feb2017: still debating exactly what should be included in unquoted strings

@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge
 
-->
+~>
   @rule
     value: "simpleValue valueExtension*"
 
@@ -43,7 +43,7 @@ import &StandardImport, &BabelBridge
     globalIdentifier:
       pattern: /(global|require|module|eval)\b/
       stnFactory: :GlobalIdentifierStn
-      stnProps: -> identifier: @text
+      stnProps: ~> identifier: @text
 
   @rule
     super:
@@ -65,7 +65,7 @@ import &StandardImport, &BabelBridge
     {}
       stnFactory:   :AssignmentStn
       stnExtension: true
-      stnProps: ->
+      stnProps: ~>
         rawOp = @assignmentOperator.toString()
         operator: (match = rawOp.match /(\S*)=/) && match[1]
 

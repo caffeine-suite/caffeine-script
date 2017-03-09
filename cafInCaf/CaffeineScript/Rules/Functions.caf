@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge
 
-getPropertySetters = (node, list = []) ->
+getPropertySetters = (node, list = []) ~>
   if node
     if prop = node.shouldSetProperty?()
       list.push prop
@@ -9,13 +9,13 @@ getPropertySetters = (node, list = []) ->
         getPropertySetters match, list
   list
 
-->
+~>
   @rule
     functionDefinition:
       pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
     {}
       stnFactory: :FunctionDefinitionStn
-      stnProps: ->
+      stnProps: ~>
         bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
           when "=>" then true
           when "~>" then false
@@ -40,7 +40,7 @@ getPropertySetters = (node, list = []) ->
     argDef:
       pattern: "at:/@/? identifier argIdentifierExtension?"
       stnFactory: "FunctionDefinitionArgStn"
-      stnProps: -> rest: !!@argIdentifierExtension?.etc, assignThisProperty: !!@at
+      stnProps: ~> rest: !!@argIdentifierExtension?.etc, assignThisProperty: !!@at
 
     argIdentifierExtension:
       :defaultValue
@@ -65,5 +65,5 @@ getPropertySetters = (node, list = []) ->
     {}
       stnFactory: "FunctionInvocationStn"
       stnExtension: true
-      stnProps: -> existanceTest: !!@existanceTest
-      stnChildren: -> @values?.getStn()
+      stnProps: ~> existanceTest: !!@existanceTest
+      stnChildren: ~> @values?.getStn()

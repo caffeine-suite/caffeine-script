@@ -13,7 +13,7 @@ statementWithoutEnd:
   "" complexExpression !tailControlOperator
 
   pattern: 'complexExpression tailControlOperatorComplexExpression+',
-  getStn: ->
+  getStn: ~>
     stn = @complexExpression.getStn()
     each tco in @tailControlOperatorComplexExpressions
       stn = ControlOperatorStn
@@ -24,7 +24,7 @@ statementWithoutEnd:
 
 newLineStart:
   pattern: /( *\n)+/
-  getPresent: -> false
+  getPresent: ~> false
 
 importStatement:
   pattern: '/import/ _ valueList end root'

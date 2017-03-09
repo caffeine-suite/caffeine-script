@@ -1,6 +1,6 @@
 import &StandardImport
 
-->
+~>
   @rule
     comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType'
     {} stnFactory: :FunctionDefinitionArgsStn

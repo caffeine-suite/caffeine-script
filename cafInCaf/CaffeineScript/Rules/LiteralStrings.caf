@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge, &SemanticTree, &Lib
 
-->
+~>
   @rule
     doubleQuote:            /"/
     singleQuote:            /'/
@@ -16,7 +16,7 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
     stringLiteral:
       {}
         pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock'
-        getStn: ->
+        getStn: ~>
           ret = @stringBlock.getStn()
           ret.compactNewLines() unless @tripple
           ret.trimRight?()
@@ -24,14 +24,14 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
 
       {}
         pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock"
-        getStn: ->
+        getStn: ~>
           ret = StringStn value: @unparsedBlock.toString()
           ret.compactNewLines() unless @tripple
           ret
 
       {}
         pattern: "':' string:unquotedString"
-        getStn: ->
+        getStn: ~>
           StringStn value: @string.toString()
           .compactNewLines true, true
 
@@ -45,12 +45,12 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
     stringBlockBody: "/[ \\n]*/ mid:blockStringMiddle interpolation:blockStringInterpolation?"
 
     {}
-      getStnChildren: (appendTo = [])->
+      getStnChildren: (appendTo = [])~>
         appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
         @interpolation?.getStnChildren appendTo
         appendTo
 
-      getStn: ->
+      getStn: ~>
         ret = if @interpolation
           InterpolatedStringStn @getStnChildren()
         else
@@ -65,7 +65,7 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
     sqStringInterpolation:    "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?"
     blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
     {}
-      getStnChildren: (appendTo = [])->
+      getStnChildren: (appendTo = [])~>
         appendTo.push @expression.getStn()
         appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
         @interpolation?.getStnChildren appendTo

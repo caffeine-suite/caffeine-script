@@ -1,6 +1,6 @@
 import &StandardImport
 
-->
+~>
   @rule
     destructuringAssignment: "structure:destructuringTarget _? '=' _? value:assignedValue"
     {} stnFactory: :DestructuringAssignmentStn
@@ -46,7 +46,7 @@ import &StandardImport
       {} pattern: "identifier destructuringDefault:destructuringDefault?"
     {}
       stnFactory: "DestructuringIdentifierStn"
-      stnProps: -> etc: !!@etc
+      stnProps: ~> etc: !!@etc
 
   @rule
     destructuringIdentifier: "identifier destructuringDefault:destructuringDefault?" # objectDestructuring arrayDestructuring implicitObjectDestructuring"

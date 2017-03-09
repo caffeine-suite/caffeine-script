@@ -1,13 +1,13 @@
 import &StandardImport, &BabelBridge
 
-->
+~>
   @rule
     controlStatement:
       "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
       "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
     {}
       stnFactory: :ControlOperatorStn
-      stnProps: ->
+      stnProps: ~>
         operand: @ifUnlessWhileUntil.toString()
         joiner: @thenDo?.toString()
 

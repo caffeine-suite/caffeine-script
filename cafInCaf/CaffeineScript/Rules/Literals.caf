@@ -1,6 +1,6 @@
 import &StandardImport
 
-->
+~>
   @rule
     literal:
       :nullLiteral
@@ -20,7 +20,7 @@ import &StandardImport
     false:  "/(false|no|off)(?![a-zA-Z0-9]+)/"
     {}
       stnFactory: :SimpleLiteralStn
-      stnProps: ->
+      stnProps: ~>
         value:
           switch v = @toString()
           when :true,   :yes, :on   then :true

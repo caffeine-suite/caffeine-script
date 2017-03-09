@@ -1,6 +1,6 @@
 import &StandardImport
 
-->
+~>
   @rule
     {}
       dotAccessor:     "existanceTest:questionMark? dot key:identifier assignmentExtension?"
@@ -8,5 +8,5 @@ import &StandardImport
     {}
       stnFactory: "AccessorStn"
       stnExtension: true
-      stnProps: -> existanceTest: !!@existanceTest
-      stnChildren: -> @key.getStn()
+      stnProps: ~> existanceTest: !!@existanceTest
+      stnChildren: ~> @key.getStn()
