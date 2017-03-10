@@ -31,6 +31,10 @@ module.exports = suite: parseTestSuite {
       ArtFoundation;
       "
 
+    "&ArtStandardLib/Types": "let Types = require('art-standard-lib/Types'); Types;"
+    "&Perf/Perfs": "let Perfs = require('../../perf/Perfs'); Perfs;"
+    "&Perf/Perfs.foo": "let Perfs = require('../../perf/Perfs'); Perfs.foo;"
+
     "foo &BabelBridge": "let BabelBridge = require('babel-bridge'); foo(BabelBridge);"
 
   requireLocal:

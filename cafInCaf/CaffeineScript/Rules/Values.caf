@@ -22,7 +22,8 @@ import &StandardImport, &BabelBridge
 
   @rule
     require:
-      pattern:    "/&/ identifier"
+      pattern:    "/&/ pathedRequire"
+      stnProps:   ~> require: @pathedRequire.text
       stnFactory: :RequireStn
 
   @rule

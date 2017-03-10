@@ -20,9 +20,9 @@ class RequireStn extends &BaseStn
   @getter
 
     # TODO: should be everything after last '/'
-    identifierAssignedName: -> @children[0].props.identifier
+    identifierAssignedName: -> peek @props.require.split "/"
 
-    rawRequireString: -> @children[0].props.identifier
+    rawRequireString: -> @props.require
 
     requireString: ->
       findModuleSync @rawRequireString, @parser.options
@@ -30,3 +30,5 @@ class RequireStn extends &BaseStn
 
   toJs: ->
     @identifierAssignedName
+
+  toJsExpressionWithParens: -> @toJs()

@@ -31,7 +31,13 @@ Caf.defMod(module, () => {
     });
     this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
-      require: { pattern: "/&/ identifier", stnFactory: "RequireStn" }
+      require: {
+        pattern: "/&/ pathedRequire",
+        stnProps: function() {
+          return { require: this.pathedRequire.text };
+        },
+        stnFactory: "RequireStn"
+      }
     });
     this.rule({
       unqualifiedIdentifier: {

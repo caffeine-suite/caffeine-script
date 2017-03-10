@@ -5,7 +5,9 @@ Caf.defMod(module, () => {
     Fs = require("fs"),
     realRequire,
     findModuleSync,
-    BaseStn = require("./BaseStn");
+    BaseStn = require("./BaseStn"),
+    peek;
+  ({ peek } = Caf.i(["peek"], [StandardImport, global]));
   Path;
   Fs;
   realRequire = eval("require");
@@ -23,10 +25,10 @@ Caf.defMod(module, () => {
       };
       this.getter({
         identifierAssignedName: function() {
-          return this.children[0].props.identifier;
+          return peek(this.props.require.split("/"));
         },
         rawRequireString: function() {
-          return this.children[0].props.identifier;
+          return this.props.require;
         },
         requireString: function() {
           return findModuleSync(
@@ -37,6 +39,9 @@ Caf.defMod(module, () => {
       });
       this.prototype.toJs = function() {
         return this.identifierAssignedName;
+      };
+      this.prototype.toJsExpressionWithParens = function() {
+        return this.toJs();
       };
     }
   );
