@@ -9,51 +9,24 @@ import &StandardImport
 # webpack hack
 realRequire = eval 'require'
 
+{findModuleSync} = require 'caffeine-mc'
+
 class RequireStn extends &BaseStn
 
   updateScope: (@scope) ->
-    @scope.addIdentifierAssigned @rawIdentifier, "require('#{@requireString}')"
+    @scope.addIdentifierAssigned @identifierAssignedName, "require('#{@requireString}')"
     super
 
   @getter
-    normalizedIdentifier: -> upperCamelCase @rawIdentifier
 
-    # throws errors if the module cannot be resolved
-    npmIdentifier: ->
-      realRequire.resolve name = dashCase @rawIdentifier
-      name
+    # TODO: should be everything after last '/'
+    identifierAssignedName: -> @children[0].props.identifier
 
-    rawIdentifier: -> @children[0].props.identifier
+    rawRequireString: -> @children[0].props.identifier
+
     requireString: ->
-      if relativeFile = @findFileInPackage()
-        relativeFile
-      else
-        @npmIdentifier
-
-  findFileInPackage: (options = @parser.options) ->
-    {sourceFile, sourceFiles, sourceRoot} = options
-    if (sourceFile ||= sourceFiles?[0]) && sourceRoot
-
-      {normalizedIdentifier} = @
-
-      directory = sourceDir = Path.resolve Path.dirname sourceFile
-      sourceRoot = Path.resolve sourceRoot
-
-      found = null
-      shouldContinue = true
-      while shouldContinue
-        found = find name from files = Fs.readdirSync directory
-          [baseName] = name.split '.'
-          normalizedName = upperCamelCase baseName
-          if normalizedName == normalizedIdentifier
-            relative = Path.relative sourceDir, directory
-            relative = Path.join relative, baseName
-            relative = "./#{relative}" unless relative.match /^\./
-            relative
-        if found || directory == sourceRoot
-          shouldContinue = false
-        directory = Path.dirname directory
-      found
+      findModuleSync @rawRequireString, @parser.options
+      .requireString
 
   toJs: ->
-    @rawIdentifier
+    @identifierAssignedName

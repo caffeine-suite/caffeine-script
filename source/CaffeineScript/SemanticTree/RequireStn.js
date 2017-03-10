@@ -4,102 +4,39 @@ Caf.defMod(module, () => {
     Path = require("path"),
     Fs = require("fs"),
     realRequire,
-    BaseStn = require("./BaseStn"),
-    upperCamelCase,
-    dashCase;
-  ({ upperCamelCase, dashCase } = Caf.i(["upperCamelCase", "dashCase"], [
-    StandardImport,
-    global
-  ]));
+    findModuleSync,
+    BaseStn = require("./BaseStn");
   Path;
   Fs;
   realRequire = eval("require");
+  ({ findModuleSync } = require("caffeine-mc"));
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         this.scope.addIdentifierAssigned(
-          this.rawIdentifier,
+          this.identifierAssignedName,
           `require('${this.requireString}')`
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
       this.getter({
-        normalizedIdentifier: function() {
-          return upperCamelCase(this.rawIdentifier);
+        identifierAssignedName: function() {
+          return this.children[0].props.identifier;
         },
-        npmIdentifier: function() {
-          let name;
-          realRequire.resolve(name = dashCase(this.rawIdentifier));
-          return name;
-        },
-        rawIdentifier: function() {
+        rawRequireString: function() {
           return this.children[0].props.identifier;
         },
         requireString: function() {
-          let relativeFile;
-          return (relativeFile = this.findFileInPackage())
-            ? relativeFile
-            : this.npmIdentifier;
+          return findModuleSync(
+            this.rawRequireString,
+            this.parser.options
+          ).requireString;
         }
       });
-      this.prototype.findFileInPackage = function(
-        options = this.parser.options
-      ) {
-        let sourceFile,
-          sourceFiles,
-          sourceRoot,
-          normalizedIdentifier,
-          directory,
-          sourceDir,
-          found,
-          shouldContinue,
-          files;
-        ({ sourceFile, sourceFiles, sourceRoot } = options);
-        return (sourceFile ||
-          (sourceFile = Caf.exists(sourceFiles) && sourceFiles[0])) &&
-          sourceRoot
-          ? ({
-              normalizedIdentifier
-            } = this, directory = sourceDir = Path.resolve(
-              Path.dirname(sourceFile)
-            ), sourceRoot = Path.resolve(
-              sourceRoot
-            ), found = null, shouldContinue = true, (() => {
-              while (shouldContinue) {
-                found = Caf.ee(files = Fs.readdirSync(directory), undefined, (
-                  name,
-                  k,
-                  into,
-                  brk
-                ) => {
-                  let baseName, normalizedName, relative, cafRet;
-                  [baseName] = name.split(".");
-                  normalizedName = upperCamelCase(baseName);
-                  return (cafRet = normalizedName === normalizedIdentifier
-                    ? (relative = Path.relative(
-                        sourceDir,
-                        directory
-                      ), relative = Path.join(
-                        relative,
-                        baseName
-                      ), !relative.match(/^\./)
-                        ? relative = `./${relative}`
-                        : undefined, relative)
-                    : undefined) &&
-                    (brk(), cafRet);
-                });
-                if (found || directory === sourceRoot) {
-                  shouldContinue = false;
-                }
-                directory = Path.dirname(directory);
-              }
-            })(), found)
-          : undefined;
-      };
       this.prototype.toJs = function() {
-        return this.rawIdentifier;
+        return this.identifierAssignedName;
       };
     }
   );

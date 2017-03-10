@@ -6,7 +6,7 @@
 
 module.exports = suite: parseTestSuite {
   sourceFiles:["source/CaffeineScript/foo"]
-  sourceRoot: "."
+  # sourceRoot: "."
   },
 
   require:
