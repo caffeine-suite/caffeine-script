@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 92);
+/******/ 	return __webpack_require__(__webpack_require__.s = 93);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1466,7 +1466,7 @@ var CaffeineScript, Neptune,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-Neptune = __webpack_require__(90);
+Neptune = __webpack_require__(91);
 
 module.exports = Neptune.CaffeineScript || Neptune.addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
@@ -4793,105 +4793,42 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    Path = __webpack_require__(91),
-    Fs = __webpack_require__(89),
+    Path = __webpack_require__(92),
+    Fs = __webpack_require__(90),
     realRequire,
-    BaseStn = __webpack_require__(3),
-    upperCamelCase,
-    dashCase;
-  ({ upperCamelCase, dashCase } = Caf.i(["upperCamelCase", "dashCase"], [
-    StandardImport,
-    global
-  ]));
+    findModuleSync,
+    BaseStn = __webpack_require__(3);
   Path;
   Fs;
   realRequire = eval("require");
+  ({ findModuleSync } = __webpack_require__(89));
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         this.scope.addIdentifierAssigned(
-          this.rawIdentifier,
+          this.identifierAssignedName,
           `require('${this.requireString}')`
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
       this.getter({
-        normalizedIdentifier: function() {
-          return upperCamelCase(this.rawIdentifier);
+        identifierAssignedName: function() {
+          return this.children[0].props.identifier;
         },
-        npmIdentifier: function() {
-          let name;
-          realRequire.resolve(name = dashCase(this.rawIdentifier));
-          return name;
-        },
-        rawIdentifier: function() {
+        rawRequireString: function() {
           return this.children[0].props.identifier;
         },
         requireString: function() {
-          let relativeFile;
-          return (relativeFile = this.findFileInPackage())
-            ? relativeFile
-            : this.npmIdentifier;
+          return findModuleSync(
+            this.rawRequireString,
+            this.parser.options
+          ).requireString;
         }
       });
-      this.prototype.findFileInPackage = function(
-        options = this.parser.options
-      ) {
-        let sourceFile,
-          sourceFiles,
-          sourceRoot,
-          normalizedIdentifier,
-          directory,
-          sourceDir,
-          found,
-          shouldContinue,
-          files;
-        ({ sourceFile, sourceFiles, sourceRoot } = options);
-        return (sourceFile ||
-          (sourceFile = Caf.exists(sourceFiles) && sourceFiles[0])) &&
-          sourceRoot
-          ? ({
-              normalizedIdentifier
-            } = this, directory = sourceDir = Path.resolve(
-              Path.dirname(sourceFile)
-            ), sourceRoot = Path.resolve(
-              sourceRoot
-            ), found = null, shouldContinue = true, (() => {
-              while (shouldContinue) {
-                found = Caf.ee(files = Fs.readdirSync(directory), undefined, (
-                  name,
-                  k,
-                  into,
-                  brk
-                ) => {
-                  let baseName, normalizedName, relative, cafRet;
-                  [baseName] = name.split(".");
-                  normalizedName = upperCamelCase(baseName);
-                  return (cafRet = normalizedName === normalizedIdentifier
-                    ? (relative = Path.relative(
-                        sourceDir,
-                        directory
-                      ), relative = Path.join(
-                        relative,
-                        baseName
-                      ), !relative.match(/^\./)
-                        ? relative = `./${relative}`
-                        : undefined, relative)
-                    : undefined) &&
-                    (brk(), cafRet);
-                });
-                if (found || directory === sourceRoot) {
-                  shouldContinue = false;
-                }
-                directory = Path.dirname(directory);
-              }
-            })(), found)
-          : undefined;
-      };
       this.prototype.toJs = function() {
-        return this.rawIdentifier;
+        return this.identifierAssignedName;
       };
     }
   );
@@ -5381,7 +5318,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.29.0"
+	"version": "0.29.1"
 };
 
 /***/ }),
@@ -5406,22 +5343,28 @@ module.exports = require("art-standard-lib");
 /* 89 */
 /***/ (function(module, exports) {
 
-module.exports = require("fs");
+module.exports = require("caffeine-mc");
 
 /***/ }),
 /* 90 */
 /***/ (function(module, exports) {
 
-module.exports = require("neptune-namespaces");
+module.exports = require("fs");
 
 /***/ }),
 /* 91 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("neptune-namespaces");
 
 /***/ }),
 /* 92 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(32);
