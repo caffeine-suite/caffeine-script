@@ -3526,6 +3526,7 @@ Caf.defMod(module, () => {
           return { identifier: this.toString() };
         }
       },
+      pathedRequire: /((?:(?!\s)[\/$\w\x7f-\uffff])+)/,
       unquotedString: /((?!\s)[-~!@\#$%^&*_+=|\\<>?\/.$\w\x7f-\uffff])+/,
       unaryTailOperator: /\?/,
       unaryOperator_: /(!|~|not\b) */,
@@ -3589,7 +3590,13 @@ Caf.defMod(module, () => {
     });
     this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
-      require: { pattern: "/&/ identifier", stnFactory: "RequireStn" }
+      require: {
+        pattern: "/&/ pathedRequire",
+        stnProps: function() {
+          return { require: this.pathedRequire.text };
+        },
+        stnFactory: "RequireStn"
+      }
     });
     this.rule({
       unqualifiedIdentifier: {
@@ -4797,7 +4804,9 @@ Caf.defMod(module, () => {
     Fs = __webpack_require__(90),
     realRequire,
     findModuleSync,
-    BaseStn = __webpack_require__(3);
+    BaseStn = __webpack_require__(3),
+    peek;
+  ({ peek } = Caf.i(["peek"], [StandardImport, global]));
   Path;
   Fs;
   realRequire = eval("require");
@@ -4815,10 +4824,10 @@ Caf.defMod(module, () => {
       };
       this.getter({
         identifierAssignedName: function() {
-          return this.children[0].props.identifier;
+          return peek(this.props.require.split("/"));
         },
         rawRequireString: function() {
-          return this.children[0].props.identifier;
+          return this.props.require;
         },
         requireString: function() {
           return findModuleSync(
@@ -4829,6 +4838,9 @@ Caf.defMod(module, () => {
       });
       this.prototype.toJs = function() {
         return this.identifierAssignedName;
+      };
+      this.prototype.toJsExpressionWithParens = function() {
+        return this.toJs();
       };
     }
   );
@@ -5318,7 +5330,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.29.1"
+	"version": "0.30.0"
 };
 
 /***/ }),
