@@ -3525,7 +3525,7 @@ Caf.defMod(module, () => {
       openCurly_: /\{ */,
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
-      reservedWord: /(for|instanceof|import|throw|return|break|into|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|not)\b/,
+      reservedWord: /(for|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
       identifier: {
         pattern: /(?!\d)((?:(?!\s)[$\w\x7f-\uffff])+)/,
         stnFactory: "IdentifierStn",
@@ -3539,17 +3539,17 @@ Caf.defMod(module, () => {
       unaryOperator_: /(!|~|not\b) */,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|isnt|is|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
-      new: /new/,
-      throw: /throw/,
-      with: /with/,
-      when: /when/,
-      into: /into/,
-      withOrDo: /with|do/
+      new: /new\b/,
+      throw: /throw\b/,
+      with: /with\b/,
+      when: /when\b/,
+      into: /(into|returning)\b/,
+      withOrDo: /(with|do)\b/
     });
     return this.rule(
       {
-        comprehensionOutputType: /object|array|reduce|each|find/,
-        comprehensionIterationType: /from|in\b/,
+        comprehensionOutputType: /(object|array|reduce|each|find)\b/,
+        comprehensionIterationType: /(from|in)\b/,
         dot: /\./,
         questionMark: /\?/
       },
@@ -5337,7 +5337,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.30.0"
+	"version": "0.31.0"
 };
 
 /***/ }),
