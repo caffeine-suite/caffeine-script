@@ -152,10 +152,15 @@ module.exports = suite: parseTestSuite
       "find a from b when a > 10 with 123": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), 123);});"
 
     alternativeKeywords:
+      returning:
+        "each a in b into      out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
+        "each a in b returning out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
       in:
-        "find a in b when a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
+        "find a from b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
+        "find a in   b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
       do:
-        "object a from b do a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
+        "object a from b with a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
+        "object a from b do   a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
 
     expression: "c = array b": "let c; c = Caf.e(b, [], (v, k, into) => {into.push(v);});"
 

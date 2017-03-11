@@ -34,11 +34,9 @@
 
       break |
 
-      into |
+      into | returning |
 
-      with |
-
-      do |
+      with | do |
 
       switch |
 
@@ -54,7 +52,7 @@
 
       and | or | is | isnt |
 
-      in |
+      in | from |
 
       not
       )
@@ -143,16 +141,16 @@
       \ *
       ///
 
-    new: /new/
-    throw: /throw/
-    with: /with/
-    when: /when/
-    into: /into/
-    withOrDo: /with|do/
+    new: /new\b/
+    throw: /throw\b/
+    with: /with\b/
+    when: /when\b/
+    into: /(into|returning)\b/
+    withOrDo: /(with|do)\b/
 
   @rule
-    comprehensionOutputType: /object|array|reduce|each|find/
-    comprehensionIterationType: /from|in\b/
+    comprehensionOutputType: /(object|array|reduce|each|find)\b/
+    comprehensionIterationType: /(from|in)\b/
 
     # comprehensionIterationType: /from( +(object|array|iter))?/
     dot: /\./
