@@ -41,7 +41,7 @@ contexts:
     - match: '\:((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+'
       scope: string.quoted.double.caffeine
 
-    - match: '->'
+    - match: '[-=~]>'
       scope: storage.type.function.caffeine
 
     - match : '&(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)'
