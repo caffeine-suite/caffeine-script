@@ -157,6 +157,12 @@ module.exports = suite: parseTestSuite
 
     """
     a:
+      ## first line comment
+      1
+    """: "({a: 1});"
+
+    """
+    a:
       1
       2
       3

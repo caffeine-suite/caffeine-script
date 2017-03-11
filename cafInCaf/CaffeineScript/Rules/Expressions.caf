@@ -66,9 +66,10 @@ upToButNotEol = /[^\n]*/y
 
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
     rValueBlockSubParse:
-      pattern: "statement*"
+      pattern: "root"
       getStn: ~>
-        if @statements.length == 1
-          @statements[0].getStn()
+        {statements} = @root
+        if statements.length == 1
+          statements[0].getStn()
         else
-          ArrayStn @getMatchStns()
+          ArrayStn @root.getMatchStns()

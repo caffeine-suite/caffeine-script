@@ -85,11 +85,13 @@ Caf.defMod(module, () => {
         rule: "rValueBlockSubParse"
       }),
       rValueBlockSubParse: {
-        pattern: "statement*",
+        pattern: "root",
         getStn: function() {
-          return this.statements.length === 1
-            ? this.statements[0].getStn()
-            : ArrayStn(this.getMatchStns());
+          let statements;
+          ({ statements } = this.root);
+          return statements.length === 1
+            ? statements[0].getStn()
+            : ArrayStn(this.root.getMatchStns());
         }
       }
     });
