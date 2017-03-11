@@ -47,40 +47,159 @@ class ValueBaseCaptureStn extends &BaseStn
     NOTES:
 
     IMPORTANT: This is used by AccessorStn and FunctionInvocationStn to perform their @transform
+
     For the purpose of this transform, FunctionInvocations are considered a form of accessor.
 
-    I seriously considered doing this the same way I handle binary operators. It's very similar in
-    that it's a precidence issue. Existance-accessors have "lower" precidence than non-existance
-    accessors. And the are left-associative. And that should be it... except! Except, in a
-    normal binary operator chain, all the leaf nodes are atomic from the perspective of the chain.
-    They can be moved anywhere in the constructed tree structure without losing their semantics.
-    However, with an accessor-chain, the existance operator's left value becomes the left-most leaf
-    value for its right-value - with a "valueCapture". I could have solve that, but this is probably
-    just as easy and I already had it half working.
+    I seriously considered doing this the same way I handle binary operators.
+    It's very similar in that it's a precidence issue. Existance-accessors have
+    "lower" precidence than non-existance accessors. And the are left-
+    associative. And that should be it... except! Except, in a normal binary
+    operator chain, all the leaf nodes are atomic from the perspective of the
+    chain. They can be moved anywhere in the constructed tree structure without
+    losing their semantics. However, with an accessor-chain, the existance
+    operator's left value becomes the left-most leaf value for its right-value -
+    with a "valueCapture". I could have solve that, but this is probably just as
+    easy and I already had it half working.
 
-  transformAccessorChain: (current = @)->
-    accessorChain = []
-    while current?.type == "Accessor" || current?.type == "FunctionInvocation"
-      accessor = current
-      current = current.value
-      accessorChain.push accessor
+    TODO: AssignmentStns also need to participate in this:
 
-    accessorChain = accessorChain.reverse()
-    # log transformAccessorChain: {accessorChain}
+      this:
+        a?.b = c
 
-    out = @transformAccessorChainR accessorChain[0].value.transform(), accessorChain
+      needs to become:
+        Caf.exists(a) && (a.b = c);
 
-    # don't lose the props - particularly props.label - SwitchStn needs it for the else-clause, and probably others do too.
-    mergeInto out.props, @props, out.props
-    out
+      with the Stn structure:
+        if
+          exists a
+          assign
+            access a, b
+            c
 
-  transformAccessorChainR: (value, accessorChain) ->
-    # log transformAccessorChainR: {value, accessorChain}
+      WHAT HAPPENS WHEN:
+
+        a = b?.c = d
+
+      GUT:
+        IN:
+          assign
+            a
+            assign
+              access
+                existanceTest: true
+                b
+                c
+              d
+
+        OUT:
+          assign
+            a
+            if
+              exists b
+              assign
+                access b, c
+                d
+
+      Which I -think- means we only call @transformAccessChain on an AssignStn
+      if its left-child is an AccessorStn.
+
+      WHAT HAPPENS WHEN:
+
+        a?.c = b = d
+
+      GUT:
+        IN:
+          assign
+            access
+              existanceTest: true
+              a
+              c
+            assign
+              d
+              b
+
+        OUT:
+          if exists a
+            assign
+              access a, c
+              assign b, d
+
+  transformAccessorChain:
+    ## <doc>
+      precondition: @type == "Accessor" || @type == "FunctionInvocation"
+      out: stn: ""
+        new root of re-arranged sub-tree
+
+      todo: ""
+
+    ->
+      accessorChain = @getLeftAccessorChain()
+
+      out = @_transformAccessorChainR accessorChain[0].value.transform(), accessorChain
+
+      # don't lose the props - particularly props.label - SwitchStn needs it for the else-clause, and probably others do too.
+      # TODO: I want a more consistent way to do this. I think the right answer is the 'transform'
+      # we override has a standard wrapper which ensures props.label and props.parseTreeNode are preserved.
+      mergeInto out.props, @props, out.props
+      out
+
+  getLeftAccessorChain:
+    ## <doc>
+      precondition: @type == "Accessor" || @type == "FunctionInvocation"
+      in:
+        @value: :stn, ""
+
+          The value being accessed.
+
+          Ex:
+            value.foo
+            value[foo]
+            value foo
+
+      out: array: stn: ""
+        The left-most-branch of the STN tree:
+          - leaf-node-first
+          - this-node-last
+    ->
+      current = @
+      accessorChain = []
+      while current
+          && current.type == "Accessor" || current.type == "FunctionInvocation"
+        accessor = current
+        current = current.value
+        accessorChain.push accessor
+
+      accessorChain.reverse()
+
+  ##
+    purpose: ""
+      Re-order the parsed-tree such that existance-testing-accessors
+      are at the top so if existance fails, everything to the right
+      is not evaluated.
+
+    in:
+      value: the inital, starting value
+      accessorChain:
+        the in-order sequence of accessors to apply to 'value'
+
+    out:
+      a new stn-tree where:
+        a) root is the left-most existance-testing accessor from the accessorChain
+           else, if there was no existance-testing-accessor, then it is
+           the last element in the accessorChain - effectively the same structure
+           as how it was parsed.
+        b) left-children-chain contains no existance-testing accessors
+        c) right-child == @_transformAccessorChainR ...
+           i.e. the right-child's root is the left-most-existince-testing-accessor
+           of the rest of the accessorChain (if there is an existnace-testing-accessor)
+
+  _transformAccessorChainR: (value, accessorChain) ->
+    # log _transformAccessorChainR: {value, accessorChain}
     # TODO: transform value
 
-    done = false # hack because we don't have 'return' or 'break' yet
+    done = false # caf-hack because we don't have 'return' or 'break' yet
     each accessor, i in accessorChain when !done
-      # TODO: transform key
+      # TODO: is there a better way to transform 'key' ?
       {key, isFunctionInvocation} = accessor
       if isArray key
         key = array kk in key with kk.transform()
@@ -94,7 +213,7 @@ class ValueBaseCaptureStn extends &BaseStn
         value = @createExistanceAccessorStn value, isFunctionInvocation, (checkedValueStn) =>
           access = @createAccessorStn checkedValueStn, key, isFunctionInvocation
           if i < accessorChain.length - 1
-            @transformAccessorChainR access, accessorChain.slice i + 1
+            @_transformAccessorChainR access, accessorChain.slice i + 1
           else
             access
 

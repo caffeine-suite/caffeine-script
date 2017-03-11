@@ -93,6 +93,12 @@ module.exports = suite: parseTestSuite
         a: 123
       """: "let a; ({a} = {a: 123});"
 
+    conditionalLeftHandSide:
+      "a?.b = c": "Caf.exists(a) && (a.b = c);"
+      "a?.b = c = d": "let c; Caf.exists(a) && (a.b = c = d);"
+      "a = b?.c = d": "let a; a = Caf.exists(b) && (b.c = d);"
+      "a = b = c?.d": "let a, b; a = b = Caf.exists(c) && c.d;"
+
   binopAssignment:
     javascriptSupported:
       "a += b":  "let a; a += b;"

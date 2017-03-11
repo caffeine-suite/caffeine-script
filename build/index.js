@@ -1009,26 +1009,31 @@ Caf.defMod(module, () => {
               value2: ReferenceStn({ identifierHandle: baseIdentifierHandle })
             });
       };
-      this.prototype.transformAccessorChain = function(current = this) {
-        let accessorChain, accessor, out;
-        accessorChain = [];
-        while (
-          (Caf.exists(current) && current.type) === "Accessor" ||
-          (Caf.exists(current) && current.type) === "FunctionInvocation"
-        ) {
-          accessor = current;
-          current = current.value;
-          accessorChain.push(accessor);
-        }
-        accessorChain = accessorChain.reverse();
-        out = this.transformAccessorChainR(
+      this.prototype.transformAccessorChain = function() {
+        let accessorChain, out;
+        accessorChain = this.getLeftAccessorChain();
+        out = this._transformAccessorChainR(
           accessorChain[0].value.transform(),
           accessorChain
         );
         mergeInto(out.props, this.props, out.props);
         return out;
       };
-      this.prototype.transformAccessorChainR = function(value, accessorChain) {
+      this.prototype.getLeftAccessorChain = function() {
+        let current, accessorChain, accessor;
+        current = this;
+        accessorChain = [];
+        while (
+          current &&
+          (current.type === "Accessor" || current.type === "FunctionInvocation")
+        ) {
+          accessor = current;
+          current = current.value;
+          accessorChain.push(accessor);
+        }
+        return accessorChain.reverse();
+      };
+      this.prototype._transformAccessorChainR = function(value, accessorChain) {
         let done;
         done = false;
         Caf.e(accessorChain, undefined, (accessor, i, into) => {
@@ -1056,7 +1061,7 @@ Caf.defMod(module, () => {
                     isFunctionInvocation
                   );
                   return i < accessorChain.length - 1
-                    ? this.transformAccessorChainR(
+                    ? this._transformAccessorChainR(
                         access,
                         accessorChain.slice(i + 1)
                       )
@@ -2716,11 +2721,13 @@ Caf.defMod(module, () => {
         rule: "rValueBlockSubParse"
       }),
       rValueBlockSubParse: {
-        pattern: "statement*",
+        pattern: "root",
         getStn: function() {
-          return this.statements.length === 1
-            ? this.statements[0].getStn()
-            : ArrayStn(this.getMatchStns());
+          let statements;
+          ({ statements } = this.root);
+          return statements.length === 1
+            ? statements[0].getStn()
+            : ArrayStn(this.root.getMatchStns());
         }
       }
     });
