@@ -67,7 +67,7 @@ Caf.defMod(module, () => {
     );
     this.rule({
       propertyValueBlock: "rValueBlock",
-      propName: { pattern: "computedPropName" },
+      propName: "computedPropName",
       computedPropName: {
         pattern: "openBracket_ expression _closeBracket",
         stnFactory: "AccessorStn"

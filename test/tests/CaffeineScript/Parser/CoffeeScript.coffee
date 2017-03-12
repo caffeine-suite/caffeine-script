@@ -104,7 +104,7 @@ module.exports = suite:
 
       "winner = yes if pick in [47, 92, 13]": "let winner; if (Caf.in(pick, [47, 92, 13])) {winner = true;};"
 
-      'print inspect "My name is #{@name}"': 'print(inspect(`My name is ${this.name}`));'
+      'print inspect "My name is #{@name}"': 'print(inspect(`My name is ${Caf.toString(this.name)}`));'
 
   switchWhenElse: ->
     parseTests
