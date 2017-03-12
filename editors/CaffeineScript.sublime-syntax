@@ -30,13 +30,13 @@ contexts:
     - match: '^[|]'
       push: caffeine_mc_block
 
-    # Numbers
-    - match: '[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
-      scope: constant.numeric.caffeine
-
     # object-literal property names:
     - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+\:'
       scope: entity.name.function.caffeine
+
+    # Numbers
+    - match: '[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
+      scope: constant.numeric.caffeine
 
     - match: '\:((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+'
       scope: string.quoted.double.caffeine
