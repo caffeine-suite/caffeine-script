@@ -344,7 +344,7 @@ Caf.defMod(module, () => {
         return this.toJs();
       };
       this.prototype.toInterpolatedJsStringPart = function() {
-        return `\${${this.toJsExpression({ skipParens: true })}}`;
+        return `\${Caf.toString(${this.toJsExpression({ skipParens: true })})}`;
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;
@@ -3121,20 +3121,26 @@ Caf.defMod(module, () => {
         }
       }
     );
+    this.rule({
+      interpolation: [
+        "interpolationStart expression interpolationEnd",
+        "interpolationStart expression:rValueBlock _end? interpolationEnd"
+      ]
+    });
     return this.rule(
       {
-        dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?",
-        sqStringInterpolation: "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?",
-        blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
+        dqStringInterpolation: "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
+        sqStringInterpolation: "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
+        blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
           let cafBase;
-          appendTo.push(this.expression.getStn());
+          appendTo.push(this.interpolation.expression.getStn());
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolation) &&
+          Caf.exists(cafBase = this.interpolationContinues) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         }
@@ -3255,7 +3261,7 @@ Caf.defMod(module, () => {
               k,
               into
             ) => {
-              into.push(opAndExp.unaryOpExpression.getStn());
+              into.push(opAndExp.rValue.getStn());
             })
           ]),
           function(operandA, operandB, operator) {
@@ -3268,9 +3274,10 @@ Caf.defMod(module, () => {
         );
       }
     },
-    binaryOperatorAndExpression: {
-      pattern: "_? binaryOperator _? unaryOpExpression"
-    },
+    binaryOperatorAndExpression: [
+      "_? binaryOperator _? _end? rValue:unaryOpExpression",
+      "_? binaryOperator _? rValue:rValueBlock"
+    ],
     lineStartBinaryOperatorAndExpression: {
       pattern: "binaryOperator _? binOpExpression",
       stnProps: function() {
@@ -3645,7 +3652,10 @@ Caf.defMod(module, () => {
     this.rule({ assignedValue: ["complexExpression", "rValueBlock"] });
     this.rule(
       {
-        assignmentExtension: "assignmentOperator:_assignmentOperator_ assignedValue"
+        assignmentExtension: [
+          "assignmentOperator:_assignmentOperator_ _end? complexExpression",
+          "assignmentOperator:_assignmentOperator_ rValueBlock"
+        ]
       },
       {
         stnFactory: "AssignmentStn",

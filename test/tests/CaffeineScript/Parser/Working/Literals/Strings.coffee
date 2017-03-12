@@ -31,11 +31,11 @@ module.exports = suite: parseTestSuite
           "'  a\nb'": '"  a b";'
 
     interpolation:
-      '"\#{a b}"':    "`${a(b)}`;"
-      '"a\#{a b}b"':  "`a${a(b)}b`;"
+      '"\#{a b}"':    "`${Caf.toString(a(b))}`;"
+      '"a\#{a b}b"':  "`a${Caf.toString(a(b))}b`;"
 
-      "'\#{a b}'":    "`${a(b)}`;"
-      "'a\#{a b}b'":  "`a${a(b)}b`;"
+      "'\#{a b}'":    "`${Caf.toString(a(b))}`;"
+      "'a\#{a b}b'":  "`a${Caf.toString(a(b))}b`;"
 
   unquotedStrings:
     basic:
@@ -74,14 +74,14 @@ module.exports = suite: parseTestSuite
         '"" hi-there':  '"hi-there";'
 
     interpolation:
-        '"" #{name}':               '`${name}`;'
-        '"" a#{name}':              '`a${name}`;'
-        '"" #{name}b':              '`${name}b`;'
-        '"" #{a}#{b}':              '`${a}${b}`;'
-        '"" - #{a}#{b}':            '`- ${a}${b}`;'
-        '"" #{a} - #{b}':           '`${a} - ${b}`;'
-        '"" #{a}#{b} -':            '`${a}${b} -`;'
-        '"" Hello #{@props.name}.': '`Hello ${this.props.name}.`;'
+        '"" #{name}':               '`${Caf.toString(name)}`;'
+        '"" a#{name}':              '`a${Caf.toString(name)}`;'
+        '"" #{name}b':              '`${Caf.toString(name)}b`;'
+        '"" #{a}#{b}':              '`${Caf.toString(a)}${Caf.toString(b)}`;'
+        '"" - #{a}#{b}':            '`- ${Caf.toString(a)}${Caf.toString(b)}`;'
+        '"" #{a} - #{b}':           '`${Caf.toString(a)} - ${Caf.toString(b)}`;'
+        '"" #{a}#{b} -':            '`${Caf.toString(a)}${Caf.toString(b)} -`;'
+        '"" Hello #{@props.name}.': '`Hello ${Caf.toString(this.props.name)}.`;'
 
     escaping:
         """
@@ -140,7 +140,7 @@ module.exports = suite: parseTestSuite
           ""
             hi
               \#{bye friend}
-          """: '`hi ${bye(friend)}`;'
+          """: '`hi ${Caf.toString(bye(friend))}`;'
 
       quotesDontNeedEscaping:
           """
@@ -227,7 +227,7 @@ module.exports = suite: parseTestSuite
                 \#{a b}
               def
 
-            ''': '`abc ${a(b)} def`;'
+            ''': '`abc ${Caf.toString(a(b))} def`;'
 
 
         threeDoubleQuote:
@@ -278,26 +278,40 @@ module.exports = suite: parseTestSuite
               abc
               #{a b}
               def
-            ''': '`abc\\n${a(b)}\\ndef`;'
+            ''': '`abc\\n${Caf.toString(a(b))}\\ndef`;'
 
         interpolation:
           """
           ""
             \#{b}
-          """: '`${b}`;'
+          """: '`${Caf.toString(b)}`;'
 
           '''
           """
             This
             that and the \#{b}
             thing.
-          ''': '`This\\nthat and the ${b}\\nthing.`;'
+          ''': '`This\\nthat and the ${Caf.toString(b)}\\nthing.`;'
 
   interpolated:
-      '"#{foo}"':                        '`${foo}`;'
-      '"${#{foo}}"':                     '`\\${${foo}}`;'
-      '"#{foo}after"':                   '`${foo}after`;'
-      '"before#{foo}"':                  '`before${foo}`;'
-      '"before#{foo}after"':             '`before${foo}after`;'
-      '"before#{@foo + bar}after"':      '`before${this.foo + bar}after`;'
-      '"before#{foo}middle#{bar}after"': '`before${foo}middle${bar}after`;'
+    basic:
+      '"${#{foo}}"':                     '`\\${${Caf.toString(foo)}}`;'
+      '"#{foo}"':                        '`${Caf.toString(foo)}`;'
+      '"#{foo}after"':                   '`${Caf.toString(foo)}after`;'
+      '"before#{foo}"':                  '`before${Caf.toString(foo)}`;'
+      '"before#{foo}after"':             '`before${Caf.toString(foo)}after`;'
+      '"before#{@foo + bar}after"':      '`before${Caf.toString(this.foo + bar)}after`;'
+      '"before#{foo}middle#{bar}after"': '`before${Caf.toString(foo)}middle${Caf.toString(bar)}after`;'
+
+    block:
+      """
+      "hi\#{
+        1
+      }there"
+      """: "`hi${Caf.toString(1)}there`;"
+      """
+      "hi\#{
+        1
+        2
+      }there"
+      """: "`hi${Caf.toString([1, 2])}there`;"

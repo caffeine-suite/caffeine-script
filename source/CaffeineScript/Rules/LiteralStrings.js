@@ -90,20 +90,26 @@ Caf.defMod(module, () => {
         }
       }
     );
+    this.rule({
+      interpolation: [
+        "interpolationStart expression interpolationEnd",
+        "interpolationStart expression:rValueBlock _end? interpolationEnd"
+      ]
+    });
     return this.rule(
       {
-        dqStringInterpolation: "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?",
-        sqStringInterpolation: "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?",
-        blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
+        dqStringInterpolation: "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
+        sqStringInterpolation: "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
+        blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
           let cafBase;
-          appendTo.push(this.expression.getStn());
+          appendTo.push(this.interpolation.expression.getStn());
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolation) &&
+          Caf.exists(cafBase = this.interpolationContinues) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         }

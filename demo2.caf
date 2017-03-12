@@ -1,0 +1,12 @@
+import &ArtStandardLib
+
+log "Departures from JavaScript:"
+
+log "This is an array interpolated: #{
+  1
+  2
+  3
+}"
+
+log "This is null interpolated: '#{null}'"
+log "This is undefined interpolated: '#{undefined}'"

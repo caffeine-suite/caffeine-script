@@ -224,7 +224,7 @@ Caf.defMod(module, () => {
         return this.toJs();
       };
       this.prototype.toInterpolatedJsStringPart = function() {
-        return `\${${this.toJsExpression({ skipParens: true })}}`;
+        return `\${Caf.toString(${this.toJsExpression({ skipParens: true })})}`;
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;

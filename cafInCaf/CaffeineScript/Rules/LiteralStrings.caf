@@ -61,12 +61,17 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
         ret
 
   @rule
-    dqStringInterpolation:    "interpolationStart expression interpolationEnd mid:dqStringMiddle interpolation:dqStringInterpolation?"
-    sqStringInterpolation:    "interpolationStart expression interpolationEnd mid:sqStringMiddle interpolation:sqStringInterpolation?"
-    blockStringInterpolation: "interpolationStart expression interpolationEnd mid:blockStringMiddle interpolation:blockStringInterpolation?"
+    interpolation:
+      "interpolationStart expression interpolationEnd"
+      "interpolationStart expression:rValueBlock _end? interpolationEnd"
+
+  @rule
+    dqStringInterpolation:    "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?"
+    sqStringInterpolation:    "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?"
+    blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
     {}
       getStnChildren: (appendTo = [])~>
-        appendTo.push @expression.getStn()
+        appendTo.push @interpolation.expression.getStn()
         appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
-        @interpolation?.getStnChildren appendTo
+        @interpolationContinues?.getStnChildren appendTo
         appendTo
