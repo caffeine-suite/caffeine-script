@@ -2406,7 +2406,7 @@ Caf.defMod(module, () => {
         end: "lineEndComment",
         comment: [
           { pattern: "/##[^\n]*/ unparsedBlock*" },
-          { pattern: "/#(?!#)[^\n]*/" }
+          { pattern: "/#( |(?=\n|$))[^\n]*/" }
         ],
         _end: /( *(\n|; *|$))+/,
         lineStartComment: ["comment _end", "_end"],
@@ -5349,7 +5349,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.32.1"
+	"version": "0.32.2"
 };
 
 /***/ }),
