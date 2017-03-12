@@ -1,5 +1,5 @@
 {CaffeineScript} = Neptune
-{each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
+{isNumber, each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
 {CaffeineScriptParser} = CaffeineScript
 require "colors"
 
@@ -21,7 +21,9 @@ module.exports =
     parseOptions = merge options, verbose: true
 
     object map, (expectedJs, source) ->
-      test name = "#{source} >> #{expectedJs}".replace(/\n/g, "\\n"), ->
+      expectFailure = !expectedJs?
+      expectedFailure = null
+      test name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
         js = try
           stn = (p = CaffeineScriptParser.parse(source, parseOptions)).getStn()
           transformedStn = stn.transform()
@@ -30,11 +32,20 @@ module.exports =
           else
             transformedStn.toJs()
         catch error
-          log.error error
+          if expectFailure && isNumber error.failureIndex
+            expectedFailure = error
+            error = null
+          else
+            log.error error
 
           null
 
-        if js != expectedJs
+        showInfo = if expectFailure
+          js || !expectedFailure
+        else
+          js != expectedJs
+
+        if showInfo
           log "\nFAIL: #{name}".red
           log info:
             js:js
@@ -43,8 +54,13 @@ module.exports =
             semanticTree: stn
             transformedSemanticTree: if transformedStn != stn then transformedStn else "no change"
           log "\n"
+
         throw error if error
-        assert.eq js, expectedJs
+
+        if expectFailure
+          assert.eq js, null
+        else
+          assert.eq js, expectedJs
 
   parseTestSuite: parseTestSuite = (a, b) ->
     map = if b
@@ -54,15 +70,15 @@ module.exports =
       options = {}
       a
 
-    hasStrings = hasOther = false
+    hasTestValues = hasOther = false
     for k, v of map
-      if isString v
-        hasStrings = true
+      if !v? || isString v
+        hasTestValues = true
       else
         hasOther = true
 
-    throw new Error "either strings or others!" if hasStrings && hasOther
-    if hasStrings
+    throw new Error "either strings or others!" if hasTestValues && hasOther
+    if hasTestValues
       -> parseTests options, map
     else
       object map, (v) -> parseTestSuite options, v
