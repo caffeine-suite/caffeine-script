@@ -38,11 +38,11 @@ module.exports = suite: parseTestSuite
 
   multiline:
     basic:
-      # "foo =\n1":           "let foo; foo = 1;"
-      # """
-      # a =
-      # b = 1
-      # """:                  "let a, b; a = b = 1;"
+      "foo =\n1":           "let foo; foo = 1;"
+      """
+      a =
+      b = 1
+      """:                  "let a, b; a = b = 1;"
 
       "f\n.foo = 1":        "f.foo = 1;"
       "f\n|| foo = 1":      "let foo; f || (foo = 1);"

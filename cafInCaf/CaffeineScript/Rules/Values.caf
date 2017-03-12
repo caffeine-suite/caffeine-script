@@ -62,7 +62,8 @@ import &StandardImport, &BabelBridge
 
   @rule
     assignmentExtension:
-      "assignmentOperator:_assignmentOperator_ assignedValue"
+      "assignmentOperator:_assignmentOperator_ _end? complexExpression"
+      "assignmentOperator:_assignmentOperator_ rValueBlock"
     {}
       stnFactory:   :AssignmentStn
       stnExtension: true

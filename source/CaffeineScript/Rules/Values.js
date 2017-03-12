@@ -79,7 +79,10 @@ Caf.defMod(module, () => {
     this.rule({ assignedValue: ["complexExpression", "rValueBlock"] });
     this.rule(
       {
-        assignmentExtension: "assignmentOperator:_assignmentOperator_ assignedValue"
+        assignmentExtension: [
+          "assignmentOperator:_assignmentOperator_ _end? complexExpression",
+          "assignmentOperator:_assignmentOperator_ rValueBlock"
+        ]
       },
       {
         stnFactory: "AssignmentStn",
