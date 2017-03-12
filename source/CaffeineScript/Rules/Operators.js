@@ -49,7 +49,7 @@ Caf.defMod(module, () => {
               k,
               into
             ) => {
-              into.push(opAndExp.unaryOpExpression.getStn());
+              into.push(opAndExp.rValue.getStn());
             })
           ]),
           function(operandA, operandB, operator) {
@@ -62,9 +62,10 @@ Caf.defMod(module, () => {
         );
       }
     },
-    binaryOperatorAndExpression: {
-      pattern: "_? binaryOperator _? unaryOpExpression"
-    },
+    binaryOperatorAndExpression: [
+      "_? binaryOperator _? _end? rValue:unaryOpExpression",
+      "_? binaryOperator _? rValue:rValueBlock"
+    ],
     lineStartBinaryOperatorAndExpression: {
       pattern: "binaryOperator _? binOpExpression",
       stnProps: function() {

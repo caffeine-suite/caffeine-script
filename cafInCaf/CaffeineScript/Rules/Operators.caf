@@ -14,7 +14,7 @@ binaryOperatorSequenceExtension:
         getNormalizedOperator opAndExp.binaryOperator
 
       compactFlatten [] left, array opAndExp in @binaryOperatorAndExpressions
-        opAndExp.unaryOpExpression.getStn()
+        opAndExp.rValue.getStn()
 
       (operandA, operandB, operator) ~>
         BinaryOperatorStn
@@ -23,7 +23,8 @@ binaryOperatorSequenceExtension:
           operandB
 
 binaryOperatorAndExpression:
-  pattern: "_? binaryOperator _? unaryOpExpression"
+  "_? binaryOperator _? _end? rValue:unaryOpExpression"
+  "_? binaryOperator _? rValue:rValueBlock"
 
 lineStartBinaryOperatorAndExpression:
   pattern:      "binaryOperator _? binOpExpression"
