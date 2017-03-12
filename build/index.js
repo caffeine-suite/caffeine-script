@@ -1992,7 +1992,7 @@ Caf.defMod(module, () => {
     ["escapeJavascriptString", "Error"],
     [StandardImport, global]
   ));
-  legalUnquotedPropName = /^(0|[1-9a-z_][0-9_a-z]*)$/i;
+  legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
   escapePropName = function(rawPropName) {
     return rawPropName.match(legalUnquotedPropName)
       ? rawPropName
@@ -2016,11 +2016,13 @@ Caf.defMod(module, () => {
         [nameStn] = this.children;
         return nameStn
           ? (str = nameStn.toJs(), nameStn.children.length > 0
-              ? `[${str}]`
+              ? `[${Caf.toString(str)}]`
               : (!(nameStn.type === "String" || nameStn.type === "Identifer")
                   ? (() => {
                       throw new Error(
-                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${nameStn.type}`
+                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
+                          nameStn.type
+                        )}`
                       );
                     })()
                   : undefined, str))
@@ -3003,7 +3005,7 @@ Caf.defMod(module, () => {
     );
     this.rule({
       propertyValueBlock: "rValueBlock",
-      propName: { pattern: "computedPropName" },
+      propName: "computedPropName",
       computedPropName: {
         pattern: "openBracket_ expression _closeBracket",
         stnFactory: "AccessorStn"
@@ -5347,7 +5349,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.31.0"
+	"version": "0.32.1"
 };
 
 /***/ }),
