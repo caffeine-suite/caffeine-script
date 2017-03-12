@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
     ["escapeJavascriptString", "Error"],
     [StandardImport, global]
   ));
-  legalUnquotedPropName = /^(0|[1-9a-z_][0-9_a-z]*)$/i;
+  legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
   escapePropName = function(rawPropName) {
     return rawPropName.match(legalUnquotedPropName)
       ? rawPropName
@@ -34,11 +34,13 @@ Caf.defMod(module, () => {
         [nameStn] = this.children;
         return nameStn
           ? (str = nameStn.toJs(), nameStn.children.length > 0
-              ? `[${str}]`
+              ? `[${Caf.toString(str)}]`
               : (!(nameStn.type === "String" || nameStn.type === "Identifer")
                   ? (() => {
                       throw new Error(
-                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${nameStn.type}`
+                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
+                          nameStn.type
+                        )}`
                       );
                     })()
                   : undefined, str))
