@@ -24,6 +24,18 @@ module.exports = suite: parseTestSuite
     b: 1 [a]:2
     """           : "({b: 1, [a]: 2});"
 
+  parseFailures:
+    """
+    a:
+    """: null
+
+    # TODO: fail nicer:
+    # """
+    # a:
+    #   # foo
+    # """: null
+
+
   unusualKeys:
     explicitObjects:
       "{0:1}"       : '({0: 1});'
@@ -47,6 +59,17 @@ module.exports = suite: parseTestSuite
       "+:1":     '({"+": 1});'
       "?:1":     '({"?": 1});'
       "%:1":     '({"%": 1});'
+
+    regressions:
+      """
+      #f00: 1
+      """: '({"#f00": 1});'
+
+      """
+      a:
+        #f00: 1
+      """: '({a: {"#f00": 1}});'
+
 
     quotedKeys:
       "{'hi mom':1}": '({"hi mom": 1});'

@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
         end: "lineEndComment",
         comment: [
           { pattern: "/##[^\n]*/ unparsedBlock*" },
-          { pattern: "/#(?!#)[^\n]*/" }
+          { pattern: "/#( |(?=\n|$))[^\n]*/" }
         ],
         _end: /( *(\n|; *|$))+/,
         lineStartComment: ["comment _end", "_end"],
