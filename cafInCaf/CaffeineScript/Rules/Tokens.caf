@@ -64,14 +64,14 @@
       pattern:
         ///
         (?!\d)
-        ( (?: (?!\s)[$\w\x7f-\uffff] )+ )
+        ( (?: (?!\s)[$\w\u007f-\uffff] )+ )
         ///
       stnFactory: :IdentifierStn
       stnProps: ~> identifier: @toString()
 
     pathedRequire:
       ///
-      ( (?: (?!\s)[/$\w\x7f-\uffff] )+ )
+      ( (?: (?!\s)[$\w\u007f-\uffff] )+ )
       ///
 
     ##
@@ -82,7 +82,7 @@
       - questionables: |, \
     unquotedString:
       ///
-      ((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\x7f-\uffff])+
+      ((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+
       ///
 
     unaryTailOperator: /\?/

@@ -29,11 +29,33 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
           ret.compactNewLines() unless @tripple
           ret
 
+      # :unquoted strings
+      # : is omitted
       {}
         pattern: "':' string:unquotedString"
-        getStn: ~>
-          StringStn value: @string.toString()
-          .compactNewLines true, true
+        getStn: ~> StringStn value: @string.toString()
+
+      # #hashtag and color (#fff) strings
+      # # is preserved
+      {}
+        pattern: /#[$\w\u007f-\uffff]+/
+        getStn: ~> StringStn value: @toString()
+
+      # number-with-unit strings
+      {}
+        pattern:
+          ///
+          [-+]?
+          (?!00)
+          [0-9]*
+          \.?
+          [0-9]+
+          ([eE][-+]?[0-9]+)?
+
+          # followed by one or more identifier characters
+          [$\w\u007f-\uffff]+
+          ///
+        getStn: ~> StringStn value: @toString()
 
     stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "stringBlockBody"
 

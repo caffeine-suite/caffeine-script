@@ -39,7 +39,23 @@ module.exports = suite: parseTestSuite
 
   unquotedStrings:
     basic:
-      ":hi":    '"hi";'
+      ":hi":        '"hi";'
+
+    hashTag:
+      "#fff":       '"#fff";'
+      "#hashTag":   '"#hashTag";'
+
+      # parses as a comment
+      "#-":         ';'
+
+    numberWithUnits:
+      "0px":          '"0px";'
+      "1px":          '"1px";'
+      "10px":         '"10px";'
+      "-10px":        '"-10px";'
+      ".1px":         '".1px";'
+      "-.1px":        '"-.1px";'
+      "0.8em":        '"0.8em";'
 
     unusual:
       ':0':         '"0";'
@@ -51,6 +67,8 @@ module.exports = suite: parseTestSuite
       ':#fff':      '"#fff";'
       ':*':         '"*";'
 
+      ':-':         '"-";'
+
       ':-a':        '"-a";'
       ':a-':        '"a-";'
 
@@ -59,6 +77,7 @@ module.exports = suite: parseTestSuite
 
       ':hi.there':  '"hi.there";'
       ':hi-there':  '"hi-there";'
+      ":80%":       '"80%";'
 
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays":

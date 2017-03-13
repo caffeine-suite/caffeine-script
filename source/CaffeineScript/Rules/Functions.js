@@ -91,7 +91,7 @@ Caf.defMod(module, () => {
       {
         functionInvocation: [
           "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? _? values:complexExpression",
+          "existanceTest:questionMark? !/[-+]/ _? values:complexExpression",
           "existanceTest:questionMark? _? values:valueListBlock"
         ]
       },

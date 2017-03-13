@@ -49,10 +49,19 @@ Caf.defMod(module, () => {
         {
           pattern: "':' string:unquotedString",
           getStn: function() {
-            return StringStn({ value: this.string.toString() }).compactNewLines(
-              true,
-              true
-            );
+            return StringStn({ value: this.string.toString() });
+          }
+        },
+        {
+          pattern: /#[$\w\u007f-\uffff]+/,
+          getStn: function() {
+            return StringStn({ value: this.toString() });
+          }
+        },
+        {
+          pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
+          getStn: function() {
+            return StringStn({ value: this.toString() });
           }
         }
       ],
