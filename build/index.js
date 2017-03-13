@@ -3080,7 +3080,7 @@ Caf.defMod(module, () => {
           }
         },
         {
-          pattern: /:[^\n\s,]+/,
+          pattern: /:(?!:)[^\\\n\s,]+/,
           getStn: function() {
             return StringStn({ value: this.toString().slice(1) });
           }
@@ -5358,7 +5358,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.32.2"
+	"version": "0.32.3"
 };
 
 /***/ }),
