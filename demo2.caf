@@ -8,6 +8,7 @@
   4 5 6
   7 8 9
 
+#-----------------------------------
 nameToColor:
   red:   #f00
   green: #0f0
@@ -16,15 +17,19 @@ colorToName:
   #f00:  :red
   #0f0:  :green
 
+#-----------------------------------
 users =
   id: 123, username: :shanebdavis, age: 41, fullName: "" Shane Brinkman-Davis Delamore
   id: 456, username: :george123,   age: 23, fullName: "" George Washington
 
+#-----------------------------------
 import &DomBuilder
 
 Div
-  'Click this link to learn about an awesome language: '
+  "" Click this link to learn about an awesome language:
+
   A
-    href: 'http://CafScript.com'
+    href:  :http://CafScript.com
     style: fontSize: 24px
-    'CafScript'
+
+    :CafScript

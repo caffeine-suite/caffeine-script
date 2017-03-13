@@ -35,17 +35,26 @@ contexts:
       scope: entity.name.function.caffeine
 
     # Numbers
-    - match: '[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?'
+    - match: '([-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\w\u007f-\uffff])(?!\.[0-9])'
       scope: constant.numeric.caffeine
 
-    - match: '\:((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+'
+    # Strings
+    - match: '\:([-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+'
       scope: string.quoted.double.caffeine
 
-    - match: '[-=~]>'
-      scope: storage.type.function.caffeine
+    - match: '#[$\w\u007f-\uffff]+'
+      scope: string.quoted.double.caffeine
 
+    - match : '[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+'
+      scope: string.quoted.double.caffeine
+
+    # Auto-Require
     - match : '&(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)'
       scope: string.quoted.double.caffeine
+
+    # Function Declaration
+    - match: '[-=~]>'
+      scope: storage.type.function.caffeine
 
     - match: '[-+=!%&*|<>?]|==|&&|\|\|'
       scope: keyword.operator.caffeine
@@ -58,9 +67,8 @@ contexts:
 
 
     # Comments begin with a '#' and finish at the end of the line
-    - match: '#'
-      scope: punctuation.definition.comment.caffeine
-      push: line_comment
+    - match: '#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))'
+      scope: comment.line.caffeine
 
     # - match: '"".*'
     #   scope: string.quoted.double.caffeine
@@ -93,9 +101,6 @@ contexts:
 
     - match: "\\}"
       pop: true
-
-    - match: '\bfor.*\b(in|of)\b'
-      scope: invalid constant.character.escape.caffeine
 
   interpolation:
     - match: "\\}"

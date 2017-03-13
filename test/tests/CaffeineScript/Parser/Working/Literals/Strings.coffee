@@ -68,6 +68,7 @@ module.exports = suite: parseTestSuite
       ':*':         '"*";'
 
       ':-':         '"-";'
+      ':\\n':       null # backslashes not allowed until a decision is made
 
       ':-a':        '"-a";'
       ':a-':        '"a-";'
@@ -78,6 +79,7 @@ module.exports = suite: parseTestSuite
       ':hi.there':  '"hi.there";'
       ':hi-there':  '"hi-there";'
       ":80%":       '"80%";'
+      ':http://cafscript.com': '"http://cafscript.com";'
 
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays":

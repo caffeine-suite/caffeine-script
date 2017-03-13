@@ -47,9 +47,9 @@ Caf.defMod(module, () => {
           }
         },
         {
-          pattern: "':' string:unquotedString",
+          pattern: /:(?!:)[^\\\n\s,]+/,
           getStn: function() {
-            return StringStn({ value: this.string.toString() });
+            return StringStn({ value: this.toString().slice(1) });
           }
         },
         {

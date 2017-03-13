@@ -2406,7 +2406,7 @@ Caf.defMod(module, () => {
         end: "lineEndComment",
         comment: [
           { pattern: "/##[^\n]*/ unparsedBlock*" },
-          { pattern: "/#( |(?=\n|$))[^\n]*/" }
+          { pattern: /#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/ }
         ],
         _end: /( *(\n|; *|$))+/,
         lineStartComment: ["comment _end", "_end"],
@@ -2835,7 +2835,7 @@ Caf.defMod(module, () => {
       {
         functionInvocation: [
           "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? _? values:complexExpression",
+          "existanceTest:questionMark? !/[-+]/ _? values:complexExpression",
           "existanceTest:questionMark? _? values:valueListBlock"
         ]
       },
@@ -3080,12 +3080,21 @@ Caf.defMod(module, () => {
           }
         },
         {
-          pattern: "':' string:unquotedString",
+          pattern: /:[^\n\s,]+/,
           getStn: function() {
-            return StringStn({ value: this.string.toString() }).compactNewLines(
-              true,
-              true
-            );
+            return StringStn({ value: this.toString().slice(1) });
+          }
+        },
+        {
+          pattern: /#[$\w\u007f-\uffff]+/,
+          getStn: function() {
+            return StringStn({ value: this.toString() });
+          }
+        },
+        {
+          pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
+          getStn: function() {
+            return StringStn({ value: this.toString() });
           }
         }
       ],
@@ -3176,7 +3185,7 @@ Caf.defMod(module, () => {
       {
         boolLiteral: ["true", "false"],
         nullLiteral: "/null/",
-        numberLiteral: /-?[0-9]+/,
+        numberLiteral: /([-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\w\x7f-\uffff])(?!\.[0-9])/i,
         true: "/(true|yes|on)(?![a-zA-Z0-9]+)/",
         false: "/(false|no|off)(?![a-zA-Z0-9]+)/"
       },

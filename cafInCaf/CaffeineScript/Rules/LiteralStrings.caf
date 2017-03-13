@@ -29,14 +29,21 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
           ret.compactNewLines() unless @tripple
           ret
 
-      # :unquoted strings
-      # : is omitted
+      ## word-strings
+        :unquoted strings
+        : is omitted
+        reserved: '::' for a future word-string-block
+        reserved: backslashes are currently excluded until I decide
+          if they should be escaped or
+          if we should support escapes
+          Could be interesting: :foo\sbar could == "foo bar"
       {}
-        pattern: "':' string:unquotedString"
-        getStn: ~> StringStn value: @string.toString()
+        pattern: /:(?!:)[^\\\n\s,]+/
+        getStn: ~> StringStn value: @toString().slice 1
 
-      # #hashtag and color (#fff) strings
-      # # is preserved
+      ## hashtag-strings
+        #hashtag and color (#fff) strings
+        The # is preserved
       {}
         pattern: /#[$\w\u007f-\uffff]+/
         getStn: ~> StringStn value: @toString()
