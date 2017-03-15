@@ -39,7 +39,7 @@ contexts:
       scope: constant.numeric.caffeine
 
     # Strings
-    - match: '\:([-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+'
+    - match: ':[^\n\s,]+'
       scope: string.quoted.double.caffeine
 
     - match: '#[$\w\u007f-\uffff]+'
@@ -49,7 +49,7 @@ contexts:
       scope: string.quoted.double.caffeine
 
     # Auto-Require
-    - match : '&(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)'
+    - match : '&(?!\d)((?:(?!\s)[/$\w\u007f-\uffff])+)'
       scope: string.quoted.double.caffeine
 
     # Function Declaration
