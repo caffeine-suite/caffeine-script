@@ -20,10 +20,19 @@ I believe productivity matters more than anything else in programming. Programmi
 
 The meta-nature of programming means any improvement in productivity creates a virtuous feedback loop. When you can write programs faster, you can write tools faster that in turn help you be even more productive. In other words, productivity improvements are exponential. 
 
-> CaffeineScript's sole goal is to maximize productivity. Every design decision must (a) minimize the total effort (b) over a product's lifetime (c) for everyone working on it.
+### [Good Design and Programming Languages](https://github.com/shanebdavis/caffeine-script/wiki/Good-Design-and-Programming-Languages)
 
+Design matters. 
+
+So why is design-thinking rarely applied to programming languages and tools? Apple has finally convinced the world that end-user apps and devices need to be obsessively designed. It matters. A lot. But, the tools we use to write those apps are anything but well designed, even Apple's.
+
+Design thinking is ultimately about productivity. It's about designing a tool to get the job done in the most efficient way possible over all possible metrics. That includes mental effort and physical effort, but it also includes emotional effort and other esthetics.
+
+I believe programming languages and tools should be beautifully designed. I believe the most productive tools are also the most beautiful ones. Flow is the most productive state possible for programming, but any little thing can trip you out of flow. That is why beautiful design is essential to entering and maintaining the flow state and, ultimately, programmer productivity.
 
 ### [CaffeineScript's Design](https://github.com/shanebdavis/caffeine-script/wiki/Design)
+
+> CaffeineScript's sole goal is to maximize productivity. Every design decision must (a) minimize the total effort (b) over a product's lifetime (c) for everyone working on it.
 
 If you are visual, value reduced syntax and are looking for every productivity advantage, CaffeineScript may be for you.
 
