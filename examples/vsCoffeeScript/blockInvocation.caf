@@ -1,0 +1,19 @@
+# COFFEE
+merge objectWithout(request.data, "bitmap"),
+  toPlainObjects {
+    url
+    templateUrl
+    dimensions:       bitmap.size
+    byteLength:       imageData.length
+    colorInfo:        Neptune.Art.ColorExtractor.extractColors bitmap
+  }
+
+# CAF
+merge
+  objectWithout request.data, "bitmap"
+  toPlainObjects {}
+    url
+    templateUrl
+    dimensions:       bitmap.size
+    byteLength:       imageData.length
+    colorInfo:        Neptune.Art.ColorExtractor.extractColors bitmap
