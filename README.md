@@ -41,12 +41,12 @@ CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a 
 ### Key Benefits
 
 * Designed to take maximum advantage of the best parts of JavaScript:
- * dynamic typing
- * functional programming
- * object oriented programming
+  * [Dynamic Typing]()
+  * [Functional Programming]()
+  * [Object Oriented Programming]()
 * Beautiful, visual, expressive, minimal syntax
- * 70-80% JavaScript syntax reduction
- * 10-20% CoffeeScript syntax reduction
+  * 70-80% JavaScript syntax reduction
+  * 10-20% CoffeeScript syntax reduction
 * Eliminates most of [JavaScript's rough edges](https://github.com/shanebdavis/caffeine-script/wiki/Coming-from-JavaScript), so you no longer have to feel like you're in a [SpaceQuest Adventure](https://www.youtube.com/watch?v=z2fmsXzXYA4).
 * 90%+ reduction in [CommonJS-specific code](https://github.com/shanebdavis/caffeine-script/wiki/Modules-and-CommonJs) so you can take maximum advantage of modules and NPMs.
 * CaffeineScript, the language itself, is extensible on a per-file or per-project basis with the help of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc).
