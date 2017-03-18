@@ -4,6 +4,10 @@ Caf.defMod(module, () => {
     root: {
       pattern: "lineStartComment* statement*",
       stnFactory: "StatementsStn"
+    },
+    nonEmptyRoot: {
+      pattern: "lineStartComment* statement+",
+      stnFactory: "StatementsStn"
     }
   };
 });

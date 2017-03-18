@@ -1,14 +1,20 @@
 import &StandardImport
+&UndefinedStn
 
 class ControlOperatorStn extends &BaseStn
 
   constructor: (props, children) ->
     super
-    @operand = props.operand
-    @joiner = props.joiner
-    @expression = children[0]
-    @body = children[1]
-    @elseBody = children[2]
+    @operand    = props.operand
+    @joiner     = props.joiner
+    if @labeledChildren.expression
+      @expression = @labeledChildren.expression
+      @body       = @labeledChildren.body       || UndefinedStn()
+      @elseBody   = @labeledChildren.elseBody
+    else
+      @expression = children[0]
+      @body       = children[1] || UndefinedStn()
+      @elseBody   = children[2]
     @validate()
 
   validate: ->
@@ -58,7 +64,7 @@ class ControlOperatorStn extends &BaseStn
       "
       #{operand}
       #{@applyRequiredParens expression}
-      {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ""}
+      {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
       "
 
   toJsParenExpression: ->

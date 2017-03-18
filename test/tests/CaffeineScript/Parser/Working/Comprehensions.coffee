@@ -74,6 +74,16 @@ module.exports = suite: parseTestSuite
         Caf.ee(a, undefined, (v, k, into, brk) =>
         {let cafRet; b; return (cafRet = c) && (brk(), cafRet);});"
 
+    regressions:
+      """
+      object obj
+        # an intended comment
+      """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
+
+      """
+      object obj
+      """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
+
     nested:
       """
       array a

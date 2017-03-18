@@ -3,13 +3,14 @@ import &StandardImport, &BabelBridge
 ~>
   @rule
     controlStatement:
-      "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?"
-      "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
+      "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block             elseBody:elseClause?"
+      "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?            elseBody:elseClause"
+      "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:complexExpression elseBody:elseClause?"
     {}
       stnFactory: :ControlOperatorStn
       stnProps: ~>
-        operand: @ifUnlessWhileUntil.toString()
-        joiner: @thenDo?.toString()
+        operand:    @ifUnlessWhileUntil.toString()
+        joiner:     @thenDo?.toString()
 
   @rule
     controlStatement:
@@ -56,5 +57,9 @@ import &StandardImport, &BabelBridge
     when:               /when/
 
     elseClause:
-      "_else block"
-      "_else _ complexExpression"
+      "controlStructorClauseJoiner /else/ block"
+      "controlStructorClauseJoiner /else/ _ complexExpression"
+
+    controlStructorClauseJoiner:
+      "/ +/"
+      "end"

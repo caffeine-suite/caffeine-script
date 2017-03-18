@@ -109,12 +109,26 @@ module.exports = suite: parseTestSuite
 
     regressions:
       "if false then :mytrue": 'if (false) {"mytrue";};'
+
+      """
+      if true
+      else b
+      """: "if (true) {undefined;} else {b;};"
+
       """
       a = if true
         #
       else
-        false
-      """: "let a; a = true ? undefined : false;"
+        :elseStuff
+      """: 'let a; a = true ? undefined : "elseStuff";'
+
+      """
+      a = if true
+        123
+      # comment before else
+      else
+        :elseStuff
+      """: 'let a; a = true ? 123 : "elseStuff";'
 
   unless:
     basic:

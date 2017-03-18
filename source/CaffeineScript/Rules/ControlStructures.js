@@ -12,8 +12,9 @@ Caf.defMod(module, () => {
     this.rule(
       {
         controlStatement: [
-          "ifUnlessWhileUntil _ expressionWithOneLessBlock block elseClause?",
-          "ifUnlessWhileUntil _ expression _ thenDo _ complexExpression elseClause?"
+          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block             elseBody:elseClause?",
+          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?            elseBody:elseClause",
+          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:complexExpression elseBody:elseClause?"
         ]
       },
       {
@@ -82,7 +83,11 @@ Caf.defMod(module, () => {
       ifUnlessWhileUntil: /if|unless|while|until/,
       thenDo: /then|do/,
       when: /when/,
-      elseClause: ["_else block", "_else _ complexExpression"]
+      elseClause: [
+        "controlStructorClauseJoiner /else/ block",
+        "controlStructorClauseJoiner /else/ _ complexExpression"
+      ],
+      controlStructorClauseJoiner: ["/ +/", "end"]
     });
   };
 });

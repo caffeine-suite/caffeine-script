@@ -1,5 +1,8 @@
+import &ArtStandardLib
+
 version: require('../../package.json').version
 
+# perf-testing version
 ##compile: (source, options) ->
   import &StandardImport
 
@@ -38,4 +41,15 @@ version: require('../../package.json').version
   compiled: js: js
 
 compile: (source, options) ->
-  compiled: js: &CaffeineScriptParser.parse(source, options).getStn().transform().toJsModule()
+  try
+    parseTree =       &CaffeineScriptParser.parse source, options
+    stn =             parseTree.getStn()
+    transformedStn =  stn.transform()
+    compiled: js:     transformedStn.toJsModule()
+  catch e
+    unless e.location? || e.sourceFile? || e.message.match /parse|expect/i
+      log.error
+        parseTree: parseTree
+        stn: stn
+        transformedStn: transformedStn
+    throw e

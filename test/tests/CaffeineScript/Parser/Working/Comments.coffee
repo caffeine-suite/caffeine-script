@@ -5,8 +5,8 @@
 
 {parseTestSuite, illegalSyntaxTests} = require '../../Helper'
 
-module.exports = suite:
-  successes: parseTestSuite
+module.exports = suite: parseTestSuite
+  successes:
 
     eol:
       "1# comment": "1;"
@@ -40,6 +40,13 @@ module.exports = suite:
 
 
       """: "1;"
+
+    regressions:
+      " # indented comment is OK": ";"
+      """
+        # hi
+      a
+      """: "a;"
 
     anyNumberOfOctothorpsAllowedExcept3:
       "#\n1\n###": "1;"
@@ -113,32 +120,35 @@ module.exports = suite:
         a
       """: "(function() {return a;});"
 
-  failures: illegalSyntaxTests
-      basic:
-        """
-          # hi
-        a
-        """
-      functions: [
-        """
-        ->
-          ##
-            hello
-          for
-        """
-        """
-        ->
-          abc
-          ->
-            ##
-              wtf
-            for
-        """
-        """
-        import a
+  failures:
+    functions:
+      """
+      ->
+        ##
+          hello
+        for
+      """: null
+
+      """
+      ->
+        abc
         ->
           ##
             wtf
           for
-        """
-      ]
+      """: null
+
+      """
+      import a
+      ->
+        ##
+          wtf
+        for
+      """: null
+
+      """
+      import a
+      ->
+        # wtf
+        for
+      """: null

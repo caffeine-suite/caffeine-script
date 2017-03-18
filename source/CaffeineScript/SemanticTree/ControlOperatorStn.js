@@ -1,6 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
+    UndefinedStn = require("./UndefinedStn"),
     BaseStn = require("./BaseStn"),
     Error,
     formattedInspect;
@@ -8,15 +9,22 @@ Caf.defMod(module, () => {
     StandardImport,
     global
   ]));
+  UndefinedStn;
   return ControlOperatorStn = Caf.defClass(
     class ControlOperatorStn extends BaseStn {
       constructor(props, children) {
         super(...arguments);
         this.operand = props.operand;
         this.joiner = props.joiner;
-        this.expression = children[0];
-        this.body = children[1];
-        this.elseBody = children[2];
+        if (this.labeledChildren.expression) {
+          this.expression = this.labeledChildren.expression;
+          this.body = this.labeledChildren.body || UndefinedStn();
+          this.elseBody = this.labeledChildren.elseBody;
+        } else {
+          this.expression = children[0];
+          this.body = children[1] || UndefinedStn();
+          this.elseBody = children[2];
+        }
         this.validate();
       }
     },
@@ -27,25 +35,31 @@ Caf.defMod(module, () => {
             case "while":
             case "until":
               if (this.elseBody) {
-                throw new Error(`else not expected after ${this.operand}`);
+                throw new Error(
+                  `else not expected after ${Caf.toString(this.operand)}`
+                );
               }
               return this.joiner === "then"
                 ? (() => {
-                    throw new Error(`then not expected after ${this.operand}`);
+                    throw new Error(
+                      `then not expected after ${Caf.toString(this.operand)}`
+                    );
                   })()
                 : undefined;
             case "if":
             case "unless":
               return this.joiner === "do"
                 ? (() => {
-                    throw new Error(`do not expected after ${this.operand}`);
+                    throw new Error(
+                      `do not expected after ${Caf.toString(this.operand)}`
+                    );
                   })()
                 : undefined;
             default:
               return (() => {
                 throw new Error(
-                  `INTERNAL: invalid control-operator: ${formattedInspect(
-                    this.operand
+                  `INTERNAL: invalid control-operator: ${Caf.toString(
+                    formattedInspect(this.operand)
                   )}`
                 );
               })();
@@ -67,7 +81,7 @@ Caf.defMod(module, () => {
           switch (operand) {
             case "until":
             case "unless":
-              expression = `!${this.applyParens(expression)}`;
+              expression = `!${Caf.toString(this.applyParens(expression))}`;
               return operand === "until" ? "while" : "if";
             default:
               return operand;
@@ -76,27 +90,34 @@ Caf.defMod(module, () => {
         return returnExpression
           ? operand === "while"
               ? returnValueIsIgnored
-                  ? `(() => {while ${this.applyRequiredParens(
-                      expression
-                    )} {${this.body.toFunctionBodyJs(false)};};})()`
-                  : (tempVarIdentifier = this.scope.uniqueIdentifier, `(() => {while ${this.applyRequiredParens(
-                      expression
-                    )} {${this.body.toFunctionBodyJs(
-                      `${tempVarIdentifier} =`
-                    )};}; return ${tempVarIdentifier}})()`)
-              : `${this.applyParens(
-                  expression
-                )} ? ${this.body.toJsParenExpression()} : ${Caf.exists(
-                  cafBase = this.elseBody
-                ) &&
-                  cafBase.toJsParenExpression() ||
-                  "undefined"}`
-          : `${operand} ${this.applyRequiredParens(
-              expression
-            )} {${this.body.toJs()};}${this.elseBody
-              ? ` else {${Caf.exists(cafBase1 = this.elseBody) &&
-                  cafBase1.toJs()};}`
-              : ""}`;
+                  ? `(() => {while ${Caf.toString(
+                      this.applyRequiredParens(expression)
+                    )} {${Caf.toString(
+                      this.body.toFunctionBodyJs(false)
+                    )};};})()`
+                  : (tempVarIdentifier = this.scope.uniqueIdentifier, `(() => {while ${Caf.toString(
+                      this.applyRequiredParens(expression)
+                    )} {${Caf.toString(
+                      this.body.toFunctionBodyJs(
+                        `${Caf.toString(tempVarIdentifier)} =`
+                      )
+                    )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
+              : `${Caf.toString(this.applyParens(expression))} ? ${Caf.toString(
+                  this.body.toJsParenExpression()
+                )} : ${Caf.toString(
+                  Caf.exists(cafBase = this.elseBody) &&
+                    cafBase.toJsParenExpression() ||
+                    "undefined"
+                )}`
+          : `${Caf.toString(operand)} ${Caf.toString(
+              this.applyRequiredParens(expression)
+            )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
+              this.elseBody
+                ? ` else {${Caf.toString(
+                    Caf.exists(cafBase1 = this.elseBody) && cafBase1.toJs()
+                  )};}`
+                : ""
+            )}`;
       };
       this.prototype.toJsParenExpression = function() {
         return this.applyRequiredParens(this.toJs({ returnExpression: true }));

@@ -97,7 +97,8 @@
       \? |
 
       # cs english logic
-      ((and | or | isnt | is | in | instanceof)\b) |
+      # is && isnt are no longer supported - in anticipation of probable semantic change to typeof-replacements
+      ((and | or | in | instanceof)\b) |
 
       # shift
       << | >>> | >> |
