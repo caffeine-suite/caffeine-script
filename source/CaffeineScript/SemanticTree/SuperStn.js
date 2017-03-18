@@ -48,7 +48,7 @@ Caf.defMod(module, () => {
               ? ["...arguments"]
               : Caf.e(args, [], (a, k, into) => {
                   into.push(a.toJsExpression());
-                }), `super(${args.join(", ")})`)
+                }), `super(${Caf.toString(args.join(", "))})`)
           : (objectPropValue = this.findParent(
               "ObjectPropValue"
             ), getSuperInput = (klass = this.findParent("Class"))
@@ -58,8 +58,10 @@ Caf.defMod(module, () => {
                   ? (args = "arguments", "apply")
                   : (args = Caf.e(args, [], (a, k, into) => {
                       into.push(a.toJsExpression());
-                    }), "call"), `${superObject}.${this.props.methodName}.${method}${this.applyRequiredParens(
-                  ["this"].concat(args).join(", ")
+                    }), "call"), `${Caf.toString(superObject)}.${Caf.toString(
+                  this.props.methodName
+                )}.${Caf.toString(method)}${Caf.toString(
+                  this.applyRequiredParens(["this"].concat(args).join(", "))
                 )}`)
               : (() => {
                   throw new Error("super not used in class");

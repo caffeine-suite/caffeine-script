@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     class ArraySpreadElementStn extends BaseStn {},
     function(ArraySpreadElementStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
-        return `...${this.childrenToJs()}`;
+        return `...${Caf.toString(this.childrenToJs())}`;
       };
     }
   );

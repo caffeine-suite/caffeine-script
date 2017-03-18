@@ -33,7 +33,7 @@ Caf.defMod(module, () => {
           identifiersUsedButNotAssigned,
           [],
           (v, k, into) => {
-            into.push(`${k} = global.${k}`);
+            into.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`);
           }
         );
         statementsJs = this.statements.toFunctionBodyJs();
@@ -42,11 +42,11 @@ Caf.defMod(module, () => {
           this.requiredIdentifierLets
         ]);
         statements = compactFlatten([
-          lets.length > 0 ? `let ${lets.join(", ")}` : undefined,
+          lets.length > 0 ? `let ${Caf.toString(lets.join(", "))}` : undefined,
           statementsJs
         ]);
-        return `let Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${statements.join(
-          "; "
+        return `let Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
+          statements.join("; ")
         )};});`;
       };
       this.prototype.toJs = function() {

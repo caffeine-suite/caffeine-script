@@ -52,7 +52,7 @@ Caf.defMod(module, () => {
           return lowerCamelCase(
             preferredName.match(/^caf/i)
               ? preferredName
-              : `caf ${preferredName}`
+              : `caf ${Caf.toString(preferredName)}`
           );
         };
         this.prototype.addIdentifierUsed = function(identifier) {
@@ -114,7 +114,9 @@ Caf.defMod(module, () => {
             ? log.error({
                 ScopeStnMixin: {
                   getAvailableIdentifierName: [
-                    `cannot be called before updateScope completes: ${this.className}`,
+                    `cannot be called before updateScope completes: ${Caf.toString(
+                      this.className
+                    )}`,
                     new Error()
                   ]
                 }
@@ -125,7 +127,11 @@ Caf.defMod(module, () => {
                 ? preferredName
                 : (count = 0, (() => {
                     while (
-                      identifiersUsed[name = `${preferredName}${count += 1}`]
+                      identifiersUsed[
+                        name = `${Caf.toString(preferredName)}${Caf.toString(
+                          count += 1
+                        )}`
+                      ]
                     ) {
                       name;
                     }
@@ -152,7 +158,7 @@ Caf.defMod(module, () => {
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
-            ? `let ${identifiers.join(", ")}`
+            ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
         this.prototype.updateScope = function(scope) {
@@ -190,9 +196,13 @@ Caf.defMod(module, () => {
               ) {
                 into.push(
                   isString(initializer)
-                    ? `${identifier} = ${initializer}`
+                    ? `${Caf.toString(identifier)} = ${Caf.toString(
+                        initializer
+                      )}`
                     : initializer.toJsExpression != null
-                        ? `${identifier} = ${initializer.toJsExpression()}`
+                        ? `${Caf.toString(identifier)} = ${Caf.toString(
+                            initializer.toJsExpression()
+                          )}`
                         : identifier
                 );
               }

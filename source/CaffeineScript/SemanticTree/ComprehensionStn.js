@@ -150,7 +150,9 @@ Caf.defMod(module, () => {
               return actionStn;
             };
         return FunctionInvocationStn(
-          IdentifierStn({ identifier: `Caf.${useExtendedEach ? "ee" : "e"}` }),
+          IdentifierStn({
+            identifier: `Caf.${Caf.toString(useExtendedEach ? "ee" : "e")}`
+          }),
           iterable,
           intoChild ||
             (() => {
@@ -167,7 +169,9 @@ Caf.defMod(module, () => {
                   return null;
                 default:
                   return (() => {
-                    throw new Error(`not supported yet: ${outputType}`);
+                    throw new Error(
+                      `not supported yet: ${Caf.toString(outputType)}`
+                    );
                   })();
               }
             })(),

@@ -8,7 +8,9 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let thenDo;
         ({ thenDo } = this.labeledChildren);
-        return `${this.getCasesJs(options)}: ${thenDo.toJs()};`;
+        return `${Caf.toString(this.getCasesJs(options))}: ${Caf.toString(
+          thenDo.toJs()
+        )};`;
       };
       this.prototype.getCasesJs = function(options) {
         let falsifyCases, whenValue, cases;
@@ -20,13 +22,15 @@ Caf.defMod(module, () => {
             })
           : [whenValue.toJsExpression()];
         return falsifyCases
-          ? `case !(${cases.join("): case !(")})`
-          : `case ${cases.join(": case ")}`;
+          ? `case !(${Caf.toString(cases.join("): case !("))})`
+          : `case ${Caf.toString(cases.join(": case "))}`;
       };
       this.prototype.toFunctionBodyJs = function(options) {
         let thenDo;
         ({ thenDo } = this.labeledChildren);
-        return `${this.getCasesJs(options)}: ${thenDo.toFunctionBodyJs()};`;
+        return `${Caf.toString(this.getCasesJs(options))}: ${Caf.toString(
+          thenDo.toFunctionBodyJs()
+        )};`;
       };
     }
   );

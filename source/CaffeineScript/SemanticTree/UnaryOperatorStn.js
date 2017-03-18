@@ -8,9 +8,11 @@ Caf.defMod(module, () => {
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
         return this.props.operand === "?"
-          ? `${this.applyParens(this.children[0].toJsExpression())} != null`
-          : `${this.normalizedOperand}${this.applyParens(
-              this.children[0].toJsExpression()
+          ? `${Caf.toString(
+              this.applyParens(this.children[0].toJsExpression())
+            )} != null`
+          : `${Caf.toString(this.normalizedOperand)}${Caf.toString(
+              this.applyParens(this.children[0].toJsExpression())
             )}`;
       };
     }

@@ -26,8 +26,8 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         return (() => {
           throw new Error(
-            `SemanticTokenStn is not intended to output Js directly. Token: ${formattedInspect(
-              this.props.token
+            `SemanticTokenStn is not intended to output Js directly. Token: ${Caf.toString(
+              formattedInspect(this.props.token)
             )}`
           );
         })();

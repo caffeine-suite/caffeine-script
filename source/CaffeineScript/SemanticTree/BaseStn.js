@@ -99,10 +99,10 @@ Caf.defMod(module, () => {
           props = objectWithout(this.props, "label", "pluralLabel");
           name = this.class.getName();
           if (label) {
-            name = `${label}.${name}`;
+            name = `${Caf.toString(label)}.${Caf.toString(name)}`;
           }
           return {
-            [`${name}`]: this.children.length === 0
+            [`${Caf.toString(name)}`]: this.children.length === 0
               ? toInspectedObjects(props)
               : (a = [], objectKeyCount(props) > 0
                   ? a.push(props)
@@ -170,7 +170,9 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         return (() => {
           throw new Error(
-            `must override one of the toJs* functions: ${this.className}`
+            `must override one of the toJs* functions: ${Caf.toString(
+              this.className
+            )}`
           );
         })();
       };
@@ -184,11 +186,11 @@ Caf.defMod(module, () => {
         if (!isString(body)) {
           body = body.toFunctionBodyJs();
         }
-        return `(() => {${body};})()`;
+        return `(() => {${Caf.toString(body)};})()`;
       };
       this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
         return returnAction
-          ? [`return ${this.toJsExpression()}`]
+          ? [`return ${Caf.toString(this.toJsExpression())}`]
           : [this.toJs()];
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
@@ -218,13 +220,15 @@ Caf.defMod(module, () => {
       this.prototype.toJsExpressionWithParens = function() {
         let js;
         js = this.toJsExpression();
-        return this.getNeedsParens() ? `(${js})` : js;
+        return this.getNeedsParens() ? `(${Caf.toString(js)})` : js;
       };
       this.prototype.toJsParenExpression = function() {
         return this.toJs();
       };
       this.prototype.toInterpolatedJsStringPart = function() {
-        return `\${Caf.toString(${this.toJsExpression({ skipParens: true })})}`;
+        return `\${Caf.toString(${Caf.toString(
+          this.toJsExpression({ skipParens: true })
+        )})}`;
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;
@@ -235,14 +239,14 @@ Caf.defMod(module, () => {
         return this.needsParensAsStatement;
       };
       this.applyRequiredParens = applyRequiredParens = function(expr) {
-        return `(${expr})`;
+        return `(${Caf.toString(expr)})`;
       };
       this.applyParens = applyParens = function(expr) {
         return expr.match(
           /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
         )
           ? expr
-          : `(${expr})`;
+          : `(${Caf.toString(expr)})`;
       };
       this.prototype.applyRequiredParens = applyRequiredParens;
       this.prototype.applyParens = applyParens;

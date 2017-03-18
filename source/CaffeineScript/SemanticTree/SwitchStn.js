@@ -16,9 +16,11 @@ Caf.defMod(module, () => {
         into.push(clause.toJs(options));
       });
       if (switchElse) {
-        cases.push(`default: ${switchElse.toJs()}`);
+        cases.push(`default: ${Caf.toString(switchElse.toJs())}`);
       }
-      return `switch (${this.getConditionJs()}) {${cases.join(" break; ")}}`;
+      return `switch (${Caf.toString(this.getConditionJs())}) {${Caf.toString(
+        cases.join(" break; ")
+      )}}`;
     };
     this.prototype.toJsExpression = function() {
       let condition, switchWhens, switchElse, falsifyCases, options, cases;
@@ -29,11 +31,11 @@ Caf.defMod(module, () => {
         into.push(clause.toFunctionBodyJs(options));
       });
       if (switchElse) {
-        cases.push(`default: ${switchElse.toFunctionBodyJs()}`);
+        cases.push(`default: ${Caf.toString(switchElse.toFunctionBodyJs())}`);
       }
-      return `(() => {switch (${this.getConditionJs()}) {${cases.join(
-        " "
-      )}};})()`;
+      return `(() => {switch (${Caf.toString(
+        this.getConditionJs()
+      )}) {${Caf.toString(cases.join(" "))}};})()`;
     };
     this.prototype.getConditionJs = function() {
       let condition;

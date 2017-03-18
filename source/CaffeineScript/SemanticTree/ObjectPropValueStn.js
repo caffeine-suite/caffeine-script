@@ -9,7 +9,9 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let prop, value;
         [prop, value] = this.children;
-        return `${prop.toJs()}: ${value.toJsExpression()}`;
+        return `${Caf.toString(prop.toJs())}: ${Caf.toString(
+          value.toJsExpression()
+        )}`;
       };
     }
   );

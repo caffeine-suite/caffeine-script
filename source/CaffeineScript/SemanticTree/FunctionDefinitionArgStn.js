@@ -23,15 +23,19 @@ Caf.defMod(module, () => {
       });
       this.prototype.getFunctionPreBodyStatementsJs = function() {
         return this.assignThisProperty
-          ? `this.${this.identifier.toJs()} = ${this.identifier.toJs()}`
+          ? `this.${Caf.toString(this.identifier.toJs())} = ${Caf.toString(
+              this.identifier.toJs()
+            )}`
           : undefined;
       };
       this.prototype.toJs = function() {
-        return `${this.rest
-          ? "..."
-          : ""}${this.identifier.toJs()}${this.defaultValue
-          ? ` = ${this.defaultValue.toJs()}`
-          : ""}`;
+        return `${Caf.toString(this.rest ? "..." : "")}${Caf.toString(
+          this.identifier.toJs()
+        )}${Caf.toString(
+          this.defaultValue
+            ? ` = ${Caf.toString(this.defaultValue.toJs())}`
+            : ""
+        )}`;
       };
     }
   );

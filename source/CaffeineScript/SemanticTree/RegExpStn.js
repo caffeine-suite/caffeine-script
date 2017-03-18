@@ -28,7 +28,7 @@ Caf.defMod(module, () => {
               into.push(
                 isString(v = child.props.value)
                   ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
-                  : `\${${child.toJsExpression()}}`
+                  : `\${${Caf.toString(child.toJsExpression())}}`
               );
             })
             .join(""))
@@ -37,9 +37,11 @@ Caf.defMod(module, () => {
         ? "/(?:)/"
         : hasInterpolation
             ? modifiers
-                ? `RegExp(\`${str}\`, '${modifiers}')`
-                : `RegExp(\`${str}\`)`
-            : `/${str}/${modifiers || ""}`;
+                ? `RegExp(\`${Caf.toString(str)}\`, '${Caf.toString(
+                    modifiers
+                  )}')`
+                : `RegExp(\`${Caf.toString(str)}\`)`
+            : `/${Caf.toString(str)}/${Caf.toString(modifiers || "")}`;
     };
   });
 });

@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
       optionalCatch = Caf.exists(optionalCatch) &&
         optionalCatch.toJs(options) ||
         "catch (cafError) {}";
-      return `try {${body};} ${optionalCatch}`;
+      return `try {${Caf.toString(body)};} ${Caf.toString(optionalCatch)}`;
     };
     this.prototype.toJsExpression = function() {
       return this.doJs(null, this.toJs({ returnExpression: true }));

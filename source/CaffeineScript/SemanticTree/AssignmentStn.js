@@ -51,11 +51,17 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         return this.operator.match(supportedOperatorsRegExp)
-          ? `${this.lValue.toJs()} ${this.operator}= ${this.rValue.toJsExpression()}`
-          : `${this.lValue.toJsExpression()} ${this.operator} ${this.lValue.toJs()} = ${this.rValue.toJsExpression()}`;
+          ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
+              this.operator
+            )}= ${Caf.toString(this.rValue.toJsExpression())}`
+          : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
+              this.operator
+            )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
+              this.rValue.toJsExpression()
+            )}`;
       };
       this.prototype.toJsParenExpression = function() {
-        return `(${this.toJs()})`;
+        return `(${Caf.toString(this.toJs())})`;
       };
     }
   );

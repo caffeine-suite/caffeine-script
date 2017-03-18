@@ -20,9 +20,11 @@ Caf.defMod(module, () => {
       this.getter({
         inspectedObjects: function() {
           return inspectedObjectLiteral(
-            `<UniqueIdentifierHandle preferredName: '${this.preferredName}', scopeSet: ${!!this.scope}, _identifier: ${inspect(
-              this._identifier
-            )}>`
+            `<UniqueIdentifierHandle preferredName: '${Caf.toString(
+              this.preferredName
+            )}', scopeSet: ${Caf.toString(
+              !!this.scope
+            )}, _identifier: ${Caf.toString(inspect(this._identifier))}>`
           );
         },
         identifier: function() {

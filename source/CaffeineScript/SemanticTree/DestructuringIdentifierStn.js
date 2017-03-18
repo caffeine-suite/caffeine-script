@@ -15,11 +15,13 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let identifier, destructuringDefault;
         ({ identifier, destructuringDefault } = this.labeledChildren);
-        return `${this.props.etc
-          ? "..."
-          : ""}${identifier.toJs()}${destructuringDefault
-          ? ` = ${destructuringDefault.toJsExpression()}`
-          : ""}`;
+        return `${Caf.toString(this.props.etc ? "..." : "")}${Caf.toString(
+          identifier.toJs()
+        )}${Caf.toString(
+          destructuringDefault
+            ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
+            : ""
+        )}`;
       };
     }
   );

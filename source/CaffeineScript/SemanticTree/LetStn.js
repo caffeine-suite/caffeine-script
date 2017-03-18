@@ -14,9 +14,9 @@ Caf.defMod(module, () => {
             ? (() => {
                 throw new Error("LetStn identifiers empty");
               })()
-            : undefined, `let ${identifiers.join(", ")}`)
+            : undefined, `let ${Caf.toString(identifiers.join(", "))}`)
         : identifier
-            ? `let ${identifier}`
+            ? `let ${Caf.toString(identifier)}`
             : (() => {
                 throw new Error("LetStn needs props!");
               })();

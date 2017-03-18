@@ -44,12 +44,16 @@ Caf.defMod(module, () => {
         if (this.existanceTest) {
           throw new Error("can't be existanceTest here");
         }
-        return `${valueJs = this.functionValue.toJsExpression()}${this.applyRequiredParens(
-          Caf
-            .e(this.argStns, [], (a, k, into) => {
-              into.push(a.toJsExpression());
-            })
-            .join(", ")
+        return `${Caf.toString(
+          valueJs = this.functionValue.toJsExpression()
+        )}${Caf.toString(
+          this.applyRequiredParens(
+            Caf
+              .e(this.argStns, [], (a, k, into) => {
+                into.push(a.toJsExpression());
+              })
+              .join(", ")
+          )
         )}`;
       };
     }

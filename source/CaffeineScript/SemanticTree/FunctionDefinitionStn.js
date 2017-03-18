@@ -112,10 +112,14 @@ Caf.defMod(module, () => {
                 bodyJs
               ]
         );
-        body = statements.length > 0 ? `{${statements.join("; ")};}` : "{}";
+        body = statements.length > 0
+          ? `{${Caf.toString(statements.join("; "))};}`
+          : "{}";
         return bound
-          ? `${argsDef} => ${body}`
-          : `${isConstructor ? "constructor" : "function"}${argsDef} ${body}`;
+          ? `${Caf.toString(argsDef)} => ${Caf.toString(body)}`
+          : `${Caf.toString(
+              isConstructor ? "constructor" : "function"
+            )}${Caf.toString(argsDef)} ${Caf.toString(body)}`;
       };
     }
   );

@@ -10,8 +10,8 @@ Caf.defMod(module, () => {
     this.prototype.toJs = function() {
       let functionDefinition;
       ({ functionDefinition } = this.labeledChildren);
-      return `(${functionDefinition.toJs()})(${functionDefinition.argumentNames.join(
-        ", "
+      return `(${Caf.toString(functionDefinition.toJs())})(${Caf.toString(
+        functionDefinition.argumentNames.join(", ")
       )})`;
     };
   });

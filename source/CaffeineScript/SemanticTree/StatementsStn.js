@@ -28,7 +28,9 @@ Caf.defMod(module, () => {
           into.push(
             returnAction && i === lines.length - 1
               ? !c.jsExpressionUsesReturn
-                  ? `${returnAction} ${c.toJsExpression()}`
+                  ? `${Caf.toString(returnAction)} ${Caf.toString(
+                      c.toJsExpression()
+                    )}`
                   : c.toJs({ generateReturnStatement: true })
               : generateStatements
                   ? (statement = c.toJsStatement(), statement.match(/^function/)

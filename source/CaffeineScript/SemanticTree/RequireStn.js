@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
         this.scope = scope;
         this.scope.addIdentifierAssigned(
           this.identifierAssignedName,
-          `require('${this.requireString}')`
+          `require('${Caf.toString(this.requireString)}')`
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };

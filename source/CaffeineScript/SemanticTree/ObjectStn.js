@@ -11,14 +11,16 @@ Caf.defMod(module, () => {
   ) {
     let splitObjectsAtSameProps;
     this.prototype.toJs = function() {
-      return `{${Caf
-        .e(this.children, [], (c, k, into) => {
-          into.push(c.toJs());
-        })
-        .join(", ")}}`;
+      return `{${Caf.toString(
+        Caf
+          .e(this.children, [], (c, k, into) => {
+            into.push(c.toJs());
+          })
+          .join(", ")
+      )}}`;
     };
     this.prototype.toJsStatement = function() {
-      return `(${this.toJs()})`;
+      return `(${Caf.toString(this.toJs())})`;
     };
     splitObjectsAtSameProps = function(children) {
       let currentDefined, listOfObjectLiterals, currentOrder;

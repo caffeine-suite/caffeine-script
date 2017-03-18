@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
       this.prototype.toJsExpressionWithParens = function(options) {
         let dotBase;
         ({ dotBase } = options);
-        return dotBase ? `(${this.toJs()})` : this.toJs();
+        return dotBase ? `(${Caf.toString(this.toJs())})` : this.toJs();
       };
     }
   );

@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     class ObjectDestructuringStn extends BaseStn {},
     function(ObjectDestructuringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
-        return `{${this.childrenToJs(", ")}}`;
+        return `{${Caf.toString(this.childrenToJs(", "))}}`;
       };
     }
   );

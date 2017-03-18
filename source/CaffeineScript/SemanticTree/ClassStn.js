@@ -104,7 +104,9 @@ Caf.defMod(module, () => {
                           default:
                             return (() => {
                               throw new Error(
-                                `unknown object property name Stn type: ${propNameStn.type}`
+                                `unknown object property name Stn type: ${Caf.toString(
+                                  propNameStn.type
+                                )}`
                               );
                             })();
                         }
@@ -149,14 +151,18 @@ Caf.defMod(module, () => {
       let className, classExtends, body, classBody, out, classBodyJs;
       ({ className, classExtends, body, classBody } = this.labeledChildren);
       className = className.toJs();
-      out = `${className} = Caf.defClass(class ${className}`;
+      out = `${Caf.toString(className)} = Caf.defClass(class ${Caf.toString(
+        className
+      )}`;
       if (classExtends) {
-        out += ` extends ${classExtends.toJsExpression()}`;
+        out += ` extends ${Caf.toString(classExtends.toJsExpression())}`;
       }
-      classBodyJs = `{${Caf.exists(classBody) && classBody.toJs() || ""}}`;
+      classBodyJs = `{${Caf.toString(
+        Caf.exists(classBody) && classBody.toJs() || ""
+      )}}`;
       return body
-        ? out + ` ${classBodyJs}, ${body.toJs()})`
-        : out + ` ${classBodyJs})`;
+        ? out + ` ${Caf.toString(classBodyJs)}, ${Caf.toString(body.toJs())})`
+        : out + ` ${Caf.toString(classBodyJs)})`;
     };
   });
 });

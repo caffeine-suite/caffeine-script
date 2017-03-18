@@ -8,10 +8,10 @@ Caf.defMod(module, () => {
     instanceSuper
   ) {
     this.prototype.toJs = function() {
-      return `throw ${this.childrenToJs()}`;
+      return `throw ${Caf.toString(this.childrenToJs())}`;
     };
     this.prototype.toJsExpression = function() {
-      return `(()=>{${this.toJs()};})()`;
+      return `(()=>{${Caf.toString(this.toJs())};})()`;
     };
     this.prototype.toJsParenExpression = function() {
       return this.toJsExpression();

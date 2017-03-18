@@ -9,7 +9,9 @@ Caf.defMod(module, () => {
   ) {
     this.prototype.needsParens = false;
     this.prototype.toJs = function() {
-      return this.children[0] ? `this.${this.children[0].toJs()}` : "this";
+      return this.children[0]
+        ? `this.${Caf.toString(this.children[0].toJs())}`
+        : "this";
     };
   });
 });

@@ -40,12 +40,16 @@ Caf.defMod(module, () => {
         "cafError";
       if (errorIdentifier) {
         body = compactFlatten([
-          `${errorIdentifier.name} = ${errorIdentifierString}`,
+          `${Caf.toString(errorIdentifier.name)} = ${Caf.toString(
+            errorIdentifierString
+          )}`,
           body
         ]).join("; ");
       }
       body = body ? body + ";" : "";
-      return `catch (${errorIdentifierString}) {${body}}`;
+      return `catch (${Caf.toString(errorIdentifierString)}) {${Caf.toString(
+        body
+      )}}`;
     };
   });
 });

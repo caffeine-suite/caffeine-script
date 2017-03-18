@@ -8,7 +8,9 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let structure, value;
         ({ structure, value } = this.labeledChildren);
-        return `(${structure.toJs()} = ${value.toJsExpression()})`;
+        return `(${Caf.toString(structure.toJs())} = ${Caf.toString(
+          value.toJsExpression()
+        )})`;
       };
     }
   );

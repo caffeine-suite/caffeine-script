@@ -73,17 +73,21 @@ Caf.defMod(module, () => {
           into.push(c.toJsExpression());
         });
         list = Caf.e(this.importing, [], (i, k, into) => {
-          into.push(`"${i}"`);
+          into.push(`"${Caf.toString(i)}"`);
         });
-        importingJs = `[${list.join(", ")}]`;
+        importingJs = `[${Caf.toString(list.join(", "))}]`;
         imports = (Caf.exists(cafBase = this.importing) && cafBase.length) > 0
-          ? `({${this.importing.join(
-              ", "
-            )}} = Caf.i(${importingJs}, ${this._importFromCaptureIdentifier
-              ? `${this._importFromCaptureIdentifier} = `
-              : ""}[${importsJs.join(", ")}, ${importFromCaptureIdentifier}]));`
+          ? `({${Caf.toString(
+              this.importing.join(", ")
+            )}} = Caf.i(${Caf.toString(importingJs)}, ${Caf.toString(
+              this._importFromCaptureIdentifier
+                ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
+                : ""
+            )}[${Caf.toString(importsJs.join(", "))}, ${Caf.toString(
+              importFromCaptureIdentifier
+            )}]));`
           : "";
-        return `${imports}${bodyJs}`;
+        return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
       this.prototype.toJsExpression = function() {
         return this.toJs({ returnExpression: true });

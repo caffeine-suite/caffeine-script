@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     class NewInstanceStn extends BaseStn {},
     function(NewInstanceStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
-        return `new ${this.childrenToJs()}`;
+        return `new ${Caf.toString(this.childrenToJs())}`;
       };
     }
   );

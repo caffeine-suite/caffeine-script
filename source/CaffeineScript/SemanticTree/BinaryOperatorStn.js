@@ -36,10 +36,9 @@ Caf.defMod(module, () => {
         this.right = children[1];
         if (!(this.left && this.right)) {
           throw new Error(
-            `left and right required: ${formattedInspect({
-              left: this.left,
-              right: this.right
-            })}`
+            `left and right required: ${Caf.toString(
+              formattedInspect({ left: this.left, right: this.right })
+            )}`
           );
         }
       }
@@ -61,9 +60,13 @@ Caf.defMod(module, () => {
       this.prototype.toJsExpression = function() {
         let identifier, parentOperatorPrecidence;
         return this.operator === "?" && this.uniqueIdentifierHandle
-          ? ({
+          ? ({ identifier } = this.uniqueIdentifierHandle, `((${Caf.toString(
               identifier
-            } = this.uniqueIdentifierHandle, `((${identifier} = ${this.left.toJsExpression()}) != null ? ${identifier} : ${this.right.toJsExpression()})`)
+            )} = ${Caf.toString(
+              this.left.toJsExpression()
+            )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
+              this.right.toJsExpression()
+            )})`)
           : !operatorIsInfixJs(this.operator)
               ? binaryOperatorToJs(
                   this.operator,
@@ -98,7 +101,7 @@ Caf.defMod(module, () => {
               isLeftOperand ===
                 getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
               ? this.toJsExpression()
-              : `(${this.toJsExpression()})`;
+              : `(${Caf.toString(this.toJsExpression())})`;
       };
     }
   );

@@ -45,13 +45,17 @@ Caf.defMod(module, () => {
         let identierString, cafBase;
         return this.value && this.key.isIdentifier
           ? (identierString = this.key.toJs()).match(/['"`]/)
-              ? `${this.value.toJsExpressionWithParens()}[${identierString}]`
-              : `${this.value.toJsExpressionWithParens({
-                  dotBase: true
-                })}.${identierString}`
-          : `${Caf.exists(cafBase = this.value) &&
-              cafBase.toJsExpressionWithParens() ||
-              ""}[${this.key.toJsExpression()}]`;
+              ? `${Caf.toString(
+                  this.value.toJsExpressionWithParens()
+                )}[${Caf.toString(identierString)}]`
+              : `${Caf.toString(
+                  this.value.toJsExpressionWithParens({ dotBase: true })
+                )}.${Caf.toString(identierString)}`
+          : `${Caf.toString(
+              Caf.exists(cafBase = this.value) &&
+                cafBase.toJsExpressionWithParens() ||
+                ""
+            )}[${Caf.toString(this.key.toJsExpression())}]`;
       };
     }
   );

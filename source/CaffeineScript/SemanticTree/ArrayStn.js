@@ -18,11 +18,13 @@ Caf.defMod(module, () => {
         }
       });
       this.prototype.toJs = function() {
-        return `[${Caf
-          .e(this.children, [], (c, k, into) => {
-            into.push(c.toJsExpression());
-          })
-          .join(", ")}]`;
+        return `[${Caf.toString(
+          Caf
+            .e(this.children, [], (c, k, into) => {
+              into.push(c.toJsExpression());
+            })
+            .join(", ")
+        )}]`;
       };
     }
   );

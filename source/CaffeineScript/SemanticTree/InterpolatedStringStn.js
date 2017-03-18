@@ -23,11 +23,13 @@ Caf.defMod(module, () => {
           (Caf.isF(cafBase.trimRight) && cafBase.trimRight());
       };
       this.prototype.toJs = function() {
-        return `\`${Caf
-          .e(this.children, [], (c, k, into) => {
-            into.push(c.toInterpolatedJsStringPart());
-          })
-          .join("")}\``;
+        return `\`${Caf.toString(
+          Caf
+            .e(this.children, [], (c, k, into) => {
+              into.push(c.toInterpolatedJsStringPart());
+            })
+            .join("")
+        )}\``;
       };
     }
   );
