@@ -5330,7 +5330,6 @@ module.exports = {
 	"author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
 	"dependencies": {
 		"art-class-system": "^1.0.1",
-		"art-foundation": "^1.0.0",
 		"art-object-tree-factory": "^1.0.0",
 		"art-standard-lib": "^1.1.0",
 		"art-testbench": "^1.0.0",
@@ -5358,7 +5357,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.32.3"
+	"version": "0.32.4"
 };
 
 /***/ }),

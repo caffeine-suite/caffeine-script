@@ -21,14 +21,14 @@ module.exports = suite: parseTestSuite {
 
     """
     &BabelBridge
-    &ArtFoundation
+    &ArtStandardLib
     """:
       "
       let
       BabelBridge = require('babel-bridge'),
-      ArtFoundation = require('art-foundation');
+      ArtStandardLib = require('art-standard-lib');
       BabelBridge;
-      ArtFoundation;
+      ArtStandardLib;
       "
 
     "&ArtStandardLib/Types": "let Types = require('art-standard-lib/Types'); Types;"
@@ -45,7 +45,7 @@ module.exports = suite: parseTestSuite {
 
   regressions:
     """
-    import &ArtFoundation
+    import &ArtStandardLib
     &BabelBridge
-    """: "let ArtFoundation = require('art-foundation'), BabelBridge = require('babel-bridge'); BabelBridge;"
+    """: "let ArtStandardLib = require('art-standard-lib'), BabelBridge = require('babel-bridge'); BabelBridge;"
 
