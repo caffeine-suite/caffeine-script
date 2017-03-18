@@ -71,7 +71,7 @@
 
     pathedRequire:
       ///
-      ( (?: (?!\s)[$\w\u007f-\uffff] )+ )
+      ( (?: (?!\s)[\/$\w\u007f-\uffff] )+ )
       ///
 
     ##

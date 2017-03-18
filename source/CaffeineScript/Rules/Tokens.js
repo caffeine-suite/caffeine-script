@@ -15,17 +15,17 @@ Caf.defMod(module, () => {
       _else: /(( *\n)+| +)else/,
       reservedWord: /(for|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
       identifier: {
-        pattern: /(?!\d)((?:(?!\s)[$\w\x7f-\uffff])+)/,
+        pattern: /(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)/,
         stnFactory: "IdentifierStn",
         stnProps: function() {
           return { identifier: this.toString() };
         }
       },
-      pathedRequire: /((?:(?!\s)[\/$\w\x7f-\uffff])+)/,
-      unquotedString: /((?!\s)[-~!@\#$%^&*_+=|\\<>?\/.$\w\x7f-\uffff])+/,
+      pathedRequire: /((?:(?!\s)[\/$\w\u007f-\uffff])+)/,
+      unquotedString: /((?!\s)[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff])+/,
       unaryTailOperator: /\?/,
       unaryOperator_: /(!|~|not\b) */,
-      binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|isnt|is|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
+      binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
       new: /new\b/,
       throw: /throw\b/,
