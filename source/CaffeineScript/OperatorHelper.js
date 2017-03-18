@@ -14,25 +14,37 @@ Caf.defMod(module, () => {
     this.CoffeeScriptGlobal = CoffeeScriptGlobal = "Caf";
     this.operatorMap = {
       "**": function(a, b) {
-        return `${CoffeeScriptGlobal}.pow(${a}, ${b})`;
+        return `${Caf.toString(CoffeeScriptGlobal)}.pow(${Caf.toString(
+          a
+        )}, ${Caf.toString(b)})`;
       },
       "//": function(a, b) {
-        return `${CoffeeScriptGlobal}.div(${a}, ${b})`;
+        return `${Caf.toString(CoffeeScriptGlobal)}.div(${Caf.toString(
+          a
+        )}, ${Caf.toString(b)})`;
       },
       "%%": function(a, b) {
-        return `${CoffeeScriptGlobal}.mod(${a}, ${b})`;
+        return `${Caf.toString(CoffeeScriptGlobal)}.mod(${Caf.toString(
+          a
+        )}, ${Caf.toString(b)})`;
       },
       in: function(a, b) {
-        return `${CoffeeScriptGlobal}.in(${a}, ${b})`;
+        return `${Caf.toString(CoffeeScriptGlobal)}.in(${Caf.toString(
+          a
+        )}, ${Caf.toString(b)})`;
       },
       "?": function(a, b) {
         return a.match(/^@?[_a-z0-9]+$/i)
-          ? `${a} != null ? ${a} : ${b}`
-          : `${CoffeeScriptGlobal}.existsOr(${a}, (() => {return ${b}})())`;
+          ? `${Caf.toString(a)} != null ? ${Caf.toString(a)} : ${Caf.toString(
+              b
+            )}`
+          : `${Caf.toString(CoffeeScriptGlobal)}.existsOr(${Caf.toString(
+              a
+            )}, (() => {return ${Caf.toString(b)}})())`;
       }
     };
     this.infix = infix = function(a, b, op) {
-      return `${a} ${op} ${b}`;
+      return `${Caf.toString(a)} ${Caf.toString(op)} ${Caf.toString(b)}`;
     };
     this.precidence = [
       ["left", "?"],
@@ -64,7 +76,7 @@ Caf.defMod(module, () => {
     this.validateOperator = validateOperator = operator => {
       if (!this.opsToPrecidence[operator]) {
         throw new Error(
-          `OperatorHelper: operator '${operator}' is not defined`
+          `OperatorHelper: operator '${Caf.toString(operator)}' is not defined`
         );
       }
       return operator;
@@ -94,7 +106,9 @@ Caf.defMod(module, () => {
     };
     this.getOpPrecidence = op => {
       if (!((p = this.opsToPrecidence[op]) != null)) {
-        throw new Error(`OperatorHelper: operator '${op}' not defined`);
+        throw new Error(
+          `OperatorHelper: operator '${Caf.toString(op)}' not defined`
+        );
       }
       return p;
     };
@@ -120,7 +134,9 @@ Caf.defMod(module, () => {
         combiner;
       if (!(operands.length === operators.length + 1)) {
         throw new Error(
-          `expecting: operands.length:${operands.length} == operators.length:${operators.length} + 1`
+          `expecting: operands.length:${Caf.toString(
+            operands.length
+          )} == operators.length:${Caf.toString(operators.length)} + 1`
         );
       }
       while (operators.length > 0) {

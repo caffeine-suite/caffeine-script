@@ -105,7 +105,7 @@ module.exports = suite:
       """: "[1, 2];"
 
       """
-      [] # this is a block array
+      [] # this == a block array
         1
         2
       """: "[1, 2];"

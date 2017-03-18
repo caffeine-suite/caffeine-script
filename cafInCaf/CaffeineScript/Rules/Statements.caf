@@ -18,8 +18,8 @@ statementWithoutEnd:
     each tco in @tailControlOperatorComplexExpressions
       stn = ControlOperatorStn
         operand: tco.tailControlOperator.toString().trim()
-        expression: tco.complexExpression.getStn()
-        body: stn
+        tco.complexExpression.getStn()
+        stn
     stn
 
 newLineStart:

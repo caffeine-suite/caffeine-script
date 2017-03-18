@@ -94,17 +94,17 @@ module.exports = suite:
     parseTests
       "-7 % 5 == -2": "-7 % 5 === -2;"
 
-      "launch() if ignition is on": "if (ignition === true) {launch();};"
+      "launch() if ignition == on": "if (ignition === true) {launch();};"
 
-      "volume = 10 if band isnt SpinalTap": "let volume; if (band !== SpinalTap) {volume = 10;};"
+      "volume = 10 if band != SpinalTap": "let volume; if (band !== SpinalTap) {volume = 10;};"
 
-      "letTheWildRumpusBegin() unless answer is no": "if (!(answer === false)) {letTheWildRumpusBegin();};"
+      "letTheWildRumpusBegin() unless answer == no": "if (!(answer === false)) {letTheWildRumpusBegin();};"
 
       "if car.speed < limit then accelerate()": "if (car.speed < limit) {accelerate();};"
 
       "winner = yes if pick in [47, 92, 13]": "let winner; if (Caf.in(pick, [47, 92, 13])) {winner = true;};"
 
-      'print inspect "My name is #{@name}"': 'print(inspect(`My name is ${Caf.toString(this.name)}`));'
+      'print inspect "My name == #{@name}"': 'print(inspect(`My name == ${Caf.toString(this.name)}`));'
 
   switchWhenElse: ->
     parseTests
@@ -114,7 +114,7 @@ module.exports = suite:
         when "Tue" then go relax
         when "Thu" then go iceFishing
         when "Fri", "Sat"
-          if day is bingoDay
+          if day == bingoDay
             go bingo
             go dancing
         when "Sun" then go church

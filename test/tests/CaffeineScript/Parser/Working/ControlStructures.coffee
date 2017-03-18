@@ -203,7 +203,7 @@ module.exports = suite: parseTestSuite
         """: "try {foo; bar;} catch (cafError) {};"
 
     nameConflicts:
-      # It's OK! It actually doesn't matter when the catch-block is empty
+      # It's OK! It actually doesn't matter when the catch-block == empty
       # The catch-cafError-identifier doesn't effect anything - even if it matches.
       """
       cafError = null

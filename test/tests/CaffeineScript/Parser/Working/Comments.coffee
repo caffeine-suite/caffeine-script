@@ -42,7 +42,7 @@ module.exports = suite: parseTestSuite
       """: "1;"
 
     regressions:
-      " # indented comment is OK": ";"
+      " # indented comment == OK": ";"
       """
         # hi
       a

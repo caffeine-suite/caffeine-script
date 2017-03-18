@@ -157,10 +157,10 @@ module.exports = suite: parseTestSuite
 
     """
     a: :shut :the :frell :up
-    b: :dude :this :is :cool
-    """: '({a: ["shut", "the", "frell", "up"], b: ["dude", "this", "is", "cool"]});'
+    b: :dude :this :== :cool
+    """: '({a: ["shut", "the", "frell", "up"], b: ["dude", "this", "==", "cool"]});'
 
-  # this is a narrow feature we don't need yet
+  # this == a narrow feature we don't need yet
   # withDiplicatPropNames:
   #     """
   #     a =

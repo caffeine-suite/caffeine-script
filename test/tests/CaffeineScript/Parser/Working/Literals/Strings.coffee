@@ -68,7 +68,7 @@ module.exports = suite: parseTestSuite
       ':*':         '"*";'
 
       ':-':         '"-";'
-      ':\\n':       null # backslashes not allowed until a decision is made
+      ':\\n':       null # backslashes not allowed until a decision == made
 
       ':-a':        '"-a";'
       ':a-':        '"a-";'

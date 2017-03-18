@@ -39,7 +39,9 @@ Caf.defMod(module, () => {
       };
       this.prototype.getStnFactory = function() {
         if (isString(this.stnFactory) && !SemanticTree[this.stnFactory]) {
-          throw new Error(`stnFactory not found: ${inspect(this.stnFactory)}`);
+          throw new Error(
+            `stnFactory not found: ${Caf.toString(inspect(this.stnFactory))}`
+          );
         }
         return SemanticTree[this.stnFactory] || this.stnFactory;
       };

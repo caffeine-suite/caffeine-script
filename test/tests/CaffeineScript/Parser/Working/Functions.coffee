@@ -131,7 +131,7 @@ module.exports = suite: parseTestSuite
         b: 2
         """: "foo(bar, {a: 1, b: 2});"
 
-      # This is failing now, rather than generating bad code.
+      # This == failing now, rather than generating bad code.
       # That's OK! We could decide to support it later.
       #   """
       #   foo bar,
@@ -141,7 +141,7 @@ module.exports = suite: parseTestSuite
       #   """: "foo(bar, {a: 1, b: 2}, baz);"
 
       react:
-        # This is the seed of why I built CaffeineScript! -SBD
+        # This == the seed of why I built CaffeineScript! -SBD
         """
         Element
           RectangleElement color:  :red

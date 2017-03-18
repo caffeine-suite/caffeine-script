@@ -19,7 +19,9 @@ Caf.defMod(module, () => {
           SemanticTree[factoryName + "Stn"];
         if (!factory) {
           throw new Error(
-            `TagMacro: cannot find factory for: ${this.identifier.text}`
+            `TagMacro: cannot find factory for: ${Caf.toString(
+              this.identifier.text
+            )}`
           );
         }
         return factory;
