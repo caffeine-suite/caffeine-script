@@ -697,6 +697,20 @@ Caf.defMod(module, () => {
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
+        this.prototype.getBareInitializers = function() {
+          let identifiers;
+          this.bindAllUniqueIdentifiersRequested();
+          return this.props.identifiersAssigned &&
+            (identifiers = this.requiredIdentifierLets).length > 0
+            ? (identifiers = Caf.e(identifiers, [], (identifier, k, into) => {
+                if (identifier.match(/=/)) {
+                  into.push(identifier);
+                }
+              }), identifiers.length > 0
+                ? `${Caf.toString(identifiers.join("; "))}`
+                : undefined)
+            : undefined;
+        };
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
@@ -2388,7 +2402,7 @@ Caf.defMod(module, () => {
   ({ log } = Caf.i(["log"], [ArtStandardLib, global]));
   return {
     version: __webpack_require__(87).version,
-    compile: function(source, options) {
+    compile: function(source, options = {}) {
       let parseTree,
         CaffeineScriptParser = __webpack_require__(19),
         stn,
@@ -2400,7 +2414,13 @@ Caf.defMod(module, () => {
           parseTree = CaffeineScriptParser.parse(source, options);
           stn = parseTree.getStn();
           transformedStn = stn.transform();
-          return { compiled: { js: transformedStn.toJsModule() } };
+          return {
+            compiled: {
+              js: options.bare
+                ? transformedStn.toBareJs()
+                : transformedStn.toJsModule()
+            }
+          };
         } catch (cafError) {
           e = cafError;
           if (
@@ -5120,10 +5140,16 @@ Caf.defMod(module, () => {
         )};});`;
       };
       this.prototype.toJs = function() {
-        let statementsJs;
-        statementsJs = this.statements.toJs();
-        return compactFlatten([this.getAutoLets(), statementsJs]).join("; ") +
-          ";";
+        return compactFlatten([
+          this.getAutoLets(),
+          this.statements.toJs()
+        ]).join("; ") + ";";
+      };
+      this.prototype.toBareJs = function() {
+        return compactFlatten([
+          this.getBareInitializers(),
+          this.statements.toJs()
+        ]).join("; ") + ";";
       };
     }
   );

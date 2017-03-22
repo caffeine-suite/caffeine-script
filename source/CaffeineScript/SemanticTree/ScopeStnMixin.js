@@ -161,6 +161,20 @@ Caf.defMod(module, () => {
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
+        this.prototype.getBareInitializers = function() {
+          let identifiers;
+          this.bindAllUniqueIdentifiersRequested();
+          return this.props.identifiersAssigned &&
+            (identifiers = this.requiredIdentifierLets).length > 0
+            ? (identifiers = Caf.e(identifiers, [], (identifier, k, into) => {
+                if (identifier.match(/=/)) {
+                  into.push(identifier);
+                }
+              }), identifiers.length > 0
+                ? `${Caf.toString(identifiers.join("; "))}`
+                : undefined)
+            : undefined;
+        };
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();

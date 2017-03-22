@@ -50,10 +50,16 @@ Caf.defMod(module, () => {
         )};});`;
       };
       this.prototype.toJs = function() {
-        let statementsJs;
-        statementsJs = this.statements.toJs();
-        return compactFlatten([this.getAutoLets(), statementsJs]).join("; ") +
-          ";";
+        return compactFlatten([
+          this.getAutoLets(),
+          this.statements.toJs()
+        ]).join("; ") + ";";
+      };
+      this.prototype.toBareJs = function() {
+        return compactFlatten([
+          this.getBareInitializers(),
+          this.statements.toJs()
+        ]).join("; ") + ";";
       };
     }
   );

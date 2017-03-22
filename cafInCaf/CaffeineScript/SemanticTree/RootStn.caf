@@ -32,9 +32,15 @@ class RootStn extends &ScopeStnMixin &BaseStn
       Caf.defMod(module, () => {#{statements.join '; '};});
 
   toJs: ->
-    statementsJs = @statements.toJs()
     compactFlatten []
       @getAutoLets()
-      statementsJs
+      @statements.toJs()
+    .join '; '
+    + ";"
+
+  toBareJs: ->
+    compactFlatten []
+      @getBareInitializers()
+      @statements.toJs()
     .join '; '
     + ";"

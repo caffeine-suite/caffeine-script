@@ -40,12 +40,16 @@ version: require('../../package.json').version
     stats: Stats?.get()
   compiled: js: js
 
-compile: (source, options) ->
+compile: (source, options = {}) ->
   try
     parseTree =       &CaffeineScriptParser.parse source, options
     stn =             parseTree.getStn()
     transformedStn =  stn.transform()
-    compiled: js:     transformedStn.toJsModule()
+    compiled: js:
+      if options.bare
+        transformedStn.toBareJs()
+      else
+        transformedStn.toJsModule()
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i
       log.error

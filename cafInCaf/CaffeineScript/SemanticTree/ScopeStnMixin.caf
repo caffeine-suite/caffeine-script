@@ -78,6 +78,13 @@ import &StandardImport
     if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
       "let #{identifiers.join ', '}"
 
+  getBareInitializers: ->
+    @bindAllUniqueIdentifiersRequested()
+    if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
+      identifiers = array identifier from identifiers when identifier.match /=/
+      if identifiers.length > 0
+        "#{identifiers.join '; '}"
+
   updateScope: (@scope)->
     @bindAllUniqueIdentifiersRequested()
     @scope.addChildScope @

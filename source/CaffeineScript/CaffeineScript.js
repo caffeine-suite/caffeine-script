@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   ({ log } = Caf.i(["log"], [ArtStandardLib, global]));
   return {
     version: require("../../package.json").version,
-    compile: function(source, options) {
+    compile: function(source, options = {}) {
       let parseTree,
         CaffeineScriptParser = require("./CaffeineScriptParser"),
         stn,
@@ -16,7 +16,13 @@ Caf.defMod(module, () => {
           parseTree = CaffeineScriptParser.parse(source, options);
           stn = parseTree.getStn();
           transformedStn = stn.transform();
-          return { compiled: { js: transformedStn.toJsModule() } };
+          return {
+            compiled: {
+              js: options.bare
+                ? transformedStn.toBareJs()
+                : transformedStn.toJsModule()
+            }
+          };
         } catch (cafError) {
           e = cafError;
           if (
