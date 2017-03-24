@@ -45,8 +45,8 @@ CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a 
   * [Functional Programming]()
   * [Object Oriented Programming]()
 * Beautiful, visual, expressive, minimal syntax
-  * 70-80% JavaScript syntax reduction
-  * 10-20% CoffeeScript syntax reduction
+  * more than 60% less syntax than JavaScript
+  * more than 10% less syntax than CoffeeScript
 * Eliminates most of [JavaScript's rough edges](https://github.com/shanebdavis/caffeine-script/wiki/Coming-from-JavaScript), so you no longer have to feel like you're in a [SpaceQuest Adventure](https://www.youtube.com/watch?v=z2fmsXzXYA4).
 * 90%+ reduction in [CommonJS-specific code](https://github.com/shanebdavis/caffeine-script/wiki/Modules-and-CommonJs) so you can take maximum advantage of modules and NPMs.
 * CaffeineScript, the language itself, is extensible on a per-file or per-project basis with the help of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc).
@@ -55,11 +55,16 @@ CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a 
 
 CaffeineScript is working and usable. The semantics are still shifting as I implement the remaining, planned v1 features.
 
-### Example
-##### CaffeineScript
+### Why Use CaffeineScript?
+
+It maximizes your productivity, blah, blah. But does it really? (yes, I think so) 
+
+Who cares! It's lean, agile and fun! And you can do cool things like this:
+
+#### Modules
+##### CaffeineScript - 27 tokens and 0 must-match-tokens
 
 ```coffeescript
-|caffeine-script
 import &ArtSuite
 
 class Login extends Component
@@ -68,13 +73,13 @@ class Login extends Component
     Element
       TextElement
         text: :username
-        size: ww: 1 hch: 1
+        size: ww: 1, hch: 1
 
       TextInput
         placeholder: "" enter username here
-        size: ww: 1 hch: 1
+        size: ww: 1, hch: 1
 ```
-##### JavaScript
+##### JavaScript - 73 tokens including 28 must-match-tokens
 
 ```javascript
 let {
@@ -82,7 +87,7 @@ let {
   Element,
   TextElement,
   TextInput
-} = require('art-suite');
+} = require('art-suite'); 
 
 module.exports = class Login extends Component {
   render() {
@@ -101,29 +106,30 @@ module.exports = class Login extends Component {
 };
 ```
 
-### Why Use CaffeineScript?
-
-It maximizes your productivity, blah, blah. But does it really? (yes, I think so) 
-
-Who cares! It's lean, agile and fun! And you can do cool things like this:
-
 #### Literals
+##### streamlined array literals
 ```coffeescript
+# CaffeineScript - 20 tokens
 1d: 1 2 3 4 5 6 7 8 9
 
 2d:
   1 2 3
   4 5 6
   7 8 9
-
-# JavaScript: 
-# {
-#   "1d": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-#   "2d": [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-# };
 ```
 
+```JavaScript
+// JavaScript - 54 tokens
+{
+  "1d": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "2d": [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+};
+```
+
+##### word-strings and hash-strings
+
 ```coffeescript
+# CaffeineScript - 10 tokens
 nameToColor: 
   red:   :#f00
   green: :#0f0
@@ -131,45 +137,32 @@ nameToColor:
 colorToName: 
   #f00:  :red
   #0f0:  :green
-
-# JavaScript:
-# {
-#   nameToColor: { red: "#f00", green: "#0f0" },
-#   colorToName: { "#f00": "red", "#0f0": "green" }
-# };
 ```
 
+```JavaScript
+// JavaScript - 28 tokens
+{
+  nameToColor: { red: "#f00", green: "#0f0" },
+  colorToName: { "#f00": "red", "#0f0": "green" }
+};
+```
+
+##### arrays of object literals
+
 ```coffeescript
+# CaffeineScript - 25 tokens
 users = 
   id: 123, username: :shanebdavis, age: 41, fullName: "" Shane Brinkman-Davis Delamore
   id: 456, username: :george123,   age: 23, fullName: "" George Washington
-
-# JavaScript:
-# let users = [
-#   {id: 123, username: "shanebdavis", age: 41, "Shane Brinkman-Davis Delamore"}, 
-#   {id: 456, username: "george123",   age: 23, "George Washington"}
-# ];
 ```
 
-#### Modules
-```coffeescript
-import &DomBuilder
 
-Div
-  "" Click this link to learn about an awesome language:
-
-  A
-    href:  :http://CafScript.com
-    style: fontSize: 24px
-
-    :CafScript
-
-# JavaScript:
-# let {Div, A} = require('dom-builder');
-# module.exports = Div(
-#   'Click this link to learn about an awesome language: ',
-#   A({href: 'http://CafScript.com', style: {fontSize: '24px'}}, 'CafScript')
-# );
+```JavaScript
+// JavaScript - 35 tokens
+let users = [
+  {id: 123, username: "shanebdavis", age: 41, "Shane Brinkman-Davis Delamore"},
+  {id: 456, username: "george123",   age: 23, "George Washington"}
+];
 ```
 
 ## CaffeineScript and CoffeeScript
