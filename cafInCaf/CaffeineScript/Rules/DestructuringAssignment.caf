@@ -1,6 +1,6 @@
 import &StandardImport
 
-~>
+->
   @rule
     destructuringAssignment: "structure:destructuringTarget _? '=' _? value:assignedValue"
     {} stnFactory: :DestructuringAssignmentStn

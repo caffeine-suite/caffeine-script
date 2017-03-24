@@ -1,6 +1,6 @@
 import &StandardImport
 
-~>
+->
   @rule
     _:            '/ +/ comment?'
     end:          "lineEndComment"

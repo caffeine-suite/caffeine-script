@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge
 
-~>
+->
   @rule
     value: "simpleValue valueExtension*"
 
@@ -48,7 +48,7 @@ import &StandardImport, &BabelBridge
 
   @rule
     super:
-      pattern:"/super\\b/ superFunctionInvocation"
+      pattern:    "/super\\b/ superFunctionInvocation"
       stnFactory: :SuperStn
 
   @rule

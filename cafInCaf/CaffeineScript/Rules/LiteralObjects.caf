@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge, &SemanticTree
 
-~>
+->
   @rule
     singleOrMultilineImplicitObject:
       :multilineImplicitObject

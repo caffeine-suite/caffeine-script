@@ -1,6 +1,6 @@
 import &StandardImport
 
-~>
+->
   @rule
     literal:
       :nullLiteral

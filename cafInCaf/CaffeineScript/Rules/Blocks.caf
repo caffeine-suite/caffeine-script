@@ -1,6 +1,6 @@
 import &StandardImport, &BabelBridge
 
-~>
+->
   @rule
     blocks: 'block+'
 

@@ -9,7 +9,7 @@ getPropertySetters = (node, list = []) ~>
         getPropertySetters match, list
   list
 
-~>
+->
   @rule
     functionDefinition:
       pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"

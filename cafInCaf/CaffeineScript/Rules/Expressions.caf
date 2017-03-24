@@ -3,7 +3,7 @@ import &StandardImport, &BabelBridge, &SemanticTree
 
 upToButNotEol = /[^\n]*/y
 
-~>
+->
   @rule
 
     lineStartExpression: "multilineImplicitObject"
