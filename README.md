@@ -61,10 +61,10 @@ It maximizes your productivity, blah, blah. But does it really? (yes, I think so
 
 Who cares! It's lean, agile and fun! And you can do cool things like this:
 
-#### Modules
-##### CaffeineScript - 27 tokens and 0 must-match-tokens
+##### streamlined modules
 
 ```coffeescript
+# CaffeineScript - 27 tokens and 0 must-match-tokens
 import &ArtSuite
 
 class Login extends Component
@@ -79,9 +79,9 @@ class Login extends Component
         placeholder: "" enter username here
         size: ww: 1, hch: 1
 ```
-##### JavaScript - 73 tokens including 28 must-match-tokens
 
 ```javascript
+// JavaScript - 73 tokens including 28 must-match-tokens
 let {
   Component,
   Element,
@@ -106,8 +106,7 @@ module.exports = class Login extends Component {
 };
 ```
 
-#### Literals
-##### streamlined array literals
+##### streamlined arrays and object property names
 ```coffeescript
 # CaffeineScript - 20 tokens
 1d: 1 2 3 4 5 6 7 8 9
@@ -126,24 +125,29 @@ module.exports = class Login extends Component {
 };
 ```
 
-##### word-strings and hash-strings
+##### #hashStrings, :wordStrings, and 10unitStrings
 
 ```coffeescript
-# CaffeineScript - 10 tokens
+# CaffeineScript - 15 tokens
 nameToColor: 
-  red:   :#f00
-  green: :#0f0
+  red:   #f00
+  green: #0f0
 
 colorToName: 
   #f00:  :red
   #0f0:  :green
+
+style:
+  fontSize: 12pt
+  padding:  25px 
 ```
 
 ```JavaScript
-// JavaScript - 28 tokens
+// JavaScript - 40 tokens
 {
-  nameToColor: { red: "#f00", green: "#0f0" },
-  colorToName: { "#f00": "red", "#0f0": "green" }
+  nameToColor: { red:      "#f00", green:   "#0f0"  },
+  colorToName: { "#f00":   "red",  "#0f0":  "green" },
+  style:       { fontSize: "12pt", padding: "25px"  }
 };
 ```
 
