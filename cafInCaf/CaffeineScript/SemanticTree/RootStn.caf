@@ -40,6 +40,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
 
   toBareJs: ->
     compactFlatten []
+      "" Caf = require('caffeine-script-runtime');
       @getBareInitializers()
       @statements.toJs()
     .join '; '

@@ -57,6 +57,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toBareJs = function() {
         return compactFlatten([
+          "Caf = require('caffeine-script-runtime');",
           this.getBareInitializers(),
           this.statements.toJs()
         ]).join("; ") + ";";

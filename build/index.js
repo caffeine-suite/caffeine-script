@@ -5147,6 +5147,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toBareJs = function() {
         return compactFlatten([
+          "Caf = require('caffeine-script-runtime');",
           this.getBareInitializers(),
           this.statements.toJs()
         ]).join("; ") + ";";
@@ -5582,7 +5583,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.32.7"
+	"version": "0.33.0"
 };
 
 /***/ }),
