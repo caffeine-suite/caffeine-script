@@ -22,13 +22,13 @@ The meta-nature of programming means any improvement in productivity creates a v
 
 ### [Good Design and Programming Languages](https://github.com/shanebdavis/caffeine-script/wiki/Good-Design-and-Programming-Languages)
 
-Design matters. 
+Design matters.
 
-So why is design-thinking rarely applied to programming languages and tools? Apple has finally convinced the world that end-user apps and devices need to be obsessively designed. It matters. A lot. But, the tools we use to write those apps are anything but well designed, even Apple's.
+An unparalleled opportunity is in front of us. Apple has finally convinced the world that end-user apps and devices need to be obsessively designed. However, the tools we use to write those apps are anything but well designed, even Apple's. By applying good design to programming languages and tools we stand to reap massive rewards.
 
 Design thinking is ultimately about productivity. It's about designing a tool to get the job done in the most efficient way possible over all possible metrics. That includes mental effort and physical effort, but it also includes emotional effort and other esthetics.
 
-I believe programming languages and tools should be beautifully designed. I believe the most productive tools are also the most beautiful ones. Flow is the most productive state possible for programming, but any little thing can trip you out of flow. That is why beautiful design is essential to entering and maintaining the flow state and, ultimately, programmer productivity.
+I believe programming languages and tools should be beautifully designed. The most productive tools are also the most beautiful ones largely because of the concept of 'flow.' Flow is the most productive state-of-mind for programming, but any little thing can trip us out of out. That is why beautiful design matters. A beautifully designed product empowers us to enter and maintain a state of flow and maximize our productivity.
 
 ### [CaffeineScript's Design](https://github.com/shanebdavis/caffeine-script/wiki/Design)
 
