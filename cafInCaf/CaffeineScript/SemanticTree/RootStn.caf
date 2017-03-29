@@ -32,16 +32,18 @@ class RootStn extends &ScopeStnMixin &BaseStn
       Caf.defMod(module, () => {#{statements.join '; '};});
 
   toJs: ->
+    statements = @statements.toJs()
     compactFlatten []
       @getAutoLets()
-      @statements.toJs()
+      statements
     .join '; '
     + ";"
 
   toBareJs: ->
+    statements = @statements.toJs()
     compactFlatten []
       "" Caf = require('caffeine-script-runtime');
       @getBareInitializers()
-      @statements.toJs()
+      statements
     .join '; '
     + ";"

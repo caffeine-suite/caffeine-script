@@ -50,16 +50,18 @@ Caf.defMod(module, () => {
         )};});`;
       };
       this.prototype.toJs = function() {
-        return compactFlatten([
-          this.getAutoLets(),
-          this.statements.toJs()
-        ]).join("; ") + ";";
+        let statements;
+        statements = this.statements.toJs();
+        return compactFlatten([this.getAutoLets(), statements]).join("; ") +
+          ";";
       };
       this.prototype.toBareJs = function() {
+        let statements;
+        statements = this.statements.toJs();
         return compactFlatten([
           "Caf = require('caffeine-script-runtime');",
           this.getBareInitializers(),
-          this.statements.toJs()
+          statements
         ]).join("; ") + ";";
       };
     }
