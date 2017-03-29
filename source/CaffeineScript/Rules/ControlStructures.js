@@ -14,7 +14,7 @@ Caf.defMod(module, () => {
         controlStatement: [
           "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block             elseBody:elseClause?",
           "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?            elseBody:elseClause",
-          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:complexExpression elseBody:elseClause?"
+          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:implicitArrayOrExpression elseBody:elseClause?"
         ]
       },
       {
@@ -31,7 +31,7 @@ Caf.defMod(module, () => {
     this.rule(
       {
         controlStatement: [
-          "/try/ _ body:complexExpression _? optionalCatch:catchClause?",
+          "/try/ _ body:implicitArrayOrExpression _? optionalCatch:catchClause?",
           "/try/ body:block optionalCatch:catchClause?"
         ]
       },
@@ -74,7 +74,7 @@ Caf.defMod(module, () => {
       {
         switchWhenClause: [
           "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
-          "end? when _ whenValue:complexExpression thenDo:thenClause"
+          "end? when _ whenValue:implicitArrayOrExpression thenDo:thenClause"
         ]
       },
       { stnFactory: "SwitchWhenStn" }
@@ -85,7 +85,7 @@ Caf.defMod(module, () => {
       when: /when/,
       elseClause: [
         "controlStructorClauseJoiner /else/ block",
-        "controlStructorClauseJoiner /else/ _ complexExpression"
+        "controlStructorClauseJoiner /else/ _ implicitArrayOrExpression"
       ],
       controlStructorClauseJoiner: ["/ +/", "end"]
     });

@@ -58,11 +58,11 @@ import &StandardImport, &BabelBridge
       stnProps:   passArguments: true
 
   @rule
-    assignedValue: :complexExpression :rValueBlock
+    assignedValue: :implicitArrayOrExpression :rValueBlock
 
   @rule
     assignmentExtension:
-      "assignmentOperator:_assignmentOperator_ _end? complexExpression"
+      "assignmentOperator:_assignmentOperator_ _end? implicitArrayOrExpression"
       "assignmentOperator:_assignmentOperator_ rValueBlock"
     {}
       stnFactory:   :AssignmentStn

@@ -40,27 +40,24 @@ getPropertySetters = (node, list = []) ~>
     argDef:
       pattern: "at:/@/? identifier argIdentifierExtension?"
       stnFactory: "FunctionDefinitionArgStn"
-      stnProps: ~> rest: !!@argIdentifierExtension?.etc, assignThisProperty: !!@at
+      stnProps: ~> rest: !!@argIdentifierExtension?.ellipsis, assignThisProperty: !!@at
 
     argIdentifierExtension:
       :defaultValue
-      :etc
+      :ellipsis
 
     defaultValue:
       pattern: "_equals_ expression"
 
-  @rule
-    etc: "'...'"
-
   @rule superFunctionInvocation:
     "openParen_ valueList? _closeParen"
-    "_? complexExpression"
+    "_? implicitArrayOrExpression"
     "_? valueListBlock"
 
   @rule
     functionInvocation:
       "existanceTest:questionMark? openParen_ values:valueList? _closeParen"
-      "existanceTest:questionMark? !/[-+]/ _? values:complexExpression"
+      "existanceTest:questionMark? !/[-+]/ _? values:valueList"
       "existanceTest:questionMark? _? values:valueListBlock"
     {}
       stnFactory: "FunctionInvocationStn"

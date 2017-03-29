@@ -71,19 +71,18 @@ Caf.defMod(module, () => {
           let cafBase;
           return {
             rest: !!(Caf.exists(cafBase = this.argIdentifierExtension) &&
-              cafBase.etc),
+              cafBase.ellipsis),
             assignThisProperty: !!this.at
           };
         }
       },
-      argIdentifierExtension: ["defaultValue", "etc"],
+      argIdentifierExtension: ["defaultValue", "ellipsis"],
       defaultValue: { pattern: "_equals_ expression" }
     });
-    this.rule({ etc: "'...'" });
     this.rule({
       superFunctionInvocation: [
         "openParen_ valueList? _closeParen",
-        "_? complexExpression",
+        "_? implicitArrayOrExpression",
         "_? valueListBlock"
       ]
     });
@@ -91,7 +90,7 @@ Caf.defMod(module, () => {
       {
         functionInvocation: [
           "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:complexExpression",
+          "existanceTest:questionMark? !/[-+]/ _? values:valueList",
           "existanceTest:questionMark? _? values:valueListBlock"
         ]
       },

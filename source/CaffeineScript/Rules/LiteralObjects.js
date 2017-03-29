@@ -59,7 +59,7 @@ Caf.defMod(module, () => {
         literalProp: "propName _colon_ propValue:literal",
         valueProp: "propName _colon_ propValue:expression",
         valuePropWithComplexExpression: [
-          "propName _colon_ propValue:complexExpression",
+          "propName _colon_ propValue:implicitArrayOrExpression",
           "propName _colon_ propValue:propertyValueBlock"
         ]
       },

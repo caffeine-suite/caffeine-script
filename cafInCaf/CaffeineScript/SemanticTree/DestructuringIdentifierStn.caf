@@ -11,4 +11,4 @@ class DestructuringIdentifierStn extends &BaseStn
 
   toJs: ->
     {identifier, destructuringDefault} = @labeledChildren
-    "#{if @props.etc then '...' else ''}#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"
+    "#{if @props.ellipsis then '...' else ''}#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"

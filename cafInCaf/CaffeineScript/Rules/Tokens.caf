@@ -18,6 +18,7 @@
     openCurly_:     /\{ */
     _closeCurly:    /\ *\}/
     _else:          /(( *\n)+| +)else/
+    ellipsis:       "'...'" # etc
 
     reservedWord: ///
       (

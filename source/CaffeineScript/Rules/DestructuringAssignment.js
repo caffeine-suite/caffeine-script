@@ -51,14 +51,14 @@ Caf.defMod(module, () => {
     this.rule(
       {
         arrayDestructuringIdentifier: [
-          { pattern: "identifier _? etc" },
+          { pattern: "identifier _? ellipsis" },
           { pattern: "identifier destructuringDefault:destructuringDefault?" }
         ]
       },
       {
         stnFactory: "DestructuringIdentifierStn",
         stnProps: function() {
-          return { etc: !!this.etc };
+          return { ellipsis: !!this.ellipsis };
         }
       }
     );

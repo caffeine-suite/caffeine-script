@@ -181,8 +181,8 @@ module.exports = suite: parseTestSuite
         """: "foo(!a(comment));"
 
       # TODO
-      # ellipsis:
-      #   "a b...": "a(...b);"
+      ellipsis:
+        "a b...": "a(...b);"
       #   "a b..., c": "a(...b, c);"
       #   "a b..., c...": "a(...b, ...c);"
       #   """

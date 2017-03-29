@@ -50,18 +50,25 @@ Caf.defMod(module, () => {
       valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
         { rule: "valueListBlockSubParse" }
       ),
-      valueListBlockSubParse: "end* statement*"
+      valueListBlockSubParse: "end* listItemStatement*"
     });
     this.rule({
       valueList: [
-        { pattern: "element:arrayValue _comma_ valueList" },
+        { pattern: "element:listItemExpression _comma_ valueList" },
         { pattern: "element:literal _ valueList" },
-        { pattern: "element:arrayValue" }
+        { pattern: "element:listItemExpression" }
       ]
     });
     return this.rule({
-      arrayValue: [
-        { pattern: "identifier etc", stnFactory: "ArraySpreadElementStn" },
+      listItemStatement: [
+        {
+          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
+          stnFactory: "ArraySpreadElementStn"
+        },
+        { pattern: "statementWithoutEnd newLineStatementExtension* end" }
+      ],
+      listItemExpression: [
+        { pattern: "expression ellipsis", stnFactory: "ArraySpreadElementStn" },
         { pattern: "expression" }
       ]
     });

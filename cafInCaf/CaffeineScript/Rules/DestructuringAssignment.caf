@@ -42,11 +42,11 @@ import &StandardImport
 
   @rule
     arrayDestructuringIdentifier:
-      {} pattern: "identifier _? etc"
+      {} pattern: "identifier _? ellipsis"
       {} pattern: "identifier destructuringDefault:destructuringDefault?"
     {}
       stnFactory: "DestructuringIdentifierStn"
-      stnProps: ~> etc: !!@etc
+      stnProps: ~> ellipsis: !!@ellipsis
 
   @rule
     destructuringIdentifier: "identifier destructuringDefault:destructuringDefault?" # objectDestructuring arrayDestructuring implicitObjectDestructuring"

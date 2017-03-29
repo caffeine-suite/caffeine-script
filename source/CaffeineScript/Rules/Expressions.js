@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({
       lineStartExpression: "multilineImplicitObject",
-      complexExpression: [
+      implicitArrayOrExpression: [
         { pattern: "implicitArray" },
         { pattern: "expression" }
       ],
@@ -74,7 +74,7 @@ Caf.defMod(module, () => {
                 endOffset
               ), parentNode.subparse(expressionSource, {
                 allowPartialMatch: true,
-                rule: "complexExpression",
+                rule: "implicitArrayOrExpression",
                 originalOffset: originalOffset,
                 originalMatchLength: endOffset - originalOffset
               }))

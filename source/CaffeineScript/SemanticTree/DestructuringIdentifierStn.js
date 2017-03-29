@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let identifier, destructuringDefault;
         ({ identifier, destructuringDefault } = this.labeledChildren);
-        return `${Caf.toString(this.props.etc ? "..." : "")}${Caf.toString(
+        return `${Caf.toString(this.props.ellipsis ? "..." : "")}${Caf.toString(
           identifier.toJs()
         )}${Caf.toString(
           destructuringDefault

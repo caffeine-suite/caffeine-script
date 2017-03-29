@@ -76,11 +76,11 @@ Caf.defMod(module, () => {
         stnProps: { passArguments: true }
       }
     });
-    this.rule({ assignedValue: ["complexExpression", "rValueBlock"] });
+    this.rule({ assignedValue: ["implicitArrayOrExpression", "rValueBlock"] });
     this.rule(
       {
         assignmentExtension: [
-          "assignmentOperator:_assignmentOperator_ _end? complexExpression",
+          "assignmentOperator:_assignmentOperator_ _end? implicitArrayOrExpression",
           "assignmentOperator:_assignmentOperator_ rValueBlock"
         ]
       },

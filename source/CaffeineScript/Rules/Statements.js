@@ -16,15 +16,15 @@ Caf.defMod(module, () => {
       "importStatement"
     ],
     tailControlOperator: /\ +(if|while|until|unless) +/,
-    tailControlOperatorComplexExpression: "tailControlOperator complexExpression",
+    tailControlOperatorComplexExpression: "tailControlOperator implicitArrayOrExpression",
     statementWithoutEnd: [
       "lineStartExpression",
-      "complexExpression !tailControlOperator",
+      "implicitArrayOrExpression !tailControlOperator",
       {
-        pattern: "complexExpression tailControlOperatorComplexExpression+",
+        pattern: "implicitArrayOrExpression tailControlOperatorComplexExpression+",
         getStn: function() {
           let stn;
-          stn = this.complexExpression.getStn();
+          stn = this.implicitArrayOrExpression.getStn();
           Caf.e(this.tailControlOperatorComplexExpressions, undefined, (
             tco,
             k,
@@ -32,7 +32,7 @@ Caf.defMod(module, () => {
           ) => {
             stn = ControlOperatorStn(
               { operand: tco.tailControlOperator.toString().trim() },
-              tco.complexExpression.getStn(),
+              tco.implicitArrayOrExpression.getStn(),
               stn
             );
           });
