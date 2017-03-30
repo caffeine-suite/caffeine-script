@@ -4,7 +4,7 @@ class FunctionDefinitionArgsStn extends &BaseStn
 
   @getter
     argumentNames: ->
-      array c in @children
+      array c in @children when c.argumentName
         c.argumentName
 
   toJs: ->

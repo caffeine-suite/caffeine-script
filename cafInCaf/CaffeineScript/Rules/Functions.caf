@@ -37,11 +37,15 @@ getPropertySetters = (node, list = []) ~>
       "argDef _ argDefList"
       "argDef"
 
+  @rule
     argDef:
-      pattern: "at:/@/? identifier argIdentifierExtension?"
+      "at:/@/? target:identifier argIdentifierExtension?"
+      "target:destructuringTarget argIdentifierExtension?"
+    {}
       stnFactory: "FunctionDefinitionArgStn"
       stnProps: ~> rest: !!@argIdentifierExtension?.ellipsis, assignThisProperty: !!@at
 
+  @rule
     argIdentifierExtension:
       :defaultValue
       :ellipsis

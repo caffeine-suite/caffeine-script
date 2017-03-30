@@ -88,10 +88,11 @@ import &StandardImport
   updateScope: (@scope)->
     @bindAllUniqueIdentifiersRequested()
     @scope.addChildScope @
-    each child in @children do child.updateScope @
+    each child in @getChildrenToUpdateScope() do child.updateScope @
     @_scopeUpdated = true
 
   @getter
+    childrenToUpdateScope: -> @children
     argumentNames: -> []
 
     uniqueIdentifierHandles: -> @_uniqueIdentifierHandles ||= []

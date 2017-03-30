@@ -59,13 +59,16 @@ Caf.defMod(module, () => {
       stnFactory: "FunctionDefinitionArgsStn"
     });
     this.rule({
-      argDefList: [
-        "argDef _comma_ argDefList",
-        "argDef _ argDefList",
-        "argDef"
-      ],
-      argDef: {
-        pattern: "at:/@/? identifier argIdentifierExtension?",
+      argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
+    });
+    this.rule(
+      {
+        argDef: [
+          "at:/@/? target:identifier argIdentifierExtension?",
+          "target:destructuringTarget argIdentifierExtension?"
+        ]
+      },
+      {
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
           let cafBase;
@@ -75,7 +78,9 @@ Caf.defMod(module, () => {
             assignThisProperty: !!this.at
           };
         }
-      },
+      }
+    );
+    this.rule({
       argIdentifierExtension: ["defaultValue", "ellipsis"],
       defaultValue: { pattern: "_equals_ expression" }
     });

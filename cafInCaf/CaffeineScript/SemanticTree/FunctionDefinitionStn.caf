@@ -50,6 +50,8 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     argumentNames: ->
       @arguments?.argumentNames || []
 
+    childrenToUpdateScope: -> compactFlatten [@statements]
+
   transform: ->
     if @props.bound == "auto"
       @props.bound = if foundParent = @findParent /Class|FunctionDefinition/

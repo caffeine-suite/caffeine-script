@@ -77,12 +77,16 @@ module.exports = suite: parseTestSuite
 
     nesting:
       array:
-        "[{a}] = b": "let a; ([{a}] = b);"
-        "[[a]] = b": "let a; ([[a]] = b);"
+        "[{a}] = b":    "let a; ([{a}] = b);"
+        "[[a]] = b":    "let a; ([[a]] = b);"
 
       object:
-        "{c:{a}} = b": "let a; ({c: {a}} = b);"
-        "{c:[a]} = b": "let a; ({c: [a]} = b);"
+        "{c:{a}} = b":  "let a; ({c: {a}} = b);"
+        "{c:[a]} = b":  "let a; ({c: [a]} = b);"
+
+      illegal:
+        "{[a]} = b":    null
+        "{{a}} = b":    null
 
     inLists:
       """

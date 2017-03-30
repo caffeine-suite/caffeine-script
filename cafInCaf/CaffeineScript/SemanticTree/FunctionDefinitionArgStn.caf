@@ -10,14 +10,14 @@ class FunctionDefinitionArgStn extends &BaseStn
 
     @assignThisProperty = props.assignThisProperty
     @rest = props.rest
-    @identifier = children[0]
+    @target = @labeledChildren.target || children[0]
     @defaultValue = children[1]
 
   @getter
-    argumentName: -> @identifier.name
+    argumentName: -> @target.name
 
   getFunctionPreBodyStatementsJs: ->
-    "this.#{@identifier.toJs()} = #{@identifier.toJs()}" if @assignThisProperty
+    "this.#{@target.toJs()} = #{@target.toJs()}" if @assignThisProperty
 
   toJs: ->
-    "#{if @rest then '...' else ''}#{@identifier.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"
+    "#{if @rest then '...' else ''}#{@target.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"

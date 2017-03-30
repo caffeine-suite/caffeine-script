@@ -179,12 +179,19 @@ Caf.defMod(module, () => {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
           this.scope.addChildScope(this);
-          Caf.e(this.children, undefined, (child, k, into) => {
+          Caf.e(this.getChildrenToUpdateScope(), undefined, (
+            child,
+            k,
+            into
+          ) => {
             child.updateScope(this);
           });
           return this._scopeUpdated = true;
         };
         this.getter({
+          childrenToUpdateScope: function() {
+            return this.children;
+          },
           argumentNames: function() {
             return [];
           },

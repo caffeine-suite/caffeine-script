@@ -42,6 +42,9 @@ Caf.defMod(module, () => {
           let cafBase;
           return Caf.exists(cafBase = this.arguments) &&
             cafBase.argumentNames || [];
+        },
+        childrenToUpdateScope: function() {
+          return compactFlatten([this.statements]);
         }
       });
       this.prototype.transform = function() {
