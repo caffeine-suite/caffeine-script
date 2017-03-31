@@ -1,7 +1,7 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 # Programming with Caffeine
 
-CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
+CaffeineScript is designed to make programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
 
 ### [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki)
 
