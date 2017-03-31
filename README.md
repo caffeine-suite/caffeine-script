@@ -1,3 +1,4 @@
+![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 # Programming with Caffeine
 
 CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
@@ -24,9 +25,9 @@ The meta-nature of programming means any improvement in productivity creates a v
 
 Design matters.
 
-An unparalleled opportunity is in front of us. Apple has finally convinced the world that end-user apps and devices need to be obsessively designed. However, the tools we use to write those apps are anything but well designed, even Apple's. By applying good design to programming languages and tools we stand to reap massive rewards.
+We have an unparalleled opportunity. Apple has finally convinced the world that end-user apps and devices need to be obsessively designed. However, the tools we use to write those apps are anything but well designed, even Apple's. By applying good design to programming we stand to reap massive rewards.
 
-Design thinking is ultimately about productivity. It's about designing a tool to get the job done in the most efficient way possible over all possible metrics. That includes mental effort and physical effort, but it also includes emotional effort and other esthetics.
+Design thinking is ultimately about productivity. It's about designing a tool to get the job done in the most efficient way possible over all possible metrics. That includes mental effort and physical effort, but it also includes emotional effort and  aesthetics.
 
 I believe programming languages and tools should be beautifully designed. The most productive tools are also the most beautiful ones largely because of the concept of 'flow.' Flow is the most productive state-of-mind for programming, but any little thing can trip us out of out. That is why beautiful design matters. A beautifully designed product empowers us to enter and maintain a state of flow and maximize our productivity.
 
