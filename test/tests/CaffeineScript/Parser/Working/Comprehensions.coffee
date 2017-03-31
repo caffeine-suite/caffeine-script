@@ -6,173 +6,175 @@
 
 module.exports = suite: parseTestSuite
 
-    iterationTypes:
-      "array b":        "Caf.e(b, [], (v, k, into) => {into.push(v);});"
-      "object b":       "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
-      "each b":         "Caf.e(b, undefined, (v, k, into) => {v;});"
-      "find b":         "Caf.ee(b, undefined, (v, k, into, brk) => {return v && (brk(), v);});"
+  iterationTypes:
+    "array b":        "Caf.e(b, [], (v, k, into) => {into.push(v);});"
+    "object b":       "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
+    "each b":         "Caf.e(b, undefined, (v, k, into) => {v;});"
+    "find b":         "Caf.ee(b, undefined, (v, k, into, brk) => {return v && (brk(), v);});"
 
-    multipleArgs:
+  multipleArgs:
+    """
+    object myV, myK from mySource
+      myV
+    """: "Caf.e(mySource, {}, (myV, myK, into) => {into[myK] = myV;});"
+
+    """
+    direction = array v, i in precidence
+      i
+    """: "let direction; direction = Caf.e(precidence, [], (v, i, into) => {into.push(i);});"
+
+  syntaxVariants:
+    implicitWith:
+      "object b":         "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
+      "object from b":    "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
+      "object v from b":  "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
+
+    with:
+      "object v from mySource\n  v":    "Caf.e(mySource, {}, (v, k, into) => {into[k] = v;});"
+      "object v from mySource with v":  "Caf.e(mySource, {}, (v, k, into) => {into[k] = v;});"
+
+      "object mySource\n true":         "Caf.e(mySource, {}, (v, k, into) => {into[k] = true;});"
+      "object mySource with true":      "Caf.e(mySource, {}, (v, k, into) => {into[k] = true;});"
+
+
+    when:
+      "object a from b when a":        "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
+      "object a from b when a with a": "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
+
       """
-      object myV, myK from mySource
-        myV
-      """: "Caf.e(mySource, {}, (myV, myK, into) => {into[myK] = myV;});"
+      object a from b when a
+        a
+      """: "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
 
-      """
-      direction = array v, i in precidence
-        i
-      """: "let direction; direction = Caf.e(precidence, [], (v, i, into) => {into.push(i);});"
+  multilineWith:
+    """
+    array v in a
+      foo
+      v
+    """:
+      "Caf.e(a, [],
+      (v, k, into) => {foo;
+      into.push(v);});"
 
-    syntaxVariants:
-      implicitWith:
-        "object b":         "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
-        "object from b":    "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
-        "object v from b":  "Caf.e(b, {}, (v, k, into) => {into[k] = v;});"
+    """
+    array v in a
+      foo
+      bar
+      v
+    """:
+      "Caf.e(a, [],
+      (v, k, into) => {foo; bar;
+      into.push(v);});"
 
-      with:
-        "object v from mySource\n  v":    "Caf.e(mySource, {}, (v, k, into) => {into[k] = v;});"
-        "object v from mySource with v":  "Caf.e(mySource, {}, (v, k, into) => {into[k] = v;});"
+    """
+    find a
+      b
+      c
+    """: "
+      Caf.ee(a, undefined, (v, k, into, brk) =>
+      {let cafRet; b; return (cafRet = c) && (brk(), cafRet);});"
 
-        "object mySource\n true":         "Caf.e(mySource, {}, (v, k, into) => {into[k] = true;});"
-        "object mySource with true":      "Caf.e(mySource, {}, (v, k, into) => {into[k] = true;});"
+  regressions:
+    """
+    object obj
+      # an intended comment
+    """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
 
+    """
+    object obj
+    """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
 
-      when:
-        "object a from b when a":        "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
-        "object a from b when a with a": "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
+    "object k from b": "Caf.e(b, {}, (k, _k, into) => {into[_k] = k;});"
+
+  nested:
+    """
+    array a
+      array b
+    """: "Caf.e(a,
+      [],
+      (v, k, into) =>
+      {into.push(Caf.e(b,
+      [],
+      (v, k, into) =>
+      {into.push(v);}));});"
+
+  scope:
+    enclosingScope:
+      "assigning to existing variable":
 
         """
-        object a from b when a
-          a
-        """: "Caf.e(b, {}, (a, k, into) => {if (a) {into[k] = a;};});"
+        a = 10
+        object a from b with a
+        """: "let a; a = 10; Caf.e(b, {}, (a, k, into) => {into[k] = a;});"
 
-    multilineWith:
-      """
-      array v in a
-        foo
-        v
-      """:
-        "Caf.e(a, [],
-        (v, k, into) => {foo;
-        into.push(v);});"
+    assigningToLoopVariables:
+      "in when using default with":
 
-      """
-      array v in a
-        foo
-        bar
-        v
-      """:
-        "Caf.e(a, [],
-        (v, k, into) => {foo; bar;
-        into.push(v);});"
+        """
+        object a from b when a = a.foo
+        """: "Caf.e(b, {}, (a, k, into) => {if (a = a.foo) {into[k] = a;};});"
 
-      """
-      find a
-        b
-        c
-      """: "
-        Caf.ee(a, undefined, (v, k, into, brk) =>
-        {let cafRet; b; return (cafRet = c) && (brk(), cafRet);});"
+      "in when using explicit with":
 
-    regressions:
-      """
-      object obj
-        # an intended comment
-      """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
+        """
+        object a from b when a = a.foo with a + 1
+        """: "Caf.e(b, {}, (a, k, into) => {if (a = a.foo) {into[k] = a + 1;};});"
 
-      """
-      object obj
-      """: "Caf.e(obj, {}, (v, k, into) => {into[k] = v;});"
+    definingNewVariables:
+      "in with":
+        """
+        object a from b with foo = a
+        """: "Caf.e(b, {}, (a, k, into) => {let foo; into[k] = foo = a;});"
 
-    nested:
-      """
-      array a
-        array b
-      """: "Caf.e(a,
-        [],
-        (v, k, into) =>
-        {into.push(Caf.e(b,
-        [],
-        (v, k, into) =>
-        {into.push(v);}));});"
+      "in when":
+        """
+        object a from b when foo = a
+        """: "Caf.e(b, {}, (a, k, into) => {let foo; if (foo = a) {into[k] = a;};});"
 
-    scope:
-      enclosingScope:
-        "assigning to existing variable":
+      "in both":
+        """
+        object a from b when foo = a with foo = foo + 1
+        """: "Caf.e(b, {}, (a, k, into) => {let foo; if (foo = a) {into[k] = foo = foo + 1;};});"
 
-          """
-          a = 10
-          object a from b with a
-          """: "let a; a = 10; Caf.e(b, {}, (a, k, into) => {into[k] = a;});"
+    usingExternalVariables:
+      "in with":
+        """
+        foo = 1
+        object a from b with foo = a
+        """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {into[k] = foo = a;});"
 
-      assigningToLoopVariables:
-        "in when using default with":
+      "in when":
+        """
+        foo = 1
+        object a from b when foo = a
+        """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {if (foo = a) {into[k] = a;};});"
 
-          """
-          object a from b when a = a.foo
-          """: "Caf.e(b, {}, (a, k, into) => {if (a = a.foo) {into[k] = a;};});"
+      "in both":
+        """
+        foo = 1
+        object a from b when foo = a with foo = foo + 1
+        """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {if (foo = a) {into[k] = foo = foo + 1;};});"
 
-        "in when using explicit with":
+  into:
+    "object a into b": "Caf.e(a, b, (v, k, into) => {into[k] = v;});"
 
-          """
-          object a from b when a = a.foo with a + 1
-          """: "Caf.e(b, {}, (a, k, into) => {if (a = a.foo) {into[k] = a + 1;};});"
+  find:
+    "find a from b when a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
+    "find a from b with a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {let cafRet; return (cafRet = a > 10) && (brk(), cafRet);});"
+    "find a from b when a > 10 with 123": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), 123);});"
 
-      definingNewVariables:
-        "in with":
-          """
-          object a from b with foo = a
-          """: "Caf.e(b, {}, (a, k, into) => {let foo; into[k] = foo = a;});"
+  alternativeKeywords:
+    returning:
+      "each a in b into      out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
+      "each a in b returning out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
+    in:
+      "find a from b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
+      "find a in   b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
+    do:
+      "object a from b with a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
+      "object a from b do   a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
 
-        "in when":
-          """
-          object a from b when foo = a
-          """: "Caf.e(b, {}, (a, k, into) => {let foo; if (foo = a) {into[k] = a;};});"
-
-        "in both":
-          """
-          object a from b when foo = a with foo = foo + 1
-          """: "Caf.e(b, {}, (a, k, into) => {let foo; if (foo = a) {into[k] = foo = foo + 1;};});"
-
-      usingExternalVariables:
-        "in with":
-          """
-          foo = 1
-          object a from b with foo = a
-          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {into[k] = foo = a;});"
-
-        "in when":
-          """
-          foo = 1
-          object a from b when foo = a
-          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {if (foo = a) {into[k] = a;};});"
-
-        "in both":
-          """
-          foo = 1
-          object a from b when foo = a with foo = foo + 1
-          """: "let foo; foo = 1; Caf.e(b, {}, (a, k, into) => {if (foo = a) {into[k] = foo = foo + 1;};});"
-
-    into:
-      "object a into b": "Caf.e(a, b, (v, k, into) => {into[k] = v;});"
-
-    find:
-      "find a from b when a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
-      "find a from b with a > 10": "Caf.ee(b, undefined, (a, k, into, brk) => {let cafRet; return (cafRet = a > 10) && (brk(), cafRet);});"
-      "find a from b when a > 10 with 123": "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), 123);});"
-
-    alternativeKeywords:
-      returning:
-        "each a in b into      out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
-        "each a in b returning out = [1] with pushUnique out, a": "let out; Caf.e(b, out = [1], (a, k, into) => {pushUnique(out, a);});"
-      in:
-        "find a from b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
-        "find a in   b when a > 10":  "Caf.ee(b, undefined, (a, k, into, brk) => {return a > 10 && (brk(), a);});"
-      do:
-        "object a from b with a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
-        "object a from b do   a + 1": "Caf.e(b, {}, (a, k, into) => {into[k] = a + 1;});"
-
-    expression: "c = array b": "let c; c = Caf.e(b, [], (v, k, into) => {into.push(v);});"
+  expression: "c = array b": "let c; c = Caf.e(b, [], (v, k, into) => {into.push(v);});"
 
   ###
   # TODO
