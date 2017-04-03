@@ -10,41 +10,72 @@ scope: source.caffeine
 contexts:
   main:
 
+    # function invocation
+    - match: '\. *(?!\d)[\w\u007f-\uffff]+ +(?=[^\n,])'
+      scope: variable.function
+
+    # regexp
     - match: '/([^\\/]|\\.)+/[igmuy]*'
       scope: string.regexp.caffeine
 
+    # macro
     - match: '<[\w\u007f-\uffff]+>'
       scope: keyword.macro.compileTime.caffeine
 
+    # comment
     - match: '(?:^( *))##'
       push: block_comment
 
+    # block-string
     - match: '(?:^( *))"""? *\n'
       scope: string.quoted.double.caffeine
       push: block_string
 
+    # to-eol-string
     - match: '""'
       scope: string.quoted.double.caffeine
       push: to_eol_string
 
-    - match: '^[|]'
+    # CaffeineMC block
+    - match: '^\|'
       push: caffeine_mc_block
 
-    # object-literal property names:
-    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+\:'
+    # object-literal function names:
+    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?=(\:| *=)[ \n]*[^\n]*\) *[-~=]>)'
       scope: entity.name.function.caffeine
+
+    # object-literal property names:
+    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?=\:)'
+      scope: variable.other.member
+
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(null|super|extract|instanceof|return|break|into|returning|try|catch|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|in|from|with|do|case|when|import)\b'
+      scope: keyword.caffeine
+
+    - match: '\b(false|true)\b'
+      scope: constant.language.boolean.caffeine
+
+    # identifier
+    - match: '(?!\d)[\w\u007f-\uffff]+'
+      scope: entity.identifier.caffeine
 
     # Numbers
     - match: '([-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\w\u007f-\uffff])(?!\.[0-9])'
       scope: constant.numeric.caffeine
 
-    # Strings
+    # word-string
     - match: ':[^\n\s,]+'
       scope: string.quoted.double.caffeine
 
+    # hash-string
     - match: '#[$\w\u007f-\uffff]+'
       scope: string.quoted.double.caffeine
 
+    # number
     - match : '[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+'
       scope: string.quoted.double.caffeine
 
@@ -61,9 +92,6 @@ contexts:
 
     - match: '\@(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)?'
       scope: variable.other.readwrite.instance.caffeine
-
-    - match: '\b(false|true)\b'
-      scope: constant.language.boolean.caffeine
 
 
     # Comments begin with a '#' and finish at the end of the line
@@ -84,14 +112,6 @@ contexts:
       push: single_quoted_string
 
     - match: '\.[_a-zA-Z0-9]'
-
-    # Keywords are if, else for and while.
-    # Note that blackslashes don't need to be escaped within single quoted
-    # strings in YAML. When using single quoted strings, only single quotes
-    # need to be escaped: this is done by using two single quotes next to each
-    # other.
-    - match: '\b(null|super|instanceof|return|break|into|returning|try|catch|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|in|from|with|do|case|when|import)\b'
-      scope: keyword.caffeine
 
     - match: '[.,\[\]\(\)]'
       scope: comment.line_comment
