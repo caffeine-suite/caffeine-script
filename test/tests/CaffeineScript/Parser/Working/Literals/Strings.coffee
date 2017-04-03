@@ -81,6 +81,12 @@ module.exports = suite: parseTestSuite
       ":80%":       '"80%";'
       ':http://cafscript.com': '"http://cafscript.com";'
 
+    regression:
+      'if currentUsersMessage then "right" else "left"':  'if (currentUsersMessage) {"right";} else {"left";};'
+      'if currentUsersMessage then "right" else :left':   'if (currentUsersMessage) {"right";} else {"left";};'
+      'if currentUsersMessage then "right" else (:left)': 'if (currentUsersMessage) {"right";} else {"left";};'
+      'if currentUsersMessage then :right else :left':    'if (currentUsersMessage) {"right";} else {"left";};'
+
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays":
         "''  0, '', 2":   '["", 0, "", 2];'
