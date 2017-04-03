@@ -17,9 +17,9 @@ Next: [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Star
 
 ### [Productivity is *Everything*](https://github.com/shanebdavis/caffeine-script/wiki/Programmer-Productivity)
 
-I believe productivity matters more than anything else in programming. Programming is the most powerful tool ever invented. It is the only true meta-tool. It is a tool that allows you to create *any other tool*. With any [Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness) programming-language, you can create any possible program including *any other programming language*, Turing-complete or not. 
+I believe productivity matters more than anything else in programming. Programming is the most powerful tool ever invented. It is the only true meta-tool. It is a tool that allows you to create *any other tool*. With any [Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness) programming-language, you can create any possible program including *any other programming language*, Turing-complete or not.
 
-The meta-nature of programming means any improvement in productivity creates a virtuous feedback loop. When you can write programs faster, you can write tools faster that in turn help you be even more productive. In other words, productivity improvements are exponential. 
+The meta-nature of programming means any improvement in productivity creates a virtuous feedback loop. When you can write programs faster, you can write tools faster that in turn help you be even more productive. In other words, productivity improvements are exponential.
 
 ### [Good Design and Programming Languages](https://github.com/shanebdavis/caffeine-script/wiki/Good-Design-and-Programming-Languages)
 
@@ -37,7 +37,7 @@ I believe programming languages and tools should be beautifully designed. The mo
 
 If you are visual, value reduced syntax and are looking for every productivity advantage, CaffeineScript may be for you.
 
-CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low-level. It is effectively the assembly-language of the web. It is excessively verbose and has many ways to shoot yourself in the foot. No-one should have to hand-code assembly-language. Coding in any assembly-language is error-prone and tedious. There is no reason to limit ourselves to only what our assembly language can express. 
+CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a powerful language, it is also low-level. It is effectively the assembly-language of the web. It is excessively verbose and has many ways to shoot yourself in the foot. No-one should have to hand-code assembly-language. Coding in any assembly-language is error-prone and tedious. There is no reason to limit ourselves to only what our assembly language can express.
 
 ### Key Benefits
 
@@ -52,13 +52,13 @@ CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a 
 * 90%+ reduction in [CommonJS-specific code](https://github.com/shanebdavis/caffeine-script/wiki/Modules-and-CommonJs) so you can take maximum advantage of modules and NPMs.
 * CaffeineScript, the language itself, is extensible on a per-file or per-project basis with the help of [CaffeineMC](https://github.com/shanebdavis/caffeine-mc).
 
-### Status: Alpha
+### Status: BETA
 
 CaffeineScript is working and usable. The semantics are still shifting as I implement the remaining, planned v1 features.
 
 ### Why Use CaffeineScript?
 
-It maximizes your productivity, blah, blah. But does it really? (yes, I think so) 
+It maximizes your productivity, blah, blah. But does it really? (yes, I think so)
 
 Who cares! It's lean, agile and fun! And you can do cool things like this:
 
@@ -88,7 +88,7 @@ let {
   Element,
   TextElement,
   TextInput
-} = require('art-suite'); 
+} = require('art-suite');
 
 module.exports = class Login extends Component {
   render() {
@@ -130,17 +130,17 @@ module.exports = class Login extends Component {
 
 ```coffeescript
 # CaffeineScript - 15 tokens
-nameToColor: 
+nameToColor:
   red:   #f00
   green: #0f0
 
-colorToName: 
+colorToName:
   #f00:  :red
   #0f0:  :green
 
 style:
   fontSize: 12pt
-  padding:  25px 
+  padding:  25px
 ```
 
 ```JavaScript
@@ -156,7 +156,7 @@ style:
 
 ```coffeescript
 # CaffeineScript - 25 tokens
-users = 
+users =
   id: 123, username: :shanebdavis, age: 41, fullName: "" Shane Brinkman-Davis Delamore
   id: 456, username: :george123,   age: 23, fullName: "" George Washington
 ```
