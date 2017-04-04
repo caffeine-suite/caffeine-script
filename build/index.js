@@ -1159,11 +1159,11 @@ Caf.defMod(module, () => {
 
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2), Error, op, p, arrayWithout;
-  ({ Error, op, p, arrayWithout } = Caf.i(
-    ["Error", "op", "p", "arrayWithout"],
-    [StandardImport, global]
-  ));
+  let StandardImport = __webpack_require__(2), Error, p, arrayWithout;
+  ({ Error, p, arrayWithout } = Caf.i(["Error", "p", "arrayWithout"], [
+    StandardImport,
+    global
+  ]));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(
     OperatorHelper,
     classSuper,
@@ -1275,7 +1275,7 @@ Caf.defMod(module, () => {
       return this.leftAssociativityByPrecidence[p];
     };
     this.operatorIsInfixJs = operator => {
-      return !this.operatorMap[op];
+      return !this.operatorMap[operator];
     };
     this.resolveOperatorPrecidence = (
       operators,
@@ -1288,6 +1288,7 @@ Caf.defMod(module, () => {
         opIndexToResolve,
         opsBefore,
         operandsBefore,
+        op,
         operandA,
         operandB,
         combiner;
@@ -5583,7 +5584,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.35.1"
+	"version": "0.35.2"
 };
 
 /***/ }),
