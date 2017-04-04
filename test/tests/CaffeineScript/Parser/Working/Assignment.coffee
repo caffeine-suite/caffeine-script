@@ -120,7 +120,7 @@ module.exports = suite: parseTestSuite
     basic:
       "a &&= b":  "let a; a && (a = b);"
       "a ||= b":  "let a; a || (a = b);"
-      "a ?= b":   "let a; a != null ? a : (a = b);"
+      "a ?= b":   "let a; a != null ? a : a = b;" # it is legal JS to have an unparenethsised assignement in a ?:.
 
     complexBase:
       "a.c ||= d":    "a.c || (a.c = d);"

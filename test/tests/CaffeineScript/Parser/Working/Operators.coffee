@@ -49,6 +49,10 @@ module.exports = suite: parseTestSuite
       "(1 + 2) * 3":  "(1 + 2) * 3;";
       "1 * (2  + 3)": "1 * (2 + 3);";
 
+    regressions:
+      "(a-1)/a": "(a - 1) / a;"
+      "((a-1)/a)**100": "Caf.pow((a - 1) / a, 100);"
+
     signedNumberConstantInterference:
       parseAsBinop:
         "1+2":        "1 + 2;"

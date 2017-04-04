@@ -1,10 +1,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("./StandardImport"), Error, op, p, arrayWithout;
-  ({ Error, op, p, arrayWithout } = Caf.i(
-    ["Error", "op", "p", "arrayWithout"],
-    [StandardImport, global]
-  ));
+  let StandardImport = require("./StandardImport"), Error, p, arrayWithout;
+  ({ Error, p, arrayWithout } = Caf.i(["Error", "p", "arrayWithout"], [
+    StandardImport,
+    global
+  ]));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(
     OperatorHelper,
     classSuper,
@@ -116,7 +116,7 @@ Caf.defMod(module, () => {
       return this.leftAssociativityByPrecidence[p];
     };
     this.operatorIsInfixJs = operator => {
-      return !this.operatorMap[op];
+      return !this.operatorMap[operator];
     };
     this.resolveOperatorPrecidence = (
       operators,
@@ -129,6 +129,7 @@ Caf.defMod(module, () => {
         opIndexToResolve,
         opsBefore,
         operandsBefore,
+        op,
         operandA,
         operandB,
         combiner;

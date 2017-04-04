@@ -60,7 +60,7 @@ class OperatorHelper
 
   @getPrecidenceLevelIsLeftAssociative: (p) => @leftAssociativityByPrecidence[p]
 
-  @operatorIsInfixJs: (operator) => !@operatorMap[op]
+  @operatorIsInfixJs: (operator) => !@operatorMap[operator]
 
   @resolveOperatorPrecidence: (operators, operands, combinerOverride) =>
     throw new Error "expecting: operands.length:#{operands.length} == operators.length:#{operators.length} + 1" unless operands.length == operators.length + 1
