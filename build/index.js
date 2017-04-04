@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 94);
+/******/ 	return __webpack_require__(__webpack_require__.s = 93);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -108,7 +108,7 @@ module.exports = function(module) {
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ArtStandardLib = __webpack_require__(33),
-    ArtClassSystem = __webpack_require__(88);
+    ArtClassSystem = __webpack_require__(87);
   return ArtStandardLib.merge(ArtStandardLib, ArtClassSystem);
 });
 
@@ -122,7 +122,7 @@ Caf.defMod(module, () => {
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     createObjectTreeFactory,
-    ArtObjectTreeFactory = __webpack_require__(89),
+    ArtObjectTreeFactory = __webpack_require__(88),
     BaseClass,
     log,
     Object,
@@ -715,12 +715,19 @@ Caf.defMod(module, () => {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
           this.scope.addChildScope(this);
-          Caf.e(this.children, undefined, (child, k, into) => {
+          Caf.e(this.getChildrenToUpdateScope(), undefined, (
+            child,
+            k,
+            into
+          ) => {
             child.updateScope(this);
           });
           return this._scopeUpdated = true;
         };
         this.getter({
+          childrenToUpdateScope: function() {
+            return this.children;
+          },
           argumentNames: function() {
             return [];
           },
@@ -1527,7 +1534,7 @@ var CaffeineScript, Neptune,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-Neptune = __webpack_require__(92);
+Neptune = __webpack_require__(91);
 
 module.exports = Neptune.CaffeineScript || Neptune.addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
@@ -1854,7 +1861,7 @@ Caf.defMod(module, () => {
         super(...arguments);
         this.assignThisProperty = props.assignThisProperty;
         this.rest = props.rest;
-        this.identifier = children[0];
+        this.target = this.labeledChildren.target || children[0];
         this.defaultValue = children[1];
       }
     },
@@ -1862,19 +1869,19 @@ Caf.defMod(module, () => {
       this.prototype.needsParens = false;
       this.getter({
         argumentName: function() {
-          return this.identifier.name;
+          return this.target.name;
         }
       });
       this.prototype.getFunctionPreBodyStatementsJs = function() {
         return this.assignThisProperty
-          ? `this.${Caf.toString(this.identifier.toJs())} = ${Caf.toString(
-              this.identifier.toJs()
+          ? `this.${Caf.toString(this.target.toJs())} = ${Caf.toString(
+              this.target.toJs()
             )}`
           : undefined;
       };
       this.prototype.toJs = function() {
         return `${Caf.toString(this.rest ? "..." : "")}${Caf.toString(
-          this.identifier.toJs()
+          this.target.toJs()
         )}${Caf.toString(
           this.defaultValue
             ? ` = ${Caf.toString(this.defaultValue.toJs())}`
@@ -1935,6 +1942,9 @@ Caf.defMod(module, () => {
           let cafBase;
           return Caf.exists(cafBase = this.arguments) &&
             cafBase.argumentNames || [];
+        },
+        childrenToUpdateScope: function() {
+          return compactFlatten([this.statements]);
         }
       });
       this.prototype.transform = function() {
@@ -2389,7 +2399,17 @@ module.exports = require("art-standard-lib");
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(86);
+module.exports = __webpack_require__(17).includeInNamespace(__webpack_require__(35)).addModules({
+  CaffeineScriptParser: __webpack_require__(19),
+  CafParseNodeBaseClass: __webpack_require__(18),
+  Lib: __webpack_require__(7),
+  OperatorHelper: __webpack_require__(13),
+  StandardImport: __webpack_require__(2)
+});
+
+__webpack_require__(32);
+
+__webpack_require__(5);
 
 
 /***/ }),
@@ -2401,7 +2421,7 @@ Caf.defMod(module, () => {
   let ArtStandardLib = __webpack_require__(33), log;
   ({ log } = Caf.i(["log"], [ArtStandardLib, global]));
   return {
-    version: __webpack_require__(87).version,
+    version: __webpack_require__(86).version,
     compile: function(source, options = {}) {
       let parseTree,
         CaffeineScriptParser = __webpack_require__(19),
@@ -2623,7 +2643,7 @@ Caf.defMod(module, () => {
         controlStatement: [
           "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block             elseBody:elseClause?",
           "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?            elseBody:elseClause",
-          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:complexExpression elseBody:elseClause?"
+          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:implicitArrayOrExpression elseBody:elseClause?"
         ]
       },
       {
@@ -2640,7 +2660,7 @@ Caf.defMod(module, () => {
     this.rule(
       {
         controlStatement: [
-          "/try/ _ body:complexExpression _? optionalCatch:catchClause?",
+          "/try/ _ body:implicitArrayOrExpression _? optionalCatch:catchClause?",
           "/try/ body:block optionalCatch:catchClause?"
         ]
       },
@@ -2683,7 +2703,7 @@ Caf.defMod(module, () => {
       {
         switchWhenClause: [
           "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
-          "end? when _ whenValue:complexExpression thenDo:thenClause"
+          "end? when _ whenValue:implicitArrayOrExpression thenDo:thenClause"
         ]
       },
       { stnFactory: "SwitchWhenStn" }
@@ -2694,7 +2714,7 @@ Caf.defMod(module, () => {
       when: /when/,
       elseClause: [
         "controlStructorClauseJoiner /else/ block",
-        "controlStructorClauseJoiner /else/ _ complexExpression"
+        "controlStructorClauseJoiner /else/ _ implicitArrayOrExpression"
       ],
       controlStructorClauseJoiner: ["/ +/", "end"]
     });
@@ -2760,14 +2780,14 @@ Caf.defMod(module, () => {
     this.rule(
       {
         arrayDestructuringIdentifier: [
-          { pattern: "identifier _? etc" },
+          { pattern: "identifier _? ellipsis" },
           { pattern: "identifier destructuringDefault:destructuringDefault?" }
         ]
       },
       {
         stnFactory: "DestructuringIdentifierStn",
         stnProps: function() {
-          return { etc: !!this.etc };
+          return { ellipsis: !!this.ellipsis };
         }
       }
     );
@@ -2807,7 +2827,7 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({
       lineStartExpression: "multilineImplicitObject",
-      complexExpression: [
+      implicitArrayOrExpression: [
         { pattern: "implicitArray" },
         { pattern: "expression" }
       ],
@@ -2863,7 +2883,7 @@ Caf.defMod(module, () => {
                 endOffset
               ), parentNode.subparse(expressionSource, {
                 allowPartialMatch: true,
-                rule: "complexExpression",
+                rule: "implicitArrayOrExpression",
                 originalOffset: originalOffset,
                 originalMatchLength: endOffset - originalOffset
               }))
@@ -2954,31 +2974,35 @@ Caf.defMod(module, () => {
       stnFactory: "FunctionDefinitionArgsStn"
     });
     this.rule({
-      argDefList: [
-        "argDef _comma_ argDefList",
-        "argDef _ argDefList",
-        "argDef"
-      ],
-      argDef: {
-        pattern: "at:/@/? identifier argIdentifierExtension?",
+      argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
+    });
+    this.rule(
+      {
+        argDef: [
+          "at:/@/? target:identifier argIdentifierExtension?",
+          "target:destructuringTarget argIdentifierExtension?"
+        ]
+      },
+      {
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
           let cafBase;
           return {
             rest: !!(Caf.exists(cafBase = this.argIdentifierExtension) &&
-              cafBase.etc),
+              cafBase.ellipsis),
             assignThisProperty: !!this.at
           };
         }
-      },
-      argIdentifierExtension: ["defaultValue", "etc"],
+      }
+    );
+    this.rule({
+      argIdentifierExtension: ["defaultValue", "ellipsis"],
       defaultValue: { pattern: "_equals_ expression" }
     });
-    this.rule({ etc: "'...'" });
     this.rule({
       superFunctionInvocation: [
         "openParen_ valueList? _closeParen",
-        "_? complexExpression",
+        "_? implicitArrayOrExpression",
         "_? valueListBlock"
       ]
     });
@@ -2986,7 +3010,7 @@ Caf.defMod(module, () => {
       {
         functionInvocation: [
           "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:complexExpression",
+          "existanceTest:questionMark? !/[-+]/ _? values:valueList",
           "existanceTest:questionMark? _? values:valueListBlock"
         ]
       },
@@ -3063,18 +3087,25 @@ Caf.defMod(module, () => {
       valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
         { rule: "valueListBlockSubParse" }
       ),
-      valueListBlockSubParse: "end* statement*"
+      valueListBlockSubParse: "end* listItemStatement*"
     });
     this.rule({
       valueList: [
-        { pattern: "element:arrayValue _comma_ valueList" },
+        { pattern: "element:listItemExpression _comma_ valueList" },
         { pattern: "element:literal _ valueList" },
-        { pattern: "element:arrayValue" }
+        { pattern: "element:listItemExpression" }
       ]
     });
     return this.rule({
-      arrayValue: [
-        { pattern: "identifier etc", stnFactory: "ArraySpreadElementStn" },
+      listItemStatement: [
+        {
+          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
+          stnFactory: "ArraySpreadElementStn"
+        },
+        { pattern: "statementWithoutEnd newLineStatementExtension* end" }
+      ],
+      listItemExpression: [
+        { pattern: "expression ellipsis", stnFactory: "ArraySpreadElementStn" },
         { pattern: "expression" }
       ]
     });
@@ -3148,7 +3179,7 @@ Caf.defMod(module, () => {
         literalProp: "propName _colon_ propValue:literal",
         valueProp: "propName _colon_ propValue:expression",
         valuePropWithComplexExpression: [
-          "propName _colon_ propValue:complexExpression",
+          "propName _colon_ propValue:implicitArrayOrExpression",
           "propName _colon_ propValue:propertyValueBlock"
         ]
       },
@@ -3595,15 +3626,15 @@ Caf.defMod(module, () => {
       "importStatement"
     ],
     tailControlOperator: /\ +(if|while|until|unless) +/,
-    tailControlOperatorComplexExpression: "tailControlOperator complexExpression",
+    tailControlOperatorComplexExpression: "tailControlOperator implicitArrayOrExpression",
     statementWithoutEnd: [
       "lineStartExpression",
-      "complexExpression !tailControlOperator",
+      "implicitArrayOrExpression !tailControlOperator",
       {
-        pattern: "complexExpression tailControlOperatorComplexExpression+",
+        pattern: "implicitArrayOrExpression tailControlOperatorComplexExpression+",
         getStn: function() {
           let stn;
-          stn = this.complexExpression.getStn();
+          stn = this.implicitArrayOrExpression.getStn();
           Caf.e(this.tailControlOperatorComplexExpressions, undefined, (
             tco,
             k,
@@ -3611,7 +3642,7 @@ Caf.defMod(module, () => {
           ) => {
             stn = ControlOperatorStn(
               { operand: tco.tailControlOperator.toString().trim() },
-              tco.complexExpression.getStn(),
+              tco.implicitArrayOrExpression.getStn(),
               stn
             );
           });
@@ -3700,6 +3731,7 @@ Caf.defMod(module, () => {
       openCurly_: /\{ */,
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
+      ellipsis: "'...'",
       reservedWord: /(for|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
       identifier: {
         pattern: /(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)/,
@@ -3817,11 +3849,11 @@ Caf.defMod(module, () => {
         stnProps: { passArguments: true }
       }
     });
-    this.rule({ assignedValue: ["complexExpression", "rValueBlock"] });
+    this.rule({ assignedValue: ["implicitArrayOrExpression", "rValueBlock"] });
     this.rule(
       {
         assignmentExtension: [
-          "assignmentOperator:_assignmentOperator_ _end? complexExpression",
+          "assignmentOperator:_assignmentOperator_ _end? implicitArrayOrExpression",
           "assignmentOperator:_assignmentOperator_ rValueBlock"
         ]
       },
@@ -4179,22 +4211,9 @@ Caf.defMod(module, () => {
     arrayWithAllButLast,
     peek,
     Error,
-    compactFlatten,
     UniqueIdentifierHandle;
-  ({
-    arrayWithAllButLast,
-    peek,
-    Error,
-    compactFlatten,
-    UniqueIdentifierHandle
-  } = Caf.i(
-    [
-      "arrayWithAllButLast",
-      "peek",
-      "Error",
-      "compactFlatten",
-      "UniqueIdentifierHandle"
-    ],
+  ({ arrayWithAllButLast, peek, Error, UniqueIdentifierHandle } = Caf.i(
+    ["arrayWithAllButLast", "peek", "Error", "UniqueIdentifierHandle"],
     [StandardImport, global]
   ));
   SemanticTree = __webpack_require__(6);
@@ -4355,31 +4374,27 @@ Caf.defMod(module, () => {
                 case "object":
                   return whenClauseWrapper(
                     StatementsStn(
-                      compactFlatten([
-                        bodyStatementsExceptLast,
-                        AssignmentStn(
-                          AccessorStn(
-                            IdentifierStn({ identifier: intoIdentifer }),
-                            ValueStn(keyVarDef)
-                          ),
-                          lastBodyStatement
-                        )
-                      ])
+                      bodyStatementsExceptLast,
+                      AssignmentStn(
+                        AccessorStn(
+                          IdentifierStn({ identifier: intoIdentifer }),
+                          ValueStn(keyVarDef)
+                        ),
+                        lastBodyStatement
+                      )
                     )
                   );
                 case "array":
                   return whenClauseWrapper(
                     StatementsStn(
-                      compactFlatten([
-                        bodyStatementsExceptLast,
-                        FunctionInvocationStn(
-                          AccessorStn(
-                            IdentifierStn({ identifier: intoIdentifer }),
-                            IdentifierStn({ identifier: "push" })
-                          ),
-                          lastBodyStatement
-                        )
-                      ])
+                      bodyStatementsExceptLast,
+                      FunctionInvocationStn(
+                        AccessorStn(
+                          IdentifierStn({ identifier: intoIdentifer }),
+                          IdentifierStn({ identifier: "push" })
+                        ),
+                        lastBodyStatement
+                      )
                     )
                   );
                 case "each":
@@ -4640,7 +4655,7 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let identifier, destructuringDefault;
         ({ identifier, destructuringDefault } = this.labeledChildren);
-        return `${Caf.toString(this.props.etc ? "..." : "")}${Caf.toString(
+        return `${Caf.toString(this.props.ellipsis ? "..." : "")}${Caf.toString(
           identifier.toJs()
         )}${Caf.toString(
           destructuringDefault
@@ -5036,8 +5051,8 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    Path = __webpack_require__(93),
-    Fs = __webpack_require__(91),
+    Path = __webpack_require__(92),
+    Fs = __webpack_require__(90),
     realRequire,
     findModuleSync,
     BaseStn = __webpack_require__(3),
@@ -5046,7 +5061,7 @@ Caf.defMod(module, () => {
   Path;
   Fs;
   realRequire = eval("require");
-  ({ findModuleSync } = __webpack_require__(90));
+  ({ findModuleSync } = __webpack_require__(89));
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
@@ -5140,16 +5155,18 @@ Caf.defMod(module, () => {
         )};});`;
       };
       this.prototype.toJs = function() {
-        return compactFlatten([
-          this.getAutoLets(),
-          this.statements.toJs()
-        ]).join("; ") + ";";
+        let statements;
+        statements = this.statements.toJs();
+        return compactFlatten([this.getAutoLets(), statements]).join("; ") +
+          ";";
       };
       this.prototype.toBareJs = function() {
+        let statements;
+        statements = this.statements.toJs();
         return compactFlatten([
           "Caf = require('caffeine-script-runtime');",
           this.getBareInitializers(),
-          this.statements.toJs()
+          statements
         ]).join("; ") + ";";
       };
     }
@@ -5532,23 +5549,6 @@ module.exports = CaffeineScript.Rules || CaffeineScript.addNamespace('Rules', Ru
 
 /***/ }),
 /* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(17).includeInNamespace(__webpack_require__(35)).addModules({
-  CaffeineScriptParser: __webpack_require__(19),
-  CafParseNodeBaseClass: __webpack_require__(18),
-  Lib: __webpack_require__(7),
-  OperatorHelper: __webpack_require__(13),
-  StandardImport: __webpack_require__(2)
-});
-
-__webpack_require__(32);
-
-__webpack_require__(5);
-
-
-/***/ }),
-/* 87 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -5583,47 +5583,47 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.33.0"
+	"version": "0.35.0"
 };
 
 /***/ }),
-/* 88 */
+/* 87 */
 /***/ (function(module, exports) {
 
 module.exports = require("art-class-system");
 
 /***/ }),
-/* 89 */
+/* 88 */
 /***/ (function(module, exports) {
 
 module.exports = require("art-object-tree-factory");
 
 /***/ }),
-/* 90 */
+/* 89 */
 /***/ (function(module, exports) {
 
 module.exports = require("caffeine-mc");
 
 /***/ }),
-/* 91 */
+/* 90 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 92 */
+/* 91 */
 /***/ (function(module, exports) {
 
 module.exports = require("neptune-namespaces");
 
 /***/ }),
-/* 93 */
+/* 92 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 94 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(34);
