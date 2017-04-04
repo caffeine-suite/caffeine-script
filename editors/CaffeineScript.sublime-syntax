@@ -45,7 +45,7 @@ contexts:
       scope: entity.name.function.caffeine
 
     # object-literal property names:
-    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?=\:)'
+    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?:\:)'
       scope: variable.other.member
 
     # Keywords are if, else for and while.
