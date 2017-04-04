@@ -7,22 +7,9 @@ Caf.defMod(module, () => {
     arrayWithAllButLast,
     peek,
     Error,
-    compactFlatten,
     UniqueIdentifierHandle;
-  ({
-    arrayWithAllButLast,
-    peek,
-    Error,
-    compactFlatten,
-    UniqueIdentifierHandle
-  } = Caf.i(
-    [
-      "arrayWithAllButLast",
-      "peek",
-      "Error",
-      "compactFlatten",
-      "UniqueIdentifierHandle"
-    ],
+  ({ arrayWithAllButLast, peek, Error, UniqueIdentifierHandle } = Caf.i(
+    ["arrayWithAllButLast", "peek", "Error", "UniqueIdentifierHandle"],
     [StandardImport, global]
   ));
   SemanticTree = require("./namespace");
@@ -183,31 +170,27 @@ Caf.defMod(module, () => {
                 case "object":
                   return whenClauseWrapper(
                     StatementsStn(
-                      compactFlatten([
-                        bodyStatementsExceptLast,
-                        AssignmentStn(
-                          AccessorStn(
-                            IdentifierStn({ identifier: intoIdentifer }),
-                            ValueStn(keyVarDef)
-                          ),
-                          lastBodyStatement
-                        )
-                      ])
+                      bodyStatementsExceptLast,
+                      AssignmentStn(
+                        AccessorStn(
+                          IdentifierStn({ identifier: intoIdentifer }),
+                          ValueStn(keyVarDef)
+                        ),
+                        lastBodyStatement
+                      )
                     )
                   );
                 case "array":
                   return whenClauseWrapper(
                     StatementsStn(
-                      compactFlatten([
-                        bodyStatementsExceptLast,
-                        FunctionInvocationStn(
-                          AccessorStn(
-                            IdentifierStn({ identifier: intoIdentifer }),
-                            IdentifierStn({ identifier: "push" })
-                          ),
-                          lastBodyStatement
-                        )
-                      ])
+                      bodyStatementsExceptLast,
+                      FunctionInvocationStn(
+                        AccessorStn(
+                          IdentifierStn({ identifier: intoIdentifer }),
+                          IdentifierStn({ identifier: "push" })
+                        ),
+                        lastBodyStatement
+                      )
                     )
                   );
                 case "each":

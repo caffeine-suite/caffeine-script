@@ -150,20 +150,22 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
         switch outputType
           when "object"
-            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, AssignmentStn
-              AccessorStn
-                IdentifierStn identifier: intoIdentifer
-                ValueStn keyVarDef
-              lastBodyStatement
-            ]
+            whenClauseWrapper StatementsStn
+              bodyStatementsExceptLast
+              AssignmentStn
+                AccessorStn
+                  IdentifierStn identifier: intoIdentifer
+                  ValueStn keyVarDef
+                lastBodyStatement
 
           when "array"
-            whenClauseWrapper StatementsStn compactFlatten [bodyStatementsExceptLast, FunctionInvocationStn
-              AccessorStn
-                IdentifierStn identifier: intoIdentifer
-                IdentifierStn identifier: "push"
-              lastBodyStatement
-            ]
+            whenClauseWrapper StatementsStn
+              bodyStatementsExceptLast
+              FunctionInvocationStn
+                AccessorStn
+                  IdentifierStn identifier: intoIdentifer
+                  IdentifierStn identifier: "push"
+                lastBodyStatement
 
           when "each"
             whenClauseWrapper bodyWithDefault
