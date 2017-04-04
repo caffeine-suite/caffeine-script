@@ -31,8 +31,8 @@ class BinaryOperatorStn extends &BaseStn
       parentOperatorPrecidence = getOpPrecidence @operator
       binaryOperatorToJs
         @operator
-        @left.toJsExpressionWithParens  {parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: true}
-        @right.toJsExpressionWithParens {parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: false}
+        @left.toJsExpressionWithParens  parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: true
+        @right.toJsExpressionWithParens parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: false
 
   toJsExpressionWithParens: (options) ->
     {parentOperatorPrecidence, isLeftOperand} = options if options
