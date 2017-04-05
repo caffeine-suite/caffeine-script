@@ -7,7 +7,7 @@ Caf.defMod(module, () => {
     upToButNotEol,
     Extensions,
     ArrayStn;
-  ({ Extensions, ArrayStn } = Caf.i(["Extensions", "ArrayStn"], [
+  ({ Extensions, ArrayStn } = Caf.import(["Extensions", "ArrayStn"], [
     StandardImport,
     BabelBridge,
     SemanticTree,

@@ -28,12 +28,17 @@ module.exports = suite: parseTestSuite
     """
     a:
     """: null
-
     # TODO: fail nicer:
     # """
     # a:
     #   # foo
     # """: null
+
+  colonDisambiguation:
+    "a  :1":    'a("1");'
+    "a:  1":    "({a: 1});"
+    "a : 1":    "({a: 1});"
+    "a:\n  1":  "({a: 1});"
 
 
   unusualKeys:

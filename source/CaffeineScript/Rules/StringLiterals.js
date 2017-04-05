@@ -7,7 +7,7 @@ Caf.defMod(module, () => {
     Extensions,
     StringStn,
     InterpolatedStringStn;
-  ({ Extensions, StringStn, InterpolatedStringStn } = Caf.i(
+  ({ Extensions, StringStn, InterpolatedStringStn } = Caf.import(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
     [StandardImport, BabelBridge, SemanticTree, Lib, global]
   ));
@@ -47,7 +47,7 @@ Caf.defMod(module, () => {
           }
         },
         {
-          pattern: /:(?!:)[^\\\n\s,]+/,
+          pattern: /:(?!:)[^\\\n\s,)\]\}]+/,
           getStn: function() {
             return StringStn({ value: this.toString().slice(1) });
           }

@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     SemanticTree = require("../SemanticTree"),
     Extensions,
     ObjectStn;
-  ({ Extensions, ObjectStn } = Caf.i(["Extensions", "ObjectStn"], [
+  ({ Extensions, ObjectStn } = Caf.import(["Extensions", "ObjectStn"], [
     StandardImport,
     BabelBridge,
     SemanticTree,
@@ -31,7 +31,7 @@ Caf.defMod(module, () => {
       {
         getStn: function() {
           let children;
-          children = Caf.e(this.getMatchStns(), [], (m, k, into) => {
+          children = Caf.each(this.getMatchStns(), [], (m, k, into) => {
             into.push(m instanceof ObjectStn.class ? m.children : m);
           });
           return ObjectStn(children);

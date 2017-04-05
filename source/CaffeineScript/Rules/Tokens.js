@@ -3,7 +3,7 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({
       _equals_: /\ *= */,
-      _colon_: /\ *: */,
+      _colon_: /: *| +:( +|(?=\n))/,
       _comma_: /\ *, *\n*/,
       _arrow_: /\ *[-~=]> */,
       openParen_: /\( */,
@@ -14,7 +14,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(for|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
+      reservedWord: /(for|yes|no|on|off|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
       identifier: {
         pattern: /(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)/,
         stnFactory: "IdentifierStn",

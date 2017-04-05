@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
     SemanticTree = require("../SemanticTree"),
     upperCamelCase,
     Error;
-  ({ upperCamelCase, Error } = Caf.i(["upperCamelCase", "Error"], [
+  ({ upperCamelCase, Error } = Caf.import(["upperCamelCase", "Error"], [
     StandardImport,
     global
   ]));

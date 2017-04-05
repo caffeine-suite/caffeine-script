@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
     getNormalizedOperator,
     BinaryOperatorStn,
     UnaryOperatorStn
-  } = Caf.i(
+  } = Caf.import(
     [
       "Error",
       "resolveOperatorPrecidence",
@@ -39,12 +39,16 @@ Caf.defMod(module, () => {
           throw new Error("expecting left");
         }
         return resolveOperatorPrecidence(
-          Caf.e(this.binaryOperatorAndExpressions, [], (opAndExp, k, into) => {
+          Caf.each(this.binaryOperatorAndExpressions, [], (
+            opAndExp,
+            k,
+            into
+          ) => {
             into.push(getNormalizedOperator(opAndExp.binaryOperator));
           }),
           compactFlatten([
             left,
-            Caf.e(this.binaryOperatorAndExpressions, [], (
+            Caf.each(this.binaryOperatorAndExpressions, [], (
               opAndExp,
               k,
               into
@@ -79,10 +83,14 @@ Caf.defMod(module, () => {
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
-        Caf.e(this.unaryTailOperators || [], undefined, (operand, k, into) => {
+        Caf.each(this.unaryTailOperators || [], undefined, (
+          operand,
+          k,
+          into
+        ) => {
           stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
         });
-        Caf.e((this.unaryOperator_s || []).slice().reverse(), undefined, (
+        Caf.each((this.unaryOperator_s || []).slice().reverse(), undefined, (
           operand,
           k,
           into

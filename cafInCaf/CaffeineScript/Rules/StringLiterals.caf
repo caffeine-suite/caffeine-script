@@ -38,7 +38,7 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
           if we should support escapes
           Could be interesting: :foo\sbar could == "foo bar"
       {}
-        pattern: /:(?!:)[^\\\n\s,]+/
+        pattern: /:(?!:)[^\\\n\s,)\]\}]+/
         getStn: ~> StringStn value: @toString().slice 1
 
       ## hashtag-strings

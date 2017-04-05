@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("../SemanticTree"),
     ControlOperatorStn;
-  ({ ControlOperatorStn } = Caf.i(["ControlOperatorStn"], [
+  ({ ControlOperatorStn } = Caf.import(["ControlOperatorStn"], [
     StandardImport,
     BabelBridge,
     SemanticTree,
@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
         getStn: function() {
           let stn;
           stn = this.implicitArrayOrExpression.getStn();
-          Caf.e(this.tailControlOperatorComplexExpressions, undefined, (
+          Caf.each(this.tailControlOperatorComplexExpressions, undefined, (
             tco,
             k,
             into

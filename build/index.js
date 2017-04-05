@@ -3364,11 +3364,10 @@ Caf.defMod(module, () => {
         "brackedArray"
       ]
     });
-    return this.rule(
+    this.rule(
       {
         boolLiteral: ["true", "false"],
         nullLiteral: "/null/",
-        numberLiteral: /([-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\w\u007f-\uffff])(?!\.[0-9])/i,
         true: "/(true|yes|on)(?![a-zA-Z0-9]+)/",
         false: "/(false|no|off)(?![a-zA-Z0-9]+)/"
       },
@@ -3392,6 +3391,17 @@ Caf.defMod(module, () => {
               }
             })()
           };
+        }
+      }
+    );
+    return this.rule(
+      {
+        numberLiteral: /([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\w\u007f-\uffff])(?!\.[0-9])/i
+      },
+      {
+        stnFactory: "SimpleLiteralStn",
+        stnProps: function() {
+          return { value: this.toString().replace(/^0+(\d)/, "$1") };
         }
       }
     );
@@ -5586,7 +5596,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.35.3"
+	"version": "0.35.4"
 };
 
 /***/ }),

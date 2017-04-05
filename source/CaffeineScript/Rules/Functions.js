@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     getPropertySetters,
     Extensions,
     Error;
-  ({ Extensions, Error } = Caf.i(["Extensions", "Error"], [
+  ({ Extensions, Error } = Caf.import(["Extensions", "Error"], [
     StandardImport,
     BabelBridge,
     global
@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
       if (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty()) {
         list.push(prop);
       } else {
-        Caf.e(node.matches, undefined, (match, k, into) => {
+        Caf.each(node.matches, undefined, (match, k, into) => {
           getPropertySetters(match, list);
         });
       }

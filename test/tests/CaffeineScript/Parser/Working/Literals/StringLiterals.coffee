@@ -38,17 +38,17 @@ module.exports = suite: parseTestSuite
       "'a\#{a b}b'":  "`a${Caf.toString(a(b))}b`;"
 
   unquotedStrings:
-    basic:
+    wordStrings:
       ":hi":        '"hi";'
 
-    hashTag:
+    hashStrings:
       "#fff":       '"#fff";'
       "#hashTag":   '"#hashTag";'
 
       # parses as a comment
       "#-":         ';'
 
-    numberWithUnits:
+    _10UnitStrings:
       "0px":          '"0px";'
       "1px":          '"1px";'
       "10px":         '"10px";'
@@ -81,11 +81,16 @@ module.exports = suite: parseTestSuite
       ":80%":       '"80%";'
       ':http://cafscript.com': '"http://cafscript.com";'
 
-    regression:
+    regressions:
       'if currentUsersMessage then "right" else "left"':  'if (currentUsersMessage) {"right";} else {"left";};'
       'if currentUsersMessage then "right" else :left':   'if (currentUsersMessage) {"right";} else {"left";};'
       'if currentUsersMessage then "right" else (:left)': 'if (currentUsersMessage) {"right";} else {"left";};'
       'if currentUsersMessage then :right else :left':    'if (currentUsersMessage) {"right";} else {"left";};'
+
+      "(:a)":           '"a";'
+      "[:a]":           '["a"];'
+      ":<div>":         '"<div>";'
+      "{a: :a}":        '({a: "a"});'
 
   toEolStrings:
     "single quote exempt so it can be used in implicit arrays":

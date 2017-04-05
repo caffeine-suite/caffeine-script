@@ -3,8 +3,8 @@
 
 module.exports = require './namespace'
 .addModules
-  Arrays:  require './Arrays' 
-  Basic:   require './Basic'  
-  Numbers: require './Numbers'
-  Objects: require './Objects'
-  Strings: require './Strings'
+  ArrayLiterals:   require './ArrayLiterals'  
+  KeywordLiterals: require './KeywordLiterals'
+  NumberLiterals:  require './NumberLiterals' 
+  ObjectLiterals:  require './ObjectLiterals' 
+  StringLiterals:  require './StringLiterals' 

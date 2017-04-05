@@ -8,10 +8,11 @@ module.exports = suite:
   keywordValues: ->
     parseTests
       "true": "true;"
-      "yes":  "true;"
-      "on":   "true;"
       "null": "null;"
-
       "false":  "false;"
-      "no":     "false;"
-      "off":    "false;"
+
+      # for simplicity and minimalism, these CoffeeScript keywords are not supported
+      "yes":    null
+      "on":     null
+      "no":     null
+      "off":    null

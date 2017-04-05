@@ -3,7 +3,7 @@ Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     BabelBridge = require("babel-bridge"),
     Extensions;
-  ({ Extensions } = Caf.i(["Extensions"], [
+  ({ Extensions } = Caf.import(["Extensions"], [
     StandardImport,
     BabelBridge,
     global

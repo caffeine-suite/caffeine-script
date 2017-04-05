@@ -11,6 +11,9 @@ module.exports = suite: parseTestSuite
     "0": "0;"
     "-0": "-0;"
     "-1": "-1;"
+    "0777": "777;"
+    "0888": "888;"
+    "0001": "1;"
 
   exponentiated:
     "1e1":    "1e1;"
@@ -21,9 +24,9 @@ module.exports = suite: parseTestSuite
     ".1":     ".1;"
     "0.1":    "0.1;"
     "1.1":    "1.1;"
+    "00.1":   "0.1;"
     ".1.1":   null
     "1.1.1":  null
-    "00.1":   null
 
   exponentiatedFloats:
     ".1e1":       ".1e1;"

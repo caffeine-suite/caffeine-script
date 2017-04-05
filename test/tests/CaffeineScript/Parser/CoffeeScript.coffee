@@ -94,15 +94,15 @@ module.exports = suite:
     parseTests
       "-7 % 5 == -2": "-7 % 5 === -2;"
 
-      "launch() if ignition == on": "if (ignition === true) {launch();};"
+      "launch() if ignition == true": "if (ignition === true) {launch();};"
 
       "volume = 10 if band != SpinalTap": "let volume; if (band !== SpinalTap) {volume = 10;};"
 
-      "letTheWildRumpusBegin() unless answer == no": "if (!(answer === false)) {letTheWildRumpusBegin();};"
+      "letTheWildRumpusBegin() unless answer == false": "if (!(answer === false)) {letTheWildRumpusBegin();};"
 
       "if car.speed < limit then accelerate()": "if (car.speed < limit) {accelerate();};"
 
-      "winner = yes if pick in [47, 92, 13]": "let winner; if (Caf.in(pick, [47, 92, 13])) {winner = true;};"
+      "winner = true if pick in [47, 92, 13]": "let winner; if (Caf.in(pick, [47, 92, 13])) {winner = true;};"
 
       'print inspect "My name == #{@name}"': 'print(inspect(`My name == ${Caf.toString(this.name)}`));'
 
