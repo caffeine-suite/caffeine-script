@@ -1,0 +1,27 @@
+class JsonParser extends &BabelBridge.Parser
+
+  @rule
+    root: :array :object
+
+    array:
+      "" '[' _? ']'
+      "" '[' _? value commaValue* _? ']'
+
+    object:
+      "" '{' _? '}'
+      "" '{' _? pair commaPair* _? '}'
+
+    commaValue: "" _? ',' _? value
+    commaPair:  "" _? ',' _? pair
+    pair:       "" string _? ':' _? value
+
+    value: :object :array :number :string :true :false :null
+
+    string: /"(?:[^"\\]|\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4}))*"/
+    number: /-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?/
+    true:   /true/
+    false:  /false/
+    null:   /null/
+    _:      /\ +/
+
+.repl()
