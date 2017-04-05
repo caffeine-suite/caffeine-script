@@ -179,6 +179,10 @@ module.exports = suite: parseTestSuite
   #       foo: 10
   #     """: '[{foo: 1}, {foo: 10}]'
 
+  optionalCommas:
+    "{a:1} {b:2}":    "[{a: 1}, {b: 2}];"
+    "c {a:1} {b:2}":  "c({a: 1}, {b: 2});"
+
   withBlockValues:
     """
     a:

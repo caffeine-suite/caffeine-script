@@ -2,187 +2,178 @@
 {log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../../Helper'
+{parseTestSuite} = require '../../../Helper'
 
-module.exports = suite:
-  basic: ->
-    parseTests
-      "[]"      : "[];"
-      "[1]"     : "[1];"
-      "[1, 2]"  : "[1, 2];"
-      "[1 2]"   : "[1, 2];"
-      """
-      [1, 2,
-      3, 4]
-      """: "[1, 2, 3, 4];"
+module.exports = suite: parseTestSuite
+  basic:
+    "[]"      : "[];"
+    "[1]"     : "[1];"
+    "[1, 2]"  : "[1, 2];"
+    "[1 2]"   : "[1, 2];"
+    """
+    [1, 2,
+    3, 4]
+    """: "[1, 2, 3, 4];"
 
-      """
-      [
-        1, 2,
-        3, 4
-      ]
-      """: "[1, 2, 3, 4];"
-
-      """
-      foo [
-        1, 2,
-        3, 4
-      ]
-      """: "foo([1, 2, 3, 4]);"
-
-      """
-      [
+    """
+    [
       1, 2,
       3, 4
-      ]
-      """: "[1, 2, 3, 4];"
+    ]
+    """: "[1, 2, 3, 4];"
 
-      """
-      [1, 2, 3, 4,]
-      """: "[1, 2, 3, 4];"
+    """
+    foo [
+      1, 2,
+      3, 4
+    ]
+    """: "foo([1, 2, 3, 4]);"
+
+    """
+    [
+    1, 2,
+    3, 4
+    ]
+    """: "[1, 2, 3, 4];"
+
+    """
+    [1, 2, 3, 4,]
+    """: "[1, 2, 3, 4];"
 
   implicit:
-    basic: ->
-      parseTests
-        "1, 2"      : "[1, 2];"
-        "1 2"       : "[1, 2];"
-        "1 + 2, 3"  : "[1 + 2, 3];"
+    basic:
+      "1, 2"      : "[1, 2];"
+      "1 2"       : "[1, 2];"
+      "1 + 2, 3"  : "[1 + 2, 3];"
 
-    mixed: ->
-      parseTests
-        "1 2 if bar": "if (bar) {[1, 2];};"
+    mixed:
+      "1 2 if bar": "if (bar) {[1, 2];};"
 
-  matchless: ->
-    parseTests
-      "[] 1"    : "[1];"
-      "[] 1, 2" : "[1, 2];"
-      "[] 1 2"  : "[1, 2];"
+  matchless:
+    "[] 1"    : "[1];"
+    "[] 1, 2" : "[1, 2];"
+    "[] 1 2"  : "[1, 2];"
 
-  longArrays: ->
-    parseTests
-      """
+  longArrays:
+    """
+    1 2 3,
+    4 5 6
+    """: "[1, 2, 3, 4, 5, 6];"
+
+    """
+    []
       1 2 3,
       4 5 6
-      """: "[1, 2, 3, 4, 5, 6];"
+    """: "[1, 2, 3, 4, 5, 6];"
 
-    parseTests
-      """
+    """
+    []
+      1 2 3
+      4 5 6
+    """: "[[1, 2, 3], [4, 5, 6]];"
+
+    """
+    1 2 3,
+    4 5 6,
+    """: "[1, 2, 3, 4, 5, 6];"
+
+    """
+    1, 2, 3,
+    4, 5, 6,
+    """: "[1, 2, 3, 4, 5, 6];"
+
+  block:
+    """
+    []
+      1
+    """: "[1];"
+
+    """
+    []
+      1
+      2
+    """: "[1, 2];"
+
+    """
+    [] # this == a block array
+      1
+      2
+    """: "[1, 2];"
+
+    """
+    [] a
+      b
+    """: "[a(b)];"
+
+    """
+    []
+      b if c
+    """: "[c ? b : undefined];"
+
+  implicitCombos:
+    """
+    singleArray =
+      1, 0, 1,
+      0, 0, 1,
+      1, 1, 0
+    """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+
+    """
+    arrayOfArrays =
+      1, 0, 1
+      0, 0, 1
+      1, 1, 0
+    """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+
+  explicitImplicitCombos:
+    """
+    singleArray = []
+      1, 0, 1,
+      0, 0, 1,
+      1, 1, 0
+    """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+
+    """
+    singleArray = []
+      [1, 0, 1,
+      0, 0, 1,
+      1, 1, 0]
+    """: "let singleArray; singleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+
+    """
+    doubleArray = [] []
+      1, 0, 1,
+      0, 0, 1,
+      1, 1, 0
+    """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
+
+    """
+    doubleArray = []
       []
-        1 2 3,
-        4 5 6
-      """: "[1, 2, 3, 4, 5, 6];"
-
-    parseTests
-      """
-      []
-        1 2 3
-        4 5 6
-      """: "[[1, 2, 3], [4, 5, 6]];"
-
-    parseTests
-      """
-      1 2 3,
-      4 5 6,
-      """: "[1, 2, 3, 4, 5, 6];"
-
-    parseTests
-      """
-      1, 2, 3,
-      4, 5, 6,
-      """: "[1, 2, 3, 4, 5, 6];"
-
-  block: ->
-    parseTests
-      """
-      []
-        1
-      """: "[1];"
-
-      """
-      []
-        1
-        2
-      """: "[1, 2];"
-
-      """
-      [] # this == a block array
-        1
-        2
-      """: "[1, 2];"
-
-      """
-      [] a
-        b
-      """: "[a(b)];"
-
-      """
-      []
-        b if c
-      """: "[c ? b : undefined];"
-
-  implicitCombos: ->
-    parseTests
-      """
-      singleArray =
         1, 0, 1,
         0, 0, 1,
         1, 1, 0
-      """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+    """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
 
-      """
-      arrayOfArrays =
-        1, 0, 1
-        0, 0, 1
-        1, 1, 0
-      """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
+    """
+    arrayOfArrays = []
+      1, 0, 1
+      0, 0, 1
+      1, 1, 0
+    """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
 
-  explicitImplicitCombos: ->
-    parseTests
-      """
-      singleArray = []
-        1, 0, 1,
-        0, 0, 1,
-        1, 1, 0
-      """: "let singleArray; singleArray = [1, 0, 1, 0, 0, 1, 1, 1, 0];"
+  optionalCommas:
+    "[1 2 3] [4 5 6]": "[[1, 2, 3], [4, 5, 6]];"
+    "a [1] [2]":       "a([1], [2]);"
 
-      """
-      singleArray = []
-        [1, 0, 1,
-        0, 0, 1,
-        1, 1, 0]
-      """: "let singleArray; singleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
-
-      """
-      doubleArray = [] []
-        1, 0, 1,
-        0, 0, 1,
-        1, 1, 0
-      """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
-
-      """
-      doubleArray = []
-        []
-          1, 0, 1,
-          0, 0, 1,
-          1, 1, 0
-      """: "let doubleArray; doubleArray = [[1, 0, 1, 0, 0, 1, 1, 1, 0]];"
-
-      """
-      arrayOfArrays = []
-        1, 0, 1
-        0, 0, 1
-        1, 1, 0
-      """: "let arrayOfArrays; arrayOfArrays = [[1, 0, 1], [0, 0, 1], [1, 1, 0]];"
-
-  splatsSpread: ->
-    parseTests
-      "[a...]":             "[...a];"
-      "[a.b...]":           "[...a.b];"
-      "[a, b...]":          "[a, ...b];"
-      "[a, b..., c]":       "[a, ...b, c];"
-      "[a, b..., c, d...]": "[a, ...b, c, ...d];"
-      "[a, [1,2]...]":          "[a, ...[1, 2]];"
-      """
-      []
-        a...
-      """: "[...a];"
+  splatsSpread:
+    "[a...]":             "[...a];"
+    "[a.b...]":           "[...a.b];"
+    "[a, b...]":          "[a, ...b];"
+    "[a, b..., c]":       "[a, ...b, c];"
+    "[a, b..., c, d...]": "[a, ...b, c, ...d];"
+    "[a, [1,2]...]":          "[a, ...[1, 2]];"
+    """
+    []
+      a...
+    """: "[...a];"

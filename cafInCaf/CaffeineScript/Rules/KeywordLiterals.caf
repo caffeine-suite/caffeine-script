@@ -2,7 +2,7 @@ import &StandardImport
 
 ->
   @rule
-    keywordLiteral:   /(null|true|false)(?![a-zA-Z0-9]+)/
+    keywordLiteral:   /(undefined|NaN|null|true|false)(?![a-zA-Z0-9]+)/
     {}
       stnFactory: :SimpleLiteralStn
       stnProps: ~> value: @toString()
