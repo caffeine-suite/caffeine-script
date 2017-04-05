@@ -12,14 +12,14 @@ module.exports = suite: parseTestSuite {compileModule: true},
     foo()
     """:
       applyModuleWrapper 'let a = global.a, foo;
-      ({foo} = Caf.i(["foo"], [a, global]));return foo();'
+      ({foo} = Caf.import(["foo"], [a, global]));return foo();'
 
     """
     import a
     foo bar
     """:
       applyModuleWrapper 'let a = global.a, foo, bar;
-      ({foo, bar} = Caf.i(["foo", "bar"], [a, global]));return foo(bar);'
+      ({foo, bar} = Caf.import(["foo", "bar"], [a, global]));return foo(bar);'
 
     """
     import a, b
@@ -27,7 +27,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     """:
       applyModuleWrapper 'let a = global.a,
       b = global.b, foo;
-      ({foo} = Caf.i(["foo"], [a, b, global]));return foo();'
+      ({foo} = Caf.import(["foo"], [a, b, global]));return foo();'
 
   nested:
     """
@@ -36,8 +36,8 @@ module.exports = suite: parseTestSuite {compileModule: true},
     foo()
     """:
       applyModuleWrapper 'let a = global.a, foo, b, cafParentImports;
-      ({b} = Caf.i(["b"], cafParentImports = [a, global]));({foo}
-      = Caf.i(["foo"], [b, cafParentImports]));return foo();
+      ({b} = Caf.import(["b"], cafParentImports = [a, global]));({foo}
+      = Caf.import(["foo"], [b, cafParentImports]));return foo();
       '
 
   scopes:
@@ -46,7 +46,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     -> min
     """:
       applyModuleWrapper 'let min;
-      ({min} = Caf.i(["min"], [global.Math, global]));return function() {return min;};'
+      ({min} = Caf.import(["min"], [global.Math, global]));return function() {return min;};'
 
 
   deepNested:
@@ -57,7 +57,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     foo()
     """:
       applyModuleWrapper 'let a = global.a, foo, c, b, cafParentImports, cafParentImports1;
-      ({b} = Caf.i(["b"], cafParentImports = [a, global]));({c}
-      = Caf.i(["c"], cafParentImports1 = [b, cafParentImports]));({foo}
-      = Caf.i(["foo"], [c, cafParentImports1]));return foo();
+      ({b} = Caf.import(["b"], cafParentImports = [a, global]));({c}
+      = Caf.import(["c"], cafParentImports1 = [b, cafParentImports]));({foo}
+      = Caf.import(["foo"], [c, cafParentImports1]));return foo();
       '

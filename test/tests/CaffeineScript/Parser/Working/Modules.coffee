@@ -40,7 +40,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     """:
       """
       let Caf = require('caffeine-script-runtime');
-      Caf.defMod(module, () => {let Foo = global.Foo, a; ({a} = Caf.i([\"a\"], [Foo, global]));return a;});
+      Caf.defMod(module, () => {let Foo = global.Foo, a; ({a} = Caf.import([\"a\"], [Foo, global]));return a;});
       """
 
     # complex:
