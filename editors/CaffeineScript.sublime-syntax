@@ -104,11 +104,11 @@ contexts:
     # Strings begin and end with quotes, and use backslashes as an escape
     # character
     - match: '"(?!")'
-      scope: punctuation.definition.string.begin.caffeine
+      scope: string.quoted.double.caffeine
       push: double_quoted_string
 
     - match: "'"
-      scope: punctuation.definition.string.begin.caffeine
+      scope: string.quoted.double.caffeine
       push: single_quoted_string
 
     - match: '\.[_a-zA-Z0-9]'
@@ -161,7 +161,7 @@ contexts:
     - match: '\\.'
       scope: constant.character.escape.caffeine
     - match: '"'
-      scope: punctuation.definition.string.end.caffeine
+      scope: string.quoted.double.caffeine
       pop: true
     - include: interpolatable
     - match: "."
@@ -172,7 +172,7 @@ contexts:
     - match: '\\.'
       scope: constant.character.escape.caffeine
     - match: "'"
-      scope: punctuation.definition.string.end.caffeine
+      scope: string.quoted.double.caffeine
       pop: true
 
   line_comment:
