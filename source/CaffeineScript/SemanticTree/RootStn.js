@@ -59,10 +59,10 @@ Caf.defMod(module, () => {
         let statements;
         statements = this.statements.toJs();
         return compactFlatten([
-          "Caf = require('caffeine-script-runtime');",
+          "Caf = require('caffeine-script-runtime')",
           this.getBareInitializers(),
           statements
-        ]).join("; ") + ";";
+        ]).join(";\n") + ";";
       };
     }
   );

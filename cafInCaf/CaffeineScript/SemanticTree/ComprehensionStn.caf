@@ -133,7 +133,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
 
     FunctionInvocationStn
-      IdentifierStn identifier: "Caf.#{if useExtendedEach then 'ee' else 'e'}"
+      IdentifierStn identifier: "Caf.#{if useExtendedEach then 'extendedEach' else 'each'}"
       iterable
       intoChild || switch outputType
       when "object" then ObjectStn()

@@ -4343,7 +4343,9 @@ Caf.defMod(module, () => {
             };
         return FunctionInvocationStn(
           IdentifierStn({
-            identifier: `Caf.${Caf.toString(useExtendedEach ? "ee" : "e")}`
+            identifier: `Caf.${Caf.toString(
+              useExtendedEach ? "extendedEach" : "each"
+            )}`
           }),
           iterable,
           intoChild ||
@@ -4804,14 +4806,14 @@ Caf.defMod(module, () => {
         this.bindAllUniqueIdentifiersRequested();
         this.statementsChild = peek(this.children);
         this.importChildren = this.children.slice(0, this.children.length - 1);
-        Caf.e(this.importChildren, undefined, (child, k, into) => {
+        Caf.each(this.importChildren, undefined, (child, k, into) => {
           child.updateScope(this.scope);
         });
         this.scope.addChildScope(this);
         this._scopeUpdated = true;
         this.statementsChild.updateScope(this);
         this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        return Caf.e(this.identifiersUsedButNotAssigned, undefined, (
+        return Caf.each(this.identifiersUsedButNotAssigned, undefined, (
           v,
           id,
           into
@@ -4859,17 +4861,17 @@ Caf.defMod(module, () => {
         bodyJs = this.statementsChild.toFunctionBodyJs(
           !!generateReturnStatement
         );
-        importsJs = Caf.e(this.importChildren, [], (c, k, into) => {
+        importsJs = Caf.each(this.importChildren, [], (c, k, into) => {
           into.push(c.toJsExpression());
         });
-        list = Caf.e(this.importing, [], (i, k, into) => {
+        list = Caf.each(this.importing, [], (i, k, into) => {
           into.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
         imports = (Caf.exists(cafBase = this.importing) && cafBase.length) > 0
           ? `({${Caf.toString(
               this.importing.join(", ")
-            )}} = Caf.i(${Caf.toString(importingJs)}, ${Caf.toString(
+            )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
               this._importFromCaptureIdentifier
                 ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
                 : ""
@@ -5165,10 +5167,10 @@ Caf.defMod(module, () => {
         let statements;
         statements = this.statements.toJs();
         return compactFlatten([
-          "Caf = require('caffeine-script-runtime');",
+          "Caf = require('caffeine-script-runtime')",
           this.getBareInitializers(),
           statements
-        ]).join("; ") + ";";
+        ]).join(";\n") + ";";
       };
     }
   );
@@ -5584,7 +5586,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.35.2"
+	"version": "0.35.3"
 };
 
 /***/ }),

@@ -55,7 +55,7 @@ class ImportStn extends &ScopeStnMixin &BaseStn
       ""
         ({#{@importing.join ', '}} =
 
-        Caf.i(#{importingJs},
+        Caf.import(#{importingJs},
         #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '},
 
         #{importFromCaptureIdentifier}]));

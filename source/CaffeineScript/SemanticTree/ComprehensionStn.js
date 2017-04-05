@@ -138,7 +138,9 @@ Caf.defMod(module, () => {
             };
         return FunctionInvocationStn(
           IdentifierStn({
-            identifier: `Caf.${Caf.toString(useExtendedEach ? "ee" : "e")}`
+            identifier: `Caf.${Caf.toString(
+              useExtendedEach ? "extendedEach" : "each"
+            )}`
           }),
           iterable,
           intoChild ||
