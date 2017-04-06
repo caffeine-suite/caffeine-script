@@ -1,12 +1,21 @@
 a = "" To end of line string.
 b = :word-string
+c = #hashString
+d = 10unitString
 
-c = ""
+e = ""
   This is
   my multiline
   string without newlines.
 
-d = """
+f = """
   This is
   my multiline
   string with newlines.
+
+g = "normal string"
+
+h = '' '' # array with two blank strings
+i = "" "" # one string, including this comment
+
+j = "Interpolating #{getUsername()}..."

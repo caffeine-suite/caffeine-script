@@ -10,9 +10,9 @@ scope: source.caffeine
 contexts:
   main:
 
-    # function invocation
-    - match: '\. *(?!\d)[\w\u007f-\uffff]+ +(?=[^\n,])'
-      scope: variable.function
+    # # function invocation
+    # - match: '\. *(?!\d)[\w\u007f-\uffff]+( +(?=[^\n,])|\( *\))'
+    #   scope: variable.function
 
     # regexp
     - match: '/([^\\/]|\\.)+/[igmuy]*'
@@ -41,12 +41,12 @@ contexts:
       push: caffeine_mc_block
 
     # object-literal function names:
-    - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?=(\:| *=)[ \n]*[^\n]*\) *[-~=]>)'
-      scope: entity.name.function.caffeine
+    # - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?=(\:| *=)[ \n]*[^\n]*\) *[-~=]>)'
+    #   scope: entity.name.function.caffeine
 
     # object-literal property names:
     - match: '((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+(?:\:)'
-      scope: variable.other.member
+      scope: variable.other.property.caffeine
 
     # Keywords are if, else for and while.
     # Note that blackslashes don't need to be escaped within single quoted
@@ -90,9 +90,12 @@ contexts:
     - match: '[-+=!%&*|<>?]|==|&&|\|\|'
       scope: keyword.operator.caffeine
 
-    - match: '\@(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)?'
-      scope: variable.other.readwrite.instance.caffeine
+    - match: '[()\[\]{}]'
+      scope: meta.brace.caffeine
 
+    # this-member: @foo
+    - match: '\@(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)?'
+      scope: variable.other.member.caffeine
 
     # Comments begin with a '#' and finish at the end of the line
     - match: '#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))'
@@ -111,16 +114,11 @@ contexts:
       scope: string.quoted.double.caffeine
       push: single_quoted_string
 
-    - match: '\.[_a-zA-Z0-9]'
+    - match: '\.[_a-zA-Z0-9]+'
+      scope: punctuation.accessor.caffeine
 
-    - match: '[.,\[\]\(\)]'
-      scope: comment.line_comment
-
-    - match: "\\{"
-      push: main
-
-    - match: "\\}"
-      pop: true
+    - match: '\.'
+      scope: punctuation.accessor.caffeine
 
   interpolation:
     - match: "\\}"

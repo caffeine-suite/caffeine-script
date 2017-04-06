@@ -1,0 +1,16 @@
+# new array with everything doubled
+array  v from 1 2 3      with v * 2           # > [2, 4, 6]
+array  v from a:1 b:2    with v * 2           # > [2, 4]
+array  v from null       with v * 2           # > []
+
+# new object with every property-value doubled
+object v from 1 2 3      with v * 2           # > 0: 2, 1: 4, 2: 6
+object v from a:1 b:2    with v * 2           # > a: 2, b: 4
+object v from null       with v * 2           # > {}
+
+# find and return the first value in source > 2
+find   v in 1 2 3 2      when v > 2           # > 3
+find   v in a:1 b:4 c:1  when v > 2           # > 4
+
+# logs each number to the console
+each   v in 1 2 3        do console.log v     # > [1, 2, 3]

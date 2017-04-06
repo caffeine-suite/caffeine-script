@@ -1,0 +1,21 @@
+# implicit comma after simple literals
+a = foo: 1  bar: 2
+
+# basic implicit form
+a = foo: 1, bar: 2
+
+# basic implicit block form
+a =
+  foo: 1
+  bar: 2
+
+# basic explicit block form
+a = {}
+  foo: 1
+  bar: 2
+
+# basic explicit to-eol form
+a = {} foo: 1, bar: 2
+
+# JavaScript form
+a = {foo: 1, bar: 2}

@@ -1,4 +1,4 @@
-# COFFEE
+# CoffeeScript
 merge objectWithout(request.data, "bitmap"),
   toPlainObjects {
     url
@@ -8,9 +8,9 @@ merge objectWithout(request.data, "bitmap"),
     colorInfo:        Neptune.Art.ColorExtractor.extractColors bitmap
   }
 
-# CAF
+# CaffeineScript
 merge
-  objectWithout request.data, "bitmap"
+  objectWithout request.data, :bitmap
   toPlainObjects {}
     url
     templateUrl

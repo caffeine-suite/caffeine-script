@@ -1,0 +1,28 @@
+# a comment
+#
+# The line above, also a comment
+
+color = #FF0  # <- #FF0 is a string
+
+##
+  Everything indented after a double ## is a comment.
+
+  Even #, ##, ###, /* and */.
+
+  ##
+    Which means you can block-comment-out another block-comment.
+
+    Can't do it in:
+      C/C++, Java, JavaScript, Ruby, CoffeeScript,
+      Objective-C, Swift, Python, Perl...
+
+    Can kind-of do it Clojure, but it doesn't have true block-comments. Clojure's
+    (comment ...) macro is nestable, but it can't contain arbitrary text. Still,
+    macros are cool. Kudos to Clojure for a cleaver combination of macros and
+    comments.
+
+##Also, this is a comment
+##      This is a comment
+##This
+  and this
+  are comments.
