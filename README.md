@@ -15,6 +15,13 @@ npm install caffeine-script
 
 Next: [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Started)
 
+### Demo
+
+A brief, interactive slideshow written in CaffeineScript
+
+* [View the Slideshow](https://shanebdavis.github.io/caffeine-script-demo)
+* [View or Clone the Slideshow's Source](https://github.com/shanebdavis/caffeine-script-demo/)
+
 ### [Productivity is *Everything*](https://github.com/shanebdavis/caffeine-script/wiki/Programmer-Productivity)
 
 I believe productivity matters more than anything else in programming. Programming is the most powerful tool ever invented. It is the only true meta-tool. It is a tool that allows you to create *any other tool*. With any [Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness) programming-language, you can create any possible program including *any other programming language*, Turing-complete or not.
