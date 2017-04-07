@@ -1,6 +1,7 @@
 {
   "author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
   "dependencies": {
+    "art-build-configurator": "^1.8.1",
     "art-class-system": "^1.0.1",
     "art-config": "^1.0.0",
     "art-object-tree-factory": "^1.0.0",
