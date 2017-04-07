@@ -93,3 +93,6 @@ module.exports = suite: parseTestSuite
 
     scope:
       "({a}) => b = a": "({a}) => {let b; return b = a;};"
+
+    regressions:
+      "({a}) -> a = a + 1": knownFailing: "(function({a}) {return a = a + 1;});"

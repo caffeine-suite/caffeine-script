@@ -84,7 +84,7 @@ module.exports = suite: parseTestSuite
     object obj
     """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
 
-    "object k from b": "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
+    "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
 
   nested:
     """

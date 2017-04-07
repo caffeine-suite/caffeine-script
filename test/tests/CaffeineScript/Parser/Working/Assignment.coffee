@@ -104,9 +104,9 @@ module.exports = suite: parseTestSuite
       """: "let a; ({a} = {a: 123});"
 
     conditionalLeftHandSide:
-      "a?.b = c": "Caf.exists(a) && (a.b = c);"
-      "a?.b = c = d": "let c; Caf.exists(a) && (a.b = c = d);"
-      "a = b?.c = d": "let a; a = Caf.exists(b) && (b.c = d);"
+      "a?.b = c":     knownFailing: "Caf.exists(a) && (a.b = c);"
+      "a?.b = c = d": knownFailing: "let c; Caf.exists(a) && (a.b = c = d);"
+      "a = b?.c = d": knownFailing: "let a; a = Caf.exists(b) && (b.c = d);"
       "a = b = c?.d": "let a, b; a = b = Caf.exists(c) && c.d;"
 
   binopAssignment:

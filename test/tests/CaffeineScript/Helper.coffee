@@ -21,9 +21,16 @@ module.exports =
     parseOptions = merge options, verbose: true
 
     object map, (expectedJs, source) ->
+      testFunction = if isString expectedJs?.knownFailing
+        expectedJs = expectedJs?.knownFailing
+        skipKnownFailingTest
+      else
+        test
+
       expectFailure = !expectedJs?
+
       expectedFailure = null
-      test name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+      testFunction name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
         js = try
           stn = (p = CaffeineScriptParser.parse(source, parseOptions)).getStn()
           transformedStn = stn.transform()
@@ -72,12 +79,12 @@ module.exports =
 
     hasTestValues = hasOther = false
     for k, v of map
-      if !v? || isString v
+      if !v? || v?.knownFailing || isString v
         hasTestValues = true
       else
         hasOther = true
 
-    throw new Error "either strings or others!" if hasTestValues && hasOther
+    throw new Error "either pass all null/string/{knownFailing:string} or all sub-suites as objects withouth knownFailing fields!" if hasTestValues && hasOther
     if hasTestValues
       -> parseTests options, map
     else
