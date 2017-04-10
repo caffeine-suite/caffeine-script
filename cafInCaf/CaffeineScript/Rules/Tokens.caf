@@ -82,13 +82,10 @@
       - definitly not: space, comma, [], (), {}
       - could, could not: '', "", ``
       - questionables: |, \
-    unquotedString:
-      ///
-      ((?!\s)[-~!@\#$%^&*_+=|\\<>?/.$\w\u007f-\uffff])+
-      ///
+    unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
 
-    unaryTailOperator: /\?/
-    unaryOperator_:    /// (! | ~ | not\b) \ * ///
+    unaryTailOperator:  /\?/
+    unaryOperator_:     /// (! | ~ | not\b) \ * ///
 
     binaryOperator: ///
 

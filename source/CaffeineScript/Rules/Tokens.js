@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
         }
       },
       pathedRequire: /((?:(?!\s)[\/$\w\u007f-\uffff])+)/,
-      unquotedString: /((?!\s)[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff])+/,
+      unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
       unaryOperator_: /(!|~|not\b) */,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
