@@ -1,7 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"),
-    BabelBridge = require("../../../babel-bridge"),
+    BabelBridge = require("babel-bridge"),
     CafParseNodeBaseClass = require("./CafParseNodeBaseClass"),
     Parser,
     isFunction,

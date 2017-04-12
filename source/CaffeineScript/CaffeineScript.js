@@ -1,6 +1,6 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtStandardLib = require("../../../art-standard-lib"), log;
+  let ArtStandardLib = require("art-standard-lib"), log;
   ({ log } = Caf.import(["log"], [ArtStandardLib, global]));
   return {
     version: require("../../package.json").version,
