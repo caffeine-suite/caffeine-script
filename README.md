@@ -15,6 +15,8 @@ npm install caffeine-script
 
 Next: [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Started)
 
+Related: [CaffeineMC Wiki](https://github.com/shanebdavis/caffeine-mc/wiki)
+
 ### Demo
 
 A brief, interactive slideshow written in CaffeineScript
