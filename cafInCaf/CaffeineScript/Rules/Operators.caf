@@ -27,10 +27,17 @@ binaryOperatorAndExpression:
   "_? binaryOperator _? rValue:rValueBlock"
 
 lineStartBinaryOperatorAndExpression:
-  pattern:      "binaryOperator _? binOpExpression"
-  stnProps:     ~> operator: getNormalizedOperator @binaryOperator
-  stnFactory:   "BinaryOperatorStn"
-  stnExtension: true
+  {}
+    pattern:      "binaryOperator _? binOpExpression"
+    stnProps:     ~> operator: getNormalizedOperator @binaryOperator
+    stnFactory:   "BinaryOperatorStn"
+    stnExtension: true
+
+  {}
+    pattern:      "binaryOperator _? rValueBlock"
+    stnProps:     ~> operator: getNormalizedOperator @binaryOperator
+    stnFactory:   "BinaryOperatorStn"
+    stnExtension: true
 
 unaryOpExpression:
   pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*"

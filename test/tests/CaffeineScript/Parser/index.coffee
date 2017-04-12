@@ -3,6 +3,7 @@
 
 module.exports = require './namespace'
 .addModules
-  CoffeeScript: require './CoffeeScript'
+  CoffeeScript:  require './CoffeeScript' 
+  SpacesAndTabs: require './SpacesAndTabs'
 require './ControlStructures'
 require './Working'

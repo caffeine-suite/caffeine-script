@@ -70,14 +70,24 @@ Caf.defMod(module, () => {
       "_? binaryOperator _? _end? rValue:unaryOpExpression",
       "_? binaryOperator _? rValue:rValueBlock"
     ],
-    lineStartBinaryOperatorAndExpression: {
-      pattern: "binaryOperator _? binOpExpression",
-      stnProps: function() {
-        return { operator: getNormalizedOperator(this.binaryOperator) };
+    lineStartBinaryOperatorAndExpression: [
+      {
+        pattern: "binaryOperator _? binOpExpression",
+        stnProps: function() {
+          return { operator: getNormalizedOperator(this.binaryOperator) };
+        },
+        stnFactory: "BinaryOperatorStn",
+        stnExtension: true
       },
-      stnFactory: "BinaryOperatorStn",
-      stnExtension: true
-    },
+      {
+        pattern: "binaryOperator _? rValueBlock",
+        stnProps: function() {
+          return { operator: getNormalizedOperator(this.binaryOperator) };
+        },
+        stnFactory: "BinaryOperatorStn",
+        stnExtension: true
+      }
+    ],
     unaryOpExpression: {
       pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*",
       getStn: function() {

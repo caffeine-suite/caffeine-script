@@ -1,11 +1,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"), escapeRegExp;
-  ({ escapeRegExp } = Caf.i(["escapeRegExp"], [StandardImport, global]));
+  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [StandardImport, global]));
   return {
     deescapeSpaces: function(string) {
       return Caf
-        .e(string.split(/((?:\\\\)+)/), [], (str, i, into) => {
+        .each(string.split(/((?:\\\\)+)/), [], (str, i, into) => {
           into.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str);
         })
         .join("");
@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
       charsRegExp = RegExp(`([${escapeRegExp(charsToEscape)}])`, "g");
       split = charsToEscape.match(/\\/) ? [string] : string.split(/((?:\\.)+)/);
       return Caf
-        .e(split, [], (str, i, into) => {
+        .each(split, [], (str, i, into) => {
           into.push(
             Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
           );

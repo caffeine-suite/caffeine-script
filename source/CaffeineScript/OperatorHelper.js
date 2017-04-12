@@ -1,7 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"), Error, p, arrayWithout;
-  ({ Error, p, arrayWithout } = Caf.i(["Error", "p", "arrayWithout"], [
+  ({ Error, p, arrayWithout } = Caf.import(["Error", "p", "arrayWithout"], [
     StandardImport,
     global
   ]));
@@ -61,14 +61,14 @@ Caf.defMod(module, () => {
       ["left", "||", "?"]
     ];
     this.opsToPrecidence = {};
-    this.leftAssociativityByPrecidence = Caf.e(this.precidence, [], (
+    this.leftAssociativityByPrecidence = Caf.each(this.precidence, [], (
       v,
       i,
       into
     ) => {
       let leftAssociativityByPrecidence, operators;
       [leftAssociativityByPrecidence, ...operators] = v;
-      Caf.e(operators, undefined, (op, k, into) => {
+      Caf.each(operators, undefined, (op, k, into) => {
         this.opsToPrecidence[op] = i;
       });
       into.push(leftAssociativityByPrecidence === "left");
@@ -143,7 +143,7 @@ Caf.defMod(module, () => {
       while (operators.length > 0) {
         lowestPrecidence = this.getOpPrecidence(operators[0]);
         firstOccurance = lastOccurance = 0;
-        Caf.e(operators, undefined, (op, i, into) => {
+        Caf.each(operators, undefined, (op, i, into) => {
           if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
             firstOccurance = lastOccurance = i;
             lowestPrecidence = p;

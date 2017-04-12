@@ -1,7 +1,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"),
-    BabelBridge = require("babel-bridge"),
+    BabelBridge = require("../../../babel-bridge"),
     SemanticTree = require("./SemanticTree"),
     Nodes,
     isString,
@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
     inspect,
     isFunction,
     RootStn;
-  ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.i(
+  ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.import(
     ["Nodes", "isString", "Error", "inspect", "isFunction", "RootStn"],
     [StandardImport, BabelBridge, SemanticTree, global]
   ));
@@ -23,7 +23,12 @@ Caf.defMod(module, () => {
         return !!this.getImplicitArray();
       };
       this.prototype.getImplicitArray = function() {
-        return Caf.ee(this.matches, undefined, (match, k, into, brk) => {
+        return Caf.extendedEach(this.matches, undefined, (
+          match,
+          k,
+          into,
+          brk
+        ) => {
           let cafRet;
           return (cafRet = Caf.isF(match.getImplicitArray) &&
             match.getImplicitArray()) &&
@@ -31,7 +36,7 @@ Caf.defMod(module, () => {
         });
       };
       this.prototype.getMatchStns = function() {
-        return Caf.e(this.matches, [], (m, k, into) => {
+        return Caf.each(this.matches, [], (m, k, into) => {
           if (m = Caf.isF(m.getStn) && m.getStn()) {
             into.push(m);
           }
@@ -48,7 +53,7 @@ Caf.defMod(module, () => {
       this.prototype.getStnChildren = function(left) {
         return this.stnChildren
           ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
-          : Caf.e(this.nonStnExtensionMatches, [], (m, k, into) => {
+          : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
               if (m = m.getStn(left)) {
                 into.push(m);
               }
@@ -62,14 +67,14 @@ Caf.defMod(module, () => {
               cafBase.isStnExtension;
         },
         stnExtensionMatches: function() {
-          return Caf.e(this.presentMatches, [], (m, k, into) => {
+          return Caf.each(this.presentMatches, [], (m, k, into) => {
             if (m.getStn && m.isStnExtension) {
               into.push(m);
             }
           });
         },
         nonStnExtensionMatches: function() {
-          return Caf.e(this.presentMatches, [], (m, k, into) => {
+          return Caf.each(this.presentMatches, [], (m, k, into) => {
             if (m.getStn && !m.isStnExtension) {
               into.push(m);
             }
@@ -88,7 +93,7 @@ Caf.defMod(module, () => {
           : (x = this.getStnChildren(left), x.length === 1
               ? x[0]
               : x.length === 0 ? left : x);
-        Caf.e(this.stnExtensionMatches, undefined, (extension, k, into) => {
+        Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
           stn = extension.getStn(stn);
         });
         if (Caf.exists(stn) && stn.props) {

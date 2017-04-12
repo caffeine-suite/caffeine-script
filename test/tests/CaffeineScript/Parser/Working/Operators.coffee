@@ -81,6 +81,7 @@ module.exports = suite: parseTestSuite
 
   unary:
     basic:
+      "-PI": knownFailing: "-PI;"
       "!true": "!true;"
       "!!true": "!!true;"
 
@@ -369,3 +370,11 @@ module.exports = suite: parseTestSuite
         """
         a && b = c
         """: "let b; a && (b = c);"
+
+    regressions:
+      """
+      a
+      &&
+        b c
+        || d
+      """: "a && (b(c) || d);"

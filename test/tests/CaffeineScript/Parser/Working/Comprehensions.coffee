@@ -86,6 +86,12 @@ module.exports = suite: parseTestSuite
 
     "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
 
+    """
+    each v from
+        a: b
+      v.a
+    """: knownFailing: "a"
+
   nested:
     """
     array a
