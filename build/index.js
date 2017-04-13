@@ -3409,7 +3409,10 @@ Caf.defMod(module, () => {
       }
     ],
     unaryOpExpression: {
-      pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*",
+      pattern: [
+        "!literal unaryOperator_+ expressionWithoutBinOps unaryTailOperator*",
+        "expressionWithoutBinOps unaryTailOperator*"
+      ],
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
@@ -3811,7 +3814,7 @@ Caf.defMod(module, () => {
       pathedRequire: /((?:(?!\s)[\/$\w\u007f-\uffff])+)/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
-      unaryOperator_: /([-!~]|not\b) */,
+      unaryOperator_: /([!~]|not\b) */,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
       new: /new\b/,

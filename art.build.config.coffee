@@ -7,7 +7,7 @@ module.exports =
 
     dependencies:
       "caffeine-mc":              "^1.0.0"
-      "babel-bridge":             "^1.0.0"
+      "babel-bridge":             "^1.12.0"
       "caffeine-script-runtime":  "^1.0.0"
       "art-object-tree-factory":  "^1.0.0"
 

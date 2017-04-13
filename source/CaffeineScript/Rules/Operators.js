@@ -89,7 +89,10 @@ Caf.defMod(module, () => {
       }
     ],
     unaryOpExpression: {
-      pattern: "unaryOperator_* expressionWithoutBinOps unaryTailOperator*",
+      pattern: [
+        "!literal unaryOperator_+ expressionWithoutBinOps unaryTailOperator*",
+        "expressionWithoutBinOps unaryTailOperator*"
+      ],
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
