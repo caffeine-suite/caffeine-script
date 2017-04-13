@@ -75,7 +75,7 @@ module.exports = suite: parseTestSuite
         #f00: 1
       """: '({a: {"#f00": 1}});'
 
-      "a:-b": knownFailing: "({a: -b});"
+      "a:-b": "({a: -b});"
 
 
     quotedKeys:

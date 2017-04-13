@@ -85,7 +85,7 @@
     unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
 
     unaryTailOperator:  /\?/
-    unaryOperator_:     /// (! | ~ | not\b) \ * ///
+    unaryOperator_:     /// ([-!~] | not\b) \ * ///
 
     binaryOperator: ///
 

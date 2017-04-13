@@ -81,7 +81,7 @@ module.exports = suite: parseTestSuite
 
   unary:
     basic:
-      "-PI": knownFailing: "-PI;"
+      "-PI": "-PI;"
       "!true": "!true;"
       "!!true": "!!true;"
 
