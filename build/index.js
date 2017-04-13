@@ -3811,7 +3811,7 @@ Caf.defMod(module, () => {
       pathedRequire: /((?:(?!\s)[\/$\w\u007f-\uffff])+)/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
-      unaryOperator_: /(!|~|not\b) */,
+      unaryOperator_: /([-!~]|not\b) */,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
       new: /new\b/,
@@ -5654,7 +5654,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.39.1"
+	"version": "0.40.0"
 };
 
 /***/ }),
