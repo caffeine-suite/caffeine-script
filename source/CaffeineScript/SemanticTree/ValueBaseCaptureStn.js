@@ -1,13 +1,15 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     BinaryOperatorStn = require("./BinaryOperatorStn"),
     UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
     SemanticTree,
+    ValueBaseCaptureStn,
     BaseStn = require("./BaseStn"),
     mergeInto,
     isArray;
-  ({ mergeInto, isArray } = Caf.i(["mergeInto", "isArray"], [
+  ({ mergeInto, isArray } = Caf.import(["mergeInto", "isArray"], [
     StandardImport,
     global
   ]));
@@ -94,12 +96,12 @@ Caf.defMod(module, () => {
       this.prototype._transformAccessorChainR = function(value, accessorChain) {
         let done;
         done = false;
-        Caf.e(accessorChain, undefined, (accessor, i, into) => {
+        Caf.each(accessorChain, undefined, (accessor, i, into) => {
           let key, isFunctionInvocation, reset;
           if (!done) {
             ({ key, isFunctionInvocation } = accessor);
             if (isArray(key)) {
-              key = Caf.e(key, [], (kk, k, into) => {
+              key = Caf.each(key, [], (kk, k, into) => {
                 into.push(kk.transform());
               });
             } else {

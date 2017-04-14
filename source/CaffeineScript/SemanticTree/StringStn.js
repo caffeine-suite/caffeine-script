@@ -1,7 +1,9 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
+    StringStn,
     BaseStn = require("./BaseStn"),
     escapeJavascriptString,
     deescapeSpaces,
@@ -12,7 +14,7 @@ Caf.defMod(module, () => {
     deescapeSpaces,
     escapeUnescaped,
     escapeMustEscapes
-  } = Caf.i(
+  } = Caf.import(
     [
       "escapeJavascriptString",
       "deescapeSpaces",

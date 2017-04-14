@@ -1,6 +1,8 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
+    ArrayStn,
     BaseStn = require("./BaseStn");
   return ArrayStn = Caf.defClass(
     class ArrayStn extends BaseStn {
@@ -20,7 +22,7 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         return `[${Caf.toString(
           Caf
-            .e(this.children, [], (c, k, into) => {
+            .each(this.children, [], (c, k, into) => {
               into.push(c.toJsExpression());
             })
             .join(", ")

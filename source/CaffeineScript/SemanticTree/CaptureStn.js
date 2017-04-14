@@ -1,3 +1,4 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
@@ -5,6 +6,7 @@ Caf.defMod(module, () => {
     ObjectStn = require("./ObjectStn"),
     ObjectPropValueStn = require("./ObjectPropValueStn"),
     ObjectPropNameStn = require("./ObjectPropNameStn"),
+    CaptureStn,
     BaseStn = require("./BaseStn");
   StringStn;
   ObjectStn;

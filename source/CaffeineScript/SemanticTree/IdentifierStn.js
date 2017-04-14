@@ -1,7 +1,8 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let IdentiferStn, StandardImport = require("../StandardImport"),
+  let StandardImport = require("../StandardImport"),
+    IdentiferStn,
     BaseStn = require("./BaseStn");
   return IdentiferStn = Caf.defClass(
     class IdentiferStn extends BaseStn {},

@@ -1,7 +1,9 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     OperatorHelper = require("../OperatorHelper"),
+    BinaryOperatorStn,
     BaseStn = require("./BaseStn"),
     operatorIsInfixJs,
     binaryOperatorToJs,
@@ -16,7 +18,7 @@ Caf.defMod(module, () => {
     getPrecidenceLevelIsLeftAssociative,
     Error,
     formattedInspect
-  } = Caf.i(
+  } = Caf.import(
     [
       "operatorIsInfixJs",
       "binaryOperatorToJs",

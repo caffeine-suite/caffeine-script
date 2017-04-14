@@ -1,3 +1,4 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
@@ -19,7 +20,7 @@ Caf.defMod(module, () => {
     merge,
     mergeInto,
     arrayToTruthMap
-  } = Caf.i(
+  } = Caf.import(
     [
       "lowerCamelCase",
       "Error",
@@ -35,6 +36,7 @@ Caf.defMod(module, () => {
   LetStn;
   UniqueIdentifierHandle;
   return function(toExtend) {
+    let ScopeStnMixin;
     return ScopeStnMixin = Caf.defClass(
       class ScopeStnMixin extends toExtend {
         constructor() {
@@ -144,7 +146,7 @@ Caf.defMod(module, () => {
         };
         this.prototype.bindAllUniqueIdentifiersRequested = function() {
           return this._uniqueIdentifierHandles
-            ? Caf.e(this._uniqueIdentifierHandles, undefined, (
+            ? Caf.each(this._uniqueIdentifierHandles, undefined, (
                 uniqueIdentifierHandle,
                 k,
                 into
@@ -166,7 +168,11 @@ Caf.defMod(module, () => {
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
-            ? (identifiers = Caf.e(identifiers, [], (identifier, k, into) => {
+            ? (identifiers = Caf.each(identifiers, [], (
+                identifier,
+                k,
+                into
+              ) => {
                 if (identifier.match(/=/)) {
                   into.push(identifier);
                 }
@@ -179,7 +185,7 @@ Caf.defMod(module, () => {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
           this.scope.addChildScope(this);
-          Caf.e(this.getChildrenToUpdateScope(), undefined, (
+          Caf.each(this.getChildrenToUpdateScope(), undefined, (
             child,
             k,
             into
@@ -206,7 +212,7 @@ Caf.defMod(module, () => {
           requiredIdentifierLets: function() {
             let identifiersAssignedInParentScopes;
             ({ identifiersAssignedInParentScopes } = this);
-            return Caf.e(this.identifiersAssigned, [], (
+            return Caf.each(this.identifiersAssigned, [], (
               initializer,
               identifier,
               into
@@ -257,12 +263,12 @@ Caf.defMod(module, () => {
           identifiersUsedButNotAssigned: function() {
             let assigned, ret;
             assigned = this.identifiersAssignedInParentThisOrChildrenScopes;
-            ret = Caf.e(this.identifiersUsed, {}, (v, k, into) => {
+            ret = Caf.each(this.identifiersUsed, {}, (v, k, into) => {
               if (!assigned[k]) {
                 into[k] = true;
               }
             });
-            Caf.e(this.childScopes, undefined, (childScope, k, into) => {
+            Caf.each(this.childScopes, undefined, (childScope, k, into) => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
             return this.props.identifiersUsedButNotAssigned = ret;

@@ -1,6 +1,8 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
+    SwitchStn,
     BaseStn = require("./BaseStn");
   return SwitchStn = Caf.defClass(class SwitchStn extends BaseStn {}, function(
     SwitchStn,
@@ -12,7 +14,7 @@ Caf.defMod(module, () => {
       ({ condition, switchWhens, switchElse } = this.labeledChildren);
       falsifyCases = !condition;
       options = { falsifyCases: falsifyCases };
-      cases = Caf.e(switchWhens, [], (clause, k, into) => {
+      cases = Caf.each(switchWhens, [], (clause, k, into) => {
         into.push(clause.toJs(options));
       });
       if (switchElse) {
@@ -27,7 +29,7 @@ Caf.defMod(module, () => {
       ({ condition, switchWhens, switchElse } = this.labeledChildren);
       falsifyCases = !condition;
       options = { falsifyCases: falsifyCases };
-      cases = Caf.e(switchWhens, [], (clause, k, into) => {
+      cases = Caf.each(switchWhens, [], (clause, k, into) => {
         into.push(clause.toFunctionBodyJs(options));
       });
       if (switchElse) {

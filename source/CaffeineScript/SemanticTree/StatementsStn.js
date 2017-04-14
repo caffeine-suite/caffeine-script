@@ -1,7 +1,9 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
+    StatementsStn,
     BaseStn = require("./BaseStn");
   return StatementsStn = Caf.defClass(
     class StatementsStn extends BaseStn {},
@@ -23,7 +25,7 @@ Caf.defMod(module, () => {
         if (returnAction === true) {
           returnAction = "return";
         }
-        return Caf.e(lines = this.children, [], (c, i, into) => {
+        return Caf.each(lines = this.children, [], (c, i, into) => {
           let statement;
           into.push(
             returnAction && i === lines.length - 1

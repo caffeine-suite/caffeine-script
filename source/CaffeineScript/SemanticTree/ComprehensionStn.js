@@ -1,15 +1,16 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     SemanticTree,
+    ComprehensionStn,
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
     arrayWithAllButLast,
     peek,
-    Error,
-    UniqueIdentifierHandle;
-  ({ arrayWithAllButLast, peek, Error, UniqueIdentifierHandle } = Caf.i(
-    ["arrayWithAllButLast", "peek", "Error", "UniqueIdentifierHandle"],
+    Error;
+  ({ arrayWithAllButLast, peek, Error } = Caf.import(
+    ["arrayWithAllButLast", "peek", "Error"],
     [StandardImport, global]
   ));
   SemanticTree = require("./namespace");
@@ -52,7 +53,8 @@ Caf.defMod(module, () => {
           whenClauseWrapper,
           allButLast,
           foundTest,
-          baseIdentifierHandle;
+          baseIdentifierHandle,
+          UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
         this.children = this.transformChildren();
         this.initLabeledChildren();
         ({

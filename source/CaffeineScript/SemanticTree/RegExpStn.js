@@ -1,10 +1,12 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     Lib = require("../Lib"),
+    RegExpStn,
     BaseStn = require("./BaseStn"),
     isString;
-  ({ isString } = Caf.i(["isString"], [StandardImport, Lib, global]));
+  ({ isString } = Caf.import(["isString"], [StandardImport, Lib, global]));
   return RegExpStn = Caf.defClass(class RegExpStn extends BaseStn {}, function(
     RegExpStn,
     classSuper,
@@ -14,7 +16,7 @@ Caf.defMod(module, () => {
       let value, modifiers, str, hasInterpolation, cafBase;
       ({ value, modifiers } = this.props);
       str = (Caf.exists(cafBase = this.children) && cafBase.length) > 0
-        ? (hasInterpolation = Caf.ee(this.children, undefined, (
+        ? (hasInterpolation = Caf.extendedEach(this.children, undefined, (
             child,
             k,
             into,
@@ -23,7 +25,7 @@ Caf.defMod(module, () => {
             let cafRet;
             return (cafRet = !isString(child.props.value)) && (brk(), cafRet);
           }), Caf
-            .e(this.children, [], (child, k, into) => {
+            .each(this.children, [], (child, k, into) => {
               let v;
               into.push(
                 isString(v = child.props.value)

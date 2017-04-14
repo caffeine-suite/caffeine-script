@@ -1,8 +1,10 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"),
     BabelBridge = require("babel-bridge"),
     SemanticTree = require("./SemanticTree"),
+    CafParseNodeBaseClass,
     Nodes,
     isString,
     Error,
@@ -17,6 +19,7 @@ Caf.defMod(module, () => {
     class CafParseNodeBaseClass extends Nodes.Node {},
     function(CafParseNodeBaseClass, classSuper, instanceSuper) {
       this._createSubclassBase = function() {
+        let NodeSubclass;
         return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
       };
       this.prototype.isImplicitArray = function() {

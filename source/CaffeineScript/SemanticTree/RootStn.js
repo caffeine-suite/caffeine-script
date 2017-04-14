@@ -1,7 +1,9 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     StatementsStn = require("./StatementsStn"),
+    RootStn,
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
     compactFlatten;

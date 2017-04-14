@@ -202,7 +202,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   operator: "&&"
 
                   AssignmentStn
-                    IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
+                    IdentifierStn identifierHandle: baseIdentifierHandle = new &UniqueIdentifierHandle "_ret"
                     body
 
                   StatementsStn

@@ -1,7 +1,9 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     ArrayStn,
+    ObjectStn,
     BaseStn = require("./BaseStn");
   ArrayStn = require("./ArrayStn");
   return ObjectStn = Caf.defClass(class ObjectStn extends BaseStn {}, function(
@@ -13,7 +15,7 @@ Caf.defMod(module, () => {
     this.prototype.toJs = function() {
       return `{${Caf.toString(
         Caf
-          .e(this.children, [], (c, k, into) => {
+          .each(this.children, [], (c, k, into) => {
             into.push(c.toJs());
           })
           .join(", ")
@@ -26,7 +28,7 @@ Caf.defMod(module, () => {
       let currentDefined, listOfObjectLiterals, currentOrder;
       currentDefined = {};
       listOfObjectLiterals = [currentOrder = []];
-      Caf.e(children, undefined, (child, k, into) => {
+      Caf.each(children, undefined, (child, k, into) => {
         let found, value;
         if (found = child.find(/ObjectPropNameStn/)) {
           [{ props: { value } }] = found;
@@ -46,7 +48,7 @@ Caf.defMod(module, () => {
       return listOfObjectLiterals.length === 1
         ? new this(props, children)
         : new ArrayStn(
-            Caf.e(listOfObjectLiterals, [], (c, k, into) => {
+            Caf.each(listOfObjectLiterals, [], (c, k, into) => {
               into.push(new this(props, c));
             })
           );

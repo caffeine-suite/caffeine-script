@@ -1,11 +1,13 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     UndefinedStn = require("./UndefinedStn"),
+    ControlOperatorStn,
     BaseStn = require("./BaseStn"),
     Error,
     formattedInspect;
-  ({ Error, formattedInspect } = Caf.i(["Error", "formattedInspect"], [
+  ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
     StandardImport,
     global
   ]));

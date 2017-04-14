@@ -1,6 +1,7 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let BaseStn = require("./BaseStn");
+  let SimpleLiteralStn, BaseStn = require("./BaseStn");
   return SimpleLiteralStn = Caf.defClass(
     class SimpleLiteralStn extends BaseStn {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {

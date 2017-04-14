@@ -1,6 +1,8 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
+    SwitchWhenStn,
     BaseStn = require("./BaseStn");
   return SwitchWhenStn = Caf.defClass(
     class SwitchWhenStn extends BaseStn {},
@@ -17,7 +19,7 @@ Caf.defMod(module, () => {
         ({ falsifyCases } = options);
         ({ whenValue } = this.labeledChildren);
         cases = whenValue.implicitArray
-          ? Caf.e(whenValue.children, [], (m, k, into) => {
+          ? Caf.each(whenValue.children, [], (m, k, into) => {
               into.push(m.toJsExpression());
             })
           : [whenValue.toJsExpression()];

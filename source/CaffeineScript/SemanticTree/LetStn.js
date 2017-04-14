@@ -1,6 +1,7 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let Error = global.Error, BaseStn = require("./BaseStn");
+  let Error = global.Error, LetStn, BaseStn = require("./BaseStn");
   return LetStn = Caf.defClass(class LetStn extends BaseStn {}, function(
     LetStn,
     classSuper,

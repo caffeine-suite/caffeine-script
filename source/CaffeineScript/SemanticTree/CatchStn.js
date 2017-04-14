@@ -1,9 +1,14 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
+    CatchStn,
     BaseStn = require("./BaseStn"),
     compactFlatten;
-  ({ compactFlatten } = Caf.i(["compactFlatten"], [StandardImport, global]));
+  ({ compactFlatten } = Caf.import(["compactFlatten"], [
+    StandardImport,
+    global
+  ]));
   return CatchStn = Caf.defClass(class CatchStn extends BaseStn {}, function(
     CatchStn,
     classSuper,

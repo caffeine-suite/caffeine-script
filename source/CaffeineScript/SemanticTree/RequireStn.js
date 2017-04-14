@@ -1,3 +1,4 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
@@ -5,9 +6,10 @@ Caf.defMod(module, () => {
     Fs = require("fs"),
     realRequire,
     findModuleSync,
+    RequireStn,
     BaseStn = require("./BaseStn"),
     peek;
-  ({ peek } = Caf.i(["peek"], [StandardImport, global]));
+  ({ peek } = Caf.import(["peek"], [StandardImport, global]));
   Path;
   Fs;
   realRequire = eval("require");

@@ -1492,9 +1492,11 @@ Caf.defMod(module, () => {
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2),
+  let IdentiferStn, StandardImport = __webpack_require__(2),
     BaseStn = __webpack_require__(3);
   return IdentiferStn = Caf.defClass(
     class IdentiferStn extends BaseStn {},
@@ -3814,7 +3816,7 @@ Caf.defMod(module, () => {
       pathedRequire: /((?:(?!\s)[\/$\w\u007f-\uffff])+)/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
-      unaryOperator_: /([!~]|not\b) */,
+      unaryOperator_: /([!~]|not\b) *|-(?![:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
       new: /new\b/,
@@ -4098,7 +4100,9 @@ Caf.defMod(module, () => {
 /* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {let Caf = __webpack_require__(0);
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     AssignmentStn = __webpack_require__(21),
@@ -4110,11 +4114,12 @@ Caf.defMod(module, () => {
     FunctionDefinitionArgsStn = __webpack_require__(10),
     FunctionDefinitionArgStn = __webpack_require__(22),
     UniqueIdentifierHandle = __webpack_require__(11),
+    ClassStn,
     BaseStn = __webpack_require__(3),
     Error,
     compactFlatten,
     merge;
-  ({ Error, compactFlatten, merge } = Caf.i(
+  ({ Error, compactFlatten, merge } = Caf.import(
     ["Error", "compactFlatten", "merge"],
     [StandardImport, global]
   ));
@@ -4132,10 +4137,18 @@ Caf.defMod(module, () => {
     classSuper,
     instanceSuper
   ) {
+    this.prototype.updateScope = function(scope) {
+      let className;
+      this.scope = scope;
+      ({ className } = this.labeledChildren);
+      this.scope.addIdentifierAssigned(className.toJs());
+      return instanceSuper.updateScope.apply(this, arguments);
+    };
     this.prototype.transform = function() {
       let className,
         classExtends,
         body,
+        constructorStn,
         classSuperHandle,
         instanceSuperHandle,
         statementsToCount,
@@ -4147,7 +4160,7 @@ Caf.defMod(module, () => {
       className = className.transform();
       classExtends = Caf.exists(classExtends) && classExtends.transform();
       if (body = Caf.exists(body) && body.transform()) {
-        constructor = null;
+        constructorStn = null;
         body = FunctionDefinitionStn(
           { label: "body", returnIgnored: true },
           FunctionDefinitionArgsStn(
@@ -4164,10 +4177,14 @@ Caf.defMod(module, () => {
             )
           ),
           StatementsStn(
-            statementsToCount = Caf.e(body.children, [], (stn, k, into) => {
+            statementsToCount = Caf.each(body.children, [], (stn, k, into) => {
               into.push(
                 stn.type === "Object"
-                  ? Caf.e(stn.children, [], (objectPropValueStn, k, into) => {
+                  ? Caf.each(stn.children, [], (
+                      objectPropValueStn,
+                      k,
+                      into
+                    ) => {
                       let propNameStn,
                         propValueStn,
                         assignToStn,
@@ -4185,7 +4202,7 @@ Caf.defMod(module, () => {
                                   IdentifierStn({ identifier: classPropName })
                                 ))
                               : propName === "constructor"
-                                  ? (constructor = propValueStn, null)
+                                  ? (constructorStn = propValueStn, null)
                                   : AccessorStn(
                                       ThisStn(
                                         IdentifierStn({
@@ -4221,16 +4238,16 @@ Caf.defMod(module, () => {
           )
         );
         statementCount = statementsToCount.length;
-        if (constructor) {
+        if (constructorStn) {
           statementCount -= 1;
-          constructor.props.isConstructor = true;
-          if (superCallChildren = constructor.find("Super")) {
+          constructorStn.props.isConstructor = true;
+          if (superCallChildren = constructorStn.find("Super")) {
             if (!(superCallChildren.length === 1)) {
               throw new Error("at most one super call in constructor");
             }
             superCallChildren[0].props.calledInConstructor = true;
           }
-          classBody = StatementsStn({ label: "classBody" }, constructor);
+          classBody = StatementsStn({ label: "classBody" }, constructorStn);
         }
         if (statementsToCount <= 0) {
           body = null;
@@ -5183,7 +5200,10 @@ Caf.defMod(module, () => {
     ScopeStnMixin = __webpack_require__(8),
     BaseStn = __webpack_require__(3),
     compactFlatten;
-  ({ compactFlatten } = Caf.i(["compactFlatten"], [StandardImport, global]));
+  ({ compactFlatten } = Caf.import(["compactFlatten"], [
+    StandardImport,
+    global
+  ]));
   StatementsStn;
   return RootStn = Caf.defClass(
     class RootStn extends ScopeStnMixin(BaseStn) {
@@ -5207,7 +5227,7 @@ Caf.defMod(module, () => {
       this.prototype.toJsModule = function() {
         let identifiersUsedButNotAssigned, statementsJs, lets, statements;
         ({ identifiersUsedButNotAssigned } = this);
-        identifiersUsedButNotAssigned = Caf.e(
+        identifiersUsedButNotAssigned = Caf.each(
           identifiersUsedButNotAssigned,
           [],
           (v, k, into) => {
@@ -5223,7 +5243,7 @@ Caf.defMod(module, () => {
           lets.length > 0 ? `let ${Caf.toString(lets.join(", "))}` : undefined,
           statementsJs
         ]);
-        return `let Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
+        return `"use strict"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
           statements.join("; ")
         )};});`;
       };
@@ -5657,7 +5677,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.40.0"
+	"version": "0.40.1"
 };
 
 /***/ }),

@@ -1,12 +1,17 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     FunctionDefinitionArgsStn = require("./FunctionDefinitionArgsStn"),
     StatementsStn = require("./StatementsStn"),
+    FunctionDefinitionStn,
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
     compactFlatten;
-  ({ compactFlatten } = Caf.i(["compactFlatten"], [StandardImport, global]));
+  ({ compactFlatten } = Caf.import(["compactFlatten"], [
+    StandardImport,
+    global
+  ]));
   FunctionDefinitionArgsStn;
   StatementsStn;
   return FunctionDefinitionStn = Caf.defClass(
@@ -75,7 +80,7 @@ Caf.defMod(module, () => {
         [argsDef, body] = this.children;
         statements = [];
         argsDef = argsDef
-          ? (statements = Caf.e(argsDef.children, [], (arg, k, into) => {
+          ? (statements = Caf.each(argsDef.children, [], (arg, k, into) => {
               let preBodyStatements;
               if (preBodyStatements = arg.getFunctionPreBodyStatementsJs()) {
                 into.push(preBodyStatements);
@@ -84,7 +89,7 @@ Caf.defMod(module, () => {
           : "()";
         bodyJs = Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
         if (this.props.isConstructor) {
-          constructorSuperIndex = Caf.ee(bodyJs, undefined, (
+          constructorSuperIndex = Caf.extendedEach(bodyJs, undefined, (
             v,
             i,
             into,

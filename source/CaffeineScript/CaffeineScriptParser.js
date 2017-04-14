@@ -1,8 +1,10 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("./StandardImport"),
     BabelBridge = require("babel-bridge"),
     CafParseNodeBaseClass = require("./CafParseNodeBaseClass"),
+    CaffeineScriptParser,
     Parser,
     isFunction,
     Error;

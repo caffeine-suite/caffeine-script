@@ -1,12 +1,14 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     legalUnquotedPropName,
     escapePropName,
+    ObjectPropNameStn,
     BaseStn = require("./BaseStn"),
     escapeJavascriptString,
     Error;
-  ({ escapeJavascriptString, Error } = Caf.i(
+  ({ escapeJavascriptString, Error } = Caf.import(
     ["escapeJavascriptString", "Error"],
     [StandardImport, global]
   ));
