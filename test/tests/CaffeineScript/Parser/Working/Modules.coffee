@@ -39,6 +39,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     a
     """:
       """
+      "use strict"
       let Caf = require('caffeine-script-runtime');
       Caf.defMod(module, () => {let Foo = global.Foo, a; ({a} = Caf.import([\"a\"], [Foo, global]));return a;});
       """

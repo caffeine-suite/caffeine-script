@@ -1,3 +1,4 @@
+"use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
@@ -10,11 +11,12 @@ Caf.defMod(module, () => {
     FunctionDefinitionArgsStn = require("./FunctionDefinitionArgsStn"),
     FunctionDefinitionArgStn = require("./FunctionDefinitionArgStn"),
     UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
+    ClassStn,
     BaseStn = require("./BaseStn"),
     Error,
     compactFlatten,
     merge;
-  ({ Error, compactFlatten, merge } = Caf.i(
+  ({ Error, compactFlatten, merge } = Caf.import(
     ["Error", "compactFlatten", "merge"],
     [StandardImport, global]
   ));
@@ -32,10 +34,18 @@ Caf.defMod(module, () => {
     classSuper,
     instanceSuper
   ) {
+    this.prototype.updateScope = function(scope) {
+      let className;
+      this.scope = scope;
+      ({ className } = this.labeledChildren);
+      this.scope.addIdentifierAssigned(className.toJs());
+      return instanceSuper.updateScope.apply(this, arguments);
+    };
     this.prototype.transform = function() {
       let className,
         classExtends,
         body,
+        constructorStn,
         classSuperHandle,
         instanceSuperHandle,
         statementsToCount,
@@ -47,7 +57,7 @@ Caf.defMod(module, () => {
       className = className.transform();
       classExtends = Caf.exists(classExtends) && classExtends.transform();
       if (body = Caf.exists(body) && body.transform()) {
-        constructor = null;
+        constructorStn = null;
         body = FunctionDefinitionStn(
           { label: "body", returnIgnored: true },
           FunctionDefinitionArgsStn(
@@ -64,10 +74,14 @@ Caf.defMod(module, () => {
             )
           ),
           StatementsStn(
-            statementsToCount = Caf.e(body.children, [], (stn, k, into) => {
+            statementsToCount = Caf.each(body.children, [], (stn, k, into) => {
               into.push(
                 stn.type === "Object"
-                  ? Caf.e(stn.children, [], (objectPropValueStn, k, into) => {
+                  ? Caf.each(stn.children, [], (
+                      objectPropValueStn,
+                      k,
+                      into
+                    ) => {
                       let propNameStn,
                         propValueStn,
                         assignToStn,
@@ -85,7 +99,7 @@ Caf.defMod(module, () => {
                                   IdentifierStn({ identifier: classPropName })
                                 ))
                               : propName === "constructor"
-                                  ? (constructor = propValueStn, null)
+                                  ? (constructorStn = propValueStn, null)
                                   : AccessorStn(
                                       ThisStn(
                                         IdentifierStn({
@@ -121,16 +135,16 @@ Caf.defMod(module, () => {
           )
         );
         statementCount = statementsToCount.length;
-        if (constructor) {
+        if (constructorStn) {
           statementCount -= 1;
-          constructor.props.isConstructor = true;
-          if (superCallChildren = constructor.find("Super")) {
+          constructorStn.props.isConstructor = true;
+          if (superCallChildren = constructorStn.find("Super")) {
             if (!(superCallChildren.length === 1)) {
               throw new Error("at most one super call in constructor");
             }
             superCallChildren[0].props.calledInConstructor = true;
           }
-          classBody = StatementsStn({ label: "classBody" }, constructor);
+          classBody = StatementsStn({ label: "classBody" }, constructorStn);
         }
         if (statementsToCount <= 0) {
           body = null;

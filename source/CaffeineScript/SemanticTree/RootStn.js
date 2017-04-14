@@ -5,7 +5,10 @@ Caf.defMod(module, () => {
     ScopeStnMixin = require("./ScopeStnMixin"),
     BaseStn = require("./BaseStn"),
     compactFlatten;
-  ({ compactFlatten } = Caf.i(["compactFlatten"], [StandardImport, global]));
+  ({ compactFlatten } = Caf.import(["compactFlatten"], [
+    StandardImport,
+    global
+  ]));
   StatementsStn;
   return RootStn = Caf.defClass(
     class RootStn extends ScopeStnMixin(BaseStn) {
@@ -29,7 +32,7 @@ Caf.defMod(module, () => {
       this.prototype.toJsModule = function() {
         let identifiersUsedButNotAssigned, statementsJs, lets, statements;
         ({ identifiersUsedButNotAssigned } = this);
-        identifiersUsedButNotAssigned = Caf.e(
+        identifiersUsedButNotAssigned = Caf.each(
           identifiersUsedButNotAssigned,
           [],
           (v, k, into) => {
@@ -45,7 +48,7 @@ Caf.defMod(module, () => {
           lets.length > 0 ? `let ${Caf.toString(lets.join(", "))}` : undefined,
           statementsJs
         ]);
-        return `let Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
+        return `"use strict"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
           statements.join("; ")
         )};});`;
       };

@@ -28,6 +28,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
       statementsJs
 
     """
+      "use strict"
       let Caf = require('caffeine-script-runtime');
       Caf.defMod(module, () => {#{statements.join '; '};});
 

@@ -93,6 +93,7 @@ module.exports =
 
   applyModuleWrapper: (body) ->
     """
+    "use strict"
     let Caf = require(\'caffeine-script-runtime\');
     Caf.defMod(module, () => {#{body}});
     """

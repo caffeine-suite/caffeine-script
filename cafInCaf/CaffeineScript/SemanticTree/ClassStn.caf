@@ -12,6 +12,11 @@ import &StandardImport
 
 class ClassStn extends &BaseStn
 
+  updateScope: (@scope) ->
+    {className} = @labeledChildren
+    @scope.addIdentifierAssigned className.toJs()
+    super
+
   transform: ->
     {className, classExtends, body} = @labeledChildren
     # log labeledChildren:@labeledChildren, className: @className
@@ -19,7 +24,7 @@ class ClassStn extends &BaseStn
     classExtends = classExtends?.transform()
 
     if body = body?.transform()
-      constructor = null
+      constructorStn = null
       body = FunctionDefinitionStn
         label: "body"
         returnIgnored: true
@@ -44,7 +49,7 @@ class ClassStn extends &BaseStn
                       ThisStn IdentifierStn identifier: classPropName
                     else
                       if propName == "constructor"
-                        constructor = propValueStn
+                        constructorStn = propValueStn
                         null
                       else
                         AccessorStn
@@ -61,16 +66,16 @@ class ClassStn extends &BaseStn
               stn
 
       statementCount = statementsToCount.length
-      if constructor
+      if constructorStn
         statementCount -= 1
-        constructor.props.isConstructor = true
-        if superCallChildren = constructor.find "Super"
+        constructorStn.props.isConstructor = true
+        if superCallChildren = constructorStn.find "Super"
           throw new Error "at most one super call in constructor" unless superCallChildren.length == 1
           superCallChildren[0].props.calledInConstructor = true
 
         classBody = StatementsStn
           label: "classBody"
-          constructor
+          constructorStn
 
       body = null if statementsToCount <= 0
       children = compactFlatten [className, classExtends, body, classBody]
