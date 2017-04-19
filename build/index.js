@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 95);
+/******/ 	return __webpack_require__(__webpack_require__.s = 96);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -110,7 +110,7 @@ module.exports = function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ArtStandardLib = __webpack_require__(33),
-    ArtClassSystem = __webpack_require__(89);
+    ArtClassSystem = __webpack_require__(90);
   return ArtStandardLib.merge(ArtStandardLib, ArtClassSystem);
 });
 
@@ -126,7 +126,7 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     createObjectTreeFactory,
-    ArtObjectTreeFactory = __webpack_require__(90),
+    ArtObjectTreeFactory = __webpack_require__(91),
     BaseStn,
     BaseClass,
     log,
@@ -420,55 +420,55 @@ module.exports = require("babel-bridge");
 
 module.exports = __webpack_require__(6).addModules({
   AccessorStn: __webpack_require__(20),
-  ArrayDestructuringStn: __webpack_require__(58),
-  ArraySpreadElementStn: __webpack_require__(59),
+  ArrayDestructuringStn: __webpack_require__(59),
+  ArraySpreadElementStn: __webpack_require__(60),
   ArrayStn: __webpack_require__(14),
   AssignmentStn: __webpack_require__(21),
   BaseStn: __webpack_require__(3),
   BinaryOperatorStn: __webpack_require__(15),
-  CaptureStn: __webpack_require__(60),
-  CatchStn: __webpack_require__(61),
-  ClassStn: __webpack_require__(62),
-  ComprehensionStn: __webpack_require__(63),
-  ControlOperatorStn: __webpack_require__(64),
-  DestructuringAssignmentStn: __webpack_require__(65),
-  DestructuringIdentifierStn: __webpack_require__(66),
-  DoStn: __webpack_require__(67),
+  CaptureStn: __webpack_require__(61),
+  CatchStn: __webpack_require__(62),
+  ClassStn: __webpack_require__(63),
+  ComprehensionStn: __webpack_require__(64),
+  ControlOperatorStn: __webpack_require__(65),
+  DestructuringAssignmentStn: __webpack_require__(66),
+  DestructuringIdentifierStn: __webpack_require__(67),
+  DoStn: __webpack_require__(68),
   FunctionDefinitionArgsStn: __webpack_require__(11),
   FunctionDefinitionArgStn: __webpack_require__(22),
   FunctionDefinitionStn: __webpack_require__(23),
-  FunctionInvocationStn: __webpack_require__(68),
-  GlobalIdentifierStn: __webpack_require__(69),
+  FunctionInvocationStn: __webpack_require__(69),
+  GlobalIdentifierStn: __webpack_require__(70),
   IdentifierStn: __webpack_require__(16),
-  ImportStn: __webpack_require__(70),
-  InterpolatedStringStn: __webpack_require__(71),
-  LabeledDestructuringTargetStn: __webpack_require__(72),
+  ImportStn: __webpack_require__(71),
+  InterpolatedStringStn: __webpack_require__(72),
+  LabeledDestructuringTargetStn: __webpack_require__(73),
   LetStn: __webpack_require__(24),
-  NewInstanceStn: __webpack_require__(73),
-  ObjectDestructuringStn: __webpack_require__(74),
+  NewInstanceStn: __webpack_require__(74),
+  ObjectDestructuringStn: __webpack_require__(75),
   ObjectPropNameStn: __webpack_require__(25),
   ObjectPropValueStn: __webpack_require__(26),
   ObjectStn: __webpack_require__(27),
   ReferenceStn: __webpack_require__(28),
-  RegExpStn: __webpack_require__(75),
-  RequireStn: __webpack_require__(76),
-  RootStn: __webpack_require__(77),
+  RegExpStn: __webpack_require__(76),
+  RequireStn: __webpack_require__(77),
+  RootStn: __webpack_require__(78),
   ScopeStnMixin: __webpack_require__(8),
-  SemanticTokenStn: __webpack_require__(78),
-  SimpleLiteralStn: __webpack_require__(79),
+  SemanticTokenStn: __webpack_require__(79),
+  SimpleLiteralStn: __webpack_require__(80),
   StatementsStn: __webpack_require__(9),
   StringStn: __webpack_require__(29),
-  SuperStn: __webpack_require__(80),
-  SwitchStn: __webpack_require__(81),
-  SwitchWhenStn: __webpack_require__(82),
+  SuperStn: __webpack_require__(81),
+  SwitchStn: __webpack_require__(82),
+  SwitchWhenStn: __webpack_require__(83),
   ThisStn: __webpack_require__(30),
-  ThrowStn: __webpack_require__(83),
-  TryStn: __webpack_require__(84),
-  UnaryOperatorStn: __webpack_require__(85),
+  ThrowStn: __webpack_require__(84),
+  TryStn: __webpack_require__(85),
+  UnaryOperatorStn: __webpack_require__(86),
   UndefinedStn: __webpack_require__(31),
   UniqueIdentifierHandle: __webpack_require__(10),
   ValueBaseCaptureStn: __webpack_require__(12),
-  ValueStn: __webpack_require__(86)
+  ValueStn: __webpack_require__(87)
 });
 
 
@@ -1576,7 +1576,7 @@ var CaffeineScript, Neptune,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-Neptune = __webpack_require__(93);
+Neptune = __webpack_require__(94);
 
 module.exports = Neptune.CaffeineScript || Neptune.addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
@@ -2487,7 +2487,7 @@ Caf.defMod(module, () => {
 /* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(87).addModules({
+module.exports = __webpack_require__(88).addModules({
   Accessors: __webpack_require__(36),
   ArrayLiterals: __webpack_require__(37),
   Blocks: __webpack_require__(38),
@@ -2509,7 +2509,8 @@ module.exports = __webpack_require__(87).addModules({
   StringLiterals: __webpack_require__(54),
   TagMacros: __webpack_require__(55),
   Tokens: __webpack_require__(56),
-  Values: __webpack_require__(57)
+  ValueLists: __webpack_require__(57),
+  Values: __webpack_require__(58)
 });
 
 
@@ -2547,7 +2548,7 @@ Caf.defMod(module, () => {
   let ArtStandardLib = __webpack_require__(33), log;
   ({ log } = Caf.import(["log"], [ArtStandardLib, global]));
   return {
-    version: __webpack_require__(88).version,
+    version: __webpack_require__(89).version,
     compile: function(source, options = {}) {
       let parseTree,
         CaffeineScriptParser = __webpack_require__(19),
@@ -2631,20 +2632,13 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    BabelBridge = __webpack_require__(4),
-    Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    StandardImport,
-    BabelBridge,
-    global
-  ]));
+    BabelBridge = __webpack_require__(4);
   return function() {
-    this.rule(
+    return this.rule(
       {
         array: [
-          "openBracket_ valueListBlock _closeBracket",
           {
-            pattern: "'[]' _? valueListToEolAndBlock",
+            pattern: "'[]' _? valueList",
             getImplicitArray: function() {
               return false;
             }
@@ -2654,7 +2648,7 @@ Caf.defMod(module, () => {
         brackedArray: "openBracket_ valueList _comma_? _closeBracket",
         implicitArray: [
           {
-            pattern: "start:expression _comma_ valueList _comma_?",
+            pattern: "start:expression _comma_ simpleValueList _comma_?",
             getImplicitArray: function() {
               return this;
             },
@@ -2662,7 +2656,7 @@ Caf.defMod(module, () => {
             stnProps: { implicitArray: true }
           },
           {
-            pattern: "start:literal _ valueList _comma_?",
+            pattern: "start:literal _ simpleValueList _comma_?",
             getImplicitArray: function() {
               return this;
             },
@@ -2673,35 +2667,6 @@ Caf.defMod(module, () => {
       },
       { stnFactory: "ArrayStn" }
     );
-    this.rule({
-      valueListBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
-        rule: "valueListBlockSubParse"
-      }),
-      valueListToEolAndBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-        { rule: "valueListBlockSubParse" }
-      ),
-      valueListBlockSubParse: "end* listItemStatement*"
-    });
-    this.rule({
-      valueList: [
-        { pattern: "element:listItemExpression _comma_ valueList" },
-        { pattern: "element:literal _ valueList" },
-        { pattern: "element:listItemExpression" }
-      ]
-    });
-    return this.rule({
-      listItemStatement: [
-        {
-          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
-          stnFactory: "ArraySpreadElementStn"
-        },
-        { pattern: "statementWithoutEnd newLineStatementExtension* end" }
-      ],
-      listItemExpression: [
-        { pattern: "expression ellipsis", stnFactory: "ArraySpreadElementStn" },
-        { pattern: "expression" }
-      ]
-    });
   };
 });
 
@@ -3230,17 +3195,15 @@ Caf.defMod(module, () => {
     });
     this.rule({
       superFunctionInvocation: [
-        "openParen_ valueList? _closeParen",
-        "_? implicitArrayOrExpression",
-        "_? valueListBlock"
+        "openParen_ simpleValueList? _closeParen",
+        "_? valueList"
       ]
     });
     return this.rule(
       {
         functionInvocation: [
-          "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:valueList",
-          "existanceTest:questionMark? _? values:valueListBlock"
+          "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
+          "existanceTest:questionMark? !/[-+]/ _? values:valueList"
         ]
       },
       {
@@ -3717,7 +3680,7 @@ Caf.defMod(module, () => {
       }
     },
     importStatement: {
-      pattern: "/import/ _ valueList end root",
+      pattern: "/import/ _? valueList end root",
       stnFactory: "ImportStn"
     },
     newLineStatementExtension: [
@@ -3985,6 +3948,55 @@ Caf.defMod(module, () => {
     global
   ]));
   return function() {
+    this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
+    this.rule({
+      valueListBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+        rule: "valueListBlockSubParse"
+      }),
+      valueListBlockSubParse: "end* listItemStatement*"
+    });
+    this.rule({
+      simpleValueList: [
+        { pattern: "element:listItemExpression _comma_ simpleValueList" },
+        { pattern: "element:literal _ simpleValueList" },
+        { pattern: "element:listItemExpression" }
+      ]
+    });
+    return this.rule({
+      listItemStatement: [
+        {
+          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
+          stnFactory: "ArraySpreadElementStn"
+        },
+        { pattern: "statementWithoutEnd newLineStatementExtension* end" }
+      ],
+      listItemExpression: [
+        { pattern: "expression ellipsis", stnFactory: "ArraySpreadElementStn" },
+        { pattern: "expression" }
+      ]
+    });
+  };
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(0);
+Caf.defMod(module, () => {
+  let StandardImport = __webpack_require__(2),
+    BabelBridge = __webpack_require__(4),
+    Extensions;
+  ({ Extensions } = Caf.import(["Extensions"], [
+    StandardImport,
+    BabelBridge,
+    global
+  ]));
+  return function() {
     this.rule({ value: "simpleValue valueExtension*" });
     this.rule({
       valueExtension: [
@@ -4087,7 +4099,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4110,7 +4122,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4133,7 +4145,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4174,7 +4186,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4242,7 +4254,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4432,7 +4444,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4709,7 +4721,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4852,7 +4864,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4879,7 +4891,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4917,7 +4929,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4945,7 +4957,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5016,7 +5028,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5040,7 +5052,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5147,7 +5159,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5193,7 +5205,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5216,7 +5228,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5239,7 +5251,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5262,7 +5274,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5319,7 +5331,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5327,8 +5339,8 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    Path = __webpack_require__(94),
-    Fs = __webpack_require__(92),
+    Path = __webpack_require__(95),
+    Fs = __webpack_require__(93),
     realRequire,
     findModuleSync,
     RequireStn,
@@ -5338,7 +5350,7 @@ Caf.defMod(module, () => {
   Path;
   Fs;
   realRequire = eval("require");
-  ({ findModuleSync } = __webpack_require__(91));
+  ({ findModuleSync } = __webpack_require__(92));
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
@@ -5377,7 +5389,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5459,7 +5471,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5506,7 +5518,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5533,7 +5545,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5615,7 +5627,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5671,7 +5683,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5718,7 +5730,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5748,7 +5760,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5782,7 +5794,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5812,7 +5824,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5834,7 +5846,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var CaffeineScript, Rules,
@@ -5856,7 +5868,7 @@ module.exports = CaffeineScript.Rules || CaffeineScript.addNamespace('Rules', Ru
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -5892,47 +5904,47 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.41.0"
+	"version": "0.41.1"
 };
-
-/***/ }),
-/* 89 */
-/***/ (function(module, exports) {
-
-module.exports = require("art-class-system");
 
 /***/ }),
 /* 90 */
 /***/ (function(module, exports) {
 
-module.exports = require("art-object-tree-factory");
+module.exports = require("art-class-system");
 
 /***/ }),
 /* 91 */
 /***/ (function(module, exports) {
 
-module.exports = require("caffeine-mc");
+module.exports = require("art-object-tree-factory");
 
 /***/ }),
 /* 92 */
 /***/ (function(module, exports) {
 
-module.exports = require("fs");
+module.exports = require("caffeine-mc");
 
 /***/ }),
 /* 93 */
 /***/ (function(module, exports) {
 
-module.exports = require("neptune-namespaces");
+module.exports = require("fs");
 
 /***/ }),
 /* 94 */
 /***/ (function(module, exports) {
 
-module.exports = require("path");
+module.exports = require("neptune-namespaces");
 
 /***/ }),
 /* 95 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(34);
