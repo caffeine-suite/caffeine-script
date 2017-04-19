@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
     global
   ]));
   return function() {
-    this.rule({ generalValueList: ["valueList", "valueListBlock"] });
+    this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
     this.rule({
       valueListBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
         rule: "valueListBlockSubParse"
@@ -18,9 +18,9 @@ Caf.defMod(module, () => {
       valueListBlockSubParse: "end* listItemStatement*"
     });
     this.rule({
-      valueList: [
-        { pattern: "element:listItemExpression _comma_ valueList" },
-        { pattern: "element:literal _ valueList" },
+      simpleValueList: [
+        { pattern: "element:listItemExpression _comma_ simpleValueList" },
+        { pattern: "element:literal _ simpleValueList" },
         { pattern: "element:listItemExpression" }
       ]
     });

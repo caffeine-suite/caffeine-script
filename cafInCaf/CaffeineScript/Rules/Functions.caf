@@ -54,15 +54,13 @@ getPropertySetters = (node, list = []) ~>
       pattern: "_equals_ expression"
 
   @rule superFunctionInvocation:
-    "openParen_ valueList? _closeParen"
-    "_? implicitArrayOrExpression"
-    "_? valueListBlock"
+    "openParen_ simpleValueList? _closeParen"
+    "_? valueList"
 
   @rule
     functionInvocation:
-      "existanceTest:questionMark? openParen_ values:valueList? _closeParen"
+      "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen"
       "existanceTest:questionMark? !/[-+]/ _? values:valueList"
-      "existanceTest:questionMark? _? values:valueListBlock"
     {}
       stnFactory: "FunctionInvocationStn"
       stnExtension: true

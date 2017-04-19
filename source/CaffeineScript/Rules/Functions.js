@@ -87,17 +87,15 @@ Caf.defMod(module, () => {
     });
     this.rule({
       superFunctionInvocation: [
-        "openParen_ valueList? _closeParen",
-        "_? implicitArrayOrExpression",
-        "_? valueListBlock"
+        "openParen_ simpleValueList? _closeParen",
+        "_? valueList"
       ]
     });
     return this.rule(
       {
         functionInvocation: [
-          "existanceTest:questionMark? openParen_ values:valueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:valueList",
-          "existanceTest:questionMark? _? values:valueListBlock"
+          "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
+          "existanceTest:questionMark? !/[-+]/ _? values:valueList"
         ]
       },
       {
