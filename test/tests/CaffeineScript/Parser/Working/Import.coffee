@@ -61,3 +61,25 @@ module.exports = suite: parseTestSuite {compileModule: true},
       = Caf.import(["c"], cafParentImports1 = [b, cafParentImports]));({foo}
       = Caf.import(["foo"], [c, cafParentImports1]));return foo();
       '
+
+  list:
+    """
+    import a, b, c
+    foo()
+    """:
+      applyModuleWrapper '
+        let a = global.a, b = global.b, c = global.c, foo;
+        ({foo} = Caf.import(["foo"], [a, b, c, global]));return foo();
+      '
+
+    """
+    import
+      a
+      b
+      c
+    foo()
+    """:
+      applyModuleWrapper '
+        let a = global.a, b = global.b, c = global.c, foo;
+        ({foo} = Caf.import(["foo"], [a, b, c, global]));return foo();
+      '

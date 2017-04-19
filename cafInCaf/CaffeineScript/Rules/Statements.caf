@@ -27,7 +27,7 @@ newLineStart:
   getPresent: ~> false
 
 importStatement:
-  pattern: '/import/ _ valueList end root'
+  pattern: '/import/ _? generalValueList end root'
   stnFactory: :ImportStn
 
 newLineStatementExtension:

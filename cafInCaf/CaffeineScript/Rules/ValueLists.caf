@@ -1,0 +1,30 @@
+import &StandardImport, &BabelBridge
+
+->
+  @rule
+    generalValueList: :valueList, :valueListBlock
+
+  @rule
+    valueListBlock:         Extensions.IndentBlocks.getPropsToSubparseBlock rule: "valueListBlockSubParse"
+    valueListBlockSubParse: "end* listItemStatement*"
+
+  @rule
+    valueList:
+      {} pattern: "element:listItemExpression _comma_ valueList"
+      {} pattern: "element:literal _ valueList"
+      {} pattern: "element:listItemExpression"
+
+  @rule
+    listItemStatement:
+      {}
+        pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end"
+        stnFactory: :ArraySpreadElementStn
+      {}
+        pattern: "statementWithoutEnd newLineStatementExtension* end"
+
+    listItemExpression:
+      {}
+        pattern: "expression ellipsis"
+        stnFactory: :ArraySpreadElementStn
+      {}
+        pattern: "expression"

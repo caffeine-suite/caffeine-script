@@ -48,7 +48,7 @@ Caf.defMod(module, () => {
       }
     },
     importStatement: {
-      pattern: "/import/ _ valueList end root",
+      pattern: "/import/ _? generalValueList end root",
       stnFactory: "ImportStn"
     },
     newLineStatementExtension: [
