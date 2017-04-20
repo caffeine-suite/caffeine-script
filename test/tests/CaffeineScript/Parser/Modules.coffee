@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
-{parseTests, parseTestSuite, illegalSyntaxTests, applyModuleWrapper} = require '../../Helper'
+{parseTests, parseTestSuite, illegalSyntaxTests, applyModuleWrapper} = require '../Helper'
 
 module.exports = suite: parseTestSuite {compileModule: true},
   basic:
@@ -37,28 +37,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     """
     import Foo
     a
-    """:
-      """
-      "use strict"
-      let Caf = require('caffeine-script-runtime');
-      Caf.defMod(module, () => {let Foo = global.Foo, a; ({a} = Caf.import([\"a\"], [Foo, global]));return a;});
-      """
-
-    # complex:
-    #   """
-    #   b = a;
-    #   ->
-    #     c = b + d
-    #     ->
-    #       e = c + f
-    #   """:  "
-    #     Caf.defMod(module, () =>
-    #       {let a = global.a, d = global.d, f = global.f;
-    #       let b;
-    #       b = a;
-    #       return function()
-    #         {let c;
-    #         c = b + d;
-    #         return function()
-    #           {let e;
-    #           return e = c + f;};};"
+    """: applyModuleWrapper "
+      let Foo = global.Foo, a;
+      ({a} = Caf.import([\"a\"], [Foo, global]));return a;
+      "

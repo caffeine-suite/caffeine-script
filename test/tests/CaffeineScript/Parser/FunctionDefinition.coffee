@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
-{parseTestSuite, illegalSyntaxTests} = require '../../Helper'
+{parseTestSuite, illegalSyntaxTests} = require '../Helper'
 
 module.exports = suite: parseTestSuite
   unbound:
@@ -42,9 +42,8 @@ module.exports = suite: parseTestSuite
     "(a...) =>":      "(...a) => {};"
     "(b, a...) =>":   "(b, ...a) => {};"
 
-    # illegalSyntaxTests [
-    #   "(b..., a) =>"
-    # ]
+  # illegalSyntaxTests:
+  #   "(b..., a) =>": knownFailing: null
 
   blankLine:
     """

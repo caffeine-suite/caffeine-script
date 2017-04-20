@@ -2,23 +2,4 @@
 # file: tests/CaffeineScript/Parser/Working/index.coffee
 
 module.exports = require './namespace'
-.addModules
-  Accessors:          require './Accessors'         
-  Assignment:         require './Assignment'        
-  AutoScoping:        require './AutoScoping'       
-  Classes:            require './Classes'           
-  Comments:           require './Comments'          
-  Comprehensions:     require './Comprehensions'    
-  ControlStructures:  require './ControlStructures' 
-  FunctionDefinition: require './FunctionDefinition'
-  FunctionInvocation: require './FunctionInvocation'
-  Import:             require './Import'            
-  Modules:            require './Modules'           
-  Operators:          require './Operators'         
-  RegExp:             require './RegExp'            
-  Require:            require './Require'           
-  Scope:              require './Scope'             
-  Statements:         require './Statements'        
-  TagMacros:          require './TagMacros'         
-  Values:             require './Values'            
 require './Literals'

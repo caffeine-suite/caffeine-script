@@ -3,7 +3,7 @@
 {Parser} = CaffeineScript
 {BaseClass} = Neptune.Art.ClassSystem
 
-{parseTestSuite} = require '../../Helper'
+{parseTestSuite} = require '../Helper'
 
 module.exports = suite: parseTestSuite
 

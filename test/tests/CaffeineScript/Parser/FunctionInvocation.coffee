@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
-{parseTestSuite, illegalSyntaxTests} = require '../../Helper'
+{parseTestSuite, illegalSyntaxTests} = require '../Helper'
 
 module.exports = suite: parseTestSuite
   noParens:
