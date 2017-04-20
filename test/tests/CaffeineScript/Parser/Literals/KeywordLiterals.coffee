@@ -2,7 +2,7 @@
 {log, formattedInspect} = Neptune.Art.StandardLib
 {Parser} = CaffeineScript
 
-{parseTests} = require '../../../Helper'
+{parseTests} = require '../../Helper'
 
 module.exports = suite:
   keywordValues: ->
