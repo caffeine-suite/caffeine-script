@@ -41,97 +41,88 @@ module.exports = suite: parseTestSuite
 
   multiline:
     basics:
-      "///hi///": "/hi/;"
-      "///  hi  ///": "/hi/;"
-      "///  hi//  ///": "/hi\\/\\//;"
+      "/// hi":     "/hi/;"
+      "///  hi":    "/hi/;"
+      "///  hi//":  "/hi\\/\\//;"
+
+    illegal:
+      "///hi": null
+
+    basicBlock:
       """
       ///
-      a
-      ///
+        a
       """: "/a/;"
+
+      """
+      ///
+        a
+        b
+      """: "/ab/;"
 
     comments:
       """
       ///
-      # only
-      ///
+        # only
       """: "/(?:)/;"
 
       """
       ///
-      a# only
-      ///
+        a# only
       """: "/a#only/;"
 
       """
       ///
-      # one
-      # two
-      ///
+        # one
+        # two
       """: "/(?:)/;"
 
       """
       ///
-      ##
-        one
-        two
-      ///
+        ##
+          one
+          two
       """: "/(?:)/;"
 
       """
       ///
-      ###
-        one
-        two
-      ###
-      ///
-      """: "/(?:)/;"
-
-      """
-      ///
-      # first
-      a
-      ///
+        # first
+        a
       """: "/a/;"
 
       """
       ///
-      a
-      # second
-      ///
+        a
+        # second
       """: "/a/;"
 
       """
       ///
-      a
-      # middle
-      b
-      ///
+        a
+        # middle
+        b
       """: "/ab/;"
 
       """
       ///
-      a # tail
-      ///
+        a # tail
       """: "/a/;"
 
       """
       ///
-      a# tail
-      ///
+        a# tail
       """: "/a#tail/;"
 
     escapes:
 
-      "///\\ ///": "/ /;"
-      "///\\////": "/\\//;"
-      "/// / ///": "/\\//;"
-      "/// // ///": "/\\/\\//;"
-      "/// //\\/ ///": "/\\/\\/\\//;"
+      "/// \\ ":      "/ /;"
+      "/// \\/":      "/\\//;"
+      "/// / ":      "/\\//;"
+      "/// // ":     "/\\/\\//;"
+      "/// //\\/ ":  "/\\/\\/\\//;"
       """
       ///
-      \\\\\\ \\ foo
-      ///
+        \\\\\\ \\ foo
       """:"/\\\\  foo/;"
 
     complex:
@@ -159,29 +150,28 @@ module.exports = suite: parseTestSuite
             )
           )
         )+
-      ///
 
       """: "/((?!\\/\\/\\/)(\\\\.|((?!\\\\|[\\s\\n]\\#|\\#\\{)(.|\\n))))+/;"
 
     interpolation:
-      '///#{a}///': "RegExp(`${a}`);";
-      '///#{a}#{b}///': "RegExp(`${a}${b}`);";
-      '///#{a}\\ #{b}///': "RegExp(`${a} ${b}`);";
-      '///this#{a}that///': "RegExp(`this${a}that`);";
-      '///\\n#{a}///': "RegExp(`\\\\n${a}`);"
+      '/// #{a}':         "RegExp(`${a}`);";
+      '/// #{a}#{b}':     "RegExp(`${a}${b}`);";
+      '/// #{a}\\ #{b}':  "RegExp(`${a} ${b}`);";
+      '/// this#{a}that': "RegExp(`this${a}that`);";
+      '/// \\n#{a}':      "RegExp(`\\\\n${a}`);"
 
     modifiers:
-      "///a///i":       "/a/i;";
-      "///a///g":       "/a/g;";
-      "///a///m":       "/a/m;";
-      "///a///u":       "/a/u;";
-      "///a///y":       "/a/y;";
-      "///a///igmuy":   "/a/igmuy;";
+      "///i a":       "/a/i;";
+      "///g a":       "/a/g;";
+      "///m a":       "/a/m;";
+      "///u a":       "/a/u;";
+      "///y a":       "/a/y;";
+      "///igmuy a":   "/a/igmuy;";
 
-    "modifiers and interpolation":
-      '///#{a}///i':       "RegExp(`${a}`, 'i');";
-      '///#{a}///g':       "RegExp(`${a}`, 'g');";
-      '///#{a}///m':       "RegExp(`${a}`, 'm');";
-      '///#{a}///u':       "RegExp(`${a}`, 'u');";
-      '///#{a}///y':       "RegExp(`${a}`, 'y');";
-      '///#{a}///igmuy':   "RegExp(`${a}`, 'igmuy');";
+    everything:
+      '///i #{a}':       "RegExp(`${a}`, 'i');";
+      '///g #{a}':       "RegExp(`${a}`, 'g');";
+      '///m #{a}':       "RegExp(`${a}`, 'm');";
+      '///u #{a}':       "RegExp(`${a}`, 'u');";
+      '///y #{a}':       "RegExp(`${a}`, 'y');";
+      '///igmuy #{a}':   "RegExp(`${a}`, 'igmuy');";

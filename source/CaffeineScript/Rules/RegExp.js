@@ -3,7 +3,14 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
     BabelBridge = require("babel-bridge"),
-    SemanticTree = require("../SemanticTree");
+    SemanticTree = require("../SemanticTree"),
+    Extensions;
+  ({ Extensions } = Caf.import(["Extensions"], [
+    StandardImport,
+    BabelBridge,
+    SemanticTree,
+    global
+  ]));
   return {
     regExpLiteral: [
       {
@@ -19,21 +26,27 @@ Caf.defMod(module, () => {
         }
       },
       {
-        pattern: "'///' multilineRegExpMiddle* '///' regExpModifiers?",
+        pattern: "'///' regExpBlockModifiers regExpBlock ",
         stnFactory: "RegExpStn",
         stnProps: function() {
-          let cafBase;
+          let cafBase, cafBase1;
           return {
-            modifiers: Caf.exists(cafBase = this.regExpModifiers) &&
-              cafBase.toString()
+            modifiers: Caf.exists(cafBase = this.regExpBlockModifiers) &&
+              (Caf.exists(cafBase1 = cafBase.regExpModifiers) &&
+                cafBase1.toString())
           };
         }
       }
     ],
+    regExpBlockModifiers: ["regExpModifiers", /(?=[ \n])/],
+    regExpBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock({
+      rule: "regExpBlockPattern"
+    }),
+    regExpBlockPattern: "multilineRegExpMiddle*",
     regExpStart: "'/' !/[ \\/]/",
     regExpMiddle: /([^\/\\\n]|\\.|\#(?!\{))*/,
     regExpEnd: /\//,
-    regExpModifiers: /([igmuy]*)/,
+    regExpModifiers: /([igmuy]+)/,
     multilineRegExpMiddle: [
       "multilineRegExpText",
       "multilineRegExpEscape",

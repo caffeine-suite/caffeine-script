@@ -1,14 +1,32 @@
 import &StandardImport, &BabelBridge, &SemanticTree
 
+##
+  TODO: convert multiline RegExp into a 'block' instead of 'bracketed'
+  Syntax:
+
+    # modifiers come immeidately after the ///
+    # This works, because spaces are already ignored.
+
+    ///i matchthis
+    ///i
+      matchthis
+
 regExpLiteral:
   {}
     pattern:    "regExpStart regExpMiddle regExpEnd regExpModifiers?"
     stnFactory: :RegExpStn
     stnProps:   ~> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
   {}
-    pattern:    "'///' multilineRegExpMiddle* '///' regExpModifiers?"
+    pattern:    "'///' regExpBlockModifiers regExpBlock "
     stnFactory: :RegExpStn
-    stnProps:   ~> modifiers: @regExpModifiers?.toString()
+    stnProps:   ~> modifiers: @regExpBlockModifiers?.regExpModifiers?.toString()
+
+regExpBlockModifiers:
+  :regExpModifiers
+  /(?=[ \n])/ # could match space or EOL
+
+regExpBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: :regExpBlockPattern
+regExpBlockPattern: "multilineRegExpMiddle*"
 
 ##
   TODO: we could accept many regexps starting with space, / f/,
@@ -19,7 +37,7 @@ regExpLiteral:
 regExpStart:      "'/' !/[ \\/]/"
 regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )* ///
 regExpEnd:        /// / ///
-regExpModifiers:  /([igmuy]*)/
+regExpModifiers:  /([igmuy]+)/
 
 multilineRegExpMiddle:
   :multilineRegExpText
