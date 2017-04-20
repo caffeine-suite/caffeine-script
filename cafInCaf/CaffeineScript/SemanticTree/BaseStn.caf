@@ -206,17 +206,17 @@ class BaseStn extends BaseClass
     "(#{expr})"
 
   @applyParens: applyParens = (expr) ->
-    if expr.match ///
-        ^(
-
-        \([^)]*\) |
-
-        \[[^\]]*\] |
-
-        ([!~-]*[_a-z0-9.]*)(\([^)]*\))?
-
-        )$
+    if expr.match
         ///i
+          ^(
+
+          \([^)]*\) |
+
+          \[[^\]]*\] |
+
+          ([!~-]*[_a-z0-9.]*)(\([^)]*\))?
+
+          )$
       expr
     else
       "(#{expr})"
