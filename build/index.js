@@ -3529,7 +3529,14 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     BabelBridge = __webpack_require__(4),
-    SemanticTree = __webpack_require__(5);
+    SemanticTree = __webpack_require__(5),
+    Extensions;
+  ({ Extensions } = Caf.import(["Extensions"], [
+    StandardImport,
+    BabelBridge,
+    SemanticTree,
+    global
+  ]));
   return {
     regExpLiteral: [
       {
@@ -3545,21 +3552,27 @@ Caf.defMod(module, () => {
         }
       },
       {
-        pattern: "'///' multilineRegExpMiddle* '///' regExpModifiers?",
+        pattern: "'///' regExpBlockModifiers regExpBlock ",
         stnFactory: "RegExpStn",
         stnProps: function() {
-          let cafBase;
+          let cafBase, cafBase1;
           return {
-            modifiers: Caf.exists(cafBase = this.regExpModifiers) &&
-              cafBase.toString()
+            modifiers: Caf.exists(cafBase = this.regExpBlockModifiers) &&
+              (Caf.exists(cafBase1 = cafBase.regExpModifiers) &&
+                cafBase1.toString())
           };
         }
       }
     ],
+    regExpBlockModifiers: ["regExpModifiers", /(?=[ \n])/],
+    regExpBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock({
+      rule: "regExpBlockPattern"
+    }),
+    regExpBlockPattern: "multilineRegExpMiddle*",
     regExpStart: "'/' !/[ \\/]/",
     regExpMiddle: /([^\/\\\n]|\\.|\#(?!\{))*/,
     regExpEnd: /\//,
-    regExpModifiers: /([igmuy]*)/,
+    regExpModifiers: /([igmuy]+)/,
     multilineRegExpMiddle: [
       "multilineRegExpText",
       "multilineRegExpEscape",
@@ -5904,7 +5917,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.41.1"
+	"version": "0.41.2"
 };
 
 /***/ }),
