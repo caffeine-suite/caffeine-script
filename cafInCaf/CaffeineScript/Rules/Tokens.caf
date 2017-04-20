@@ -21,60 +21,59 @@
     _else:          /(( *\n)+| +)else/
     ellipsis:       "'...'" # etc
 
-    reservedWord: ///
-      (
-      # forbidden by javascript, but not used by Caf
-      for | yes | no | on | off |
-
-      instanceof |
-
-      import |
-
-      throw |
-
-      return |
-
-      break |
-
-      into | returning |
-
-      with | do |
-
-      switch |
-
-      when |
-
-      if | until |
-
-      try | catch |
-
-      while | unless |
-
-      then | else |
-
-      and | or | is | isnt |
-
-      in | from |
-
-      not
-      )
-
-      \b
+    reservedWord:
       ///
+        (
+        # forbidden by javascript, but not used by Caf
+        for | yes | no | on | off |
+
+        instanceof |
+
+        import |
+
+        throw |
+
+        return |
+
+        break |
+
+        into | returning |
+
+        with | do |
+
+        switch |
+
+        when |
+
+        if | until |
+
+        try | catch |
+
+        while | unless |
+
+        then | else |
+
+        and | or | is | isnt |
+
+        in | from |
+
+        not
+        )
+
+        \b
 
     identifier:
       pattern:
         ///
-        (?!\d)
-        ( (?: (?!\s)[$\w\u007f-\uffff] )+ )
-        ///
+          (?!\d)
+          ( (?: (?!\s)[$\w\u007f-\uffff] )+ )
+
       stnFactory: :IdentifierStn
       stnProps: ~> identifier: @toString()
 
     pathedRequire:
       ///
-      ( (?: (?!\s)[\/$\w\u007f-\uffff] )+ )
-      ///
+        ( (?: (?!\s)[\/$\w\u007f-\uffff] )+ )
 
     ##
       SBD Feb2017: still debating exactly what should be included in unquoted strings
@@ -92,61 +91,59 @@
         |
 
         -(?![ :])
+
+    binaryOperator:
       ///
 
-    binaryOperator: ///
-
-      # js logic
-      && | \|\| | &(?=\s) | \| | \^ |
-
-      # cs logic
-      \? |
-
-      # cs english logic
-      # is && isnt are no longer supported - in anticipation of probable semantic change to typeof-replacements
-      ((and | or | in | instanceof)\b) |
-
-      # shift
-      << | >>> | >> |
-
-      # comparison
-      == | != | <= | >= | < | > |
-
-      # cs math
-      // | %% | \*\* |
-
-      # js math
-      [-+*/%]
-
-      ///
-
-    _assignmentOperator_: ///
-      \ *
-      ( # copy of binaryOperatorRegEx EXCEPT comparison operators
         # js logic
-        && | \|\| | & | \| | \^ |
+        && | \|\| | &(?=\s) | \| | \^ |
 
         # cs logic
         \? |
 
         # cs english logic
-        ((and | or | isnt | is | in)\b) |
+        # is && isnt are no longer supported - in anticipation of probable semantic change to typeof-replacements
+        ((and | or | in | instanceof)\b) |
 
         # shift
         << | >>> | >> |
 
         # comparison
-        # == | != | <= | >= | < | > |
+        == | != | <= | >= | < | > |
 
         # cs math
         // | %% | \*\* |
 
         # js math
         [-+*/%]
-      )?
-      =
-      \ *
+
+    _assignmentOperator_:
       ///
+        \ *
+        ( # copy of binaryOperatorRegEx EXCEPT comparison operators
+          # js logic
+          && | \|\| | & | \| | \^ |
+
+          # cs logic
+          \? |
+
+          # cs english logic
+          ((and | or | isnt | is | in)\b) |
+
+          # shift
+          << | >>> | >> |
+
+          # comparison
+          # == | != | <= | >= | < | > |
+
+          # cs math
+          // | %% | \*\* |
+
+          # js math
+          [-+*/%]
+        )?
+        =
+        \ *
 
     new: /new\b/
     throw: /throw\b/

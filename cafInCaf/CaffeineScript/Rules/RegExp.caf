@@ -35,8 +35,8 @@ regExpBlockPattern: "multilineRegExpMiddle*"
   The problem cases are listed in the tests under spaceAfterSlashIsNotRegExp - with comments.
 
 regExpStart:      "'/' !/[ \\/]/"
-regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )* ///
-regExpEnd:        /// / ///
+regExpMiddle:     /// ( [^\/\\\n] | \\. | \#(?!\{) )*
+regExpEnd:        /// /
 regExpModifiers:  /([igmuy]+)/
 
 multilineRegExpMiddle:

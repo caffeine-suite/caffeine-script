@@ -8,9 +8,9 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
     interpolationStart:     /\#\{/
     interpolationEnd:       /\}/
 
-    dqStringMiddle:         /// ( [^"\\#]    | \\. | \#(?!\{) )* ///
-    sqStringMiddle:         /// ( [^'\\#]    | \\. | \#(?!\{) )* ///
-    blockStringMiddle:      /// ( [^\\#]     | \\.     | \#(?!\{) )* ///
+    dqStringMiddle:         /// ( [^"\\#]    | \\. | \#(?!\{) )*
+    sqStringMiddle:         /// ( [^'\\#]    | \\. | \#(?!\{) )*
+    blockStringMiddle:      /// ( [^\\#]     | \\. | \#(?!\{) )*
 
   @rule
     stringLiteral:
@@ -52,16 +52,16 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
       {}
         pattern:
           ///
-          [-+]?
-          (?!00)
-          [0-9]*
-          \.?
-          [0-9]+
-          ([eE][-+]?[0-9]+)?
+            [-+]?
+            (?!00)
+            [0-9]*
+            \.?
+            [0-9]+
+            ([eE][-+]?[0-9]+)?
 
-          # followed by one or more identifier characters
-          [$\w\u007f-\uffff]+
-          ///
+            # followed by one or more identifier characters
+            [$\w\u007f-\uffff]+
+
         getStn: ~> StringStn value: @toString()
 
     stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "stringBlockBody"
