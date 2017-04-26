@@ -32,15 +32,6 @@ Caf.defMod(module, () => {
     });
     this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
-      require: {
-        pattern: "/&/ pathedRequire",
-        stnProps: function() {
-          return { require: this.pathedRequire.text };
-        },
-        stnFactory: "RequireStn"
-      }
-    });
-    this.rule({
       unqualifiedIdentifier: {
         pattern: "!reservedWord identifierReference assignmentExtension?"
       }

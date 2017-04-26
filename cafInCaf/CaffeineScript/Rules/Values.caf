@@ -21,12 +21,6 @@ import &StandardImport, &BabelBridge
     parentheticalExpression: "'(' _? expression _? ')'"
 
   @rule
-    require:
-      pattern:    "/&/ pathedRequire"
-      stnProps:   ~> require: @pathedRequire.text
-      stnFactory: :RequireStn
-
-  @rule
     unqualifiedIdentifier:
       pattern: "!reservedWord identifierReference assignmentExtension?"
 

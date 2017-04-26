@@ -1,0 +1,4 @@
+require:
+  pattern:    "/&/ pathedRequire"
+  stnProps:   ~> require: @pathedRequire.text
+  stnFactory: :RequireStn

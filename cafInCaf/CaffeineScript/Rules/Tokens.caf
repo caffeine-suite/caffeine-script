@@ -73,7 +73,7 @@
 
     pathedRequire:
       ///
-        ( (?: (?!\s)[\/$\w\u007f-\uffff] )+ )
+        ( (?: (?!\s)[-\/$\w\u007f-\uffff] )+ )
 
     ##
       SBD Feb2017: still debating exactly what should be included in unquoted strings

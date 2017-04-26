@@ -11,8 +11,10 @@ module.exports = suite: parseTestSuite {
 
   npm:
     basic:
-      "&BabelBridge": "require('babel-bridge');"
-      "&babelBridge": "require('babel-bridge');"
+      "&BabelBridge":   "require('babel-bridge');"
+      "&babelBridge":   "require('babel-bridge');"
+      "&babel_bridge":  "require('babel-bridge');"
+      "&babel-bridge":  "require('babel-bridge');"
 
     pathed:
       "&ArtStandardLib/Types":  "require('art-standard-lib/Types');"
