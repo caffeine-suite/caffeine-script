@@ -5,6 +5,7 @@ module.exports = require './namespace'
 .addModules
   Accessors:               require './Accessors'              
   ArrayLiterals:           require './ArrayLiterals'          
+  Assignment:              require './Assignment'             
   Blocks:                  require './Blocks'                 
   Classes:                 require './Classes'                
   Comments:                require './Comments'               

@@ -92,7 +92,7 @@ import &StandardImport, &BabelBridge, &SemanticTree, &Lib
   @rule
     interpolation:
       "interpolationStart expression interpolationEnd"
-      "interpolationStart expression:rValueBlock _end? interpolationEnd"
+      "interpolationStart expression:requiredValue _end? interpolationEnd"
 
   @rule
     dqStringInterpolation:    "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?"

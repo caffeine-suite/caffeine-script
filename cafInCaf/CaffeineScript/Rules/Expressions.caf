@@ -63,13 +63,3 @@ upToButNotEol = /[^\n]*/y
             rule:                 "implicitArrayOrExpression"
             originalOffset:       originalOffset
             originalMatchLength:  endOffset - originalOffset
-
-    rValueBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "rValueBlockSubParse"
-    rValueBlockSubParse:
-      pattern: "root"
-      getStn: ~>
-        {statements} = @root
-        if statements.length == 1
-          statements[0].getStn()
-        else
-          ArrayStn @root.getMatchStns()

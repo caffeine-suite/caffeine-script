@@ -77,25 +77,7 @@ Caf.defMod(module, () => {
         stnProps: { passArguments: true }
       }
     });
-    this.rule({ assignedValue: ["implicitArrayOrExpression", "rValueBlock"] });
-    this.rule(
-      {
-        assignmentExtension: [
-          "assignmentOperator:_assignmentOperator_ _end? implicitArrayOrExpression",
-          "assignmentOperator:_assignmentOperator_ rValueBlock"
-        ]
-      },
-      {
-        stnFactory: "AssignmentStn",
-        stnExtension: true,
-        stnProps: function() {
-          let rawOp, match;
-          rawOp = this.assignmentOperator.toString();
-          return { operator: (match = rawOp.match(/(\S*)=/)) && match[1] };
-        }
-      }
-    );
-    return this.rule({
+    this.rule({
       blockValueExtension: "_? blockValueExtensionBlock",
       blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock(
         { rule: "blockValueExtensionSubparse" }
@@ -105,6 +87,22 @@ Caf.defMod(module, () => {
         "lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
       ],
       dotOrQuestionDot: /\??\./
+    });
+    return this.rule({
+      requiredValue: ["_? _end? implicitArrayOrExpression", "_? rValueBlock"],
+      rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+        rule: "rValueBlockSubParse"
+      }),
+      rValueBlockSubParse: {
+        pattern: "root",
+        getStn: function() {
+          let statements, ArrayStn = require("../SemanticTree/ArrayStn");
+          ({ statements } = this.root);
+          return statements.length === 1
+            ? statements[0].getStn()
+            : ArrayStn(this.root.getMatchStns());
+        }
+      }
     });
   };
 });

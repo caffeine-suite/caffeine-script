@@ -103,7 +103,7 @@ Caf.defMod(module, () => {
     this.rule({
       interpolation: [
         "interpolationStart expression interpolationEnd",
-        "interpolationStart expression:rValueBlock _end? interpolationEnd"
+        "interpolationStart expression:requiredValue _end? interpolationEnd"
       ]
     });
     return this.rule(

@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        destructuringAssignment: "structure:destructuringTarget _? '=' _? value:assignedValue"
+        destructuringAssignment: "structure:destructuringTarget _? '=' _? value:requiredValue"
       },
       { stnFactory: "DestructuringAssignmentStn" }
     );

@@ -117,9 +117,8 @@
         # js math
         [-+*/%]
 
-    _assignmentOperator_:
+    assignmentOperator: assignmentOperator =
       ///
-        \ *
         ( # copy of binaryOperatorRegEx EXCEPT comparison operators
           # js logic
           && | \|\| | & | \| | \^ |
@@ -143,7 +142,9 @@
           [-+*/%]
         )?
         =
-        \ *
+        # \ *
+
+    # _assignmentOperator_: /// \ *#{assignmentOperator.source}\ *
 
     new: /new\b/
     throw: /throw\b/

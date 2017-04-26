@@ -2,6 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return function() {
+    let assignmentOperator;
     this.rule({
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
@@ -28,7 +29,7 @@ Caf.defMod(module, () => {
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b) *|-(?![:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
-      _assignmentOperator_: / *(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?= */,
+      assignmentOperator: assignmentOperator = /(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?=/,
       new: /new\b/,
       throw: /throw\b/,
       with: /with\b/,
