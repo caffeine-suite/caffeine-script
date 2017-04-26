@@ -1,20 +1,15 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArtStandardLib = require("art-standard-lib"), log;
-  ({ log } = Caf.import(["log"], [ArtStandardLib, global]));
+  let log;
+  ({ log } = Caf.import(["log"], [require("art-standard-lib"), global]));
   return {
     version: require("../../package.json").version,
     compile: function(source, options = {}) {
-      let parseTree,
-        CaffeineScriptParser = require("./CaffeineScriptParser"),
-        stn,
-        transformedStn,
-        e,
-        cafError;
+      let parseTree, stn, transformedStn, e, cafError;
       return (() => {
         try {
-          parseTree = CaffeineScriptParser.parse(source, options);
+          parseTree = require("./CaffeineScriptParser").parse(source, options);
           stn = parseTree.getStn();
           transformedStn = stn.transform();
           return {

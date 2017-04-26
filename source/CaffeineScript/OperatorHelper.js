@@ -1,13 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("./StandardImport"),
-    OperatorHelper,
-    Error,
-    p,
-    arrayWithout;
+  let OperatorHelper, Error, p, arrayWithout;
   ({ Error, p, arrayWithout } = Caf.import(["Error", "p", "arrayWithout"], [
-    StandardImport,
+    require("./StandardImport"),
     global
   ]));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(

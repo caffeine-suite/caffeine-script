@@ -1,26 +1,22 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("./StandardImport"),
-    BabelBridge = require("babel-bridge"),
-    CafParseNodeBaseClass = require("./CafParseNodeBaseClass"),
-    CaffeineScriptParser,
-    Parser,
-    isFunction,
-    Error;
+  let CaffeineScriptParser, Parser, isFunction, Error;
   ({ Parser, isFunction, Error } = Caf.import(
     ["Parser", "isFunction", "Error"],
-    [StandardImport, BabelBridge, CafParseNodeBaseClass, global]
+    [
+      require("./StandardImport"),
+      require("babel-bridge"),
+      require("./CafParseNodeBaseClass"),
+      global
+    ]
   ));
   return CaffeineScriptParser = Caf.defClass(
     class CaffeineScriptParser extends Parser {},
     function(CaffeineScriptParser, classSuper, instanceSuper) {
-      let Rules = require("./Rules"),
-        mixedIndentationRegexp,
-        tabIndentationRegexp,
-        spaceIndentationRegexp;
-      this.nodeBaseClass = CafParseNodeBaseClass;
-      Caf.each(Rules.modules, undefined, (mod, k, into) => {
+      let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
+      this.nodeBaseClass = require("./CafParseNodeBaseClass");
+      Caf.each(require("./Rules").modules, undefined, (mod, k, into) => {
         if (isFunction(mod)) {
           mod.call(this);
         } else {
@@ -44,9 +40,7 @@ Caf.defMod(module, () => {
           e.failureIndex = 0;
           throw e;
         }
-        return tabIndentationRegexp.test(source)
-          ? source.replace(/\t/g, " ")
-          : source;
+        return source.replace(/\t/g, " ");
       };
       this.prototype.parse = function(source, options) {
         return instanceSuper.parse.call(

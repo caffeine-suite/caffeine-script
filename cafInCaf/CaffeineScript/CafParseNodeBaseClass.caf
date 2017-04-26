@@ -31,8 +31,8 @@ class CafParseNodeBaseClass extends Nodes.Node
     array m from @matches when m = m.getStn?()
 
   getStnFactory: ->
-    throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !SemanticTree[@stnFactory]
-    SemanticTree[@stnFactory] || @stnFactory
+    throw new Error "stnFactory not found: #{inspect @stnFactory}" if isString(@stnFactory) && !&SemanticTree[@stnFactory]
+    &SemanticTree[@stnFactory] || @stnFactory
 
   getStnChildren: (left) ->
     if @stnChildren

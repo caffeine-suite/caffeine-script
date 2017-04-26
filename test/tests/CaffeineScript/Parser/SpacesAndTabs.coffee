@@ -8,3 +8,6 @@ module.exports = suite: parseTestSuite
 
   mixed:
     "foo\n\t1\n  2": null
+
+  inline:
+    "foo\t1": "foo(1);"

@@ -1,8 +1,11 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("./StandardImport"), escapeRegExp;
-  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [StandardImport, global]));
+  let escapeRegExp;
+  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [
+    require("./StandardImport"),
+    global
+  ]));
   return {
     deescapeSpaces: function(string) {
       return Caf

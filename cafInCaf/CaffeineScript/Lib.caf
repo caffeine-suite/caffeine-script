@@ -24,7 +24,7 @@ escapeMustEscapes: (string) ->
   string.replace /[\n]/g, '\\n'
 
 escapeUnescaped: (string, charsToEscape = '"') ->
-  charsRegExp = /// ([#{escapeRegExp charsToEscape}]) ///g
+  charsRegExp = ///g ([#{escapeRegExp charsToEscape}])
   split = if charsToEscape.match /\\/
     [string]
   else

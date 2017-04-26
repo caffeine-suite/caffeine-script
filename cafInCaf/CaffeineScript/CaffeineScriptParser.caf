@@ -34,11 +34,7 @@ class CaffeineScriptParser extends Parser
       e.failureIndex = 0 # make it look like a parse-error (TODO: HACK)
       throw e
 
-
-    if tabIndentationRegexp.test source
-      source.replace /\t/g, ' '
-    else
-      source
+    source.replace /\t/g, ' '
 
   parse: (source, options) ->
     super
