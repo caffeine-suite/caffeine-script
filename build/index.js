@@ -109,9 +109,10 @@ module.exports = function(module) {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let ArtStandardLib = __webpack_require__(34),
-    ArtClassSystem = __webpack_require__(92);
-  return ArtStandardLib.merge(ArtStandardLib, ArtClassSystem);
+  return __webpack_require__(19).merge(
+    __webpack_require__(19),
+    __webpack_require__(92)
+  );
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -421,13 +422,13 @@ module.exports = require("babel-bridge");
 module.exports = __webpack_require__(6);
 
 module.exports.addModules({
-  AccessorStn: __webpack_require__(20),
+  AccessorStn: __webpack_require__(21),
   ArrayDestructuringStn: __webpack_require__(62),
   ArraySpreadElementStn: __webpack_require__(63),
   ArrayStn: __webpack_require__(11),
-  AssignmentStn: __webpack_require__(21),
+  AssignmentStn: __webpack_require__(22),
   BaseStn: __webpack_require__(3),
-  BinaryOperatorStn: __webpack_require__(15),
+  BinaryOperatorStn: __webpack_require__(16),
   CaptureStn: __webpack_require__(64),
   CatchStn: __webpack_require__(65),
   ClassStn: __webpack_require__(66),
@@ -437,21 +438,21 @@ module.exports.addModules({
   DestructuringIdentifierStn: __webpack_require__(70),
   DoStn: __webpack_require__(71),
   FunctionDefinitionArgsStn: __webpack_require__(12),
-  FunctionDefinitionArgStn: __webpack_require__(22),
-  FunctionDefinitionStn: __webpack_require__(23),
+  FunctionDefinitionArgStn: __webpack_require__(23),
+  FunctionDefinitionStn: __webpack_require__(24),
   FunctionInvocationStn: __webpack_require__(72),
   GlobalIdentifierStn: __webpack_require__(73),
-  IdentifierStn: __webpack_require__(16),
+  IdentifierStn: __webpack_require__(17),
   ImportStn: __webpack_require__(74),
   InterpolatedStringStn: __webpack_require__(75),
   LabeledDestructuringTargetStn: __webpack_require__(76),
-  LetStn: __webpack_require__(24),
+  LetStn: __webpack_require__(25),
   NewInstanceStn: __webpack_require__(77),
   ObjectDestructuringStn: __webpack_require__(78),
-  ObjectPropNameStn: __webpack_require__(25),
-  ObjectPropValueStn: __webpack_require__(26),
-  ObjectStn: __webpack_require__(27),
-  ReferenceStn: __webpack_require__(28),
+  ObjectPropNameStn: __webpack_require__(26),
+  ObjectPropValueStn: __webpack_require__(27),
+  ObjectStn: __webpack_require__(28),
+  ReferenceStn: __webpack_require__(29),
   RegExpStn: __webpack_require__(79),
   RequireStn: __webpack_require__(80),
   RootStn: __webpack_require__(81),
@@ -459,15 +460,15 @@ module.exports.addModules({
   SemanticTokenStn: __webpack_require__(82),
   SimpleLiteralStn: __webpack_require__(83),
   StatementsStn: __webpack_require__(9),
-  StringStn: __webpack_require__(29),
+  StringStn: __webpack_require__(30),
   SuperStn: __webpack_require__(84),
   SwitchStn: __webpack_require__(85),
   SwitchWhenStn: __webpack_require__(86),
-  ThisStn: __webpack_require__(30),
+  ThisStn: __webpack_require__(31),
   ThrowStn: __webpack_require__(87),
   TryStn: __webpack_require__(88),
   UnaryOperatorStn: __webpack_require__(89),
-  UndefinedStn: __webpack_require__(31),
+  UndefinedStn: __webpack_require__(32),
   UniqueIdentifierHandle: __webpack_require__(10),
   ValueBaseCaptureStn: __webpack_require__(13),
   ValueStn: __webpack_require__(90)
@@ -482,7 +483,7 @@ var CaffeineScript, SemanticTree,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-CaffeineScript = __webpack_require__(17);
+CaffeineScript = __webpack_require__(18);
 
 module.exports = CaffeineScript.SemanticTree || CaffeineScript.addNamespace('SemanticTree', SemanticTree = (function(superClass) {
   extend(SemanticTree, superClass);
@@ -504,8 +505,11 @@ module.exports = CaffeineScript.SemanticTree || CaffeineScript.addNamespace('Sem
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2), escapeRegExp;
-  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [StandardImport, global]));
+  let escapeRegExp;
+  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [
+    __webpack_require__(2),
+    global
+  ]));
   return {
     deescapeSpaces: function(string) {
       return Caf
@@ -547,7 +551,7 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
     StatementsStn = __webpack_require__(9),
-    LetStn = __webpack_require__(24),
+    LetStn = __webpack_require__(25),
     UniqueIdentifierHandle = __webpack_require__(10),
     lowerCamelCase,
     Error,
@@ -1053,7 +1057,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    BinaryOperatorStn = __webpack_require__(15),
+    BinaryOperatorStn = __webpack_require__(16),
     UniqueIdentifierHandle = __webpack_require__(10),
     SemanticTree,
     ValueBaseCaptureStn,
@@ -1230,13 +1234,141 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2),
-    OperatorHelper,
+  let CafParseNodeBaseClass,
+    Nodes,
+    isString,
     Error,
-    p,
-    arrayWithout;
+    inspect,
+    isFunction,
+    RootStn;
+  ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.import(
+    ["Nodes", "isString", "Error", "inspect", "isFunction", "RootStn"],
+    [
+      __webpack_require__(2),
+      __webpack_require__(4),
+      __webpack_require__(5),
+      global
+    ]
+  ));
+  return CafParseNodeBaseClass = Caf.defClass(
+    class CafParseNodeBaseClass extends Nodes.Node {},
+    function(CafParseNodeBaseClass, classSuper, instanceSuper) {
+      this._createSubclassBase = function() {
+        let NodeSubclass;
+        return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
+      };
+      this.prototype.isImplicitArray = function() {
+        return !!this.getImplicitArray();
+      };
+      this.prototype.getImplicitArray = function() {
+        return Caf.extendedEach(this.matches, undefined, (
+          match,
+          k,
+          into,
+          brk
+        ) => {
+          let cafRet;
+          return (cafRet = Caf.isF(match.getImplicitArray) &&
+            match.getImplicitArray()) &&
+            (brk(), cafRet);
+        });
+      };
+      this.prototype.getMatchStns = function() {
+        return Caf.each(this.matches, [], (m, k, into) => {
+          if (m = Caf.isF(m.getStn) && m.getStn()) {
+            into.push(m);
+          }
+        });
+      };
+      this.prototype.getStnFactory = function() {
+        if (
+          isString(this.stnFactory) &&
+          !__webpack_require__(5)[this.stnFactory]
+        ) {
+          throw new Error(
+            `stnFactory not found: ${Caf.toString(inspect(this.stnFactory))}`
+          );
+        }
+        return __webpack_require__(5)[this.stnFactory] || this.stnFactory;
+      };
+      this.prototype.getStnChildren = function(left) {
+        return this.stnChildren
+          ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
+          : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
+              if (m = m.getStn(left)) {
+                into.push(m);
+              }
+            });
+      };
+      this.getter({
+        isStnExtension: function() {
+          let cafBase;
+          return this.stnExtension ||
+            Caf.exists(cafBase = this.presentMatches[0]) &&
+              cafBase.isStnExtension;
+        },
+        stnExtensionMatches: function() {
+          return Caf.each(this.presentMatches, [], (m, k, into) => {
+            if (m.getStn && m.isStnExtension) {
+              into.push(m);
+            }
+          });
+        },
+        nonStnExtensionMatches: function() {
+          return Caf.each(this.presentMatches, [], (m, k, into) => {
+            if (m.getStn && !m.isStnExtension) {
+              into.push(m);
+            }
+          });
+        }
+      });
+      this.prototype.getStn = function(left) {
+        let stn, factory, x, currentStnLabel;
+        stn = (factory = this.getStnFactory())
+          ? factory(
+              { parseTreeNode: this },
+              Caf.isF(this.stnProps) && this.stnProps() || this.stnProps,
+              left,
+              this.getStnChildren()
+            )
+          : (x = this.getStnChildren(left), x.length === 1
+              ? x[0]
+              : x.length === 0 ? left : x);
+        Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
+          stn = extension.getStn(stn);
+        });
+        if (Caf.exists(stn) && stn.props) {
+          currentStnLabel = stn.props.label;
+          if (!currentStnLabel || this.label) {
+            stn.props.label = this.label || this.ruleName;
+            stn.props.pluralLabel = this.pluralLabel || this.pluralRuleName;
+          }
+        }
+        return this.isRoot ? RootStn(stn) : stn;
+      };
+      this.prototype.getTransformedSemanticTree = function() {
+        return this.getStn().transform();
+      };
+      this.prototype.toJs = function() {
+        return this.getTransformedSemanticTree().toJs();
+      };
+    }
+  );
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(0);
+Caf.defMod(module, () => {
+  let OperatorHelper, Error, p, arrayWithout;
   ({ Error, p, arrayWithout } = Caf.import(["Error", "p", "arrayWithout"], [
-    StandardImport,
+    __webpack_require__(2),
     global
   ]));
   return OperatorHelper = Caf.defClass(class OperatorHelper {}, function(
@@ -1411,7 +1543,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1419,7 +1551,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    OperatorHelper = __webpack_require__(14),
+    OperatorHelper = __webpack_require__(15),
     BinaryOperatorStn,
     BaseStn = __webpack_require__(3),
     operatorIsInfixJs,
@@ -1529,7 +1661,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1571,7 +1703,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var CaffeineScript, Neptune,
@@ -1591,166 +1723,41 @@ module.exports = Neptune.CaffeineScript || Neptune.addNamespace('CaffeineScript'
 
 })(Neptune.Base));
 
-__webpack_require__(33);
+__webpack_require__(34);
 
 __webpack_require__(6);
 
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 19 */
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
-Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2),
-    BabelBridge = __webpack_require__(4),
-    SemanticTree = __webpack_require__(5),
-    CafParseNodeBaseClass,
-    Nodes,
-    isString,
-    Error,
-    inspect,
-    isFunction,
-    RootStn;
-  ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.import(
-    ["Nodes", "isString", "Error", "inspect", "isFunction", "RootStn"],
-    [StandardImport, BabelBridge, SemanticTree, global]
-  ));
-  return CafParseNodeBaseClass = Caf.defClass(
-    class CafParseNodeBaseClass extends Nodes.Node {},
-    function(CafParseNodeBaseClass, classSuper, instanceSuper) {
-      this._createSubclassBase = function() {
-        let NodeSubclass;
-        return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
-      };
-      this.prototype.isImplicitArray = function() {
-        return !!this.getImplicitArray();
-      };
-      this.prototype.getImplicitArray = function() {
-        return Caf.extendedEach(this.matches, undefined, (
-          match,
-          k,
-          into,
-          brk
-        ) => {
-          let cafRet;
-          return (cafRet = Caf.isF(match.getImplicitArray) &&
-            match.getImplicitArray()) &&
-            (brk(), cafRet);
-        });
-      };
-      this.prototype.getMatchStns = function() {
-        return Caf.each(this.matches, [], (m, k, into) => {
-          if (m = Caf.isF(m.getStn) && m.getStn()) {
-            into.push(m);
-          }
-        });
-      };
-      this.prototype.getStnFactory = function() {
-        if (isString(this.stnFactory) && !SemanticTree[this.stnFactory]) {
-          throw new Error(
-            `stnFactory not found: ${Caf.toString(inspect(this.stnFactory))}`
-          );
-        }
-        return SemanticTree[this.stnFactory] || this.stnFactory;
-      };
-      this.prototype.getStnChildren = function(left) {
-        return this.stnChildren
-          ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
-          : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
-              if (m = m.getStn(left)) {
-                into.push(m);
-              }
-            });
-      };
-      this.getter({
-        isStnExtension: function() {
-          let cafBase;
-          return this.stnExtension ||
-            Caf.exists(cafBase = this.presentMatches[0]) &&
-              cafBase.isStnExtension;
-        },
-        stnExtensionMatches: function() {
-          return Caf.each(this.presentMatches, [], (m, k, into) => {
-            if (m.getStn && m.isStnExtension) {
-              into.push(m);
-            }
-          });
-        },
-        nonStnExtensionMatches: function() {
-          return Caf.each(this.presentMatches, [], (m, k, into) => {
-            if (m.getStn && !m.isStnExtension) {
-              into.push(m);
-            }
-          });
-        }
-      });
-      this.prototype.getStn = function(left) {
-        let stn, factory, x, currentStnLabel;
-        stn = (factory = this.getStnFactory())
-          ? factory(
-              { parseTreeNode: this },
-              Caf.isF(this.stnProps) && this.stnProps() || this.stnProps,
-              left,
-              this.getStnChildren()
-            )
-          : (x = this.getStnChildren(left), x.length === 1
-              ? x[0]
-              : x.length === 0 ? left : x);
-        Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
-          stn = extension.getStn(stn);
-        });
-        if (Caf.exists(stn) && stn.props) {
-          currentStnLabel = stn.props.label;
-          if (!currentStnLabel || this.label) {
-            stn.props.label = this.label || this.ruleName;
-            stn.props.pluralLabel = this.pluralLabel || this.pluralRuleName;
-          }
-        }
-        return this.isRoot ? RootStn(stn) : stn;
-      };
-      this.prototype.getTransformedSemanticTree = function() {
-        return this.getStn().transform();
-      };
-      this.prototype.toJs = function() {
-        return this.getTransformedSemanticTree().toJs();
-      };
-    }
-  );
-});
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+module.exports = require("art-standard-lib");
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let StandardImport = __webpack_require__(2),
-    BabelBridge = __webpack_require__(4),
-    CafParseNodeBaseClass = __webpack_require__(18),
-    CaffeineScriptParser,
-    Parser,
-    isFunction,
-    Error;
+  let CaffeineScriptParser, Parser, isFunction, Error;
   ({ Parser, isFunction, Error } = Caf.import(
     ["Parser", "isFunction", "Error"],
-    [StandardImport, BabelBridge, CafParseNodeBaseClass, global]
+    [
+      __webpack_require__(2),
+      __webpack_require__(4),
+      __webpack_require__(14),
+      global
+    ]
   ));
   return CaffeineScriptParser = Caf.defClass(
     class CaffeineScriptParser extends Parser {},
     function(CaffeineScriptParser, classSuper, instanceSuper) {
-      let Rules = __webpack_require__(32),
-        mixedIndentationRegexp,
-        tabIndentationRegexp,
-        spaceIndentationRegexp;
-      this.nodeBaseClass = CafParseNodeBaseClass;
-      Caf.each(Rules.modules, undefined, (mod, k, into) => {
+      let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
+      this.nodeBaseClass = __webpack_require__(14);
+      Caf.each(__webpack_require__(33).modules, undefined, (mod, k, into) => {
         if (isFunction(mod)) {
           mod.call(this);
         } else {
@@ -1774,9 +1781,7 @@ Caf.defMod(module, () => {
           e.failureIndex = 0;
           throw e;
         }
-        return tabIndentationRegexp.test(source)
-          ? source.replace(/\t/g, " ")
-          : source;
+        return source.replace(/\t/g, " ");
       };
       this.prototype.parse = function(source, options) {
         return instanceSuper.parse.call(
@@ -1792,7 +1797,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1864,7 +1869,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1872,9 +1877,9 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    BinaryOperatorStn = __webpack_require__(15),
-    IdentifierStn = __webpack_require__(16),
-    ReferenceStn = __webpack_require__(28),
+    BinaryOperatorStn = __webpack_require__(16),
+    IdentifierStn = __webpack_require__(17),
+    ReferenceStn = __webpack_require__(29),
     ArrayStn = __webpack_require__(11),
     SemanticTree,
     supportedOperatorsRegExp,
@@ -1942,7 +1947,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1994,7 +1999,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2136,7 +2141,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2170,7 +2175,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2231,7 +2236,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2259,7 +2264,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2324,7 +2329,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2370,7 +2375,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2439,7 +2444,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2466,7 +2471,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2490,10 +2495,10 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(33);
+module.exports = __webpack_require__(34);
 
 module.exports.addModules({
   Accessors: __webpack_require__(37),
@@ -2525,14 +2530,14 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var CaffeineScript, Rules,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-CaffeineScript = __webpack_require__(17);
+CaffeineScript = __webpack_require__(18);
 
 module.exports = CaffeineScript.Rules || CaffeineScript.addNamespace('Rules', Rules = (function(superClass) {
   extend(Rules, superClass);
@@ -2547,26 +2552,20 @@ module.exports = CaffeineScript.Rules || CaffeineScript.addNamespace('Rules', Ru
 
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports) {
-
-module.exports = require("art-standard-lib");
-
-/***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(17);
+module.exports = __webpack_require__(18);
 
 module.exports.includeInNamespace(__webpack_require__(36)).addModules({
-  CaffeineScriptParser: __webpack_require__(19),
-  CafParseNodeBaseClass: __webpack_require__(18),
+  CaffeineScriptParser: __webpack_require__(20),
+  CafParseNodeBaseClass: __webpack_require__(14),
   Lib: __webpack_require__(7),
-  OperatorHelper: __webpack_require__(14),
+  OperatorHelper: __webpack_require__(15),
   StandardImport: __webpack_require__(2)
 });
 
-__webpack_require__(32);
+__webpack_require__(33);
 
 __webpack_require__(5);
 
@@ -2579,20 +2578,15 @@ __webpack_require__(5);
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let ArtStandardLib = __webpack_require__(34), log;
-  ({ log } = Caf.import(["log"], [ArtStandardLib, global]));
+  let log;
+  ({ log } = Caf.import(["log"], [__webpack_require__(19), global]));
   return {
     version: __webpack_require__(91).version,
     compile: function(source, options = {}) {
-      let parseTree,
-        CaffeineScriptParser = __webpack_require__(19),
-        stn,
-        transformedStn,
-        e,
-        cafError;
+      let parseTree, stn, transformedStn, e, cafError;
       return (() => {
         try {
-          parseTree = CaffeineScriptParser.parse(source, options);
+          parseTree = __webpack_require__(20).parse(source, options);
           stn = parseTree.getStn();
           transformedStn = stn.transform();
           return {
@@ -3440,7 +3434,7 @@ Caf.defMod(module, () => {
     ],
     [
       __webpack_require__(2),
-      __webpack_require__(14),
+      __webpack_require__(15),
       __webpack_require__(5),
       global
     ]
@@ -4181,10 +4175,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    StringStn = __webpack_require__(29),
-    ObjectStn = __webpack_require__(27),
-    ObjectPropValueStn = __webpack_require__(26),
-    ObjectPropNameStn = __webpack_require__(25),
+    StringStn = __webpack_require__(30),
+    ObjectStn = __webpack_require__(28),
+    ObjectPropValueStn = __webpack_require__(27),
+    ObjectPropNameStn = __webpack_require__(26),
     CaptureStn,
     BaseStn = __webpack_require__(3);
   StringStn;
@@ -4290,14 +4284,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    AssignmentStn = __webpack_require__(21),
-    AccessorStn = __webpack_require__(20),
-    ThisStn = __webpack_require__(30),
-    IdentifierStn = __webpack_require__(16),
+    AssignmentStn = __webpack_require__(22),
+    AccessorStn = __webpack_require__(21),
+    ThisStn = __webpack_require__(31),
+    IdentifierStn = __webpack_require__(17),
     StatementsStn = __webpack_require__(9),
-    FunctionDefinitionStn = __webpack_require__(23),
+    FunctionDefinitionStn = __webpack_require__(24),
     FunctionDefinitionArgsStn = __webpack_require__(12),
-    FunctionDefinitionArgStn = __webpack_require__(22),
+    FunctionDefinitionArgStn = __webpack_require__(23),
     UniqueIdentifierHandle = __webpack_require__(10),
     ClassStn,
     BaseStn = __webpack_require__(3),
@@ -4757,7 +4751,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StandardImport = __webpack_require__(2),
-    UndefinedStn = __webpack_require__(31),
+    UndefinedStn = __webpack_require__(32),
     ControlOperatorStn,
     BaseStn = __webpack_require__(3),
     Error,
@@ -5891,7 +5885,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.42.1"
+	"version": "0.43.0"
 };
 
 /***/ }),
