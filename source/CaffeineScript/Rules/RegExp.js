@@ -1,14 +1,11 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    BabelBridge = require("babel-bridge"),
-    SemanticTree = require("../SemanticTree"),
-    Extensions;
+  let Extensions;
   ({ Extensions } = Caf.import(["Extensions"], [
-    StandardImport,
-    BabelBridge,
-    SemanticTree,
+    require("../StandardImport"),
+    require("babel-bridge"),
+    require("../SemanticTree"),
     global
   ]));
   return {

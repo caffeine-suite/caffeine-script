@@ -1,7 +1,6 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport");
   return function() {
     return this.rule(
       { keywordLiteral: /(undefined|NaN|null|true|false)(?![a-zA-Z0-9]+)/ },

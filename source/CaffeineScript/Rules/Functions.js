@@ -1,14 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    BabelBridge = require("babel-bridge"),
-    getPropertySetters,
-    Extensions,
-    Error;
+  let getPropertySetters, Extensions, Error;
   ({ Extensions, Error } = Caf.import(["Extensions", "Error"], [
-    StandardImport,
-    BabelBridge,
+    require("../StandardImport"),
+    require("babel-bridge"),
     global
   ]));
   getPropertySetters = function(node, list = []) {

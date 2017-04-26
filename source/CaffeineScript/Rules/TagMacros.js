@@ -1,15 +1,12 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    SemanticTree = require("../SemanticTree"),
-    upperCamelCase,
-    Error;
+  let SemanticTree, upperCamelCase, Error;
   ({ upperCamelCase, Error } = Caf.import(["upperCamelCase", "Error"], [
-    StandardImport,
+    require("../StandardImport"),
     global
   ]));
-  SemanticTree;
+  SemanticTree = require("../SemanticTree");
   return {
     tagMacro: {
       pattern: "/</ identifier />/ actualToEolAndBlock",

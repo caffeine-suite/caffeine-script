@@ -1,12 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    BabelBridge = require("babel-bridge"),
-    Extensions;
+  let Extensions;
   ({ Extensions } = Caf.import(["Extensions"], [
-    StandardImport,
-    BabelBridge,
+    require("../StandardImport"),
+    require("babel-bridge"),
     global
   ]));
   return function() {
@@ -87,11 +85,11 @@ Caf.defMod(module, () => {
       rValueBlockSubParse: {
         pattern: "root",
         getStn: function() {
-          let statements, ArrayStn = require("../SemanticTree/ArrayStn");
+          let statements;
           ({ statements } = this.root);
           return statements.length === 1
             ? statements[0].getStn()
-            : ArrayStn(this.root.getMatchStns());
+            : require("../SemanticTree/ArrayStn")(this.root.getMatchStns());
         }
       }
     });

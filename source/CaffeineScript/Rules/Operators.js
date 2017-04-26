@@ -1,10 +1,7 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    OperatorHelper = require("../OperatorHelper"),
-    SemanticTree = require("../SemanticTree"),
-    Error,
+  let Error,
     resolveOperatorPrecidence,
     compactFlatten,
     getNormalizedOperator,
@@ -26,7 +23,12 @@ Caf.defMod(module, () => {
       "BinaryOperatorStn",
       "UnaryOperatorStn"
     ],
-    [StandardImport, OperatorHelper, SemanticTree, global]
+    [
+      require("../StandardImport"),
+      require("../OperatorHelper"),
+      require("../SemanticTree"),
+      global
+    ]
   ));
   return {
     binOpExpression: {
