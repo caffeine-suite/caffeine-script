@@ -73,7 +73,7 @@ Caf.defMod(module, () => {
     ],
     lineStartBinaryOperatorAndExpression: [
       {
-        pattern: "binaryOperator _? binOpExpression",
+        pattern: "!/[-+][^ ]/ binaryOperator _? binOpExpression",
         stnProps: function() {
           return { operator: getNormalizedOperator(this.binaryOperator) };
         },
@@ -81,7 +81,7 @@ Caf.defMod(module, () => {
         stnExtension: true
       },
       {
-        pattern: "binaryOperator _? rValueBlock",
+        pattern: "!/[-+][^ ]/ binaryOperator _? rValueBlock",
         stnProps: function() {
           return { operator: getNormalizedOperator(this.binaryOperator) };
         },

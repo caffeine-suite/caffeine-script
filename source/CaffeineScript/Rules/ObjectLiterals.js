@@ -59,15 +59,11 @@ Caf.defMod(module, () => {
       {
         literalProp: "propName _colon_ propValue:literal",
         valueProp: "propName _colon_ propValue:expression",
-        valuePropWithComplexExpression: [
-          "propName _colon_ propValue:implicitArrayOrExpression",
-          "propName _colon_ propValue:propertyValueBlock"
-        ]
+        valuePropWithComplexExpression: "propName _colon_ propValue:requiredValue"
       },
       { name: "literalObjectProperty", stnFactory: "ObjectPropValueStn" }
     );
     this.rule({
-      propertyValueBlock: "rValueBlock",
       propName: "computedPropName",
       computedPropName: {
         pattern: "openBracket_ expression _closeBracket",

@@ -53,15 +53,13 @@ import &StandardImport, &BabelBridge, &SemanticTree
     valueProp:    "propName _colon_ propValue:expression"
 
     valuePropWithComplexExpression:
-      "propName _colon_ propValue:implicitArrayOrExpression"
-      "propName _colon_ propValue:propertyValueBlock"
+      "propName _colon_ propValue:requiredValue"
 
     {}
       name: "literalObjectProperty"
       stnFactory: "ObjectPropValueStn"
 
   @rule
-    propertyValueBlock: "rValueBlock"
     propName: "computedPropName"
     computedPropName:
       pattern: "openBracket_ expression _closeBracket"

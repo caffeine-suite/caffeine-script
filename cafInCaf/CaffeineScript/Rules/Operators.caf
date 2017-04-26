@@ -28,13 +28,13 @@ binaryOperatorAndExpression:
 
 lineStartBinaryOperatorAndExpression:
   {}
-    pattern:      "binaryOperator _? binOpExpression"
+    pattern:      "!/[-+][^ ]/ binaryOperator _? binOpExpression"
     stnProps:     ~> operator: getNormalizedOperator @binaryOperator
     stnFactory:   "BinaryOperatorStn"
     stnExtension: true
 
   {}
-    pattern:      "binaryOperator _? rValueBlock"
+    pattern:      "!/[-+][^ ]/ binaryOperator _? rValueBlock"
     stnProps:     ~> operator: getNormalizedOperator @binaryOperator
     stnFactory:   "BinaryOperatorStn"
     stnExtension: true
