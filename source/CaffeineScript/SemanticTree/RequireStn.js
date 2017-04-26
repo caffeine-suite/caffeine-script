@@ -2,33 +2,14 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StandardImport = require("../StandardImport"),
-    Path = require("path"),
-    Fs = require("fs"),
-    realRequire,
     findModuleSync,
     RequireStn,
-    BaseStn = require("./BaseStn"),
-    peek;
-  ({ peek } = Caf.import(["peek"], [StandardImport, global]));
-  Path;
-  Fs;
-  realRequire = eval("require");
+    BaseStn = require("./BaseStn");
   ({ findModuleSync } = require("caffeine-mc"));
   return RequireStn = Caf.defClass(
     class RequireStn extends BaseStn {},
     function(RequireStn, classSuper, instanceSuper) {
-      this.prototype.updateScope = function(scope) {
-        this.scope = scope;
-        this.scope.addIdentifierAssigned(
-          this.identifierAssignedName,
-          `require('${Caf.toString(this.requireString)}')`
-        );
-        return instanceSuper.updateScope.apply(this, arguments);
-      };
       this.getter({
-        identifierAssignedName: function() {
-          return peek(this.props.require.split("/"));
-        },
         rawRequireString: function() {
           return this.props.require;
         },
@@ -40,7 +21,7 @@ Caf.defMod(module, () => {
         }
       });
       this.prototype.toJs = function() {
-        return this.identifierAssignedName;
+        return `require('${Caf.toString(this.requireString)}')`;
       };
       this.prototype.toJsExpressionWithParens = function() {
         return this.toJs();

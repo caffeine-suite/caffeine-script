@@ -3,24 +3,19 @@
 # See my NODE issue report: https://github.com/nodejs/node/issues/11480
 
 import &StandardImport
-&Path
-&Fs
-
-# webpack hack
-realRequire = eval 'require'
 
 {findModuleSync} = require 'caffeine-mc'
 
 class RequireStn extends &BaseStn
 
-  updateScope: (@scope) ->
-    @scope.addIdentifierAssigned @identifierAssignedName, "require('#{@requireString}')"
-    super
+  # updateScope: (@scope) ->
+  #   @scope.addIdentifierAssigned @identifierAssignedName
+  #   super
 
   @getter
 
-    # TODO: should be everything after last '/'
-    identifierAssignedName: -> peek @props.require.split "/"
+    # # TODO: should be everything after last '/'
+    # identifierAssignedName: -> peek @props.require.split "/"
 
     rawRequireString: -> @props.require
 
@@ -29,6 +24,6 @@ class RequireStn extends &BaseStn
       .requireString
 
   toJs: ->
-    @identifierAssignedName
+    "" require('#{@requireString}')
 
   toJsExpressionWithParens: -> @toJs()

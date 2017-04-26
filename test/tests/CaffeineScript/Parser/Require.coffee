@@ -9,42 +9,59 @@ module.exports = suite: parseTestSuite {
   # sourceRoot: "."
   },
 
-  require:
-    "&BabelBridge": "let BabelBridge = require('babel-bridge'); BabelBridge;"
-    "&babelBridge": "let babelBridge = require('babel-bridge'); babelBridge;"
+  npm:
+    basic:
+      "&BabelBridge": "require('babel-bridge');"
+      "&babelBridge": "require('babel-bridge');"
+
+    pathed:
+      "&ArtStandardLib/Types":  "require('art-standard-lib/Types');"
+
+    asValue:
+      "foo &BabelBridge":       "foo(require('babel-bridge'));"
+      "&BabelBridge.Parser":    "require('babel-bridge').Parser;"
+
+  local:
+    basic:
+      "&Lib":                   "require('./Lib');"
+      "&Source":                "require('../../source');"
+
+    pathed:
+      "&Perf/Perfs":            "require('../../perf/Perfs');"
+
+    asValue:
+      "foo &Perf/Perfs":        "foo(require('../../perf/Perfs'));"
+      "&Perf/Perfs.foo":        "require('../../perf/Perfs').foo;"
+
+  regressions:
+    """
+    import &ArtStandardLib
+    &BabelBridge
+    """: "require('babel-bridge');"
+
+    """
+    import &ArtStandardLib
+    &BabelBridge
+    foo
+    """: "
+      let foo;
+      ({foo} = Caf.import([\"foo\"], [require('art-standard-lib'), global]));require('babel-bridge');
+      foo;
+      "
+
+    "-> &Lib": "(function() {return require('./Lib');});"
 
     """
     &BabelBridge
     ->
       &BabelBridge
-    """: "let BabelBridge = require('babel-bridge'); BabelBridge; (function() {return BabelBridge;});"
+    """: "require('babel-bridge'); (function() {return require('babel-bridge');});"
 
     """
     &BabelBridge
     &ArtStandardLib
     """:
       "
-      let
-      BabelBridge = require('babel-bridge'),
-      ArtStandardLib = require('art-standard-lib');
-      BabelBridge;
-      ArtStandardLib;
+      require('babel-bridge');
+      require('art-standard-lib');
       "
-
-    "&ArtStandardLib/Types":  "let Types = require('art-standard-lib/Types'); Types;"
-    "&Perf/Perfs":            "let Perfs = require('../../perf/Perfs'); Perfs;"
-    "&Perf/Perfs.foo":        "let Perfs = require('../../perf/Perfs'); Perfs.foo;"
-    "foo &BabelBridge":       "let BabelBridge = require('babel-bridge'); foo(BabelBridge);"
-
-  requireLocal:
-    "&Lib": "let Lib = require('./Lib'); Lib;"
-    "&Source": "let Source = require('../../source'); Source;"
-
-    "-> &Lib": "(function() {let Lib = require('./Lib'); return Lib;});"
-
-  regressions:
-    """
-    import &ArtStandardLib
-    &BabelBridge
-    """: "let ArtStandardLib = require('art-standard-lib'), BabelBridge = require('babel-bridge'); BabelBridge;"
-
