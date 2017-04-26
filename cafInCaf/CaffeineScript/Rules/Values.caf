@@ -36,7 +36,7 @@ import &StandardImport, &BabelBridge
 
   @rule
     globalIdentifier:
-      pattern: /(global|require|module|eval)\b/
+      pattern: /(global|require|module|eval|this)\b/
       stnFactory: :GlobalIdentifierStn
       stnProps: ~> identifier: @text
 

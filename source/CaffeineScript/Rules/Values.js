@@ -46,7 +46,7 @@ Caf.defMod(module, () => {
     );
     this.rule({
       globalIdentifier: {
-        pattern: /(global|require|module|eval)\b/,
+        pattern: /(global|require|module|eval|this)\b/,
         stnFactory: "GlobalIdentifierStn",
         stnProps: function() {
           return { identifier: this.text };

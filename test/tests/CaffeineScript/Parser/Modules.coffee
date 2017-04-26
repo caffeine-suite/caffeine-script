@@ -14,6 +14,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
       "a":            applyModuleWrapper "let a = global.a; return a;"
       "a = 1":        applyModuleWrapper "let a; return a = 1;"
       "global":       applyModuleWrapper "return global;"
+      "this":         applyModuleWrapper "return this;"
 
     withFunctions:
       "-> a":         applyModuleWrapper "let a = global.a; return function() {return a;};"
