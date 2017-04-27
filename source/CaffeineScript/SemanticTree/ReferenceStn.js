@@ -1,11 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    ReferenceStn,
-    BaseStn = require("./BaseStn");
+  let ReferenceStn;
   return ReferenceStn = Caf.defClass(
-    class ReferenceStn extends BaseStn {},
+    class ReferenceStn extends require("./BaseStn") {},
     function(ReferenceStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;

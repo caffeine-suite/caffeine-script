@@ -1,11 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    NewInstanceStn,
-    BaseStn = require("./BaseStn");
+  let NewInstanceStn;
   return NewInstanceStn = Caf.defClass(
-    class NewInstanceStn extends BaseStn {},
+    class NewInstanceStn extends require("./BaseStn") {},
     function(NewInstanceStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return `new ${Caf.toString(this.childrenToJs())}`;

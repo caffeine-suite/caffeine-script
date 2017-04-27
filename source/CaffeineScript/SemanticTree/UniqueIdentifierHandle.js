@@ -1,14 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    UniqueIdentifierHandle,
-    BaseClass,
-    inspectedObjectLiteral,
-    inspect;
+  let UniqueIdentifierHandle, BaseClass, inspectedObjectLiteral, inspect;
   ({ BaseClass, inspectedObjectLiteral, inspect } = Caf.import(
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
-    [StandardImport, global]
+    [require("../StandardImport"), global]
   ));
   return UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {

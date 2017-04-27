@@ -1,11 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    DestructuringAssignmentStn,
-    BaseStn = require("./BaseStn");
+  let DestructuringAssignmentStn;
   return DestructuringAssignmentStn = Caf.defClass(
-    class DestructuringAssignmentStn extends BaseStn {},
+    class DestructuringAssignmentStn extends require("./BaseStn") {},
     function(DestructuringAssignmentStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         let structure, value;

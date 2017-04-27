@@ -1,19 +1,14 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    UndefinedStn = require("./UndefinedStn"),
-    ControlOperatorStn,
-    BaseStn = require("./BaseStn"),
-    Error,
-    formattedInspect;
+  let UndefinedStn, ControlOperatorStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    StandardImport,
+    require("../StandardImport"),
     global
   ]));
-  UndefinedStn;
+  UndefinedStn = require("./UndefinedStn");
   return ControlOperatorStn = Caf.defClass(
-    class ControlOperatorStn extends BaseStn {
+    class ControlOperatorStn extends require("./BaseStn") {
       constructor(props, children) {
         super(...arguments);
         this.operand = props.operand;
@@ -125,10 +120,7 @@ Caf.defMod(module, () => {
         return this.applyRequiredParens(this.toJs({ returnExpression: true }));
       };
       this.prototype.toJsExpression = function(returnValueIsIgnored) {
-        return this.toJs({
-          returnExpression: true,
-          returnValueIsIgnored: returnValueIsIgnored
-        });
+        return this.toJs({ returnExpression: true, returnValueIsIgnored });
       };
     }
   );

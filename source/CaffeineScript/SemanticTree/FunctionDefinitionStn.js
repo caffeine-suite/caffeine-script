@@ -1,21 +1,19 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    FunctionDefinitionArgsStn = require("./FunctionDefinitionArgsStn"),
-    StatementsStn = require("./StatementsStn"),
+  let FunctionDefinitionArgsStn,
+    StatementsStn,
     FunctionDefinitionStn,
-    ScopeStnMixin = require("./ScopeStnMixin"),
-    BaseStn = require("./BaseStn"),
     compactFlatten;
   ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    StandardImport,
+    require("../StandardImport"),
     global
   ]));
-  FunctionDefinitionArgsStn;
-  StatementsStn;
+  FunctionDefinitionArgsStn = require("./FunctionDefinitionArgsStn");
+  StatementsStn = require("./StatementsStn");
   return FunctionDefinitionStn = Caf.defClass(
-    class FunctionDefinitionStn extends ScopeStnMixin(BaseStn) {
+    class FunctionDefinitionStn
+      extends require("./ScopeStnMixin")(require("./BaseStn")) {
       constructor(props, children) {
         let onlyChild;
         if (children.length === 1) {

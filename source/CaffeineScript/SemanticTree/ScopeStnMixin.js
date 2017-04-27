@@ -1,10 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    StatementsStn = require("./StatementsStn"),
-    LetStn = require("./LetStn"),
-    UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
+  let StatementsStn,
+    LetStn,
+    UniqueIdentifierHandle,
     lowerCamelCase,
     Error,
     log,
@@ -30,11 +29,11 @@ Caf.defMod(module, () => {
       "mergeInto",
       "arrayToTruthMap"
     ],
-    [StandardImport, global]
+    [require("../StandardImport"), global]
   ));
-  StatementsStn;
-  LetStn;
-  UniqueIdentifierHandle;
+  StatementsStn = require("./StatementsStn");
+  LetStn = require("./LetStn");
+  UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   return function(toExtend) {
     let ScopeStnMixin;
     return ScopeStnMixin = Caf.defClass(

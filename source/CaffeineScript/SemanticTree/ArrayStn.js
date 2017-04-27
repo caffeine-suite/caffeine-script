@@ -1,11 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    ArrayStn,
-    BaseStn = require("./BaseStn");
+  let ArrayStn;
   return ArrayStn = Caf.defClass(
-    class ArrayStn extends BaseStn {
+    class ArrayStn extends require("./BaseStn") {
       constructor(props, children) {
         if (children.length === 1 && children[0].props.implicitArray) {
           children = children[0].children;

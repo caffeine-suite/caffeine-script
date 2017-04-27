@@ -1,21 +1,21 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    SemanticTree,
+  let SemanticTree,
+    UniqueIdentifierHandle,
     ComprehensionStn,
-    ScopeStnMixin = require("./ScopeStnMixin"),
-    BaseStn = require("./BaseStn"),
     arrayWithAllButLast,
     peek,
     Error;
   ({ arrayWithAllButLast, peek, Error } = Caf.import(
     ["arrayWithAllButLast", "peek", "Error"],
-    [StandardImport, global]
+    [require("../StandardImport"), global]
   ));
-  SemanticTree = require("./namespace");
+  SemanticTree = require("./");
+  UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   return ComprehensionStn = Caf.defClass(
-    class ComprehensionStn extends ScopeStnMixin(BaseStn) {},
+    class ComprehensionStn
+      extends require("./ScopeStnMixin")(require("./BaseStn")) {},
     function(ComprehensionStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
         let outputType,
@@ -53,8 +53,7 @@ Caf.defMod(module, () => {
           whenClauseWrapper,
           allButLast,
           foundTest,
-          baseIdentifierHandle,
-          UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
+          baseIdentifierHandle;
         this.children = this.transformChildren();
         this.initLabeledChildren();
         ({

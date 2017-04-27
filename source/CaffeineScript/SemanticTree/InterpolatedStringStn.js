@@ -1,13 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    InterpolatedStringStn,
-    BaseStn = require("./BaseStn"),
-    peek;
-  ({ peek } = Caf.import(["peek"], [StandardImport, global]));
+  let InterpolatedStringStn, peek;
+  ({ peek } = Caf.import(["peek"], [require("../StandardImport"), global]));
   return InterpolatedStringStn = Caf.defClass(
-    class InterpolatedStringStn extends BaseStn {},
+    class InterpolatedStringStn extends require("./BaseStn") {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {
       this.prototype.compactNewLines = function(compactLeft, compactRight) {
         return Caf.each(this.children, undefined, (child, i, into) => {

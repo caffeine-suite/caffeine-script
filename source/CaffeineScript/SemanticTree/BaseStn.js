@@ -1,9 +1,7 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    createObjectTreeFactory,
-    ArtObjectTreeFactory = require("art-object-tree-factory"),
+  let createObjectTreeFactory,
     BaseStn,
     BaseClass,
     log,
@@ -36,9 +34,9 @@ Caf.defMod(module, () => {
       "compactFlatten",
       "isString"
     ],
-    [StandardImport, global]
+    [require("../StandardImport"), global]
   ));
-  ({ createObjectTreeFactory } = ArtObjectTreeFactory);
+  ({ createObjectTreeFactory } = require("art-object-tree-factory"));
   return BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
       constructor(props, children = noChildren) {
@@ -50,17 +48,14 @@ Caf.defMod(module, () => {
       }
     },
     function(BaseStn, classSuper, instanceSuper) {
-      let CaffeineScriptRuntime = require("caffeine-script-runtime"),
-        noChildren,
-        applyRequiredParens,
-        applyParens;
-      if (!(CaffeineScriptRuntime.getSuper(this) === BaseClass)) {
+      let noChildren, applyRequiredParens, applyParens;
+      if (!(require("caffeine-script-runtime").getSuper(this) === BaseClass)) {
         log({
           self: this,
           selfName: this.getName(),
           "Object.getPrototypeOf@": Object.getPrototypeOf(this),
-          badSuper: CaffeineScriptRuntime.getSuper(this),
-          BaseClass: BaseClass,
+          badSuper: require("caffeine-script-runtime").getSuper(this),
+          BaseClass,
           "selfIsBaseObject?": this === BaseClass
         });
         throw new Error("bad super");

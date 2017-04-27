@@ -1,10 +1,7 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    OperatorHelper = require("../OperatorHelper"),
-    BinaryOperatorStn,
-    BaseStn = require("./BaseStn"),
+  let BinaryOperatorStn,
     operatorIsInfixJs,
     binaryOperatorToJs,
     getOpPrecidence,
@@ -27,10 +24,10 @@ Caf.defMod(module, () => {
       "Error",
       "formattedInspect"
     ],
-    [StandardImport, OperatorHelper, global]
+    [require("../StandardImport"), require("../OperatorHelper"), global]
   ));
   return BinaryOperatorStn = Caf.defClass(
-    class BinaryOperatorStn extends BaseStn {
+    class BinaryOperatorStn extends require("./BaseStn") {
       constructor(props, children) {
         super(...arguments);
         this.operator = props.operator;
@@ -80,11 +77,11 @@ Caf.defMod(module, () => {
                 ), binaryOperatorToJs(
                   this.operator,
                   this.left.toJsExpressionWithParens({
-                    parentOperatorPrecidence: parentOperatorPrecidence,
+                    parentOperatorPrecidence,
                     isLeftOperand: true
                   }),
                   this.right.toJsExpressionWithParens({
-                    parentOperatorPrecidence: parentOperatorPrecidence,
+                    parentOperatorPrecidence,
                     isLeftOperand: false
                   })
                 ));

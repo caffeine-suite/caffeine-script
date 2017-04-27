@@ -1,14 +1,13 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    SuperStn,
-    BaseStn = require("./BaseStn"),
-    Error,
-    merge;
-  ({ Error, merge } = Caf.import(["Error", "merge"], [StandardImport, global]));
+  let SuperStn, Error, merge;
+  ({ Error, merge } = Caf.import(["Error", "merge"], [
+    require("../StandardImport"),
+    global
+  ]));
   return SuperStn = Caf.defClass(
-    class SuperStn extends BaseStn {
+    class SuperStn extends require("./BaseStn") {
       constructor(props, args) {
         super(...arguments);
         this.args = args;
@@ -29,10 +28,7 @@ Caf.defMod(module, () => {
           [__, classMethod, methodName] = m;
         }
         return new this.class(
-          merge(this.props, {
-            methodName: methodName,
-            classMethod: !!classMethod
-          }),
+          merge(this.props, { methodName, classMethod: !!classMethod }),
           this.transformChildren()
         );
       };

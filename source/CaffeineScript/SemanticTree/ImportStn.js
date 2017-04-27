@@ -1,15 +1,13 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    ImportStn,
-    ScopeStnMixin = require("./ScopeStnMixin"),
-    BaseStn = require("./BaseStn"),
-    peek,
-    Object;
-  ({ peek, Object } = Caf.import(["peek", "Object"], [StandardImport, global]));
+  let ImportStn, peek, Object;
+  ({ peek, Object } = Caf.import(["peek", "Object"], [
+    require("../StandardImport"),
+    global
+  ]));
   return ImportStn = Caf.defClass(
-    class ImportStn extends ScopeStnMixin(BaseStn) {},
+    class ImportStn extends require("./ScopeStnMixin")(require("./BaseStn")) {},
     function(ImportStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;

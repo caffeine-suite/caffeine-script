@@ -1,11 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    SwitchWhenStn,
-    BaseStn = require("./BaseStn");
+  let SwitchWhenStn;
   return SwitchWhenStn = Caf.defClass(
-    class SwitchWhenStn extends BaseStn {},
+    class SwitchWhenStn extends require("./BaseStn") {},
     function(SwitchWhenStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
         let thenDo;

@@ -1,23 +1,21 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    BinaryOperatorStn = require("./BinaryOperatorStn"),
-    UniqueIdentifierHandle = require("./UniqueIdentifierHandle"),
+  let BinaryOperatorStn,
+    UniqueIdentifierHandle,
     SemanticTree,
     ValueBaseCaptureStn,
-    BaseStn = require("./BaseStn"),
     mergeInto,
     isArray;
   ({ mergeInto, isArray } = Caf.import(["mergeInto", "isArray"], [
-    StandardImport,
+    require("../StandardImport"),
     global
   ]));
-  BinaryOperatorStn;
-  UniqueIdentifierHandle;
+  BinaryOperatorStn = require("./BinaryOperatorStn");
+  UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   SemanticTree = require("./namespace");
   return ValueBaseCaptureStn = Caf.defClass(
-    class ValueBaseCaptureStn extends BaseStn {},
+    class ValueBaseCaptureStn extends require("./BaseStn") {},
     function(ValueBaseCaptureStn, classSuper, instanceSuper) {
       this.abstractClass();
       this.prototype.getValueWithBaseCapture = function(accessorStn) {
