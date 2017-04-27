@@ -70,7 +70,7 @@ Caf.defMod(module, () => {
               ), parentNode.subparse(expressionSource, {
                 allowPartialMatch: true,
                 rule: "implicitArrayOrExpression",
-                originalOffset: originalOffset,
+                originalOffset,
                 originalMatchLength: endOffset - originalOffset
               }))
             : undefined;

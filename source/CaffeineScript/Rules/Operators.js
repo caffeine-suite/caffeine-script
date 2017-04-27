@@ -60,11 +60,7 @@ Caf.defMod(module, () => {
             })
           ]),
           function(operandA, operandB, operator) {
-            return BinaryOperatorStn(
-              { operator: operator },
-              operandA,
-              operandB
-            );
+            return BinaryOperatorStn({ operator }, operandA, operandB);
           }
         );
       }

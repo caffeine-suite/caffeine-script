@@ -26,11 +26,7 @@ Caf.defMod(module, () => {
               e.sourceFile != null ||
               e.message.match(/parse|expect/i))
           ) {
-            log.error({
-              parseTree: parseTree,
-              stn: stn,
-              transformedStn: transformedStn
-            });
+            log.error({ parseTree, stn, transformedStn });
           }
           return (() => {
             throw e;
