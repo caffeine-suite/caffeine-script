@@ -1,24 +1,44 @@
 import &StandardImport, &BabelBridge, &SemanticTree
+import Extensions
 
 ->
   @rule
-    singleOrMultilineImplicitObject:
-      :multilineImplicitObject
-      :object
+    object:
+      :implicitObject
+      :explicitObject
+
+    singleOrMultilineExplicitObject:
+      :multilineExplicitObject
+      :oneLineExplicitObject
 
   @rule
 
-    object:
-      "props:implicitObject"
-      "'{}' _? props:propertyList"
+    implicitObject:
+      "props:propertyList"
+
+    oneLineExplicitObject:
+      "props:explicitPropertyList"
+
+    explicitObject:
+      "'{}' _? props:explicitPropertyList"
       "'{}' _? props:objectLiteralBlock"
       "'{}'"
-      # :bracketedObject
 
-    bracketedObject: "openCurly_ props:propertyList _closeCurly"
+    bracketedObject: "openCurly_ props:explicitPropertyList _closeCurly"
 
     multilineImplicitObject:
-      pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
+      pattern:
+        ""
+          !implicitObjectWithTwoOrMorePropsOnOneLine
+          valuePropWithComplexExpression
+          multilineImplicitObjectExtension+
+
+    multilineExplicitObject:
+      pattern:
+        ""
+          !implicitObjectWithTwoOrMorePropsOnOneLine
+          explicitValuePropWithComplexExpression
+          multilineExplicitObjectExtension+"
 
     {}
       getStn: ~>
@@ -34,14 +54,21 @@ import &StandardImport, &BabelBridge, &SemanticTree
     multilineImplicitObjectExtension:
       "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression"
 
-    objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "singleOrMultilineImplicitObject"
+    multilineExplicitObjectExtension:
+      "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression"
 
-    implicitObject:
-      pattern: "propertyList"
+    objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock
+      rule: :singleOrMultilineExplicitObject
 
     implicitObjectWithTwoOrMorePropsOnOneLine:
       "literalProp _ propertyList"
       "valueProp _comma_ propertyList"
+
+    explicitPropertyList:
+      "valueProp _comma_ explicitPropertyList"
+      "literalProp _ explicitPropertyList"
+      "structurableProp _comma_ explicitPropertyList"
+      "explicitValuePropWithComplexExpression"
 
     propertyList:
       "valueProp _comma_ propertyList"
@@ -57,7 +84,17 @@ import &StandardImport, &BabelBridge, &SemanticTree
 
     {}
       name: "literalObjectProperty"
-      stnFactory: "ObjectPropValueStn"
+      stnFactory: :ObjectPropValueStn
+
+  @rule
+    explicitValuePropWithComplexExpression:
+      :valuePropWithComplexExpression
+      :structurableProp
+
+    structurableProp:
+      :identifier
+      stnProps: ~> propertyName: @identifier.text
+      stnFactory: :ObjectPropValueStn
 
   @rule
     propName: "computedPropName"

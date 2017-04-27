@@ -1,28 +1,43 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let Extensions, ObjectStn;
-  ({ Extensions, ObjectStn } = Caf.import(["Extensions", "ObjectStn"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    require("../SemanticTree"),
-    global
+  let IndentBlocks, ObjectStn, Extensions, cafParentImports;
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    cafParentImports = [
+      require("../StandardImport"),
+      require("babel-bridge"),
+      require("../SemanticTree"),
+      global
+    ]
+  ));
+  ({ IndentBlocks, ObjectStn } = Caf.import(["IndentBlocks", "ObjectStn"], [
+    Extensions,
+    cafParentImports
   ]));
   return function() {
     this.rule({
-      singleOrMultilineImplicitObject: ["multilineImplicitObject", "object"]
+      object: ["implicitObject", "explicitObject"],
+      singleOrMultilineExplicitObject: [
+        "multilineExplicitObject",
+        "oneLineExplicitObject"
+      ]
     });
     this.rule(
       {
-        object: [
-          "props:implicitObject",
-          "'{}' _? props:propertyList",
+        implicitObject: "props:propertyList",
+        oneLineExplicitObject: "props:explicitPropertyList",
+        explicitObject: [
+          "'{}' _? props:explicitPropertyList",
           "'{}' _? props:objectLiteralBlock",
           "'{}'"
         ],
-        bracketedObject: "openCurly_ props:propertyList _closeCurly",
+        bracketedObject: "openCurly_ props:explicitPropertyList _closeCurly",
         multilineImplicitObject: {
           pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
+        },
+        multilineExplicitObject: {
+          pattern: '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
         }
       },
       {
@@ -37,13 +52,19 @@ Caf.defMod(module, () => {
     );
     this.rule({
       multilineImplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
-      objectLiteralBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-        { rule: "singleOrMultilineImplicitObject" }
-      ),
-      implicitObject: { pattern: "propertyList" },
+      multilineExplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
+      objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
+        rule: "singleOrMultilineExplicitObject"
+      }),
       implicitObjectWithTwoOrMorePropsOnOneLine: [
         "literalProp _ propertyList",
         "valueProp _comma_ propertyList"
+      ],
+      explicitPropertyList: [
+        "valueProp _comma_ explicitPropertyList",
+        "literalProp _ explicitPropertyList",
+        "structurableProp _comma_ explicitPropertyList",
+        "explicitValuePropWithComplexExpression"
       ],
       propertyList: [
         "valueProp _comma_ propertyList",
@@ -59,6 +80,21 @@ Caf.defMod(module, () => {
       },
       { name: "literalObjectProperty", stnFactory: "ObjectPropValueStn" }
     );
+    this.rule({
+      explicitValuePropWithComplexExpression: [
+        "valuePropWithComplexExpression",
+        "structurableProp"
+      ],
+      structurableProp: [
+        "identifier",
+        {
+          stnProps: function() {
+            return { propertyName: this.identifier.text };
+          },
+          stnFactory: "ObjectPropValueStn"
+        }
+      ]
+    });
     this.rule({
       propName: "computedPropName",
       computedPropName: {

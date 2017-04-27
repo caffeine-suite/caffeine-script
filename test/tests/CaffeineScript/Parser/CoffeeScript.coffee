@@ -23,7 +23,7 @@ module.exports = suite:
         root:   Math.sqrt
         square: square
         cube:   (x) -> x * square x
-      """: "let math; math = {root: Math.sqrt, square: square, cube: function(x) {return x * square(x);}};"
+      """: "let math; math = {root: Math.sqrt, square, cube: function(x) {return x * square(x);}};"
 
       # """
       # race = (winner, runners...) ->

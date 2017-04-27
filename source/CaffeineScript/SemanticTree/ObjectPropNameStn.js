@@ -1,25 +1,14 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    legalUnquotedPropName,
-    escapePropName,
-    ObjectPropNameStn,
-    BaseStn = require("./BaseStn"),
-    escapeJavascriptString,
-    Error;
+  let legalUnquotedPropName, ObjectPropNameStn, escapeJavascriptString, Error;
   ({ escapeJavascriptString, Error } = Caf.import(
     ["escapeJavascriptString", "Error"],
-    [StandardImport, global]
+    [require("../StandardImport"), global]
   ));
   legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
-  escapePropName = function(rawPropName) {
-    return rawPropName.match(legalUnquotedPropName)
-      ? rawPropName
-      : escapeJavascriptString(rawPropName);
-  };
   return ObjectPropNameStn = Caf.defClass(
-    class ObjectPropNameStn extends BaseStn {
+    class ObjectPropNameStn extends require("./BaseStn") {
       constructor() {
         let nameStn, cafBase;
         super(...arguments);
@@ -31,6 +20,12 @@ Caf.defMod(module, () => {
       }
     },
     function(ObjectPropNameStn, classSuper, instanceSuper) {
+      let escapePropName;
+      this.escapePropName = escapePropName = function(rawPropName) {
+        return rawPropName.match(legalUnquotedPropName)
+          ? rawPropName
+          : escapeJavascriptString(rawPropName);
+      };
       this.prototype.toJs = function() {
         let nameStn, str;
         [nameStn] = this.children;
