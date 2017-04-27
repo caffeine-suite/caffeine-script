@@ -1,5 +1,5 @@
 import &StandardImport
-&FunctionDefinitionArgsStn
+FunctionDefinitionArgsStn = &FunctionDefinitionArgsStn
 
 class FunctionDefinitionArgStn extends &BaseStn
 

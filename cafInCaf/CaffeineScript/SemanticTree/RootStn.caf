@@ -1,6 +1,6 @@
 import &StandardImport
 
-&StatementsStn
+StatementsStn = &StatementsStn
 
 class RootStn extends &ScopeStnMixin &BaseStn
   constructor: (props, children) ->

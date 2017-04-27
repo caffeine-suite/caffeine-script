@@ -1,7 +1,7 @@
 import &StandardImport
 
-&FunctionDefinitionArgsStn
-&StatementsStn
+FunctionDefinitionArgsStn = &FunctionDefinitionArgsStn
+StatementsStn = &StatementsStn
 
 ##
   Thinking.

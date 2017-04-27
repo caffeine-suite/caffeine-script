@@ -1,7 +1,7 @@
 import &StandardImport
 
-SemanticTree = require './namespace'
-
+SemanticTree = &SemanticTree
+UniqueIdentifierHandle = &UniqueIdentifierHandle
 
 class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
@@ -67,7 +67,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     outputType = outputType?.props.token
     iterationFunction = outputType.slice 0,1
 
-    {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn, FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn, FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn, ValueStn} = SemanticTree
+    {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn,
+    FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn,
+    FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn, ValueStn} = SemanticTree
     # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
 
 
@@ -202,7 +204,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   operator: "&&"
 
                   AssignmentStn
-                    IdentifierStn identifierHandle: baseIdentifierHandle = new &UniqueIdentifierHandle "_ret"
+                    IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
                     body
 
                   StatementsStn

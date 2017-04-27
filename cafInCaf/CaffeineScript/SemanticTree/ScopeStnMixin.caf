@@ -1,8 +1,8 @@
 import &StandardImport
 
-&StatementsStn
-&LetStn
-&UniqueIdentifierHandle
+StatementsStn = &StatementsStn
+LetStn = &LetStn
+UniqueIdentifierHandle = &UniqueIdentifierHandle
 
 (toExtend) -> class ScopeStnMixin extends toExtend
   @abstractClass()

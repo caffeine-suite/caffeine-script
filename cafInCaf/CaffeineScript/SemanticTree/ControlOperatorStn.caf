@@ -1,5 +1,5 @@
 import &StandardImport
-&UndefinedStn
+UndefinedStn = &UndefinedStn
 
 class ControlOperatorStn extends &BaseStn
 
