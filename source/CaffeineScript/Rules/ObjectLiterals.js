@@ -85,15 +85,7 @@ Caf.defMod(module, () => {
         "valuePropWithComplexExpression",
         "structurableProp"
       ],
-      structurableProp: [
-        "identifier",
-        {
-          stnProps: function() {
-            return { propertyName: this.identifier.text };
-          },
-          stnFactory: "ObjectPropValueStn"
-        }
-      ]
+      structurableProp: ["expression", { stnFactory: "ObjectPropValueStn" }]
     });
     this.rule({
       propName: "computedPropName",

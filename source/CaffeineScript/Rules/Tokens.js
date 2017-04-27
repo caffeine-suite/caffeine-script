@@ -17,14 +17,16 @@ Caf.defMod(module, () => {
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
       reservedWord: /(for|yes|no|on|off|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
-      identifier: {
-        pattern: /(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)/,
-        stnFactory: "IdentifierStn",
-        stnProps: function() {
-          return { identifier: this.toString() };
+      identifier: [
+        /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
+        {
+          stnFactory: "IdentifierStn",
+          stnProps: function() {
+            return { identifier: this.toString() };
+          }
         }
-      },
-      pathedRequire: /((?:(?!\s)[-\/$\w\u007f-\uffff])+)/,
+      ],
+      pathedRequire: /((?!\s)[-\/$\w\u007f-\uffff])+/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b) *|-(?![:])/,

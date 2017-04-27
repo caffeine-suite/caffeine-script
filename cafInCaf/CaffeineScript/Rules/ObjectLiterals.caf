@@ -92,8 +92,7 @@ import Extensions
       :structurableProp
 
     structurableProp:
-      :identifier
-      stnProps: ~> propertyName: @identifier.text
+      :expression
       stnFactory: :ObjectPropValueStn
 
   @rule

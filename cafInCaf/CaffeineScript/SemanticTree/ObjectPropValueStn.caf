@@ -14,20 +14,37 @@ import &StandardImport
   props:
     propertyName: string (optional)
 
+identifierRegexp =
+  ///
+    ^
+    (?!\d)
+    ( (?!\s) [$\w\u007f-\uffff] )+
+    $
+
 class ObjectPropValueStn extends &BaseStn
 
   @getter isObject: true
 
   toJs: ->
-    {propertyName} = @props
-    propertyName = if propertyName
-      &ObjectPropNameStn.escapePropName propertyName
-    else
-      @children[0].toJs()
+    switch @children.length
+    when 2
+      [propNameStn, valueStn] = @children
+      valueJs = valueStn.toJsExpression()
+      propertyName = propNameStn.toJs()
+    when 1
+      structuringStn = @children[0]
 
-    if propertyName == valueJs =
-        peek @children
-        .toJsExpression()
+      valueJs = structuringStn.toJsExpression()
+      propertyName = peek valueJs.split "."
+
+      unless identifierRegexp.test propertyName
+        # TODO - use propery validator system so we can get line-numbers with this
+        throw new Error "expression not allowed in explicit object literal: #{valueJs}"
+
+    else
+      throw new Error "internal error - expecint 1 or 2 children"
+
+    if propertyName == valueJs && identifierRegexp.test propertyName
 
       valueJs
     else

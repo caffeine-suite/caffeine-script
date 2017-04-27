@@ -23,3 +23,23 @@ module.exports = suite: parseTestSuite
       "{a: a}":     "({a});"
       "{} a: a":    "({a});"
       "{}\n a: a":  "({a});"
+
+    this:
+      "{@a}": "({a: this.a});"
+
+    pathing:
+      "{a.b}": "({b: a.b});"
+
+    complex:
+      """
+      {}
+        @a
+        b.c
+        d
+        e: f
+      """: "({a: this.a, c: b.c, d, e: f});"
+
+      """
+      {}
+        (array v from a when a > 10).length
+      """: "({length: Caf.each(a, [], (v, k, into) => {if (a > 10) {into.push(v);};}).length});"
