@@ -1,14 +1,5 @@
 import &StandardImport
-
-&AssignmentStn
-&AccessorStn
-&ThisStn
-&IdentifierStn
-&StatementsStn
-&FunctionDefinitionStn
-&FunctionDefinitionArgsStn
-&FunctionDefinitionArgStn
-&UniqueIdentifierHandle
+SemanticTree = &SemanticTree
 
 class ClassStn extends &BaseStn
 
@@ -19,6 +10,15 @@ class ClassStn extends &BaseStn
 
   transform: ->
     {className, classExtends, body} = @labeledChildren
+    {FunctionDefinitionArgsStn,
+    StatementsStn,
+    FunctionDefinitionStn,
+    IdentifierStn,
+    FunctionDefinitionArgStn,
+    AssignmentStn,
+    AccessorStn,
+    ThisStn} = SemanticTree
+
     # log labeledChildren:@labeledChildren, className: @className
     className = className.transform()
     classExtends = classExtends?.transform()

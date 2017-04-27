@@ -1,9 +1,5 @@
 import &StandardImport
-&BinaryOperatorStn
-&IdentifierStn
-&ReferenceStn
-&ArrayStn
-SemanticTree = require './namespace'
+SemanticTree = &SemanticTree
 
 supportedOperatorsRegExp = /^([-+*\/%]|)$/
 
@@ -26,7 +22,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
     unless @operator.match supportedOperatorsRegExp
       {value1, value2} = @getValueWithBaseCapture @lValue
 
-      BinaryOperatorStn
+      SemanticTree.BinaryOperatorStn
         operator: @operator
         value1
         SemanticTree.AssignmentStn

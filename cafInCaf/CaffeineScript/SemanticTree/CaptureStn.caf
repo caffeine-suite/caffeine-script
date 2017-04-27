@@ -1,9 +1,5 @@
 import &StandardImport
-
-&StringStn
-&ObjectStn
-&ObjectPropValueStn
-&ObjectPropNameStn
+SemanticTree = &SemanticTree
 
 ##
   ObjectStn
@@ -22,12 +18,12 @@ class CaptureStn extends &BaseStn
 
   transform: ->
     # log CaptureStn: parseTreeNode:
-    ObjectStn
+    SemanticTree.ObjectStn
       @props
-      ObjectPropValueStn
-        ObjectPropNameStn value: "source"
-        StringStn value: @children[1].parseTreeNode.text
+      SemanticTree.ObjectPropValueStn
+        SemanticTree.ObjectPropNameStn value: "source"
+        SemanticTree.StringStn value: @children[1].parseTreeNode.text
 
-      ObjectPropValueStn
-        ObjectPropNameStn value: "value"
+      SemanticTree.ObjectPropValueStn
+        SemanticTree.ObjectPropNameStn value: "value"
         @children[1]

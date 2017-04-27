@@ -1,23 +1,11 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StandardImport = require("../StandardImport"),
-    BinaryOperatorStn = require("./BinaryOperatorStn"),
-    IdentifierStn = require("./IdentifierStn"),
-    ReferenceStn = require("./ReferenceStn"),
-    ArrayStn = require("./ArrayStn"),
-    SemanticTree,
-    supportedOperatorsRegExp,
-    AssignmentStn,
-    ValueBaseCaptureStn = require("./ValueBaseCaptureStn");
-  BinaryOperatorStn;
-  IdentifierStn;
-  ReferenceStn;
-  ArrayStn;
-  SemanticTree = require("./namespace");
+  let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
+  SemanticTree = require("./");
   supportedOperatorsRegExp = /^([-+*\/%]|)$/;
   return AssignmentStn = Caf.defClass(
-    class AssignmentStn extends ValueBaseCaptureStn {
+    class AssignmentStn extends require("./ValueBaseCaptureStn") {
       constructor(props, children) {
         super(...arguments);
         this.operator = props.operator || "";
@@ -44,7 +32,7 @@ Caf.defMod(module, () => {
         return !this.operator.match(supportedOperatorsRegExp)
           ? ({ value1, value2 } = this.getValueWithBaseCapture(
               this.lValue
-            ), BinaryOperatorStn(
+            ), SemanticTree.BinaryOperatorStn(
               { operator: this.operator },
               value1,
               SemanticTree.AssignmentStn(value2, this.rValue)
