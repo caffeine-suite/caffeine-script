@@ -162,11 +162,48 @@ class BaseStn extends BaseClass
   toFunctionBodyJs: (returnAction = true)->
     @toFunctionBodyJsArray(returnAction).join ''
 
+  ##
+    TODO: this is getting out of hand! We need to convert
+    the whole SematicTree system over to ONLY using labeled children.
+
+    In fact, BabelBridge should probably strongly discourage using the "@matches"
+    list.
+
+    Labeled children can either be singles or arrays - if more than one child
+    has the same label.
+
+    Labels from BabelBridge should be explicit labels, if there are any, OR
+    the rule's name. I think right now we have a 'contextual' aspect which is
+    just confusing - if any node in a change of nodes has a label, that's what
+    is used for the label for that branch.
+
+    We should also refactor BaseStn so that transform ALWAYS
+    transforms children first, then, optionally, the transform override is called,
+    after the children are 'normalized.'
+
+    Rethinking transform:
+
+      I think I want two node-types: 'macros' and 'standard'
+
+      standard: can output JS and are more-or-less 1:1 with JS.
+        Auto-lets will probably still be managed by standard-nodes,
+        but otherwise, the output-JS requires no other preprocessing.
+
+        These nodes do not have a 'transform' method.
+
+      macros:
+        These nodes cannot generate JS, but they can transform themselves
+        into 'standard' nodes.
+
+        Macro nodes expect their children to be standard nodes when
+        their transform-method is called.
+
   transformChildren: ->
     ret = null
     each child, i in @children
       if child != newChild = child.transform()
         ret ?= @children.slice()
+        newChild.props.label = child.label
         ret[i] = newChild
     ret || @children
 

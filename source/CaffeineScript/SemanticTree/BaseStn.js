@@ -198,6 +198,7 @@ Caf.defMod(module, () => {
           let newChild;
           if (child !== (newChild = child.transform())) {
             ret != null ? ret : ret = this.children.slice();
+            newChild.props.label = child.label;
             ret[i] = newChild;
           }
         });

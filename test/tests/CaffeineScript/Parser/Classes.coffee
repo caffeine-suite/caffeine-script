@@ -13,6 +13,14 @@ module.exports = suite: parseTestSuite
       "new Foo 1": "new Foo(1);"
       "new Foo.Bar": "new Foo.Bar;"
 
+    regressions:
+      "new &BabelBridge 123":             knownFailing: "(new require('babel-bridge'))(123)"
+      "new BabelBridge 123":              "new BabelBridge(123);"
+
+      "new require('babel-bridge') 123":  knownFailing: "(new require('babel-bridge'))(123)"
+      "new require 'babel-bridge' 123":   'new require("babel-bridge", 123);'
+      "new require 'babel-bridge'":       'new require("babel-bridge");'
+
   definition:
     basic:
       "class Foo": "let Foo; Foo = Caf.defClass(class Foo {});"
@@ -131,3 +139,4 @@ module.exports = suite: parseTestSuite
           function(Foo, classSuper, instanceSuper)
             {this.getter({foo:
               function() {return this._foo;}});});"
+

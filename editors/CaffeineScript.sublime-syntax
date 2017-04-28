@@ -18,6 +18,15 @@ contexts:
     - match: '/([^\\/]|\\.)+/[igmuy]*'
       scope: string.regexp.caffeine
 
+    # block regexp
+    - match: '///[igmuy ] *[^ \n][^\n]*'
+      scope: string.regexp.caffeine
+
+    # block regexp
+    - match: '(?:^( *))///[igmuy]*\n'
+      scope: string.regexp.caffeine
+      push: block_regexp
+
     # macro
     - match: '<[\w\u007f-\uffff]+>'
       scope: keyword.macro.compileTime.caffeine
@@ -83,7 +92,7 @@ contexts:
       scope: string.quoted.double.caffeine
 
     # Auto-Require
-    - match : '&(?!\d)((?:(?!\s)[/$\w\u007f-\uffff])+)'
+    - match : '&(?!\d)((?:(?!\s)[-/$\w\u007f-\uffff])+)'
       scope: string.quoted.double.caffeine
 
     # Function Declaration
@@ -100,7 +109,7 @@ contexts:
     - match: '\@(?!\d)((?:(?!\s)[$\w\u007f-\uffff])+)?'
       scope: variable.other.member.caffeine
 
-    # Comments begin with a '#' and finish at the end of the line
+    # to-eol-comment
     - match: '#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))'
       scope: comment.line.caffeine
 
@@ -150,6 +159,16 @@ contexts:
     - include: interpolatable
     - match: "."
       scope: string.quoted.double.caffeine
+
+  block_regexp:
+    - match: '^(?!\1 +[^ ])(?= *[^ \n])'
+      pop: true
+    - include: interpolatable
+    # to-eol-comment
+    - match: '#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))'
+      scope: comment.line.caffeine
+    - match: "."
+      scope: string.regexp.caffeine
 
   to_eol_string:
     - match: '(?:\n)'
