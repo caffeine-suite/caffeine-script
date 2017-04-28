@@ -1,4 +1,5 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
+
 # Programming with Caffeine [![Build Status](https://travis-ci.org/shanebdavis/caffeine-script.svg?branch=master)](https://travis-ci.org/shanebdavis/caffeine-script)
 
 CaffeineScript is designed to make programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
@@ -65,13 +66,19 @@ CaffeineScript, or Caf for short, is built on JavaScript. While JavaScript is a 
 
 CaffeineScript is working and usable. The semantics are still shifting as I implement the remaining, planned v1 features.
 
+### Contribute
+
+* [Discuss on Google Group](https://groups.google.com/d/forum/caffeinescript)
+* [Request, Suggest or Report Bugs on Github Issues](https://github.com/shanebdavis/caffeine-script/issues)
+* [View source or Fork on Github](https://github.com/shanebdavis/caffeine-script)
+
 ### Why Use CaffeineScript?
 
 It maximizes your productivity, blah, blah. But does it really? (yes, I think so)
 
 Who cares! It's lean, agile and fun! And you can do cool things like this:
 
-##### streamlined modules
+##### [streamlined modules](https://github.com/shanebdavis/caffeine-script/wiki/Modules-and-CommonJs)
 
 ```coffeescript
 # CaffeineScript - 27 tokens and 0 must-match-tokens
@@ -116,7 +123,7 @@ module.exports = class Login extends Component {
 };
 ```
 
-##### streamlined arrays and object property names
+##### streamlined [array](https://github.com/shanebdavis/caffeine-script/wiki/Array-Literals) and [object](https://github.com/shanebdavis/caffeine-script/wiki/Object-Literals) literals
 ```coffeescript
 # CaffeineScript - 20 tokens
 1d: 1 2 3 4 5 6 7 8 9
@@ -135,7 +142,7 @@ module.exports = class Login extends Component {
 };
 ```
 
-##### #hashStrings, :wordStrings, and 10unitStrings
+##### [#hashStrings, :wordStrings, and 10unitStrings](https://github.com/shanebdavis/caffeine-script/wiki/String-Literals)
 
 ```coffeescript
 # CaffeineScript - 15 tokens
@@ -164,21 +171,40 @@ style:
 ##### arrays of object literals
 
 ```coffeescript
-# CaffeineScript - 25 tokens
+# CaffeineScript - 19 tokens
 users =
-  id: 123, username: :shanebdavis, age: 41, fullName: "" Shane Brinkman-Davis Delamore
-  id: 456, username: :george123,   age: 23, fullName: "" George Washington
+  id: 123 username: :shanebdavis born: 1976 fullName: "" Shane Brinkman-Davis Delamore
+  id: 456 username: :alanturing  born: 1912 fullName: "" Alan Turing
 ```
 
 
 ```JavaScript
 // JavaScript - 35 tokens
 let users = [
-  {id: 123, username: "shanebdavis", age: 41, "Shane Brinkman-Davis Delamore"},
-  {id: 456, username: "george123",   age: 23, "George Washington"}
+  {id: 123, username: "shanebdavis", born: 1976, "Shane Brinkman-Davis Delamore"},
+  {id: 456, username: "alanturing",  born: 1912, "Alan Turing"}
 ];
+```
+
+##### powerful comprehensions
+
+```coffeescript
+# CaffeineScript
+fontProps = object value, key from allProps when /^font/.test key
+```
+
+```javascript
+// JavaScript
+var fontProps = {}, key, value;
+
+for (key in allProps) {
+  value = allProps[key];
+  if (/^font/.test(key)) {
+    fontProps[key] = value;
+  }
+}
 ```
 
 ## CaffeineScript and CoffeeScript
 
-I owe a debt of gratitude to Jeremy Ashkenas, the author of CoffeeScript. It is my primary inspiration, and what the CaffeineScript compiler was originally written in. More on inspirations from CoffeeScript: [Coming from CoffeeScript](https://github.com/shanebdavis/caffeine-script/wiki/Coming-from-CoffeeScript).
+I owe a debt of gratitude to Jeremy Ashkenas and the CoffeeScript community. It is my primary inspiration, and what the CaffeineScript compiler was originally written in. More on inspirations from CoffeeScript: [Coming from CoffeeScript](https://github.com/shanebdavis/caffeine-script/wiki/Coming-from-CoffeeScript).
