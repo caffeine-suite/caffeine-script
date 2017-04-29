@@ -2930,7 +2930,7 @@ Caf.defMod(module, () => {
       }
     },
     multilineRegExpInterpolation: {
-      pattern: "interpolationStart expression interpolationEnd"
+      pattern: "/ */ interpolationStart expression interpolationEnd"
     },
     multilineRegExpForwardSlashes: {
       pattern: /\/\/?(?!\/)/,
@@ -5175,7 +5175,9 @@ Caf.defMod(module, () => {
                 into.push(
                   isString(v = child.props.value)
                     ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
-                    : `\${${Caf.toString(child.toJsExpression())}}`
+                    : `\${Caf.toString(${Caf.toString(
+                        child.toJsExpression()
+                      )})}`
                 );
               })
               .join(""))
@@ -5789,7 +5791,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.44.2"
+	"version": "0.44.3"
 };
 
 /***/ }),
