@@ -306,16 +306,20 @@ Caf.defMod(module, () => {
           let newChild;
           if (child !== (newChild = child.transform())) {
             ret != null ? ret : ret = this.children.slice();
+            newChild.props.label = child.label;
             ret[i] = newChild;
           }
         });
         return ret || this.children;
       };
+      this.prototype.postTransform = function() {
+        return this;
+      };
       this.prototype.transform = function() {
         let newChildren;
-        return this.children !== (newChildren = this.transformChildren())
+        return (this.children !== (newChildren = this.transformChildren())
           ? new this.class(this.props, newChildren)
-          : this;
+          : this).postTransform();
       };
       this.prototype.toJsExpression = function(returnValueIgnored = false) {
         return this.toJs();
@@ -883,6 +887,9 @@ Caf.defMod(module, () => {
                   : c.toJsExpression(true)
           );
         });
+      };
+      this.prototype.toJsExpression = function() {
+        return this.toJsParenExpression();
       };
       this.prototype.toJsParenExpression = function() {
         return (() => {
@@ -3574,12 +3581,7 @@ Caf.defMod(module, () => {
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
-      this.prototype.transform = function() {
-        return instanceSuper.transform
-          .apply(this, arguments)
-          .postSuperTransform();
-      };
-      this.prototype.postSuperTransform = function() {
+      this.prototype.postTransform = function() {
         let value1, value2;
         return !this.operator.match(supportedOperatorsRegExp)
           ? ({ value1, value2 } = this.getValueWithBaseCapture(
@@ -5762,15 +5764,16 @@ module.exports = {
 		"art-object-tree-factory": "^1.0.0",
 		"art-standard-lib": "^1.1.0",
 		"art-testbench": "^1.0.0",
-		"babel-bridge": "^1.0.0",
+		"babel-bridge": "^1.12.0",
 		"caffeine-mc": "^1.0.0",
+		"caffeine-script": "^0.38.1",
 		"caffeine-script-runtime": "^1.0.0",
 		"case-sensitive-paths-webpack-plugin": "^1.1.4",
 		"coffee-loader": "^0.7.2",
 		"coffee-script": "^1.12.3",
 		"css-loader": "^0.26.1",
 		"json-loader": "^0.5.4",
-		"neptune-namespaces": "^1.9.1",
+		"neptune-namespaces": "^2.0.0",
 		"script-loader": "^0.7.0",
 		"style-loader": "^0.13.1",
 		"webpack": "^2.2.1",
@@ -5786,7 +5789,7 @@ module.exports = {
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
 	},
-	"version": "0.44.0"
+	"version": "0.44.2"
 };
 
 /***/ }),
