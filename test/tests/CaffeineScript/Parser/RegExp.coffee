@@ -154,11 +154,11 @@ module.exports = suite: parseTestSuite
       """: "/((?!\\/\\/\\/)(\\\\.|((?!\\\\|[\\s\\n]\\#|\\#\\{)(.|\\n))))+/;"
 
     interpolation:
-      '/// #{a}':         "RegExp(`${a}`);";
-      '/// #{a}#{b}':     "RegExp(`${a}${b}`);";
-      '/// #{a}\\ #{b}':  "RegExp(`${a} ${b}`);";
-      '/// this#{a}that': "RegExp(`this${a}that`);";
-      '/// \\n#{a}':      "RegExp(`\\\\n${a}`);"
+      '/// #{a}':         "RegExp(`${Caf.toString(a)}`);";
+      '/// #{a}#{b}':     "RegExp(`${Caf.toString(a)}${Caf.toString(b)}`);";
+      '/// #{a}\\ #{b}':  "RegExp(`${Caf.toString(a)} ${Caf.toString(b)}`);";
+      '/// this#{a}that': "RegExp(`this${Caf.toString(a)}that`);";
+      '/// \\n#{a}':      "RegExp(`\\\\n${Caf.toString(a)}`);"
 
     modifiers:
       "///i a":       "/a/i;";
@@ -169,9 +169,14 @@ module.exports = suite: parseTestSuite
       "///igmuy a":   "/a/igmuy;";
 
     everything:
-      '///i #{a}':       "RegExp(`${a}`, 'i');";
-      '///g #{a}':       "RegExp(`${a}`, 'g');";
-      '///m #{a}':       "RegExp(`${a}`, 'm');";
-      '///u #{a}':       "RegExp(`${a}`, 'u');";
-      '///y #{a}':       "RegExp(`${a}`, 'y');";
-      '///igmuy #{a}':   "RegExp(`${a}`, 'igmuy');";
+      '///i #{a}':       "RegExp(`${Caf.toString(a)}`, 'i');";
+      '///g #{a}':       "RegExp(`${Caf.toString(a)}`, 'g');";
+      '///m #{a}':       "RegExp(`${Caf.toString(a)}`, 'm');";
+      '///u #{a}':       "RegExp(`${Caf.toString(a)}`, 'u');";
+      '///y #{a}':       "RegExp(`${Caf.toString(a)}`, 'y');";
+      '///igmuy #{a}':   "RegExp(`${Caf.toString(a)}`, 'igmuy');";
+
+  regressions:
+    '/// a b': "/ab/;"
+    '/// a #{b}': "RegExp(`a${Caf.toString(b)}`);"
+    '/// a #{b} c': "RegExp(`a${Caf.toString(b)}c`);"

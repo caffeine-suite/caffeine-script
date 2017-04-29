@@ -28,7 +28,9 @@ Caf.defMod(module, () => {
                 into.push(
                   isString(v = child.props.value)
                     ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
-                    : `\${${Caf.toString(child.toJsExpression())}}`
+                    : `\${Caf.toString(${Caf.toString(
+                        child.toJsExpression()
+                      )})}`
                 );
               })
               .join(""))

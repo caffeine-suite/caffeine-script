@@ -73,7 +73,7 @@ Caf.defMod(module, () => {
       }
     },
     multilineRegExpInterpolation: {
-      pattern: "interpolationStart expression interpolationEnd"
+      pattern: "/ */ interpolationStart expression interpolationEnd"
     },
     multilineRegExpForwardSlashes: {
       pattern: /\/\/?(?!\/)/,

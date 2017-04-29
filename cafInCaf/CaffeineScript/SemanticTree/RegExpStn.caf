@@ -14,7 +14,7 @@ class RegExpStn extends &BaseStn
           else
             v
         else
-          "${#{child.toJsExpression()}}"
+          "${Caf.toString(#{child.toJsExpression()})}"
       .join ''
     else
       value
