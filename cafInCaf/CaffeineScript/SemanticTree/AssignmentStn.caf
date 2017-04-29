@@ -14,11 +14,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
     @scope.addIdentifierAssigned @lValue?.explicitIdentifier
     super
 
-  transform: ->
-    super.postSuperTransform()
-
-  # TODO - I need a better way of saying "do all the transforms for the children, and then maybe I'll do some more transforms here"
-  postSuperTransform: ->
+  postTransform: ->
     unless @operator.match supportedOperatorsRegExp
       {value1, value2} = @getValueWithBaseCapture @lValue
 

@@ -32,6 +32,9 @@ class StatementsStn extends &BaseStn
         else
           c.toJsExpression true
 
+  toJsExpression: ->
+    @toJsParenExpression()
+
   toJsParenExpression: ->
     switch @children.length
     when 0 then "undefined"

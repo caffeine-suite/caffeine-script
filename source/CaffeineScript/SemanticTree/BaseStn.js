@@ -204,11 +204,14 @@ Caf.defMod(module, () => {
         });
         return ret || this.children;
       };
+      this.prototype.postTransform = function() {
+        return this;
+      };
       this.prototype.transform = function() {
         let newChildren;
-        return this.children !== (newChildren = this.transformChildren())
+        return (this.children !== (newChildren = this.transformChildren())
           ? new this.class(this.props, newChildren)
-          : this;
+          : this).postTransform();
       };
       this.prototype.toJsExpression = function(returnValueIgnored = false) {
         return this.toJs();

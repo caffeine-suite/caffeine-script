@@ -207,11 +207,15 @@ class BaseStn extends BaseClass
         ret[i] = newChild
     ret || @children
 
+  # transform after children have been transformed
+  postTransform: -> @
+
   transform: ->
     if @children != newChildren = @transformChildren()
       new @class @props, newChildren
     else
       @
+    .postTransform()
 
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;

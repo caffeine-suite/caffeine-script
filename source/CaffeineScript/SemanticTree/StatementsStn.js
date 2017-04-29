@@ -39,6 +39,9 @@ Caf.defMod(module, () => {
           );
         });
       };
+      this.prototype.toJsExpression = function() {
+        return this.toJsParenExpression();
+      };
       this.prototype.toJsParenExpression = function() {
         return (() => {
           switch (this.children.length) {

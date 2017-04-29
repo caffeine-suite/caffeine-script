@@ -22,12 +22,7 @@ Caf.defMod(module, () => {
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
-      this.prototype.transform = function() {
-        return instanceSuper.transform
-          .apply(this, arguments)
-          .postSuperTransform();
-      };
-      this.prototype.postSuperTransform = function() {
+      this.prototype.postTransform = function() {
         let value1, value2;
         return !this.operator.match(supportedOperatorsRegExp)
           ? ({ value1, value2 } = this.getValueWithBaseCapture(

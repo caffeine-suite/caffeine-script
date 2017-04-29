@@ -74,24 +74,6 @@ module.exports = suite: parseTestSuite
       Caf.extendedEach(a, undefined, (v, k, into, brk) =>
       {let cafRet; b; return (cafRet = c) && (brk(), cafRet);});"
 
-  regressions:
-    """
-    object obj
-      # an intended comment
-    """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
-
-    """
-    object obj
-    """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
-
-    "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
-
-    """
-    each v from
-        a: b
-      v.a
-    """: knownFailing: "a"
-
   nested:
     """
     array a
@@ -199,3 +181,30 @@ module.exports = suite: parseTestSuite
 
 
   ###
+
+  regressions:
+    """
+    object obj
+      # an intended comment
+    """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
+
+    """
+    object obj
+    """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
+
+    "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
+
+    """
+    each v from
+        a: b
+      v.a
+    """: knownFailing: "a"
+
+    """
+    find foo
+      if bar
+        baz
+    """: "
+      Caf.extendedEach(foo, undefined, (v, k, into, brk) =>
+      {let cafRet; return (cafRet = (bar ? baz : undefined))
+      && (brk(), cafRet);});"

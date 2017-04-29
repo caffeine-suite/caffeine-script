@@ -12,7 +12,7 @@ module.exports = suite: parseTestSuite
       a: 'foo'
       b: foo
     """: """
-      ({source: "a: \'foo\'\\nb: foo", value: ({a: "foo", b: foo})});
+      ({source: "a: \'foo\'\\nb: foo", value: {a: "foo", b: foo}});
       """
 
     "<capture> foo": """
