@@ -80,7 +80,7 @@ contexts:
       scope: constant.numeric.caffeine
 
     # word-string
-    - match: ':[^\n\s,]+'
+    - match: ':(?!:)[^\\\n\s,)\]\}]+'
       scope: string.quoted.double.caffeine
 
     # hash-string
