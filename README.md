@@ -4,7 +4,7 @@
 
 CaffeineScript is designed to make programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of JavaScript.
 
-CaffeineScript compiles to JavaScript. It is for CoffeeScript fans who long for a major update, and it is for JavaScript fans who ache for a language as beautiful on the outside as JavaScript is on the inside.
+CaffeineScript compiles to JavaScript. It is for CoffeeScript fans who long for a major update and JavaScript fans who ache for a language as beautiful on the outside as JavaScript is on the inside.
 
 ### [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki)
 
