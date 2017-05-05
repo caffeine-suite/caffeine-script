@@ -2,7 +2,7 @@
 
 ### Productivity by Design [![Build Status](https://travis-ci.org/shanebdavis/caffeine-script.svg?branch=master)](https://travis-ci.org/shanebdavis/caffeine-script)
 
-CaffeineScript is a designer-language guided as much by good UX and graphic design as good language design. It is designed to make programming more wonderful, code more beautiful and programmers more productive. Concretely, CaffeineScript's design goal is to minimize total effort, over a product's lifetime, for the entire team.
+CaffeineScript is a programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. I believe design thinking is essential for achieving that goal. That means user-experience and graphic design are as important as computer-science and software engineering. If done right, a well-designed language can make programming more wonderful, code more beautiful and programming more fun. 
 
 CaffeineScript is inspired by CoffeeScript, but it is a ground-up redesign, re-imagining what CoffeeScript or JavaScript might look like if it they were written today. The result is a lean, high-level language that empowers you to get the most out of JavaScript.
 
