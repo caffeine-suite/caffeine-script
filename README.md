@@ -2,23 +2,9 @@
 
 ### Productivity by Design [![Build Status](https://travis-ci.org/shanebdavis/caffeine-script.svg?branch=master)](https://travis-ci.org/shanebdavis/caffeine-script)
 
-CaffeineScript is a programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. I believe design thinking is essential for achieving that goal. That means user-experience and graphic design are as important as computer-science and software engineering. If done right, a well-designed language can make programming more wonderful, code more beautiful and programming more fun. 
+CaffeineScript is a programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. Design thinking is essential for achieving that goal. That means user-experience and graphic design are as important as computer-science and software engineering. If done right, a well-designed language can make programming more wonderful, code more beautiful and programming more fun. 
 
 CaffeineScript is inspired by CoffeeScript, but it is a ground-up redesign, re-imagining what CoffeeScript or JavaScript might look like if it they were written today. The result is a lean, high-level language that empowers you to get the most out of JavaScript.
-
-### [CaffeineScript Wiki](https://github.com/shanebdavis/caffeine-script/wiki)
-
-Go to the [Wiki](https://github.com/shanebdavis/caffeine-script/wiki) for documentation and more.
-
-### Install
-
-```bash
-npm install caffeine-script
-```
-
-Next: [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Started)
-
-Related: [CaffeineMC Wiki](https://github.com/shanebdavis/caffeine-mc/wiki)
 
 ### Example
 
@@ -37,19 +23,35 @@ A brief, interactive slideshow written in CaffeineScript
 
 CaffeineScript is working and usable. The semantics are still shifting as I implement the remaining, planned v1 features.
 
+### Install
+
+```bash
+npm install caffeine-script
+```
+
+### Learn More
+
+* [Wiki Home](https://github.com/shanebdavis/caffeine-script/wiki/Home)
+* [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Started)
+* [Benefits](https://github.com/shanebdavis/caffeine-script/wiki/Benefits)
+* [Highlights](https://github.com/shanebdavis/caffeine-script/wiki/Highlights)
+* [Productivity by Design](https://github.com/shanebdavis/caffeine-script/wiki/Productivity-by-Design)
+* [CaffeineScript Design](https://github.com/shanebdavis/caffeine-script/wiki/CaffeineScript-Design)
+* [What is CaffeineScript Good For?](https://github.com/shanebdavis/caffeine-script/wiki/What-is-CaffeineScript-Good-For%3F)
+* [Why CaffeineScript over CoffeeScript?](https://github.com/shanebdavis/caffeine-script/wiki/Why-CaffeineScript-over-CoffeeScript%3F)
+* [Why CaffeineScript over JavaScript?](https://github.com/shanebdavis/caffeine-script/wiki/Why-CaffeineScript-over-JavaScript%3F)
+
 ### Contribute
 
 * [Discuss on Google Group](https://groups.google.com/d/forum/caffeinescript)
 * [Request, Suggest or Report Bugs on Github Issues](https://github.com/shanebdavis/caffeine-script/issues)
 * [View source or Fork on Github](https://github.com/shanebdavis/caffeine-script)
 
-### Why Use CaffeineScript?
+### More Examples
 
-It maximizes your productivity, blah, blah. But does it really? (yes, I think so)
-
-Who cares! It's lean, agile and fun! And you can do cool things like this:
-
-##### [streamlined modules](https://github.com/shanebdavis/caffeine-script/wiki/Modules-and-CommonJs)
+##### [React](https://github.com/shanebdavis/caffeine-script/wiki/React) and [Declarative Programming](https://github.com/shanebdavis/caffeine-script/wiki/Declarative-Programming)
+* [streamlined modules](https://github.com/shanebdavis/caffeine-script/wiki/Streamlined-Modules)
+* block [function invocation](https://github.com/shanebdavis/caffeine-script/wiki/function-invocation)
 
 ```coffeescript
 # CaffeineScript - 27 tokens and 0 must-match-tokens
@@ -94,7 +96,8 @@ module.exports = class Login extends Component {
 };
 ```
 
-##### streamlined [array](https://github.com/shanebdavis/caffeine-script/wiki/Array-Literals) and [object](https://github.com/shanebdavis/caffeine-script/wiki/Object-Literals) literals
+
+##### Implicit [Array](https://github.com/shanebdavis/caffeine-script/wiki/Array-Literals) and [Object](https://github.com/shanebdavis/caffeine-script/wiki/Object-Literals) literals
 ```coffeescript
 # CaffeineScript - 20 tokens
 1d: 1 2 3 4 5 6 7 8 9
@@ -113,6 +116,21 @@ module.exports = class Login extends Component {
 };
 ```
 
+```coffeescript
+# CaffeineScript - 19 tokens
+users =
+  id: 123 username: :shanebdavis born: 1976 fullName: "" Shane Brinkman-Davis Delamore
+  id: 456 username: :alanturing  born: 1912 fullName: "" Alan Turing
+```
+
+
+```JavaScript
+// JavaScript - 35 tokens
+let users = [
+  {id: 123, username: "shanebdavis", born: 1976, "Shane Brinkman-Davis Delamore"},
+  {id: 456, username: "alanturing",  born: 1912, "Alan Turing"}
+];
+```
 ##### [#hashStrings, :wordStrings, and 10unitStrings](https://github.com/shanebdavis/caffeine-script/wiki/String-Literals)
 
 ```coffeescript
@@ -139,25 +157,7 @@ style:
 };
 ```
 
-##### arrays of object literals
-
-```coffeescript
-# CaffeineScript - 19 tokens
-users =
-  id: 123 username: :shanebdavis born: 1976 fullName: "" Shane Brinkman-Davis Delamore
-  id: 456 username: :alanturing  born: 1912 fullName: "" Alan Turing
-```
-
-
-```JavaScript
-// JavaScript - 35 tokens
-let users = [
-  {id: 123, username: "shanebdavis", born: 1976, "Shane Brinkman-Davis Delamore"},
-  {id: 456, username: "alanturing",  born: 1912, "Alan Turing"}
-];
-```
-
-##### powerful comprehensions
+##### [Comprehensions and Iteration](https://github.com/shanebdavis/caffeine-script/wiki/Comprehensions-and-Iteration)
 
 ```coffeescript
 # CaffeineScript
