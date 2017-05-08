@@ -15,6 +15,11 @@ module.exports =
       test:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
       perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"
 
+    config:
+      blanket:
+        pattern: "source"
+
+
   webpack:
     common:
       target: "node"
