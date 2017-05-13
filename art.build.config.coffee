@@ -19,6 +19,9 @@ module.exports =
       blanket:
         pattern: "source"
 
+    repository:
+      type: "git"
+      url: "git@github.com:shanebdavis/caffeine-script.git"
 
   webpack:
     common:
