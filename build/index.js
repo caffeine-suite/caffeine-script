@@ -5759,6 +5759,11 @@ Caf.defMod(module, () => {
 
 module.exports = {
 	"author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
+	"config": {
+		"blanket": {
+			"pattern": "source"
+		}
+	},
 	"dependencies": {
 		"art-build-configurator": "^1.8.1",
 		"art-class-system": "^1.0.1",
@@ -5789,9 +5794,10 @@ module.exports = {
 		"build": "webpack --progress",
 		"perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
 		"start": "webpack-dev-server --hot --inline --progress",
-		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register"
+		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
+		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.3"
+	"version": "0.44.4"
 };
 
 /***/ }),
