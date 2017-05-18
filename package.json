@@ -13,7 +13,7 @@
     "art-standard-lib": "^1.11.1",
     "art-testbench": "^1.0.0",
     "babel-bridge": "^1.12.0",
-    "caffeine-mc": "^1.0.0",
+    "caffeine-mc": "^2.0.0",
     "caffeine-script": "^0.38.1",
     "caffeine-script-runtime": "^1.0.0",
     "case-sensitive-paths-webpack-plugin": "^1.1.4",

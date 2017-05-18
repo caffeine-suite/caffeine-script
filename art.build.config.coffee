@@ -6,7 +6,7 @@ module.exports =
       empowers you to get the most out of any JavaScript runtime."
 
     dependencies:
-      "caffeine-mc":              "^1.0.0"
+      "caffeine-mc":              "^2.0.0"
       "babel-bridge":             "^1.12.0"
       "caffeine-script-runtime":  "^1.0.0"
       "art-object-tree-factory":  "^1.0.0"
