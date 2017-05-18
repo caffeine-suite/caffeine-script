@@ -43,5 +43,5 @@
     "test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
     "testInBrowser": "webpack-dev-server --progress"
   },
-  "version": "0.44.4"
+  "version": "0.44.5"
 }
