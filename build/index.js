@@ -5766,10 +5766,10 @@ module.exports = {
 	},
 	"dependencies": {
 		"art-build-configurator": "^1.8.1",
-		"art-class-system": "^1.0.1",
+		"art-class-system": "^1.5.1",
 		"art-config": "^1.0.0",
 		"art-object-tree-factory": "^1.0.0",
-		"art-standard-lib": "^1.1.0",
+		"art-standard-lib": "^1.11.1",
 		"art-testbench": "^1.0.0",
 		"babel-bridge": "^1.12.0",
 		"caffeine-mc": "^1.0.0",
@@ -5779,6 +5779,7 @@ module.exports = {
 		"coffee-loader": "^0.7.2",
 		"coffee-script": "^1.12.3",
 		"css-loader": "^0.26.1",
+		"detect-node": "^2.0.3",
 		"json-loader": "^0.5.4",
 		"neptune-namespaces": "^2.0.0",
 		"script-loader": "^0.7.0",
@@ -5790,6 +5791,10 @@ module.exports = {
 	"description": "CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.",
 	"license": "ISC",
 	"name": "caffeine-script",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:shanebdavis/caffeine-script.git"
+	},
 	"scripts": {
 		"build": "webpack --progress",
 		"perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
@@ -5797,7 +5802,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.4"
+	"version": "0.44.5"
 };
 
 /***/ }),
