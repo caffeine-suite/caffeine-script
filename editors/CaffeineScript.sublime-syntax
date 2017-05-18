@@ -93,7 +93,7 @@ contexts:
 
     # Auto-Require
     - match : '&(?!\d)((?:(?!\s)[-/$\w\u007f-\uffff])+)'
-      scope: string.quoted.double.caffeine
+      scope: string.quoted.other.caffeine
 
     # Function Declaration
     - match: '[-=~]>'
