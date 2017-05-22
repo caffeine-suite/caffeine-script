@@ -22,7 +22,10 @@ Caf.defMod(module, () => {
     },
     escapeUnescaped: function(string, charsToEscape = '"') {
       let charsRegExp, split;
-      charsRegExp = RegExp(`([${escapeRegExp(charsToEscape)}])`, "g");
+      charsRegExp = RegExp(
+        `([${Caf.toString(escapeRegExp(charsToEscape))}])`,
+        "g"
+      );
       split = charsToEscape.match(/\\/) ? [string] : string.split(/((?:\\.)+)/);
       return Caf
         .each(split, [], (str, i, into) => {
