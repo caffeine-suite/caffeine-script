@@ -1,1 +1,3 @@
 |caffeine-script
+cache: true
+prettier: true
