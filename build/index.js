@@ -827,7 +827,10 @@ Caf.defMod(module, () => {
     },
     escapeUnescaped: function(string, charsToEscape = '"') {
       let charsRegExp, split;
-      charsRegExp = RegExp(`([${escapeRegExp(charsToEscape)}])`, "g");
+      charsRegExp = RegExp(
+        `([${Caf.toString(escapeRegExp(charsToEscape))}])`,
+        "g"
+      );
       split = charsToEscape.match(/\\/) ? [string] : string.split(/((?:\\.)+)/);
       return Caf
         .each(split, [], (str, i, into) => {
@@ -5802,7 +5805,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.6"
+	"version": "0.44.8"
 };
 
 /***/ }),
