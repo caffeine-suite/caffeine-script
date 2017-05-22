@@ -16,6 +16,11 @@ Caf.defMod(module, () => {
           }
         });
       };
+      this.prototype.trimLeft = function() {
+        let cafBase;
+        return Caf.exists(cafBase = this.children[0]) &&
+          (Caf.isF(cafBase.trimLeft) && cafBase.trimLeft());
+      };
       this.prototype.trimRight = function() {
         let cafBase;
         return Caf.exists(cafBase = peek(this.children)) &&

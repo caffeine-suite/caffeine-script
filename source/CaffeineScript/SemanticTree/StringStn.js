@@ -39,6 +39,9 @@ Caf.defMod(module, () => {
         this.props.value = this.value.replace(/(\ *\n *)+/g, " ");
         return this;
       };
+      this.prototype.trimLeft = function() {
+        return this.props.value = this.value.trimLeft();
+      };
       this.prototype.trimRight = function() {
         return this.props.value = this.value.trimRight();
       };

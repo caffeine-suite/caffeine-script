@@ -30,7 +30,8 @@ Caf.defMod(module, () => {
             let ret;
             ret = this.stringBlock.getStn();
             if (!this.tripple) {
-              ret.compactNewLines();
+              Caf.isF(ret.compactNewLines) && ret.compactNewLines();
+              Caf.isF(ret.trimLeft) && ret.trimLeft();
             }
             Caf.isF(ret.trimRight) && ret.trimRight();
             return ret;
@@ -76,7 +77,7 @@ Caf.defMod(module, () => {
           "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
           "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
         ],
-        stringBlockBody: "/[ \\n]*/ mid:blockStringMiddle interpolation:blockStringInterpolation?"
+        stringBlockBody: "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {

@@ -156,6 +156,35 @@ module.exports = suite: parseTestSuite
             \#{bye friend}
         """: '"hi\\n  \#{bye friend}";'
 
+    blankLines:
+      double:
+        """
+        ""
+
+          abc
+        """: '"abc";'
+
+        """
+        ""
+
+
+          abc
+        """: '"abc";'
+
+      tripple:
+        '''
+        """
+
+          abc
+        ''': '"\\nabc";'
+
+        '''
+        """
+
+
+          abc
+        ''': '"\\n\\nabc";'
+
     doubleQuotes:
       basic:
           """
@@ -276,7 +305,7 @@ module.exports = suite: parseTestSuite
 
               abc
               def
-            ''': '"abc\\ndef";'
+            ''': '"\\nabc\\ndef";'
 
           postNewLine:
 
