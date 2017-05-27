@@ -133,7 +133,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     else
       (actionStn) -> actionStn
 
-
     FunctionInvocationStn
       IdentifierStn identifier: "Caf.#{if useExtendedEach then 'extendedEach' else 'each'}"
       iterable

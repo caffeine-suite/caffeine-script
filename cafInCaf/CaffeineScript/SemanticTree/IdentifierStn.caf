@@ -1,6 +1,6 @@
 import &StandardImport
 
-class IdentiferStn extends &BaseStn
+class IdentifierStn extends &BaseStn
 
   @getter
     name: -> @props.identifier
@@ -15,4 +15,8 @@ class IdentiferStn extends &BaseStn
     super
 
   needsParens: false
+
+  # toJsg: ->
+  #   JsgOut (@props.identifierHandle || @props).identifier
+
   toJs: -> (@props.identifierHandle || @props).identifier

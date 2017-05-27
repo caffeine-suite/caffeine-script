@@ -1,10 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let IdentiferStn;
-  return IdentiferStn = Caf.defClass(
-    class IdentiferStn extends require("./BaseStn") {},
-    function(IdentiferStn, classSuper, instanceSuper) {
+  let IdentifierStn;
+  return IdentifierStn = Caf.defClass(
+    class IdentifierStn extends require("./BaseStn") {},
+    function(IdentifierStn, classSuper, instanceSuper) {
       this.getter({
         name: function() {
           return this.props.identifier;

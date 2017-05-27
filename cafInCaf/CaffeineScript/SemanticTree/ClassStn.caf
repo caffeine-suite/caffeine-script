@@ -85,7 +85,6 @@ class ClassStn extends &BaseStn
       merge @props, classSuperHandle: classSuperHandle, instanceSuperHandle: instanceSuperHandle
       children
 
-
   toJs: ->
     {className, classExtends, body, classBody} = @labeledChildren
     className = className.toJs()

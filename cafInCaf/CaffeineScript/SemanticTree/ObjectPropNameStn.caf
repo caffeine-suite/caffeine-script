@@ -26,7 +26,7 @@ class ObjectPropNameStn extends &BaseStn
       if nameStn.children.length > 0
         "[#{str}]"
       else
-        unless nameStn.type == "String" || nameStn.type == "Identifer"
+        unless nameStn.type == "String" || nameStn.type == "Identifier"
           throw new Error "internal error - should be a StringStn or IdentifierStn. Actual type: #{nameStn.type}"
         str
     else

@@ -84,7 +84,7 @@ class BaseStn extends BaseClass
   @postCreateConcreteClass: (options)->
     {classModuleState, hotReloadEnabled} = options
     super
-    createObjectTreeFactory
+    &StnRegistry.register createObjectTreeFactory
       class: @
       (props, children) =>
         @newInstance props, children

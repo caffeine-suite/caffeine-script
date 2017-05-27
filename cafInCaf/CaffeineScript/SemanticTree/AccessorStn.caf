@@ -32,7 +32,7 @@ class AccessorStn extends &ValueBaseCaptureStn
       super
 
   ###
-    @value is only ever not set for object literal computed property names.
+    @value is only ever not set for object literal computed property names. (object-structuring)
   toJs: ->
     if @value && @key.isIdentifier
       if (identierString = @key.toJs()).match /['"`]/

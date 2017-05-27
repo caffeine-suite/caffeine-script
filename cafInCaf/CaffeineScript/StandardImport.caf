@@ -1,1 +1,4 @@
-&ArtStandardLib.merge &ArtStandardLib, &ArtClassSystem
+&ArtStandardLib.merge
+  &ArtClassSystem
+  &ArtStandardLib
+  # &CaffeineJsGen

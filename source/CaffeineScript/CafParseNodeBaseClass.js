@@ -1,15 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let CafParseNodeBaseClass,
-    Nodes,
-    isString,
-    Error,
-    inspect,
-    isFunction,
-    RootStn;
-  ({ Nodes, isString, Error, inspect, isFunction, RootStn } = Caf.import(
-    ["Nodes", "isString", "Error", "inspect", "isFunction", "RootStn"],
+  let StnRegistry, CafParseNodeBaseClass, Nodes, isFunction, RootStn;
+  ({ Nodes, isFunction, RootStn } = Caf.import(
+    ["Nodes", "isFunction", "RootStn"],
     [
       require("./StandardImport"),
       require("babel-bridge"),
@@ -17,6 +11,7 @@ Caf.defMod(module, () => {
       global
     ]
   ));
+  StnRegistry = require("./StnRegistry");
   return CafParseNodeBaseClass = Caf.defClass(
     class CafParseNodeBaseClass extends Nodes.Node {},
     function(CafParseNodeBaseClass, classSuper, instanceSuper) {
@@ -48,15 +43,7 @@ Caf.defMod(module, () => {
         });
       };
       this.prototype.getStnFactory = function() {
-        if (
-          isString(this.stnFactory) &&
-          !require("./SemanticTree")[this.stnFactory]
-        ) {
-          throw new Error(
-            `stnFactory not found: ${Caf.toString(inspect(this.stnFactory))}`
-          );
-        }
-        return require("./SemanticTree")[this.stnFactory] || this.stnFactory;
+        return StnRegistry.get(this.stnFactory);
       };
       this.prototype.getStnChildren = function(left) {
         return this.stnChildren

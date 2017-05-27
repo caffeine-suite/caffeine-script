@@ -125,9 +125,11 @@ Caf.defMod(module, () => {
         let classModuleState, hotReloadEnabled;
         ({ classModuleState, hotReloadEnabled } = options);
         classSuper.postCreateConcreteClass.apply(this, arguments);
-        return createObjectTreeFactory({ class: this }, (props, children) => {
-          return this.newInstance(props, children);
-        });
+        return require("../StnRegistry").register(
+          createObjectTreeFactory({ class: this }, (props, children) => {
+            return this.newInstance(props, children);
+          })
+        );
       };
       this.prototype.findParent = function(stnTypePattern) {
         let parent, found;

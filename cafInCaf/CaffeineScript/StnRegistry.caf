@@ -1,0 +1,22 @@
+import &StandardImport
+
+class StnRegistry extends BaseClass
+  @singletonClass()
+
+  @register: (stn) -> @singleton.register stn
+
+  @get: (stnFactoryName) ->
+    if isFunction stnFactoryName
+      stnFactoryName
+    else if isString stnFactoryName
+      unless out = @singleton.registered[stnFactoryName]
+        throw new Error "stnFactoryName not found: #{formattedInspect stnFactoryName}"
+      out
+
+  constructor: ->
+    super
+    @registered = {}
+
+  register: (stn) ->
+    log "" register: #{stn.class.getName()}
+    @registered[stn.class.getName()] = stn

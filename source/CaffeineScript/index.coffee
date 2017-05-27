@@ -10,5 +10,6 @@ module.exports
   Lib:                   require './Lib'                  
   OperatorHelper:        require './OperatorHelper'       
   StandardImport:        require './StandardImport'       
+  StnRegistry:           require './StnRegistry'          
 require './Rules'
 require './SemanticTree'

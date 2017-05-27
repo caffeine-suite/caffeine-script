@@ -32,7 +32,7 @@ Caf.defMod(module, () => {
         return nameStn
           ? (str = nameStn.toJs(), nameStn.children.length > 0
               ? `[${Caf.toString(str)}]`
-              : (!(nameStn.type === "String" || nameStn.type === "Identifer")
+              : (!(nameStn.type === "String" || nameStn.type === "Identifier")
                   ? (() => {
                       throw new Error(
                         `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
