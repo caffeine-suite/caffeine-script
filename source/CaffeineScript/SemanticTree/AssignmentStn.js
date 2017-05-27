@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
-  SemanticTree = require("./");
+  SemanticTree = require("../StnRegistry");
   supportedOperatorsRegExp = /^([-+*\/%]|)$/;
   return AssignmentStn = Caf.defClass(
     class AssignmentStn extends require("./ValueBaseCaptureStn") {

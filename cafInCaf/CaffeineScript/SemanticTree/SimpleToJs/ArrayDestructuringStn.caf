@@ -1,5 +1,6 @@
 import &StandardImport
 
+
 class ArrayDestructuringStn extends &BaseStn
 
   toJs: ->

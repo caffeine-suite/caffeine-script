@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     ["Error", "compactFlatten", "merge"],
     [require("../StandardImport"), global]
   ));
-  SemanticTree = require("./");
+  SemanticTree = require("../StnRegistry");
   return ClassStn = Caf.defClass(
     class ClassStn extends require("./BaseStn") {},
     function(ClassStn, classSuper, instanceSuper) {

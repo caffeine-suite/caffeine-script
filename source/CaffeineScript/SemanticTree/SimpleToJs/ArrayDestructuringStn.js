@@ -3,7 +3,7 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ArrayDestructuringStn;
   return ArrayDestructuringStn = Caf.defClass(
-    class ArrayDestructuringStn extends require("./BaseStn") {},
+    class ArrayDestructuringStn extends require("../BaseStn") {},
     function(ArrayDestructuringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return `[${Caf.toString(this.childrenToJs(", "))}]`;

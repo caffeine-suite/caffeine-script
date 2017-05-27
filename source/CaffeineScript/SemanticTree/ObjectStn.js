@@ -1,8 +1,8 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ArrayStn, ObjectStn;
-  ArrayStn = require("./ArrayStn");
+  let StnRegistry, ObjectStn;
+  StnRegistry = require("../StnRegistry");
   return ObjectStn = Caf.defClass(
     class ObjectStn extends require("./BaseStn") {},
     function(ObjectStn, classSuper, instanceSuper) {
@@ -42,7 +42,7 @@ Caf.defMod(module, () => {
         listOfObjectLiterals = splitObjectsAtSameProps(children);
         return listOfObjectLiterals.length === 1
           ? new this(props, children)
-          : new ArrayStn(
+          : new StnRegistry.ArrayStn(
               Caf.each(listOfObjectLiterals, [], (c, k, into) => {
                 into.push(new this(props, c));
               })

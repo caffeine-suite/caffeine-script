@@ -4,10 +4,6 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  AccessorStn:                   require './AccessorStn'                  
-  ArrayDestructuringStn:         require './ArrayDestructuringStn'        
-  ArraySpreadElementStn:         require './ArraySpreadElementStn'        
-  ArrayStn:                      require './ArrayStn'                     
   AssignmentStn:                 require './AssignmentStn'                
   BaseStn:                       require './BaseStn'                      
   BinaryOperatorStn:             require './BinaryOperatorStn'            
@@ -54,3 +50,4 @@ module.exports
   UniqueIdentifierHandle:        require './UniqueIdentifierHandle'       
   ValueBaseCaptureStn:           require './ValueBaseCaptureStn'          
   ValueStn:                      require './ValueStn'                     
+require './SimpleToJs'

@@ -1,5 +1,5 @@
 import &StandardImport
-SemanticTree = &SemanticTree
+SemanticTree = &StnRegistry
 
 ##
   ObjectStn

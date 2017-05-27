@@ -5,3 +5,4 @@ CaffeineScript = require '../namespace'
 module.exports = CaffeineScript.SemanticTree ||
 CaffeineScript.addNamespace 'SemanticTree', class SemanticTree extends Neptune.Base
   ;
+require './SimpleToJs/namespace'

@@ -1,6 +1,6 @@
 import &StandardImport
 
-SemanticTree = &SemanticTree
+SemanticTree = &StnRegistry
 UniqueIdentifierHandle = &UniqueIdentifierHandle
 
 class ComprehensionStn extends &ScopeStnMixin &BaseStn

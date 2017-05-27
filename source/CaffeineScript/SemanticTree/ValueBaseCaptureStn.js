@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
   ]));
   BinaryOperatorStn = require("./BinaryOperatorStn");
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
-  SemanticTree = require("./namespace");
+  SemanticTree = require("../StnRegistry");
   return ValueBaseCaptureStn = Caf.defClass(
     class ValueBaseCaptureStn extends require("./BaseStn") {},
     function(ValueBaseCaptureStn, classSuper, instanceSuper) {

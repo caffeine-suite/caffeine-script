@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTree, CaptureStn;
-  SemanticTree = require("./");
+  SemanticTree = require("../StnRegistry");
   return CaptureStn = Caf.defClass(
     class CaptureStn extends require("./BaseStn") {},
     function(CaptureStn, classSuper, instanceSuper) {

@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
     ["arrayWithAllButLast", "peek", "Error"],
     [require("../StandardImport"), global]
   ));
-  SemanticTree = require("./");
+  SemanticTree = require("../StnRegistry");
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   return ComprehensionStn = Caf.defClass(
     class ComprehensionStn

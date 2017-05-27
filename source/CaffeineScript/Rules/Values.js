@@ -89,7 +89,7 @@ Caf.defMod(module, () => {
           ({ statements } = this.root);
           return statements.length === 1
             ? statements[0].getStn()
-            : require("../SemanticTree/ArrayStn")(this.root.getMatchStns());
+            : require("../StnRegistry").ArrayStn(this.root.getMatchStns());
         }
       }
     });

@@ -2,10 +2,13 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTree, AccessorStn, Error;
-  ({ Error } = Caf.import(["Error"], [require("../StandardImport"), global]));
+  ({ Error } = Caf.import(["Error"], [
+    require("../../StandardImport"),
+    global
+  ]));
   SemanticTree = require("./namespace");
   return AccessorStn = Caf.defClass(
-    class AccessorStn extends require("./ValueBaseCaptureStn") {
+    class AccessorStn extends require("../ValueBaseCaptureStn") {
       constructor(props, children) {
         super(...arguments);
         switch (children.length) {

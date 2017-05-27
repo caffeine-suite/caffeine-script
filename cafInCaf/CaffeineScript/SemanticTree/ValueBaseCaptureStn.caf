@@ -2,7 +2,7 @@ import &StandardImport
 BinaryOperatorStn = &BinaryOperatorStn
 
 UniqueIdentifierHandle = &UniqueIdentifierHandle
-SemanticTree = require "./namespace"
+SemanticTree = &StnRegistry
 
 class ValueBaseCaptureStn extends &BaseStn
   @abstractClass()

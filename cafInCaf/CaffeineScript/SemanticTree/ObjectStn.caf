@@ -1,6 +1,6 @@
 import &StandardImport
 
-ArrayStn = require './ArrayStn'
+StnRegistry = &StnRegistry
 
 class ObjectStn extends &BaseStn
 
@@ -32,6 +32,6 @@ class ObjectStn extends &BaseStn
     if listOfObjectLiterals.length == 1
       new @ props, children
     else
-      new ArrayStn
+      new StnRegistry.ArrayStn
         array c in listOfObjectLiterals
           new @ props, c
