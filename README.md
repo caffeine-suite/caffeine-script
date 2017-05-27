@@ -117,7 +117,7 @@ module.exports = class Login extends Component {
 ```
 
 ```coffeescript
-# CaffeineScript - 19 tokens
+# CaffeineScript - 18 tokens
 users =
   id: 123 username: :shanebdavis born: 1976 fullName: "" Shane Brinkman-Davis Delamore
   id: 456 username: :alanturing  born: 1912 fullName: "" Alan Turing
