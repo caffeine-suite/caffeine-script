@@ -4,9 +4,17 @@ class SwitchWhenStn extends &BaseStn
 
   toJs: (options)->
     {thenDo} = @labeledChildren
-    "#{@getCasesJs(options)}: #{thenDo.toJs()};"
+    "#{@_getCasesJs(options)}: #{thenDo.toJs()};"
 
-  getCasesJs: (options)->
+  toFunctionBodyJs: (options)->
+    {thenDo} = @labeledChildren
+    "#{@_getCasesJs(options)}: #{thenDo.toFunctionBodyJs()};"
+
+
+  ###########
+    PRIVATE
+
+  _getCasesJs: (options)->
     {falsifyCases} = options
     {whenValue} = @labeledChildren
     cases = if whenValue.implicitArray
@@ -18,8 +26,3 @@ class SwitchWhenStn extends &BaseStn
       "case !(#{cases.join '): case !('})"
     else
       "case #{cases.join ': case '}"
-
-
-  toFunctionBodyJs: (options)->
-    {thenDo} = @labeledChildren
-    "#{@getCasesJs(options)}: #{thenDo.toFunctionBodyJs()};"

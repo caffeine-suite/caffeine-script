@@ -1,5 +1,5 @@
 import &StandardImport
-UndefinedStn = &UndefinedStn
+StnRegistry = &StnRegistry
 
 class ControlOperatorStn extends &BaseStn
 
@@ -9,11 +9,11 @@ class ControlOperatorStn extends &BaseStn
     @joiner     = props.joiner
     if @labeledChildren.expression
       @expression = @labeledChildren.expression
-      @body       = @labeledChildren.body       || UndefinedStn()
+      @body       = @labeledChildren.body       || StnRegistry.UndefinedStn()
       @elseBody   = @labeledChildren.elseBody
     else
       @expression = children[0]
-      @body       = children[1] || UndefinedStn()
+      @body       = children[1] || StnRegistry.UndefinedStn()
       @elseBody   = children[2]
     @validate()
 

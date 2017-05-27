@@ -1,7 +1,5 @@
 import &StandardImport
 
-StatementsStn = &StatementsStn
-LetStn = &LetStn
 UniqueIdentifierHandle = &UniqueIdentifierHandle
 
 (toExtend) -> class ScopeStnMixin extends toExtend

@@ -216,7 +216,7 @@ Caf.defMod(module, () => {
           : this).postTransform();
       };
       this.prototype.toJsExpression = function(returnValueIgnored = false) {
-        return this.toJs();
+        return this.toJs({ expression: true });
       };
       this.prototype.toJsExpressionWithParens = function() {
         let js;
@@ -224,7 +224,7 @@ Caf.defMod(module, () => {
         return this.getNeedsParens() ? `(${Caf.toString(js)})` : js;
       };
       this.prototype.toJsParenExpression = function() {
-        return this.toJs();
+        return this.toJs({ expresison: true });
       };
       this.prototype.toInterpolatedJsStringPart = function() {
         return `\${Caf.toString(${Caf.toString(

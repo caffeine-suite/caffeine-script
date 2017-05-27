@@ -1,8 +1,5 @@
 import &StandardImport
 
-
-SemanticTree = require './namespace'
-
 class AccessorStn extends &ValueBaseCaptureStn
 
   constructor: (props, children) ->

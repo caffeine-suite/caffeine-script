@@ -7,7 +7,7 @@ import &StandardImport
     All children are labeled children.
     Pros
     - Positional is so fragile.
-    - Plural children still allow us to handle unbounded lists.
+    - Properties can have arrays of children: for unbounded lists
     - It'll be much easier for writing code that generates Stns
 
 class BaseStn extends BaseClass
@@ -220,7 +220,7 @@ class BaseStn extends BaseClass
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;
   toJsExpression: (returnValueIgnored = false)->
-    @toJs()
+    @toJs expression: true
 
   toJsExpressionWithParens: ->
     js = @toJsExpression()
@@ -232,7 +232,7 @@ class BaseStn extends BaseClass
   # return JS code that can be used as js-expression (returns a value)
   # for statements: (a,b,c)
   toJsParenExpression: ->
-    @toJs()
+    @toJs expresison: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression(skipParens: true)})}"

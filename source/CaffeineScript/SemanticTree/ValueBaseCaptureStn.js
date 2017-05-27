@@ -1,9 +1,8 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let BinaryOperatorStn,
-    UniqueIdentifierHandle,
-    SemanticTree,
+  let UniqueIdentifierHandle,
+    StnRegistry,
     ValueBaseCaptureStn,
     mergeInto,
     isArray;
@@ -11,9 +10,8 @@ Caf.defMod(module, () => {
     require("../StandardImport"),
     global
   ]));
-  BinaryOperatorStn = require("./BinaryOperatorStn");
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
-  SemanticTree = require("../StnRegistry");
+  StnRegistry = require("../StnRegistry");
   return ValueBaseCaptureStn = Caf.defClass(
     class ValueBaseCaptureStn extends require("./BaseStn") {},
     function(ValueBaseCaptureStn, classSuper, instanceSuper) {
@@ -26,7 +24,7 @@ Caf.defMod(module, () => {
           key,
           baseIdentifierHandle;
         return accessorStn.isAccessor && !accessorStn.children[0].isReference
-          ? ({ AssignmentStn, ReferenceStn, IdentifierStn } = SemanticTree, {
+          ? ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry, {
               value,
               key
             } = accessorStn, {
@@ -55,7 +53,7 @@ Caf.defMod(module, () => {
         return accessorStn.type === "Identifier" ||
           accessorStn.type === "Reference"
           ? { value1: accessorStn, value2: accessorStn }
-          : ({ AssignmentStn, ReferenceStn, IdentifierStn } = SemanticTree, {
+          : ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry, {
               value1: AssignmentStn(
                 IdentifierStn({
                   identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle(
@@ -139,8 +137,8 @@ Caf.defMod(module, () => {
         isFunctionInvocation
       ) {
         return isFunctionInvocation
-          ? SemanticTree.FunctionInvocationStn(value, key)
-          : SemanticTree.AccessorStn(value, key);
+          ? StnRegistry.FunctionInvocationStn(value, key)
+          : StnRegistry.AccessorStn(value, key);
       };
       this.prototype.createExistanceAccessorStn = function(
         value,
@@ -152,10 +150,10 @@ Caf.defMod(module, () => {
           ? this.getValueWithBaseCapture(value)
           : this.getValueWithCapture(value);
         ({ value1, value2 } = res);
-        return SemanticTree.BinaryOperatorStn(
+        return StnRegistry.BinaryOperatorStn(
           { operator: "&&" },
-          SemanticTree.FunctionInvocationStn(
-            SemanticTree.IdentifierStn({
+          StnRegistry.FunctionInvocationStn(
+            StnRegistry.IdentifierStn({
               identifier: forFunctionInvocation ? "Caf.isF" : "Caf.exists"
             }),
             value1

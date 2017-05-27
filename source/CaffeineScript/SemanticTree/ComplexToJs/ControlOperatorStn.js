@@ -3,12 +3,12 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StnRegistry, ControlOperatorStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    require("../StandardImport"),
+    require("../../StandardImport"),
     global
   ]));
-  StnRegistry = require("../StnRegistry");
+  StnRegistry = require("../../StnRegistry");
   return ControlOperatorStn = Caf.defClass(
-    class ControlOperatorStn extends require("./BaseStn") {
+    class ControlOperatorStn extends require("../BaseStn") {
       constructor(props, children) {
         super(...arguments);
         this.operand = props.operand;

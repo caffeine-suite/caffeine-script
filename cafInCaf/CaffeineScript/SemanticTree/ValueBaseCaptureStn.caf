@@ -1,15 +1,14 @@
 import &StandardImport
-BinaryOperatorStn = &BinaryOperatorStn
 
 UniqueIdentifierHandle = &UniqueIdentifierHandle
-SemanticTree = &StnRegistry
+StnRegistry = &StnRegistry
 
 class ValueBaseCaptureStn extends &BaseStn
   @abstractClass()
 
   getValueWithBaseCapture: (accessorStn)->
     if accessorStn.isAccessor && !accessorStn.children[0].isReference
-      {AssignmentStn, ReferenceStn, IdentifierStn} = SemanticTree
+      {AssignmentStn, ReferenceStn, IdentifierStn} = StnRegistry
 
       {value, key} = accessorStn
       value1: new accessorStn.class accessorStn.props, [
@@ -33,7 +32,7 @@ class ValueBaseCaptureStn extends &BaseStn
       value1: accessorStn, value2: accessorStn
 
     else
-      {AssignmentStn, ReferenceStn, IdentifierStn} = SemanticTree
+      {AssignmentStn, ReferenceStn, IdentifierStn} = StnRegistry
 
       value1:
         AssignmentStn
@@ -224,9 +223,9 @@ class ValueBaseCaptureStn extends &BaseStn
 
   createAccessorStn: (value, key, isFunctionInvocation) ->
     if isFunctionInvocation
-      SemanticTree.FunctionInvocationStn value, key
+      StnRegistry.FunctionInvocationStn value, key
     else
-      SemanticTree.AccessorStn value, key
+      StnRegistry.AccessorStn value, key
 
   createExistanceAccessorStn: (value, forFunctionInvocation, createRightStn) ->
     res = if forFunctionInvocation
@@ -236,9 +235,9 @@ class ValueBaseCaptureStn extends &BaseStn
 
     {value1, value2} = res
 
-    SemanticTree.BinaryOperatorStn
+    StnRegistry.BinaryOperatorStn
       operator: "&&"
-      SemanticTree.FunctionInvocationStn
-        SemanticTree.IdentifierStn identifier: if forFunctionInvocation then "Caf.isF" else "Caf.exists"
+      StnRegistry.FunctionInvocationStn
+        StnRegistry.IdentifierStn identifier: if forFunctionInvocation then "Caf.isF" else "Caf.exists"
         value1
       createRightStn value2

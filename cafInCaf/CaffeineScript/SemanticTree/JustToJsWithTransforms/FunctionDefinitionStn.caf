@@ -1,7 +1,5 @@
 import &StandardImport
-
-FunctionDefinitionArgsStn = &FunctionDefinitionArgsStn
-StatementsStn = &StatementsStn
+StnRegistry = &StnRegistry
 
 ##
   Thinking.
@@ -34,15 +32,15 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
   constructor: (props, children) ->
     if children.length == 1
       [onlyChild] = children
-      unless onlyChild instanceof FunctionDefinitionArgsStn.class
-        children = [FunctionDefinitionArgsStn(), children[0]]
+      unless onlyChild instanceof StnRegistry.FunctionDefinitionArgsStn.class
+        children = [StnRegistry.FunctionDefinitionArgsStn(), children[0]]
     super props, children
 
     @arguments = children[0]
     @statements = children[1]
 
   cloneWithNewStatements: (statements)->
-    new @class @props, [@arguments, StatementsStn compactFlatten statements]
+    new @class @props, [@arguments, StnRegistry.StatementsStn compactFlatten statements]
 
   @getter
     needsParens: -> false

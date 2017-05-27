@@ -1,0 +1,11 @@
+import &StandardImport
+
+class ThrowStn extends &BaseStn
+
+  toJs: (options={})->
+    if options.expression
+      "(()=>{#{@toJs()};})()"
+    else
+      "throw #{@childrenToJs()}"
+
+  toJsParenExpression: -> @toJsExpression()
