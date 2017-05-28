@@ -148,6 +148,16 @@ class BaseStn extends BaseClass
       expression: t/f
         if true, return JS for an expression
 
+      subExpression: t/f
+        currently this means the result is used
+        in a binary operator
+
+      statement: t/f
+        true: is used as a s
+
+      dotBase: t/f
+        true: is used as the base for a . or [] accessor.
+
       returnValueIsIgnored: t/f
         if true and expression is true, still return
         an expression, but it's OK to streamline since the

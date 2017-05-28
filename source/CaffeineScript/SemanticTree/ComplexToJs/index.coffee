@@ -6,7 +6,6 @@ module.exports
 .addModules
   FunctionDefinitionArgStn: require './FunctionDefinitionArgStn'
   ImportStn:                require './ImportStn'               
-  ObjectStn:                require './ObjectStn'               
   RootStn:                  require './RootStn'                 
   StatementsStn:            require './StatementsStn'           
   StringStn:                require './StringStn'               

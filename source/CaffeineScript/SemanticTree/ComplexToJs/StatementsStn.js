@@ -46,7 +46,9 @@ Caf.defMod(module, () => {
                     )}`
                   : c.toJs({ generateReturnStatement: true })
               : generateStatements
-                  ? (statement = c.toJsStatement(), statement.match(/^function/)
+                  ? (statement = c.toJs({ statement: true }), statement.match(
+                      /^function/
+                    )
                       ? this.applyRequiredParens(statement)
                       : statement)
                   : c.toJsExpression({ returnValueIsIgnored: true })

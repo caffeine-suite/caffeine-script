@@ -23,6 +23,7 @@ module.exports
   ObjectDestructuringStn:        require './ObjectDestructuringStn'       
   ObjectPropNameStn:             require './ObjectPropNameStn'            
   ObjectPropValueStn:            require './ObjectPropValueStn'           
+  ObjectStn:                     require './ObjectStn'                    
   ReferenceStn:                  require './ReferenceStn'                 
   RegExpStn:                     require './RegExpStn'                    
   RequireStn:                    require './RequireStn'                   
