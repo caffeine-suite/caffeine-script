@@ -179,9 +179,6 @@ Caf.defMod(module, () => {
           );
         })();
       };
-      this.prototype.toJsStatement = function() {
-        return this.toJs();
-      };
       this.prototype.doJs = function(args, body) {
         if (args) {
           throw "TODO";
@@ -198,6 +195,12 @@ Caf.defMod(module, () => {
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
         return this.toFunctionBodyJsArray(returnAction).join("");
+      };
+      this.prototype.toJsExpression = function(options) {
+        return this.toJs(merge(options, { expression: true }));
+      };
+      this.prototype.toInterpolatedJsStringPart = function() {
+        return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
       };
       this.prototype.transformChildren = function() {
         let ret;
@@ -220,12 +223,6 @@ Caf.defMod(module, () => {
         return (this.children !== (newChildren = this.transformChildren())
           ? new this.class(this.props, newChildren)
           : this).postTransform();
-      };
-      this.prototype.toJsExpression = function(options) {
-        return this.toJs(merge(options, { expression: true }));
-      };
-      this.prototype.toInterpolatedJsStringPart = function() {
-        return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;
