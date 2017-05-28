@@ -9,8 +9,6 @@ class BinaryOperatorStn extends &BaseStn
     @right = children[1]
     throw new Error "left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right
 
-  toJs: -> @toJsExpression()
-
   toJsStatement: -> @toJsExpression()
 
   updateScope: (@scope) ->
@@ -18,7 +16,7 @@ class BinaryOperatorStn extends &BaseStn
       @uniqueIdentifierHandle = @scope.uniqueIdentifierHandle
     super
 
-  toJsExpression: ->
+  toJs: ->
     if @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
       "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"

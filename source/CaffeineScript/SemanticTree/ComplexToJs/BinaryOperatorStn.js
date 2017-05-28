@@ -43,9 +43,6 @@ Caf.defMod(module, () => {
       }
     },
     function(BinaryOperatorStn, classSuper, instanceSuper) {
-      this.prototype.toJs = function() {
-        return this.toJsExpression();
-      };
       this.prototype.toJsStatement = function() {
         return this.toJsExpression();
       };
@@ -56,7 +53,7 @@ Caf.defMod(module, () => {
         }
         return instanceSuper.updateScope.apply(this, arguments);
       };
-      this.prototype.toJsExpression = function() {
+      this.prototype.toJs = function() {
         let identifier, parentOperatorPrecidence;
         return this.operator === "?" && this.uniqueIdentifierHandle
           ? ({ identifier } = this.uniqueIdentifierHandle, `((${Caf.toString(
