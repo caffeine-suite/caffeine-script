@@ -6,17 +6,15 @@ Caf.defMod(module, () => {
     class TryStn extends require("../BaseStn") {},
     function(TryStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options = {}) {
-        let expression, body, optionalCatch;
+        let expression, body, optionalCatch, js;
         ({ expression } = options);
         ({ body, optionalCatch } = this.labeledChildren);
         body = expression ? body.toFunctionBodyJs() : body.toJs();
         optionalCatch = Caf.exists(optionalCatch) &&
           optionalCatch.toJs(options) ||
           "catch (cafError) {}";
-        return `try {${Caf.toString(body)};} ${Caf.toString(optionalCatch)}`;
-      };
-      this.prototype.toJsExpression = function() {
-        return this.doJs(null, this.toJs({ expression: true }));
+        js = `try {${Caf.toString(body)};} ${Caf.toString(optionalCatch)}`;
+        return expression ? this.doJs(null, js) : js;
       };
     }
   );

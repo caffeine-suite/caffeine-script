@@ -7,8 +7,8 @@ class TryStn extends &BaseStn
     {body, optionalCatch} = @labeledChildren
     body = if expression then body.toFunctionBodyJs() else body.toJs();
     optionalCatch = optionalCatch?.toJs(options) || "catch (cafError) {}"
-    "try {#{body};} #{optionalCatch}"
-
-  toJsExpression: ->
-    @doJs null, @toJs expression: true
-
+    js = "try {#{body};} #{optionalCatch}"
+    if expression
+      @doJs null, js
+    else
+      js
