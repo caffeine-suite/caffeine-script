@@ -4,14 +4,10 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  BinaryOperatorStn:        require './BinaryOperatorStn'       
-  ControlOperatorStn:       require './ControlOperatorStn'      
   FunctionDefinitionArgStn: require './FunctionDefinitionArgStn'
   ImportStn:                require './ImportStn'               
   ObjectStn:                require './ObjectStn'               
-  RequireStn:               require './RequireStn'              
   RootStn:                  require './RootStn'                 
-  SimpleLiteralStn:         require './SimpleLiteralStn'        
   StatementsStn:            require './StatementsStn'           
   StringStn:                require './StringStn'               
   SwitchWhenStn:            require './SwitchWhenStn'           
