@@ -20,9 +20,6 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         return `require('${Caf.toString(this.requireString)}')`;
       };
-      this.prototype.toJsExpressionWithParens = function() {
-        return this.toJs();
-      };
     }
   );
 });

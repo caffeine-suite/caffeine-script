@@ -70,34 +70,44 @@ Caf.defMod(module, () => {
                   this.operator
                 ), binaryOperatorToJs(
                   this.operator,
-                  this.left.toJsExpressionWithParens({
+                  this.left.toJs({
+                    expression: true,
+                    subExpression: true,
                     parentOperatorPrecidence,
                     isLeftOperand: true
                   }),
-                  this.right.toJsExpressionWithParens({
+                  this.right.toJs({
+                    expression: true,
+                    subExpression: true,
                     parentOperatorPrecidence,
                     isLeftOperand: false
                   })
                 ));
-        return Caf.exists(options) && options.dotBase
-          ? `(${Caf.toString(out)})`
+        return options
+          ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
           : out;
       };
-      this.prototype.toJsExpressionWithParens = function(options) {
-        let parentOperatorPrecidence, isLeftOperand, operatorPrecidence;
-        if (options) {
-          ({ parentOperatorPrecidence, isLeftOperand } = options);
+      this.prototype._needsParens = function(toJsOptions) {
+        let dotBase,
+          parentOperatorPrecidence,
+          isLeftOperand,
+          operatorPrecidence;
+        if (toJsOptions) {
+          ({ dotBase, parentOperatorPrecidence, isLeftOperand } = toJsOptions);
         }
-        operatorPrecidence = getOpPrecidence(this.operator);
-        return parentOperatorPrecidence != null &&
-          operatorPrecidence < parentOperatorPrecidence
-          ? this.toJsExpression()
-          : parentOperatorPrecidence != null &&
-              operatorPrecidence === parentOperatorPrecidence &&
-              isLeftOperand ===
-                getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
-              ? this.toJsExpression()
-              : `(${Caf.toString(this.toJsExpression())})`;
+        return !(parentOperatorPrecidence != null)
+          ? dotBase
+          : (operatorPrecidence = getOpPrecidence(
+              this.operator
+            ), parentOperatorPrecidence &&
+              operatorPrecidence < parentOperatorPrecidence
+              ? false
+              : parentOperatorPrecidence &&
+                  operatorPrecidence === parentOperatorPrecidence &&
+                  isLeftOperand ===
+                    getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
+                  ? false
+                  : true);
       };
     }
   );

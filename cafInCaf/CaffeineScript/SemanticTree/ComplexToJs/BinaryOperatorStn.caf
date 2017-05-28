@@ -18,30 +18,42 @@ class BinaryOperatorStn extends &BaseStn
     out = if @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
       "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
+
     else if !operatorIsInfixJs @operator
       binaryOperatorToJs
         @operator
         @left.toJsExpression()
         @right.toJsExpression()
+
     else
       parentOperatorPrecidence = getOpPrecidence @operator
       binaryOperatorToJs
         @operator
-        @left.toJsExpressionWithParens  parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: true
-        @right.toJsExpressionWithParens parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: false
+        @left.toJs  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
+        @right.toJs {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
 
-    if options?.dotBase
-      "(#{out})"
+    if options
+      # {parentOperatorPrecidence, isLeftOperand, dotBase} = options
+      if @_needsParens options
+        "(#{out})"
+      else
+        out
     else
       out
 
-  toJsExpressionWithParens: (options) ->
-    {parentOperatorPrecidence, isLeftOperand} = options if options
+  ###############
+    PRIVATE
 
-    operatorPrecidence = getOpPrecidence @operator
-    if parentOperatorPrecidence? && operatorPrecidence < parentOperatorPrecidence
-      @toJsExpression()
-    else if parentOperatorPrecidence? && operatorPrecidence == parentOperatorPrecidence && isLeftOperand == getPrecidenceLevelIsLeftAssociative operatorPrecidence
-      @toJsExpression()
+  _needsParens: (toJsOptions) ->
+    {dotBase, parentOperatorPrecidence, isLeftOperand} = toJsOptions if toJsOptions
+
+    unless parentOperatorPrecidence?
+      dotBase
     else
-      "(#{@toJsExpression()})"
+      operatorPrecidence = getOpPrecidence @operator
+      if parentOperatorPrecidence && operatorPrecidence < parentOperatorPrecidence
+        false
+      else if parentOperatorPrecidence && operatorPrecidence == parentOperatorPrecidence && isLeftOperand == getPrecidenceLevelIsLeftAssociative operatorPrecidence
+        false
+      else
+        true

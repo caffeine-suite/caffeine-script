@@ -25,5 +25,3 @@ class RequireStn extends &BaseStn
 
   toJs: ->
     "" require('#{@requireString}')
-
-  toJsExpressionWithParens: -> @toJs()

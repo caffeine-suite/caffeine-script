@@ -45,7 +45,8 @@ Caf.defMod(module, () => {
             )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
               this.rValue.toJsExpression()
             )}`;
-        return Caf.exists(options) && options.dotBase
+        return Caf.exists(options) && options.dotBase ||
+          Caf.exists(options) && options.subExpression
           ? `(${Caf.toString(out)})`
           : out;
       };

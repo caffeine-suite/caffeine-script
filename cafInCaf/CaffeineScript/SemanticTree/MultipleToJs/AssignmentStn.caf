@@ -32,7 +32,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
       "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
-    if options?.dotBase
+    if options?.dotBase || options?.subExpression
       "(#{out})"
     else out
 

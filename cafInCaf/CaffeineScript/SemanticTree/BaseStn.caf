@@ -238,13 +238,6 @@ class BaseStn extends BaseClass
   toJsExpression: (options)->
     @toJs merge options, expression: true
 
-  toJsExpressionWithParens: ->
-    js = @toJsExpression()
-    if @getNeedsParens()
-      "(#{js})"
-    else
-      js
-
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression()})}"
 
