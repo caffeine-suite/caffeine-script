@@ -9,5 +9,4 @@ require './ComplexToJs/namespace';
 require './JustToJs/namespace';
 require './JustToJsWithTransforms/namespace';
 require './JustTransforms/namespace';
-require './MultipleToJs/namespace';
-require './SimpleToJs/namespace'
+require './MultipleToJs/namespace'

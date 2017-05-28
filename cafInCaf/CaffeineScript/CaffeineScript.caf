@@ -1,5 +1,7 @@
 import &ArtStandardLib
 
+&SemanticTree
+
 version: require('../../package.json').version
 
 # perf-testing version

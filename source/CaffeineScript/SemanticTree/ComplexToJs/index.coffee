@@ -5,7 +5,6 @@ module.exports = require './namespace'
 module.exports
 .addModules
   BinaryOperatorStn:        require './BinaryOperatorStn'       
-  CatchStn:                 require './CatchStn'                
   ControlOperatorStn:       require './ControlOperatorStn'      
   FunctionDefinitionArgStn: require './FunctionDefinitionArgStn'
   ImportStn:                require './ImportStn'               
@@ -15,7 +14,4 @@ module.exports
   SimpleLiteralStn:         require './SimpleLiteralStn'        
   StatementsStn:            require './StatementsStn'           
   StringStn:                require './StringStn'               
-  SwitchStn:                require './SwitchStn'               
   SwitchWhenStn:            require './SwitchWhenStn'           
-  ThrowStn:                 require './ThrowStn'                
-  TryStn:                   require './TryStn'                  

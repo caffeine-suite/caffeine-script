@@ -3,6 +3,7 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let log;
   ({ log } = Caf.import(["log"], [require("art-standard-lib"), global]));
+  require("./SemanticTree");
   return {
     version: require("../../package.json").version,
     compile: function(source, options = {}) {

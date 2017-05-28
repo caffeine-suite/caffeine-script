@@ -7,7 +7,7 @@ Caf.defMod(module, () => {
     [
       require("./StandardImport"),
       require("babel-bridge"),
-      require("./SemanticTree"),
+      require("./StnRegistry"),
       global
     ]
   ));
