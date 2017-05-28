@@ -41,8 +41,6 @@ module.exports
   StringStn:                     require './StringStn'                    
   SuperStn:                      require './SuperStn'                     
   SwitchStn:                     require './SwitchStn'                    
-  SwitchWhenStn:                 require './SwitchWhenStn'                
-  UnaryOperatorStn:              require './UnaryOperatorStn'             
   UniqueIdentifierHandle:        require './UniqueIdentifierHandle'       
   ValueBaseCaptureStn:           require './ValueBaseCaptureStn'          
 require './ComplexToJs'

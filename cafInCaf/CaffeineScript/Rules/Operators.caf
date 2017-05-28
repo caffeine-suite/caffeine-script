@@ -1,4 +1,4 @@
-import &StandardImport, &OperatorHelper, &SemanticTree
+import &StandardImport, &OperatorHelper, &StnRegistry
 
 binOpExpression:
   pattern: "unaryOpExpression binaryOperatorSequenceExtension?"

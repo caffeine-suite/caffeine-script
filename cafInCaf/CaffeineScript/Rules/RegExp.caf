@@ -1,4 +1,4 @@
-import &StandardImport, &BabelBridge, &SemanticTree
+import &StandardImport, &BabelBridge, &StnRegistry
 
 ##
   TODO: convert multiline RegExp into a 'block' instead of 'bracketed'

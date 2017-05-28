@@ -1,4 +1,4 @@
-import &StandardImport, &BabelBridge, &SemanticTree, &Lib
+import &StandardImport, &BabelBridge, &StnRegistry, &Lib
 
 ->
   @rule

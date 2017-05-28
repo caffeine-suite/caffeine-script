@@ -26,7 +26,7 @@ Caf.defMod(module, () => {
     [
       require("../StandardImport"),
       require("../OperatorHelper"),
-      require("../SemanticTree"),
+      require("../StnRegistry"),
       global
     ]
   ));

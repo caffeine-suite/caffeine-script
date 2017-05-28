@@ -1,4 +1,4 @@
-import &StandardImport, &BabelBridge, &SemanticTree
+import &StandardImport, &BabelBridge, &StnRegistry
 
 statement: [
   "statementWithoutEnd newLineStatementExtension* end"

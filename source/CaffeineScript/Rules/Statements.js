@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
   ({ ControlOperatorStn } = Caf.import(["ControlOperatorStn"], [
     require("../StandardImport"),
     require("babel-bridge"),
-    require("../SemanticTree"),
+    require("../StnRegistry"),
     global
   ]));
   return {

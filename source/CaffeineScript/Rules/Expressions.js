@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(["Extensions"], [
     require("../StandardImport"),
     require("babel-bridge"),
-    require("../SemanticTree"),
+    require("../StnRegistry"),
     global
   ]));
   ({ matchBlock } = Extensions.IndentBlocks);
