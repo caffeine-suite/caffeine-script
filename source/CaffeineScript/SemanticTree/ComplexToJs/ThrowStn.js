@@ -10,9 +10,6 @@ Caf.defMod(module, () => {
           ? `(()=>{${Caf.toString(this.toJs())};})()`
           : `throw ${Caf.toString(this.childrenToJs())}`;
       };
-      this.prototype.toJsParenExpression = function() {
-        return this.toJsExpression();
-      };
     }
   );
 });

@@ -7,5 +7,3 @@ class ThrowStn extends &BaseStn
       "(()=>{#{@toJs()};})()"
     else
       "throw #{@childrenToJs()}"
-
-  toJsParenExpression: -> @toJsExpression()

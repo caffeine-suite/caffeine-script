@@ -229,10 +229,11 @@ class BaseStn extends BaseClass
     else
       js
 
+
   # return JS code that can be used as js-expression (returns a value)
   # for statements: (a,b,c)
   toJsParenExpression: ->
-    @toJs expresison: true
+    @toJs expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression(skipParens: true)})}"

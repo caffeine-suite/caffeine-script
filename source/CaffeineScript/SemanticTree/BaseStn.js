@@ -224,7 +224,7 @@ Caf.defMod(module, () => {
         return this.getNeedsParens() ? `(${Caf.toString(js)})` : js;
       };
       this.prototype.toJsParenExpression = function() {
-        return this.toJs({ expresison: true });
+        return this.toJs({ expression: true });
       };
       this.prototype.toInterpolatedJsStringPart = function() {
         return `\${Caf.toString(${Caf.toString(
