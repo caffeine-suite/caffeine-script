@@ -144,6 +144,14 @@ module.exports = suite: parseTestSuite
         :elseStuff
       """: 'let a; a = true ? 123 : "elseStuff";'
 
+      """
+      a = if true
+        switch foo
+        when 0 then "undefined"
+      """: """
+        let a; a = true ? (() => {switch (foo) {case 0: return "undefined";};})() : undefined;
+        """
+
   unless:
     basic:
       """
