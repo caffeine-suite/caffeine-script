@@ -6,7 +6,13 @@ class StatementsStn extends &BaseStn
 
   toJs: (options)->
     if options?.expression
-      @toJsParenExpressionB()
+      switch @children.length
+      when 0 then "undefined"
+      when 1 then @children[0].toJsExpression()
+      else
+        @applyRequiredParens
+          @getChildrenStatementsJsArray "", false
+          .join ", "
     else
       @getChildrenStatementsJsArray().join "; "
 
@@ -36,12 +42,3 @@ class StatementsStn extends &BaseStn
             statement
         else
           c.toJsExpression returnValueIsIgnored: true
-
-  toJsParenExpressionB: ->
-    switch @children.length
-    when 0 then "undefined"
-    when 1 then @children[0].toJsExpression()
-    else
-      @applyRequiredParens
-        @getChildrenStatementsJsArray "", false
-        .join ", "

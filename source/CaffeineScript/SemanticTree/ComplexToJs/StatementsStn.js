@@ -8,7 +8,18 @@ Caf.defMod(module, () => {
       this.prototype.needsParens = false;
       this.prototype.toJs = function(options) {
         return Caf.exists(options) && options.expression
-          ? this.toJsParenExpressionB()
+          ? (() => {
+              switch (this.children.length) {
+                case 0:
+                  return "undefined";
+                case 1:
+                  return this.children[0].toJsExpression();
+                default:
+                  return this.applyRequiredParens(
+                    this.getChildrenStatementsJsArray("", false).join(", ")
+                  );
+              }
+            })()
           : this.getChildrenStatementsJsArray().join("; ");
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
@@ -41,20 +52,6 @@ Caf.defMod(module, () => {
                   : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });
-      };
-      this.prototype.toJsParenExpressionB = function() {
-        return (() => {
-          switch (this.children.length) {
-            case 0:
-              return "undefined";
-            case 1:
-              return this.children[0].toJsExpression();
-            default:
-              return this.applyRequiredParens(
-                this.getChildrenStatementsJsArray("", false).join(", ")
-              );
-          }
-        })();
       };
     }
   );
