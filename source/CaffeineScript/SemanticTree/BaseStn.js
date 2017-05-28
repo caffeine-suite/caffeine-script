@@ -11,7 +11,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString;
+    isString,
+    merge;
   ({
     BaseClass,
     log,
@@ -21,7 +22,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString
+    isString,
+    merge
   } = Caf.import(
     [
       "BaseClass",
@@ -32,7 +34,8 @@ Caf.defMod(module, () => {
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
-      "isString"
+      "isString",
+      "merge"
     ],
     [require("../StandardImport"), global]
   ));
@@ -164,7 +167,7 @@ Caf.defMod(module, () => {
           })
           .join(joiner);
       };
-      this.prototype.toJs = function() {
+      this.prototype.toJs = function(options) {
         return (() => {
           throw new Error(
             `must override one of the toJs* functions: ${Caf.toString(
@@ -215,16 +218,16 @@ Caf.defMod(module, () => {
           ? new this.class(this.props, newChildren)
           : this).postTransform();
       };
-      this.prototype.toJsExpression = function(returnValueIgnored = false) {
-        return this.toJs({ expression: true });
+      this.prototype.toJsExpression = function(options) {
+        return this.toJs(merge(options, { expression: true }));
       };
       this.prototype.toJsExpressionWithParens = function() {
         let js;
         js = this.toJsExpression();
         return this.getNeedsParens() ? `(${Caf.toString(js)})` : js;
       };
-      this.prototype.toJsParenExpression = function() {
-        return this.toJs({ expression: true });
+      this.prototype.toJsParenExpression = function(options) {
+        return this.toJs(merge(options, { expression: true }));
       };
       this.prototype.toInterpolatedJsStringPart = function() {
         return `\${Caf.toString(${Caf.toString(

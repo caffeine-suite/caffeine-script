@@ -121,9 +121,6 @@ Caf.defMod(module, () => {
       this.prototype.toJsParenExpression = function() {
         return this.applyRequiredParens(this.toJs({ expression: true }));
       };
-      this.prototype.toJsExpression = function(returnValueIsIgnored) {
-        return this.toJs({ expression: true, returnValueIsIgnored });
-      };
     }
   );
 });

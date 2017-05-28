@@ -30,7 +30,7 @@ class StatementsStn extends &BaseStn
           else
             statement
         else
-          c.toJsExpression true
+          c.toJsExpression returnValueIsIgnored: true
 
   toJsExpression: ->
     @toJsParenExpression()

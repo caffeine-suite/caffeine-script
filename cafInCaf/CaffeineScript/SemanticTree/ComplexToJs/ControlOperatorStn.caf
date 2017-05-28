@@ -69,6 +69,3 @@ class ControlOperatorStn extends &BaseStn
 
   toJsParenExpression: ->
     @applyRequiredParens @toJs expression: true
-
-  toJsExpression: (returnValueIsIgnored) ->
-    @toJs expression: true, returnValueIsIgnored: returnValueIsIgnored

@@ -35,7 +35,7 @@ Caf.defMod(module, () => {
                   ? (statement = c.toJsStatement(), statement.match(/^function/)
                       ? this.applyRequiredParens(statement)
                       : statement)
-                  : c.toJsExpression(true)
+                  : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });
       };

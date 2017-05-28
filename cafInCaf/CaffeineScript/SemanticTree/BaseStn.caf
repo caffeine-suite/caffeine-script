@@ -140,7 +140,20 @@ class BaseStn extends BaseClass
     array c in @children with c.toJs()
     .join joiner
 
-  toJs: ->
+  ##
+    IN: options:
+      expression: t/f
+        if true, return JS for an expression
+
+      returnValueIsIgnored: t/f
+        if true and expression is true, still return
+        an expression, but it's OK to streamline since the
+        return-value is ignored.
+
+        This is for use in expressiong-statement-lists: (expressionStatement1, es2, es3)
+        Only the last value, es3, has a meaningful return-value.
+
+  toJs: (options) ->
     throw new Error "must override one of the toJs* functions: #{@className}"
 
   # return JS code that doesn't (have to) return a value
@@ -219,8 +232,8 @@ class BaseStn extends BaseClass
 
   # return JS code that can be used as js-expression (returns a value)
   # for statements: a; b; return c;
-  toJsExpression: (returnValueIgnored = false)->
-    @toJs expression: true
+  toJsExpression: (options)->
+    @toJs merge options, expression: true
 
   toJsExpressionWithParens: ->
     js = @toJsExpression()
@@ -232,8 +245,8 @@ class BaseStn extends BaseClass
 
   # return JS code that can be used as js-expression (returns a value)
   # for statements: (a,b,c)
-  toJsParenExpression: ->
-    @toJs expression: true
+  toJsParenExpression: (options)->
+    @toJs merge options, expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression(skipParens: true)})}"
