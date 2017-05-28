@@ -24,6 +24,7 @@ module.exports
   ReferenceStn:                  require './ReferenceStn'                 
   RegExpStn:                     require './RegExpStn'                    
   SemanticTokenStn:              require './SemanticTokenStn'             
+  SwitchStn:                     require './SwitchStn'                    
   ThisStn:                       require './ThisStn'                      
   ThrowStn:                      require './ThrowStn'                     
   TryStn:                        require './TryStn'                       

@@ -2,8 +2,11 @@ import &StandardImport, &Lib
 
 class StatementsStn extends &BaseStn
 
-  toJs: ->
-    @getChildrenStatementsJsArray().join "; "
+  toJs: (options)->
+    if options?.expression
+      @toJsParenExpression()
+    else
+      @getChildrenStatementsJsArray().join "; "
 
   toFunctionBodyJs: (returnAction = true)->
     @toFunctionBodyJsArray returnAction
@@ -31,9 +34,6 @@ class StatementsStn extends &BaseStn
             statement
         else
           c.toJsExpression returnValueIsIgnored: true
-
-  toJsExpression: ->
-    @toJsParenExpression()
 
   toJsParenExpression: ->
     switch @children.length

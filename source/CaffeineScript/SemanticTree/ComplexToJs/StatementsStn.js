@@ -5,8 +5,10 @@ Caf.defMod(module, () => {
   return StatementsStn = Caf.defClass(
     class StatementsStn extends require("../BaseStn") {},
     function(StatementsStn, classSuper, instanceSuper) {
-      this.prototype.toJs = function() {
-        return this.getChildrenStatementsJsArray().join("; ");
+      this.prototype.toJs = function(options) {
+        return Caf.exists(options) && options.expression
+          ? this.toJsParenExpression()
+          : this.getChildrenStatementsJsArray().join("; ");
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
         return this.toFunctionBodyJsArray(returnAction).join("; ");
@@ -38,9 +40,6 @@ Caf.defMod(module, () => {
                   : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });
-      };
-      this.prototype.toJsExpression = function() {
-        return this.toJsParenExpression();
       };
       this.prototype.toJsParenExpression = function() {
         return (() => {
