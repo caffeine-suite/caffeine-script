@@ -27,11 +27,14 @@ class AssignmentStn extends &ValueBaseCaptureStn
     else
       @
 
-  toJs: ->
-    if @operator.match supportedOperatorsRegExp
+  toJs: (options) ->
+    out = if @operator.match supportedOperatorsRegExp
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
       "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+    if options?.dotBase
+      "(#{out})"
+    else out
 
   toJsParenExpression: ->
     "(#{@toJs()})"

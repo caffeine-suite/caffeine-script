@@ -23,11 +23,15 @@ Caf.defMod(module, () => {
   return StringStn = Caf.defClass(
     class StringStn extends require("../BaseStn") {},
     function(StringStn, classSuper, instanceSuper) {
-      this.prototype.toJs = function() {
-        return escapeJavascriptString(deescapeSpaces(this.value)).replace(
+      this.prototype.toJs = function(options) {
+        let out;
+        out = escapeJavascriptString(deescapeSpaces(this.value)).replace(
           /\\\\/g,
           "\\"
         );
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(out)})`
+          : out;
       };
       this.prototype.compactNewLines = function(compactLeft, compactRight) {
         if (compactLeft) {

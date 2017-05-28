@@ -4,7 +4,12 @@ StnRegistry = &StnRegistry
 
 class ObjectStn extends &BaseStn
 
-  toJs: -> "{#{(array c in @children with c.toJs()).join ', '}}"
+  toJs: (options) ->
+    out = "{#{(array c in @children with c.toJs()).join ', '}}"
+    if options?.dotBase
+      "(#{out})"
+    else out
+
   toJsStatement: -> "(#{@toJs()})"
 
   ##

@@ -11,19 +11,21 @@ class StatementsStn extends &BaseStn
       when 1 then @children[0].toJsExpression()
       else
         @applyRequiredParens
-          @getChildrenStatementsJsArray "", false
+          @_getChildrenStatementsJsArray "", false
           .join ", "
     else
-      @getChildrenStatementsJsArray().join "; "
+      @_getChildrenStatementsJsArray().join "; "
 
   toFunctionBodyJs: (returnAction = true)->
     @toFunctionBodyJsArray returnAction
     .join "; "
 
   toFunctionBodyJsArray: (returnAction = true)->
-    @getChildrenStatementsJsArray returnAction
+    @_getChildrenStatementsJsArray returnAction
 
-  getChildrenStatementsJsArray: (returnAction, generateStatements = true)->
+  ###########
+    PRIVATE
+  _getChildrenStatementsJsArray: (returnAction, generateStatements = true)->
     if returnAction == true
       returnAction = "return"
 

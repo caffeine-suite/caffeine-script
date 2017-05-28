@@ -11,4 +11,8 @@ class ArrayStn extends &BaseStn
       children = children[0].children
     super props, children
 
-  toJs: ->  "[#{(array c in @children with c.toJsExpression()).join ', '}]"
+  toJs: (options) ->
+    out = "[#{(array c in @children with c.toJsExpression()).join ', '}]"
+    if options?.dotBase
+      "(#{out})"
+    else out

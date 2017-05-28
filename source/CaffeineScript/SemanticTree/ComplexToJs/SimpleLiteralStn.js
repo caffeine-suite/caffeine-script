@@ -6,13 +6,12 @@ Caf.defMod(module, () => {
     class SimpleLiteralStn extends require("../BaseStn") {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
-      this.prototype.toJs = function() {
-        return this.props.value;
-      };
-      this.prototype.toJsExpressionWithParens = function(options) {
-        let dotBase;
-        ({ dotBase } = options);
-        return dotBase ? `(${Caf.toString(this.toJs())})` : this.toJs();
+      this.prototype.toJs = function(options) {
+        let value;
+        ({ value } = this.props);
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(value)})`
+          : value;
       };
     }
   );

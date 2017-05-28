@@ -34,8 +34,9 @@ Caf.defMod(module, () => {
             ))
           : this;
       };
-      this.prototype.toJs = function() {
-        return this.operator.match(supportedOperatorsRegExp)
+      this.prototype.toJs = function(options) {
+        let out;
+        out = this.operator.match(supportedOperatorsRegExp)
           ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
               this.operator
             )}= ${Caf.toString(this.rValue.toJsExpression())}`
@@ -44,6 +45,9 @@ Caf.defMod(module, () => {
             )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
               this.rValue.toJsExpression()
             )}`;
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(out)})`
+          : out;
       };
       this.prototype.toJsParenExpression = function() {
         return `(${Caf.toString(this.toJs())})`;

@@ -16,19 +16,19 @@ Caf.defMod(module, () => {
                   return this.children[0].toJsExpression();
                 default:
                   return this.applyRequiredParens(
-                    this.getChildrenStatementsJsArray("", false).join(", ")
+                    this._getChildrenStatementsJsArray("", false).join(", ")
                   );
               }
             })()
-          : this.getChildrenStatementsJsArray().join("; ");
+          : this._getChildrenStatementsJsArray().join("; ");
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
         return this.toFunctionBodyJsArray(returnAction).join("; ");
       };
       this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
-        return this.getChildrenStatementsJsArray(returnAction);
+        return this._getChildrenStatementsJsArray(returnAction);
       };
-      this.prototype.getChildrenStatementsJsArray = function(
+      this.prototype._getChildrenStatementsJsArray = function(
         returnAction,
         generateStatements = true
       ) {

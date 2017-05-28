@@ -17,14 +17,18 @@ Caf.defMod(module, () => {
           return this.props.implicitArray;
         }
       });
-      this.prototype.toJs = function() {
-        return `[${Caf.toString(
+      this.prototype.toJs = function(options) {
+        let out;
+        out = `[${Caf.toString(
           Caf
             .each(this.children, [], (c, k, into) => {
               into.push(c.toJsExpression());
             })
             .join(", ")
         )}]`;
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(out)})`
+          : out;
       };
     }
   );

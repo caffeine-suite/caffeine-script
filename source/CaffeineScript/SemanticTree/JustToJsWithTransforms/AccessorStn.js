@@ -42,20 +42,16 @@ Caf.defMod(module, () => {
           : instanceSuper.transform.apply(this, arguments);
       };
       this.prototype.toJs = function() {
-        let identierString, cafBase;
+        let base, identierString, cafBase;
+        base = Caf.exists(cafBase = this.value) &&
+          cafBase.toJsExpression({ dotBase: true });
         return this.value && this.key.isIdentifier
           ? (identierString = this.key.toJs()).match(/['"`]/)
-              ? `${Caf.toString(
-                  this.value.toJsExpressionWithParens()
-                )}[${Caf.toString(identierString)}]`
-              : `${Caf.toString(
-                  this.value.toJsExpressionWithParens({ dotBase: true })
-                )}.${Caf.toString(identierString)}`
-          : `${Caf.toString(
-              Caf.exists(cafBase = this.value) &&
-                cafBase.toJsExpressionWithParens() ||
-                ""
-            )}[${Caf.toString(this.key.toJsExpression())}]`;
+              ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
+              : `${Caf.toString(base)}.${Caf.toString(identierString)}`
+          : `${Caf.toString(base || "")}[${Caf.toString(
+              this.key.toJsExpression()
+            )}]`;
       };
     }
   );

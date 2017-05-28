@@ -1,9 +1,9 @@
 class SimpleLiteralStn extends &BaseStn
   needsParens: false
-  toJs: -> @props.value
 
-  toJsExpressionWithParens: (options) ->
-    {dotBase} = options
-    if dotBase
-      "(#{@toJs()})"
-    else @toJs()
+  toJs: (options) ->
+    {value} = @props
+    if options?.dotBase
+      "(#{value})"
+    else
+      value

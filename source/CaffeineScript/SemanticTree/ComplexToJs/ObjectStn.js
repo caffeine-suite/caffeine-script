@@ -7,14 +7,18 @@ Caf.defMod(module, () => {
     class ObjectStn extends require("../BaseStn") {},
     function(ObjectStn, classSuper, instanceSuper) {
       let splitObjectsAtSameProps;
-      this.prototype.toJs = function() {
-        return `{${Caf.toString(
+      this.prototype.toJs = function(options) {
+        let out;
+        out = `{${Caf.toString(
           Caf
             .each(this.children, [], (c, k, into) => {
               into.push(c.toJs());
             })
             .join(", ")
         )}}`;
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(out)})`
+          : out;
       };
       this.prototype.toJsStatement = function() {
         return `(${Caf.toString(this.toJs())})`;

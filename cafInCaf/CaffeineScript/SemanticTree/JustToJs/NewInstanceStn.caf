@@ -2,4 +2,8 @@ import &StandardImport
 
 class NewInstanceStn extends &BaseStn
 
-  toJs: ->  "new #{@childrenToJs()}"
+  toJs: (options) ->
+    if options?.dotBase
+      "(new #{@childrenToJs()})"
+    else
+      "new #{@childrenToJs()}"

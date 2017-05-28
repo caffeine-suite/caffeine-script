@@ -43,9 +43,6 @@ Caf.defMod(module, () => {
       }
     },
     function(BinaryOperatorStn, classSuper, instanceSuper) {
-      this.prototype.toJsStatement = function() {
-        return this.toJsExpression();
-      };
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         if (this.operator === "?" && !this.left.isReference) {
@@ -53,9 +50,9 @@ Caf.defMod(module, () => {
         }
         return instanceSuper.updateScope.apply(this, arguments);
       };
-      this.prototype.toJs = function() {
-        let identifier, parentOperatorPrecidence;
-        return this.operator === "?" && this.uniqueIdentifierHandle
+      this.prototype.toJs = function(options) {
+        let out, identifier, parentOperatorPrecidence;
+        out = this.operator === "?" && this.uniqueIdentifierHandle
           ? ({ identifier } = this.uniqueIdentifierHandle, `((${Caf.toString(
               identifier
             )} = ${Caf.toString(
@@ -82,6 +79,9 @@ Caf.defMod(module, () => {
                     isLeftOperand: false
                   })
                 ));
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(out)})`
+          : out;
       };
       this.prototype.toJsExpressionWithParens = function(options) {
         let parentOperatorPrecidence, isLeftOperand, operatorPrecidence;

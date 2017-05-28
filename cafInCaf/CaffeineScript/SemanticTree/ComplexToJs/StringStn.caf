@@ -2,11 +2,14 @@ import &StandardImport, &Lib
 
 class StringStn extends &BaseStn
 
-  toJs: ->
-    escapeJavascriptString
-      deescapeSpaces @value
-
-    .replace /\\\\/g, '\\'
+  toJs: (options) ->
+    out =
+      escapeJavascriptString
+        deescapeSpaces @value
+      .replace /\\\\/g, '\\'
+    if options?.dotBase
+      "(#{out})"
+    else out
 
   compactNewLines: (compactLeft, compactRight) ->
     @props.value = @value.replace /^\ *\n */, '' if compactLeft

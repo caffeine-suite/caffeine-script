@@ -9,15 +9,13 @@ class BinaryOperatorStn extends &BaseStn
     @right = children[1]
     throw new Error "left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right
 
-  toJsStatement: -> @toJsExpression()
-
   updateScope: (@scope) ->
     if @operator == "?" && !@left.isReference
       @uniqueIdentifierHandle = @scope.uniqueIdentifierHandle
     super
 
-  toJs: ->
-    if @operator == "?" && @uniqueIdentifierHandle
+  toJs: (options)->
+    out = if @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
       "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
     else if !operatorIsInfixJs @operator
@@ -31,6 +29,11 @@ class BinaryOperatorStn extends &BaseStn
         @operator
         @left.toJsExpressionWithParens  parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: true
         @right.toJsExpressionWithParens parentOperatorPrecidence: parentOperatorPrecidence, isLeftOperand: false
+
+    if options?.dotBase
+      "(#{out})"
+    else
+      out
 
   toJsExpressionWithParens: (options) ->
     {parentOperatorPrecidence, isLeftOperand} = options if options

@@ -32,10 +32,11 @@ class AccessorStn extends &ValueBaseCaptureStn
   ###
     @value is only ever not set for object literal computed property names. (object-structuring)
   toJs: ->
+    base = @value?.toJsExpression dotBase: true
     if @value && @key.isIdentifier
       if (identierString = @key.toJs()).match /['"`]/
-        "#{@value.toJsExpressionWithParens()}[#{identierString}]"
+        "#{base}[#{identierString}]"
       else
-        "#{@value.toJsExpressionWithParens dotBase: true}.#{identierString}"
+        "#{base}.#{identierString}"
     else
-      "#{@value?.toJsExpressionWithParens() || ""}[#{@key.toJsExpression()}]"
+      "#{base || ""}[#{@key.toJsExpression()}]"
