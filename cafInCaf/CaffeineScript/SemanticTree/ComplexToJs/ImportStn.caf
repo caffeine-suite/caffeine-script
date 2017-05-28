@@ -65,4 +65,4 @@ class ImportStn extends &ScopeStnMixin &BaseStn
     "#{imports}#{bodyJs}"
 
   toJsExpression: ->
-    @toJs returnExpression: true
+    @toJs expression: true

@@ -28,47 +28,47 @@ class ControlOperatorStn extends &BaseStn
       throw new Error "INTERNAL: invalid control-operator: #{formattedInspect @operand}"
 
   toJs: (options = {})->
-    {returnExpression, returnValueIsIgnored} = options
-    expression = @expression.toJsExpression()
+    {expression, returnValueIsIgnored} = options
+    jsExpression = @expression.toJsExpression()
     {operand} = @
 
     operand = switch operand
       when "until", "unless"
-        expression = "!#{@applyParens expression}"
+        jsExpression = "!#{@applyParens jsExpression}"
         if operand == "until" then "while" else "if"
       else operand
 
-    if returnExpression
+    if expression
       if operand == "while"
         if returnValueIsIgnored
           "
           (() => {while
-          #{@applyRequiredParens expression}
+          #{@applyRequiredParens jsExpression}
           {#{@body.toFunctionBodyJs false};};})()
           "
         else
           tempVarIdentifier = @scope.uniqueIdentifier
           "
           (() => {while
-          #{@applyRequiredParens expression}
+          #{@applyRequiredParens jsExpression}
           {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
           return #{tempVarIdentifier}})()
           "
       else
         "
-        #{@applyParens expression} ?
+        #{@applyParens jsExpression} ?
         #{@body.toJsParenExpression()} :
         #{@elseBody?.toJsParenExpression() || 'undefined'}
         "
     else
       "
       #{operand}
-      #{@applyRequiredParens expression}
+      #{@applyRequiredParens jsExpression}
       {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
       "
 
   toJsParenExpression: ->
-    @applyRequiredParens @toJs returnExpression: true
+    @applyRequiredParens @toJs expression: true
 
   toJsExpression: (returnValueIsIgnored) ->
-    @toJs returnExpression: true, returnValueIsIgnored: returnValueIsIgnored
+    @toJs expression: true, returnValueIsIgnored: returnValueIsIgnored

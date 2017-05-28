@@ -25,15 +25,10 @@ Caf.defMod(module, () => {
         return instanceSuper.updateScope.apply(this, arguments);
       };
       this.prototype.toJs = function(options = {}) {
-        let returnExpression,
-          errorIdentifier,
-          body,
-          errorIdentifierString,
-          cafBase;
-        ({ returnExpression } = options);
+        let expression, errorIdentifier, body, errorIdentifierString, cafBase;
+        ({ expression } = options);
         ({ errorIdentifier, body } = this.labeledChildren);
-        body = body &&
-          (returnExpression ? body.toFunctionBodyJs() : body.toJs());
+        body = body && (expression ? body.toFunctionBodyJs() : body.toJs());
         errorIdentifierString = Caf.exists(
           cafBase = this.uniqueIdentifierHandle
         ) &&

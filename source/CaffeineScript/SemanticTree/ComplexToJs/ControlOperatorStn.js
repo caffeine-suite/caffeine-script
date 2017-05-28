@@ -64,42 +64,44 @@ Caf.defMod(module, () => {
         })();
       };
       this.prototype.toJs = function(options = {}) {
-        let returnExpression,
+        let expression,
           returnValueIsIgnored,
-          expression,
+          jsExpression,
           operand,
           tempVarIdentifier,
           cafBase,
           cafBase1;
-        ({ returnExpression, returnValueIsIgnored } = options);
-        expression = this.expression.toJsExpression();
+        ({ expression, returnValueIsIgnored } = options);
+        jsExpression = this.expression.toJsExpression();
         ({ operand } = this);
         operand = (() => {
           switch (operand) {
             case "until":
             case "unless":
-              expression = `!${Caf.toString(this.applyParens(expression))}`;
+              jsExpression = `!${Caf.toString(this.applyParens(jsExpression))}`;
               return operand === "until" ? "while" : "if";
             default:
               return operand;
           }
         })();
-        return returnExpression
+        return expression
           ? operand === "while"
               ? returnValueIsIgnored
                   ? `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(expression)
+                      this.applyRequiredParens(jsExpression)
                     )} {${Caf.toString(
                       this.body.toFunctionBodyJs(false)
                     )};};})()`
                   : (tempVarIdentifier = this.scope.uniqueIdentifier, `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(expression)
+                      this.applyRequiredParens(jsExpression)
                     )} {${Caf.toString(
                       this.body.toFunctionBodyJs(
                         `${Caf.toString(tempVarIdentifier)} =`
                       )
                     )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
-              : `${Caf.toString(this.applyParens(expression))} ? ${Caf.toString(
+              : `${Caf.toString(
+                  this.applyParens(jsExpression)
+                )} ? ${Caf.toString(
                   this.body.toJsParenExpression()
                 )} : ${Caf.toString(
                   Caf.exists(cafBase = this.elseBody) &&
@@ -107,7 +109,7 @@ Caf.defMod(module, () => {
                     "undefined"
                 )}`
           : `${Caf.toString(operand)} ${Caf.toString(
-              this.applyRequiredParens(expression)
+              this.applyRequiredParens(jsExpression)
             )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
               this.elseBody
                 ? ` else {${Caf.toString(
@@ -117,10 +119,10 @@ Caf.defMod(module, () => {
             )}`;
       };
       this.prototype.toJsParenExpression = function() {
-        return this.applyRequiredParens(this.toJs({ returnExpression: true }));
+        return this.applyRequiredParens(this.toJs({ expression: true }));
       };
       this.prototype.toJsExpression = function(returnValueIsIgnored) {
-        return this.toJs({ returnExpression: true, returnValueIsIgnored });
+        return this.toJs({ expression: true, returnValueIsIgnored });
       };
     }
   );

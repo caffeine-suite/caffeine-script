@@ -91,7 +91,7 @@ Caf.defMod(module, () => {
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
       this.prototype.toJsExpression = function() {
-        return this.toJs({ returnExpression: true });
+        return this.toJs({ expression: true });
       };
     }
   );

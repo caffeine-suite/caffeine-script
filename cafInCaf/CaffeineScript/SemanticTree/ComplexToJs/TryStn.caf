@@ -3,12 +3,12 @@ import &StandardImport
 class TryStn extends &BaseStn
 
   toJs: (options = {})->
-    {returnExpression} = options
+    {expression} = options
     {body, optionalCatch} = @labeledChildren
-    body = if returnExpression then body.toFunctionBodyJs() else body.toJs();
+    body = if expression then body.toFunctionBodyJs() else body.toJs();
     optionalCatch = optionalCatch?.toJs(options) || "catch (cafError) {}"
     "try {#{body};} #{optionalCatch}"
 
   toJsExpression: ->
-    @doJs null, @toJs returnExpression: true
+    @doJs null, @toJs expression: true
 
