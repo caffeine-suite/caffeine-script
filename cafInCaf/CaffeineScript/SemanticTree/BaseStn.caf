@@ -249,7 +249,7 @@ class BaseStn extends BaseClass
     @toJs merge options, expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
-  toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression(skipParens: true)})}"
+  toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression()})}"
 
   needsParens: true
   needsParensAsStatement: false

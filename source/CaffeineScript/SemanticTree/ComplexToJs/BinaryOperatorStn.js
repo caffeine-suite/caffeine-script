@@ -47,7 +47,7 @@ Caf.defMod(module, () => {
         return this.toJsExpression();
       };
       this.prototype.toJsStatement = function() {
-        return this.toJsExpression({ skipParens: true });
+        return this.toJsExpression();
       };
       this.prototype.updateScope = function(scope) {
         this.scope = scope;

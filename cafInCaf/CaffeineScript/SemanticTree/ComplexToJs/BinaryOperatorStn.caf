@@ -11,7 +11,7 @@ class BinaryOperatorStn extends &BaseStn
 
   toJs: -> @toJsExpression()
 
-  toJsStatement: -> @toJsExpression skipParens: true
+  toJsStatement: -> @toJsExpression()
 
   updateScope: (@scope) ->
     if @operator == "?" && !@left.isReference

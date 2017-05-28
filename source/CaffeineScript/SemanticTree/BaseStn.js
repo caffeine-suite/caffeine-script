@@ -230,9 +230,7 @@ Caf.defMod(module, () => {
         return this.toJs(merge(options, { expression: true }));
       };
       this.prototype.toInterpolatedJsStringPart = function() {
-        return `\${Caf.toString(${Caf.toString(
-          this.toJsExpression({ skipParens: true })
-        )})}`;
+        return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;
