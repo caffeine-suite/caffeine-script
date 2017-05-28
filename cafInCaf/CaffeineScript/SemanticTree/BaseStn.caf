@@ -26,10 +26,13 @@ class BaseStn extends BaseClass
 
   @abstractClass()
 
+  toJsParenExpression: (options)->
+    @toJs merge options, expression: true
+
   ###
     IN:
       props should be a plain-object-structure with an object as the root
-      children should be a compact, flat array of Stns
+      children should be a compatoJsParenExpressionct, flat array of Stns
 
     TODO: I'd like to make setting the parseTreeNode cleaner.
   noChildren = []
@@ -241,12 +244,6 @@ class BaseStn extends BaseClass
       "(#{js})"
     else
       js
-
-
-  # return JS code that can be used as js-expression (returns a value)
-  # for statements: (a,b,c)
-  toJsParenExpression: (options)->
-    @toJs merge options, expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
   toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression()})}"

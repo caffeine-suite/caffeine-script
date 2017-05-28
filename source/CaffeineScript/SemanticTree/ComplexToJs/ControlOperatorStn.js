@@ -102,10 +102,10 @@ Caf.defMod(module, () => {
               : `${Caf.toString(
                   this.applyParens(jsExpression)
                 )} ? ${Caf.toString(
-                  this.body.toJsParenExpression()
+                  this.body.toJsExpression()
                 )} : ${Caf.toString(
                   Caf.exists(cafBase = this.elseBody) &&
-                    cafBase.toJsParenExpression() ||
+                    cafBase.toJsExpression() ||
                     "undefined"
                 )}`
           : `${Caf.toString(operand)} ${Caf.toString(
@@ -117,9 +117,6 @@ Caf.defMod(module, () => {
                   )};}`
                 : ""
             )}`;
-      };
-      this.prototype.toJsParenExpression = function() {
-        return this.applyRequiredParens(this.toJs({ expression: true }));
       };
     }
   );

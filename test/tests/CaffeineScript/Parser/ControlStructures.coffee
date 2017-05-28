@@ -49,7 +49,7 @@ module.exports = suite: parseTestSuite
         d
       else
         e
-      """: "let foo; foo = a ? b : (c ? d : e);"
+      """: "let foo; foo = a ? b : c ? d : e;"
 
       """
       foo = if a
@@ -59,7 +59,7 @@ module.exports = suite: parseTestSuite
           d
       else
         e
-      """: "let foo; foo = a ? (b ? c : d) : e;"
+      """: "let foo; foo = a ? b ? c : d : e;"
 
     expressions:
       """
@@ -90,9 +90,9 @@ module.exports = suite: parseTestSuite
       """
       ret = if a
         b = c
-      """: "let ret, b; ret = a ? (b = c) : undefined;"
+      """: "let ret, b; ret = a ? b = c : undefined;"
 
-    nested:
+    nestedWithStatements:
       """
       if a
         b
@@ -106,6 +106,20 @@ module.exports = suite: parseTestSuite
         if c
           d
       """: "let out; out = a ? (b, c ? d : undefined) : undefined;"
+
+    nestedBasic:
+      """
+      if a
+        if c
+          d
+      """: "if (a) {if (c) {d;};};"
+
+      """
+      out = if a
+        if c
+          d
+      """: "let out; out = a ? c ? d : undefined : undefined;"
+
 
     regressions:
       "if false then :mytrue": 'if (false) {"mytrue";};'

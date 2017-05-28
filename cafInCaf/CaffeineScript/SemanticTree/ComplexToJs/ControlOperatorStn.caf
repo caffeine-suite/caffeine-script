@@ -57,8 +57,8 @@ class ControlOperatorStn extends &BaseStn
       else
         "
         #{@applyParens jsExpression} ?
-        #{@body.toJsParenExpression()} :
-        #{@elseBody?.toJsParenExpression() || 'undefined'}
+        #{@body.toJsExpression()} :
+        #{@elseBody?.toJsExpression() || 'undefined'}
         "
     else
       "
@@ -66,6 +66,3 @@ class ControlOperatorStn extends &BaseStn
       #{@applyRequiredParens jsExpression}
       {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
       "
-
-  toJsParenExpression: ->
-    @applyRequiredParens @toJs expression: true

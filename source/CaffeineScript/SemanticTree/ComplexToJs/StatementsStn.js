@@ -5,9 +5,10 @@ Caf.defMod(module, () => {
   return StatementsStn = Caf.defClass(
     class StatementsStn extends require("../BaseStn") {},
     function(StatementsStn, classSuper, instanceSuper) {
+      this.prototype.needsParens = false;
       this.prototype.toJs = function(options) {
         return Caf.exists(options) && options.expression
-          ? this.toJsParenExpression()
+          ? this.toJsParenExpressionB()
           : this.getChildrenStatementsJsArray().join("; ");
       };
       this.prototype.toFunctionBodyJs = function(returnAction = true) {
@@ -41,22 +42,19 @@ Caf.defMod(module, () => {
           );
         });
       };
-      this.prototype.toJsParenExpression = function() {
+      this.prototype.toJsParenExpressionB = function() {
         return (() => {
           switch (this.children.length) {
             case 0:
               return "undefined";
             case 1:
-              return this.children[0].toJsParenExpression();
+              return this.children[0].toJsExpression();
             default:
               return this.applyRequiredParens(
                 this.getChildrenStatementsJsArray("", false).join(", ")
               );
           }
         })();
-      };
-      this.prototype.toJsExpressionWithParens = function() {
-        return this.toJsParenExpression();
       };
     }
   );

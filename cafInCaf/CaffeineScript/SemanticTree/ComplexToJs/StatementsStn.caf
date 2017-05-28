@@ -2,9 +2,11 @@ import &StandardImport, &Lib
 
 class StatementsStn extends &BaseStn
 
+  needsParens: false
+
   toJs: (options)->
     if options?.expression
-      @toJsParenExpression()
+      @toJsParenExpressionB()
     else
       @getChildrenStatementsJsArray().join "; "
 
@@ -35,14 +37,11 @@ class StatementsStn extends &BaseStn
         else
           c.toJsExpression returnValueIsIgnored: true
 
-  toJsParenExpression: ->
+  toJsParenExpressionB: ->
     switch @children.length
     when 0 then "undefined"
-    when 1 then @children[0].toJsParenExpression()
+    when 1 then @children[0].toJsExpression()
     else
       @applyRequiredParens
         @getChildrenStatementsJsArray "", false
         .join ", "
-
-  toJsExpressionWithParens: -> @toJsParenExpression()
-

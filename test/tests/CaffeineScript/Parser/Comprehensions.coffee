@@ -206,5 +206,5 @@ module.exports = suite: parseTestSuite
         baz
     """: "
       Caf.extendedEach(foo, undefined, (v, k, into, brk) =>
-      {let cafRet; return (cafRet = (bar ? baz : undefined))
+      {let cafRet; return (cafRet = bar ? baz : undefined)
       && (brk(), cafRet);});"

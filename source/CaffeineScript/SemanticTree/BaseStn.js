@@ -7,35 +7,35 @@ Caf.defMod(module, () => {
     log,
     Object,
     Error,
+    merge,
     objectWithout,
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString,
-    merge;
+    isString;
   ({
     BaseClass,
     log,
     Object,
     Error,
+    merge,
     objectWithout,
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString,
-    merge
+    isString
   } = Caf.import(
     [
       "BaseClass",
       "log",
       "Object",
       "Error",
+      "merge",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
-      "isString",
-      "merge"
+      "isString"
     ],
     [require("../StandardImport"), global]
   ));
@@ -64,6 +64,9 @@ Caf.defMod(module, () => {
         throw new Error("bad super");
       }
       this.abstractClass();
+      this.prototype.toJsParenExpression = function(options) {
+        return this.toJs(merge(options, { expression: true }));
+      };
       noChildren = [];
       this.prototype.initLabeledChildren = function() {
         this.labeledChildren = this.children && {};
@@ -225,9 +228,6 @@ Caf.defMod(module, () => {
         let js;
         js = this.toJsExpression();
         return this.getNeedsParens() ? `(${Caf.toString(js)})` : js;
-      };
-      this.prototype.toJsParenExpression = function(options) {
-        return this.toJs(merge(options, { expression: true }));
       };
       this.prototype.toInterpolatedJsStringPart = function() {
         return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
