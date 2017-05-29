@@ -34,6 +34,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
       "module.exports = 1": applyModuleWrapper "return module.exports = 1;"
       """eval "" console.log("hi")""": applyModuleWrapper """return eval('console.log("hi")');"""
 
+  regressions:
+    "(foo) -> foo":     applyModuleWrapper "return function(foo) {return foo;};"
+    "([foo]) -> foo":   applyModuleWrapper "return function([foo]) {return foo;};"
+
   withImport:
     """
     import Foo
