@@ -21,9 +21,9 @@ module.exports = suite: parseTestSuite
       "-> => 321": "(function() {return () => {return 321;};});"
 
     inClass:
-      "class Foo\n  foo: ~> 123": "let Foo; Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
-      "class Foo\n  foo: => 123": "let Foo; Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = () => {return 123;};});"
-      "class Foo\n  foo: -> 123": "let Foo; Foo = Caf.defClass(class Foo {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
+      "class Foo\n  foo: ~> 123": "let Foo; Foo = Caf.defClass(class Foo extends Object {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
+      "class Foo\n  foo: => 123": "let Foo; Foo = Caf.defClass(class Foo extends Object {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = () => {return 123;};});"
+      "class Foo\n  foo: -> 123": "let Foo; Foo = Caf.defClass(class Foo extends Object {}, function(Foo, classSuper, instanceSuper) {this.prototype.foo = function() {return 123;};});"
 
   dontMissParse:
     "foo -> 321"         : "foo(function() {return 321;});"

@@ -166,10 +166,9 @@ Caf.defMod(module, () => {
         className = className.toJs();
         out = `${Caf.toString(className)} = Caf.defClass(class ${Caf.toString(
           className
+        )} extends ${Caf.toString(
+          Caf.exists(classExtends) && classExtends.toJsExpression() || "Object"
         )}`;
-        if (classExtends) {
-          out += ` extends ${Caf.toString(classExtends.toJsExpression())}`;
-        }
         classBodyJs = `{${Caf.toString(
           Caf.exists(classBody) && classBody.toJs() || ""
         )}}`;

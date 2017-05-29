@@ -88,9 +88,11 @@ class ClassStn extends &BaseStn
   toJs: ->
     {className, classExtends, body, classBody} = @labeledChildren
     className = className.toJs()
-    out = "#{className} = Caf.defClass(class #{className}"
-    if classExtends
-      out += " extends #{classExtends.toJsExpression()}"
+
+    # NOTE: without an 'extends' class, JavaScript extends Funciton, not Object
+    # AND 'super' is illegal
+    # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
+    out = "#{className} = Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
 
     classBodyJs = "{#{classBody?.toJs()||''}}"
 
