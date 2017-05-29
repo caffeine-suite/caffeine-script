@@ -68,6 +68,7 @@ class OperatorHelper
 
       lowestPrecidence = @getOpPrecidence operators[0]
       firstOccurance = lastOccurance = 0
+      p = null
       each op, i in operators
         if lowestPrecidence > p = @getOpPrecidence op
           firstOccurance = lastOccurance = i

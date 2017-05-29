@@ -1,8 +1,8 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let OperatorHelper, Error, p, arrayWithout;
-  ({ Error, p, arrayWithout } = Caf.import(["Error", "p", "arrayWithout"], [
+  let OperatorHelper, Error, arrayWithout;
+  ({ Error, arrayWithout } = Caf.import(["Error", "arrayWithout"], [
     require("./StandardImport"),
     global
   ]));
@@ -106,6 +106,7 @@ Caf.defMod(module, () => {
       return f(a, b, operand);
     };
     this.getOpPrecidence = op => {
+      let p;
       if (!((p = this.opsToPrecidence[op]) != null)) {
         throw new Error(
           `OperatorHelper: operator '${Caf.toString(op)}' not defined`
@@ -127,6 +128,7 @@ Caf.defMod(module, () => {
       let lowestPrecidence,
         firstOccurance,
         lastOccurance,
+        p,
         opIndexToResolve,
         opsBefore,
         operandsBefore,
@@ -144,6 +146,7 @@ Caf.defMod(module, () => {
       while (operators.length > 0) {
         lowestPrecidence = this.getOpPrecidence(operators[0]);
         firstOccurance = lastOccurance = 0;
+        p = null;
         Caf.each(operators, undefined, (op, i, into) => {
           if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
             firstOccurance = lastOccurance = i;
