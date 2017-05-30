@@ -4029,7 +4029,7 @@ Caf.defMod(module, () => {
                   Caf.exists(cafBase = this.elseBody) &&
                     cafBase.toJsExpression() ||
                     "undefined"
-                )}`, options.subExpression
+                )}`, options.subExpression || options.dotBase
                   ? out = `(${Caf.toString(out)})`
                   : out)
           : `${Caf.toString(operand)} ${Caf.toString(
@@ -6010,7 +6010,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.12"
+	"version": "0.44.13"
 };
 
 /***/ }),
