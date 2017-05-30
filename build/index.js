@@ -120,8 +120,7 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString,
-    noChildren;
+    isString;
   ({
     BaseClass,
     log,
@@ -132,8 +131,7 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString,
-    noChildren
+    isString
   } = Caf.import(
     [
       "BaseClass",
@@ -145,15 +143,14 @@ Caf.defMod(module, () => {
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
-      "isString",
-      "noChildren"
+      "isString"
     ],
     [__webpack_require__(3), global]
   ));
   ({ createObjectTreeFactory } = __webpack_require__(104));
   return BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
-      constructor(props, children = noChildren) {
+      constructor(props, children = []) {
         super(...arguments);
         this.children = children;
         this.parseTreeNode = props.parseTreeNode;
@@ -178,7 +175,6 @@ Caf.defMod(module, () => {
       this.prototype.toJsParenExpression = function(options) {
         return this.toJs(merge(options, { expression: true }));
       };
-      noChildren = [];
       this.prototype.initLabeledChildren = function() {
         this.labeledChildren = this.children && {};
         return Caf.each(this.children, undefined, (child, k, into) => {
@@ -6016,7 +6012,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.16"
+	"version": "0.44.17"
 };
 
 /***/ }),
