@@ -3990,6 +3990,7 @@ Caf.defMod(module, () => {
           jsExpression,
           operand,
           tempVarIdentifier,
+          out,
           cafBase,
           cafBase1;
         ({ expression, returnValueIsIgnored } = options);
@@ -4020,7 +4021,7 @@ Caf.defMod(module, () => {
                         `${Caf.toString(tempVarIdentifier)} =`
                       )
                     )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
-              : `${Caf.toString(
+              : (out = `${Caf.toString(
                   this.applyParens(jsExpression)
                 )} ? ${Caf.toString(
                   this.body.toJsExpression()
@@ -4028,7 +4029,9 @@ Caf.defMod(module, () => {
                   Caf.exists(cafBase = this.elseBody) &&
                     cafBase.toJsExpression() ||
                     "undefined"
-                )}`
+                )}`, options.subExpression
+                  ? out = `(${Caf.toString(out)})`
+                  : out)
           : `${Caf.toString(operand)} ${Caf.toString(
               this.applyRequiredParens(jsExpression)
             )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
@@ -6007,7 +6010,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.11"
+	"version": "0.44.12"
 };
 
 /***/ }),
