@@ -12,7 +12,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString;
+    isString,
+    noChildren;
   ({
     BaseClass,
     log,
@@ -23,7 +24,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString
+    isString,
+    noChildren
   } = Caf.import(
     [
       "BaseClass",
@@ -35,7 +37,8 @@ Caf.defMod(module, () => {
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
-      "isString"
+      "isString",
+      "noChildren"
     ],
     [require("../StandardImport"), global]
   ));
@@ -51,7 +54,7 @@ Caf.defMod(module, () => {
       }
     },
     function(BaseStn, classSuper, instanceSuper) {
-      let noChildren, applyRequiredParens, applyParens;
+      let applyRequiredParens, applyParens;
       if (!(require("caffeine-script-runtime").getSuper(this) === BaseClass)) {
         log({
           self: this,
