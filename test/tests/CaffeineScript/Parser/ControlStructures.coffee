@@ -397,3 +397,10 @@ module.exports = suite: parseTestSuite
 
   regressions:
     "500 || (if data then 200 else 404)": "500 || (data ? 200 : 404);"
+    """
+    if true
+      {}
+    else
+      {}
+    .foo
+    """: "(true ? {} : {}).foo;"

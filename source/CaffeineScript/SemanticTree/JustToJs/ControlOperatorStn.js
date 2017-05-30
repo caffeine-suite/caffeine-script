@@ -108,7 +108,7 @@ Caf.defMod(module, () => {
                   Caf.exists(cafBase = this.elseBody) &&
                     cafBase.toJsExpression() ||
                     "undefined"
-                )}`, options.subExpression
+                )}`, options.subExpression || options.dotBase
                   ? out = `(${Caf.toString(out)})`
                   : out)
           : `${Caf.toString(operand)} ${Caf.toString(

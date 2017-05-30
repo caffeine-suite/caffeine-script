@@ -61,7 +61,7 @@ class ControlOperatorStn extends &BaseStn
           #{@body.toJsExpression()} :
           #{@elseBody?.toJsExpression() || 'undefined'}
           "
-        if options.subExpression
+        if options.subExpression || options.dotBase
           out = "(#{out})"
         else
           out
