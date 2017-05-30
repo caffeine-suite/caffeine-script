@@ -120,7 +120,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString;
+    isString,
+    noChildren;
   ({
     BaseClass,
     log,
@@ -131,7 +132,8 @@ Caf.defMod(module, () => {
     toInspectedObjects,
     objectKeyCount,
     compactFlatten,
-    isString
+    isString,
+    noChildren
   } = Caf.import(
     [
       "BaseClass",
@@ -143,7 +145,8 @@ Caf.defMod(module, () => {
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
-      "isString"
+      "isString",
+      "noChildren"
     ],
     [__webpack_require__(3), global]
   ));
@@ -159,7 +162,7 @@ Caf.defMod(module, () => {
       }
     },
     function(BaseStn, classSuper, instanceSuper) {
-      let noChildren, applyRequiredParens, applyParens;
+      let applyRequiredParens, applyParens;
       if (!(__webpack_require__(0).getSuper(this) === BaseClass)) {
         log({
           self: this,
@@ -496,26 +499,9 @@ Caf.defMod(module, () => {
     log,
     isString,
     merge,
-    mergeInto,
-    arrayToTruthMap;
-  ({
-    lowerCamelCase,
-    Error,
-    log,
-    isString,
-    merge,
-    mergeInto,
-    arrayToTruthMap
-  } = Caf.import(
-    [
-      "lowerCamelCase",
-      "Error",
-      "log",
-      "isString",
-      "merge",
-      "mergeInto",
-      "arrayToTruthMap"
-    ],
+    mergeInto;
+  ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
+    ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
     [__webpack_require__(3), global]
   ));
   UniqueIdentifierHandle = __webpack_require__(9);
@@ -548,6 +534,9 @@ Caf.defMod(module, () => {
             );
           }
           return this.identifiersUsed[identifier] = true;
+        };
+        this.prototype.addArgumentName = function(identifier) {
+          return this.argumentNames[identifier] = true;
         };
         this.prototype.addIdentifierAssigned = function(
           identifier,
@@ -682,9 +671,6 @@ Caf.defMod(module, () => {
           childrenToUpdateScope: function() {
             return this.children;
           },
-          argumentNames: function() {
-            return [];
-          },
           uniqueIdentifierHandles: function() {
             return this._uniqueIdentifierHandles ||
               (this._uniqueIdentifierHandles = []);
@@ -718,6 +704,11 @@ Caf.defMod(module, () => {
                 );
               }
             });
+          },
+          argumentNames: function() {
+            let cafBase;
+            return (cafBase = this.props).argumentNames ||
+              (cafBase.argumentNames = {});
           },
           identifiersUsed: function() {
             let cafBase;
@@ -768,7 +759,7 @@ Caf.defMod(module, () => {
               ? merge(
                   this.scope.identifiersAssignedInParentScopes,
                   this.scope.identifiersAssigned,
-                  arrayToTruthMap(this.argumentNames)
+                  this.argumentNames
                 )
               : undefined;
           }
@@ -4118,7 +4109,11 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let DoStn;
+  let DoStn, Object;
+  ({ Object } = Caf.import(["Object"], [
+    __webpack_require__(3),
+    global
+  ]));
   return DoStn = Caf.defClass(
     class DoStn extends __webpack_require__(2) {},
     function(DoStn, classSuper, instanceSuper) {
@@ -4126,7 +4121,7 @@ Caf.defMod(module, () => {
         let functionDefinition;
         ({ functionDefinition } = this.labeledChildren);
         return `(${Caf.toString(functionDefinition.toJs())})(${Caf.toString(
-          functionDefinition.argumentNames.join(", ")
+          Object.keys(functionDefinition.argumentNames).join(", ")
         )})`;
       };
     }
@@ -4148,7 +4143,7 @@ Caf.defMod(module, () => {
     class FunctionDefinitionArgsStn extends __webpack_require__(2) {},
     function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
       this.getter({
-        argumentNames: function() {
+        argumentNameList: function() {
           return Caf.each(this.children, [], (c, k, into) => {
             if (c.argumentName) {
               into.push(c.argumentName);
@@ -5250,15 +5245,25 @@ Caf.defMod(module, () => {
         needsParensAsStatement: function() {
           return !this.props.bound;
         },
-        argumentNames: function() {
-          let cafBase;
-          return Caf.exists(cafBase = this.arguments) &&
-            cafBase.argumentNames || [];
-        },
         childrenToUpdateScope: function() {
           return compactFlatten([this.statements]);
         }
       });
+      this.prototype.updateScope = function() {
+        instanceSuper.updateScope.apply(this, arguments);
+        return this.arguments
+          ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
+              into[k] = this.addArgumentName(name);
+            }), this.arguments.updateScope({
+              addIdentifierUsed: identifier => {
+                return this.addIdentifierUsed(identifier);
+              },
+              addIdentifierAssigned: identifier => {
+                return this.addArgumentName(identifier);
+              }
+            }))
+          : undefined;
+      };
       this.prototype.transform = function() {
         let foundParent;
         if (this.props.bound === "auto") {
@@ -6011,7 +6016,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.14"
+	"version": "0.44.16"
 };
 
 /***/ }),
