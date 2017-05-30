@@ -140,3 +140,16 @@ module.exports = suite: parseTestSuite
             {this.getter({foo:
               function() {return this._foo;}});});"
 
+  regressions:
+
+    # We need a better way of handling class-defs so this compiles and
+    # makes sense. Basically, the constructor function needs to be in the
+    # same scope as the class-body:
+    """
+    class Foo
+      b = []
+      constructor: (a = b) ->
+    """: knownFailing: "let Foo;
+      Foo = (function() {let b; Caf.defClass(class Foo extends Object
+        {constructor(a = b) {super(...arguments);}},
+        function(Foo, classSuper, instanceSuper) {b = [];}))();"

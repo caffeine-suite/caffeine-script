@@ -35,8 +35,7 @@ class BaseStn extends BaseClass
       children should be a compatoJsParenExpressionct, flat array of Stns
 
     TODO: I'd like to make setting the parseTreeNode cleaner.
-  noChildren = []
-  constructor: (props, @children = noChildren) ->
+  constructor: (props, @children = []) ->
     super
     @parseTreeNode = props.parseTreeNode
 
