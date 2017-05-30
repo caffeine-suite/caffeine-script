@@ -394,3 +394,6 @@ module.exports = suite: parseTestSuite
 
     asExpressions:
       "=>\n foo if bar": "() => {return bar ? foo : undefined;};"
+
+  regressions:
+    "500 || (if data then 200 else 404)": "500 || (data ? 200 : 404);"

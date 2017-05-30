@@ -55,11 +55,16 @@ class ControlOperatorStn extends &BaseStn
           return #{tempVarIdentifier}})()
           "
       else
-        "
-        #{@applyParens jsExpression} ?
-        #{@body.toJsExpression()} :
-        #{@elseBody?.toJsExpression() || 'undefined'}
-        "
+        out =
+          "
+          #{@applyParens jsExpression} ?
+          #{@body.toJsExpression()} :
+          #{@elseBody?.toJsExpression() || 'undefined'}
+          "
+        if options.subExpression
+          out = "(#{out})"
+        else
+          out
     else
       "
       #{operand}
