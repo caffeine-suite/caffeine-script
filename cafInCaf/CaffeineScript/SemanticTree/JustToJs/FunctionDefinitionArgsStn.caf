@@ -3,7 +3,7 @@ import &StandardImport
 class FunctionDefinitionArgsStn extends &BaseStn
 
   @getter
-    argumentNames: ->
+    argumentNameList: ->
       array c in @children when c.argumentName
         c.argumentName
 

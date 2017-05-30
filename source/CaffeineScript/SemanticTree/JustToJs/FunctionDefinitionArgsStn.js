@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     class FunctionDefinitionArgsStn extends require("../BaseStn") {},
     function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
       this.getter({
-        argumentNames: function() {
+        argumentNameList: function() {
           return Caf.each(this.children, [], (c, k, into) => {
             if (c.argumentName) {
               into.push(c.argumentName);

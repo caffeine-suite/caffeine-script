@@ -45,10 +45,17 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
   @getter
     needsParens: -> false
     needsParensAsStatement: -> !@props.bound
-    argumentNames: ->
-      @arguments?.argumentNames || []
 
     childrenToUpdateScope: -> compactFlatten [@statements]
+
+
+  updateScope: ->
+    super
+    if @arguments
+      object name from @arguments.argumentNameList with @addArgumentName name
+      @arguments.updateScope
+        addIdentifierUsed:     (identifier) -> @addIdentifierUsed identifier
+        addIdentifierAssigned: (identifier) -> @addArgumentName identifier
 
   transform: ->
     if @props.bound == "auto"

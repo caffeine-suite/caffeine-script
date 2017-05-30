@@ -39,15 +39,25 @@ Caf.defMod(module, () => {
         needsParensAsStatement: function() {
           return !this.props.bound;
         },
-        argumentNames: function() {
-          let cafBase;
-          return Caf.exists(cafBase = this.arguments) &&
-            cafBase.argumentNames || [];
-        },
         childrenToUpdateScope: function() {
           return compactFlatten([this.statements]);
         }
       });
+      this.prototype.updateScope = function() {
+        instanceSuper.updateScope.apply(this, arguments);
+        return this.arguments
+          ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
+              into[k] = this.addArgumentName(name);
+            }), this.arguments.updateScope({
+              addIdentifierUsed: identifier => {
+                return this.addIdentifierUsed(identifier);
+              },
+              addIdentifierAssigned: identifier => {
+                return this.addArgumentName(identifier);
+              }
+            }))
+          : undefined;
+      };
       this.prototype.transform = function() {
         let foundParent;
         if (this.props.bound === "auto") {

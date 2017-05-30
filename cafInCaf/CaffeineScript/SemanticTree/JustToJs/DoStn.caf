@@ -4,4 +4,4 @@ class DoStn extends &BaseStn
 
   toJs: ->
     {functionDefinition} = @labeledChildren
-    "(#{functionDefinition.toJs()})(#{functionDefinition.argumentNames.join ', '})"
+    "(#{functionDefinition.toJs()})(#{(Object.keys functionDefinition.argumentNames).join ', '})"

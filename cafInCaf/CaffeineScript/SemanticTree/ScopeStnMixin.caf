@@ -19,6 +19,9 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
     @identifiersUsed[identifier] = true
 
+  addArgumentName: (identifier) ->
+    @argumentNames[identifier] = true
+
   addIdentifierAssigned: (identifier, initializer)->
     if identifier
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
@@ -91,7 +94,6 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 
   @getter
     childrenToUpdateScope: -> @children
-    argumentNames: -> []
 
     uniqueIdentifierHandles: -> @_uniqueIdentifierHandles ||= []
 
@@ -108,6 +110,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
         else
           identifier
 
+    argumentNames: -> @props.argumentNames ||= {}
     identifiersUsed: -> @props.identifiersUsed ||= {}
     identifiersAssigned: -> @props.identifiersAssigned ||= {}
 
@@ -137,4 +140,4 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
     identifiersAssignedInParentScopes: ->
       if @scope && @scope != @
-        merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, arrayToTruthMap @argumentNames
+        merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, @argumentNames

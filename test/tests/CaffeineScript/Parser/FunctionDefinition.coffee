@@ -96,4 +96,4 @@ module.exports = suite: parseTestSuite
       "({a}) => b = a": "({a}) => {let b; return b = a;};"
 
     regressions:
-      "({a}) -> a = a + 1": knownFailing: "(function({a}) {return a = a + 1;});"
+      "({a}) -> a = a + 1": "(function({a}) {return a = a + 1;});"

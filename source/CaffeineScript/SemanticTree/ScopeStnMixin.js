@@ -7,26 +7,9 @@ Caf.defMod(module, () => {
     log,
     isString,
     merge,
-    mergeInto,
-    arrayToTruthMap;
-  ({
-    lowerCamelCase,
-    Error,
-    log,
-    isString,
-    merge,
-    mergeInto,
-    arrayToTruthMap
-  } = Caf.import(
-    [
-      "lowerCamelCase",
-      "Error",
-      "log",
-      "isString",
-      "merge",
-      "mergeInto",
-      "arrayToTruthMap"
-    ],
+    mergeInto;
+  ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
+    ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
     [require("../StandardImport"), global]
   ));
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
@@ -59,6 +42,9 @@ Caf.defMod(module, () => {
             );
           }
           return this.identifiersUsed[identifier] = true;
+        };
+        this.prototype.addArgumentName = function(identifier) {
+          return this.argumentNames[identifier] = true;
         };
         this.prototype.addIdentifierAssigned = function(
           identifier,
@@ -193,9 +179,6 @@ Caf.defMod(module, () => {
           childrenToUpdateScope: function() {
             return this.children;
           },
-          argumentNames: function() {
-            return [];
-          },
           uniqueIdentifierHandles: function() {
             return this._uniqueIdentifierHandles ||
               (this._uniqueIdentifierHandles = []);
@@ -229,6 +212,11 @@ Caf.defMod(module, () => {
                 );
               }
             });
+          },
+          argumentNames: function() {
+            let cafBase;
+            return (cafBase = this.props).argumentNames ||
+              (cafBase.argumentNames = {});
           },
           identifiersUsed: function() {
             let cafBase;
@@ -279,7 +267,7 @@ Caf.defMod(module, () => {
               ? merge(
                   this.scope.identifiersAssignedInParentScopes,
                   this.scope.identifiersAssigned,
-                  arrayToTruthMap(this.argumentNames)
+                  this.argumentNames
                 )
               : undefined;
           }

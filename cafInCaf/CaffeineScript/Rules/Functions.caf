@@ -17,9 +17,9 @@ getPropertySetters = (node, list = []) ~>
       stnFactory: :FunctionDefinitionStn
       stnProps: ~>
         bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
-          when "=>" then true
-          when "~>" then false
-          when "->" then "auto"
+          when :=> then true
+          when :~> then false
+          when :-> then :auto
           else throw new Error
 
   @rule
