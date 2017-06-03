@@ -2,41 +2,41 @@ module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -47,7 +47,7 @@ module.exports =
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -56,15 +56,15 @@ module.exports =
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 107);
+/******/ 	return __webpack_require__(__webpack_require__.s = 97);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -147,8 +147,8 @@ Caf.defMod(module, () => {
     ],
     [__webpack_require__(3), global]
   ));
-  ({ createObjectTreeFactory } = __webpack_require__(104));
-  return BaseStn = Caf.defClass(
+  ({ createObjectTreeFactory } = __webpack_require__(105));
+  return (BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
       constructor(props, children = []) {
         super(...arguments);
@@ -184,7 +184,8 @@ Caf.defMod(module, () => {
           this.labeledChildren[label] = child;
           if (pluralLabel) {
             ((cafBase = this.labeledChildren)[pluralLabel] ||
-              (cafBase[pluralLabel] = [])).push(child);
+              (cafBase[pluralLabel] = []))
+              .push(child);
           }
         });
       };
@@ -212,13 +213,15 @@ Caf.defMod(module, () => {
           return {
             [`${Caf.toString(name)}`]: this.children.length === 0
               ? toInspectedObjects(props)
-              : (a = [], objectKeyCount(props) > 0
-                  ? a.push(props)
-                  : undefined, a.concat(
-                  Caf.each(this.children, [], (c, k, into) => {
-                    into.push(c.inspectedObjects);
-                  })
-                ))
+              : (
+                  (a = []),
+                  objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                  a.concat(
+                    Caf.each(this.children, [], (c, k, into) => {
+                      into.push(c.inspectedObjects);
+                    })
+                  )
+                )
           };
         },
         type: function() {
@@ -271,11 +274,9 @@ Caf.defMod(module, () => {
         return a.length === 0 ? null : a;
       };
       this.prototype.childrenToJs = function(joiner = "") {
-        return Caf
-          .each(this.children, [], (c, k, into) => {
-            into.push(c.toJs());
-          })
-          .join(joiner);
+        return Caf.each(this.children, [], (c, k, into) => {
+          into.push(c.toJs());
+        }).join(joiner);
       };
       this.prototype.toJs = function(options) {
         return (() => {
@@ -315,7 +316,7 @@ Caf.defMod(module, () => {
         Caf.each(this.children, undefined, (child, i, into) => {
           let newChild;
           if (child !== (newChild = child.transform())) {
-            ret != null ? ret : ret = this.children.slice();
+            ret != null ? ret : (ret = this.children.slice());
             newChild.props.label = child.label;
             ret[i] = newChild;
           }
@@ -355,7 +356,7 @@ Caf.defMod(module, () => {
         normalizedOperand: function() {
           let op;
           return (() => {
-            switch (op = this.props.operand) {
+            switch ((op = this.props.operand)) {
               case "and":
                 return "&&";
               case "or":
@@ -381,7 +382,7 @@ Caf.defMod(module, () => {
         });
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -395,7 +396,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   return __webpack_require__(15).merge(
-    __webpack_require__(103),
+    __webpack_require__(104),
     __webpack_require__(15)
   );
 });
@@ -415,18 +416,19 @@ Caf.defMod(module, () => {
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
     [__webpack_require__(3), global]
   ));
-  return StnRegistry = Caf.defClass(
+  return (StnRegistry = Caf.defClass(
     class StnRegistry extends BaseClass {},
     function(StnRegistry, classSuper, instanceSuper) {
       this.register = function(stn) {
-        return this[stn.class.getName()] = stn;
+        return (this[stn.class.getName()] = stn);
       };
       this.get = function(stnFactoryName) {
         let out;
         return isFunction(stnFactoryName)
           ? stnFactoryName
           : isString(stnFactoryName)
-              ? (!(out = this[stnFactoryName])
+            ? (
+                !(out = this[stnFactoryName])
                   ? (() => {
                       throw new Error(
                         `stnFactoryName not found: ${Caf.toString(
@@ -434,11 +436,13 @@ Caf.defMod(module, () => {
                         )}`
                       );
                     })()
-                  : undefined, out)
-              : undefined;
+                  : undefined,
+                out
+              )
+            : undefined;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -503,7 +507,7 @@ Caf.defMod(module, () => {
   UniqueIdentifierHandle = __webpack_require__(9);
   return function(toExtend) {
     let ScopeStnMixin;
-    return ScopeStnMixin = Caf.defClass(
+    return (ScopeStnMixin = Caf.defClass(
       class ScopeStnMixin extends toExtend {
         constructor() {
           super(...arguments);
@@ -529,25 +533,26 @@ Caf.defMod(module, () => {
               "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
             );
           }
-          return this.identifiersUsed[identifier] = true;
+          return (this.identifiersUsed[identifier] = true);
         };
         this.prototype.addArgumentName = function(identifier) {
-          return this.argumentNames[identifier] = true;
+          return (this.argumentNames[identifier] = true);
         };
         this.prototype.addIdentifierAssigned = function(
           identifier,
           initializer
         ) {
           return identifier
-            ? (this._boundUniqueIdentifiers
-                ? (() => {
-                    throw new Error(
-                      "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                    );
-                  })()
-                : undefined, this.identifiersAssigned[
-                identifier
-              ] = initializer || true)
+            ? (
+                this._boundUniqueIdentifiers
+                  ? (() => {
+                      throw new Error(
+                        "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                      );
+                    })()
+                  : undefined,
+                (this.identifiersAssigned[identifier] = initializer || true)
+              )
             : undefined;
         };
         this.getter({
@@ -564,7 +569,7 @@ Caf.defMod(module, () => {
         });
         this.prototype.addUniqueIdentifierHandle = function(uih) {
           return !uih.scope
-            ? (uih.scope = this, this.uniqueIdentifierHandles.push(uih), uih)
+            ? ((uih.scope = this), this.uniqueIdentifierHandles.push(uih), uih)
             : undefined;
         };
         this.prototype.bindUniqueIdentifier = function(
@@ -592,21 +597,26 @@ Caf.defMod(module, () => {
                   ]
                 }
               })
-            : (identifiersUsed = this.identifiersUsedOrAssigned, !identifiersUsed[
-                preferredName
-              ]
-                ? preferredName
-                : (count = 0, (() => {
-                    while (
-                      identifiersUsed[
-                        name = `${Caf.toString(preferredName)}${Caf.toString(
-                          count += 1
-                        )}`
-                      ]
-                    ) {
-                      name;
-                    }
-                  })(), name));
+            : (
+                (identifiersUsed = this.identifiersUsedOrAssigned),
+                !identifiersUsed[preferredName]
+                  ? preferredName
+                  : (
+                      (count = 0),
+                      (() => {
+                        while (
+                          identifiersUsed[
+                            (name = `${Caf.toString(
+                              preferredName
+                            )}${Caf.toString((count += 1))}`)
+                          ]
+                        ) {
+                          name;
+                        }
+                      })(),
+                      name
+                    )
+              );
         };
         this.prototype.addChildScope = function(child) {
           return !(child === this)
@@ -615,13 +625,13 @@ Caf.defMod(module, () => {
         };
         this.prototype.bindAllUniqueIdentifiersRequested = function() {
           return this._uniqueIdentifierHandles
-            ? Caf.each(this._uniqueIdentifierHandles, undefined, (
-                uniqueIdentifierHandle,
-                k,
-                into
-              ) => {
-                uniqueIdentifierHandle.identifier;
-              })
+            ? Caf.each(
+                this._uniqueIdentifierHandles,
+                undefined,
+                (uniqueIdentifierHandle, k, into) => {
+                  uniqueIdentifierHandle.identifier;
+                }
+              )
             : undefined;
         };
         this.prototype.getAutoLets = function() {
@@ -637,84 +647,97 @@ Caf.defMod(module, () => {
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
-            ? (identifiers = Caf.each(identifiers, [], (
-                identifier,
-                k,
-                into
-              ) => {
-                if (identifier.match(/=/)) {
-                  into.push(identifier);
-                }
-              }), identifiers.length > 0
-                ? `${Caf.toString(identifiers.join("; "))}`
-                : undefined)
+            ? (
+                (identifiers = Caf.each(
+                  identifiers,
+                  [],
+                  (identifier, k, into) => {
+                    if (identifier.match(/=/)) {
+                      into.push(identifier);
+                    }
+                  }
+                )),
+                identifiers.length > 0
+                  ? `${Caf.toString(identifiers.join("; "))}`
+                  : undefined
+              )
             : undefined;
         };
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
           this.scope.addChildScope(this);
-          Caf.each(this.getChildrenToUpdateScope(), undefined, (
-            child,
-            k,
-            into
-          ) => {
-            child.updateScope(this);
-          });
-          return this._scopeUpdated = true;
+          Caf.each(
+            this.getChildrenToUpdateScope(),
+            undefined,
+            (child, k, into) => {
+              child.updateScope(this);
+            }
+          );
+          return (this._scopeUpdated = true);
         };
         this.getter({
           childrenToUpdateScope: function() {
             return this.children;
           },
           uniqueIdentifierHandles: function() {
-            return this._uniqueIdentifierHandles ||
-              (this._uniqueIdentifierHandles = []);
+            return (
+              this._uniqueIdentifierHandles ||
+              (this._uniqueIdentifierHandles = [])
+            );
           },
           boundUniqueIdentifiers: function() {
-            return this._boundUniqueIdentifiers ||
-              (this._boundUniqueIdentifiers = {});
+            return (
+              this._boundUniqueIdentifiers ||
+              (this._boundUniqueIdentifiers = {})
+            );
           },
           requiredIdentifierLets: function() {
             let identifiersAssignedInParentScopes;
             ({ identifiersAssignedInParentScopes } = this);
-            return Caf.each(this.identifiersAssigned, [], (
-              initializer,
-              identifier,
-              into
-            ) => {
-              if (
-                !identifiersAssignedInParentScopes ||
-                !identifiersAssignedInParentScopes[identifier]
-              ) {
-                into.push(
-                  isString(initializer)
-                    ? `${Caf.toString(identifier)} = ${Caf.toString(
-                        initializer
-                      )}`
-                    : initializer.toJsExpression != null
+            return Caf.each(
+              this.identifiersAssigned,
+              [],
+              (initializer, identifier, into) => {
+                if (
+                  !identifiersAssignedInParentScopes ||
+                  !identifiersAssignedInParentScopes[identifier]
+                ) {
+                  into.push(
+                    isString(initializer)
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer
+                        )}`
+                      : initializer.toJsExpression != null
                         ? `${Caf.toString(identifier)} = ${Caf.toString(
                             initializer.toJsExpression()
                           )}`
                         : identifier
-                );
+                  );
+                }
               }
-            });
+            );
           },
           argumentNames: function() {
             let cafBase;
-            return (cafBase = this.props).argumentNames ||
-              (cafBase.argumentNames = {});
+            return (
+              (cafBase = this.props).argumentNames ||
+              (cafBase.argumentNames = {})
+            );
           },
           identifiersUsed: function() {
             let cafBase;
-            return (cafBase = this.props).identifiersUsed ||
-              (cafBase.identifiersUsed = {});
+            return (
+              (cafBase = this.props).identifiersUsed ||
+              (cafBase.identifiersUsed = {})
+            );
           },
           identifiersAssigned: function() {
             let cafBase;
-            return (cafBase = this.props).identifiersAssigned ||
-              (cafBase.identifiersAssigned = {});
+            return (
+              (cafBase = this.props).identifiersAssigned ||
+              (cafBase.identifiersAssigned = {})
+            );
           },
           identifiersUsedOrAssigned: function() {
             let out, scope, notDone;
@@ -742,7 +765,7 @@ Caf.defMod(module, () => {
             Caf.each(this.childScopes, undefined, (childScope, k, into) => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
-            return this.props.identifiersUsedButNotAssigned = ret;
+            return (this.props.identifiersUsedButNotAssigned = ret);
           },
           identifiersAssignedInParentThisOrChildrenScopes: function() {
             return merge(
@@ -761,7 +784,7 @@ Caf.defMod(module, () => {
           }
         });
       }
-    );
+    ));
   };
 });
 
@@ -776,17 +799,15 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let escapeRegExp;
-  ({ escapeRegExp } = Caf.import(["escapeRegExp"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ escapeRegExp } = Caf.import(
+    ["escapeRegExp"],
+    [__webpack_require__(3), global]
+  ));
   return {
     deescapeSpaces: function(string) {
-      return Caf
-        .each(string.split(/((?:\\\\)+)/), [], (str, i, into) => {
-          into.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str);
-        })
-        .join("");
+      return Caf.each(string.split(/((?:\\\\)+)/), [], (str, i, into) => {
+        into.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str);
+      }).join("");
     },
     escapeNewLines: function(string) {
       return string.replace(/\n/g, "\\n");
@@ -801,13 +822,9 @@ Caf.defMod(module, () => {
         "g"
       );
       split = charsToEscape.match(/\\/) ? [string] : string.split(/((?:\\.)+)/);
-      return Caf
-        .each(split, [], (str, i, into) => {
-          into.push(
-            Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
-          );
-        })
-        .join("");
+      return Caf.each(split, [], (str, i, into) => {
+        into.push(Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str);
+      }).join("");
     }
   };
 });
@@ -827,7 +844,7 @@ Caf.defMod(module, () => {
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
     [__webpack_require__(3), global]
   ));
-  return UniqueIdentifierHandle = Caf.defClass(
+  return (UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {
       constructor(preferredName, scope) {
         super(...arguments);
@@ -847,18 +864,20 @@ Caf.defMod(module, () => {
           );
         },
         identifier: function() {
-          return this._identifier ||
+          return (
+            this._identifier ||
             (this._identifier = this.scope.bindUniqueIdentifier(
               this.preferredName,
               this
-            ));
+            ))
+          );
         }
       });
       this.prototype.toString = function() {
         return this.identifier;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -876,13 +895,13 @@ Caf.defMod(module, () => {
     ValueBaseCaptureStn,
     mergeInto,
     isArray;
-  ({ mergeInto, isArray } = Caf.import(["mergeInto", "isArray"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ mergeInto, isArray } = Caf.import(
+    ["mergeInto", "isArray"],
+    [__webpack_require__(3), global]
+  ));
   UniqueIdentifierHandle = __webpack_require__(9);
   StnRegistry = __webpack_require__(4);
-  return ValueBaseCaptureStn = Caf.defClass(
+  return (ValueBaseCaptureStn = Caf.defClass(
     class ValueBaseCaptureStn extends __webpack_require__(2) {},
     function(ValueBaseCaptureStn, classSuper, instanceSuper) {
       this.abstractClass();
@@ -894,46 +913,50 @@ Caf.defMod(module, () => {
           key,
           baseIdentifierHandle;
         return accessorStn.isAccessor && !accessorStn.children[0].isReference
-          ? ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry, {
-              value,
-              key
-            } = accessorStn, {
-              value1: new accessorStn.class(accessorStn.props, [
-                AssignmentStn(
-                  IdentifierStn({
-                    identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle(
-                      "base"
-                    )
-                  }),
-                  value
-                ),
-                key
-              ]),
-              value2: new accessorStn.class(accessorStn.props, [
-                ReferenceStn({ identifierHandle: baseIdentifierHandle }),
-                key
-              ])
-            })
+          ? (
+              ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
+              ({ value, key } = accessorStn),
+              {
+                value1: new accessorStn.class(accessorStn.props, [
+                  AssignmentStn(
+                    IdentifierStn({
+                      identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                        "base"
+                      ))
+                    }),
+                    value
+                  ),
+                  key
+                ]),
+                value2: new accessorStn.class(accessorStn.props, [
+                  ReferenceStn({ identifierHandle: baseIdentifierHandle }),
+                  key
+                ])
+              }
+            )
           : accessorStn.isAccessor || accessorStn.type === "This"
-              ? { value1: accessorStn, value2: accessorStn }
-              : this.getValueWithCapture(accessorStn);
+            ? { value1: accessorStn, value2: accessorStn }
+            : this.getValueWithCapture(accessorStn);
       };
       this.prototype.getValueWithCapture = function(accessorStn) {
         let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;
         return accessorStn.type === "Identifier" ||
           accessorStn.type === "Reference"
           ? { value1: accessorStn, value2: accessorStn }
-          : ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry, {
-              value1: AssignmentStn(
-                IdentifierStn({
-                  identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle(
-                    "base"
-                  )
-                }),
-                accessorStn
-              ),
-              value2: ReferenceStn({ identifierHandle: baseIdentifierHandle })
-            });
+          : (
+              ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
+              {
+                value1: AssignmentStn(
+                  IdentifierStn({
+                    identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                      "base"
+                    ))
+                  }),
+                  accessorStn
+                ),
+                value2: ReferenceStn({ identifierHandle: baseIdentifierHandle })
+              }
+            );
       };
       this.prototype.transformAccessorChain = function() {
         let accessorChain, out;
@@ -1032,7 +1055,7 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -1056,32 +1079,35 @@ Caf.defMod(module, () => {
     ]
   ));
   StnRegistry = __webpack_require__(4);
-  return CafParseNodeBaseClass = Caf.defClass(
+  return (CafParseNodeBaseClass = Caf.defClass(
     class CafParseNodeBaseClass extends Nodes.Node {},
     function(CafParseNodeBaseClass, classSuper, instanceSuper) {
       this._createSubclassBase = function() {
         let NodeSubclass;
-        return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
+        return (NodeSubclass = Caf.defClass(
+          class NodeSubclass extends this {}
+        ));
       };
       this.prototype.isImplicitArray = function() {
         return !!this.getImplicitArray();
       };
       this.prototype.getImplicitArray = function() {
-        return Caf.extendedEach(this.matches, undefined, (
-          match,
-          k,
-          into,
-          brk
-        ) => {
-          let cafRet;
-          return (cafRet = Caf.isF(match.getImplicitArray) &&
-            match.getImplicitArray()) &&
-            (brk(), cafRet);
-        });
+        return Caf.extendedEach(
+          this.matches,
+          undefined,
+          (match, k, into, brk) => {
+            let cafRet;
+            return (
+              (cafRet =
+                Caf.isF(match.getImplicitArray) && match.getImplicitArray()) &&
+              (brk(), cafRet)
+            );
+          }
+        );
       };
       this.prototype.getMatchStns = function() {
         return Caf.each(this.matches, [], (m, k, into) => {
-          if (m = Caf.isF(m.getStn) && m.getStn()) {
+          if ((m = Caf.isF(m.getStn) && m.getStn())) {
             into.push(m);
           }
         });
@@ -1093,7 +1119,7 @@ Caf.defMod(module, () => {
         return this.stnChildren
           ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
           : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
-              if (m = m.getStn(left)) {
+              if ((m = m.getStn(left))) {
                 into.push(m);
               }
             });
@@ -1101,9 +1127,11 @@ Caf.defMod(module, () => {
       this.getter({
         isStnExtension: function() {
           let cafBase;
-          return this.stnExtension ||
-            Caf.exists(cafBase = this.presentMatches[0]) &&
-              cafBase.isStnExtension;
+          return (
+            this.stnExtension ||
+            (Caf.exists((cafBase = this.presentMatches[0])) &&
+              cafBase.isStnExtension)
+          );
         },
         stnExtensionMatches: function() {
           return Caf.each(this.presentMatches, [], (m, k, into) => {
@@ -1125,13 +1153,14 @@ Caf.defMod(module, () => {
         stn = (factory = this.getStnFactory())
           ? factory(
               { parseTreeNode: this },
-              Caf.isF(this.stnProps) && this.stnProps() || this.stnProps,
+              (Caf.isF(this.stnProps) && this.stnProps()) || this.stnProps,
               left,
               this.getStnChildren()
             )
-          : (x = this.getStnChildren(left), x.length === 1
-              ? x[0]
-              : x.length === 0 ? left : x);
+          : (
+              (x = this.getStnChildren(left)),
+              x.length === 1 ? x[0] : x.length === 0 ? left : x
+            );
         Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
           stn = extension.getStn(stn);
         });
@@ -1151,7 +1180,7 @@ Caf.defMod(module, () => {
         return this.getTransformedSemanticTree().toJs();
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -1165,11 +1194,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let OperatorHelper, Error, arrayWithout;
-  ({ Error, arrayWithout } = Caf.import(["Error", "arrayWithout"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return OperatorHelper = Caf.defClass(
+  ({ Error, arrayWithout } = Caf.import(
+    ["Error", "arrayWithout"],
+    [__webpack_require__(3), global]
+  ));
+  return (OperatorHelper = Caf.defClass(
     class OperatorHelper extends Object {},
     function(OperatorHelper, classSuper, instanceSuper) {
       let CoffeeScriptGlobal, infix, validateOperator;
@@ -1223,18 +1252,18 @@ Caf.defMod(module, () => {
         ["left", "||", "?"]
       ];
       this.opsToPrecidence = {};
-      this.leftAssociativityByPrecidence = Caf.each(this.precidence, [], (
-        v,
-        i,
-        into
-      ) => {
-        let leftAssociativityByPrecidence, operators;
-        [leftAssociativityByPrecidence, ...operators] = v;
-        Caf.each(operators, undefined, (op, k, into) => {
-          this.opsToPrecidence[op] = i;
-        });
-        into.push(leftAssociativityByPrecidence === "left");
-      });
+      this.leftAssociativityByPrecidence = Caf.each(
+        this.precidence,
+        [],
+        (v, i, into) => {
+          let leftAssociativityByPrecidence, operators;
+          [leftAssociativityByPrecidence, ...operators] = v;
+          Caf.each(operators, undefined, (op, k, into) => {
+            this.opsToPrecidence[op] = i;
+          });
+          into.push(leftAssociativityByPrecidence === "left");
+        }
+      );
       this.validateOperator = validateOperator = operator => {
         if (!this.opsToPrecidence[operator]) {
           throw new Error(
@@ -1247,7 +1276,7 @@ Caf.defMod(module, () => {
       };
       this.getNormalizedOperator = function(operator) {
         return (() => {
-          switch (operator = operator.toString().trim()) {
+          switch ((operator = operator.toString().trim())) {
             case "and":
               return "&&";
             case "or":
@@ -1339,7 +1368,7 @@ Caf.defMod(module, () => {
         return operands[0];
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -1374,7 +1403,7 @@ var CaffeineScript, Neptune,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-Neptune = __webpack_require__(106);
+Neptune = __webpack_require__(107);
 
 module.exports = Neptune.CaffeineScript || Neptune.addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
@@ -1416,7 +1445,7 @@ Caf.defMod(module, () => {
       global
     ]
   ));
-  return CaffeineScriptParser = Caf.defClass(
+  return (CaffeineScriptParser = Caf.defClass(
     class CaffeineScriptParser extends Parser {},
     function(CaffeineScriptParser, classSuper, instanceSuper) {
       let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
@@ -1432,9 +1461,11 @@ Caf.defMod(module, () => {
       tabIndentationRegexp = /(^|\n)\t/;
       spaceIndentationRegexp = /(^|\n) /;
       this.prototype.hasMixedIndentation = function(source) {
-        return mixedIndentationRegexp.test(source) ||
-          tabIndentationRegexp.test(source) &&
-            spaceIndentationRegexp.test(source);
+        return (
+          mixedIndentationRegexp.test(source) ||
+          (tabIndentationRegexp.test(source) &&
+            spaceIndentationRegexp.test(source))
+        );
       };
       this.prototype.normalizeIndentation = function(source) {
         let e;
@@ -1455,7 +1486,7 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -1469,7 +1500,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StatementsStn;
-  return StatementsStn = Caf.defClass(
+  return (StatementsStn = Caf.defClass(
     class StatementsStn extends __webpack_require__(2) {},
     function(StatementsStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -1503,27 +1534,28 @@ Caf.defMod(module, () => {
         if (returnAction === true) {
           returnAction = "return";
         }
-        return Caf.each(lines = this.children, [], (c, i, into) => {
+        return Caf.each((lines = this.children), [], (c, i, into) => {
           let statement;
           into.push(
             returnAction && i === lines.length - 1
               ? !c.jsExpressionUsesReturn
-                  ? `${Caf.toString(returnAction)} ${Caf.toString(
-                      c.toJsExpression()
-                    )}`
-                  : c.toJs({ generateReturnStatement: true })
+                ? `${Caf.toString(returnAction)} ${Caf.toString(
+                    c.toJsExpression()
+                  )}`
+                : c.toJs({ generateReturnStatement: true })
               : generateStatements
-                  ? (statement = c.toJs({ statement: true }), statement.match(
-                      /^function/
-                    )
+                ? (
+                    (statement = c.toJs({ statement: true })),
+                    statement.match(/^function/)
                       ? this.applyRequiredParens(statement)
-                      : statement)
-                  : c.toJsExpression({ returnValueIsIgnored: true })
+                      : statement
+                  )
+                : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -1686,8 +1718,6 @@ module.exports.addModules({
   ValueBaseCaptureStn: __webpack_require__(10)
 });
 
-__webpack_require__(97);
-
 __webpack_require__(98);
 
 __webpack_require__(99);
@@ -1695,6 +1725,8 @@ __webpack_require__(99);
 __webpack_require__(100);
 
 __webpack_require__(101);
+
+__webpack_require__(102);
 
 
 /***/ }),
@@ -1729,7 +1761,7 @@ Caf.defMod(module, () => {
   ({ log } = Caf.import(["log"], [__webpack_require__(15), global]));
   __webpack_require__(24);
   return {
-    version: __webpack_require__(102).version,
+    version: __webpack_require__(103).version,
     compile: function(source, options = {}) {
       let parseTree, stn, transformedStn, e, cafError;
       return (() => {
@@ -1747,9 +1779,11 @@ Caf.defMod(module, () => {
         } catch (cafError) {
           e = cafError;
           if (
-            !(e.location != null ||
+            !(
+              e.location != null ||
               e.sourceFile != null ||
-              e.message.match(/parse|expect/i))
+              e.message.match(/parse|expect/i)
+            )
           ) {
             log.error({ parseTree, stn, transformedStn });
           }
@@ -1775,8 +1809,10 @@ Caf.defMod(module, () => {
   return function() {
     return this.rule(
       {
-        dotAccessor: "existanceTest:questionMark? dot key:identifier assignmentExtension?",
-        bracketAccessor: "existanceTest:questionMark? openBracket_ key:expression _closeBracket assignmentExtension?"
+        dotAccessor:
+          "existanceTest:questionMark? dot key:identifier assignmentExtension?",
+        bracketAccessor:
+          "existanceTest:questionMark? openBracket_ key:expression _closeBracket assignmentExtension?"
       },
       {
         stnFactory: "AccessorStn",
@@ -1876,11 +1912,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [__webpack_require__(3), __webpack_require__(5), global]
+  ));
   return function() {
     this.rule({ blocks: "block+" });
     this.rule({
@@ -1918,7 +1953,8 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   return {
     classDefinition: {
-      pattern: "/class/ _ className:identifier classExtends:_extendsClause? body:actualBlockEmptyOk?",
+      pattern:
+        "/class/ _ className:identifier classExtends:_extendsClause? body:actualBlockEmptyOk?",
       stnFactory: "ClassStn"
     },
     _extendsClause: {
@@ -1975,7 +2011,8 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        comprehensionVariableDef_: "!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType"
+        comprehensionVariableDef_:
+          "!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType"
       },
       { stnFactory: "FunctionDefinitionArgsStn" }
     );
@@ -1990,7 +2027,8 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        comprehension: "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
+        comprehension:
+          "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
       },
       { stnFactory: "ComprehensionStn" }
     );
@@ -2008,11 +2046,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [__webpack_require__(3), __webpack_require__(5), global]
+  ));
   return function() {
     this.rule(
       {
@@ -2028,7 +2065,7 @@ Caf.defMod(module, () => {
           let cafBase;
           return {
             operand: this.ifUnlessWhileUntil.toString(),
-            joiner: Caf.exists(cafBase = this.thenDo) && cafBase.toString()
+            joiner: Caf.exists((cafBase = this.thenDo)) && cafBase.toString()
           };
         }
       }
@@ -2110,7 +2147,8 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        destructuringAssignment: "structure:destructuringTarget _? '=' _? value:requiredValue"
+        destructuringAssignment:
+          "structure:destructuringTarget _? '=' _? value:requiredValue"
       },
       { stnFactory: "DestructuringAssignmentStn" }
     );
@@ -2121,13 +2159,15 @@ Caf.defMod(module, () => {
       { objectDestructuring: "'{' _? objectDestructuringList _? '}'" },
       { stnFactory: "ObjectDestructuringStn" }
     );
-    this.rule({ arrayDestructuring: "'[' _? arrayDestructuringList _? ']'" }, {
-      stnFactory: "ArrayDestructuringStn"
-    });
+    this.rule(
+      { arrayDestructuring: "'[' _? arrayDestructuringList _? ']'" },
+      { stnFactory: "ArrayDestructuringStn" }
+    );
     this.rule({
       arrayDestructuringList: [
         {
-          pattern: "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+          pattern:
+            "element:arrayDestructuringElement _comma_ arrayDestructuringList"
         },
         { pattern: "element:arrayDestructuringElement" }
       ],
@@ -2139,7 +2179,8 @@ Caf.defMod(module, () => {
     this.rule({
       objectDestructuringList: [
         {
-          pattern: "element:objectDestructuringElement _comma_ objectDestructuringList"
+          pattern:
+            "element:objectDestructuringElement _comma_ objectDestructuringList"
         },
         { pattern: "element:objectDestructuringElement" }
       ],
@@ -2150,7 +2191,8 @@ Caf.defMod(module, () => {
     });
     this.rule(
       {
-        labeledDestructuringTarget: "identifier _? ':' _? arrayDestructuringElement"
+        labeledDestructuringTarget:
+          "identifier _? ':' _? arrayDestructuringElement"
       },
       { stnFactory: "LabeledDestructuringTargetStn" }
     );
@@ -2170,7 +2212,8 @@ Caf.defMod(module, () => {
     );
     this.rule(
       {
-        destructuringIdentifier: "identifier destructuringDefault:destructuringDefault?"
+        destructuringIdentifier:
+          "identifier destructuringDefault:destructuringDefault?"
       },
       { stnFactory: "DestructuringIdentifierStn" }
     );
@@ -2189,12 +2232,15 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let matchBlock, upToButNotEol, Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    __webpack_require__(4),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [
+      __webpack_require__(3),
+      __webpack_require__(5),
+      __webpack_require__(4),
+      global
+    ]
+  ));
   ({ matchBlock } = Extensions.IndentBlocks);
   upToButNotEol = /[^\n]*/y;
   return function() {
@@ -2222,12 +2268,14 @@ Caf.defMod(module, () => {
       ],
       structuredLiteral: ["object", "array"]
     });
-    this.rule({ newInstance: "new _ expressionWithoutBinOps" }, {
-      stnFactory: "NewInstanceStn"
-    });
-    this.rule({ throwExpression: "throw _ expressionWithoutBinOps" }, {
-      stnFactory: "ThrowStn"
-    });
+    this.rule(
+      { newInstance: "new _ expressionWithoutBinOps" },
+      { stnFactory: "NewInstanceStn" }
+    );
+    this.rule(
+      { throwExpression: "throw _ expressionWithoutBinOps" },
+      { stnFactory: "ThrowStn" }
+    );
     return this.rule({
       expressionWithOneLessBlock: {
         parse: function(parentNode) {
@@ -2245,21 +2293,24 @@ Caf.defMod(module, () => {
           originalOffset = offset;
           upToButNotEol.lastIndex = offset;
           return (match = upToButNotEol.exec(source))
-            ? ([m] = match, endOffset = offset += m.length, (() => {
-                while (match = matchBlock(source, offset)) {
-                  endOffset = offset;
-                  ({ matchLength } = match);
-                  offset += matchLength;
-                }
-              })(), expressionSource = source.slice(
-                originalOffset,
-                endOffset
-              ), parentNode.subparse(expressionSource, {
-                allowPartialMatch: true,
-                rule: "implicitArrayOrExpression",
-                originalOffset,
-                originalMatchLength: endOffset - originalOffset
-              }))
+            ? (
+                ([m] = match),
+                (endOffset = offset += m.length),
+                (() => {
+                  while ((match = matchBlock(source, offset))) {
+                    endOffset = offset;
+                    ({ matchLength } = match);
+                    offset += matchLength;
+                  }
+                })(),
+                (expressionSource = source.slice(originalOffset, endOffset)),
+                parentNode.subparse(expressionSource, {
+                  allowPartialMatch: true,
+                  rule: "implicitArrayOrExpression",
+                  originalOffset,
+                  originalMatchLength: endOffset - originalOffset
+                })
+              )
             : undefined;
         }
       }
@@ -2278,15 +2329,16 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let getPropertySetters, Extensions, Error;
-  ({ Extensions, Error } = Caf.import(["Extensions", "Error"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    global
-  ]));
+  ({ Extensions, Error } = Caf.import(
+    ["Extensions", "Error"],
+    [__webpack_require__(3), __webpack_require__(5), global]
+  ));
   getPropertySetters = function(node, list = []) {
     let prop;
     if (node) {
-      if (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty()) {
+      if (
+        (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty())
+      ) {
         list.push(prop);
       } else {
         Caf.each(node.matches, undefined, (match, k, into) => {
@@ -2300,7 +2352,8 @@ Caf.defMod(module, () => {
     this.rule(
       {
         functionDefinition: {
-          pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+          pattern:
+            "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
         }
       },
       {
@@ -2328,9 +2381,10 @@ Caf.defMod(module, () => {
     this.rule({
       functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
     });
-    this.rule({ argsDefinition: "openParen_ argDefList? _closeParen" }, {
-      stnFactory: "FunctionDefinitionArgsStn"
-    });
+    this.rule(
+      { argsDefinition: "openParen_ argDefList? _closeParen" },
+      { stnFactory: "FunctionDefinitionArgsStn" }
+    );
     this.rule({
       argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
     });
@@ -2346,8 +2400,10 @@ Caf.defMod(module, () => {
         stnProps: function() {
           let cafBase;
           return {
-            rest: !!(Caf.exists(cafBase = this.argIdentifierExtension) &&
-              cafBase.ellipsis),
+            rest: !!(
+              Caf.exists((cafBase = this.argIdentifierExtension)) &&
+              cafBase.ellipsis
+            ),
             assignThisProperty: !!this.at
           };
         }
@@ -2378,7 +2434,7 @@ Caf.defMod(module, () => {
         },
         stnChildren: function() {
           let cafBase;
-          return Caf.exists(cafBase = this.values) && cafBase.getStn();
+          return Caf.exists((cafBase = this.values)) && cafBase.getStn();
         }
       }
     );
@@ -2468,17 +2524,17 @@ Caf.defMod(module, () => {
   let IndentBlocks, ObjectStn, Extensions, cafParentImports;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    cafParentImports = [
+    (cafParentImports = [
       __webpack_require__(3),
       __webpack_require__(5),
       __webpack_require__(4),
       global
-    ]
+    ])
   ));
-  ({ IndentBlocks, ObjectStn } = Caf.import(["IndentBlocks", "ObjectStn"], [
-    Extensions,
-    cafParentImports
-  ]));
+  ({ IndentBlocks, ObjectStn } = Caf.import(
+    ["IndentBlocks", "ObjectStn"],
+    [Extensions, cafParentImports]
+  ));
   return function() {
     this.rule({
       object: ["implicitObject", "explicitObject"],
@@ -2498,10 +2554,12 @@ Caf.defMod(module, () => {
         ],
         bracketedObject: "openCurly_ props:explicitPropertyList _closeCurly",
         multilineImplicitObject: {
-          pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
+          pattern:
+            "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
         },
         multilineExplicitObject: {
-          pattern: '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
+          pattern:
+            '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
         }
       },
       {
@@ -2515,8 +2573,10 @@ Caf.defMod(module, () => {
       }
     );
     this.rule({
-      multilineImplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
-      multilineExplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
+      multilineImplicitObjectExtension:
+        "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
+      multilineExplicitObjectExtension:
+        "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
       objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
         rule: "singleOrMultilineExplicitObject"
       }),
@@ -2540,7 +2600,8 @@ Caf.defMod(module, () => {
       {
         literalProp: "propName _colon_ propValue:literal",
         valueProp: "propName _colon_ propValue:expression",
-        valuePropWithComplexExpression: "propName _colon_ propValue:requiredValue"
+        valuePropWithComplexExpression:
+          "propName _colon_ propValue:requiredValue"
       },
       { name: "literalObjectProperty", stnFactory: "ObjectPropValueStn" }
     );
@@ -2623,22 +2684,22 @@ Caf.defMod(module, () => {
           throw new Error("expecting left");
         }
         return resolveOperatorPrecidence(
-          Caf.each(this.binaryOperatorAndExpressions, [], (
-            opAndExp,
-            k,
-            into
-          ) => {
-            into.push(getNormalizedOperator(opAndExp.binaryOperator));
-          }),
+          Caf.each(
+            this.binaryOperatorAndExpressions,
+            [],
+            (opAndExp, k, into) => {
+              into.push(getNormalizedOperator(opAndExp.binaryOperator));
+            }
+          ),
           compactFlatten([
             left,
-            Caf.each(this.binaryOperatorAndExpressions, [], (
-              opAndExp,
-              k,
-              into
-            ) => {
-              into.push(opAndExp.rValue.getStn());
-            })
+            Caf.each(
+              this.binaryOperatorAndExpressions,
+              [],
+              (opAndExp, k, into) => {
+                into.push(opAndExp.rValue.getStn());
+              }
+            )
           ]),
           function(operandA, operandB, operator) {
             return BinaryOperatorStn({ operator }, operandA, operandB);
@@ -2676,20 +2737,20 @@ Caf.defMod(module, () => {
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
-        Caf.each(this.unaryTailOperators || [], undefined, (
-          operand,
-          k,
-          into
-        ) => {
-          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
-        });
-        Caf.each((this.unaryOperator_s || []).slice().reverse(), undefined, (
-          operand,
-          k,
-          into
-        ) => {
-          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
-        });
+        Caf.each(
+          this.unaryTailOperators || [],
+          undefined,
+          (operand, k, into) => {
+            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+          }
+        );
+        Caf.each(
+          (this.unaryOperator_s || []).slice().reverse(),
+          undefined,
+          (operand, k, into) => {
+            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+          }
+        );
         return stn;
       }
     }
@@ -2707,12 +2768,15 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    __webpack_require__(4),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [
+      __webpack_require__(3),
+      __webpack_require__(5),
+      __webpack_require__(4),
+      global
+    ]
+  ));
   return {
     regExpLiteral: [
       {
@@ -2722,8 +2786,8 @@ Caf.defMod(module, () => {
           let cafBase;
           return {
             value: this.regExpMiddle.toString(),
-            modifiers: Caf.exists(cafBase = this.regExpModifiers) &&
-              cafBase.toString()
+            modifiers:
+              Caf.exists((cafBase = this.regExpModifiers)) && cafBase.toString()
           };
         }
       },
@@ -2733,9 +2797,10 @@ Caf.defMod(module, () => {
         stnProps: function() {
           let cafBase, cafBase1;
           return {
-            modifiers: Caf.exists(cafBase = this.regExpBlockModifiers) &&
-              (Caf.exists(cafBase1 = cafBase.regExpModifiers) &&
-                cafBase1.toString())
+            modifiers:
+              Caf.exists((cafBase = this.regExpBlockModifiers)) &&
+                (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
+                  cafBase1.toString())
           };
         }
       }
@@ -2844,38 +2909,43 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ControlOperatorStn;
-  ({ ControlOperatorStn } = Caf.import(["ControlOperatorStn"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    __webpack_require__(4),
-    global
-  ]));
+  ({ ControlOperatorStn } = Caf.import(
+    ["ControlOperatorStn"],
+    [
+      __webpack_require__(3),
+      __webpack_require__(5),
+      __webpack_require__(4),
+      global
+    ]
+  ));
   return {
     statement: [
       "statementWithoutEnd newLineStatementExtension* end",
       "importStatement"
     ],
     tailControlOperator: /\ +(if|while|until|unless) +/,
-    tailControlOperatorComplexExpression: "tailControlOperator implicitArrayOrExpression",
+    tailControlOperatorComplexExpression:
+      "tailControlOperator implicitArrayOrExpression",
     statementWithoutEnd: [
       "lineStartExpression",
       "implicitArrayOrExpression !tailControlOperator",
       {
-        pattern: "implicitArrayOrExpression tailControlOperatorComplexExpression+",
+        pattern:
+          "implicitArrayOrExpression tailControlOperatorComplexExpression+",
         getStn: function() {
           let stn;
           stn = this.implicitArrayOrExpression.getStn();
-          Caf.each(this.tailControlOperatorComplexExpressions, undefined, (
-            tco,
-            k,
-            into
-          ) => {
-            stn = ControlOperatorStn(
-              { operand: tco.tailControlOperator.toString().trim() },
-              tco.implicitArrayOrExpression.getStn(),
-              stn
-            );
-          });
+          Caf.each(
+            this.tailControlOperatorComplexExpressions,
+            undefined,
+            (tco, k, into) => {
+              stn = ControlOperatorStn(
+                { operand: tco.tailControlOperator.toString().trim() },
+                tco.implicitArrayOrExpression.getStn(),
+                stn
+              );
+            }
+          );
           return stn;
         }
       }
@@ -2988,7 +3058,8 @@ Caf.defMod(module, () => {
           "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
           "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
         ],
-        stringBlockBody: "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
+        stringBlockBody:
+          "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
@@ -2996,7 +3067,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolation) &&
+          Caf.exists((cafBase = this.interpolation)) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         },
@@ -3020,9 +3091,12 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        dqStringInterpolation: "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
-        sqStringInterpolation: "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
-        blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
+        dqStringInterpolation:
+          "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
+        sqStringInterpolation:
+          "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
+        blockStringInterpolation:
+          "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
@@ -3031,7 +3105,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolationContinues) &&
+          Caf.exists((cafBase = this.interpolationContinues)) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         }
@@ -3051,10 +3125,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StnRegistry, upperCamelCase, Error;
-  ({ upperCamelCase, Error } = Caf.import(["upperCamelCase", "Error"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ upperCamelCase, Error } = Caf.import(
+    ["upperCamelCase", "Error"],
+    [__webpack_require__(3), global]
+  ));
   StnRegistry = __webpack_require__(4);
   return {
     tagMacro: {
@@ -3116,7 +3190,7 @@ Caf.defMod(module, () => {
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b) *|-(?![:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
-      assignmentOperator: assignmentOperator = /(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?=/,
+      assignmentOperator: (assignmentOperator = /(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?=/),
       new: /new\b/,
       throw: /throw\b/,
       with: /with\b/,
@@ -3147,11 +3221,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [__webpack_require__(3), __webpack_require__(5), global]
+  ));
   return function() {
     this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
     this.rule({
@@ -3170,7 +3243,8 @@ Caf.defMod(module, () => {
     return this.rule({
       listItemStatement: [
         {
-          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
+          pattern:
+            "statementWithoutEnd newLineStatementExtension* ellipsis end",
           stnFactory: "ArraySpreadElementStn"
         },
         { pattern: "statementWithoutEnd newLineStatementExtension* end" }
@@ -3194,11 +3268,10 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    __webpack_require__(3),
-    __webpack_require__(5),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [__webpack_require__(3), __webpack_require__(5), global]
+  ));
   return function() {
     this.rule({ value: "simpleValue valueExtension*" });
     this.rule({
@@ -3299,7 +3372,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let FunctionDefinitionArgStn;
-  return FunctionDefinitionArgStn = Caf.defClass(
+  return (FunctionDefinitionArgStn = Caf.defClass(
     class FunctionDefinitionArgStn extends __webpack_require__(2) {
       constructor(props, children) {
         super(...arguments);
@@ -3333,7 +3406,7 @@ Caf.defMod(module, () => {
         )}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3347,13 +3420,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ImportStn, peek, Object;
-  ({ peek, Object } = Caf.import(["peek", "Object"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return ImportStn = Caf.defClass(
-    class ImportStn
-      extends __webpack_require__(7)(__webpack_require__(2)) {},
+  ({ peek, Object } = Caf.import(
+    ["peek", "Object"],
+    [__webpack_require__(3), global]
+  ));
+  return (ImportStn = Caf.defClass(
+    class ImportStn extends __webpack_require__(7)(
+      __webpack_require__(2)
+    ) {},
     function(ImportStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
@@ -3367,13 +3441,13 @@ Caf.defMod(module, () => {
         this._scopeUpdated = true;
         this.statementsChild.updateScope(this);
         this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        return Caf.each(this.identifiersUsedButNotAssigned, undefined, (
-          v,
-          id,
-          into
-        ) => {
-          this.scope.addIdentifierAssigned(id);
-        });
+        return Caf.each(
+          this.identifiersUsedButNotAssigned,
+          undefined,
+          (v, id, into) => {
+            this.scope.addIdentifierAssigned(id);
+          }
+        );
       };
       this.prototype.addIdentifierAssigned = function(id, init) {
         return this.scope.addIdentifierAssigned(id, init);
@@ -3389,10 +3463,12 @@ Caf.defMod(module, () => {
           return scope;
         },
         importFromCaptureIdentifier: function() {
-          return this._importFromCaptureIdentifier ||
+          return (
+            this._importFromCaptureIdentifier ||
             (this._importFromCaptureIdentifier = this.nonImportScope.bindUniqueIdentifier(
               "parentImports"
-            ));
+            ))
+          );
         }
       });
       this.prototype.toJs = function(options = {}) {
@@ -3407,7 +3483,7 @@ Caf.defMod(module, () => {
           cafBase;
         ({ generateReturnStatement } = options);
         importFromCaptureIdentifier = null;
-        if (p = this.findParent("Import")) {
+        if ((p = this.findParent("Import"))) {
           ({ importFromCaptureIdentifier } = p);
           true;
         }
@@ -3422,7 +3498,7 @@ Caf.defMod(module, () => {
           into.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
-        imports = (Caf.exists(cafBase = this.importing) && cafBase.length) > 0
+        imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
           ? `({${Caf.toString(
               this.importing.join(", ")
             )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
@@ -3436,7 +3512,7 @@ Caf.defMod(module, () => {
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3450,12 +3526,12 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StatementsStn, RootStn, compactFlatten;
-  ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ compactFlatten } = Caf.import(
+    ["compactFlatten"],
+    [__webpack_require__(3), global]
+  ));
   StatementsStn = __webpack_require__(17);
-  return RootStn = Caf.defClass(
+  return (RootStn = Caf.defClass(
     class RootStn extends __webpack_require__(7)(__webpack_require__(2)) {
       constructor(props, children) {
         super(...arguments);
@@ -3500,20 +3576,23 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let statements;
         statements = this.statements.toJs();
-        return compactFlatten([this.getAutoLets(), statements]).join("; ") +
-          ";";
+        return (
+          compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
+        );
       };
       this.prototype.toBareJs = function() {
         let statements;
         statements = this.statements.toJs();
-        return compactFlatten([
-          "Caf = require('caffeine-script-runtime')",
-          this.getBareInitializers(),
-          statements
-        ]).join(";\n") + ";";
+        return (
+          compactFlatten([
+            "Caf = require('caffeine-script-runtime')",
+            this.getBareInitializers(),
+            statements
+          ]).join(";\n") + ";"
+        );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3545,7 +3624,7 @@ Caf.defMod(module, () => {
     ],
     [__webpack_require__(3), __webpack_require__(8), global]
   ));
-  return StringStn = Caf.defClass(
+  return (StringStn = Caf.defClass(
     class StringStn extends __webpack_require__(2) {},
     function(StringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -3569,10 +3648,10 @@ Caf.defMod(module, () => {
         return this;
       };
       this.prototype.trimLeft = function() {
-        return this.props.value = this.value.trimLeft();
+        return (this.props.value = this.value.trimLeft());
       };
       this.prototype.trimRight = function() {
-        return this.props.value = this.value.trimRight();
+        return (this.props.value = this.value.trimRight());
       };
       this.getter({
         value: function() {
@@ -3585,7 +3664,7 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3599,7 +3678,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SwitchWhenStn;
-  return SwitchWhenStn = Caf.defClass(
+  return (SwitchWhenStn = Caf.defClass(
     class SwitchWhenStn extends __webpack_require__(2) {},
     function(SwitchWhenStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -3630,7 +3709,7 @@ Caf.defMod(module, () => {
           : `case ${Caf.toString(cases.join(": case "))}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3644,14 +3723,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ArrayDestructuringStn;
-  return ArrayDestructuringStn = Caf.defClass(
+  return (ArrayDestructuringStn = Caf.defClass(
     class ArrayDestructuringStn extends __webpack_require__(2) {},
     function(ArrayDestructuringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return `[${Caf.toString(this.childrenToJs(", "))}]`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3665,14 +3744,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ArraySpreadElementStn;
-  return ArraySpreadElementStn = Caf.defClass(
+  return (ArraySpreadElementStn = Caf.defClass(
     class ArraySpreadElementStn extends __webpack_require__(2) {},
     function(ArraySpreadElementStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return `...${Caf.toString(this.childrenToJs())}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3686,7 +3765,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ArrayStn;
-  return ArrayStn = Caf.defClass(
+  return (ArrayStn = Caf.defClass(
     class ArrayStn extends __webpack_require__(2) {
       constructor(props, children) {
         if (children.length === 1 && children[0].props.implicitArray) {
@@ -3704,18 +3783,16 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let out;
         out = `[${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toJsExpression());
-            })
-            .join(", ")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toJsExpression());
+          }).join(", ")
         )}]`;
         return Caf.exists(options) && options.dotBase
           ? `(${Caf.toString(out)})`
           : out;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3753,7 +3830,7 @@ Caf.defMod(module, () => {
     ],
     [__webpack_require__(3), __webpack_require__(12), global]
   ));
-  return BinaryOperatorStn = Caf.defClass(
+  return (BinaryOperatorStn = Caf.defClass(
     class BinaryOperatorStn extends __webpack_require__(2) {
       constructor(props, children) {
         super(...arguments);
@@ -3780,22 +3857,23 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let out, identifier, parentOperatorPrecidence;
         out = this.operator === "?" && this.uniqueIdentifierHandle
-          ? ({ identifier } = this.uniqueIdentifierHandle, `((${Caf.toString(
-              identifier
-            )} = ${Caf.toString(
-              this.left.toJsExpression()
-            )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
-              this.right.toJsExpression()
-            )})`)
+          ? (
+              ({ identifier } = this.uniqueIdentifierHandle),
+              `((${Caf.toString(identifier)} = ${Caf.toString(
+                this.left.toJsExpression()
+              )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
+                this.right.toJsExpression()
+              )})`
+            )
           : !operatorIsInfixJs(this.operator)
-              ? binaryOperatorToJs(
-                  this.operator,
-                  this.left.toJsExpression(),
-                  this.right.toJsExpression()
-                )
-              : (parentOperatorPrecidence = getOpPrecidence(
-                  this.operator
-                ), binaryOperatorToJs(
+            ? binaryOperatorToJs(
+                this.operator,
+                this.left.toJsExpression(),
+                this.right.toJsExpression()
+              )
+            : (
+                (parentOperatorPrecidence = getOpPrecidence(this.operator)),
+                binaryOperatorToJs(
                   this.operator,
                   this.left.toJs({
                     expression: true,
@@ -3809,7 +3887,8 @@ Caf.defMod(module, () => {
                     parentOperatorPrecidence,
                     isLeftOperand: false
                   })
-                ));
+                )
+              );
         return options
           ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
           : out;
@@ -3824,20 +3903,21 @@ Caf.defMod(module, () => {
         }
         return !(parentOperatorPrecidence != null)
           ? dotBase
-          : (operatorPrecidence = getOpPrecidence(
-              this.operator
-            ), parentOperatorPrecidence &&
-              operatorPrecidence < parentOperatorPrecidence
-              ? false
-              : parentOperatorPrecidence &&
-                  operatorPrecidence === parentOperatorPrecidence &&
-                  isLeftOperand ===
-                    getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
+          : (
+              (operatorPrecidence = getOpPrecidence(this.operator)),
+              parentOperatorPrecidence &&
+                operatorPrecidence < parentOperatorPrecidence
+                ? false
+                : parentOperatorPrecidence &&
+                    operatorPrecidence === parentOperatorPrecidence &&
+                    isLeftOperand ===
+                      getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
                   ? false
-                  : true);
+                  : true
+            );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3851,11 +3931,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let CatchStn, compactFlatten;
-  ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return CatchStn = Caf.defClass(
+  ({ compactFlatten } = Caf.import(
+    ["compactFlatten"],
+    [__webpack_require__(3), global]
+  ));
+  return (CatchStn = Caf.defClass(
     class CatchStn extends __webpack_require__(2) {},
     function(CatchStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
@@ -3878,10 +3958,9 @@ Caf.defMod(module, () => {
         ({ expression } = options);
         ({ errorIdentifier, body } = this.labeledChildren);
         body = body && (expression ? body.toFunctionBodyJs() : body.toJs());
-        errorIdentifierString = Caf.exists(
-          cafBase = this.uniqueIdentifierHandle
-        ) &&
-          cafBase.identifier ||
+        errorIdentifierString =
+          (Caf.exists((cafBase = this.uniqueIdentifierHandle)) &&
+            cafBase.identifier) ||
           "cafError";
         if (errorIdentifier) {
           body = compactFlatten([
@@ -3897,7 +3976,7 @@ Caf.defMod(module, () => {
         )}}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -3911,12 +3990,12 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StnRegistry, ControlOperatorStn, Error, formattedInspect;
-  ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ Error, formattedInspect } = Caf.import(
+    ["Error", "formattedInspect"],
+    [__webpack_require__(3), global]
+  ));
   StnRegistry = __webpack_require__(4);
-  return ControlOperatorStn = Caf.defClass(
+  return (ControlOperatorStn = Caf.defClass(
     class ControlOperatorStn extends __webpack_require__(2) {
       constructor(props, children) {
         super(...arguments);
@@ -3996,42 +4075,46 @@ Caf.defMod(module, () => {
         })();
         return expression
           ? operand === "while"
-              ? returnValueIsIgnored
-                  ? `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(false)
-                    )};};})()`
-                  : (tempVarIdentifier = this.scope.uniqueIdentifier, `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(
-                        `${Caf.toString(tempVarIdentifier)} =`
-                      )
-                    )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
-              : (out = `${Caf.toString(
+            ? returnValueIsIgnored
+              ? `(() => {while ${Caf.toString(
+                  this.applyRequiredParens(jsExpression)
+                )} {${Caf.toString(this.body.toFunctionBodyJs(false))};};})()`
+              : (
+                  (tempVarIdentifier = this.scope.uniqueIdentifier),
+                  `(() => {while ${Caf.toString(
+                    this.applyRequiredParens(jsExpression)
+                  )} {${Caf.toString(
+                    this.body.toFunctionBodyJs(
+                      `${Caf.toString(tempVarIdentifier)} =`
+                    )
+                  )};}; return ${Caf.toString(tempVarIdentifier)}})()`
+                )
+            : (
+                (out = `${Caf.toString(
                   this.applyParens(jsExpression)
                 )} ? ${Caf.toString(
                   this.body.toJsExpression()
                 )} : ${Caf.toString(
-                  Caf.exists(cafBase = this.elseBody) &&
-                    cafBase.toJsExpression() ||
+                  (Caf.exists((cafBase = this.elseBody)) &&
+                    cafBase.toJsExpression()) ||
                     "undefined"
-                )}`, options.subExpression || options.dotBase
-                  ? out = `(${Caf.toString(out)})`
-                  : out)
+                )}`),
+                options.subExpression || options.dotBase
+                  ? (out = `(${Caf.toString(out)})`)
+                  : out
+              )
           : `${Caf.toString(operand)} ${Caf.toString(
               this.applyRequiredParens(jsExpression)
             )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
               this.elseBody
                 ? ` else {${Caf.toString(
-                    Caf.exists(cafBase1 = this.elseBody) && cafBase1.toJs()
+                    Caf.exists((cafBase1 = this.elseBody)) && cafBase1.toJs()
                   )};}`
                 : ""
             )}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4045,7 +4128,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let DestructuringAssignmentStn;
-  return DestructuringAssignmentStn = Caf.defClass(
+  return (DestructuringAssignmentStn = Caf.defClass(
     class DestructuringAssignmentStn extends __webpack_require__(2) {},
     function(DestructuringAssignmentStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
@@ -4056,7 +4139,7 @@ Caf.defMod(module, () => {
         )})`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4070,7 +4153,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let DestructuringIdentifierStn;
-  return DestructuringIdentifierStn = Caf.defClass(
+  return (DestructuringIdentifierStn = Caf.defClass(
     class DestructuringIdentifierStn extends __webpack_require__(2) {},
     function(DestructuringIdentifierStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
@@ -4092,7 +4175,7 @@ Caf.defMod(module, () => {
         )}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4106,11 +4189,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let DoStn, Object;
-  ({ Object } = Caf.import(["Object"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return DoStn = Caf.defClass(
+  ({ Object } = Caf.import(
+    ["Object"],
+    [__webpack_require__(3), global]
+  ));
+  return (DoStn = Caf.defClass(
     class DoStn extends __webpack_require__(2) {},
     function(DoStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
@@ -4121,7 +4204,7 @@ Caf.defMod(module, () => {
         )})`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4135,7 +4218,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let FunctionDefinitionArgsStn;
-  return FunctionDefinitionArgsStn = Caf.defClass(
+  return (FunctionDefinitionArgsStn = Caf.defClass(
     class FunctionDefinitionArgsStn extends __webpack_require__(2) {},
     function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
       this.getter({
@@ -4149,15 +4232,13 @@ Caf.defMod(module, () => {
       });
       this.prototype.toJs = function() {
         return `(${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toJs());
-            })
-            .join(", ")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toJs());
+          }).join(", ")
         )})`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4171,7 +4252,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let GlobalIdentifierStn;
-  return GlobalIdentifierStn = Caf.defClass(
+  return (GlobalIdentifierStn = Caf.defClass(
     class GlobalIdentifierStn extends __webpack_require__(2) {},
     function(GlobalIdentifierStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -4179,7 +4260,7 @@ Caf.defMod(module, () => {
         return this.props.identifier;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4193,7 +4274,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let IdentifierStn;
-  return IdentifierStn = Caf.defClass(
+  return (IdentifierStn = Caf.defClass(
     class IdentifierStn extends __webpack_require__(2) {},
     function(IdentifierStn, classSuper, instanceSuper) {
       this.getter({
@@ -4219,7 +4300,7 @@ Caf.defMod(module, () => {
         return (this.props.identifierHandle || this.props).identifier;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4234,7 +4315,7 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let InterpolatedStringStn, peek;
   ({ peek } = Caf.import(["peek"], [__webpack_require__(3), global]));
-  return InterpolatedStringStn = Caf.defClass(
+  return (InterpolatedStringStn = Caf.defClass(
     class InterpolatedStringStn extends __webpack_require__(2) {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {
       this.prototype.compactNewLines = function(compactLeft, compactRight) {
@@ -4249,25 +4330,27 @@ Caf.defMod(module, () => {
       };
       this.prototype.trimLeft = function() {
         let cafBase;
-        return Caf.exists(cafBase = this.children[0]) &&
-          (Caf.isF(cafBase.trimLeft) && cafBase.trimLeft());
+        return (
+          Caf.exists((cafBase = this.children[0])) &&
+          (Caf.isF(cafBase.trimLeft) && cafBase.trimLeft())
+        );
       };
       this.prototype.trimRight = function() {
         let cafBase;
-        return Caf.exists(cafBase = peek(this.children)) &&
-          (Caf.isF(cafBase.trimRight) && cafBase.trimRight());
+        return (
+          Caf.exists((cafBase = peek(this.children))) &&
+          (Caf.isF(cafBase.trimRight) && cafBase.trimRight())
+        );
       };
       this.prototype.toJs = function() {
         return `\`${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toInterpolatedJsStringPart());
-            })
-            .join("")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toInterpolatedJsStringPart());
+          }).join("")
         )}\``;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4281,14 +4364,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let LabeledDestructuringTargetStn;
-  return LabeledDestructuringTargetStn = Caf.defClass(
+  return (LabeledDestructuringTargetStn = Caf.defClass(
     class LabeledDestructuringTargetStn extends __webpack_require__(2) {},
     function(LabeledDestructuringTargetStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return this.childrenToJs(": ");
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4301,27 +4384,31 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let Error = global.Error, LetStn;
-  return LetStn = Caf.defClass(
+  let Error = global.Error,
+    LetStn;
+  return (LetStn = Caf.defClass(
     class LetStn extends __webpack_require__(2) {},
     function(LetStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         let identifiers, identifier;
         ({ identifiers, identifier } = this.props);
         return identifiers
-          ? (!(identifiers.length > 0)
-              ? (() => {
-                  throw new Error("LetStn identifiers empty");
-                })()
-              : undefined, `let ${Caf.toString(identifiers.join(", "))}`)
+          ? (
+              !(identifiers.length > 0)
+                ? (() => {
+                    throw new Error("LetStn identifiers empty");
+                  })()
+                : undefined,
+              `let ${Caf.toString(identifiers.join(", "))}`
+            )
           : identifier
-              ? `let ${Caf.toString(identifier)}`
-              : (() => {
-                  throw new Error("LetStn needs props!");
-                })();
+            ? `let ${Caf.toString(identifier)}`
+            : (() => {
+                throw new Error("LetStn needs props!");
+              })();
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4335,7 +4422,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let NewInstanceStn;
-  return NewInstanceStn = Caf.defClass(
+  return (NewInstanceStn = Caf.defClass(
     class NewInstanceStn extends __webpack_require__(2) {},
     function(NewInstanceStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -4344,7 +4431,7 @@ Caf.defMod(module, () => {
           : `new ${Caf.toString(this.childrenToJs())}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4358,14 +4445,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ObjectDestructuringStn;
-  return ObjectDestructuringStn = Caf.defClass(
+  return (ObjectDestructuringStn = Caf.defClass(
     class ObjectDestructuringStn extends __webpack_require__(2) {},
     function(ObjectDestructuringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return `{${Caf.toString(this.childrenToJs(", "))}}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4384,7 +4471,7 @@ Caf.defMod(module, () => {
     [__webpack_require__(3), global]
   ));
   legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
-  return ObjectPropNameStn = Caf.defClass(
+  return (ObjectPropNameStn = Caf.defClass(
     class ObjectPropNameStn extends __webpack_require__(2) {
       constructor() {
         let nameStn, cafBase;
@@ -4407,21 +4494,29 @@ Caf.defMod(module, () => {
         let nameStn, str;
         [nameStn] = this.children;
         return nameStn
-          ? (str = nameStn.toJs(), nameStn.children.length > 0
-              ? `[${Caf.toString(str)}]`
-              : (!(nameStn.type === "String" || nameStn.type === "Identifier")
-                  ? (() => {
-                      throw new Error(
-                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
-                          nameStn.type
-                        )}`
-                      );
-                    })()
-                  : undefined, str))
+          ? (
+              (str = nameStn.toJs()),
+              nameStn.children.length > 0
+                ? `[${Caf.toString(str)}]`
+                : (
+                    !(
+                      nameStn.type === "String" || nameStn.type === "Identifier"
+                    )
+                      ? (() => {
+                          throw new Error(
+                            `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
+                              nameStn.type
+                            )}`
+                          );
+                        })()
+                      : undefined,
+                    str
+                  )
+            )
           : escapePropName(this.props.value);
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4435,12 +4530,12 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let identifierRegexp, ObjectPropValueStn, peek, Error;
-  ({ peek, Error } = Caf.import(["peek", "Error"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ peek, Error } = Caf.import(
+    ["peek", "Error"],
+    [__webpack_require__(3), global]
+  ));
   identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/;
-  return ObjectPropValueStn = Caf.defClass(
+  return (ObjectPropValueStn = Caf.defClass(
     class ObjectPropValueStn extends __webpack_require__(2) {},
     function(ObjectPropValueStn, classSuper, instanceSuper) {
       this.getter({ isObject: true });
@@ -4472,7 +4567,7 @@ Caf.defMod(module, () => {
           : `${Caf.toString(propertyName)}: ${Caf.toString(valueJs)}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4487,35 +4582,33 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StnRegistry, ObjectStn;
   StnRegistry = __webpack_require__(4);
-  return ObjectStn = Caf.defClass(
+  return (ObjectStn = Caf.defClass(
     class ObjectStn extends __webpack_require__(2) {},
     function(ObjectStn, classSuper, instanceSuper) {
       let splitObjectsAtSameProps;
       this.prototype.toJs = function(options) {
         let out;
         out = `{${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toJs());
-            })
-            .join(", ")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toJs());
+          }).join(", ")
         )}}`;
-        return Caf.exists(options) && options.dotBase ||
-          Caf.exists(options) && options.statement
+        return (Caf.exists(options) && options.dotBase) ||
+          (Caf.exists(options) && options.statement)
           ? `(${Caf.toString(out)})`
           : out;
       };
       splitObjectsAtSameProps = function(children) {
         let currentDefined, listOfObjectLiterals, currentOrder;
         currentDefined = {};
-        listOfObjectLiterals = [currentOrder = []];
+        listOfObjectLiterals = [(currentOrder = [])];
         Caf.each(children, undefined, (child, k, into) => {
           let found, value;
-          if (found = child.find(/ObjectPropNameStn/)) {
+          if ((found = child.find(/ObjectPropNameStn/))) {
             [{ props: { value } }] = found;
             if (currentDefined[value]) {
               currentDefined = {};
-              listOfObjectLiterals.push(currentOrder = []);
+              listOfObjectLiterals.push((currentOrder = []));
             }
             currentDefined[value] = true;
           }
@@ -4535,7 +4628,7 @@ Caf.defMod(module, () => {
             );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4549,7 +4642,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ReferenceStn;
-  return ReferenceStn = Caf.defClass(
+  return (ReferenceStn = Caf.defClass(
     class ReferenceStn extends __webpack_require__(2) {},
     function(ReferenceStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
@@ -4567,19 +4660,23 @@ Caf.defMod(module, () => {
         },
         explicitIdentifier: function() {
           let cafBase;
-          return Caf.exists(cafBase = this.labeledChildren.identifier) &&
-            cafBase.explicitIdentifier;
+          return (
+            Caf.exists((cafBase = this.labeledChildren.identifier)) &&
+            cafBase.explicitIdentifier
+          );
         }
       });
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
         let cafBase;
-        return Caf.exists(cafBase = this.props.identifierHandle) &&
-          cafBase.identifier ||
-          this.labeledChildren.identifier.toJs();
+        return (
+          (Caf.exists((cafBase = this.props.identifierHandle)) &&
+            cafBase.identifier) ||
+          this.labeledChildren.identifier.toJs()
+        );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4593,51 +4690,50 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let RegExpStn, isString;
-  ({ isString } = Caf.import(["isString"], [
-    __webpack_require__(3),
-    __webpack_require__(8),
-    global
-  ]));
-  return RegExpStn = Caf.defClass(
+  ({ isString } = Caf.import(
+    ["isString"],
+    [__webpack_require__(3), __webpack_require__(8), global]
+  ));
+  return (RegExpStn = Caf.defClass(
     class RegExpStn extends __webpack_require__(2) {},
     function(RegExpStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         let value, modifiers, str, hasInterpolation, cafBase;
         ({ value, modifiers } = this.props);
-        str = (Caf.exists(cafBase = this.children) && cafBase.length) > 0
-          ? (hasInterpolation = Caf.extendedEach(this.children, undefined, (
-              child,
-              k,
-              into,
-              brk
-            ) => {
-              let cafRet;
-              return (cafRet = !isString(child.props.value)) && (brk(), cafRet);
-            }), Caf
-              .each(this.children, [], (child, k, into) => {
+        str = (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
+          ? (
+              (hasInterpolation = Caf.extendedEach(
+                this.children,
+                undefined,
+                (child, k, into, brk) => {
+                  let cafRet;
+                  return (
+                    (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+                  );
+                }
+              )),
+              Caf.each(this.children, [], (child, k, into) => {
                 let v;
                 into.push(
-                  isString(v = child.props.value)
+                  isString((v = child.props.value))
                     ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
                     : `\${Caf.toString(${Caf.toString(
                         child.toJsExpression()
                       )})}`
                 );
-              })
-              .join(""))
+              }).join("")
+            )
           : value;
         return str.length === 0
           ? "/(?:)/"
           : hasInterpolation
-              ? modifiers
-                  ? `RegExp(\`${Caf.toString(str)}\`, '${Caf.toString(
-                      modifiers
-                    )}')`
-                  : `RegExp(\`${Caf.toString(str)}\`)`
-              : `/${Caf.toString(str)}/${Caf.toString(modifiers || "")}`;
+            ? modifiers
+              ? `RegExp(\`${Caf.toString(str)}\`, '${Caf.toString(modifiers)}')`
+              : `RegExp(\`${Caf.toString(str)}\`)`
+            : `/${Caf.toString(str)}/${Caf.toString(modifiers || "")}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4651,8 +4747,8 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let findModuleSync, RequireStn;
-  ({ findModuleSync } = __webpack_require__(105));
-  return RequireStn = Caf.defClass(
+  ({ findModuleSync } = __webpack_require__(106));
+  return (RequireStn = Caf.defClass(
     class RequireStn extends __webpack_require__(2) {},
     function(RequireStn, classSuper, instanceSuper) {
       this.getter({
@@ -4660,17 +4756,15 @@ Caf.defMod(module, () => {
           return this.props.require;
         },
         requireString: function() {
-          return findModuleSync(
-            this.rawRequireString,
-            this.parser.options
-          ).requireString;
+          return findModuleSync(this.rawRequireString, this.parser.options)
+            .requireString;
         }
       });
       this.prototype.toJs = function() {
         return `require('${Caf.toString(this.requireString)}')`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4684,11 +4778,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SemanticTokenStn, Error, formattedInspect;
-  ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return SemanticTokenStn = Caf.defClass(
+  ({ Error, formattedInspect } = Caf.import(
+    ["Error", "formattedInspect"],
+    [__webpack_require__(3), global]
+  ));
+  return (SemanticTokenStn = Caf.defClass(
     class SemanticTokenStn extends __webpack_require__(2) {
       constructor() {
         let cafBase;
@@ -4713,7 +4807,7 @@ Caf.defMod(module, () => {
         })();
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4727,7 +4821,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SimpleLiteralStn;
-  return SimpleLiteralStn = Caf.defClass(
+  return (SimpleLiteralStn = Caf.defClass(
     class SimpleLiteralStn extends __webpack_require__(2) {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -4739,7 +4833,7 @@ Caf.defMod(module, () => {
           : value;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4753,7 +4847,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SwitchStn;
-  return SwitchStn = Caf.defClass(
+  return (SwitchStn = Caf.defClass(
     class SwitchStn extends __webpack_require__(2) {},
     function(SwitchStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -4765,22 +4859,30 @@ Caf.defMod(module, () => {
         falsifyCases = !condition;
         options = { falsifyCases };
         return expression
-          ? (cases = Caf.each(switchWhens, [], (clause, k, into) => {
-              into.push(clause.toFunctionBodyJs(options));
-            }), switchElse
-              ? cases.push(
-                  `default: ${Caf.toString(switchElse.toFunctionBodyJs())}`
-                )
-              : undefined, `(() => {switch (${Caf.toString(
-              this.getConditionJs()
-            )}) {${Caf.toString(cases.join(" "))}};})()`)
-          : (cases = Caf.each(switchWhens, [], (clause, k, into) => {
-              into.push(clause.toJs(options));
-            }), switchElse
-              ? cases.push(`default: ${Caf.toString(switchElse.toJs())}`)
-              : undefined, `switch (${Caf.toString(
-              this.getConditionJs()
-            )}) {${Caf.toString(cases.join(" break; "))}}`);
+          ? (
+              (cases = Caf.each(switchWhens, [], (clause, k, into) => {
+                into.push(clause.toFunctionBodyJs(options));
+              })),
+              switchElse
+                ? cases.push(
+                    `default: ${Caf.toString(switchElse.toFunctionBodyJs())}`
+                  )
+                : undefined,
+              `(() => {switch (${Caf.toString(
+                this.getConditionJs()
+              )}) {${Caf.toString(cases.join(" "))}};})()`
+            )
+          : (
+              (cases = Caf.each(switchWhens, [], (clause, k, into) => {
+                into.push(clause.toJs(options));
+              })),
+              switchElse
+                ? cases.push(`default: ${Caf.toString(switchElse.toJs())}`)
+                : undefined,
+              `switch (${Caf.toString(this.getConditionJs())}) {${Caf.toString(
+                cases.join(" break; ")
+              )}}`
+            );
       };
       this.prototype.getConditionJs = function() {
         let condition;
@@ -4788,7 +4890,7 @@ Caf.defMod(module, () => {
         return condition ? condition.toJsExpression() : "false";
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4802,7 +4904,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ThisStn;
-  return ThisStn = Caf.defClass(
+  return (ThisStn = Caf.defClass(
     class ThisStn extends __webpack_require__(2) {},
     function(ThisStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -4812,7 +4914,7 @@ Caf.defMod(module, () => {
           : "this";
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4826,7 +4928,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ThrowStn;
-  return ThrowStn = Caf.defClass(
+  return (ThrowStn = Caf.defClass(
     class ThrowStn extends __webpack_require__(2) {},
     function(ThrowStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options = {}) {
@@ -4835,7 +4937,7 @@ Caf.defMod(module, () => {
           : `throw ${Caf.toString(this.childrenToJs())}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4849,7 +4951,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let TryStn;
-  return TryStn = Caf.defClass(
+  return (TryStn = Caf.defClass(
     class TryStn extends __webpack_require__(2) {},
     function(TryStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options = {}) {
@@ -4857,14 +4959,14 @@ Caf.defMod(module, () => {
         ({ expression } = options);
         ({ body, optionalCatch } = this.labeledChildren);
         body = expression ? body.toFunctionBodyJs() : body.toJs();
-        optionalCatch = Caf.exists(optionalCatch) &&
-          optionalCatch.toJs(options) ||
+        optionalCatch =
+          (Caf.exists(optionalCatch) && optionalCatch.toJs(options)) ||
           "catch (cafError) {}";
         js = `try {${Caf.toString(body)};} ${Caf.toString(optionalCatch)}`;
         return expression ? this.doJs(null, js) : js;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4878,7 +4980,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let UnaryOperatorStn;
-  return UnaryOperatorStn = Caf.defClass(
+  return (UnaryOperatorStn = Caf.defClass(
     class UnaryOperatorStn extends __webpack_require__(2) {},
     function(UnaryOperatorStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -4892,7 +4994,7 @@ Caf.defMod(module, () => {
             )}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4906,7 +5008,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let UndefinedStn;
-  return UndefinedStn = Caf.defClass(
+  return (UndefinedStn = Caf.defClass(
     class UndefinedStn extends __webpack_require__(2) {},
     function(UndefinedStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -4914,7 +5016,7 @@ Caf.defMod(module, () => {
         return "undefined";
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4928,14 +5030,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let ValueStn;
-  return ValueStn = Caf.defClass(
+  return (ValueStn = Caf.defClass(
     class ValueStn extends __webpack_require__(2) {},
     function(ValueStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
         return this.childrenToJs();
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -4949,11 +5051,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let AccessorStn, Error;
-  ({ Error } = Caf.import(["Error"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return AccessorStn = Caf.defClass(
+  ({ Error } = Caf.import(
+    ["Error"],
+    [__webpack_require__(3), global]
+  ));
+  return (AccessorStn = Caf.defClass(
     class AccessorStn extends __webpack_require__(10) {
       constructor(props, children) {
         super(...arguments);
@@ -4990,18 +5092,19 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let base, identierString, cafBase;
-        base = Caf.exists(cafBase = this.value) &&
+        base =
+          Caf.exists((cafBase = this.value)) &&
           cafBase.toJsExpression({ dotBase: true });
         return this.value && this.key.isIdentifier
           ? (identierString = this.key.toJs()).match(/['"`]/)
-              ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
-              : `${Caf.toString(base)}.${Caf.toString(identierString)}`
+            ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
+            : `${Caf.toString(base)}.${Caf.toString(identierString)}`
           : `${Caf.toString(base || "")}[${Caf.toString(
               this.key.toJsExpression()
             )}]`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5020,16 +5123,9 @@ Caf.defMod(module, () => {
     [__webpack_require__(3), global]
   ));
   SemanticTree = __webpack_require__(4);
-  return ClassStn = Caf.defClass(
+  return (ClassStn = Caf.defClass(
     class ClassStn extends __webpack_require__(2) {},
     function(ClassStn, classSuper, instanceSuper) {
-      this.prototype.updateScope = function(scope) {
-        let className;
-        this.scope = scope;
-        ({ className } = this.labeledChildren);
-        this.scope.addIdentifierAssigned(className.toJs());
-        return instanceSuper.updateScope.apply(this, arguments);
-      };
       this.prototype.transform = function() {
         let className,
           classExtends,
@@ -5063,7 +5159,7 @@ Caf.defMod(module, () => {
         } = SemanticTree);
         className = className.transform();
         classExtends = Caf.exists(classExtends) && classExtends.transform();
-        if (body = Caf.exists(body) && body.transform()) {
+        if ((body = Caf.exists(body) && body.transform())) {
           constructorStn = null;
           body = FunctionDefinitionStn(
             { label: "body", returnIgnored: true },
@@ -5072,88 +5168,95 @@ Caf.defMod(module, () => {
                 IdentifierStn({ identifier: className.toJs() })
               ),
               FunctionDefinitionArgStn(
-                IdentifierStn({ identifier: classSuperHandle = "classSuper" })
+                IdentifierStn({ identifier: (classSuperHandle = "classSuper") })
               ),
               FunctionDefinitionArgStn(
                 IdentifierStn({
-                  identifier: instanceSuperHandle = "instanceSuper"
+                  identifier: (instanceSuperHandle = "instanceSuper")
                 })
               )
             ),
             StatementsStn(
-              statementsToCount = Caf.each(body.children, [], (
-                stn,
-                k,
-                into
-              ) => {
-                into.push(
-                  stn.type === "Object"
-                    ? Caf.each(stn.children, [], (
-                        objectPropValueStn,
-                        k,
-                        into
-                      ) => {
-                        let propNameStn,
-                          propValueStn,
-                          assignToStn,
-                          propName,
-                          m,
-                          __,
-                          classPropName;
-                        [
-                          propNameStn,
-                          propValueStn
-                        ] = objectPropValueStn.children;
-                        assignToStn = (() => {
-                          switch (propNameStn.type) {
-                            case "ObjectPropName":
-                              propName = propNameStn.toJs();
-                              return (m = propName.match(/^"@(.*)"$/))
-                                ? ([__, classPropName] = m, ThisStn(
-                                    IdentifierStn({ identifier: classPropName })
-                                  ))
-                                : propName === "constructor"
-                                    ? (constructorStn = propValueStn, null)
-                                    : AccessorStn(
+              (statementsToCount = Caf.each(
+                body.children,
+                [],
+                (stn, k, into) => {
+                  into.push(
+                    stn.type === "Object"
+                      ? Caf.each(
+                          stn.children,
+                          [],
+                          (objectPropValueStn, k, into) => {
+                            let propNameStn,
+                              propValueStn,
+                              assignToStn,
+                              propName,
+                              m,
+                              __,
+                              classPropName;
+                            [
+                              propNameStn,
+                              propValueStn
+                            ] = objectPropValueStn.children;
+                            assignToStn = (() => {
+                              switch (propNameStn.type) {
+                                case "ObjectPropName":
+                                  propName = propNameStn.toJs();
+                                  return (m = propName.match(/^"@(.*)"$/))
+                                    ? (
+                                        ([__, classPropName] = m),
                                         ThisStn(
                                           IdentifierStn({
-                                            identifier: "prototype"
+                                            identifier: classPropName
                                           })
-                                        ),
-                                        IdentifierStn({ identifier: propName })
-                                      );
-                            case "Accessor":
-                              return AccessorStn(
-                                ThisStn(
-                                  IdentifierStn({ identifier: "prototype" })
-                                ),
-                                propNameStn.children
-                              );
-                            default:
-                              return (() => {
-                                throw new Error(
-                                  `unknown object property name Stn type: ${Caf.toString(
-                                    propNameStn.type
-                                  )}`
-                                );
-                              })();
+                                        )
+                                      )
+                                    : propName === "constructor"
+                                      ? ((constructorStn = propValueStn), null)
+                                      : AccessorStn(
+                                          ThisStn(
+                                            IdentifierStn({
+                                              identifier: "prototype"
+                                            })
+                                          ),
+                                          IdentifierStn({
+                                            identifier: propName
+                                          })
+                                        );
+                                case "Accessor":
+                                  return AccessorStn(
+                                    ThisStn(
+                                      IdentifierStn({ identifier: "prototype" })
+                                    ),
+                                    propNameStn.children
+                                  );
+                                default:
+                                  return (() => {
+                                    throw new Error(
+                                      `unknown object property name Stn type: ${Caf.toString(
+                                        propNameStn.type
+                                      )}`
+                                    );
+                                  })();
+                              }
+                            })();
+                            into.push(
+                              assignToStn &&
+                                AssignmentStn(assignToStn, propValueStn)
+                            );
                           }
-                        })();
-                        into.push(
-                          assignToStn &&
-                            AssignmentStn(assignToStn, propValueStn)
-                        );
-                      })
-                    : stn
-                );
-              })
+                        )
+                      : stn
+                  );
+                }
+              ))
             )
           );
           statementCount = statementsToCount.length;
           if (constructorStn) {
             statementCount -= 1;
             constructorStn.props.isConstructor = true;
-            if (superCallChildren = constructorStn.find("Super")) {
+            if ((superCallChildren = constructorStn.find("Super"))) {
               if (!(superCallChildren.length === 1)) {
                 throw new Error("at most one super call in constructor");
               }
@@ -5168,29 +5271,33 @@ Caf.defMod(module, () => {
         } else {
           children = this.transformChildren();
         }
-        return new ClassStn(
-          merge(this.props, { classSuperHandle, instanceSuperHandle }),
-          children
+        return new AssignmentStn(
+          new IdentifierStn({ identifier: className.toJs() }),
+          new ClassStn(
+            merge(this.props, { classSuperHandle, instanceSuperHandle }),
+            children
+          )
         );
       };
       this.prototype.toJs = function() {
         let className, classExtends, body, classBody, out, classBodyJs;
         ({ className, classExtends, body, classBody } = this.labeledChildren);
         className = className.toJs();
-        out = `${Caf.toString(className)} = Caf.defClass(class ${Caf.toString(
+        out = `Caf.defClass(class ${Caf.toString(
           className
         )} extends ${Caf.toString(
-          Caf.exists(classExtends) && classExtends.toJsExpression() || "Object"
+          (Caf.exists(classExtends) && classExtends.toJsExpression()) ||
+            "Object"
         )}`;
         classBodyJs = `{${Caf.toString(
-          Caf.exists(classBody) && classBody.toJs() || ""
+          (Caf.exists(classBody) && classBody.toJs()) || ""
         )}}`;
         return body
           ? out + ` ${Caf.toString(classBodyJs)}, ${Caf.toString(body.toJs())})`
           : out + ` ${Caf.toString(classBodyJs)})`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5204,14 +5311,15 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let StnRegistry, FunctionDefinitionStn, compactFlatten;
-  ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ compactFlatten } = Caf.import(
+    ["compactFlatten"],
+    [__webpack_require__(3), global]
+  ));
   StnRegistry = __webpack_require__(4);
-  return FunctionDefinitionStn = Caf.defClass(
-    class FunctionDefinitionStn
-      extends __webpack_require__(7)(__webpack_require__(2)) {
+  return (FunctionDefinitionStn = Caf.defClass(
+    class FunctionDefinitionStn extends __webpack_require__(7)(
+      __webpack_require__(2)
+    ) {
       constructor(props, children) {
         let onlyChild;
         if (children.length === 1) {
@@ -5248,16 +5356,19 @@ Caf.defMod(module, () => {
       this.prototype.updateScope = function() {
         instanceSuper.updateScope.apply(this, arguments);
         return this.arguments
-          ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
-              into[k] = this.addArgumentName(name);
-            }), this.arguments.updateScope({
-              addIdentifierUsed: identifier => {
-                return this.addIdentifierUsed(identifier);
-              },
-              addIdentifierAssigned: identifier => {
-                return this.addArgumentName(identifier);
-              }
-            }))
+          ? (
+              Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
+                into[k] = this.addArgumentName(name);
+              }),
+              this.arguments.updateScope({
+                addIdentifierUsed: identifier => {
+                  return this.addIdentifierUsed(identifier);
+                },
+                addIdentifierAssigned: identifier => {
+                  return this.addArgumentName(identifier);
+                }
+              })
+            )
           : undefined;
       };
       this.prototype.transform = function() {
@@ -5288,39 +5399,45 @@ Caf.defMod(module, () => {
         [argsDef, body] = this.children;
         statements = [];
         argsDef = argsDef
-          ? (statements = Caf.each(argsDef.children, [], (arg, k, into) => {
-              let preBodyStatements;
-              if (preBodyStatements = arg.getFunctionPreBodyStatementsJs()) {
-                into.push(preBodyStatements);
-              }
-            }), argsDef.toJs())
+          ? (
+              (statements = Caf.each(argsDef.children, [], (arg, k, into) => {
+                let preBodyStatements;
+                if (
+                  (preBodyStatements = arg.getFunctionPreBodyStatementsJs())
+                ) {
+                  into.push(preBodyStatements);
+                }
+              })),
+              argsDef.toJs()
+            )
           : "()";
         bodyJs = Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
         if (this.props.isConstructor) {
-          constructorSuperIndex = Caf.extendedEach(bodyJs, undefined, (
-            v,
-            i,
-            into,
-            brk
-          ) => {
-            return v.match(/^super\(/) && (brk(), i);
-          });
+          constructorSuperIndex = Caf.extendedEach(
+            bodyJs,
+            undefined,
+            (v, i, into, brk) => {
+              return v.match(/^super\(/) && (brk(), i);
+            }
+          );
         }
         statements = compactFlatten(
           constructorSuperIndex >= 0
-            ? (beforeSuper = bodyJs.slice(
-                0,
-                constructorSuperIndex
-              ), afterSuper = bodyJs.slice(
-                constructorSuperIndex + 1,
-                bodyJs.length
-              ), superJs = bodyJs[constructorSuperIndex], [
-                this.getAutoLets(),
-                beforeSuper,
-                superJs,
-                statements,
-                afterSuper
-              ])
+            ? (
+                (beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
+                (afterSuper = bodyJs.slice(
+                  constructorSuperIndex + 1,
+                  bodyJs.length
+                )),
+                (superJs = bodyJs[constructorSuperIndex]),
+                [
+                  this.getAutoLets(),
+                  beforeSuper,
+                  superJs,
+                  statements,
+                  afterSuper
+                ]
+              )
             : [
                 this.getAutoLets(),
                 isConstructor && "super(...arguments)",
@@ -5338,7 +5455,7 @@ Caf.defMod(module, () => {
             )}${Caf.toString(argsDef)} ${Caf.toString(body)}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5352,12 +5469,12 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SemanticTree, FunctionInvocationStn, Error;
-  ({ Error } = Caf.import(["Error"], [
-    __webpack_require__(3),
-    global
-  ]));
+  ({ Error } = Caf.import(
+    ["Error"],
+    [__webpack_require__(3), global]
+  ));
   SemanticTree = __webpack_require__(13);
-  return FunctionInvocationStn = Caf.defClass(
+  return (FunctionInvocationStn = Caf.defClass(
     class FunctionInvocationStn extends __webpack_require__(10) {
       constructor(props, children) {
         let functionValue, argStns, cafBase, cafBase1, cafBase2;
@@ -5369,8 +5486,9 @@ Caf.defMod(module, () => {
           this.argStns = this.argStns[0].children;
         }
         if (
-          Caf.exists(cafBase = this.parseTreeNode) && cafBase.conditional ||
-          Caf.exists(cafBase1 = this.parseTreeNode) && cafBase1.existanceTest
+          (Caf.exists((cafBase = this.parseTreeNode)) && cafBase.conditional) ||
+          (Caf.exists((cafBase1 = this.parseTreeNode)) &&
+            cafBase1.existanceTest)
         ) {
           (cafBase2 = this.props).existanceTest ||
             (cafBase2.existanceTest = true);
@@ -5396,19 +5514,17 @@ Caf.defMod(module, () => {
           throw new Error("can't be existanceTest here");
         }
         return `${Caf.toString(
-          valueJs = this.functionValue.toJsExpression()
+          (valueJs = this.functionValue.toJsExpression())
         )}${Caf.toString(
           this.applyRequiredParens(
-            Caf
-              .each(this.argStns, [], (a, k, into) => {
-                into.push(a.toJsExpression());
-              })
-              .join(", ")
+            Caf.each(this.argStns, [], (a, k, into) => {
+              into.push(a.toJsExpression());
+            }).join(", ")
           )
         )}`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5422,11 +5538,11 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SuperStn, Error, merge;
-  ({ Error, merge } = Caf.import(["Error", "merge"], [
-    __webpack_require__(3),
-    global
-  ]));
-  return SuperStn = Caf.defClass(
+  ({ Error, merge } = Caf.import(
+    ["Error", "merge"],
+    [__webpack_require__(3), global]
+  ));
+  return (SuperStn = Caf.defClass(
     class SuperStn extends __webpack_require__(2) {
       constructor(props, args) {
         super(...arguments);
@@ -5444,7 +5560,7 @@ Caf.defMod(module, () => {
           throw new Error("super must be used inside an object-literal value");
         }
         methodName = propValue.labeledChildren.propName.props.value;
-        if (m = methodName.match(/^(@)(.*)/)) {
+        if ((m = methodName.match(/^(@)(.*)/))) {
           [__, classMethod, methodName] = m;
         }
         return new this.class(
@@ -5462,31 +5578,43 @@ Caf.defMod(module, () => {
           method;
         ({ args } = this);
         return this.props.calledInConstructor
-          ? (args = this.props.passArguments
-              ? ["...arguments"]
-              : Caf.each(args, [], (a, k, into) => {
-                  into.push(a.toJsExpression());
-                }), `super(${Caf.toString(args.join(", "))})`)
-          : (objectPropValue = this.findParent(
-              "ObjectPropValue"
-            ), getSuperInput = (klass = this.findParent("Class"))
-              ? (className = klass.labeledChildren.className.toJs(), superObject = this.props.classMethod
-                  ? klass.props.classSuperHandle
-                  : klass.props.instanceSuperHandle, method = this.props.passArguments
-                  ? (args = "arguments", "apply")
-                  : (args = Caf.each(args, [], (a, k, into) => {
-                      into.push(a.toJsExpression());
-                    }), "call"), `${Caf.toString(superObject)}.${Caf.toString(
-                  this.props.methodName
-                )}.${Caf.toString(method)}${Caf.toString(
-                  this.applyRequiredParens(["this"].concat(args).join(", "))
-                )}`)
-              : (() => {
-                  throw new Error("super not used in class");
-                })());
+          ? (
+              (args = this.props.passArguments
+                ? ["...arguments"]
+                : Caf.each(args, [], (a, k, into) => {
+                    into.push(a.toJsExpression());
+                  })),
+              `super(${Caf.toString(args.join(", "))})`
+            )
+          : (
+              (objectPropValue = this.findParent("ObjectPropValue")),
+              (getSuperInput = (klass = this.findParent("Class"))
+                ? (
+                    (className = klass.labeledChildren.className.toJs()),
+                    (superObject = this.props.classMethod
+                      ? klass.props.classSuperHandle
+                      : klass.props.instanceSuperHandle),
+                    (method = this.props.passArguments
+                      ? ((args = "arguments"), "apply")
+                      : (
+                          (args = Caf.each(args, [], (a, k, into) => {
+                            into.push(a.toJsExpression());
+                          })),
+                          "call"
+                        )),
+                    `${Caf.toString(superObject)}.${Caf.toString(
+                      this.props.methodName
+                    )}.${Caf.toString(method)}${Caf.toString(
+                      this.applyRequiredParens(["this"].concat(args).join(", "))
+                    )}`
+                  )
+                : (() => {
+                    throw new Error("super not used in class");
+                  })())
+            );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5501,7 +5629,7 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let SemanticTree, CaptureStn;
   SemanticTree = __webpack_require__(4);
-  return CaptureStn = Caf.defClass(
+  return (CaptureStn = Caf.defClass(
     class CaptureStn extends __webpack_require__(2) {},
     function(CaptureStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
@@ -5520,7 +5648,7 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5545,9 +5673,10 @@ Caf.defMod(module, () => {
   ));
   SemanticTree = __webpack_require__(4);
   UniqueIdentifierHandle = __webpack_require__(9);
-  return ComprehensionStn = Caf.defClass(
-    class ComprehensionStn
-      extends __webpack_require__(7)(__webpack_require__(2)) {},
+  return (ComprehensionStn = Caf.defClass(
+    class ComprehensionStn extends __webpack_require__(7)(
+      __webpack_require__(2)
+    ) {},
     function(ComprehensionStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
         let outputType,
@@ -5627,21 +5756,24 @@ Caf.defMod(module, () => {
           }
         })();
         variableDefinition = FunctionDefinitionArgsStn(
-          valueVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[0] ||
+          (valueVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[0]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: valueIdentifer })
-            ),
-          keyVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[1] ||
+            )),
+          (keyVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[1]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: keyIdentifer })
-            ),
-          intoVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[2] ||
+            )),
+          (intoVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[2]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: intoIdentifer })
-            ),
+            )),
           useExtendedEach &&
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: brkIdentifer })
@@ -5650,11 +5782,14 @@ Caf.defMod(module, () => {
         if (outputType === "object" || outputType === "array") {
           lastBodyStatement = body
             ? body.className === "StatementsStn"
-                ? (bodyStatementsExceptLast = arrayWithAllButLast(
+              ? (
+                  (bodyStatementsExceptLast = arrayWithAllButLast(
                     body.children
-                  ), peek(body.children))
-                : body
-            : (bodyStatementsExceptLast = null, ValueStn(valueVarDef));
+                  )),
+                  peek(body.children)
+                )
+              : body
+            : ((bodyStatementsExceptLast = null), ValueStn(valueVarDef));
         } else {
           bodyWithDefault = body || ValueStn(valueVarDef);
         }
@@ -5733,39 +5868,46 @@ Caf.defMod(module, () => {
                 case "find":
                   return whenClause
                     ? body
-                        ? BinaryOperatorStn(
-                            { operator: "&&" },
-                            whenClause,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              body
-                            )
+                      ? BinaryOperatorStn(
+                          { operator: "&&" },
+                          whenClause,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            body
                           )
-                        : BinaryOperatorStn(
-                            { operator: "&&" },
-                            whenClause,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              valueVarDef
-                            )
+                        )
+                      : BinaryOperatorStn(
+                          { operator: "&&" },
+                          whenClause,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            valueVarDef
                           )
+                        )
                     : body
-                        ? (body.type === "Statements" &&
-                            body.children.length > 1
-                            ? (allButLast = StatementsStn(
-                                body.children.slice(0, body.children.length - 1)
-                              ), body = peek(body.children))
-                            : undefined, foundTest = BinaryOperatorStn(
+                      ? (
+                          body.type === "Statements" && body.children.length > 1
+                            ? (
+                                (allButLast = StatementsStn(
+                                  body.children.slice(
+                                    0,
+                                    body.children.length - 1
+                                  )
+                                )),
+                                (body = peek(body.children))
+                              )
+                            : undefined,
+                          (foundTest = BinaryOperatorStn(
                             { operator: "&&" },
                             AssignmentStn(
                               IdentifierStn({
-                                identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle(
+                                identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
                                   "_ret"
-                                )
+                                ))
                               }),
                               body
                             ),
@@ -5777,26 +5919,28 @@ Caf.defMod(module, () => {
                                 identifierHandle: baseIdentifierHandle
                               })
                             )
-                          ), allButLast
+                          )),
+                          allButLast
                             ? StatementsStn(allButLast, foundTest)
-                            : foundTest)
-                        : BinaryOperatorStn(
-                            { operator: "&&" },
-                            valueVarDef,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              valueVarDef
-                            )
-                          );
+                            : foundTest
+                        )
+                      : BinaryOperatorStn(
+                          { operator: "&&" },
+                          valueVarDef,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            valueVarDef
+                          )
+                        );
               }
             })()
           )
         );
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
@@ -5812,7 +5956,7 @@ Caf.defMod(module, () => {
   let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
   SemanticTree = __webpack_require__(4);
   supportedOperatorsRegExp = /^([-+*\/%]|)$/;
-  return AssignmentStn = Caf.defClass(
+  return (AssignmentStn = Caf.defClass(
     class AssignmentStn extends __webpack_require__(10) {
       constructor(props, children) {
         super(...arguments);
@@ -5826,20 +5970,21 @@ Caf.defMod(module, () => {
         let cafBase;
         this.scope = scope;
         this.scope.addIdentifierAssigned(
-          Caf.exists(cafBase = this.lValue) && cafBase.explicitIdentifier
+          Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
       this.prototype.postTransform = function() {
         let value1, value2;
         return !this.operator.match(supportedOperatorsRegExp)
-          ? ({ value1, value2 } = this.getValueWithBaseCapture(
-              this.lValue
-            ), SemanticTree.BinaryOperatorStn(
-              { operator: this.operator },
-              value1,
-              SemanticTree.AssignmentStn(value2, this.rValue)
-            ))
+          ? (
+              ({ value1, value2 } = this.getValueWithBaseCapture(this.lValue)),
+              SemanticTree.BinaryOperatorStn(
+                { operator: this.operator },
+                value1,
+                SemanticTree.AssignmentStn(value2, this.rValue)
+              )
+            )
           : this;
       };
       this.prototype.toJs = function(options) {
@@ -5853,8 +5998,8 @@ Caf.defMod(module, () => {
             )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
               this.rValue.toJsExpression()
             )}`;
-        return Caf.exists(options) && options.dotBase ||
-          Caf.exists(options) && options.subExpression
+        return (Caf.exists(options) && options.dotBase) ||
+          (Caf.exists(options) && options.subExpression)
           ? `(${Caf.toString(out)})`
           : out;
       };
@@ -5862,13 +6007,20 @@ Caf.defMod(module, () => {
         return `(${Caf.toString(this.toJs())})`;
       };
     }
-  );
+  ));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
 /* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(25);
+
+
+/***/ }),
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(20);
@@ -5884,7 +6036,7 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(21);
@@ -5926,7 +6078,7 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(13);
@@ -5941,7 +6093,7 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(22);
@@ -5953,7 +6105,7 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(23);
@@ -5964,7 +6116,7 @@ module.exports.addModules({
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -5982,21 +6134,31 @@ module.exports = {
 		"art-standard-lib": "^1.11.1",
 		"art-testbench": "^1.10.3",
 		"babel-bridge": "^1.12.0",
+		"bluebird": "^3.5.0",
 		"caffeine-mc": "^2.0.0",
 		"caffeine-script": "^0.44.5",
 		"caffeine-script-runtime": "^1.0.0",
-		"case-sensitive-paths-webpack-plugin": "^1.1.4",
-		"coffee-loader": "^0.7.2",
-		"coffee-script": "^1.12.3",
-		"css-loader": "^0.26.1",
+		"case-sensitive-paths-webpack-plugin": "^2.1.1",
+		"chai": "^4.0.1",
+		"coffee-loader": "^0.7.3",
+		"coffee-script": "^1.12.6",
+		"colors": "^1.1.2",
+		"commander": "^2.9.0",
+		"css-loader": "^0.28.4",
+		"dateformat": "^2.0.0",
 		"detect-node": "^2.0.3",
+		"fs-extra": "^3.0.1",
+		"glob": "^7.1.2",
+		"glob-promise": "^3.1.0",
 		"json-loader": "^0.5.4",
+		"mocha": "^3.4.2",
 		"neptune-namespaces": "^2.2.2",
 		"script-loader": "^0.7.0",
-		"style-loader": "^0.13.1",
-		"webpack": "^2.2.1",
-		"webpack-dev-server": "^2.3.0",
-		"webpack-merge": "^3.0.0"
+		"style-loader": "^0.18.1",
+		"webpack": "^2.6.1",
+		"webpack-dev-server": "^2.4.5",
+		"webpack-merge": "^4.1.0",
+		"webpack-node-externals": "^1.6.0"
 	},
 	"description": "CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.",
 	"license": "ISC",
@@ -6012,39 +6174,32 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.17"
+	"version": "0.44.18"
 };
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports) {
-
-module.exports = require("art-class-system");
 
 /***/ }),
 /* 104 */
 /***/ (function(module, exports) {
 
-module.exports = require("art-object-tree-factory");
+module.exports = require("art-class-system");
 
 /***/ }),
 /* 105 */
 /***/ (function(module, exports) {
 
-module.exports = require("caffeine-mc");
+module.exports = require("art-object-tree-factory");
 
 /***/ }),
 /* 106 */
 /***/ (function(module, exports) {
 
-module.exports = require("neptune-namespaces");
+module.exports = require("caffeine-mc");
 
 /***/ }),
 /* 107 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__(25);
-
+module.exports = require("neptune-namespaces");
 
 /***/ })
 /******/ ]);
