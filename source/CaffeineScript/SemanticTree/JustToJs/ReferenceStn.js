@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ReferenceStn;
-  return ReferenceStn = Caf.defClass(
+  return (ReferenceStn = Caf.defClass(
     class ReferenceStn extends require("../BaseStn") {},
     function(ReferenceStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
@@ -20,17 +20,21 @@ Caf.defMod(module, () => {
         },
         explicitIdentifier: function() {
           let cafBase;
-          return Caf.exists(cafBase = this.labeledChildren.identifier) &&
-            cafBase.explicitIdentifier;
+          return (
+            Caf.exists((cafBase = this.labeledChildren.identifier)) &&
+            cafBase.explicitIdentifier
+          );
         }
       });
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
         let cafBase;
-        return Caf.exists(cafBase = this.props.identifierHandle) &&
-          cafBase.identifier ||
-          this.labeledChildren.identifier.toJs();
+        return (
+          (Caf.exists((cafBase = this.props.identifierHandle)) &&
+            cafBase.identifier) ||
+          this.labeledChildren.identifier.toJs()
+        );
       };
     }
-  );
+  ));
 });

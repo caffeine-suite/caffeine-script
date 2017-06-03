@@ -4,7 +4,8 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        comprehensionVariableDef_: "!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType"
+        comprehensionVariableDef_:
+          "!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType"
       },
       { stnFactory: "FunctionDefinitionArgsStn" }
     );
@@ -19,7 +20,8 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        comprehension: "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
+        comprehension:
+          "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
       },
       { stnFactory: "ComprehensionStn" }
     );

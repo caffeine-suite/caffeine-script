@@ -2,12 +2,12 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StnRegistry, ControlOperatorStn, Error, formattedInspect;
-  ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    require("../../StandardImport"),
-    global
-  ]));
+  ({ Error, formattedInspect } = Caf.import(
+    ["Error", "formattedInspect"],
+    [require("../../StandardImport"), global]
+  ));
   StnRegistry = require("../../StnRegistry");
-  return ControlOperatorStn = Caf.defClass(
+  return (ControlOperatorStn = Caf.defClass(
     class ControlOperatorStn extends require("../BaseStn") {
       constructor(props, children) {
         super(...arguments);
@@ -87,40 +87,44 @@ Caf.defMod(module, () => {
         })();
         return expression
           ? operand === "while"
-              ? returnValueIsIgnored
-                  ? `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(false)
-                    )};};})()`
-                  : (tempVarIdentifier = this.scope.uniqueIdentifier, `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(
-                        `${Caf.toString(tempVarIdentifier)} =`
-                      )
-                    )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
-              : (out = `${Caf.toString(
+            ? returnValueIsIgnored
+              ? `(() => {while ${Caf.toString(
+                  this.applyRequiredParens(jsExpression)
+                )} {${Caf.toString(this.body.toFunctionBodyJs(false))};};})()`
+              : (
+                  (tempVarIdentifier = this.scope.uniqueIdentifier),
+                  `(() => {while ${Caf.toString(
+                    this.applyRequiredParens(jsExpression)
+                  )} {${Caf.toString(
+                    this.body.toFunctionBodyJs(
+                      `${Caf.toString(tempVarIdentifier)} =`
+                    )
+                  )};}; return ${Caf.toString(tempVarIdentifier)}})()`
+                )
+            : (
+                (out = `${Caf.toString(
                   this.applyParens(jsExpression)
                 )} ? ${Caf.toString(
                   this.body.toJsExpression()
                 )} : ${Caf.toString(
-                  Caf.exists(cafBase = this.elseBody) &&
-                    cafBase.toJsExpression() ||
+                  (Caf.exists((cafBase = this.elseBody)) &&
+                    cafBase.toJsExpression()) ||
                     "undefined"
-                )}`, options.subExpression || options.dotBase
-                  ? out = `(${Caf.toString(out)})`
-                  : out)
+                )}`),
+                options.subExpression || options.dotBase
+                  ? (out = `(${Caf.toString(out)})`)
+                  : out
+              )
           : `${Caf.toString(operand)} ${Caf.toString(
               this.applyRequiredParens(jsExpression)
             )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
               this.elseBody
                 ? ` else {${Caf.toString(
-                    Caf.exists(cafBase1 = this.elseBody) && cafBase1.toJs()
+                    Caf.exists((cafBase1 = this.elseBody)) && cafBase1.toJs()
                   )};}`
                 : ""
             )}`;
       };
     }
-  );
+  ));
 });

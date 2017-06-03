@@ -2,11 +2,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let AccessorStn, Error;
-  ({ Error } = Caf.import(["Error"], [
-    require("../../StandardImport"),
-    global
-  ]));
-  return AccessorStn = Caf.defClass(
+  ({ Error } = Caf.import(
+    ["Error"],
+    [require("../../StandardImport"), global]
+  ));
+  return (AccessorStn = Caf.defClass(
     class AccessorStn extends require("../ValueBaseCaptureStn") {
       constructor(props, children) {
         super(...arguments);
@@ -43,16 +43,17 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let base, identierString, cafBase;
-        base = Caf.exists(cafBase = this.value) &&
+        base =
+          Caf.exists((cafBase = this.value)) &&
           cafBase.toJsExpression({ dotBase: true });
         return this.value && this.key.isIdentifier
           ? (identierString = this.key.toJs()).match(/['"`]/)
-              ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
-              : `${Caf.toString(base)}.${Caf.toString(identierString)}`
+            ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
+            : `${Caf.toString(base)}.${Caf.toString(identierString)}`
           : `${Caf.toString(base || "")}[${Caf.toString(
               this.key.toJsExpression()
             )}]`;
       };
     }
-  );
+  ));
 });

@@ -2,13 +2,14 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ImportStn, peek, Object;
-  ({ peek, Object } = Caf.import(["peek", "Object"], [
-    require("../../StandardImport"),
-    global
-  ]));
-  return ImportStn = Caf.defClass(
-    class ImportStn
-      extends require("../ScopeStnMixin")(require("../BaseStn")) {},
+  ({ peek, Object } = Caf.import(
+    ["peek", "Object"],
+    [require("../../StandardImport"), global]
+  ));
+  return (ImportStn = Caf.defClass(
+    class ImportStn extends require("../ScopeStnMixin")(
+      require("../BaseStn")
+    ) {},
     function(ImportStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
@@ -22,13 +23,13 @@ Caf.defMod(module, () => {
         this._scopeUpdated = true;
         this.statementsChild.updateScope(this);
         this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        return Caf.each(this.identifiersUsedButNotAssigned, undefined, (
-          v,
-          id,
-          into
-        ) => {
-          this.scope.addIdentifierAssigned(id);
-        });
+        return Caf.each(
+          this.identifiersUsedButNotAssigned,
+          undefined,
+          (v, id, into) => {
+            this.scope.addIdentifierAssigned(id);
+          }
+        );
       };
       this.prototype.addIdentifierAssigned = function(id, init) {
         return this.scope.addIdentifierAssigned(id, init);
@@ -44,10 +45,12 @@ Caf.defMod(module, () => {
           return scope;
         },
         importFromCaptureIdentifier: function() {
-          return this._importFromCaptureIdentifier ||
+          return (
+            this._importFromCaptureIdentifier ||
             (this._importFromCaptureIdentifier = this.nonImportScope.bindUniqueIdentifier(
               "parentImports"
-            ));
+            ))
+          );
         }
       });
       this.prototype.toJs = function(options = {}) {
@@ -62,7 +65,7 @@ Caf.defMod(module, () => {
           cafBase;
         ({ generateReturnStatement } = options);
         importFromCaptureIdentifier = null;
-        if (p = this.findParent("Import")) {
+        if ((p = this.findParent("Import"))) {
           ({ importFromCaptureIdentifier } = p);
           true;
         }
@@ -77,7 +80,7 @@ Caf.defMod(module, () => {
           into.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
-        imports = (Caf.exists(cafBase = this.importing) && cafBase.length) > 0
+        imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
           ? `({${Caf.toString(
               this.importing.join(", ")
             )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
@@ -91,5 +94,5 @@ Caf.defMod(module, () => {
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
     }
-  );
+  ));
 });

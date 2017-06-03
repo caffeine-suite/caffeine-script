@@ -2,12 +2,12 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTree, FunctionInvocationStn, Error;
-  ({ Error } = Caf.import(["Error"], [
-    require("../../StandardImport"),
-    global
-  ]));
+  ({ Error } = Caf.import(
+    ["Error"],
+    [require("../../StandardImport"), global]
+  ));
   SemanticTree = require("./namespace");
-  return FunctionInvocationStn = Caf.defClass(
+  return (FunctionInvocationStn = Caf.defClass(
     class FunctionInvocationStn extends require("../ValueBaseCaptureStn") {
       constructor(props, children) {
         let functionValue, argStns, cafBase, cafBase1, cafBase2;
@@ -19,8 +19,9 @@ Caf.defMod(module, () => {
           this.argStns = this.argStns[0].children;
         }
         if (
-          Caf.exists(cafBase = this.parseTreeNode) && cafBase.conditional ||
-          Caf.exists(cafBase1 = this.parseTreeNode) && cafBase1.existanceTest
+          (Caf.exists((cafBase = this.parseTreeNode)) && cafBase.conditional) ||
+          (Caf.exists((cafBase1 = this.parseTreeNode)) &&
+            cafBase1.existanceTest)
         ) {
           (cafBase2 = this.props).existanceTest ||
             (cafBase2.existanceTest = true);
@@ -46,17 +47,15 @@ Caf.defMod(module, () => {
           throw new Error("can't be existanceTest here");
         }
         return `${Caf.toString(
-          valueJs = this.functionValue.toJsExpression()
+          (valueJs = this.functionValue.toJsExpression())
         )}${Caf.toString(
           this.applyRequiredParens(
-            Caf
-              .each(this.argStns, [], (a, k, into) => {
-                into.push(a.toJsExpression());
-              })
-              .join(", ")
+            Caf.each(this.argStns, [], (a, k, into) => {
+              into.push(a.toJsExpression());
+            }).join(", ")
           )
         )}`;
       };
     }
-  );
+  ));
 });

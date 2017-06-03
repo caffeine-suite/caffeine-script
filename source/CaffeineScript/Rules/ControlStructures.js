@@ -2,11 +2,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [require("../StandardImport"), require("babel-bridge"), global]
+  ));
   return function() {
     this.rule(
       {
@@ -22,7 +21,7 @@ Caf.defMod(module, () => {
           let cafBase;
           return {
             operand: this.ifUnlessWhileUntil.toString(),
-            joiner: Caf.exists(cafBase = this.thenDo) && cafBase.toString()
+            joiner: Caf.exists((cafBase = this.thenDo)) && cafBase.toString()
           };
         }
       }

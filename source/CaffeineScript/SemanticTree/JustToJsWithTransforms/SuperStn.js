@@ -2,11 +2,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SuperStn, Error, merge;
-  ({ Error, merge } = Caf.import(["Error", "merge"], [
-    require("../../StandardImport"),
-    global
-  ]));
-  return SuperStn = Caf.defClass(
+  ({ Error, merge } = Caf.import(
+    ["Error", "merge"],
+    [require("../../StandardImport"), global]
+  ));
+  return (SuperStn = Caf.defClass(
     class SuperStn extends require("../BaseStn") {
       constructor(props, args) {
         super(...arguments);
@@ -24,7 +24,7 @@ Caf.defMod(module, () => {
           throw new Error("super must be used inside an object-literal value");
         }
         methodName = propValue.labeledChildren.propName.props.value;
-        if (m = methodName.match(/^(@)(.*)/)) {
+        if ((m = methodName.match(/^(@)(.*)/))) {
           [__, classMethod, methodName] = m;
         }
         return new this.class(
@@ -42,29 +42,41 @@ Caf.defMod(module, () => {
           method;
         ({ args } = this);
         return this.props.calledInConstructor
-          ? (args = this.props.passArguments
-              ? ["...arguments"]
-              : Caf.each(args, [], (a, k, into) => {
-                  into.push(a.toJsExpression());
-                }), `super(${Caf.toString(args.join(", "))})`)
-          : (objectPropValue = this.findParent(
-              "ObjectPropValue"
-            ), getSuperInput = (klass = this.findParent("Class"))
-              ? (className = klass.labeledChildren.className.toJs(), superObject = this.props.classMethod
-                  ? klass.props.classSuperHandle
-                  : klass.props.instanceSuperHandle, method = this.props.passArguments
-                  ? (args = "arguments", "apply")
-                  : (args = Caf.each(args, [], (a, k, into) => {
-                      into.push(a.toJsExpression());
-                    }), "call"), `${Caf.toString(superObject)}.${Caf.toString(
-                  this.props.methodName
-                )}.${Caf.toString(method)}${Caf.toString(
-                  this.applyRequiredParens(["this"].concat(args).join(", "))
-                )}`)
-              : (() => {
-                  throw new Error("super not used in class");
-                })());
+          ? (
+              (args = this.props.passArguments
+                ? ["...arguments"]
+                : Caf.each(args, [], (a, k, into) => {
+                    into.push(a.toJsExpression());
+                  })),
+              `super(${Caf.toString(args.join(", "))})`
+            )
+          : (
+              (objectPropValue = this.findParent("ObjectPropValue")),
+              (getSuperInput = (klass = this.findParent("Class"))
+                ? (
+                    (className = klass.labeledChildren.className.toJs()),
+                    (superObject = this.props.classMethod
+                      ? klass.props.classSuperHandle
+                      : klass.props.instanceSuperHandle),
+                    (method = this.props.passArguments
+                      ? ((args = "arguments"), "apply")
+                      : (
+                          (args = Caf.each(args, [], (a, k, into) => {
+                            into.push(a.toJsExpression());
+                          })),
+                          "call"
+                        )),
+                    `${Caf.toString(superObject)}.${Caf.toString(
+                      this.props.methodName
+                    )}.${Caf.toString(method)}${Caf.toString(
+                      this.applyRequiredParens(["this"].concat(args).join(", "))
+                    )}`
+                  )
+                : (() => {
+                    throw new Error("super not used in class");
+                  })())
+            );
       };
     }
-  );
+  ));
 });

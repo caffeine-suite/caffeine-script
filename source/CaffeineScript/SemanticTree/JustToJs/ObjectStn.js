@@ -3,35 +3,33 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StnRegistry, ObjectStn;
   StnRegistry = require("../../StnRegistry");
-  return ObjectStn = Caf.defClass(
+  return (ObjectStn = Caf.defClass(
     class ObjectStn extends require("../BaseStn") {},
     function(ObjectStn, classSuper, instanceSuper) {
       let splitObjectsAtSameProps;
       this.prototype.toJs = function(options) {
         let out;
         out = `{${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toJs());
-            })
-            .join(", ")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toJs());
+          }).join(", ")
         )}}`;
-        return Caf.exists(options) && options.dotBase ||
-          Caf.exists(options) && options.statement
+        return (Caf.exists(options) && options.dotBase) ||
+          (Caf.exists(options) && options.statement)
           ? `(${Caf.toString(out)})`
           : out;
       };
       splitObjectsAtSameProps = function(children) {
         let currentDefined, listOfObjectLiterals, currentOrder;
         currentDefined = {};
-        listOfObjectLiterals = [currentOrder = []];
+        listOfObjectLiterals = [(currentOrder = [])];
         Caf.each(children, undefined, (child, k, into) => {
           let found, value;
-          if (found = child.find(/ObjectPropNameStn/)) {
+          if ((found = child.find(/ObjectPropNameStn/))) {
             [{ props: { value } }] = found;
             if (currentDefined[value]) {
               currentDefined = {};
-              listOfObjectLiterals.push(currentOrder = []);
+              listOfObjectLiterals.push((currentOrder = []));
             }
             currentDefined[value] = true;
           }
@@ -51,5 +49,5 @@ Caf.defMod(module, () => {
             );
       };
     }
-  );
+  ));
 });

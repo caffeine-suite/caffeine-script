@@ -4,8 +4,10 @@ Caf.defMod(module, () => {
   return function() {
     return this.rule(
       {
-        dotAccessor: "existanceTest:questionMark? dot key:identifier assignmentExtension?",
-        bracketAccessor: "existanceTest:questionMark? openBracket_ key:expression _closeBracket assignmentExtension?"
+        dotAccessor:
+          "existanceTest:questionMark? dot key:identifier assignmentExtension?",
+        bracketAccessor:
+          "existanceTest:questionMark? openBracket_ key:expression _closeBracket assignmentExtension?"
       },
       {
         stnFactory: "AccessorStn",

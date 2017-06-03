@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let NewInstanceStn;
-  return NewInstanceStn = Caf.defClass(
+  return (NewInstanceStn = Caf.defClass(
     class NewInstanceStn extends require("../BaseStn") {},
     function(NewInstanceStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -11,5 +11,5 @@ Caf.defMod(module, () => {
           : `new ${Caf.toString(this.childrenToJs())}`;
       };
     }
-  );
+  ));
 });

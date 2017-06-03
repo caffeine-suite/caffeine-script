@@ -12,6 +12,7 @@ module.exports
   Comments:           require './Comments'          
   Comprehensions:     require './Comprehensions'    
   ControlStructures:  require './ControlStructures' 
+  Delete:             require './Delete'            
   Destructuring:      require './Destructuring'     
   FunctionDefinition: require './FunctionDefinition'
   FunctionInvocation: require './FunctionInvocation'

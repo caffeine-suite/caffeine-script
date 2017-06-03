@@ -40,7 +40,7 @@ Caf.defMod(module, () => {
     [require("../StandardImport"), global]
   ));
   ({ createObjectTreeFactory } = require("art-object-tree-factory"));
-  return BaseStn = Caf.defClass(
+  return (BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
       constructor(props, children = []) {
         super(...arguments);
@@ -76,7 +76,8 @@ Caf.defMod(module, () => {
           this.labeledChildren[label] = child;
           if (pluralLabel) {
             ((cafBase = this.labeledChildren)[pluralLabel] ||
-              (cafBase[pluralLabel] = [])).push(child);
+              (cafBase[pluralLabel] = []))
+              .push(child);
           }
         });
       };
@@ -104,13 +105,15 @@ Caf.defMod(module, () => {
           return {
             [`${Caf.toString(name)}`]: this.children.length === 0
               ? toInspectedObjects(props)
-              : (a = [], objectKeyCount(props) > 0
-                  ? a.push(props)
-                  : undefined, a.concat(
-                  Caf.each(this.children, [], (c, k, into) => {
-                    into.push(c.inspectedObjects);
-                  })
-                ))
+              : (
+                  (a = []),
+                  objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                  a.concat(
+                    Caf.each(this.children, [], (c, k, into) => {
+                      into.push(c.inspectedObjects);
+                    })
+                  )
+                )
           };
         },
         type: function() {
@@ -163,11 +166,9 @@ Caf.defMod(module, () => {
         return a.length === 0 ? null : a;
       };
       this.prototype.childrenToJs = function(joiner = "") {
-        return Caf
-          .each(this.children, [], (c, k, into) => {
-            into.push(c.toJs());
-          })
-          .join(joiner);
+        return Caf.each(this.children, [], (c, k, into) => {
+          into.push(c.toJs());
+        }).join(joiner);
       };
       this.prototype.toJs = function(options) {
         return (() => {
@@ -207,7 +208,7 @@ Caf.defMod(module, () => {
         Caf.each(this.children, undefined, (child, i, into) => {
           let newChild;
           if (child !== (newChild = child.transform())) {
-            ret != null ? ret : ret = this.children.slice();
+            ret != null ? ret : (ret = this.children.slice());
             newChild.props.label = child.label;
             ret[i] = newChild;
           }
@@ -247,7 +248,7 @@ Caf.defMod(module, () => {
         normalizedOperand: function() {
           let op;
           return (() => {
-            switch (op = this.props.operand) {
+            switch ((op = this.props.operand)) {
               case "and":
                 return "&&";
               case "or":
@@ -273,5 +274,5 @@ Caf.defMod(module, () => {
         });
       };
     }
-  );
+  ));
 });

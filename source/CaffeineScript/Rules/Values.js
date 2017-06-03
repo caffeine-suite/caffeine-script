@@ -2,11 +2,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [require("../StandardImport"), require("babel-bridge"), global]
+  ));
   return function() {
     this.rule({ value: "simpleValue valueExtension*" });
     this.rule({

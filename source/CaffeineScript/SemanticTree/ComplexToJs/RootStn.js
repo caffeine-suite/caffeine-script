@@ -2,12 +2,12 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StatementsStn, RootStn, compactFlatten;
-  ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    require("../../StandardImport"),
-    global
-  ]));
+  ({ compactFlatten } = Caf.import(
+    ["compactFlatten"],
+    [require("../../StandardImport"), global]
+  ));
   StatementsStn = require("./StatementsStn");
-  return RootStn = Caf.defClass(
+  return (RootStn = Caf.defClass(
     class RootStn extends require("../ScopeStnMixin")(require("../BaseStn")) {
       constructor(props, children) {
         super(...arguments);
@@ -52,18 +52,21 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let statements;
         statements = this.statements.toJs();
-        return compactFlatten([this.getAutoLets(), statements]).join("; ") +
-          ";";
+        return (
+          compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
+        );
       };
       this.prototype.toBareJs = function() {
         let statements;
         statements = this.statements.toJs();
-        return compactFlatten([
-          "Caf = require('caffeine-script-runtime')",
-          this.getBareInitializers(),
-          statements
-        ]).join(";\n") + ";";
+        return (
+          compactFlatten([
+            "Caf = require('caffeine-script-runtime')",
+            this.getBareInitializers(),
+            statements
+          ]).join(";\n") + ";"
+        );
       };
     }
-  );
+  ));
 });

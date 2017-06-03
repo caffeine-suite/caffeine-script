@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
   SemanticTree = require("../../StnRegistry");
   supportedOperatorsRegExp = /^([-+*\/%]|)$/;
-  return AssignmentStn = Caf.defClass(
+  return (AssignmentStn = Caf.defClass(
     class AssignmentStn extends require("../ValueBaseCaptureStn") {
       constructor(props, children) {
         super(...arguments);
@@ -18,20 +18,21 @@ Caf.defMod(module, () => {
         let cafBase;
         this.scope = scope;
         this.scope.addIdentifierAssigned(
-          Caf.exists(cafBase = this.lValue) && cafBase.explicitIdentifier
+          Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
         );
         return instanceSuper.updateScope.apply(this, arguments);
       };
       this.prototype.postTransform = function() {
         let value1, value2;
         return !this.operator.match(supportedOperatorsRegExp)
-          ? ({ value1, value2 } = this.getValueWithBaseCapture(
-              this.lValue
-            ), SemanticTree.BinaryOperatorStn(
-              { operator: this.operator },
-              value1,
-              SemanticTree.AssignmentStn(value2, this.rValue)
-            ))
+          ? (
+              ({ value1, value2 } = this.getValueWithBaseCapture(this.lValue)),
+              SemanticTree.BinaryOperatorStn(
+                { operator: this.operator },
+                value1,
+                SemanticTree.AssignmentStn(value2, this.rValue)
+              )
+            )
           : this;
       };
       this.prototype.toJs = function(options) {
@@ -45,8 +46,8 @@ Caf.defMod(module, () => {
             )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
               this.rValue.toJsExpression()
             )}`;
-        return Caf.exists(options) && options.dotBase ||
-          Caf.exists(options) && options.subExpression
+        return (Caf.exists(options) && options.dotBase) ||
+          (Caf.exists(options) && options.subExpression)
           ? `(${Caf.toString(out)})`
           : out;
       };
@@ -54,5 +55,5 @@ Caf.defMod(module, () => {
         return `(${Caf.toString(this.toJs())})`;
       };
     }
-  );
+  ));
 });

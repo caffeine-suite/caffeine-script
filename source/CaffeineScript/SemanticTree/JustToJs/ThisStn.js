@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ThisStn;
-  return ThisStn = Caf.defClass(
+  return (ThisStn = Caf.defClass(
     class ThisStn extends require("../BaseStn") {},
     function(ThisStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -12,5 +12,5 @@ Caf.defMod(module, () => {
           : "this";
       };
     }
-  );
+  ));
 });

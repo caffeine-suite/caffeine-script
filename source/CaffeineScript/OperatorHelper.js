@@ -2,11 +2,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let OperatorHelper, Error, arrayWithout;
-  ({ Error, arrayWithout } = Caf.import(["Error", "arrayWithout"], [
-    require("./StandardImport"),
-    global
-  ]));
-  return OperatorHelper = Caf.defClass(
+  ({ Error, arrayWithout } = Caf.import(
+    ["Error", "arrayWithout"],
+    [require("./StandardImport"), global]
+  ));
+  return (OperatorHelper = Caf.defClass(
     class OperatorHelper extends Object {},
     function(OperatorHelper, classSuper, instanceSuper) {
       let CoffeeScriptGlobal, infix, validateOperator;
@@ -60,18 +60,18 @@ Caf.defMod(module, () => {
         ["left", "||", "?"]
       ];
       this.opsToPrecidence = {};
-      this.leftAssociativityByPrecidence = Caf.each(this.precidence, [], (
-        v,
-        i,
-        into
-      ) => {
-        let leftAssociativityByPrecidence, operators;
-        [leftAssociativityByPrecidence, ...operators] = v;
-        Caf.each(operators, undefined, (op, k, into) => {
-          this.opsToPrecidence[op] = i;
-        });
-        into.push(leftAssociativityByPrecidence === "left");
-      });
+      this.leftAssociativityByPrecidence = Caf.each(
+        this.precidence,
+        [],
+        (v, i, into) => {
+          let leftAssociativityByPrecidence, operators;
+          [leftAssociativityByPrecidence, ...operators] = v;
+          Caf.each(operators, undefined, (op, k, into) => {
+            this.opsToPrecidence[op] = i;
+          });
+          into.push(leftAssociativityByPrecidence === "left");
+        }
+      );
       this.validateOperator = validateOperator = operator => {
         if (!this.opsToPrecidence[operator]) {
           throw new Error(
@@ -84,7 +84,7 @@ Caf.defMod(module, () => {
       };
       this.getNormalizedOperator = function(operator) {
         return (() => {
-          switch (operator = operator.toString().trim()) {
+          switch ((operator = operator.toString().trim())) {
             case "and":
               return "&&";
             case "or":
@@ -176,5 +176,5 @@ Caf.defMod(module, () => {
         return operands[0];
       };
     }
-  );
+  ));
 });

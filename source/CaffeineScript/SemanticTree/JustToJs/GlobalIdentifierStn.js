@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let GlobalIdentifierStn;
-  return GlobalIdentifierStn = Caf.defClass(
+  return (GlobalIdentifierStn = Caf.defClass(
     class GlobalIdentifierStn extends require("../BaseStn") {},
     function(GlobalIdentifierStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -10,5 +10,5 @@ Caf.defMod(module, () => {
         return this.props.identifier;
       };
     }
-  );
+  ));
 });

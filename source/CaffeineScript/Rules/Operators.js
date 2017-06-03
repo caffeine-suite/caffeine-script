@@ -42,22 +42,22 @@ Caf.defMod(module, () => {
           throw new Error("expecting left");
         }
         return resolveOperatorPrecidence(
-          Caf.each(this.binaryOperatorAndExpressions, [], (
-            opAndExp,
-            k,
-            into
-          ) => {
-            into.push(getNormalizedOperator(opAndExp.binaryOperator));
-          }),
+          Caf.each(
+            this.binaryOperatorAndExpressions,
+            [],
+            (opAndExp, k, into) => {
+              into.push(getNormalizedOperator(opAndExp.binaryOperator));
+            }
+          ),
           compactFlatten([
             left,
-            Caf.each(this.binaryOperatorAndExpressions, [], (
-              opAndExp,
-              k,
-              into
-            ) => {
-              into.push(opAndExp.rValue.getStn());
-            })
+            Caf.each(
+              this.binaryOperatorAndExpressions,
+              [],
+              (opAndExp, k, into) => {
+                into.push(opAndExp.rValue.getStn());
+              }
+            )
           ]),
           function(operandA, operandB, operator) {
             return BinaryOperatorStn({ operator }, operandA, operandB);
@@ -95,20 +95,20 @@ Caf.defMod(module, () => {
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
-        Caf.each(this.unaryTailOperators || [], undefined, (
-          operand,
-          k,
-          into
-        ) => {
-          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
-        });
-        Caf.each((this.unaryOperator_s || []).slice().reverse(), undefined, (
-          operand,
-          k,
-          into
-        ) => {
-          stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
-        });
+        Caf.each(
+          this.unaryTailOperators || [],
+          undefined,
+          (operand, k, into) => {
+            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+          }
+        );
+        Caf.each(
+          (this.unaryOperator_s || []).slice().reverse(),
+          undefined,
+          (operand, k, into) => {
+            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+          }
+        );
         return stn;
       }
     }

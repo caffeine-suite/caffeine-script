@@ -2,12 +2,15 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    require("../StnRegistry"),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [
+      require("../StandardImport"),
+      require("babel-bridge"),
+      require("../StnRegistry"),
+      global
+    ]
+  ));
   return {
     regExpLiteral: [
       {
@@ -17,8 +20,8 @@ Caf.defMod(module, () => {
           let cafBase;
           return {
             value: this.regExpMiddle.toString(),
-            modifiers: Caf.exists(cafBase = this.regExpModifiers) &&
-              cafBase.toString()
+            modifiers:
+              Caf.exists((cafBase = this.regExpModifiers)) && cafBase.toString()
           };
         }
       },
@@ -28,9 +31,10 @@ Caf.defMod(module, () => {
         stnProps: function() {
           let cafBase, cafBase1;
           return {
-            modifiers: Caf.exists(cafBase = this.regExpBlockModifiers) &&
-              (Caf.exists(cafBase1 = cafBase.regExpModifiers) &&
-                cafBase1.toString())
+            modifiers:
+              Caf.exists((cafBase = this.regExpBlockModifiers)) &&
+                (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
+                  cafBase1.toString())
           };
         }
       }

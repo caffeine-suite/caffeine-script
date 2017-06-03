@@ -2,38 +2,43 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ControlOperatorStn;
-  ({ ControlOperatorStn } = Caf.import(["ControlOperatorStn"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    require("../StnRegistry"),
-    global
-  ]));
+  ({ ControlOperatorStn } = Caf.import(
+    ["ControlOperatorStn"],
+    [
+      require("../StandardImport"),
+      require("babel-bridge"),
+      require("../StnRegistry"),
+      global
+    ]
+  ));
   return {
     statement: [
       "statementWithoutEnd newLineStatementExtension* end",
       "importStatement"
     ],
     tailControlOperator: /\ +(if|while|until|unless) +/,
-    tailControlOperatorComplexExpression: "tailControlOperator implicitArrayOrExpression",
+    tailControlOperatorComplexExpression:
+      "tailControlOperator implicitArrayOrExpression",
     statementWithoutEnd: [
       "lineStartExpression",
       "implicitArrayOrExpression !tailControlOperator",
       {
-        pattern: "implicitArrayOrExpression tailControlOperatorComplexExpression+",
+        pattern:
+          "implicitArrayOrExpression tailControlOperatorComplexExpression+",
         getStn: function() {
           let stn;
           stn = this.implicitArrayOrExpression.getStn();
-          Caf.each(this.tailControlOperatorComplexExpressions, undefined, (
-            tco,
-            k,
-            into
-          ) => {
-            stn = ControlOperatorStn(
-              { operand: tco.tailControlOperator.toString().trim() },
-              tco.implicitArrayOrExpression.getStn(),
-              stn
-            );
-          });
+          Caf.each(
+            this.tailControlOperatorComplexExpressions,
+            undefined,
+            (tco, k, into) => {
+              stn = ControlOperatorStn(
+                { operand: tco.tailControlOperator.toString().trim() },
+                tco.implicitArrayOrExpression.getStn(),
+                stn
+              );
+            }
+          );
           return stn;
         }
       }

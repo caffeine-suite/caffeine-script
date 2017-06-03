@@ -2,11 +2,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [require("../StandardImport"), require("babel-bridge"), global]
+  ));
   return function() {
     this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
     this.rule({
@@ -25,7 +24,8 @@ Caf.defMod(module, () => {
     return this.rule({
       listItemStatement: [
         {
-          pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end",
+          pattern:
+            "statementWithoutEnd newLineStatementExtension* ellipsis end",
           stnFactory: "ArraySpreadElementStn"
         },
         { pattern: "statementWithoutEnd newLineStatementExtension* end" }

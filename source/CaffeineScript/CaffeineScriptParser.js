@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
       global
     ]
   ));
-  return CaffeineScriptParser = Caf.defClass(
+  return (CaffeineScriptParser = Caf.defClass(
     class CaffeineScriptParser extends Parser {},
     function(CaffeineScriptParser, classSuper, instanceSuper) {
       let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
@@ -27,9 +27,11 @@ Caf.defMod(module, () => {
       tabIndentationRegexp = /(^|\n)\t/;
       spaceIndentationRegexp = /(^|\n) /;
       this.prototype.hasMixedIndentation = function(source) {
-        return mixedIndentationRegexp.test(source) ||
-          tabIndentationRegexp.test(source) &&
-            spaceIndentationRegexp.test(source);
+        return (
+          mixedIndentationRegexp.test(source) ||
+          (tabIndentationRegexp.test(source) &&
+            spaceIndentationRegexp.test(source))
+        );
       };
       this.prototype.normalizeIndentation = function(source) {
         let e;
@@ -50,5 +52,5 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });

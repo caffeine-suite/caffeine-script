@@ -2,12 +2,15 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let matchBlock, upToButNotEol, Extensions;
-  ({ Extensions } = Caf.import(["Extensions"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    require("../StnRegistry"),
-    global
-  ]));
+  ({ Extensions } = Caf.import(
+    ["Extensions"],
+    [
+      require("../StandardImport"),
+      require("babel-bridge"),
+      require("../StnRegistry"),
+      global
+    ]
+  ));
   ({ matchBlock } = Extensions.IndentBlocks);
   upToButNotEol = /[^\n]*/y;
   return function() {
@@ -35,12 +38,14 @@ Caf.defMod(module, () => {
       ],
       structuredLiteral: ["object", "array"]
     });
-    this.rule({ newInstance: "new _ expressionWithoutBinOps" }, {
-      stnFactory: "NewInstanceStn"
-    });
-    this.rule({ throwExpression: "throw _ expressionWithoutBinOps" }, {
-      stnFactory: "ThrowStn"
-    });
+    this.rule(
+      { newInstance: "new _ expressionWithoutBinOps" },
+      { stnFactory: "NewInstanceStn" }
+    );
+    this.rule(
+      { throwExpression: "throw _ expressionWithoutBinOps" },
+      { stnFactory: "ThrowStn" }
+    );
     return this.rule({
       expressionWithOneLessBlock: {
         parse: function(parentNode) {
@@ -58,21 +63,24 @@ Caf.defMod(module, () => {
           originalOffset = offset;
           upToButNotEol.lastIndex = offset;
           return (match = upToButNotEol.exec(source))
-            ? ([m] = match, endOffset = offset += m.length, (() => {
-                while (match = matchBlock(source, offset)) {
-                  endOffset = offset;
-                  ({ matchLength } = match);
-                  offset += matchLength;
-                }
-              })(), expressionSource = source.slice(
-                originalOffset,
-                endOffset
-              ), parentNode.subparse(expressionSource, {
-                allowPartialMatch: true,
-                rule: "implicitArrayOrExpression",
-                originalOffset,
-                originalMatchLength: endOffset - originalOffset
-              }))
+            ? (
+                ([m] = match),
+                (endOffset = offset += m.length),
+                (() => {
+                  while ((match = matchBlock(source, offset))) {
+                    endOffset = offset;
+                    ({ matchLength } = match);
+                    offset += matchLength;
+                  }
+                })(),
+                (expressionSource = source.slice(originalOffset, endOffset)),
+                parentNode.subparse(expressionSource, {
+                  allowPartialMatch: true,
+                  rule: "implicitArrayOrExpression",
+                  originalOffset,
+                  originalMatchLength: endOffset - originalOffset
+                })
+              )
             : undefined;
         }
       }

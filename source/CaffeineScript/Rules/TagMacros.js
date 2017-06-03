@@ -2,10 +2,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StnRegistry, upperCamelCase, Error;
-  ({ upperCamelCase, Error } = Caf.import(["upperCamelCase", "Error"], [
-    require("../StandardImport"),
-    global
-  ]));
+  ({ upperCamelCase, Error } = Caf.import(
+    ["upperCamelCase", "Error"],
+    [require("../StandardImport"), global]
+  ));
   StnRegistry = require("../StnRegistry");
   return {
     tagMacro: {

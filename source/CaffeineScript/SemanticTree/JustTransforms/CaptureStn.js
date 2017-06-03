@@ -3,7 +3,7 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTree, CaptureStn;
   SemanticTree = require("../../StnRegistry");
-  return CaptureStn = Caf.defClass(
+  return (CaptureStn = Caf.defClass(
     class CaptureStn extends require("../BaseStn") {},
     function(CaptureStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
@@ -22,5 +22,5 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });

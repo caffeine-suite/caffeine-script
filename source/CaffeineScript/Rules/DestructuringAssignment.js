@@ -4,7 +4,8 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        destructuringAssignment: "structure:destructuringTarget _? '=' _? value:requiredValue"
+        destructuringAssignment:
+          "structure:destructuringTarget _? '=' _? value:requiredValue"
       },
       { stnFactory: "DestructuringAssignmentStn" }
     );
@@ -15,13 +16,15 @@ Caf.defMod(module, () => {
       { objectDestructuring: "'{' _? objectDestructuringList _? '}'" },
       { stnFactory: "ObjectDestructuringStn" }
     );
-    this.rule({ arrayDestructuring: "'[' _? arrayDestructuringList _? ']'" }, {
-      stnFactory: "ArrayDestructuringStn"
-    });
+    this.rule(
+      { arrayDestructuring: "'[' _? arrayDestructuringList _? ']'" },
+      { stnFactory: "ArrayDestructuringStn" }
+    );
     this.rule({
       arrayDestructuringList: [
         {
-          pattern: "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+          pattern:
+            "element:arrayDestructuringElement _comma_ arrayDestructuringList"
         },
         { pattern: "element:arrayDestructuringElement" }
       ],
@@ -33,7 +36,8 @@ Caf.defMod(module, () => {
     this.rule({
       objectDestructuringList: [
         {
-          pattern: "element:objectDestructuringElement _comma_ objectDestructuringList"
+          pattern:
+            "element:objectDestructuringElement _comma_ objectDestructuringList"
         },
         { pattern: "element:objectDestructuringElement" }
       ],
@@ -44,7 +48,8 @@ Caf.defMod(module, () => {
     });
     this.rule(
       {
-        labeledDestructuringTarget: "identifier _? ':' _? arrayDestructuringElement"
+        labeledDestructuringTarget:
+          "identifier _? ':' _? arrayDestructuringElement"
       },
       { stnFactory: "LabeledDestructuringTargetStn" }
     );
@@ -64,7 +69,8 @@ Caf.defMod(module, () => {
     );
     this.rule(
       {
-        destructuringIdentifier: "identifier destructuringDefault:destructuringDefault?"
+        destructuringIdentifier:
+          "identifier destructuringDefault:destructuringDefault?"
       },
       { stnFactory: "DestructuringIdentifierStn" }
     );

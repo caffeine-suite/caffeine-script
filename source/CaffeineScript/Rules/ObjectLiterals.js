@@ -4,17 +4,17 @@ Caf.defMod(module, () => {
   let IndentBlocks, ObjectStn, Extensions, cafParentImports;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    cafParentImports = [
+    (cafParentImports = [
       require("../StandardImport"),
       require("babel-bridge"),
       require("../StnRegistry"),
       global
-    ]
+    ])
   ));
-  ({ IndentBlocks, ObjectStn } = Caf.import(["IndentBlocks", "ObjectStn"], [
-    Extensions,
-    cafParentImports
-  ]));
+  ({ IndentBlocks, ObjectStn } = Caf.import(
+    ["IndentBlocks", "ObjectStn"],
+    [Extensions, cafParentImports]
+  ));
   return function() {
     this.rule({
       object: ["implicitObject", "explicitObject"],
@@ -34,10 +34,12 @@ Caf.defMod(module, () => {
         ],
         bracketedObject: "openCurly_ props:explicitPropertyList _closeCurly",
         multilineImplicitObject: {
-          pattern: "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
+          pattern:
+            "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
         },
         multilineExplicitObject: {
-          pattern: '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
+          pattern:
+            '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
         }
       },
       {
@@ -51,8 +53,10 @@ Caf.defMod(module, () => {
       }
     );
     this.rule({
-      multilineImplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
-      multilineExplicitObjectExtension: "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
+      multilineImplicitObjectExtension:
+        "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
+      multilineExplicitObjectExtension:
+        "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
       objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
         rule: "singleOrMultilineExplicitObject"
       }),
@@ -76,7 +80,8 @@ Caf.defMod(module, () => {
       {
         literalProp: "propName _colon_ propValue:literal",
         valueProp: "propName _colon_ propValue:expression",
-        valuePropWithComplexExpression: "propName _colon_ propValue:requiredValue"
+        valuePropWithComplexExpression:
+          "propName _colon_ propValue:requiredValue"
       },
       { name: "literalObjectProperty", stnFactory: "ObjectPropValueStn" }
     );

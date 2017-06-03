@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let FunctionDefinitionArgStn;
-  return FunctionDefinitionArgStn = Caf.defClass(
+  return (FunctionDefinitionArgStn = Caf.defClass(
     class FunctionDefinitionArgStn extends require("../BaseStn") {
       constructor(props, children) {
         super(...arguments);
@@ -36,5 +36,5 @@ Caf.defMod(module, () => {
         )}`;
       };
     }
-  );
+  ));
 });

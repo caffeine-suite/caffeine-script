@@ -2,15 +2,16 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let getPropertySetters, Extensions, Error;
-  ({ Extensions, Error } = Caf.import(["Extensions", "Error"], [
-    require("../StandardImport"),
-    require("babel-bridge"),
-    global
-  ]));
+  ({ Extensions, Error } = Caf.import(
+    ["Extensions", "Error"],
+    [require("../StandardImport"), require("babel-bridge"), global]
+  ));
   getPropertySetters = function(node, list = []) {
     let prop;
     if (node) {
-      if (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty()) {
+      if (
+        (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty())
+      ) {
         list.push(prop);
       } else {
         Caf.each(node.matches, undefined, (match, k, into) => {
@@ -24,7 +25,8 @@ Caf.defMod(module, () => {
     this.rule(
       {
         functionDefinition: {
-          pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+          pattern:
+            "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
         }
       },
       {
@@ -52,9 +54,10 @@ Caf.defMod(module, () => {
     this.rule({
       functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
     });
-    this.rule({ argsDefinition: "openParen_ argDefList? _closeParen" }, {
-      stnFactory: "FunctionDefinitionArgsStn"
-    });
+    this.rule(
+      { argsDefinition: "openParen_ argDefList? _closeParen" },
+      { stnFactory: "FunctionDefinitionArgsStn" }
+    );
     this.rule({
       argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
     });
@@ -70,8 +73,10 @@ Caf.defMod(module, () => {
         stnProps: function() {
           let cafBase;
           return {
-            rest: !!(Caf.exists(cafBase = this.argIdentifierExtension) &&
-              cafBase.ellipsis),
+            rest: !!(
+              Caf.exists((cafBase = this.argIdentifierExtension)) &&
+              cafBase.ellipsis
+            ),
             assignThisProperty: !!this.at
           };
         }
@@ -102,7 +107,7 @@ Caf.defMod(module, () => {
         },
         stnChildren: function() {
           let cafBase;
-          return Caf.exists(cafBase = this.values) && cafBase.getStn();
+          return Caf.exists((cafBase = this.values)) && cafBase.getStn();
         }
       }
     );

@@ -12,32 +12,35 @@ Caf.defMod(module, () => {
     ]
   ));
   StnRegistry = require("./StnRegistry");
-  return CafParseNodeBaseClass = Caf.defClass(
+  return (CafParseNodeBaseClass = Caf.defClass(
     class CafParseNodeBaseClass extends Nodes.Node {},
     function(CafParseNodeBaseClass, classSuper, instanceSuper) {
       this._createSubclassBase = function() {
         let NodeSubclass;
-        return NodeSubclass = Caf.defClass(class NodeSubclass extends this {});
+        return (NodeSubclass = Caf.defClass(
+          class NodeSubclass extends this {}
+        ));
       };
       this.prototype.isImplicitArray = function() {
         return !!this.getImplicitArray();
       };
       this.prototype.getImplicitArray = function() {
-        return Caf.extendedEach(this.matches, undefined, (
-          match,
-          k,
-          into,
-          brk
-        ) => {
-          let cafRet;
-          return (cafRet = Caf.isF(match.getImplicitArray) &&
-            match.getImplicitArray()) &&
-            (brk(), cafRet);
-        });
+        return Caf.extendedEach(
+          this.matches,
+          undefined,
+          (match, k, into, brk) => {
+            let cafRet;
+            return (
+              (cafRet =
+                Caf.isF(match.getImplicitArray) && match.getImplicitArray()) &&
+              (brk(), cafRet)
+            );
+          }
+        );
       };
       this.prototype.getMatchStns = function() {
         return Caf.each(this.matches, [], (m, k, into) => {
-          if (m = Caf.isF(m.getStn) && m.getStn()) {
+          if ((m = Caf.isF(m.getStn) && m.getStn())) {
             into.push(m);
           }
         });
@@ -49,7 +52,7 @@ Caf.defMod(module, () => {
         return this.stnChildren
           ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
           : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
-              if (m = m.getStn(left)) {
+              if ((m = m.getStn(left))) {
                 into.push(m);
               }
             });
@@ -57,9 +60,11 @@ Caf.defMod(module, () => {
       this.getter({
         isStnExtension: function() {
           let cafBase;
-          return this.stnExtension ||
-            Caf.exists(cafBase = this.presentMatches[0]) &&
-              cafBase.isStnExtension;
+          return (
+            this.stnExtension ||
+            (Caf.exists((cafBase = this.presentMatches[0])) &&
+              cafBase.isStnExtension)
+          );
         },
         stnExtensionMatches: function() {
           return Caf.each(this.presentMatches, [], (m, k, into) => {
@@ -81,13 +86,14 @@ Caf.defMod(module, () => {
         stn = (factory = this.getStnFactory())
           ? factory(
               { parseTreeNode: this },
-              Caf.isF(this.stnProps) && this.stnProps() || this.stnProps,
+              (Caf.isF(this.stnProps) && this.stnProps()) || this.stnProps,
               left,
               this.getStnChildren()
             )
-          : (x = this.getStnChildren(left), x.length === 1
-              ? x[0]
-              : x.length === 0 ? left : x);
+          : (
+              (x = this.getStnChildren(left)),
+              x.length === 1 ? x[0] : x.length === 0 ? left : x
+            );
         Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
           stn = extension.getStn(stn);
         });
@@ -107,5 +113,5 @@ Caf.defMod(module, () => {
         return this.getTransformedSemanticTree().toJs();
       };
     }
-  );
+  ));
 });

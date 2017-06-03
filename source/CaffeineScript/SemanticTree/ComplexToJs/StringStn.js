@@ -20,7 +20,7 @@ Caf.defMod(module, () => {
     ],
     [require("../../StandardImport"), require("../../Lib"), global]
   ));
-  return StringStn = Caf.defClass(
+  return (StringStn = Caf.defClass(
     class StringStn extends require("../BaseStn") {},
     function(StringStn, classSuper, instanceSuper) {
       this.prototype.toJs = function(options) {
@@ -44,10 +44,10 @@ Caf.defMod(module, () => {
         return this;
       };
       this.prototype.trimLeft = function() {
-        return this.props.value = this.value.trimLeft();
+        return (this.props.value = this.value.trimLeft());
       };
       this.prototype.trimRight = function() {
-        return this.props.value = this.value.trimRight();
+        return (this.props.value = this.value.trimRight());
       };
       this.getter({
         value: function() {
@@ -60,5 +60,5 @@ Caf.defMod(module, () => {
         );
       };
     }
-  );
+  ));
 });

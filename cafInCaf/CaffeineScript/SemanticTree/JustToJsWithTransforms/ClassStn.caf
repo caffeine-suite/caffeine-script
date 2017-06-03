@@ -3,10 +3,10 @@ SemanticTree = &StnRegistry
 
 class ClassStn extends &BaseStn
 
-  updateScope: (@scope) ->
-    {className} = @labeledChildren
-    @scope.addIdentifierAssigned className.toJs()
-    super
+  # updateScope: (@scope) ->
+  #   {className} = @labeledChildren
+  #   @scope.addIdentifierAssigned className.toJs()
+  #   super
 
   transform: ->
     {className, classExtends, body} = @labeledChildren
@@ -81,9 +81,12 @@ class ClassStn extends &BaseStn
       children = compactFlatten [className, classExtends, body, classBody]
     else
       children = @transformChildren()
-    new ClassStn
-      merge @props, classSuperHandle: classSuperHandle, instanceSuperHandle: instanceSuperHandle
-      children
+
+    new AssignmentStn
+      new IdentifierStn identifier: className.toJs()
+      new ClassStn
+        merge @props, classSuperHandle: classSuperHandle, instanceSuperHandle: instanceSuperHandle
+        children
 
   toJs: ->
     {className, classExtends, body, classBody} = @labeledChildren
@@ -92,7 +95,7 @@ class ClassStn extends &BaseStn
     # NOTE: without an 'extends' class, JavaScript extends Funciton, not Object
     # AND 'super' is illegal
     # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
-    out = "#{className} = Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
+    out = "Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
 
     classBodyJs = "{#{classBody?.toJs()||''}}"
 

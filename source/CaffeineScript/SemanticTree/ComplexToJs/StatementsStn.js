@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let StatementsStn;
-  return StatementsStn = Caf.defClass(
+  return (StatementsStn = Caf.defClass(
     class StatementsStn extends require("../BaseStn") {},
     function(StatementsStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -36,25 +36,26 @@ Caf.defMod(module, () => {
         if (returnAction === true) {
           returnAction = "return";
         }
-        return Caf.each(lines = this.children, [], (c, i, into) => {
+        return Caf.each((lines = this.children), [], (c, i, into) => {
           let statement;
           into.push(
             returnAction && i === lines.length - 1
               ? !c.jsExpressionUsesReturn
-                  ? `${Caf.toString(returnAction)} ${Caf.toString(
-                      c.toJsExpression()
-                    )}`
-                  : c.toJs({ generateReturnStatement: true })
+                ? `${Caf.toString(returnAction)} ${Caf.toString(
+                    c.toJsExpression()
+                  )}`
+                : c.toJs({ generateReturnStatement: true })
               : generateStatements
-                  ? (statement = c.toJs({ statement: true }), statement.match(
-                      /^function/
-                    )
+                ? (
+                    (statement = c.toJs({ statement: true })),
+                    statement.match(/^function/)
                       ? this.applyRequiredParens(statement)
-                      : statement)
-                  : c.toJsExpression({ returnValueIsIgnored: true })
+                      : statement
+                  )
+                : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });
       };
     }
-  );
+  ));
 });

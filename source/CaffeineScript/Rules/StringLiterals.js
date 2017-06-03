@@ -77,7 +77,8 @@ Caf.defMod(module, () => {
           "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
           "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
         ],
-        stringBlockBody: "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
+        stringBlockBody:
+          "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
@@ -85,7 +86,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolation) &&
+          Caf.exists((cafBase = this.interpolation)) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         },
@@ -109,9 +110,12 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        dqStringInterpolation: "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
-        sqStringInterpolation: "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
-        blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
+        dqStringInterpolation:
+          "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
+        sqStringInterpolation:
+          "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
+        blockStringInterpolation:
+          "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
       },
       {
         getStnChildren: function(appendTo = []) {
@@ -120,7 +124,7 @@ Caf.defMod(module, () => {
           if (this.mid.matchLength > 0) {
             appendTo.push(StringStn({ value: this.mid.toString() }));
           }
-          Caf.exists(cafBase = this.interpolationContinues) &&
+          Caf.exists((cafBase = this.interpolationContinues)) &&
             cafBase.getStnChildren(appendTo);
           return appendTo;
         }

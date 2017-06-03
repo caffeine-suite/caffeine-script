@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   return function(toExtend) {
     let ScopeStnMixin;
-    return ScopeStnMixin = Caf.defClass(
+    return (ScopeStnMixin = Caf.defClass(
       class ScopeStnMixin extends toExtend {
         constructor() {
           super(...arguments);
@@ -41,25 +41,26 @@ Caf.defMod(module, () => {
               "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
             );
           }
-          return this.identifiersUsed[identifier] = true;
+          return (this.identifiersUsed[identifier] = true);
         };
         this.prototype.addArgumentName = function(identifier) {
-          return this.argumentNames[identifier] = true;
+          return (this.argumentNames[identifier] = true);
         };
         this.prototype.addIdentifierAssigned = function(
           identifier,
           initializer
         ) {
           return identifier
-            ? (this._boundUniqueIdentifiers
-                ? (() => {
-                    throw new Error(
-                      "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                    );
-                  })()
-                : undefined, this.identifiersAssigned[
-                identifier
-              ] = initializer || true)
+            ? (
+                this._boundUniqueIdentifiers
+                  ? (() => {
+                      throw new Error(
+                        "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                      );
+                    })()
+                  : undefined,
+                (this.identifiersAssigned[identifier] = initializer || true)
+              )
             : undefined;
         };
         this.getter({
@@ -76,7 +77,7 @@ Caf.defMod(module, () => {
         });
         this.prototype.addUniqueIdentifierHandle = function(uih) {
           return !uih.scope
-            ? (uih.scope = this, this.uniqueIdentifierHandles.push(uih), uih)
+            ? ((uih.scope = this), this.uniqueIdentifierHandles.push(uih), uih)
             : undefined;
         };
         this.prototype.bindUniqueIdentifier = function(
@@ -104,21 +105,26 @@ Caf.defMod(module, () => {
                   ]
                 }
               })
-            : (identifiersUsed = this.identifiersUsedOrAssigned, !identifiersUsed[
-                preferredName
-              ]
-                ? preferredName
-                : (count = 0, (() => {
-                    while (
-                      identifiersUsed[
-                        name = `${Caf.toString(preferredName)}${Caf.toString(
-                          count += 1
-                        )}`
-                      ]
-                    ) {
-                      name;
-                    }
-                  })(), name));
+            : (
+                (identifiersUsed = this.identifiersUsedOrAssigned),
+                !identifiersUsed[preferredName]
+                  ? preferredName
+                  : (
+                      (count = 0),
+                      (() => {
+                        while (
+                          identifiersUsed[
+                            (name = `${Caf.toString(
+                              preferredName
+                            )}${Caf.toString((count += 1))}`)
+                          ]
+                        ) {
+                          name;
+                        }
+                      })(),
+                      name
+                    )
+              );
         };
         this.prototype.addChildScope = function(child) {
           return !(child === this)
@@ -127,13 +133,13 @@ Caf.defMod(module, () => {
         };
         this.prototype.bindAllUniqueIdentifiersRequested = function() {
           return this._uniqueIdentifierHandles
-            ? Caf.each(this._uniqueIdentifierHandles, undefined, (
-                uniqueIdentifierHandle,
-                k,
-                into
-              ) => {
-                uniqueIdentifierHandle.identifier;
-              })
+            ? Caf.each(
+                this._uniqueIdentifierHandles,
+                undefined,
+                (uniqueIdentifierHandle, k, into) => {
+                  uniqueIdentifierHandle.identifier;
+                }
+              )
             : undefined;
         };
         this.prototype.getAutoLets = function() {
@@ -149,84 +155,97 @@ Caf.defMod(module, () => {
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
-            ? (identifiers = Caf.each(identifiers, [], (
-                identifier,
-                k,
-                into
-              ) => {
-                if (identifier.match(/=/)) {
-                  into.push(identifier);
-                }
-              }), identifiers.length > 0
-                ? `${Caf.toString(identifiers.join("; "))}`
-                : undefined)
+            ? (
+                (identifiers = Caf.each(
+                  identifiers,
+                  [],
+                  (identifier, k, into) => {
+                    if (identifier.match(/=/)) {
+                      into.push(identifier);
+                    }
+                  }
+                )),
+                identifiers.length > 0
+                  ? `${Caf.toString(identifiers.join("; "))}`
+                  : undefined
+              )
             : undefined;
         };
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
           this.bindAllUniqueIdentifiersRequested();
           this.scope.addChildScope(this);
-          Caf.each(this.getChildrenToUpdateScope(), undefined, (
-            child,
-            k,
-            into
-          ) => {
-            child.updateScope(this);
-          });
-          return this._scopeUpdated = true;
+          Caf.each(
+            this.getChildrenToUpdateScope(),
+            undefined,
+            (child, k, into) => {
+              child.updateScope(this);
+            }
+          );
+          return (this._scopeUpdated = true);
         };
         this.getter({
           childrenToUpdateScope: function() {
             return this.children;
           },
           uniqueIdentifierHandles: function() {
-            return this._uniqueIdentifierHandles ||
-              (this._uniqueIdentifierHandles = []);
+            return (
+              this._uniqueIdentifierHandles ||
+              (this._uniqueIdentifierHandles = [])
+            );
           },
           boundUniqueIdentifiers: function() {
-            return this._boundUniqueIdentifiers ||
-              (this._boundUniqueIdentifiers = {});
+            return (
+              this._boundUniqueIdentifiers ||
+              (this._boundUniqueIdentifiers = {})
+            );
           },
           requiredIdentifierLets: function() {
             let identifiersAssignedInParentScopes;
             ({ identifiersAssignedInParentScopes } = this);
-            return Caf.each(this.identifiersAssigned, [], (
-              initializer,
-              identifier,
-              into
-            ) => {
-              if (
-                !identifiersAssignedInParentScopes ||
-                !identifiersAssignedInParentScopes[identifier]
-              ) {
-                into.push(
-                  isString(initializer)
-                    ? `${Caf.toString(identifier)} = ${Caf.toString(
-                        initializer
-                      )}`
-                    : initializer.toJsExpression != null
+            return Caf.each(
+              this.identifiersAssigned,
+              [],
+              (initializer, identifier, into) => {
+                if (
+                  !identifiersAssignedInParentScopes ||
+                  !identifiersAssignedInParentScopes[identifier]
+                ) {
+                  into.push(
+                    isString(initializer)
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer
+                        )}`
+                      : initializer.toJsExpression != null
                         ? `${Caf.toString(identifier)} = ${Caf.toString(
                             initializer.toJsExpression()
                           )}`
                         : identifier
-                );
+                  );
+                }
               }
-            });
+            );
           },
           argumentNames: function() {
             let cafBase;
-            return (cafBase = this.props).argumentNames ||
-              (cafBase.argumentNames = {});
+            return (
+              (cafBase = this.props).argumentNames ||
+              (cafBase.argumentNames = {})
+            );
           },
           identifiersUsed: function() {
             let cafBase;
-            return (cafBase = this.props).identifiersUsed ||
-              (cafBase.identifiersUsed = {});
+            return (
+              (cafBase = this.props).identifiersUsed ||
+              (cafBase.identifiersUsed = {})
+            );
           },
           identifiersAssigned: function() {
             let cafBase;
-            return (cafBase = this.props).identifiersAssigned ||
-              (cafBase.identifiersAssigned = {});
+            return (
+              (cafBase = this.props).identifiersAssigned ||
+              (cafBase.identifiersAssigned = {})
+            );
           },
           identifiersUsedOrAssigned: function() {
             let out, scope, notDone;
@@ -254,7 +273,7 @@ Caf.defMod(module, () => {
             Caf.each(this.childScopes, undefined, (childScope, k, into) => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
-            return this.props.identifiersUsedButNotAssigned = ret;
+            return (this.props.identifiersUsedButNotAssigned = ret);
           },
           identifiersAssignedInParentThisOrChildrenScopes: function() {
             return merge(
@@ -273,6 +292,6 @@ Caf.defMod(module, () => {
           }
         });
       }
-    );
+    ));
   };
 });

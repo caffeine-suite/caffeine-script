@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
     [require("../StandardImport"), global]
   ));
-  return UniqueIdentifierHandle = Caf.defClass(
+  return (UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {
       constructor(preferredName, scope) {
         super(...arguments);
@@ -26,16 +26,18 @@ Caf.defMod(module, () => {
           );
         },
         identifier: function() {
-          return this._identifier ||
+          return (
+            this._identifier ||
             (this._identifier = this.scope.bindUniqueIdentifier(
               this.preferredName,
               this
-            ));
+            ))
+          );
         }
       });
       this.prototype.toString = function() {
         return this.identifier;
       };
     }
-  );
+  ));
 });

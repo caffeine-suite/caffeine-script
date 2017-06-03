@@ -6,18 +6,19 @@ Caf.defMod(module, () => {
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
     [require("./StandardImport"), global]
   ));
-  return StnRegistry = Caf.defClass(
+  return (StnRegistry = Caf.defClass(
     class StnRegistry extends BaseClass {},
     function(StnRegistry, classSuper, instanceSuper) {
       this.register = function(stn) {
-        return this[stn.class.getName()] = stn;
+        return (this[stn.class.getName()] = stn);
       };
       this.get = function(stnFactoryName) {
         let out;
         return isFunction(stnFactoryName)
           ? stnFactoryName
           : isString(stnFactoryName)
-              ? (!(out = this[stnFactoryName])
+            ? (
+                !(out = this[stnFactoryName])
                   ? (() => {
                       throw new Error(
                         `stnFactoryName not found: ${Caf.toString(
@@ -25,9 +26,11 @@ Caf.defMod(module, () => {
                         )}`
                       );
                     })()
-                  : undefined, out)
-              : undefined;
+                  : undefined,
+                out
+              )
+            : undefined;
       };
     }
-  );
+  ));
 });

@@ -23,9 +23,11 @@ Caf.defMod(module, () => {
         } catch (cafError) {
           e = cafError;
           if (
-            !(e.location != null ||
+            !(
+              e.location != null ||
               e.sourceFile != null ||
-              e.message.match(/parse|expect/i))
+              e.message.match(/parse|expect/i)
+            )
           ) {
             log.error({ parseTree, stn, transformedStn });
           }

@@ -153,3 +153,8 @@ module.exports = suite: parseTestSuite
       Foo = (function() {let b; Caf.defClass(class Foo extends Object
         {constructor(a = b) {super(...arguments);}},
         function(Foo, classSuper, instanceSuper) {b = [];}))();"
+
+    """
+    class FooWithDot
+    .bar
+    """: "let FooWithDot; (FooWithDot = Caf.defClass(class FooWithDot extends Object {})).bar;"

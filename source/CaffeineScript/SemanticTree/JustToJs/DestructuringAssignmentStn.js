@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let DestructuringAssignmentStn;
-  return DestructuringAssignmentStn = Caf.defClass(
+  return (DestructuringAssignmentStn = Caf.defClass(
     class DestructuringAssignmentStn extends require("../BaseStn") {},
     function(DestructuringAssignmentStn, classSuper, instanceSuper) {
       this.prototype.toJs = function() {
@@ -13,5 +13,5 @@ Caf.defMod(module, () => {
         )})`;
       };
     }
-  );
+  ));
 });

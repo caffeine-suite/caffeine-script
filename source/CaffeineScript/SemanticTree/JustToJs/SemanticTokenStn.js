@@ -2,11 +2,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let SemanticTokenStn, Error, formattedInspect;
-  ({ Error, formattedInspect } = Caf.import(["Error", "formattedInspect"], [
-    require("../../StandardImport"),
-    global
-  ]));
-  return SemanticTokenStn = Caf.defClass(
+  ({ Error, formattedInspect } = Caf.import(
+    ["Error", "formattedInspect"],
+    [require("../../StandardImport"), global]
+  ));
+  return (SemanticTokenStn = Caf.defClass(
     class SemanticTokenStn extends require("../BaseStn") {
       constructor() {
         let cafBase;
@@ -31,5 +31,5 @@ Caf.defMod(module, () => {
         })();
       };
     }
-  );
+  ));
 });

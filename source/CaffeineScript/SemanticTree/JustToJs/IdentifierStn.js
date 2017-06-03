@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let IdentifierStn;
-  return IdentifierStn = Caf.defClass(
+  return (IdentifierStn = Caf.defClass(
     class IdentifierStn extends require("../BaseStn") {},
     function(IdentifierStn, classSuper, instanceSuper) {
       this.getter({
@@ -28,5 +28,5 @@ Caf.defMod(module, () => {
         return (this.props.identifierHandle || this.props).identifier;
       };
     }
-  );
+  ));
 });

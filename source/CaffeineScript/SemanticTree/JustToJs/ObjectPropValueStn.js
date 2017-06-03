@@ -2,12 +2,12 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let identifierRegexp, ObjectPropValueStn, peek, Error;
-  ({ peek, Error } = Caf.import(["peek", "Error"], [
-    require("../../StandardImport"),
-    global
-  ]));
+  ({ peek, Error } = Caf.import(
+    ["peek", "Error"],
+    [require("../../StandardImport"), global]
+  ));
   identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/;
-  return ObjectPropValueStn = Caf.defClass(
+  return (ObjectPropValueStn = Caf.defClass(
     class ObjectPropValueStn extends require("../BaseStn") {},
     function(ObjectPropValueStn, classSuper, instanceSuper) {
       this.getter({ isObject: true });
@@ -39,5 +39,5 @@ Caf.defMod(module, () => {
           : `${Caf.toString(propertyName)}: ${Caf.toString(valueJs)}`;
       };
     }
-  );
+  ));
 });

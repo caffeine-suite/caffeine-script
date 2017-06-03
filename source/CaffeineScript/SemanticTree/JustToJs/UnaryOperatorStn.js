@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let UnaryOperatorStn;
-  return UnaryOperatorStn = Caf.defClass(
+  return (UnaryOperatorStn = Caf.defClass(
     class UnaryOperatorStn extends require("../BaseStn") {},
     function(UnaryOperatorStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
@@ -16,5 +16,5 @@ Caf.defMod(module, () => {
             )}`;
       };
     }
-  );
+  ));
 });

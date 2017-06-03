@@ -2,11 +2,11 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let CatchStn, compactFlatten;
-  ({ compactFlatten } = Caf.import(["compactFlatten"], [
-    require("../../StandardImport"),
-    global
-  ]));
-  return CatchStn = Caf.defClass(
+  ({ compactFlatten } = Caf.import(
+    ["compactFlatten"],
+    [require("../../StandardImport"), global]
+  ));
+  return (CatchStn = Caf.defClass(
     class CatchStn extends require("../BaseStn") {},
     function(CatchStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
@@ -29,10 +29,9 @@ Caf.defMod(module, () => {
         ({ expression } = options);
         ({ errorIdentifier, body } = this.labeledChildren);
         body = body && (expression ? body.toFunctionBodyJs() : body.toJs());
-        errorIdentifierString = Caf.exists(
-          cafBase = this.uniqueIdentifierHandle
-        ) &&
-          cafBase.identifier ||
+        errorIdentifierString =
+          (Caf.exists((cafBase = this.uniqueIdentifierHandle)) &&
+            cafBase.identifier) ||
           "cafError";
         if (errorIdentifier) {
           body = compactFlatten([
@@ -48,5 +47,5 @@ Caf.defMod(module, () => {
         )}}`;
       };
     }
-  );
+  ));
 });

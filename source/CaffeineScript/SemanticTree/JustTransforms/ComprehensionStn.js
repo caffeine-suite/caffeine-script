@@ -13,9 +13,10 @@ Caf.defMod(module, () => {
   ));
   SemanticTree = require("../../StnRegistry");
   UniqueIdentifierHandle = require("../UniqueIdentifierHandle");
-  return ComprehensionStn = Caf.defClass(
-    class ComprehensionStn
-      extends require("../ScopeStnMixin")(require("../BaseStn")) {},
+  return (ComprehensionStn = Caf.defClass(
+    class ComprehensionStn extends require("../ScopeStnMixin")(
+      require("../BaseStn")
+    ) {},
     function(ComprehensionStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
         let outputType,
@@ -95,21 +96,24 @@ Caf.defMod(module, () => {
           }
         })();
         variableDefinition = FunctionDefinitionArgsStn(
-          valueVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[0] ||
+          (valueVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[0]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: valueIdentifer })
-            ),
-          keyVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[1] ||
+            )),
+          (keyVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[1]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: keyIdentifer })
-            ),
-          intoVarDef = Caf.exists(variableDefinition) &&
-            variableDefinition.children[2] ||
+            )),
+          (intoVarDef =
+            (Caf.exists(variableDefinition) &&
+              variableDefinition.children[2]) ||
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: intoIdentifer })
-            ),
+            )),
           useExtendedEach &&
             FunctionDefinitionArgStn(
               IdentifierStn({ identifier: brkIdentifer })
@@ -118,11 +122,14 @@ Caf.defMod(module, () => {
         if (outputType === "object" || outputType === "array") {
           lastBodyStatement = body
             ? body.className === "StatementsStn"
-                ? (bodyStatementsExceptLast = arrayWithAllButLast(
+              ? (
+                  (bodyStatementsExceptLast = arrayWithAllButLast(
                     body.children
-                  ), peek(body.children))
-                : body
-            : (bodyStatementsExceptLast = null, ValueStn(valueVarDef));
+                  )),
+                  peek(body.children)
+                )
+              : body
+            : ((bodyStatementsExceptLast = null), ValueStn(valueVarDef));
         } else {
           bodyWithDefault = body || ValueStn(valueVarDef);
         }
@@ -201,39 +208,46 @@ Caf.defMod(module, () => {
                 case "find":
                   return whenClause
                     ? body
-                        ? BinaryOperatorStn(
-                            { operator: "&&" },
-                            whenClause,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              body
-                            )
+                      ? BinaryOperatorStn(
+                          { operator: "&&" },
+                          whenClause,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            body
                           )
-                        : BinaryOperatorStn(
-                            { operator: "&&" },
-                            whenClause,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              valueVarDef
-                            )
+                        )
+                      : BinaryOperatorStn(
+                          { operator: "&&" },
+                          whenClause,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            valueVarDef
                           )
+                        )
                     : body
-                        ? (body.type === "Statements" &&
-                            body.children.length > 1
-                            ? (allButLast = StatementsStn(
-                                body.children.slice(0, body.children.length - 1)
-                              ), body = peek(body.children))
-                            : undefined, foundTest = BinaryOperatorStn(
+                      ? (
+                          body.type === "Statements" && body.children.length > 1
+                            ? (
+                                (allButLast = StatementsStn(
+                                  body.children.slice(
+                                    0,
+                                    body.children.length - 1
+                                  )
+                                )),
+                                (body = peek(body.children))
+                              )
+                            : undefined,
+                          (foundTest = BinaryOperatorStn(
                             { operator: "&&" },
                             AssignmentStn(
                               IdentifierStn({
-                                identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle(
+                                identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
                                   "_ret"
-                                )
+                                ))
                               }),
                               body
                             ),
@@ -245,24 +259,26 @@ Caf.defMod(module, () => {
                                 identifierHandle: baseIdentifierHandle
                               })
                             )
-                          ), allButLast
+                          )),
+                          allButLast
                             ? StatementsStn(allButLast, foundTest)
-                            : foundTest)
-                        : BinaryOperatorStn(
-                            { operator: "&&" },
-                            valueVarDef,
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              valueVarDef
-                            )
-                          );
+                            : foundTest
+                        )
+                      : BinaryOperatorStn(
+                          { operator: "&&" },
+                          valueVarDef,
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
+                            ),
+                            valueVarDef
+                          )
+                        );
               }
             })()
           )
         );
       };
     }
-  );
+  ));
 });

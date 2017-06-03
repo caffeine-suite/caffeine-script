@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let ArrayStn;
-  return ArrayStn = Caf.defClass(
+  return (ArrayStn = Caf.defClass(
     class ArrayStn extends require("../BaseStn") {
       constructor(props, children) {
         if (children.length === 1 && children[0].props.implicitArray) {
@@ -20,16 +20,14 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let out;
         out = `[${Caf.toString(
-          Caf
-            .each(this.children, [], (c, k, into) => {
-              into.push(c.toJsExpression());
-            })
-            .join(", ")
+          Caf.each(this.children, [], (c, k, into) => {
+            into.push(c.toJsExpression());
+          }).join(", ")
         )}]`;
         return Caf.exists(options) && options.dotBase
           ? `(${Caf.toString(out)})`
           : out;
       };
     }
-  );
+  ));
 });
