@@ -9,15 +9,20 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({
       value: "valueBase blockValueExtension*",
-      valueBase: ["assignableValue assignmentExtension?", "nonAssignableValue"],
+      valueBase: [
+        ":functionInvocation !accessorExtension",
+        "assignableValue assignmentExtension?",
+        "parentheticalExpression",
+        "simpleNonAssignableValue"
+      ],
       simpleAssignableValue: ["thisProperty", "identifierReference"],
       assignableValue: [
-        "simpleAssignableValue assignableValueExtension* !functionInvocationExtension",
-        "'(' _? assignableValue _? ')' assignableValueExtension* !functionInvocationExtension",
-        "parentheticalExpression assignableValueExtension+",
-        "nonAssignableValue assignableValueExtension+"
+        "simpleAssignableValue accessorExtension* !functionInvocationExtension",
+        "'(' _? assignableValue _? ')' accessorExtension* !functionInvocationExtension",
+        "parentheticalExpression accessorExtension+",
+        "nonAssignableValue accessorExtension+"
       ],
-      assignableValueExtension: ["dotAccessor", "bracketAccessor"],
+      accessorExtension: ["dotAccessor", "bracketAccessor"],
       nonAssignableValue: [
         "functionInvocation",
         "parentheticalExpression",
@@ -37,7 +42,7 @@ Caf.defMod(module, () => {
         "parentheticalExpression extendedFunctionInvocationExtension+"
       ],
       extendedFunctionInvocationExtension:
-        "assignableValueExtension* functionInvocationExtension"
+        "accessorExtension* functionInvocationExtension"
     });
     this.rule({
       parentheticalExpression: "'(' _? expression _? ')'",

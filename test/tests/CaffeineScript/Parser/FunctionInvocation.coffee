@@ -126,3 +126,7 @@ module.exports = suite: parseTestSuite
         d
       """: "a(b, ...c, d);"
 
+
+  regressions:
+    "(a).c()": "a.c();"
+    "(a || b).c()": "(a || b).c();"
