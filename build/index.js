@@ -3283,10 +3283,8 @@ Caf.defMod(module, () => {
     this.rule({
       value: "valueBase blockValueExtension*",
       valueBase: [
-        ":functionInvocation !accessorExtension",
-        "assignableValue assignmentExtension?",
-        "parentheticalExpression",
-        "simpleNonAssignableValue"
+        "nonAssignableValue !accessorExtension",
+        "assignableValue assignmentExtension?"
       ],
       simpleAssignableValue: ["thisProperty", "identifierReference"],
       assignableValue: [
@@ -6233,7 +6231,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.45.2"
+	"version": "0.45.3"
 };
 
 /***/ }),
