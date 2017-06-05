@@ -10,10 +10,8 @@ Caf.defMod(module, () => {
     this.rule({
       value: "valueBase blockValueExtension*",
       valueBase: [
-        ":functionInvocation !accessorExtension",
-        "assignableValue assignmentExtension?",
-        "parentheticalExpression",
-        "simpleNonAssignableValue"
+        "nonAssignableValue !accessorExtension",
+        "assignableValue assignmentExtension?"
       ],
       simpleAssignableValue: ["thisProperty", "identifierReference"],
       assignableValue: [

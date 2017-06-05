@@ -6,20 +6,18 @@ import &StandardImport, &BabelBridge
       "valueBase blockValueExtension*"
 
     valueBase:
-      ":functionInvocation !accessorExtension"
-      "assignableValue assignmentExtension?"
-      :parentheticalExpression
-      :simpleNonAssignableValue
+      "" nonAssignableValue !accessorExtension
+      "" assignableValue assignmentExtension?
 
     simpleAssignableValue:
       :thisProperty
       :identifierReference
 
     assignableValue:
-      "simpleAssignableValue accessorExtension* !functionInvocationExtension"
-      "'(' _? assignableValue _? ')' accessorExtension* !functionInvocationExtension"
-      "parentheticalExpression accessorExtension+"
-      "nonAssignableValue accessorExtension+"
+      "" simpleAssignableValue accessorExtension* !functionInvocationExtension
+      "" '(' _? assignableValue _? ')' accessorExtension* !functionInvocationExtension
+      "" parentheticalExpression accessorExtension+
+      "" nonAssignableValue accessorExtension+
 
     accessorExtension: :dotAccessor :bracketAccessor
     nonAssignableValue:
@@ -40,14 +38,14 @@ import &StandardImport, &BabelBridge
       :super
 
     functionInvocation:
-      "simpleValue extendedFunctionInvocationExtension+"
-      "parentheticalExpression extendedFunctionInvocationExtension+"
+      "" simpleValue extendedFunctionInvocationExtension+
+      "" parentheticalExpression extendedFunctionInvocationExtension+
 
     extendedFunctionInvocationExtension:
-      "accessorExtension* functionInvocationExtension"
+      "" accessorExtension* functionInvocationExtension
 
   @rule
-    parentheticalExpression: "'(' _? expression _? ')'"
+    parentheticalExpression: "" '(' _? expression _? ')'
     valueExtension: :dotAccessor :bracketAccessor :functionInvocationExtension :blockValueExtension
 
   @rule
@@ -62,7 +60,7 @@ import &StandardImport, &BabelBridge
 
   @rule
     globalIdentifier:
-      pattern: /(global|require|module|eval|this)\b/
+      pattern:    /(global|require|module|eval|this)\b/
       stnFactory: :GlobalIdentifierStn
       stnProps: ~> identifier: @text
 
@@ -78,20 +76,20 @@ import &StandardImport, &BabelBridge
       stnProps:   passArguments: true
 
   @rule
-    blockValueExtension: "_? blockValueExtensionBlock"
-    blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "blockValueExtensionSubparse"
+    blockValueExtension: "" _? blockValueExtensionBlock
+    blockValueExtensionBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: :blockValueExtensionSubparse
     blockValueExtensionSubparse:
-      "lineStartComment* &dotOrQuestionDot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end"
-      "lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end"
+      "" lineStartComment* &dotOrQuestionDot valueExtension+ binaryOperatorSequenceExtension? newLineStatementExtension* end
+      "" lineStartComment* lineStartBinaryOperatorAndExpression newLineStatementExtension* end
 
     dotOrQuestionDot: /\??\./
 
   @rule
     requiredValue:
-      "_? _end? implicitArrayOrExpression"
-      "_? rValueBlock"
+      "" _? _end? implicitArrayOrExpression
+      "" _? rValueBlock
 
-    rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: "rValueBlockSubParse"
+    rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: :rValueBlockSubParse
     rValueBlockSubParse:
       pattern: "root"
       getStn: ~>
