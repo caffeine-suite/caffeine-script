@@ -352,29 +352,6 @@ Caf.defMod(module, () => {
       };
       this.prototype.applyRequiredParens = applyRequiredParens;
       this.prototype.applyParens = applyParens;
-      this.getter({
-        normalizedOperand: function() {
-          let op;
-          return (() => {
-            switch ((op = this.props.operand)) {
-              case "and":
-                return "&&";
-              case "or":
-                return "||";
-              case "==":
-              case "is":
-                return "===";
-              case "!=":
-              case "isnt":
-                return "!==";
-              case "not":
-                return "!";
-              default:
-                return op;
-            }
-          })();
-        }
-      });
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         return Caf.each(this.children, undefined, (child, k, into) => {
@@ -1224,6 +1201,16 @@ Caf.defMod(module, () => {
             a
           )}, ${Caf.toString(b)})`;
         },
+        is: function(a, b) {
+          return `${Caf.toString(CoffeeScriptGlobal)}.is(${Caf.toString(
+            a
+          )}, ${Caf.toString(b)})`;
+        },
+        isnt: function(a, b) {
+          return `!${Caf.toString(CoffeeScriptGlobal)}.is(${Caf.toString(
+            a
+          )}, ${Caf.toString(b)})`;
+        },
         "?": function(a, b) {
           return a.match(/^@?[_a-z0-9]+$/i)
             ? `${Caf.toString(a)} != null ? ${Caf.toString(a)} : ${Caf.toString(
@@ -1243,7 +1230,7 @@ Caf.defMod(module, () => {
         ["left", "*", "/", "%", "//", "%%"],
         ["left", "+", "-"],
         ["left", "<<", ">>", ">>>"],
-        ["left", "<", "<=", ">", ">=", "instanceof", "in"],
+        ["left", "<", "<=", ">", ">=", "instanceof", "in", "is", "isnt"],
         ["left", "===", "!==", "!=", "=="],
         ["left", "&"],
         ["left", "^"],
@@ -1282,10 +1269,8 @@ Caf.defMod(module, () => {
             case "or":
               return "||";
             case "==":
-            case "is":
               return "===";
             case "!=":
-            case "isnt":
               return "!==";
             default:
               return validateOperator(operator);
@@ -2256,6 +2241,7 @@ Caf.defMod(module, () => {
         "expressionWithoutBinOps"
       ],
       expressionWithoutBinOps: [
+        "incDecUnaryExpression",
         "controlStatement",
         "comprehension",
         "classDefinition",
@@ -2272,6 +2258,24 @@ Caf.defMod(module, () => {
       { newInstance: "new _ expressionWithoutBinOps" },
       { stnFactory: "NewInstanceStn" }
     );
+    this.rule({
+      incDecUnaryExpression: [
+        "prefix:/\\+\\+|--/ assignableValue",
+        "assignableValue postfix:/\\+\\+|--/",
+        {
+          stnFactory: "UnaryOperatorStn",
+          stnProps: function() {
+            let cafBase;
+            return {
+              operand: (this.prefix || this.postfix).toString(),
+              tail: !!(
+                Caf.exists((cafBase = this.postfix)) && cafBase.toString()
+              )
+            };
+          }
+        }
+      ]
+    });
     this.rule(
       { throwExpression: "throw _ expressionWithoutBinOps" },
       { stnFactory: "ThrowStn" }
@@ -2421,7 +2425,7 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        functionInvocation: [
+        functionInvocationExtension: [
           "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
           "existanceTest:questionMark? !/[-+]/ _? values:valueList"
         ]
@@ -2741,7 +2745,10 @@ Caf.defMod(module, () => {
           this.unaryTailOperators || [],
           undefined,
           (operand, k, into) => {
-            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+            stn = UnaryOperatorStn(
+              { operand: operand.toString().trim(), tail: true },
+              stn
+            );
           }
         );
         Caf.each(
@@ -3175,7 +3182,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(for|yes|no|on|off|instanceof|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
+      reservedWord: /(for|yes|no|on|off|null|undefined|global|require|module|eval|this|true|false|super|instanceof|delete|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {
@@ -3188,8 +3195,8 @@ Caf.defMod(module, () => {
       pathedRequire: /((?!\s)[-\/$\w\u007f-\uffff])+/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
       unaryTailOperator: /\?/,
-      unaryOperator_: /([!~]|not\b) *|-(?![:])/,
-      binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
+      unaryOperator_: /([!~]|not\b|delete\b) *|-(?![:])/,
+      binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|is|isnt|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       assignmentOperator: (assignmentOperator = /(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?=/),
       new: /new\b/,
       throw: /throw\b/,
@@ -3273,34 +3280,57 @@ Caf.defMod(module, () => {
     [__webpack_require__(3), __webpack_require__(5), global]
   ));
   return function() {
-    this.rule({ value: "simpleValue valueExtension*" });
     this.rule({
-      valueExtension: [
-        "dotAccessor",
-        "bracketAccessor",
-        "functionInvocation",
-        "blockValueExtension"
+      value: "valueBase blockValueExtension*",
+      valueBase: [
+        ":functionInvocation !accessorExtension",
+        "assignableValue assignmentExtension?",
+        "parentheticalExpression",
+        "simpleNonAssignableValue"
       ],
-      simpleValue: [
+      simpleAssignableValue: ["thisProperty", "identifierReference"],
+      assignableValue: [
+        "simpleAssignableValue accessorExtension* !functionInvocationExtension",
+        "'(' _? assignableValue _? ')' accessorExtension* !functionInvocationExtension",
+        "parentheticalExpression accessorExtension+",
+        "nonAssignableValue accessorExtension+"
+      ],
+      accessorExtension: ["dotAccessor", "bracketAccessor"],
+      nonAssignableValue: [
+        "functionInvocation",
+        "parentheticalExpression",
+        "simpleNonAssignableValue"
+      ],
+      simpleValue: ["simpleNonAssignableValue", "simpleAssignableValue"],
+      simpleNonAssignableValue: [
         "require",
         "tagMacro",
         "globalIdentifier",
         "this",
-        "thisProperty",
         "literal",
-        "super",
-        "unqualifiedIdentifier",
-        "parentheticalExpression"
+        "super"
+      ],
+      functionInvocation: [
+        "simpleValue extendedFunctionInvocationExtension+",
+        "parentheticalExpression extendedFunctionInvocationExtension+"
+      ],
+      extendedFunctionInvocationExtension:
+        "accessorExtension* functionInvocationExtension"
+    });
+    this.rule({
+      parentheticalExpression: "'(' _? expression _? ')'",
+      valueExtension: [
+        "dotAccessor",
+        "bracketAccessor",
+        "functionInvocationExtension",
+        "blockValueExtension"
       ]
     });
-    this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
-      unqualifiedIdentifier: {
-        pattern: "!reservedWord identifierReference assignmentExtension?"
+      identifierReference: {
+        pattern: "!reservedWord identifier",
+        stnFactory: "ReferenceStn"
       }
-    });
-    this.rule({
-      identifierReference: { pattern: "identifier", stnFactory: "ReferenceStn" }
     });
     this.rule(
       {
@@ -4983,15 +5013,44 @@ Caf.defMod(module, () => {
   return (UnaryOperatorStn = Caf.defClass(
     class UnaryOperatorStn extends __webpack_require__(2) {},
     function(UnaryOperatorStn, classSuper, instanceSuper) {
+      this.getter({
+        normalizedOperand: function() {
+          let op;
+          return (() => {
+            switch ((op = this.props.operand)) {
+              case "delete":
+                return "delete ";
+              case "and":
+                return "&&";
+              case "or":
+                return "||";
+              case "==":
+              case "is":
+                return "===";
+              case "!=":
+              case "isnt":
+                return "!==";
+              case "not":
+                return "!";
+              default:
+                return op;
+            }
+          })();
+        }
+      });
       this.prototype.needsParens = false;
       this.prototype.toJs = function() {
+        let childrenJs;
+        childrenJs = this.applyParens(this.children[0].toJsExpression());
         return this.props.operand === "?"
-          ? `${Caf.toString(
-              this.applyParens(this.children[0].toJsExpression())
-            )} != null`
-          : `${Caf.toString(this.normalizedOperand)}${Caf.toString(
-              this.applyParens(this.children[0].toJsExpression())
-            )}`;
+          ? `${Caf.toString(childrenJs)} != null`
+          : this.props.tail
+            ? `${Caf.toString(childrenJs)}${Caf.toString(
+                this.normalizedOperand
+              )}`
+            : `${Caf.toString(this.normalizedOperand)}${Caf.toString(
+                childrenJs
+              )}`;
       };
     }
   ));
@@ -6174,7 +6233,7 @@ module.exports = {
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.44.18"
+	"version": "0.45.2"
 };
 
 /***/ }),
