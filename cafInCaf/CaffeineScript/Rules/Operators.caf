@@ -49,6 +49,7 @@ unaryOpExpression:
     each operand in @unaryTailOperators || []
       stn = UnaryOperatorStn
         operand: operand.toString().trim()
+        tail: true
         stn
     each operand in (@unaryOperator_s || []).slice().reverse()
       stn = UnaryOperatorStn

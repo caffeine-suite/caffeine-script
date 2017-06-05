@@ -29,6 +29,8 @@
 
         instanceof |
 
+        delete |
+
         import |
 
         throw |
@@ -83,10 +85,10 @@
       - questionables: |, \
     unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
 
-    unaryTailOperator:  /// \? | \+\+ | -- ///
+    unaryTailOperator:  /// \?
     unaryOperator_:
       ///
-        ([!~] | not\b | delete\b | \+\+ | --) \ *
+        ([!~] | not\b | delete\b) \ *
 
         |
 

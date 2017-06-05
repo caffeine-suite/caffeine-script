@@ -2,9 +2,23 @@ import &StandardImport
 
 class UnaryOperatorStn extends &BaseStn
 
+  @getter
+    normalizedOperand: ->
+      switch op = @props.operand
+        when "delete" then "delete "
+        when "and" then "&&"
+        when "or"  then "||"
+        when "==", "is"   then "==="
+        when "!=", "isnt" then "!=="
+        when "not" then "!"
+        else op
+
   needsParens: false
   toJs: ->
+    childrenJs = @applyParens @children[0].toJsExpression()
     if @props.operand == "?"
-      "#{@applyParens @children[0].toJsExpression()} != null"
+      "#{childrenJs} != null"
+    else if @props.tail
+      "#{childrenJs}#{@normalizedOperand}"
     else
-      "#{@normalizedOperand}#{@applyParens @children[0].toJsExpression()}"
+      "#{@normalizedOperand}#{childrenJs}"

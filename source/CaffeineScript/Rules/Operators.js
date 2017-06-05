@@ -99,7 +99,10 @@ Caf.defMod(module, () => {
           this.unaryTailOperators || [],
           undefined,
           (operand, k, into) => {
-            stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
+            stn = UnaryOperatorStn(
+              { operand: operand.toString().trim(), tail: true },
+              stn
+            );
           }
         );
         Caf.each(

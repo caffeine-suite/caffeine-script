@@ -84,10 +84,20 @@ module.exports = suite: parseTestSuite
   unary:
     basic:
       "-PI": "-PI;"
+      "--i": "--i;"
+      "++i": "++i;"
+      "i--": "i--;"
+      "i++": "i++;"
+
+      "(a+b)++": null
+
       "!true": "!true;"
       "!!true": "!!true;"
 
       "not true": "!true;"
+
+      "delete a.b": "delete a.b;"
+      "deletea.b": "deletea.b;"
 
       "nottrue": "nottrue;"
 

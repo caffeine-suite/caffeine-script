@@ -274,15 +274,6 @@ class BaseStn extends BaseClass
   applyRequiredParens: applyRequiredParens
   applyParens: applyParens
 
-  @getter
-    normalizedOperand: ->
-      switch op = @props.operand
-        when "and" then "&&"
-        when "or"  then "||"
-        when "==", "is"   then "==="
-        when "!=", "isnt" then "!=="
-        when "not" then "!"
-        else op
 
   updateScope: (@scope) ->
     each child in @children

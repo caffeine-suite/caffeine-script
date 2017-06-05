@@ -18,6 +18,7 @@ upToButNotEol = /[^\n]*/y
       :expressionWithoutBinOps
 
     expressionWithoutBinOps:
+      :incDecUnaryExpression
       :controlStatement
       :comprehension
       :classDefinition
@@ -35,6 +36,15 @@ upToButNotEol = /[^\n]*/y
   @rule
     newInstance: "new _ expressionWithoutBinOps"
     {} stnFactory: :NewInstanceStn
+
+  @rule
+    incDecUnaryExpression:
+      "prefix:/\\+\\+|--/ value"
+      "value postfix:/\\+\\+|--/"
+      stnFactory: :UnaryOperatorStn
+      stnProps: ~>
+        operand:  (@prefix || @postfix).toString()
+        tail:     !!@postfix?.toString()
 
   @rule
     throwExpression: "throw _ expressionWithoutBinOps"

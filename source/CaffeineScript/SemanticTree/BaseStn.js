@@ -244,29 +244,6 @@ Caf.defMod(module, () => {
       };
       this.prototype.applyRequiredParens = applyRequiredParens;
       this.prototype.applyParens = applyParens;
-      this.getter({
-        normalizedOperand: function() {
-          let op;
-          return (() => {
-            switch ((op = this.props.operand)) {
-              case "and":
-                return "&&";
-              case "or":
-                return "||";
-              case "==":
-              case "is":
-                return "===";
-              case "!=":
-              case "isnt":
-                return "!==";
-              case "not":
-                return "!";
-              default:
-                return op;
-            }
-          })();
-        }
-      });
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         return Caf.each(this.children, undefined, (child, k, into) => {

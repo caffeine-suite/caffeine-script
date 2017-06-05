@@ -26,6 +26,7 @@ Caf.defMod(module, () => {
         "expressionWithoutBinOps"
       ],
       expressionWithoutBinOps: [
+        "incDecUnaryExpression",
         "controlStatement",
         "comprehension",
         "classDefinition",
@@ -42,6 +43,24 @@ Caf.defMod(module, () => {
       { newInstance: "new _ expressionWithoutBinOps" },
       { stnFactory: "NewInstanceStn" }
     );
+    this.rule({
+      incDecUnaryExpression: [
+        "prefix:/\\+\\+|--/ value",
+        "value postfix:/\\+\\+|--/",
+        {
+          stnFactory: "UnaryOperatorStn",
+          stnProps: function() {
+            let cafBase;
+            return {
+              operand: (this.prefix || this.postfix).toString(),
+              tail: !!(
+                Caf.exists((cafBase = this.postfix)) && cafBase.toString()
+              )
+            };
+          }
+        }
+      ]
+    });
     this.rule(
       { throwExpression: "throw _ expressionWithoutBinOps" },
       { stnFactory: "ThrowStn" }
