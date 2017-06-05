@@ -45,8 +45,8 @@ Caf.defMod(module, () => {
     );
     this.rule({
       incDecUnaryExpression: [
-        "prefix:/\\+\\+|--/ value",
-        "value postfix:/\\+\\+|--/",
+        "prefix:/\\+\\+|--/ assignableValue",
+        "assignableValue postfix:/\\+\\+|--/",
         {
           stnFactory: "UnaryOperatorStn",
           stnProps: function() {

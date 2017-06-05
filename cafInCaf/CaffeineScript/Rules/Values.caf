@@ -1,9 +1,8 @@
 import &StandardImport, &BabelBridge
 
 ->
-  @rule
+  ## @rule
     value: "simpleValue valueExtension*"
-    valueExtension: :dotAccessor :bracketAccessor :functionInvocationExtension :blockValueExtension
     simpleValue:
       :require
       :tagMacro
@@ -15,14 +14,20 @@ import &StandardImport, &BabelBridge
       :unqualifiedIdentifier
       :parentheticalExpression
 
-  ##@rule
+    unqualifiedIdentifier:
+      pattern: "!reservedWord identifierReference assignmentExtension?"
+
+  @rule
     value:
+      "valueBase blockValueExtension*"
+
+    valueBase:
+      "assignableValue assignmentExtension?"
       :nonAssignableValue
-      :assignableValue
 
     simpleAssignableValue:
-      "thisProperty"
-      "identifierReference"
+      :thisProperty
+      :identifierReference
 
     assignableValue:
       "simpleAssignableValue assignableValueExtension* !functionInvocationExtension"
@@ -33,6 +38,7 @@ import &StandardImport, &BabelBridge
     assignableValueExtension: :dotAccessor :bracketAccessor
     nonAssignableValue:
       :functionInvocation
+      :parentheticalExpression
       :simpleNonAssignableValue
 
     simpleValue:
@@ -56,14 +62,11 @@ import &StandardImport, &BabelBridge
 
   @rule
     parentheticalExpression: "'(' _? expression _? ')'"
-
-  @rule
-    unqualifiedIdentifier:
-      pattern: "!reservedWord identifierReference assignmentExtension?"
+    valueExtension: :dotAccessor :bracketAccessor :functionInvocationExtension :blockValueExtension
 
   @rule
     identifierReference:
-      pattern:    :identifier
+      pattern:    "" !super !globalIdentifier !reservedWord identifier
       stnFactory: :ReferenceStn
 
   @rule

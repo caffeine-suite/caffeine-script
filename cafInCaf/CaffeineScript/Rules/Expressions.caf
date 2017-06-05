@@ -39,8 +39,8 @@ upToButNotEol = /[^\n]*/y
 
   @rule
     incDecUnaryExpression:
-      "prefix:/\\+\\+|--/ value"
-      "value postfix:/\\+\\+|--/"
+      "prefix:/\\+\\+|--/ assignableValue"
+      "assignableValue postfix:/\\+\\+|--/"
       stnFactory: :UnaryOperatorStn
       stnProps: ~>
         operand:  (@prefix || @postfix).toString()

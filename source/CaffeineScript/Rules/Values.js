@@ -8,33 +8,51 @@ Caf.defMod(module, () => {
   ));
   return function() {
     this.rule({
-      value: "simpleValue valueExtension*",
+      value: "valueBase blockValueExtension*",
+      valueBase: ["assignableValue assignmentExtension?", "nonAssignableValue"],
+      simpleAssignableValue: ["thisProperty", "identifierReference"],
+      assignableValue: [
+        "simpleAssignableValue assignableValueExtension* !functionInvocationExtension",
+        "'(' _? assignableValue _? ')' assignableValueExtension* !functionInvocationExtension",
+        "parentheticalExpression assignableValueExtension+",
+        "nonAssignableValue assignableValueExtension+"
+      ],
+      assignableValueExtension: ["dotAccessor", "bracketAccessor"],
+      nonAssignableValue: [
+        "functionInvocation",
+        "parentheticalExpression",
+        "simpleNonAssignableValue"
+      ],
+      simpleValue: ["simpleNonAssignableValue", "simpleAssignableValue"],
+      simpleNonAssignableValue: [
+        "require",
+        "tagMacro",
+        "globalIdentifier",
+        "this",
+        "literal",
+        "super"
+      ],
+      functionInvocation: [
+        "simpleValue extendedFunctionInvocationExtension+",
+        "parentheticalExpression extendedFunctionInvocationExtension+"
+      ],
+      extendedFunctionInvocationExtension:
+        "assignableValueExtension* functionInvocationExtension"
+    });
+    this.rule({
+      parentheticalExpression: "'(' _? expression _? ')'",
       valueExtension: [
         "dotAccessor",
         "bracketAccessor",
         "functionInvocationExtension",
         "blockValueExtension"
-      ],
-      simpleValue: [
-        "require",
-        "tagMacro",
-        "globalIdentifier",
-        "this",
-        "thisProperty",
-        "literal",
-        "super",
-        "unqualifiedIdentifier",
-        "parentheticalExpression"
       ]
     });
-    this.rule({ parentheticalExpression: "'(' _? expression _? ')'" });
     this.rule({
-      unqualifiedIdentifier: {
-        pattern: "!reservedWord identifierReference assignmentExtension?"
+      identifierReference: {
+        pattern: "!super !globalIdentifier !reservedWord identifier",
+        stnFactory: "ReferenceStn"
       }
-    });
-    this.rule({
-      identifierReference: { pattern: "identifier", stnFactory: "ReferenceStn" }
     });
     this.rule(
       {

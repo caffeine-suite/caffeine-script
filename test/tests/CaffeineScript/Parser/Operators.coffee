@@ -390,3 +390,18 @@ module.exports = suite: parseTestSuite
         b c
         || d
       """: "a && (b(c) || d);"
+
+      """
+      (++a)
+        + b
+      """: "++a + b;"
+
+      """
+      ++a
+        .b
+      """: null
+
+      """
+      ++a
+        + b
+      """: null
