@@ -50,7 +50,7 @@ Caf.defMod(module, () => {
     });
     this.rule({
       identifierReference: {
-        pattern: "!super !globalIdentifier !reservedWord identifier",
+        pattern: "!reservedWord identifier",
         stnFactory: "ReferenceStn"
       }
     });

@@ -37,6 +37,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
   regressions:
     "(foo) -> foo":     applyModuleWrapper "return function(foo) {return foo;};"
     "([foo]) -> foo":   applyModuleWrapper "return function([foo]) {return foo;};"
+    "a = true":         applyModuleWrapper "let a; return a = true;"
 
   withImport:
     """

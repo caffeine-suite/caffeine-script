@@ -66,7 +66,7 @@ import &StandardImport, &BabelBridge
 
   @rule
     identifierReference:
-      pattern:    "" !super !globalIdentifier !reservedWord identifier
+      pattern:    "" !reservedWord identifier
       stnFactory: :ReferenceStn
 
   @rule

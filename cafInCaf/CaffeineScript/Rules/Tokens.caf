@@ -27,6 +27,12 @@
         # forbidden by javascript, but not used by Caf
         for | yes | no | on | off |
 
+        global | require | module | eval | this |
+
+        true | false |
+
+        super |
+
         instanceof |
 
         delete |
