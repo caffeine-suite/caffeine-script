@@ -32,6 +32,16 @@ Caf.defMod(module, () => {
             a
           )}, ${Caf.toString(b)})`;
         },
+        is: function(a, b) {
+          return `${Caf.toString(CoffeeScriptGlobal)}.is(${Caf.toString(
+            a
+          )}, ${Caf.toString(b)})`;
+        },
+        isnt: function(a, b) {
+          return `!${Caf.toString(CoffeeScriptGlobal)}.is(${Caf.toString(
+            a
+          )}, ${Caf.toString(b)})`;
+        },
         "?": function(a, b) {
           return a.match(/^@?[_a-z0-9]+$/i)
             ? `${Caf.toString(a)} != null ? ${Caf.toString(a)} : ${Caf.toString(
@@ -51,7 +61,7 @@ Caf.defMod(module, () => {
         ["left", "*", "/", "%", "//", "%%"],
         ["left", "+", "-"],
         ["left", "<<", ">>", ">>>"],
-        ["left", "<", "<=", ">", ">=", "instanceof", "in"],
+        ["left", "<", "<=", ">", ">=", "instanceof", "in", "is", "isnt"],
         ["left", "===", "!==", "!=", "=="],
         ["left", "&"],
         ["left", "^"],
@@ -90,10 +100,8 @@ Caf.defMod(module, () => {
             case "or":
               return "||";
             case "==":
-            case "is":
               return "===";
             case "!=":
-            case "isnt":
               return "!==";
             default:
               return validateOperator(operator);

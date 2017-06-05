@@ -8,6 +8,9 @@ class OperatorHelper
     //: (a, b) -> "#{CoffeeScriptGlobal}.div(#{a}, #{b})"
     %%: (a, b) -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
     in: (a, b) -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
+    is: (a, b) -> "#{CoffeeScriptGlobal}.is(#{a}, #{b})"
+    isnt: (a, b) -> "!#{CoffeeScriptGlobal}.is(#{a}, #{b})"
+
     ?:  (a, b) ->
       if a.match /^@?[_a-z0-9]+$/i
         "#{a} != null ? #{a} : #{b}"
@@ -21,7 +24,7 @@ class OperatorHelper
     :left  :*     :/    :%    ://   :%%
     :left  :+     :-
     :left  :<<    :>>   :>>>
-    :left  :<     :<=   :>    :>=   :instanceof :in
+    :left  :<     :<=   :>    :>=   :instanceof :in :is :isnt
     :left  :===   :!==  :!=   :== # :!= and :== are included only for internal use
     :left  :&
     :left  :^
@@ -44,8 +47,8 @@ class OperatorHelper
     switch operator = operator.toString().trim()
     when :and       then :&&
     when :or        then :||
-    when :==, :is   then :===
-    when :!=, :isnt then :!==
+    when :==        then :===
+    when :!=        then :!==
     else
       validateOperator operator
 

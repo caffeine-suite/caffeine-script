@@ -83,10 +83,10 @@
       - questionables: |, \
     unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
 
-    unaryTailOperator:  /\?/
+    unaryTailOperator:  /// \? | \+\+ | -- ///
     unaryOperator_:
       ///
-        ([!~] | not\b) \ *
+        ([!~] | not\b | delete\b | \+\+ | --) \ *
 
         |
 
@@ -103,7 +103,7 @@
 
         # cs english logic
         # is && isnt are no longer supported - in anticipation of probable semantic change to typeof-replacements
-        ((and | or | in | instanceof)\b) |
+        ((and | or | in | is | isnt | instanceof)\b) |
 
         # shift
         << | >>> | >> |

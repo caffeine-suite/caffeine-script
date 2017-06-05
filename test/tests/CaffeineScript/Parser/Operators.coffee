@@ -39,6 +39,8 @@ module.exports = suite: parseTestSuite
       "1 != 2":   "1 !== 2;"
       "1 ==   2":   "1 === 2;"
       "1 in   2":   "Caf.in(1, 2);"
+      "1 is   2":   "Caf.is(1, 2);"
+      "1 isnt 2":   "!Caf.is(1, 2);"
       "a instanceof b": "a instanceof b;"
 
     precedence:
