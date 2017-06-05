@@ -7,12 +7,12 @@ Caf.defMod(module, () => {
     [require("../StandardImport"), require("babel-bridge"), global]
   ));
   return function() {
-    this.rule({ value: "simpleValue valueExtension*" });
     this.rule({
+      value: "simpleValue valueExtension*",
       valueExtension: [
         "dotAccessor",
         "bracketAccessor",
-        "functionInvocation",
+        "functionInvocationExtension",
         "blockValueExtension"
       ],
       simpleValue: [

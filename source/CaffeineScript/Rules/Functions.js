@@ -94,7 +94,7 @@ Caf.defMod(module, () => {
     });
     return this.rule(
       {
-        functionInvocation: [
+        functionInvocationExtension: [
           "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
           "existanceTest:questionMark? !/[-+]/ _? values:valueList"
         ]

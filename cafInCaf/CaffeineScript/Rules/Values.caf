@@ -3,9 +3,7 @@ import &StandardImport, &BabelBridge
 ->
   @rule
     value: "simpleValue valueExtension*"
-
-  @rule
-    valueExtension: :dotAccessor :bracketAccessor :functionInvocation :blockValueExtension
+    valueExtension: :dotAccessor :bracketAccessor :functionInvocationExtension :blockValueExtension
     simpleValue:
       :require
       :tagMacro
@@ -16,6 +14,45 @@ import &StandardImport, &BabelBridge
       :super
       :unqualifiedIdentifier
       :parentheticalExpression
+
+  ##@rule
+    value:
+      :nonAssignableValue
+      :assignableValue
+
+    simpleAssignableValue:
+      "thisProperty"
+      "identifierReference"
+
+    assignableValue:
+      "simpleAssignableValue assignableValueExtension* !functionInvocationExtension"
+      "'(' _? assignableValue _? ')' assignableValueExtension* !functionInvocationExtension"
+      "parentheticalExpression assignableValueExtension+"
+      "nonAssignableValue assignableValueExtension+"
+
+    assignableValueExtension: :dotAccessor :bracketAccessor
+    nonAssignableValue:
+      :functionInvocation
+      :simpleNonAssignableValue
+
+    simpleValue:
+      :simpleNonAssignableValue
+      :simpleAssignableValue
+
+    simpleNonAssignableValue:
+      :require
+      :tagMacro
+      :globalIdentifier
+      :this
+      :literal
+      :super
+
+    functionInvocation:
+      "simpleValue extendedFunctionInvocationExtension+"
+      "parentheticalExpression extendedFunctionInvocationExtension+"
+
+    extendedFunctionInvocationExtension:
+      "assignableValueExtension* functionInvocationExtension"
 
   @rule
     parentheticalExpression: "'(' _? expression _? ')'"

@@ -58,7 +58,7 @@ getPropertySetters = (node, list = []) ~>
     "_? valueList"
 
   @rule
-    functionInvocation:
+    functionInvocationExtension:
       "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen"
       "existanceTest:questionMark? !/[-+]/ _? values:valueList"
     {}
