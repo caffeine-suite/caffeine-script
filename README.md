@@ -1,6 +1,6 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 
-### Productivity by Design [![Build Status](https://travis-ci.org/shanebdavis/caffeine-script.svg?branch=master)](https://travis-ci.org/shanebdavis/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
+### Do More with Less [![Build Status](https://travis-ci.org/shanebdavis/caffeine-script.svg?branch=master)](https://travis-ci.org/shanebdavis/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
 
 CaffeineScript is an open-source programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. Design thinking is essential for achieving that goal. That means [user-experience](https://github.com/shanebdavis/caffeine-script/wiki/UX-Design-for-Langauges) and [graphic design](https://github.com/shanebdavis/caffeine-script/wiki/Graphic-Design-for-Languages) are as important as computer-science and software engineering. A well-designed language makes code more beautiful, programming more fun, and, ultimately, lets us get more done with less effort.
 
