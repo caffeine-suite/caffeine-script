@@ -51,13 +51,13 @@ class ValueBaseCaptureStn extends &BaseStn
 
     I seriously considered doing this the same way I handle binary operators.
     It's very similar in that it's a precidence issue. Existance-accessors have
-    "lower" precidence than non-existance accessors. And the are left-
+    "lower" precidence than non-existance accessors. And they are left-
     associative. And that should be it... except! Except, in a normal binary
     operator chain, all the leaf nodes are atomic from the perspective of the
     chain. They can be moved anywhere in the constructed tree structure without
     losing their semantics. However, with an accessor-chain, the existance
     operator's left value becomes the left-most leaf value for its right-value -
-    with a "valueCapture". I could have solve that, but this is probably just as
+    with a "valueCapture". I could solve that, but this is probably just as
     easy and I already had it half working.
 
     TODO: AssignmentStns also need to participate in this:

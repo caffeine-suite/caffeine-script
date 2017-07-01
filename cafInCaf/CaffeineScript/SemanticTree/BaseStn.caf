@@ -203,7 +203,7 @@ class BaseStn extends BaseClass
 
     Labels from BabelBridge should be explicit labels, if there are any, OR
     the rule's name. I think right now we have a 'contextual' aspect which is
-    just confusing - if any node in a change of nodes has a label, that's what
+    just confusing - if any node in a chain of nodes has a label, that's what
     is used for the label for that branch.
 
     We should also refactor BaseStn so that transform ALWAYS
