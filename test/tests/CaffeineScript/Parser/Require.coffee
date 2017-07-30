@@ -50,7 +50,7 @@ module.exports = suite: parseTestSuite {
     foo
     """: "
       let foo;
-      ({foo} = Caf.import([\"foo\"], [require('art-standard-lib'), global]));require('babel-bridge');
+      ({foo} = Caf.import([\"foo\"], [global, require('art-standard-lib')]));require('babel-bridge');
       foo;
       "
 

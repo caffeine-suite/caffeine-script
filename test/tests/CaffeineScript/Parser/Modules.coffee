@@ -45,5 +45,5 @@ module.exports = suite: parseTestSuite {compileModule: true},
     a
     """: applyModuleWrapper "
       let Foo = global.Foo, a;
-      ({a} = Caf.import([\"a\"], [Foo, global]));return a;
+      ({a} = Caf.import([\"a\"], [global, Foo]));return a;
       "

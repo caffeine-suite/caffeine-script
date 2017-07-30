@@ -42,7 +42,7 @@ class ImportStn extends &ScopeStnMixin &BaseStn
       {importFromCaptureIdentifier} = p
       true
 
-    importFromCaptureIdentifier ||= "global"
+    # importFromCaptureIdentifier ||= "global"
 
     bodyJs = @statementsChild.toFunctionBodyJs !!generateReturnStatement
 
@@ -51,14 +51,16 @@ class ImportStn extends &ScopeStnMixin &BaseStn
     list = array i in @importing with "" "#{i}"
     importingJs = "" [#{list.join ', '}]
 
+    importFromCaptureIdentifier ||= "global"
+
+    importsJs = compactFlatten [importFromCaptureIdentifier, importsJs]
+
     imports = if @importing?.length > 0
       ""
         ({#{@importing.join ', '}} =
 
         Caf.import(#{importingJs},
-        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '},
-
-        #{importFromCaptureIdentifier}]));
+        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}]));
 
     else ""
 

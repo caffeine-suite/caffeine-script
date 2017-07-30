@@ -1,9 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ImportStn, peek, Object;
-  ({ peek, Object } = Caf.import(
-    ["peek", "Object"],
+  let ImportStn, peek, Object, compactFlatten;
+  ({ peek, Object, compactFlatten } = Caf.import(
+    ["peek", "Object", "compactFlatten"],
     [require("../../StandardImport"), global]
   ));
   return (ImportStn = Caf.defClass(
@@ -69,7 +69,6 @@ Caf.defMod(module, () => {
           ({ importFromCaptureIdentifier } = p);
           true;
         }
-        importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
         bodyJs = this.statementsChild.toFunctionBodyJs(
           !!generateReturnStatement
         );
@@ -80,6 +79,8 @@ Caf.defMod(module, () => {
           into.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
+        importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
+        importsJs = compactFlatten([importFromCaptureIdentifier, importsJs]);
         imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
           ? `({${Caf.toString(
               this.importing.join(", ")
@@ -87,9 +88,7 @@ Caf.defMod(module, () => {
               this._importFromCaptureIdentifier
                 ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
                 : ""
-            )}[${Caf.toString(importsJs.join(", "))}, ${Caf.toString(
-              importFromCaptureIdentifier
-            )}]));`
+            )}[${Caf.toString(importsJs.join(", "))}]));`
           : "";
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
