@@ -26,7 +26,7 @@ module.exports = suite: parseTestSuite {
   local:
     basic:
       "&Lib":                   "require('./Lib');"
-      "&Source":                "require('../../source');"
+      "&Source":                "require('../');"
 
     reservedWords:
       "&package":               "require('../../package');"
