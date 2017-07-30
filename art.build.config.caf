@@ -14,6 +14,7 @@ npm:
 
   scripts:
     perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"
+    build:  "caf -v -p -C -c cafInCaf -o source"
 
   config:
     blanket:
