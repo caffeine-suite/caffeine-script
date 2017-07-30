@@ -1753,13 +1753,13 @@ module.exports = {
 		"url": "git@github.com:shanebdavis/caffeine-script.git"
 	},
 	"scripts": {
-		"build": "webpack --progress",
+		"build": "caf -v -p -C -c cafInCaf -o source",
 		"perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
 		"start": "webpack-dev-server --hot --inline --progress",
 		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
 		"testInBrowser": "webpack-dev-server --progress"
 	},
-	"version": "0.45.5"
+	"version": "0.46.0"
 };
 
 /***/ }),
@@ -3495,9 +3495,9 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let ImportStn, peek, Object;
-  ({ peek, Object } = Caf.import(
-    ["peek", "Object"],
+  let ImportStn, peek, Object, compactFlatten;
+  ({ peek, Object, compactFlatten } = Caf.import(
+    ["peek", "Object", "compactFlatten"],
     [__webpack_require__(3), global]
   ));
   return (ImportStn = Caf.defClass(
@@ -3563,7 +3563,6 @@ Caf.defMod(module, () => {
           ({ importFromCaptureIdentifier } = p);
           true;
         }
-        importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
         bodyJs = this.statementsChild.toFunctionBodyJs(
           !!generateReturnStatement
         );
@@ -3574,6 +3573,8 @@ Caf.defMod(module, () => {
           into.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
+        importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
+        importsJs = compactFlatten([importFromCaptureIdentifier, importsJs]);
         imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
           ? `({${Caf.toString(
               this.importing.join(", ")
@@ -3581,9 +3582,7 @@ Caf.defMod(module, () => {
               this._importFromCaptureIdentifier
                 ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
                 : ""
-            )}[${Caf.toString(importsJs.join(", "))}, ${Caf.toString(
-              importFromCaptureIdentifier
-            )}]));`
+            )}[${Caf.toString(importsJs.join(", "))}]));`
           : "";
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
