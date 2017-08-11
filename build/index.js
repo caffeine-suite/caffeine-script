@@ -145,7 +145,7 @@ Caf.defMod(module, () => {
       "compactFlatten",
       "isString"
     ],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   ({ createObjectTreeFactory } = __webpack_require__(105));
   return (BaseStn = Caf.defClass(
@@ -391,7 +391,7 @@ Caf.defMod(module, () => {
   let StnRegistry, BaseClass, isFunction, isString, Error, formattedInspect;
   ({ BaseClass, isFunction, isString, Error, formattedInspect } = Caf.import(
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (StnRegistry = Caf.defClass(
     class StnRegistry extends BaseClass {},
@@ -428,7 +428,7 @@ Caf.defMod(module, () => {
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-bridge");
+module.exports = require("caffeine-eight");
 
 /***/ }),
 /* 6 */
@@ -477,7 +477,7 @@ Caf.defMod(module, () => {
     mergeInto;
   ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
     ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   UniqueIdentifierHandle = __webpack_require__(9);
   return function(toExtend) {
@@ -776,7 +776,7 @@ Caf.defMod(module, () => {
   let escapeRegExp;
   ({ escapeRegExp } = Caf.import(
     ["escapeRegExp"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return {
     deescapeSpaces: function(string) {
@@ -817,7 +817,7 @@ Caf.defMod(module, () => {
   let UniqueIdentifierHandle, BaseClass, inspectedObjectLiteral, inspect;
   ({ BaseClass, inspectedObjectLiteral, inspect } = Caf.import(
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {
@@ -872,7 +872,7 @@ Caf.defMod(module, () => {
     isArray;
   ({ mergeInto, isArray } = Caf.import(
     ["mergeInto", "isArray"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   UniqueIdentifierHandle = __webpack_require__(9);
   StnRegistry = __webpack_require__(4);
@@ -1047,10 +1047,10 @@ Caf.defMod(module, () => {
   ({ Nodes, isFunction, RootStn } = Caf.import(
     ["Nodes", "isFunction", "RootStn"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ]
   ));
   StnRegistry = __webpack_require__(4);
@@ -1171,7 +1171,7 @@ Caf.defMod(module, () => {
   let OperatorHelper, Error, arrayWithout;
   ({ Error, arrayWithout } = Caf.import(
     ["Error", "arrayWithout"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (OperatorHelper = Caf.defClass(
     class OperatorHelper extends Object {},
@@ -1420,10 +1420,10 @@ Caf.defMod(module, () => {
   ({ Parser, isFunction, Error } = Caf.import(
     ["Parser", "isFunction", "Error"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(11),
-      global
+      __webpack_require__(11)
     ]
   ));
   return (CaffeineScriptParser = Caf.defClass(
@@ -1715,14 +1715,14 @@ module.exports = {
 		"art-build-configurator": "*",
 		"art-class-system": "*",
 		"art-config": "*",
-		"art-object-tree-factory": "^1.0.0",
+		"art-object-tree-factory": "*",
 		"art-standard-lib": "*",
 		"art-testbench": "*",
-		"babel-bridge": "^1.12.0",
 		"bluebird": "^3.5.0",
-		"caffeine-mc": "^2.0.0",
+		"caffeine-eight": "*",
+		"caffeine-mc": "*",
 		"caffeine-script": "*",
-		"caffeine-script-runtime": "^1.0.0",
+		"caffeine-script-runtime": "*",
 		"case-sensitive-paths-webpack-plugin": "^2.1.1",
 		"chai": "^4.0.1",
 		"coffee-loader": "^0.7.3",
@@ -1791,7 +1791,7 @@ __webpack_require__(24);
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let log;
-  ({ log } = Caf.import(["log"], [__webpack_require__(15), global]));
+  ({ log } = Caf.import(["log"], [global, __webpack_require__(15)]));
   __webpack_require__(24);
   return {
     version: __webpack_require__(25).version,
@@ -1947,7 +1947,7 @@ Caf.defMod(module, () => {
   let Extensions;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    [__webpack_require__(3), __webpack_require__(5), global]
+    [global, __webpack_require__(3), __webpack_require__(5)]
   ));
   return function() {
     this.rule({ blocks: "block+" });
@@ -2081,7 +2081,7 @@ Caf.defMod(module, () => {
   let Extensions;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    [__webpack_require__(3), __webpack_require__(5), global]
+    [global, __webpack_require__(3), __webpack_require__(5)]
   ));
   return function() {
     this.rule(
@@ -2268,10 +2268,10 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(
     ["Extensions"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ]
   ));
   ({ matchBlock } = Extensions.IndentBlocks);
@@ -2383,7 +2383,7 @@ Caf.defMod(module, () => {
   let getPropertySetters, Extensions, Error;
   ({ Extensions, Error } = Caf.import(
     ["Extensions", "Error"],
-    [__webpack_require__(3), __webpack_require__(5), global]
+    [global, __webpack_require__(3), __webpack_require__(5)]
   ));
   getPropertySetters = function(node, list = []) {
     let prop;
@@ -2577,15 +2577,15 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(
     ["Extensions"],
     (cafParentImports = [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ])
   ));
   ({ IndentBlocks, ObjectStn } = Caf.import(
     ["IndentBlocks", "ObjectStn"],
-    [Extensions, cafParentImports]
+    [cafParentImports, Extensions]
   ));
   return function() {
     this.rule({
@@ -2718,10 +2718,10 @@ Caf.defMod(module, () => {
       "UnaryOperatorStn"
     ],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(12),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ]
   ));
   return {
@@ -2826,10 +2826,10 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(
     ["Extensions"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ]
   ));
   return {
@@ -2967,10 +2967,10 @@ Caf.defMod(module, () => {
   ({ ControlOperatorStn } = Caf.import(
     ["ControlOperatorStn"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(4),
-      global
+      __webpack_require__(4)
     ]
   ));
   return {
@@ -3041,11 +3041,11 @@ Caf.defMod(module, () => {
   ({ Extensions, StringStn, InterpolatedStringStn } = Caf.import(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
     [
+      global,
       __webpack_require__(3),
       __webpack_require__(5),
       __webpack_require__(4),
-      __webpack_require__(8),
-      global
+      __webpack_require__(8)
     ]
   ));
   return function() {
@@ -3182,7 +3182,7 @@ Caf.defMod(module, () => {
   let StnRegistry, upperCamelCase, Error;
   ({ upperCamelCase, Error } = Caf.import(
     ["upperCamelCase", "Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   StnRegistry = __webpack_require__(4);
   return {
@@ -3278,7 +3278,7 @@ Caf.defMod(module, () => {
   let Extensions;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    [__webpack_require__(3), __webpack_require__(5), global]
+    [global, __webpack_require__(3), __webpack_require__(5)]
   ));
   return function() {
     this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
@@ -3325,7 +3325,7 @@ Caf.defMod(module, () => {
   let Extensions;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    [__webpack_require__(3), __webpack_require__(5), global]
+    [global, __webpack_require__(3), __webpack_require__(5)]
   ));
   return function() {
     this.rule({
@@ -3498,7 +3498,7 @@ Caf.defMod(module, () => {
   let ImportStn, peek, Object, compactFlatten;
   ({ peek, Object, compactFlatten } = Caf.import(
     ["peek", "Object", "compactFlatten"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (ImportStn = Caf.defClass(
     class ImportStn extends __webpack_require__(7)(
@@ -3603,7 +3603,7 @@ Caf.defMod(module, () => {
   let StatementsStn, RootStn, compactFlatten;
   ({ compactFlatten } = Caf.import(
     ["compactFlatten"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   StatementsStn = __webpack_require__(17);
   return (RootStn = Caf.defClass(
@@ -3697,7 +3697,7 @@ Caf.defMod(module, () => {
       "escapeUnescaped",
       "escapeMustEscapes"
     ],
-    [__webpack_require__(3), __webpack_require__(8), global]
+    [global, __webpack_require__(3), __webpack_require__(8)]
   ));
   return (StringStn = Caf.defClass(
     class StringStn extends __webpack_require__(2) {},
@@ -3903,7 +3903,7 @@ Caf.defMod(module, () => {
       "Error",
       "formattedInspect"
     ],
-    [__webpack_require__(3), __webpack_require__(12), global]
+    [global, __webpack_require__(3), __webpack_require__(12)]
   ));
   return (BinaryOperatorStn = Caf.defClass(
     class BinaryOperatorStn extends __webpack_require__(2) {
@@ -4008,7 +4008,7 @@ Caf.defMod(module, () => {
   let CatchStn, compactFlatten;
   ({ compactFlatten } = Caf.import(
     ["compactFlatten"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (CatchStn = Caf.defClass(
     class CatchStn extends __webpack_require__(2) {},
@@ -4067,7 +4067,7 @@ Caf.defMod(module, () => {
   let StnRegistry, ControlOperatorStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(
     ["Error", "formattedInspect"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   StnRegistry = __webpack_require__(4);
   return (ControlOperatorStn = Caf.defClass(
@@ -4266,7 +4266,7 @@ Caf.defMod(module, () => {
   let DoStn, Object;
   ({ Object } = Caf.import(
     ["Object"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (DoStn = Caf.defClass(
     class DoStn extends __webpack_require__(2) {},
@@ -4389,7 +4389,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let InterpolatedStringStn, peek;
-  ({ peek } = Caf.import(["peek"], [__webpack_require__(3), global]));
+  ({ peek } = Caf.import(["peek"], [global, __webpack_require__(3)]));
   return (InterpolatedStringStn = Caf.defClass(
     class InterpolatedStringStn extends __webpack_require__(2) {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {
@@ -4543,7 +4543,7 @@ Caf.defMod(module, () => {
   let legalUnquotedPropName, ObjectPropNameStn, escapeJavascriptString, Error;
   ({ escapeJavascriptString, Error } = Caf.import(
     ["escapeJavascriptString", "Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
   return (ObjectPropNameStn = Caf.defClass(
@@ -4607,7 +4607,7 @@ Caf.defMod(module, () => {
   let identifierRegexp, ObjectPropValueStn, peek, Error;
   ({ peek, Error } = Caf.import(
     ["peek", "Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/;
   return (ObjectPropValueStn = Caf.defClass(
@@ -4767,7 +4767,7 @@ Caf.defMod(module, () => {
   let RegExpStn, isString;
   ({ isString } = Caf.import(
     ["isString"],
-    [__webpack_require__(3), __webpack_require__(8), global]
+    [global, __webpack_require__(3), __webpack_require__(8)]
   ));
   return (RegExpStn = Caf.defClass(
     class RegExpStn extends __webpack_require__(2) {},
@@ -4855,7 +4855,7 @@ Caf.defMod(module, () => {
   let SemanticTokenStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(
     ["Error", "formattedInspect"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (SemanticTokenStn = Caf.defClass(
     class SemanticTokenStn extends __webpack_require__(2) {
@@ -5157,7 +5157,7 @@ Caf.defMod(module, () => {
   let AccessorStn, Error;
   ({ Error } = Caf.import(
     ["Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (AccessorStn = Caf.defClass(
     class AccessorStn extends __webpack_require__(10) {
@@ -5224,7 +5224,7 @@ Caf.defMod(module, () => {
   let SemanticTree, ClassStn, Error, compactFlatten, merge;
   ({ Error, compactFlatten, merge } = Caf.import(
     ["Error", "compactFlatten", "merge"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   SemanticTree = __webpack_require__(4);
   return (ClassStn = Caf.defClass(
@@ -5417,7 +5417,7 @@ Caf.defMod(module, () => {
   let StnRegistry, FunctionDefinitionStn, compactFlatten;
   ({ compactFlatten } = Caf.import(
     ["compactFlatten"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   StnRegistry = __webpack_require__(4);
   return (FunctionDefinitionStn = Caf.defClass(
@@ -5575,7 +5575,7 @@ Caf.defMod(module, () => {
   let SemanticTree, FunctionInvocationStn, Error;
   ({ Error } = Caf.import(
     ["Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   SemanticTree = __webpack_require__(13);
   return (FunctionInvocationStn = Caf.defClass(
@@ -5644,7 +5644,7 @@ Caf.defMod(module, () => {
   let SuperStn, Error, merge;
   ({ Error, merge } = Caf.import(
     ["Error", "merge"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   return (SuperStn = Caf.defClass(
     class SuperStn extends __webpack_require__(2) {
@@ -5773,7 +5773,7 @@ Caf.defMod(module, () => {
     Error;
   ({ arrayWithAllButLast, peek, Error } = Caf.import(
     ["arrayWithAllButLast", "peek", "Error"],
-    [__webpack_require__(3), global]
+    [global, __webpack_require__(3)]
   ));
   SemanticTree = __webpack_require__(4);
   UniqueIdentifierHandle = __webpack_require__(9);

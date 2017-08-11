@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
     mergeInto;
   ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
     ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
-    [require("../StandardImport"), global]
+    [global, require("../StandardImport")]
   ));
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   return function(toExtend) {

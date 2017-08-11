@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let SemanticTokenStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(
     ["Error", "formattedInspect"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (SemanticTokenStn = Caf.defClass(
     class SemanticTokenStn extends require("../BaseStn") {

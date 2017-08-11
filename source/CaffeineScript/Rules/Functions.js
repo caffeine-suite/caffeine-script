@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let getPropertySetters, Extensions, Error;
   ({ Extensions, Error } = Caf.import(
     ["Extensions", "Error"],
-    [require("../StandardImport"), require("babel-bridge"), global]
+    [global, require("../StandardImport"), require("caffeine-eight")]
   ));
   getPropertySetters = function(node, list = []) {
     let prop;

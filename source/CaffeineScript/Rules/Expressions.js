@@ -5,10 +5,10 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(
     ["Extensions"],
     [
+      global,
       require("../StandardImport"),
-      require("babel-bridge"),
-      require("../StnRegistry"),
-      global
+      require("caffeine-eight"),
+      require("../StnRegistry")
     ]
   ));
   ({ matchBlock } = Extensions.IndentBlocks);

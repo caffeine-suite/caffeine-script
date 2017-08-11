@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let SemanticTree, FunctionInvocationStn, Error;
   ({ Error } = Caf.import(
     ["Error"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   SemanticTree = require("./namespace");
   return (FunctionInvocationStn = Caf.defClass(

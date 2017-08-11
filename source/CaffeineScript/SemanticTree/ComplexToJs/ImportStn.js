@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let ImportStn, peek, Object, compactFlatten;
   ({ peek, Object, compactFlatten } = Caf.import(
     ["peek", "Object", "compactFlatten"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (ImportStn = Caf.defClass(
     class ImportStn extends require("../ScopeStnMixin")(

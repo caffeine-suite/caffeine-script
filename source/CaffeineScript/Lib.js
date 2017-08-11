@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let escapeRegExp;
   ({ escapeRegExp } = Caf.import(
     ["escapeRegExp"],
-    [require("./StandardImport"), global]
+    [global, require("./StandardImport")]
   ));
   return {
     deescapeSpaces: function(string) {

@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let identifierRegexp, ObjectPropValueStn, peek, Error;
   ({ peek, Error } = Caf.import(
     ["peek", "Error"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/;
   return (ObjectPropValueStn = Caf.defClass(

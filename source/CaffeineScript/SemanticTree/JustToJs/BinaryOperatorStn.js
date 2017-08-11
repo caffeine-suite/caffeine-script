@@ -24,7 +24,7 @@ Caf.defMod(module, () => {
       "Error",
       "formattedInspect"
     ],
-    [require("../../StandardImport"), require("../../OperatorHelper"), global]
+    [global, require("../../StandardImport"), require("../../OperatorHelper")]
   ));
   return (BinaryOperatorStn = Caf.defClass(
     class BinaryOperatorStn extends require("../BaseStn") {

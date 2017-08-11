@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
       "escapeUnescaped",
       "escapeMustEscapes"
     ],
-    [require("../../StandardImport"), require("../../Lib"), global]
+    [global, require("../../StandardImport"), require("../../Lib")]
   ));
   return (StringStn = Caf.defClass(
     class StringStn extends require("../BaseStn") {},

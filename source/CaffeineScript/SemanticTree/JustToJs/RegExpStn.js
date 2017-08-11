@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let RegExpStn, isString;
   ({ isString } = Caf.import(
     ["isString"],
-    [require("../../StandardImport"), require("../../Lib"), global]
+    [global, require("../../StandardImport"), require("../../Lib")]
   ));
   return (RegExpStn = Caf.defClass(
     class RegExpStn extends require("../BaseStn") {},

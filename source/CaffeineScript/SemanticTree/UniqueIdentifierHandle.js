@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let UniqueIdentifierHandle, BaseClass, inspectedObjectLiteral, inspect;
   ({ BaseClass, inspectedObjectLiteral, inspect } = Caf.import(
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
-    [require("../StandardImport"), global]
+    [global, require("../StandardImport")]
   ));
   return (UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {

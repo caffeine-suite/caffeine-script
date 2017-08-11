@@ -5,11 +5,11 @@ Caf.defMod(module, () => {
   ({ Extensions, StringStn, InterpolatedStringStn } = Caf.import(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
     [
+      global,
       require("../StandardImport"),
-      require("babel-bridge"),
+      require("caffeine-eight"),
       require("../StnRegistry"),
-      require("../Lib"),
-      global
+      require("../Lib")
     ]
   ));
   return function() {

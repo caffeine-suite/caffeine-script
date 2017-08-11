@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let Extensions;
   ({ Extensions } = Caf.import(
     ["Extensions"],
-    [require("../StandardImport"), require("babel-bridge"), global]
+    [global, require("../StandardImport"), require("caffeine-eight")]
   ));
   return function() {
     this.rule({ valueList: ["simpleValueList", "valueListBlock"] });

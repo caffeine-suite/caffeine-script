@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let legalUnquotedPropName, ObjectPropNameStn, escapeJavascriptString, Error;
   ({ escapeJavascriptString, Error } = Caf.import(
     ["escapeJavascriptString", "Error"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i;
   return (ObjectPropNameStn = Caf.defClass(

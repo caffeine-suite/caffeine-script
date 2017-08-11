@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let StnRegistry, BaseClass, isFunction, isString, Error, formattedInspect;
   ({ BaseClass, isFunction, isString, Error, formattedInspect } = Caf.import(
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
-    [require("./StandardImport"), global]
+    [global, require("./StandardImport")]
   ));
   return (StnRegistry = Caf.defClass(
     class StnRegistry extends BaseClass {},

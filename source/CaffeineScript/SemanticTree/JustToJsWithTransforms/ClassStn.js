@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let SemanticTree, ClassStn, Error, compactFlatten, merge;
   ({ Error, compactFlatten, merge } = Caf.import(
     ["Error", "compactFlatten", "merge"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   SemanticTree = require("../../StnRegistry");
   return (ClassStn = Caf.defClass(

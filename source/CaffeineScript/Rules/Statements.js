@@ -5,10 +5,10 @@ Caf.defMod(module, () => {
   ({ ControlOperatorStn } = Caf.import(
     ["ControlOperatorStn"],
     [
+      global,
       require("../StandardImport"),
-      require("babel-bridge"),
-      require("../StnRegistry"),
-      global
+      require("caffeine-eight"),
+      require("../StnRegistry")
     ]
   ));
   return {

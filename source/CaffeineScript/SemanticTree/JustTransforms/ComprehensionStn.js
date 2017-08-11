@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
     Error;
   ({ arrayWithAllButLast, peek, Error } = Caf.import(
     ["arrayWithAllButLast", "peek", "Error"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   SemanticTree = require("../../StnRegistry");
   UniqueIdentifierHandle = require("../UniqueIdentifierHandle");

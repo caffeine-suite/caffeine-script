@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let StnRegistry, ControlOperatorStn, Error, formattedInspect;
   ({ Error, formattedInspect } = Caf.import(
     ["Error", "formattedInspect"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   StnRegistry = require("../../StnRegistry");
   return (ControlOperatorStn = Caf.defClass(

@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let DoStn, Object;
   ({ Object } = Caf.import(
     ["Object"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (DoStn = Caf.defClass(
     class DoStn extends require("../BaseStn") {},

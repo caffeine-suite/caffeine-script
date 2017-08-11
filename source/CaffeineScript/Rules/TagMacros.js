@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let StnRegistry, upperCamelCase, Error;
   ({ upperCamelCase, Error } = Caf.import(
     ["upperCamelCase", "Error"],
-    [require("../StandardImport"), global]
+    [global, require("../StandardImport")]
   ));
   StnRegistry = require("../StnRegistry");
   return {

@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let InterpolatedStringStn, peek;
-  ({ peek } = Caf.import(["peek"], [require("../../StandardImport"), global]));
+  ({ peek } = Caf.import(["peek"], [global, require("../../StandardImport")]));
   return (InterpolatedStringStn = Caf.defClass(
     class InterpolatedStringStn extends require("../BaseStn") {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {

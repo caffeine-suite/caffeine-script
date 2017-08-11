@@ -24,10 +24,10 @@ Caf.defMod(module, () => {
       "UnaryOperatorStn"
     ],
     [
+      global,
       require("../StandardImport"),
       require("../OperatorHelper"),
-      require("../StnRegistry"),
-      global
+      require("../StnRegistry")
     ]
   ));
   return {

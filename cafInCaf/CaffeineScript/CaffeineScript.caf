@@ -8,7 +8,7 @@ version: require('../../package.json').version
 ##compile: (source, options) ->
   import &StandardImport
 
-  {Stats} = &BabelBridge
+  {Stats} = &CaffeineEight
 
   countNodes = (node) ->
     Stats?.add "finalNode"

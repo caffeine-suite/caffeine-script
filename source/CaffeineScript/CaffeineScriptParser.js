@@ -5,10 +5,10 @@ Caf.defMod(module, () => {
   ({ Parser, isFunction, Error } = Caf.import(
     ["Parser", "isFunction", "Error"],
     [
+      global,
       require("./StandardImport"),
-      require("babel-bridge"),
-      require("./CafParseNodeBaseClass"),
-      global
+      require("caffeine-eight"),
+      require("./CafParseNodeBaseClass")
     ]
   ));
   return (CaffeineScriptParser = Caf.defClass(

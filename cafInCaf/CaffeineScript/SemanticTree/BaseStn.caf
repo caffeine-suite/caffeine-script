@@ -12,7 +12,7 @@ import &StandardImport
 
 class BaseStn extends BaseClass
   ############################################
-    Could go in BabelBridge standard BaseStn
+    Could go in CaffeineEight standard BaseStn
 
   unless &CaffeineScriptRuntime.getSuper(@) == BaseClass
     log
@@ -195,13 +195,13 @@ class BaseStn extends BaseClass
     TODO: this is getting out of hand! We need to convert
     the whole SematicTree system over to ONLY using labeled children.
 
-    In fact, BabelBridge should probably strongly discourage using the "@matches"
+    In fact, CaffeineEight should probably strongly discourage using the "@matches"
     list.
 
     Labeled children can either be singles or arrays - if more than one child
     has the same label.
 
-    Labels from BabelBridge should be explicit labels, if there are any, OR
+    Labels from CaffeineEight should be explicit labels, if there are any, OR
     the rule's name. I think right now we have a 'contextual' aspect which is
     just confusing - if any node in a chain of nodes has a label, that's what
     is used for the label for that branch.

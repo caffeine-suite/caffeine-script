@@ -37,7 +37,7 @@ Caf.defMod(module, () => {
       "compactFlatten",
       "isString"
     ],
-    [require("../StandardImport"), global]
+    [global, require("../StandardImport")]
   ));
   ({ createObjectTreeFactory } = require("art-object-tree-factory"));
   return (BaseStn = Caf.defClass(

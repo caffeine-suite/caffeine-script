@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let StatementsStn, RootStn, compactFlatten;
   ({ compactFlatten } = Caf.import(
     ["compactFlatten"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   StatementsStn = require("./StatementsStn");
   return (RootStn = Caf.defClass(

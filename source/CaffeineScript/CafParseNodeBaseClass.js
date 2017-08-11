@@ -5,10 +5,10 @@ Caf.defMod(module, () => {
   ({ Nodes, isFunction, RootStn } = Caf.import(
     ["Nodes", "isFunction", "RootStn"],
     [
+      global,
       require("./StandardImport"),
-      require("babel-bridge"),
-      require("./StnRegistry"),
-      global
+      require("caffeine-eight"),
+      require("./StnRegistry")
     ]
   ));
   StnRegistry = require("./StnRegistry");

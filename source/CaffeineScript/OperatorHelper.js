@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let OperatorHelper, Error, arrayWithout;
   ({ Error, arrayWithout } = Caf.import(
     ["Error", "arrayWithout"],
-    [require("./StandardImport"), global]
+    [global, require("./StandardImport")]
   ));
   return (OperatorHelper = Caf.defClass(
     class OperatorHelper extends Object {},

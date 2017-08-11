@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let SuperStn, Error, merge;
   ({ Error, merge } = Caf.import(
     ["Error", "merge"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (SuperStn = Caf.defClass(
     class SuperStn extends require("../BaseStn") {

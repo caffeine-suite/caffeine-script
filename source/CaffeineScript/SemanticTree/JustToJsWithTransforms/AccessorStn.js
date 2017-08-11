@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let AccessorStn, Error;
   ({ Error } = Caf.import(
     ["Error"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (AccessorStn = Caf.defClass(
     class AccessorStn extends require("../ValueBaseCaptureStn") {

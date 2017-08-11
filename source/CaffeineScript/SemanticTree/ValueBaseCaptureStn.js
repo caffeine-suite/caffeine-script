@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
     isArray;
   ({ mergeInto, isArray } = Caf.import(
     ["mergeInto", "isArray"],
-    [require("../StandardImport"), global]
+    [global, require("../StandardImport")]
   ));
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
   StnRegistry = require("../StnRegistry");

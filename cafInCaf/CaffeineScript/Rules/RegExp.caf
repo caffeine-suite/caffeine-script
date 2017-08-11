@@ -1,4 +1,4 @@
-import &StandardImport, &BabelBridge, &StnRegistry
+import &StandardImport, &CaffeineEight, &StnRegistry
 
 ##
   TODO: convert multiline RegExp into a 'block' instead of 'bracketed'

@@ -5,15 +5,15 @@ Caf.defMod(module, () => {
   ({ Extensions } = Caf.import(
     ["Extensions"],
     (cafParentImports = [
+      global,
       require("../StandardImport"),
-      require("babel-bridge"),
-      require("../StnRegistry"),
-      global
+      require("caffeine-eight"),
+      require("../StnRegistry")
     ])
   ));
   ({ IndentBlocks, ObjectStn } = Caf.import(
     ["IndentBlocks", "ObjectStn"],
-    [Extensions, cafParentImports]
+    [cafParentImports, Extensions]
   ));
   return function() {
     this.rule({

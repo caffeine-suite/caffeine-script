@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   let CatchStn, compactFlatten;
   ({ compactFlatten } = Caf.import(
     ["compactFlatten"],
-    [require("../../StandardImport"), global]
+    [global, require("../../StandardImport")]
   ));
   return (CatchStn = Caf.defClass(
     class CatchStn extends require("../BaseStn") {},
