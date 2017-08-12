@@ -53,6 +53,7 @@ class BaseStn extends BaseClass
 
 
   @getter
+    sourceOffset: -> @parseTreeNode.offset
     parser: -> @parseTreeNode.parser.rootParser
     sourceFile: -> @parser.sourceFile
     label: -> @props.label
@@ -274,7 +275,19 @@ class BaseStn extends BaseClass
   applyRequiredParens: applyRequiredParens
   applyParens: applyParens
 
+  validate: ->
+
+  validateAll: ->
+    try
+      @validate()
+    catch e
+      throw @parseTreeNode.parser.generateCompileError {}
+        failureOffset: @sourceOffset
+        errorType: "Validation"
+        e.message
+        e.info
+    each child in @children do child.validateAll()
+    @
 
   updateScope: (@scope) ->
-    each child in @children
-      child.updateScope @scope
+    each child in @children do child.updateScope @scope

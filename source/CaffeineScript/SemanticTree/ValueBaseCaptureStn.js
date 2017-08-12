@@ -52,7 +52,7 @@ Caf.defMod(module, () => {
       this.prototype.getValueWithCapture = function(accessorStn) {
         let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;
         return accessorStn.type === "Identifier" ||
-          accessorStn.type === "Reference"
+        accessorStn.type === "Reference"
           ? { value1: accessorStn, value2: accessorStn }
           : (
               ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),

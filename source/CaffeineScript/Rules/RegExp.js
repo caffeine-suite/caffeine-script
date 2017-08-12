@@ -33,8 +33,8 @@ Caf.defMod(module, () => {
           return {
             modifiers:
               Caf.exists((cafBase = this.regExpBlockModifiers)) &&
-                (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
-                  cafBase1.toString())
+              (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
+                cafBase1.toString())
           };
         }
       }

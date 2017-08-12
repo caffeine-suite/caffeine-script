@@ -15,6 +15,9 @@ Caf.defMod(module, () => {
             .requireString;
         }
       });
+      this.prototype.validate = function() {
+        return this.requireString;
+      };
       this.prototype.toJs = function() {
         return `require('${Caf.toString(this.requireString)}')`;
       };

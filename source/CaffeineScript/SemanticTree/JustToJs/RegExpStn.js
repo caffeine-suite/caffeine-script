@@ -12,30 +12,31 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let value, modifiers, str, hasInterpolation, cafBase;
         ({ value, modifiers } = this.props);
-        str = (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
-          ? (
-              (hasInterpolation = Caf.extendedEach(
-                this.children,
-                undefined,
-                (child, k, into, brk) => {
-                  let cafRet;
-                  return (
-                    (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+        str =
+          (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
+            ? (
+                (hasInterpolation = Caf.extendedEach(
+                  this.children,
+                  undefined,
+                  (child, k, into, brk) => {
+                    let cafRet;
+                    return (
+                      (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+                    );
+                  }
+                )),
+                Caf.each(this.children, [], (child, k, into) => {
+                  let v;
+                  into.push(
+                    isString((v = child.props.value))
+                      ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
+                      : `\${Caf.toString(${Caf.toString(
+                          child.toJsExpression()
+                        )})}`
                   );
-                }
-              )),
-              Caf.each(this.children, [], (child, k, into) => {
-                let v;
-                into.push(
-                  isString((v = child.props.value))
-                    ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
-                    : `\${Caf.toString(${Caf.toString(
-                        child.toJsExpression()
-                      )})}`
-                );
-              }).join("")
-            )
-          : value;
+                }).join("")
+              )
+            : value;
         return str.length === 0
           ? "/(?:)/"
           : hasInterpolation

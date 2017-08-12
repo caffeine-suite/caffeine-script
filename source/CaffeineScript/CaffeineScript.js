@@ -7,12 +7,15 @@ Caf.defMod(module, () => {
   return {
     version: require("../../package.json").version,
     compile: function(source, options = {}) {
-      let parseTree, stn, transformedStn, e, cafError;
+      let transformedStn, stn, parseTree, e, cafError;
       return (() => {
         try {
-          parseTree = require("./CaffeineScriptParser").parse(source, options);
-          stn = parseTree.getStn();
-          transformedStn = stn.transform();
+          transformedStn = (stn = (parseTree = require("./CaffeineScriptParser").parse(
+            source,
+            options
+          )).getStn())
+            .validateAll()
+            .transform();
           return {
             compiled: {
               js: options.bare

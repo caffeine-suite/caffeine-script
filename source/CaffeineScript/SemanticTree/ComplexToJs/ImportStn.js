@@ -81,15 +81,16 @@ Caf.defMod(module, () => {
         importingJs = `[${Caf.toString(list.join(", "))}]`;
         importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
         importsJs = compactFlatten([importFromCaptureIdentifier, importsJs]);
-        imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
-          ? `({${Caf.toString(
-              this.importing.join(", ")
-            )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
-              this._importFromCaptureIdentifier
-                ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
-                : ""
-            )}[${Caf.toString(importsJs.join(", "))}]));`
-          : "";
+        imports =
+          (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
+            ? `({${Caf.toString(
+                this.importing.join(", ")
+              )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
+                this._importFromCaptureIdentifier
+                  ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
+                  : ""
+              )}[${Caf.toString(importsJs.join(", "))}]));`
+            : "";
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
     }

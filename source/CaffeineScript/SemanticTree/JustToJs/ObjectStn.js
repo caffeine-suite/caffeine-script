@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
           }).join(", ")
         )}}`;
         return (Caf.exists(options) && options.dotBase) ||
-          (Caf.exists(options) && options.statement)
+        (Caf.exists(options) && options.statement)
           ? `(${Caf.toString(out)})`
           : out;
       };

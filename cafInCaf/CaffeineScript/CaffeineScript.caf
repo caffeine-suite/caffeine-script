@@ -44,9 +44,13 @@ version: require('../../package.json').version
 
 compile: (source, options = {}) ->
   try
-    parseTree =       &CaffeineScriptParser.parse source, options
-    stn =             parseTree.getStn()
-    transformedStn =  stn.transform()
+    transformedStn =
+      stn =
+        parseTree = &CaffeineScriptParser.parse source, options
+        .getStn()
+      .validateAll()
+      .transform()
+
     compiled: js:
       if options.bare
         transformedStn.toBareJs()

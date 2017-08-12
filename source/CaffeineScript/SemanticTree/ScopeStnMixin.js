@@ -146,7 +146,7 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-            (identifiers = this.requiredIdentifierLets).length > 0
+          (identifiers = this.requiredIdentifierLets).length > 0
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
@@ -154,7 +154,7 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-            (identifiers = this.requiredIdentifierLets).length > 0
+          (identifiers = this.requiredIdentifierLets).length > 0
             ? (
                 (identifiers = Caf.each(
                   identifiers,

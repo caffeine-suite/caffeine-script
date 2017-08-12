@@ -23,5 +23,7 @@ class RequireStn extends &BaseStn
       findModuleSync @rawRequireString, @parser.options
       .requireString
 
+  validate: -> @requireString
+
   toJs: ->
     "" require('#{@requireString}')

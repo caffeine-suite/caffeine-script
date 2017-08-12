@@ -82,6 +82,9 @@ Caf.defMod(module, () => {
         });
       };
       this.getter({
+        sourceOffset: function() {
+          return this.parseTreeNode.offset;
+        },
         parser: function() {
           return this.parseTreeNode.parser.rootParser;
         },
@@ -103,17 +106,18 @@ Caf.defMod(module, () => {
             name = `${Caf.toString(label)}.${Caf.toString(name)}`;
           }
           return {
-            [`${Caf.toString(name)}`]: this.children.length === 0
-              ? toInspectedObjects(props)
-              : (
-                  (a = []),
-                  objectKeyCount(props) > 0 ? a.push(props) : undefined,
-                  a.concat(
-                    Caf.each(this.children, [], (c, k, into) => {
-                      into.push(c.inspectedObjects);
-                    })
+            [`${Caf.toString(name)}`]:
+              this.children.length === 0
+                ? toInspectedObjects(props)
+                : (
+                    (a = []),
+                    objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                    a.concat(
+                      Caf.each(this.children, [], (c, k, into) => {
+                        into.push(c.inspectedObjects);
+                      })
+                    )
                   )
-                )
           };
         },
         type: function() {
@@ -244,6 +248,25 @@ Caf.defMod(module, () => {
       };
       this.prototype.applyRequiredParens = applyRequiredParens;
       this.prototype.applyParens = applyParens;
+      this.prototype.validate = function() {};
+      this.prototype.validateAll = function() {
+        let e, cafError;
+        try {
+          this.validate();
+        } catch (cafError) {
+          e = cafError;
+          throw this.parseTreeNode.parser.generateCompileError({
+            failureOffset: this.sourceOffset,
+            errorType: "Validation",
+            message: e.message,
+            info: e.info
+          });
+        }
+        Caf.each(this.children, undefined, (child, k, into) => {
+          child.validateAll();
+        });
+        return this;
+      };
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         return Caf.each(this.children, undefined, (child, k, into) => {
