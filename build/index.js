@@ -190,6 +190,9 @@ Caf.defMod(module, () => {
         });
       };
       this.getter({
+        sourceOffset: function() {
+          return this.parseTreeNode.offset;
+        },
         parser: function() {
           return this.parseTreeNode.parser.rootParser;
         },
@@ -211,17 +214,18 @@ Caf.defMod(module, () => {
             name = `${Caf.toString(label)}.${Caf.toString(name)}`;
           }
           return {
-            [`${Caf.toString(name)}`]: this.children.length === 0
-              ? toInspectedObjects(props)
-              : (
-                  (a = []),
-                  objectKeyCount(props) > 0 ? a.push(props) : undefined,
-                  a.concat(
-                    Caf.each(this.children, [], (c, k, into) => {
-                      into.push(c.inspectedObjects);
-                    })
+            [`${Caf.toString(name)}`]:
+              this.children.length === 0
+                ? toInspectedObjects(props)
+                : (
+                    (a = []),
+                    objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                    a.concat(
+                      Caf.each(this.children, [], (c, k, into) => {
+                        into.push(c.inspectedObjects);
+                      })
+                    )
                   )
-                )
           };
         },
         type: function() {
@@ -352,6 +356,25 @@ Caf.defMod(module, () => {
       };
       this.prototype.applyRequiredParens = applyRequiredParens;
       this.prototype.applyParens = applyParens;
+      this.prototype.validate = function() {};
+      this.prototype.validateAll = function() {
+        let e, cafError;
+        try {
+          this.validate();
+        } catch (cafError) {
+          e = cafError;
+          throw this.parseTreeNode.parser.generateCompileError({
+            failureOffset: this.sourceOffset,
+            errorType: "Validation",
+            message: e.message,
+            info: e.info
+          });
+        }
+        Caf.each(this.children, undefined, (child, k, into) => {
+          child.validateAll();
+        });
+        return this;
+      };
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
         return Caf.each(this.children, undefined, (child, k, into) => {
@@ -613,7 +636,7 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-            (identifiers = this.requiredIdentifierLets).length > 0
+          (identifiers = this.requiredIdentifierLets).length > 0
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
@@ -621,7 +644,7 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-            (identifiers = this.requiredIdentifierLets).length > 0
+          (identifiers = this.requiredIdentifierLets).length > 0
             ? (
                 (identifiers = Caf.each(
                   identifiers,
@@ -916,7 +939,7 @@ Caf.defMod(module, () => {
       this.prototype.getValueWithCapture = function(accessorStn) {
         let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;
         return accessorStn.type === "Identifier" ||
-          accessorStn.type === "Reference"
+        accessorStn.type === "Reference"
           ? { value1: accessorStn, value2: accessorStn }
           : (
               ({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
@@ -1704,63 +1727,7 @@ __webpack_require__(103);
 /* 25 */
 /***/ (function(module, exports) {
 
-module.exports = {
-	"author": "Shane Brinkman-Davis Delamore, Imikimi LLC",
-	"config": {
-		"blanket": {
-			"pattern": "source"
-		}
-	},
-	"dependencies": {
-		"art-build-configurator": "*",
-		"art-class-system": "*",
-		"art-config": "*",
-		"art-object-tree-factory": "*",
-		"art-standard-lib": "*",
-		"art-testbench": "*",
-		"bluebird": "^3.5.0",
-		"caffeine-eight": "*",
-		"caffeine-mc": "*",
-		"caffeine-script": "*",
-		"caffeine-script-runtime": "*",
-		"case-sensitive-paths-webpack-plugin": "^2.1.1",
-		"chai": "^4.0.1",
-		"coffee-loader": "^0.7.3",
-		"coffee-script": "^1.12.6",
-		"colors": "^1.1.2",
-		"commander": "^2.9.0",
-		"css-loader": "^0.28.4",
-		"dateformat": "^2.0.0",
-		"detect-node": "^2.0.3",
-		"fs-extra": "^3.0.1",
-		"glob": "^7.1.2",
-		"glob-promise": "^3.1.0",
-		"json-loader": "^0.5.4",
-		"mocha": "^3.4.2",
-		"neptune-namespaces": "*",
-		"script-loader": "^0.7.0",
-		"style-loader": "^0.18.1",
-		"webpack": "^2.6.1",
-		"webpack-dev-server": "^2.4.5",
-		"webpack-merge": "^4.1.0",
-		"webpack-node-externals": "^1.6.0"
-	},
-	"description": "CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.",
-	"license": "ISC",
-	"name": "caffeine-script",
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:shanebdavis/caffeine-script.git"
-	},
-	"scripts": {
-		"build": "caf -v -p -C -c cafInCaf -o source",
-		"perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
-		"start": "webpack-dev-server --hot --inline --progress",
-		"test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
-		"testInBrowser": "webpack-dev-server --progress"
-	},
-	"version": "0.46.1"
-};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.47.0"}
 
 /***/ }),
 /* 26 */
@@ -1796,12 +1763,15 @@ Caf.defMod(module, () => {
   return {
     version: __webpack_require__(25).version,
     compile: function(source, options = {}) {
-      let parseTree, stn, transformedStn, e, cafError;
+      let transformedStn, stn, parseTree, e, cafError;
       return (() => {
         try {
-          parseTree = __webpack_require__(16).parse(source, options);
-          stn = parseTree.getStn();
-          transformedStn = stn.transform();
+          transformedStn = (stn = (parseTree = __webpack_require__(16).parse(
+            source,
+            options
+          )).getStn())
+            .validateAll()
+            .transform();
           return {
             compiled: {
               js: options.bare
@@ -2854,8 +2824,8 @@ Caf.defMod(module, () => {
           return {
             modifiers:
               Caf.exists((cafBase = this.regExpBlockModifiers)) &&
-                (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
-                  cafBase1.toString())
+              (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
+                cafBase1.toString())
           };
         }
       }
@@ -3575,15 +3545,16 @@ Caf.defMod(module, () => {
         importingJs = `[${Caf.toString(list.join(", "))}]`;
         importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
         importsJs = compactFlatten([importFromCaptureIdentifier, importsJs]);
-        imports = (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
-          ? `({${Caf.toString(
-              this.importing.join(", ")
-            )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
-              this._importFromCaptureIdentifier
-                ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
-                : ""
-            )}[${Caf.toString(importsJs.join(", "))}]));`
-          : "";
+        imports =
+          (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
+            ? `({${Caf.toString(
+                this.importing.join(", ")
+              )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
+                this._importFromCaptureIdentifier
+                  ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
+                  : ""
+              )}[${Caf.toString(importsJs.join(", "))}]));`
+            : "";
         return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
       };
     }
@@ -3931,39 +3902,40 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function(options) {
         let out, identifier, parentOperatorPrecidence;
-        out = this.operator === "?" && this.uniqueIdentifierHandle
-          ? (
-              ({ identifier } = this.uniqueIdentifierHandle),
-              `((${Caf.toString(identifier)} = ${Caf.toString(
-                this.left.toJsExpression()
-              )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
-                this.right.toJsExpression()
-              )})`
-            )
-          : !operatorIsInfixJs(this.operator)
-            ? binaryOperatorToJs(
-                this.operator,
-                this.left.toJsExpression(),
-                this.right.toJsExpression()
+        out =
+          this.operator === "?" && this.uniqueIdentifierHandle
+            ? (
+                ({ identifier } = this.uniqueIdentifierHandle),
+                `((${Caf.toString(identifier)} = ${Caf.toString(
+                  this.left.toJsExpression()
+                )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
+                  this.right.toJsExpression()
+                )})`
               )
-            : (
-                (parentOperatorPrecidence = getOpPrecidence(this.operator)),
-                binaryOperatorToJs(
+            : !operatorIsInfixJs(this.operator)
+              ? binaryOperatorToJs(
                   this.operator,
-                  this.left.toJs({
-                    expression: true,
-                    subExpression: true,
-                    parentOperatorPrecidence,
-                    isLeftOperand: true
-                  }),
-                  this.right.toJs({
-                    expression: true,
-                    subExpression: true,
-                    parentOperatorPrecidence,
-                    isLeftOperand: false
-                  })
+                  this.left.toJsExpression(),
+                  this.right.toJsExpression()
                 )
-              );
+              : (
+                  (parentOperatorPrecidence = getOpPrecidence(this.operator)),
+                  binaryOperatorToJs(
+                    this.operator,
+                    this.left.toJs({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: true
+                    }),
+                    this.right.toJs({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: false
+                    })
+                  )
+                );
         return options
           ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
           : out;
@@ -3981,12 +3953,12 @@ Caf.defMod(module, () => {
           : (
               (operatorPrecidence = getOpPrecidence(this.operator)),
               parentOperatorPrecidence &&
-                operatorPrecidence < parentOperatorPrecidence
+              operatorPrecidence < parentOperatorPrecidence
                 ? false
                 : parentOperatorPrecidence &&
-                    operatorPrecidence === parentOperatorPrecidence &&
-                    isLeftOperand ===
-                      getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
+                  operatorPrecidence === parentOperatorPrecidence &&
+                  isLeftOperand ===
+                    getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
                   ? false
                   : true
             );
@@ -4669,7 +4641,7 @@ Caf.defMod(module, () => {
           }).join(", ")
         )}}`;
         return (Caf.exists(options) && options.dotBase) ||
-          (Caf.exists(options) && options.statement)
+        (Caf.exists(options) && options.statement)
           ? `(${Caf.toString(out)})`
           : out;
       };
@@ -4775,30 +4747,31 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function() {
         let value, modifiers, str, hasInterpolation, cafBase;
         ({ value, modifiers } = this.props);
-        str = (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
-          ? (
-              (hasInterpolation = Caf.extendedEach(
-                this.children,
-                undefined,
-                (child, k, into, brk) => {
-                  let cafRet;
-                  return (
-                    (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+        str =
+          (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
+            ? (
+                (hasInterpolation = Caf.extendedEach(
+                  this.children,
+                  undefined,
+                  (child, k, into, brk) => {
+                    let cafRet;
+                    return (
+                      (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+                    );
+                  }
+                )),
+                Caf.each(this.children, [], (child, k, into) => {
+                  let v;
+                  into.push(
+                    isString((v = child.props.value))
+                      ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
+                      : `\${Caf.toString(${Caf.toString(
+                          child.toJsExpression()
+                        )})}`
                   );
-                }
-              )),
-              Caf.each(this.children, [], (child, k, into) => {
-                let v;
-                into.push(
-                  isString((v = child.props.value))
-                    ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
-                    : `\${Caf.toString(${Caf.toString(
-                        child.toJsExpression()
-                      )})}`
-                );
-              }).join("")
-            )
-          : value;
+                }).join("")
+              )
+            : value;
         return str.length === 0
           ? "/(?:)/"
           : hasInterpolation
@@ -4835,6 +4808,9 @@ Caf.defMod(module, () => {
             .requireString;
         }
       });
+      this.prototype.validate = function() {
+        return this.requireString;
+      };
       this.prototype.toJs = function() {
         return `require('${Caf.toString(this.requireString)}')`;
       };
@@ -5549,9 +5525,10 @@ Caf.defMod(module, () => {
                 bodyJs
               ]
         );
-        body = statements.length > 0
-          ? `{${Caf.toString(statements.join("; "))};}`
-          : "{}";
+        body =
+          statements.length > 0
+            ? `{${Caf.toString(statements.join("; "))};}`
+            : "{}";
         return bound
           ? `${Caf.toString(argsDef)} => ${Caf.toString(body)}`
           : `${Caf.toString(
@@ -6103,7 +6080,7 @@ Caf.defMod(module, () => {
               this.rValue.toJsExpression()
             )}`;
         return (Caf.exists(options) && options.dotBase) ||
-          (Caf.exists(options) && options.subExpression)
+        (Caf.exists(options) && options.subExpression)
           ? `(${Caf.toString(out)})`
           : out;
       };
