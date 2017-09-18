@@ -30,6 +30,11 @@ module.exports = suite: parseTestSuite
     pathing:
       "{a.b}": "({b: a.b});"
 
+    reservedWords:
+      "{true}":       "({true: true});"
+      "{true: true}": "({true: true});"
+      "{false}":      "({false: false});"
+
     complex:
       """
       {}

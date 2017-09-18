@@ -44,7 +44,7 @@ class ObjectPropValueStn extends &BaseStn
     else
       throw new Error "internal error - expecint 1 or 2 children"
 
-    if propertyName == valueJs && identifierRegexp.test propertyName
+    if propertyName == valueJs && !javaScriptReservedWords[propertyName] && identifierRegexp.test propertyName
 
       valueJs
     else

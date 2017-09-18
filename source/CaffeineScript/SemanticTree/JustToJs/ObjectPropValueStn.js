@@ -1,9 +1,13 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let identifierRegexp, ObjectPropValueStn, peek, Error;
-  ({ peek, Error } = Caf.import(
-    ["peek", "Error"],
+  let identifierRegexp,
+    ObjectPropValueStn,
+    peek,
+    Error,
+    javaScriptReservedWords;
+  ({ peek, Error, javaScriptReservedWords } = Caf.import(
+    ["peek", "Error", "javaScriptReservedWords"],
     [global, require("../../StandardImport")]
   ));
   identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/;
@@ -34,7 +38,9 @@ Caf.defMod(module, () => {
           default:
             throw new Error("internal error - expecint 1 or 2 children");
         }
-        return propertyName === valueJs && identifierRegexp.test(propertyName)
+        return propertyName === valueJs &&
+        !javaScriptReservedWords[propertyName] &&
+        identifierRegexp.test(propertyName)
           ? valueJs
           : `${Caf.toString(propertyName)}: ${Caf.toString(valueJs)}`;
       };
