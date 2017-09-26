@@ -14,12 +14,12 @@ module.exports = suite: parseTestSuite
       "new Foo.Bar": "new Foo.Bar;"
 
     regressions:
-      "new &BabelBridge 123":             knownFailing: "(new require('babel-bridge'))(123)"
-      "new BabelBridge 123":              "new BabelBridge(123);"
+      "new &CaffeineEight 123":             knownFailing: "(new require('caffeine-eight'))(123)"
+      "new CaffeineEight 123":              "new CaffeineEight(123);"
 
-      "new require('babel-bridge') 123":  knownFailing: "(new require('babel-bridge'))(123)"
-      "new require 'babel-bridge' 123":   'new require("babel-bridge", 123);'
-      "new require 'babel-bridge'":       'new require("babel-bridge");'
+      "new require('caffeine-eight') 123":  knownFailing: "(new require('caffeine-eight'))(123)"
+      "new require 'caffeine-eight' 123":   'new require("caffeine-eight", 123);'
+      "new require 'caffeine-eight'":       'new require("caffeine-eight");'
 
   definition:
     basic:

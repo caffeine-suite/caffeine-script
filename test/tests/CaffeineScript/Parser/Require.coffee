@@ -11,17 +11,17 @@ module.exports = suite: parseTestSuite {
 
   npm:
     basic:
-      "&BabelBridge":   "require('babel-bridge');"
-      "&babelBridge":   "require('babel-bridge');"
-      "&babel_bridge":  "require('babel-bridge');"
-      "&babel-bridge":  "require('babel-bridge');"
+      "&CaffeineEight":   "require('caffeine-eight');"
+      "&caffeineEight":   "require('caffeine-eight');"
+      "&caffeine_eight":  "require('caffeine-eight');"
+      "&caffeine-eight":  "require('caffeine-eight');"
 
     pathed:
       "&ArtStandardLib/Types":  "require('art-standard-lib/Types');"
 
     asValue:
-      "foo &BabelBridge":       "foo(require('babel-bridge'));"
-      "&BabelBridge.Parser":    "require('babel-bridge').Parser;"
+      "foo &CaffeineEight":       "foo(require('caffeine-eight'));"
+      "&CaffeineEight.Parser":    "require('caffeine-eight').Parser;"
 
   local:
     basic:
@@ -41,32 +41,32 @@ module.exports = suite: parseTestSuite {
   regressions:
     """
     import &ArtStandardLib
-    &BabelBridge
-    """: "require('babel-bridge');"
+    &CaffeineEight
+    """: "require('caffeine-eight');"
 
     """
     import &ArtStandardLib
-    &BabelBridge
+    &CaffeineEight
     foo
     """: "
       let foo;
-      ({foo} = Caf.import([\"foo\"], [global, require('art-standard-lib')]));require('babel-bridge');
+      ({foo} = Caf.import([\"foo\"], [global, require('art-standard-lib')]));require('caffeine-eight');
       foo;
       "
 
     "-> &Lib": "(function() {return require('./Lib');});"
 
     """
-    &BabelBridge
+    &CaffeineEight
     ->
-      &BabelBridge
-    """: "require('babel-bridge'); (function() {return require('babel-bridge');});"
+      &CaffeineEight
+    """: "require('caffeine-eight'); (function() {return require('caffeine-eight');});"
 
     """
-    &BabelBridge
+    &CaffeineEight
     &ArtStandardLib
     """:
       "
-      require('babel-bridge');
+      require('caffeine-eight');
       require('art-standard-lib');
       "
