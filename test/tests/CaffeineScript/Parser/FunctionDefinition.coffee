@@ -65,6 +65,24 @@ module.exports = suite: parseTestSuite
     "(@foo...) =>":       "(...foo) => {this.foo = foo;};"
     "(@foo, @bar) =>":    "(foo, bar) => {this.foo = foo; this.bar = bar;};"
 
+  oneliners:
+    onestatement:
+      "-> 1":                 "(function() {return 1;});"
+      "-> a b":               "(function() {return a(b);});"
+      "-> a(); 2":            "(function() {a(); return 2;});"
+
+    comments:
+      "-> 1 # with comment":                "(function() {return 1;});"
+      "-> 1 ##\n with comment":             "(function() {return 1;});"
+      "-> 1   ;   2    ##\n with comment":  "(function() {1; return 2;});"
+
+    insideParens:
+      "(-> 1)":       "(function() {return 1;});"
+      "(-> (~> 1))":  "(function() {return function() {return 1;};});"
+
+    multistatement:
+      "-> 1; 2":      "(function() {1; return 2;});"
+
   argDestructuring:
     basic:
       "({a}) =>":       "({a}) => {};"

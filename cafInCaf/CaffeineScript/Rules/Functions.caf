@@ -12,7 +12,8 @@ getPropertySetters = (node, list = []) ~>
 ->
   @rule
     functionDefinition:
-      pattern: "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+        "args:argsDefinition? _arrow_ body:oneLinerBody"
+        "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
     {}
       stnFactory: :FunctionDefinitionStn
       stnProps: ~>
@@ -23,7 +24,12 @@ getPropertySetters = (node, list = []) ~>
           else throw new Error
 
   @rule
-    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
+    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock()
+    semicolonStatement: "onelinerEnd statementWithoutEnd"
+
+  @rule
+    oneLinerBody: "statementWithoutEnd semicolonStatement*"
+    {} stnFactory: :StatementsStn
 
   @rule
     argsDefinition:

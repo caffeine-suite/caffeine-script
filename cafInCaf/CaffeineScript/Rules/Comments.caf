@@ -2,8 +2,9 @@ import &StandardImport
 
 ->
   @rule
-    _:            '/ +/ comment?'
-    end:          "lineEndComment"
+    _:            "" / +/ comment?
+    end:          :lineEndComment
+    onelinerEnd:  "" _? comment? /; */ comment?
 
     comment:
       {} pattern: "/##[^\n]*/ unparsedBlock*"

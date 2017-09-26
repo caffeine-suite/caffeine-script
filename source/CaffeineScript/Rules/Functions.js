@@ -24,10 +24,10 @@ Caf.defMod(module, () => {
   return function() {
     this.rule(
       {
-        functionDefinition: {
-          pattern:
-            "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
-        }
+        functionDefinition: [
+          "args:argsDefinition? _arrow_ body:oneLinerBody",
+          "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+        ]
       },
       {
         stnFactory: "FunctionDefinitionStn",
@@ -52,8 +52,13 @@ Caf.defMod(module, () => {
       }
     );
     this.rule({
-      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
+      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock(),
+      semicolonStatement: "onelinerEnd statementWithoutEnd"
     });
+    this.rule(
+      { oneLinerBody: "statementWithoutEnd semicolonStatement*" },
+      { stnFactory: "StatementsStn" }
+    );
     this.rule(
       { argsDefinition: "openParen_ argDefList? _closeParen" },
       { stnFactory: "FunctionDefinitionArgsStn" }
