@@ -78,10 +78,17 @@ module.exports = suite: parseTestSuite
 
     insideParens:
       "(-> 1)":       "(function() {return 1;});"
-      "(-> (~> 1))":  "(function() {return function() {return 1;};});"
+      # "(-> (~> 1))":  "(function() {return function() {return 1;};});"
 
     multistatement:
       "-> 1; 2":      "(function() {1; return 2;});"
+
+    regressions:
+      """
+      a: ~> b: 1
+      c: 2
+      """: "({a: function() {return {b: 1};}, c: 2});"
+
 
   argDestructuring:
     basic:

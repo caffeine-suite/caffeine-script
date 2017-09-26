@@ -1,34 +1,14 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let getPropertySetters, Extensions, Error;
+  let Extensions, Error;
   ({ Extensions, Error } = Caf.import(
     ["Extensions", "Error"],
     [global, require("../StandardImport"), require("caffeine-eight")]
   ));
-  getPropertySetters = function(node, list = []) {
-    let prop;
-    if (node) {
-      if (
-        (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty())
-      ) {
-        list.push(prop);
-      } else {
-        Caf.each(node.matches, undefined, (match, k, into) => {
-          getPropertySetters(match, list);
-        });
-      }
-    }
-    return list;
-  };
-  return function() {
-    this.rule(
-      {
-        functionDefinition: [
-          "args:argsDefinition? _arrow_ body:oneLinerBody",
-          "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
-        ]
-      },
+  return {
+    functionDefinition: [
+      "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?",
       {
         stnFactory: "FunctionDefinitionStn",
         stnProps: function() {
@@ -50,29 +30,18 @@ Caf.defMod(module, () => {
           };
         }
       }
-    );
-    this.rule({
-      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock(),
-      semicolonStatement: "onelinerEnd statementWithoutEnd"
-    });
-    this.rule(
-      { oneLinerBody: "statementWithoutEnd semicolonStatement*" },
-      { stnFactory: "StatementsStn" }
-    );
-    this.rule(
-      { argsDefinition: "openParen_ argDefList? _closeParen" },
+    ],
+    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
+      { allowPartialMatch: true }
+    ),
+    argsDefinition: [
+      "openParen_ argDefList? _closeParen",
       { stnFactory: "FunctionDefinitionArgsStn" }
-    );
-    this.rule({
-      argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
-    });
-    this.rule(
-      {
-        argDef: [
-          "at:/@/? target:identifier argIdentifierExtension?",
-          "target:destructuringTarget argIdentifierExtension?"
-        ]
-      },
+    ],
+    argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"],
+    argDef: [
+      "at:/@/? target:identifier argIdentifierExtension?",
+      "target:destructuringTarget argIdentifierExtension?",
       {
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
@@ -86,24 +55,16 @@ Caf.defMod(module, () => {
           };
         }
       }
-    );
-    this.rule({
-      argIdentifierExtension: ["defaultValue", "ellipsis"],
-      defaultValue: { pattern: "_equals_ expression" }
-    });
-    this.rule({
-      superFunctionInvocation: [
-        "openParen_ simpleValueList? _closeParen",
-        "_? valueList"
-      ]
-    });
-    return this.rule(
-      {
-        functionInvocationExtension: [
-          "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:valueList"
-        ]
-      },
+    ],
+    argIdentifierExtension: ["defaultValue", "ellipsis"],
+    defaultValue: { pattern: "_equals_ expression" },
+    superFunctionInvocation: [
+      "openParen_ simpleValueList? _closeParen",
+      "_? valueList"
+    ],
+    functionInvocationExtension: [
+      "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
+      "existanceTest:questionMark? !/[-+]/ _? values:valueList",
       {
         stnFactory: "FunctionInvocationStn",
         stnExtension: true,
@@ -115,6 +76,6 @@ Caf.defMod(module, () => {
           return Caf.exists((cafBase = this.values)) && cafBase.getStn();
         }
       }
-    );
+    ]
   };
 });

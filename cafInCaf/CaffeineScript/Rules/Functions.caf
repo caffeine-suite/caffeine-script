@@ -1,74 +1,48 @@
 import &StandardImport, &CaffeineEight
 
-getPropertySetters = (node, list = []) ~>
-  if node
-    if prop = node.shouldSetProperty?()
-      list.push prop
-    else
-      each match in node.matches
-        getPropertySetters match, list
-  list
+functionDefinition:
+  "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+  stnFactory: :FunctionDefinitionStn
+  stnProps: ~>
+    bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
+      when :=> then true
+      when :~> then false
+      when :-> then :auto
+      else throw new Error
 
-->
-  @rule
-    functionDefinition:
-        "args:argsDefinition? _arrow_ body:oneLinerBody"
-        "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
-    {}
-      stnFactory: :FunctionDefinitionStn
-      stnProps: ~>
-        bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
-          when :=> then true
-          when :~> then false
-          when :-> then :auto
-          else throw new Error
+functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock
+  allowPartialMatch: true
 
-  @rule
-    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock()
-    semicolonStatement: "onelinerEnd statementWithoutEnd"
+argsDefinition:
+  "openParen_ argDefList? _closeParen"
+  stnFactory: :FunctionDefinitionArgsStn
 
-  @rule
-    oneLinerBody: "statementWithoutEnd semicolonStatement*"
-    {} stnFactory: :StatementsStn
+argDefList:
+  "argDef _comma_ argDefList"
+  "argDef _ argDefList"
+  "argDef"
 
-  @rule
-    argsDefinition:
-      "openParen_ argDefList? _closeParen"
-    {}
-      stnFactory: :FunctionDefinitionArgsStn
+argDef:
+  "at:/@/? target:identifier argIdentifierExtension?"
+  "target:destructuringTarget argIdentifierExtension?"
+  stnFactory: "FunctionDefinitionArgStn"
+  stnProps:   ~> rest: !!@argIdentifierExtension?.ellipsis, assignThisProperty: !!@at
 
-  @rule
-    argDefList:
-      "argDef _comma_ argDefList"
-      "argDef _ argDefList"
-      "argDef"
+argIdentifierExtension:
+  :defaultValue
+  :ellipsis
 
-  @rule
-    argDef:
-      "at:/@/? target:identifier argIdentifierExtension?"
-      "target:destructuringTarget argIdentifierExtension?"
-    {}
-      stnFactory: "FunctionDefinitionArgStn"
-      stnProps: ~> rest: !!@argIdentifierExtension?.ellipsis, assignThisProperty: !!@at
+defaultValue:
+  pattern: "_equals_ expression"
 
-  @rule
-    argIdentifierExtension:
-      :defaultValue
-      :ellipsis
+superFunctionInvocation:
+  "openParen_ simpleValueList? _closeParen"
+  "_? valueList"
 
-    defaultValue:
-      pattern: "_equals_ expression"
-
-  @rule superFunctionInvocation:
-    "openParen_ simpleValueList? _closeParen"
-    "_? valueList"
-
-  @rule
-    functionInvocationExtension:
-      "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen"
-      "existanceTest:questionMark? !/[-+]/ _? values:valueList"
-    {}
-      stnFactory: "FunctionInvocationStn"
-      stnExtension: true
-      stnProps: ~> existanceTest: !!@existanceTest
-      stnChildren: ~> @values?.getStn()
+functionInvocationExtension:
+  "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen"
+  "existanceTest:questionMark? !/[-+]/ _? values:valueList"
+  stnFactory:   "FunctionInvocationStn"
+  stnExtension: true
+  stnProps:     ~> existanceTest: !!@existanceTest
+  stnChildren:  ~> @values?.getStn()

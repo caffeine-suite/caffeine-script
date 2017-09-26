@@ -4,13 +4,20 @@ import &StandardImport
   @rule
     _:            "" / +/ comment?
     end:          :lineEndComment
-    onelinerEnd:  "" _? comment? /; */ comment?
 
     comment:
       {} pattern: "/##[^\n]*/ unparsedBlock*"
       {} pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/
 
-    _end: /( *(\n|; *|$))+/
+    _end:
+      ///
+        (\ * (\n | ;\ * | $) )+
+        |
+        (\ * (?=\)))
+        # A close-parenthesis can be considered an 'end'
+        # This is makes this parse: (-> 1).
+        # Without it, the "1" wouldn't be a statement.
+        # NOTE: the close-paren is not 'consumed' by this regexp.
 
     lineStartComment: "comment _end" "_end"
     lineEndComment:   "_? comment? _end lineStartComment*"
