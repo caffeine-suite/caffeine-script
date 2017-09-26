@@ -1506,7 +1506,7 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let words, out;
   words = __webpack_require__(11).w(
-    "abstract    else    instanceof    super boolean   enum    int   switch break   export    interface   synchronized byte    extends   let   this case    false   long    throw catch   final   native    throws char    finally   new   transient class   float   null    true const   for   package   try continue    function    private   typeof debugger    goto    protected   var default   if    public    void delete    implements    return    volatile do    import    short   while double    in    static    with"
+    "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
   );
   return Caf.each(words, (out = {}), (word, k, into) => {
     out[word] = true;
@@ -1747,7 +1747,7 @@ __webpack_require__(104);
 /* 26 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.47.1"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.47.3"}
 
 /***/ }),
 /* 27 */
@@ -2009,7 +2009,7 @@ Caf.defMod(module, () => {
           { pattern: "/##[^\n]*/ unparsedBlock*" },
           { pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/ }
         ],
-        _end: /( *(\n|; *|$))+/,
+        _end: /( *(\n|; *|$))+|( *(?=\)))/,
         lineStartComment: ["comment _end", "_end"],
         lineEndComment: "_? comment? _end lineStartComment*"
       },
@@ -2371,34 +2371,14 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let getPropertySetters, Extensions, Error;
+  let Extensions, Error;
   ({ Extensions, Error } = Caf.import(
     ["Extensions", "Error"],
     [global, __webpack_require__(3), __webpack_require__(5)]
   ));
-  getPropertySetters = function(node, list = []) {
-    let prop;
-    if (node) {
-      if (
-        (prop = Caf.isF(node.shouldSetProperty) && node.shouldSetProperty())
-      ) {
-        list.push(prop);
-      } else {
-        Caf.each(node.matches, undefined, (match, k, into) => {
-          getPropertySetters(match, list);
-        });
-      }
-    }
-    return list;
-  };
-  return function() {
-    this.rule(
-      {
-        functionDefinition: {
-          pattern:
-            "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
-        }
-      },
+  return {
+    functionDefinition: [
+      "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?",
       {
         stnFactory: "FunctionDefinitionStn",
         stnProps: function() {
@@ -2420,24 +2400,18 @@ Caf.defMod(module, () => {
           };
         }
       }
-    );
-    this.rule({
-      functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
-    });
-    this.rule(
-      { argsDefinition: "openParen_ argDefList? _closeParen" },
+    ],
+    functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
+      { allowPartialMatch: true }
+    ),
+    argsDefinition: [
+      "openParen_ argDefList? _closeParen",
       { stnFactory: "FunctionDefinitionArgsStn" }
-    );
-    this.rule({
-      argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"]
-    });
-    this.rule(
-      {
-        argDef: [
-          "at:/@/? target:identifier argIdentifierExtension?",
-          "target:destructuringTarget argIdentifierExtension?"
-        ]
-      },
+    ],
+    argDefList: ["argDef _comma_ argDefList", "argDef _ argDefList", "argDef"],
+    argDef: [
+      "at:/@/? target:identifier argIdentifierExtension?",
+      "target:destructuringTarget argIdentifierExtension?",
       {
         stnFactory: "FunctionDefinitionArgStn",
         stnProps: function() {
@@ -2451,24 +2425,16 @@ Caf.defMod(module, () => {
           };
         }
       }
-    );
-    this.rule({
-      argIdentifierExtension: ["defaultValue", "ellipsis"],
-      defaultValue: { pattern: "_equals_ expression" }
-    });
-    this.rule({
-      superFunctionInvocation: [
-        "openParen_ simpleValueList? _closeParen",
-        "_? valueList"
-      ]
-    });
-    return this.rule(
-      {
-        functionInvocationExtension: [
-          "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
-          "existanceTest:questionMark? !/[-+]/ _? values:valueList"
-        ]
-      },
+    ],
+    argIdentifierExtension: ["defaultValue", "ellipsis"],
+    defaultValue: { pattern: "_equals_ expression" },
+    superFunctionInvocation: [
+      "openParen_ simpleValueList? _closeParen",
+      "_? valueList"
+    ],
+    functionInvocationExtension: [
+      "existanceTest:questionMark? openParen_ values:simpleValueList? _closeParen",
+      "existanceTest:questionMark? !/[-+]/ _? values:valueList",
       {
         stnFactory: "FunctionInvocationStn",
         stnExtension: true,
@@ -2480,7 +2446,7 @@ Caf.defMod(module, () => {
           return Caf.exists((cafBase = this.values)) && cafBase.getStn();
         }
       }
-    );
+    ]
   };
 });
 
