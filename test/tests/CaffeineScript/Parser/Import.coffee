@@ -94,3 +94,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
         let a = global.a, b = global.b, c = global.c, foo;
         ({foo} = Caf.import(["foo"], [global, a, b, c]));return foo();
       '
+
+  regressions:
+    """
+    import global
+    global.Neptune?.Art
+    """: applyModuleWrapper "let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;"
+

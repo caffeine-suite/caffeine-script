@@ -106,6 +106,7 @@ module.exports = suite: parseTestSuite
         '"" hi-there':  '"hi-there";'
 
     interpolation:
+        '""#{name}':                '`${Caf.toString(name)}`;'
         '"" #{name}':               '`${Caf.toString(name)}`;'
         '"" a#{name}':              '`a${Caf.toString(name)}`;'
         '"" #{name}b':              '`${Caf.toString(name)}b`;'
