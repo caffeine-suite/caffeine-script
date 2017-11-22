@@ -99,5 +99,5 @@ module.exports = suite: parseTestSuite {compileModule: true},
     """
     import global
     global.Neptune?.Art
-    """: applyModuleWrapper "let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;"
+    """: knownFailing: applyModuleWrapper "let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;"
 

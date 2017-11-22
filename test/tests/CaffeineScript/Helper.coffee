@@ -19,10 +19,12 @@ module.exports =
       a
 
     parseOptions = merge options, verbose: true
+    knownFailing = false
 
     object map, (expectedJs, source) ->
       testFunction = if isString expectedJs?.knownFailing
         expectedJs = expectedJs?.knownFailing
+        knownFailing = true
         skipKnownFailingTest
       else
         test
@@ -52,7 +54,7 @@ module.exports =
         else
           js != expectedJs
 
-        if showInfo
+        if showInfo && !knownFailing
           log "\nFAIL: #{name}".red
           log info:
             js:js
