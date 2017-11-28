@@ -8,4 +8,5 @@ module.exports
   Helper:         require './Helper'        
   Lib:            require './Lib'           
   OperatorHelper: require './OperatorHelper'
+  ParseFailure:   require './ParseFailure'  
 require './Parser'
