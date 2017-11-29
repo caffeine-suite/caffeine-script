@@ -123,6 +123,11 @@ class ValueBaseCaptureStn extends &BaseStn
               access a, c
               assign b, d
 
+    EXISTANCE-TESTING-ACCESSOR-INTUITION
+
+      The intution is everything to the right of a ?., ?() or ?[] is ABORTED if
+      the value on the left is null or undefined. The left-value is returned.
+
   transformAccessorChain:
     ## <doc>
       precondition: @type == "Accessor" || @type == "FunctionInvocation"
@@ -134,7 +139,9 @@ class ValueBaseCaptureStn extends &BaseStn
     ->
       accessorChain = @getLeftAccessorChain()
 
-      out = @_transformAccessorChainR accessorChain[0].value.transform(), accessorChain
+      out = @_transformAccessorChainR
+        accessorChain[0].value.transform()
+        accessorChain
 
       # don't lose the props - particularly props.label - SwitchStn needs it for the else-clause, and probably others do too.
       # TODO: I want a more consistent way to do this. I think the right answer is the 'transform'
