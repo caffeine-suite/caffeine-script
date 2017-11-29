@@ -22,22 +22,7 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
     existanceTest: -> @props.existanceTest
     isFunctionInvocation: -> true
 
-  transform: ->
-    @transformAccessorChain()
-  ##  {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
-
-    if @existanceTest
-      {value1, value2} = @getValueWithBaseCapture @functionValue
-      BinaryOperatorStn
-        operator: "&&"
-        SemanticTree.FunctionInvocationStn
-          IdentifierStn identifier: "Caf.isF"
-          value1
-
-        SemanticTree.FunctionInvocationStn value2, @argStns
-
-    else
-      super
+  transform: -> @transformAccessorChain()
 
   toJs: ->
     throw new Error "can't be existanceTest here" if @existanceTest

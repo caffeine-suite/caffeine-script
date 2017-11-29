@@ -15,8 +15,7 @@ class AccessorStn extends &ValueBaseCaptureStn
     existanceTest: -> @props.existanceTest
     isAccessor: -> true
 
-  transform: ->
-    @transformAccessorChain()
+  transform: -> @transformAccessorChain()
 
   toJs: ->
     base = @value.toJsExpression dotBase: true
