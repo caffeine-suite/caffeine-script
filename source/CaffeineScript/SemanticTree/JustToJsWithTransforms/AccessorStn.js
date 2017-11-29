@@ -10,17 +10,11 @@ Caf.defMod(module, () => {
     class AccessorStn extends require("../ValueBaseCaptureStn") {
       constructor(props, children) {
         super(...arguments);
-        switch (children.length) {
-          case 1:
-            this.key = children[0];
-            break;
-          case 2:
-            this.value = children[0];
-            this.key = children[1];
-            break;
-          default:
-            throw new Error("expected 1 or 2 children");
+        if (!(children.length === 2)) {
+          throw new Error("2 children");
         }
+        this.value = children[0];
+        this.key = children[1];
         if (!this.key) {
           throw new Error("need key");
         }
@@ -37,22 +31,16 @@ Caf.defMod(module, () => {
         }
       });
       this.prototype.transform = function() {
-        return this.value
-          ? this.transformAccessorChain()
-          : instanceSuper.transform.apply(this, arguments);
+        return this.transformAccessorChain();
       };
       this.prototype.toJs = function() {
-        let base, identierString, cafBase;
-        base =
-          Caf.exists((cafBase = this.value)) &&
-          cafBase.toJsExpression({ dotBase: true });
-        return this.value && this.key.isIdentifier
+        let base, identierString;
+        base = this.value.toJsExpression({ dotBase: true });
+        return this.key.isIdentifier
           ? (identierString = this.key.toJs()).match(/['"`]/)
             ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
             : `${Caf.toString(base)}.${Caf.toString(identierString)}`
-          : `${Caf.toString(base || "")}[${Caf.toString(
-              this.key.toJsExpression()
-            )}]`;
+          : `${Caf.toString(base)}[${Caf.toString(this.key.toJsExpression())}]`;
       };
     }
   ));

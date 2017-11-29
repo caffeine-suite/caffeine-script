@@ -4,15 +4,10 @@ class AccessorStn extends &ValueBaseCaptureStn
 
   constructor: (props, children) ->
     super
-    switch children.length
-    when 1 then @key = children[0]
-    when 2
-      @value = children[0]
-      @key = children[1]
-    else throw new Error "expected 1 or 2 children"
-
-    unless @key
-      throw new Error "need key"
+    throw new Error "2 children" unless children.length == 2
+    @value = children[0]
+    @key = children[1]
+    throw new Error "need key" unless @key
 
   needsParens: false
 
@@ -21,22 +16,14 @@ class AccessorStn extends &ValueBaseCaptureStn
     isAccessor: -> true
 
   transform: ->
-    if @value
-      @transformAccessorChain()
-    else
-      ##
-        special case for computed-keys in object literals. Ex: [foo]: 123
-        computed-keys may just need its own Stn, it's an awkward overloading
-      super
+    @transformAccessorChain()
 
-  ###
-    @value is only ever not set for object literal computed property names. (object-structuring)
   toJs: ->
-    base = @value?.toJsExpression dotBase: true
-    if @value && @key.isIdentifier
+    base = @value.toJsExpression dotBase: true
+    if @key.isIdentifier
       if (identierString = @key.toJs()).match /['"`]/
         "#{base}[#{identierString}]"
       else
         "#{base}.#{identierString}"
     else
-      "#{base || ""}[#{@key.toJsExpression()}]"
+      "#{base}[#{@key.toJsExpression()}]"
