@@ -5,16 +5,18 @@ StatementsStn = &StatementsStn
 class RootStn extends &ScopeStnMixin &BaseStn
   constructor: (props, children) ->
     super
+    @_scopeHasBeenUpdated = false
     @statements = children[0]
 
   cloneWithNewStatements: (statements)->
     new RootStn @props, [] StatementsStn compactFlatten statements
 
-  postTransform: ->
-    @updateScope @
-    @
+  updateScope: ->
+    unless @_scopeHasBeenUpdated
+      super @
 
   toJsModule: ->
+    @updateScope()
     {identifiersUsedButNotAssigned} = @
     identifiersUsedButNotAssigned = array v, k in identifiersUsedButNotAssigned with "#{k} = global.#{k}"
 
@@ -31,6 +33,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
       Caf.defMod(module, () => {#{statements.join '; '};});
 
   toJs: ->
+    @updateScope()
     statements = @statements.toJs()
     compactFlatten []
       @getAutoLets()
@@ -39,6 +42,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
     + ";"
 
   toBareJs: ->
+    @updateScope()
     statements = @statements.toJs()
     compactFlatten []
       "" Caf = require('caffeine-script-runtime')

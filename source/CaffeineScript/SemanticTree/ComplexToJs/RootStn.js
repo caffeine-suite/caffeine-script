@@ -11,6 +11,7 @@ Caf.defMod(module, () => {
     class RootStn extends require("../ScopeStnMixin")(require("../BaseStn")) {
       constructor(props, children) {
         super(...arguments);
+        this._scopeHasBeenUpdated = false;
         this.statements = children[0];
       }
     },
@@ -20,12 +21,14 @@ Caf.defMod(module, () => {
           StatementsStn(compactFlatten(statements))
         ]);
       };
-      this.prototype.postTransform = function() {
-        this.updateScope(this);
-        return this;
+      this.prototype.updateScope = function() {
+        return !this._scopeHasBeenUpdated
+          ? instanceSuper.updateScope.call(this, this)
+          : undefined;
       };
       this.prototype.toJsModule = function() {
         let identifiersUsedButNotAssigned, statementsJs, lets, statements;
+        this.updateScope();
         ({ identifiersUsedButNotAssigned } = this);
         identifiersUsedButNotAssigned = Caf.each(
           identifiersUsedButNotAssigned,
@@ -49,6 +52,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let statements;
+        this.updateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
@@ -56,6 +60,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toBareJs = function() {
         let statements;
+        this.updateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([
