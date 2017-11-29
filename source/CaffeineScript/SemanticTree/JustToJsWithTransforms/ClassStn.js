@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
   return (ClassStn = Caf.defClass(
     class ClassStn extends require("../BaseStn") {},
     function(ClassStn, classSuper, instanceSuper) {
-      this.prototype.transform = function() {
+      this.prototype.postTransform = function() {
         let className,
           classExtends,
           body,
@@ -87,14 +87,12 @@ Caf.defMod(module, () => {
                                 case "ObjectPropName":
                                   propName = propNameStn.toJs();
                                   return (m = propName.match(/^"@(.*)"$/))
-                                    ? (
-                                        ([__, classPropName] = m),
-                                        ThisStn(
-                                          IdentifierStn({
-                                            identifier: classPropName
-                                          })
-                                        )
-                                      )
+                                    ? (([__, classPropName] = m),
+                                      ThisStn(
+                                        IdentifierStn({
+                                          identifier: classPropName
+                                        })
+                                      ))
                                     : propName === "constructor"
                                       ? ((constructorStn = propValueStn), null)
                                       : AccessorStn(

@@ -30,25 +30,19 @@ Caf.defMod(module, () => {
         let nameStn, str;
         [nameStn] = this.children;
         return nameStn
-          ? (
-              (str = nameStn.toJs()),
-              nameStn.children.length > 0
-                ? `[${Caf.toString(str)}]`
-                : (
-                    !(
-                      nameStn.type === "String" || nameStn.type === "Identifier"
-                    )
-                      ? (() => {
-                          throw new Error(
-                            `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
-                              nameStn.type
-                            )}`
-                          );
-                        })()
-                      : undefined,
-                    str
-                  )
-            )
+          ? ((str = nameStn.toJs()),
+            nameStn.children.length > 0
+              ? `[${Caf.toString(str)}]`
+              : (!(nameStn.type === "String" || nameStn.type === "Identifier")
+                  ? (() => {
+                      throw new Error(
+                        `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
+                          nameStn.type
+                        )}`
+                      );
+                    })()
+                  : undefined,
+                str))
           : escapePropName(this.props.value);
       };
     }

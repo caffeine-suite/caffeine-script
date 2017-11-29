@@ -23,7 +23,7 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
     isFunctionInvocation: -> true
 
   transform: ->
-    @transformAccessorChain();
+    @transformAccessorChain()
   ##  {BinaryOperatorStn, AccessorStn, IdentifierStn, SimpleLiteralStn, SemanticTokenStn} = SemanticTree
 
     if @existanceTest

@@ -57,7 +57,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         addIdentifierUsed:     (identifier) -> @addIdentifierUsed identifier
         addIdentifierAssigned: (identifier) -> @addArgumentName identifier
 
-  transform: ->
+  postTransform: ->
     if @props.bound == "auto"
       @props.bound = if foundParent = @findParent /Class|FunctionDefinition/
         if foundParent.type == "Class"

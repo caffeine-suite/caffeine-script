@@ -54,38 +54,34 @@ Caf.defMod(module, () => {
         let out, identifier, parentOperatorPrecidence;
         out =
           this.operator === "?" && this.uniqueIdentifierHandle
-            ? (
-                ({ identifier } = this.uniqueIdentifierHandle),
-                `((${Caf.toString(identifier)} = ${Caf.toString(
-                  this.left.toJsExpression()
-                )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
-                  this.right.toJsExpression()
-                )})`
-              )
+            ? (({ identifier } = this.uniqueIdentifierHandle),
+              `((${Caf.toString(identifier)} = ${Caf.toString(
+                this.left.toJsExpression()
+              )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
+                this.right.toJsExpression()
+              )})`)
             : !operatorIsInfixJs(this.operator)
               ? binaryOperatorToJs(
                   this.operator,
                   this.left.toJsExpression(),
                   this.right.toJsExpression()
                 )
-              : (
-                  (parentOperatorPrecidence = getOpPrecidence(this.operator)),
-                  binaryOperatorToJs(
-                    this.operator,
-                    this.left.toJs({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: true
-                    }),
-                    this.right.toJs({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: false
-                    })
-                  )
-                );
+              : ((parentOperatorPrecidence = getOpPrecidence(this.operator)),
+                binaryOperatorToJs(
+                  this.operator,
+                  this.left.toJs({
+                    expression: true,
+                    subExpression: true,
+                    parentOperatorPrecidence,
+                    isLeftOperand: true
+                  }),
+                  this.right.toJs({
+                    expression: true,
+                    subExpression: true,
+                    parentOperatorPrecidence,
+                    isLeftOperand: false
+                  })
+                ));
         return options
           ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
           : out;
@@ -100,18 +96,16 @@ Caf.defMod(module, () => {
         }
         return !(parentOperatorPrecidence != null)
           ? dotBase
-          : (
-              (operatorPrecidence = getOpPrecidence(this.operator)),
-              parentOperatorPrecidence &&
-              operatorPrecidence < parentOperatorPrecidence
+          : ((operatorPrecidence = getOpPrecidence(this.operator)),
+            parentOperatorPrecidence &&
+            operatorPrecidence < parentOperatorPrecidence
+              ? false
+              : parentOperatorPrecidence &&
+                operatorPrecidence === parentOperatorPrecidence &&
+                isLeftOperand ===
+                  getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
                 ? false
-                : parentOperatorPrecidence &&
-                  operatorPrecidence === parentOperatorPrecidence &&
-                  isLeftOperand ===
-                    getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
-                  ? false
-                  : true
-            );
+                : true);
       };
     }
   ));

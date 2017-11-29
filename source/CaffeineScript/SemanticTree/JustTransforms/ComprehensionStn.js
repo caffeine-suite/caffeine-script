@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
       require("../BaseStn")
     ) {},
     function(ComprehensionStn, classSuper, instanceSuper) {
-      this.prototype.transform = function() {
+      this.prototype.postTransform = function() {
         let outputType,
           variableDefinition,
           body,
@@ -55,7 +55,6 @@ Caf.defMod(module, () => {
           allButLast,
           foundTest,
           baseIdentifierHandle;
-        this.children = this.transformChildren();
         this.initLabeledChildren();
         ({
           outputType,
@@ -122,12 +121,10 @@ Caf.defMod(module, () => {
         if (outputType === "object" || outputType === "array") {
           lastBodyStatement = body
             ? body.className === "StatementsStn"
-              ? (
-                  (bodyStatementsExceptLast = arrayWithAllButLast(
-                    body.children
-                  )),
-                  peek(body.children)
-                )
+              ? ((bodyStatementsExceptLast = arrayWithAllButLast(
+                  body.children
+                )),
+                peek(body.children))
               : body
             : ((bodyStatementsExceptLast = null), ValueStn(valueVarDef));
         } else {
@@ -229,41 +226,34 @@ Caf.defMod(module, () => {
                           )
                         )
                     : body
-                      ? (
-                          body.type === "Statements" && body.children.length > 1
-                            ? (
-                                (allButLast = StatementsStn(
-                                  body.children.slice(
-                                    0,
-                                    body.children.length - 1
-                                  )
-                                )),
-                                (body = peek(body.children))
-                              )
-                            : undefined,
-                          (foundTest = BinaryOperatorStn(
-                            { operator: "&&" },
-                            AssignmentStn(
-                              IdentifierStn({
-                                identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
-                                  "_ret"
-                                ))
-                              }),
-                              body
+                      ? (body.type === "Statements" && body.children.length > 1
+                          ? ((allButLast = StatementsStn(
+                              body.children.slice(0, body.children.length - 1)
+                            )),
+                            (body = peek(body.children)))
+                          : undefined,
+                        (foundTest = BinaryOperatorStn(
+                          { operator: "&&" },
+                          AssignmentStn(
+                            IdentifierStn({
+                              identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                                "_ret"
+                              ))
+                            }),
+                            body
+                          ),
+                          StatementsStn(
+                            FunctionInvocationStn(
+                              IdentifierStn({ identifier: brkIdentifer })
                             ),
-                            StatementsStn(
-                              FunctionInvocationStn(
-                                IdentifierStn({ identifier: brkIdentifer })
-                              ),
-                              IdentifierStn({
-                                identifierHandle: baseIdentifierHandle
-                              })
-                            )
-                          )),
-                          allButLast
-                            ? StatementsStn(allButLast, foundTest)
-                            : foundTest
-                        )
+                            IdentifierStn({
+                              identifierHandle: baseIdentifierHandle
+                            })
+                          )
+                        )),
+                        allButLast
+                          ? StatementsStn(allButLast, foundTest)
+                          : foundTest)
                       : BinaryOperatorStn(
                           { operator: "&&" },
                           valueVarDef,

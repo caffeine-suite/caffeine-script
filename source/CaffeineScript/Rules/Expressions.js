@@ -82,24 +82,22 @@ Caf.defMod(module, () => {
           originalOffset = offset;
           upToButNotEol.lastIndex = offset;
           return (match = upToButNotEol.exec(source))
-            ? (
-                ([m] = match),
-                (endOffset = offset += m.length),
-                (() => {
-                  while ((match = matchBlock(source, offset))) {
-                    endOffset = offset;
-                    ({ matchLength } = match);
-                    offset += matchLength;
-                  }
-                })(),
-                (expressionSource = source.slice(originalOffset, endOffset)),
-                parentNode.subparse(expressionSource, {
-                  allowPartialMatch: true,
-                  rule: "implicitArrayOrExpression",
-                  originalOffset,
-                  originalMatchLength: endOffset - originalOffset
-                })
-              )
+            ? (([m] = match),
+              (endOffset = offset += m.length),
+              (() => {
+                while ((match = matchBlock(source, offset))) {
+                  endOffset = offset;
+                  ({ matchLength } = match);
+                  offset += matchLength;
+                }
+              })(),
+              (expressionSource = source.slice(originalOffset, endOffset)),
+              parentNode.subparse(expressionSource, {
+                allowPartialMatch: true,
+                rule: "implicitArrayOrExpression",
+                originalOffset,
+                originalMatchLength: endOffset - originalOffset
+              }))
             : undefined;
         }
       }

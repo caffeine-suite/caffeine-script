@@ -39,8 +39,8 @@ Caf.defMod(module, () => {
             throw new Error("internal error - expecint 1 or 2 children");
         }
         return propertyName === valueJs &&
-        !javaScriptReservedWords[propertyName] &&
-        identifierRegexp.test(propertyName)
+          !javaScriptReservedWords[propertyName] &&
+          identifierRegexp.test(propertyName)
           ? valueJs
           : `${Caf.toString(propertyName)}: ${Caf.toString(valueJs)}`;
       };

@@ -91,30 +91,24 @@ Caf.defMod(module, () => {
               ? `(() => {while ${Caf.toString(
                   this.applyRequiredParens(jsExpression)
                 )} {${Caf.toString(this.body.toFunctionBodyJs(false))};};})()`
-              : (
-                  (tempVarIdentifier = this.scope.uniqueIdentifier),
-                  `(() => {while ${Caf.toString(
-                    this.applyRequiredParens(jsExpression)
-                  )} {${Caf.toString(
-                    this.body.toFunctionBodyJs(
-                      `${Caf.toString(tempVarIdentifier)} =`
-                    )
-                  )};}; return ${Caf.toString(tempVarIdentifier)}})()`
-                )
-            : (
-                (out = `${Caf.toString(
-                  this.applyParens(jsExpression)
-                )} ? ${Caf.toString(
-                  this.body.toJsExpression()
-                )} : ${Caf.toString(
-                  (Caf.exists((cafBase = this.elseBody)) &&
-                    cafBase.toJsExpression()) ||
-                    "undefined"
-                )}`),
-                options.subExpression || options.dotBase
-                  ? (out = `(${Caf.toString(out)})`)
-                  : out
-              )
+              : ((tempVarIdentifier = this.scope.uniqueIdentifier),
+                `(() => {while ${Caf.toString(
+                  this.applyRequiredParens(jsExpression)
+                )} {${Caf.toString(
+                  this.body.toFunctionBodyJs(
+                    `${Caf.toString(tempVarIdentifier)} =`
+                  )
+                )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
+            : ((out = `${Caf.toString(
+                this.applyParens(jsExpression)
+              )} ? ${Caf.toString(this.body.toJsExpression())} : ${Caf.toString(
+                (Caf.exists((cafBase = this.elseBody)) &&
+                  cafBase.toJsExpression()) ||
+                  "undefined"
+              )}`),
+              options.subExpression || options.dotBase
+                ? (out = `(${Caf.toString(out)})`)
+                : out)
           : `${Caf.toString(operand)} ${Caf.toString(
               this.applyRequiredParens(jsExpression)
             )} {${Caf.toString(this.body.toJs())};}${Caf.toString(

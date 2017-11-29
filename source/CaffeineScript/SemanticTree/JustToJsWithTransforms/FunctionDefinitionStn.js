@@ -47,22 +47,20 @@ Caf.defMod(module, () => {
       this.prototype.updateScope = function() {
         instanceSuper.updateScope.apply(this, arguments);
         return this.arguments
-          ? (
-              Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
-                into[k] = this.addArgumentName(name);
-              }),
-              this.arguments.updateScope({
-                addIdentifierUsed: identifier => {
-                  return this.addIdentifierUsed(identifier);
-                },
-                addIdentifierAssigned: identifier => {
-                  return this.addArgumentName(identifier);
-                }
-              })
-            )
+          ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
+              into[k] = this.addArgumentName(name);
+            }),
+            this.arguments.updateScope({
+              addIdentifierUsed: identifier => {
+                return this.addIdentifierUsed(identifier);
+              },
+              addIdentifierAssigned: identifier => {
+                return this.addArgumentName(identifier);
+              }
+            }))
           : undefined;
       };
-      this.prototype.transform = function() {
+      this.prototype.postTransform = function() {
         let foundParent;
         if (this.props.bound === "auto") {
           this.props.bound = (foundParent = this.findParent(
@@ -71,7 +69,7 @@ Caf.defMod(module, () => {
             ? foundParent.type === "Class" ? false : true
             : false;
         }
-        return instanceSuper.transform.apply(this, arguments);
+        return instanceSuper.postTransform.apply(this, arguments);
       };
       this.prototype.toJs = function() {
         let returnIgnored,
@@ -90,17 +88,13 @@ Caf.defMod(module, () => {
         [argsDef, body] = this.children;
         statements = [];
         argsDef = argsDef
-          ? (
-              (statements = Caf.each(argsDef.children, [], (arg, k, into) => {
-                let preBodyStatements;
-                if (
-                  (preBodyStatements = arg.getFunctionPreBodyStatementsJs())
-                ) {
-                  into.push(preBodyStatements);
-                }
-              })),
-              argsDef.toJs()
-            )
+          ? ((statements = Caf.each(argsDef.children, [], (arg, k, into) => {
+              let preBodyStatements;
+              if ((preBodyStatements = arg.getFunctionPreBodyStatementsJs())) {
+                into.push(preBodyStatements);
+              }
+            })),
+            argsDef.toJs())
           : "()";
         bodyJs = Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
         if (this.props.isConstructor) {
@@ -114,21 +108,19 @@ Caf.defMod(module, () => {
         }
         statements = compactFlatten(
           constructorSuperIndex >= 0
-            ? (
-                (beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
-                (afterSuper = bodyJs.slice(
-                  constructorSuperIndex + 1,
-                  bodyJs.length
-                )),
-                (superJs = bodyJs[constructorSuperIndex]),
-                [
-                  this.getAutoLets(),
-                  beforeSuper,
-                  superJs,
-                  statements,
-                  afterSuper
-                ]
-              )
+            ? ((beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
+              (afterSuper = bodyJs.slice(
+                constructorSuperIndex + 1,
+                bodyJs.length
+              )),
+              (superJs = bodyJs[constructorSuperIndex]),
+              [
+                this.getAutoLets(),
+                beforeSuper,
+                superJs,
+                statements,
+                afterSuper
+              ])
             : [
                 this.getAutoLets(),
                 isConstructor && "super(...arguments)",

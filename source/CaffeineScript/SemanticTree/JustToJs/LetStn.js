@@ -10,14 +10,12 @@ Caf.defMod(module, () => {
         let identifiers, identifier;
         ({ identifiers, identifier } = this.props);
         return identifiers
-          ? (
-              !(identifiers.length > 0)
-                ? (() => {
-                    throw new Error("LetStn identifiers empty");
-                  })()
-                : undefined,
-              `let ${Caf.toString(identifiers.join(", "))}`
-            )
+          ? (!(identifiers.length > 0)
+              ? (() => {
+                  throw new Error("LetStn identifiers empty");
+                })()
+              : undefined,
+            `let ${Caf.toString(identifiers.join(", "))}`)
           : identifier
             ? `let ${Caf.toString(identifier)}`
             : (() => {

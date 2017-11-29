@@ -51,16 +51,14 @@ Caf.defMod(module, () => {
           initializer
         ) {
           return identifier
-            ? (
-                this._boundUniqueIdentifiers
-                  ? (() => {
-                      throw new Error(
-                        "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                      );
-                    })()
-                  : undefined,
-                (this.identifiersAssigned[identifier] = initializer || true)
-              )
+            ? (this._boundUniqueIdentifiers
+                ? (() => {
+                    throw new Error(
+                      "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                    );
+                  })()
+                : undefined,
+              (this.identifiersAssigned[identifier] = initializer || true))
             : undefined;
         };
         this.getter({
@@ -105,26 +103,22 @@ Caf.defMod(module, () => {
                   ]
                 }
               })
-            : (
-                (identifiersUsed = this.identifiersUsedOrAssigned),
-                !identifiersUsed[preferredName]
-                  ? preferredName
-                  : (
-                      (count = 0),
-                      (() => {
-                        while (
-                          identifiersUsed[
-                            (name = `${Caf.toString(
-                              preferredName
-                            )}${Caf.toString((count += 1))}`)
-                          ]
-                        ) {
-                          name;
-                        }
-                      })(),
-                      name
-                    )
-              );
+            : ((identifiersUsed = this.identifiersUsedOrAssigned),
+              !identifiersUsed[preferredName]
+                ? preferredName
+                : ((count = 0),
+                  (() => {
+                    while (
+                      identifiersUsed[
+                        (name = `${Caf.toString(preferredName)}${Caf.toString(
+                          (count += 1)
+                        )}`)
+                      ]
+                    ) {
+                      name;
+                    }
+                  })(),
+                  name));
         };
         this.prototype.addChildScope = function(child) {
           return !(child === this)
@@ -146,7 +140,7 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-          (identifiers = this.requiredIdentifierLets).length > 0
+            (identifiers = this.requiredIdentifierLets).length > 0
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
         };
@@ -154,21 +148,19 @@ Caf.defMod(module, () => {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
           return this.props.identifiersAssigned &&
-          (identifiers = this.requiredIdentifierLets).length > 0
-            ? (
-                (identifiers = Caf.each(
-                  identifiers,
-                  [],
-                  (identifier, k, into) => {
-                    if (identifier.match(/=/)) {
-                      into.push(identifier);
-                    }
+            (identifiers = this.requiredIdentifierLets).length > 0
+            ? ((identifiers = Caf.each(
+                identifiers,
+                [],
+                (identifier, k, into) => {
+                  if (identifier.match(/=/)) {
+                    into.push(identifier);
                   }
-                )),
-                identifiers.length > 0
-                  ? `${Caf.toString(identifiers.join("; "))}`
-                  : undefined
-              )
+                }
+              )),
+              identifiers.length > 0
+                ? `${Caf.toString(identifiers.join("; "))}`
+                : undefined)
             : undefined;
         };
         this.prototype.updateScope = function(scope) {

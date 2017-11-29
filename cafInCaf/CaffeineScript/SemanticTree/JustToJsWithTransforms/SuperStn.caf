@@ -13,7 +13,7 @@ class SuperStn extends &BaseStn
 
   needsParens: false
 
-  transform: ->
+  postTransform: ->
     throw new Error "super must be used inside an object-literal value" unless propValue = @findParent "ObjectPropValue"
     # TODO: we should validate that propName has a legal value string
 

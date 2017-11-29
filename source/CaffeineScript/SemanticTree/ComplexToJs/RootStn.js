@@ -20,11 +20,9 @@ Caf.defMod(module, () => {
           StatementsStn(compactFlatten(statements))
         ]);
       };
-      this.prototype.transform = function() {
-        let ret;
-        ret = instanceSuper.transform.apply(this, arguments);
-        ret.updateScope(ret);
-        return ret;
+      this.prototype.postTransform = function() {
+        this.updateScope(this);
+        return this;
       };
       this.prototype.toJsModule = function() {
         let identifiersUsedButNotAssigned, statementsJs, lets, statements;

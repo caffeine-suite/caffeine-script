@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
   return (CaptureStn = Caf.defClass(
     class CaptureStn extends require("../BaseStn") {},
     function(CaptureStn, classSuper, instanceSuper) {
-      this.prototype.transform = function() {
+      this.prototype.postTransform = function() {
         return SemanticTree.ObjectStn(
           this.props,
           SemanticTree.ObjectPropValueStn(

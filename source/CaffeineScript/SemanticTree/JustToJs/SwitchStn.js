@@ -14,30 +14,26 @@ Caf.defMod(module, () => {
         falsifyCases = !condition;
         options = { falsifyCases };
         return expression
-          ? (
-              (cases = Caf.each(switchWhens, [], (clause, k, into) => {
-                into.push(clause.toFunctionBodyJs(options));
-              })),
-              switchElse
-                ? cases.push(
-                    `default: ${Caf.toString(switchElse.toFunctionBodyJs())}`
-                  )
-                : undefined,
-              `(() => {switch (${Caf.toString(
-                this.getConditionJs()
-              )}) {${Caf.toString(cases.join(" "))}};})()`
-            )
-          : (
-              (cases = Caf.each(switchWhens, [], (clause, k, into) => {
-                into.push(clause.toJs(options));
-              })),
-              switchElse
-                ? cases.push(`default: ${Caf.toString(switchElse.toJs())}`)
-                : undefined,
-              `switch (${Caf.toString(this.getConditionJs())}) {${Caf.toString(
-                cases.join(" break; ")
-              )}}`
-            );
+          ? ((cases = Caf.each(switchWhens, [], (clause, k, into) => {
+              into.push(clause.toFunctionBodyJs(options));
+            })),
+            switchElse
+              ? cases.push(
+                  `default: ${Caf.toString(switchElse.toFunctionBodyJs())}`
+                )
+              : undefined,
+            `(() => {switch (${Caf.toString(
+              this.getConditionJs()
+            )}) {${Caf.toString(cases.join(" "))}};})()`)
+          : ((cases = Caf.each(switchWhens, [], (clause, k, into) => {
+              into.push(clause.toJs(options));
+            })),
+            switchElse
+              ? cases.push(`default: ${Caf.toString(switchElse.toJs())}`)
+              : undefined,
+            `switch (${Caf.toString(this.getConditionJs())}) {${Caf.toString(
+              cases.join(" break; ")
+            )}}`);
       };
       this.prototype.getConditionJs = function() {
         let condition;

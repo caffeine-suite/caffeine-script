@@ -90,10 +90,8 @@ Caf.defMod(module, () => {
               left,
               this.getStnChildren()
             )
-          : (
-              (x = this.getStnChildren(left)),
-              x.length === 1 ? x[0] : x.length === 0 ? left : x
-            );
+          : ((x = this.getStnChildren(left)),
+            x.length === 1 ? x[0] : x.length === 0 ? left : x);
         Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
           stn = extension.getStn(stn);
         });

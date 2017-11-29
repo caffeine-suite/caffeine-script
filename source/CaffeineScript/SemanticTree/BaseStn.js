@@ -75,9 +75,10 @@ Caf.defMod(module, () => {
           ({ label, pluralLabel } = child);
           this.labeledChildren[label] = child;
           if (pluralLabel) {
-            ((cafBase = this.labeledChildren)[pluralLabel] ||
-              (cafBase[pluralLabel] = []))
-              .push(child);
+            (
+              (cafBase = this.labeledChildren)[pluralLabel] ||
+              (cafBase[pluralLabel] = [])
+            ).push(child);
           }
         });
       };
@@ -109,15 +110,13 @@ Caf.defMod(module, () => {
             [`${Caf.toString(name)}`]:
               this.children.length === 0
                 ? toInspectedObjects(props)
-                : (
-                    (a = []),
-                    objectKeyCount(props) > 0 ? a.push(props) : undefined,
-                    a.concat(
-                      Caf.each(this.children, [], (c, k, into) => {
-                        into.push(c.inspectedObjects);
-                      })
-                    )
-                  )
+                : ((a = []),
+                  objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                  a.concat(
+                    Caf.each(this.children, [], (c, k, into) => {
+                      into.push(c.inspectedObjects);
+                    })
+                  ))
           };
         },
         type: function() {
@@ -226,7 +225,8 @@ Caf.defMod(module, () => {
         let newChildren;
         return (this.children !== (newChildren = this.transformChildren())
           ? new this.class(this.props, newChildren)
-          : this).postTransform();
+          : this
+        ).postTransform();
       };
       this.prototype.needsParens = true;
       this.prototype.needsParensAsStatement = false;

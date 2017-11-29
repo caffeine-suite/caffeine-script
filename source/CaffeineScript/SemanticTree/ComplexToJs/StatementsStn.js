@@ -46,12 +46,10 @@ Caf.defMod(module, () => {
                   )}`
                 : c.toJs({ generateReturnStatement: true })
               : generateStatements
-                ? (
-                    (statement = c.toJs({ statement: true })),
-                    statement.match(/^function/)
-                      ? this.applyRequiredParens(statement)
-                      : statement
-                  )
+                ? ((statement = c.toJs({ statement: true })),
+                  statement.match(/^function/)
+                    ? this.applyRequiredParens(statement)
+                    : statement)
                 : c.toJsExpression({ returnValueIsIgnored: true })
           );
         });

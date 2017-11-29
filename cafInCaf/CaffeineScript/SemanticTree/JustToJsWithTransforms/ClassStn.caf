@@ -8,7 +8,7 @@ class ClassStn extends &BaseStn
   #   @scope.addIdentifierAssigned className.toJs()
   #   super
 
-  transform: ->
+  postTransform: ->
     {className, classExtends, body} = @labeledChildren
     {FunctionDefinitionArgsStn,
     StatementsStn,

@@ -10,11 +10,9 @@ class RootStn extends &ScopeStnMixin &BaseStn
   cloneWithNewStatements: (statements)->
     new RootStn @props, [] StatementsStn compactFlatten statements
 
-  transform: ->
-    ret = super
-    # needs to be after super for correct identifier-use detection
-    ret.updateScope ret
-    ret
+  postTransform: ->
+    @updateScope @
+    @
 
   toJsModule: ->
     {identifiersUsedButNotAssigned} = @
