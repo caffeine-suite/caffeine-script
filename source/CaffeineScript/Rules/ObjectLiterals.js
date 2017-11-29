@@ -96,7 +96,7 @@ Caf.defMod(module, () => {
       propName: "computedPropName",
       computedPropName: {
         pattern: "openBracket_ expression _closeBracket",
-        stnFactory: "AccessorStn"
+        stnFactory: "ObjectLiteralAccessorStn"
       }
     });
     this.rule({ stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"] });

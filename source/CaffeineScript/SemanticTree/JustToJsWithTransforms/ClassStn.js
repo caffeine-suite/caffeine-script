@@ -105,7 +105,7 @@ Caf.defMod(module, () => {
                                             identifier: propName
                                           })
                                         );
-                                case "Accessor":
+                                case "ObjectLiteralAccessor":
                                   return AccessorStn(
                                     ThisStn(
                                       IdentifierStn({ identifier: "prototype" })

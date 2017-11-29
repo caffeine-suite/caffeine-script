@@ -4,8 +4,9 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  AccessorStn:           require './AccessorStn'          
-  ClassStn:              require './ClassStn'             
-  FunctionDefinitionStn: require './FunctionDefinitionStn'
-  FunctionInvocationStn: require './FunctionInvocationStn'
-  SuperStn:              require './SuperStn'             
+  AccessorStn:              require './AccessorStn'             
+  ClassStn:                 require './ClassStn'                
+  FunctionDefinitionStn:    require './FunctionDefinitionStn'   
+  FunctionInvocationStn:    require './FunctionInvocationStn'   
+  ObjectLiteralAccessorStn: require './ObjectLiteralAccessorStn'
+  SuperStn:                 require './SuperStn'                

@@ -99,7 +99,7 @@ import Extensions
     propName: "computedPropName"
     computedPropName:
       pattern: "openBracket_ expression _closeBracket"
-      stnFactory: "AccessorStn"
+      stnFactory: "ObjectLiteralAccessorStn"
 
   @rule
     stringLiteralPropNameTail: [

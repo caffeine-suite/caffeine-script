@@ -55,7 +55,7 @@ class ClassStn extends &BaseStn
                         AccessorStn
                           ThisStn IdentifierStn identifier: "prototype"
                           IdentifierStn identifier: propName
-                  when "Accessor"
+                  when "ObjectLiteralAccessor"
                     AccessorStn
                       ThisStn IdentifierStn identifier: "prototype"
                       propNameStn.children
