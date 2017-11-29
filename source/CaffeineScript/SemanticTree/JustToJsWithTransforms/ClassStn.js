@@ -151,7 +151,7 @@ Caf.defMod(module, () => {
           }
           children = compactFlatten([className, classExtends, body, classBody]);
         } else {
-          children = this.transformChildren();
+          children = this.children;
         }
         return new AssignmentStn(
           new IdentifierStn({ identifier: className.toJs() }),

@@ -29,7 +29,7 @@ Caf.defMod(module, () => {
         }
         return new this.class(
           merge(this.props, { methodName, classMethod: !!classMethod }),
-          this.transformChildren()
+          this.children
         );
       };
       this.prototype.toJs = function() {

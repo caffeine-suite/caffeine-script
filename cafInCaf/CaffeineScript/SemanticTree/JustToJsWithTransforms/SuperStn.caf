@@ -19,7 +19,7 @@ class SuperStn extends &BaseStn
 
     methodName = propValue.labeledChildren.propName.props.value
     [__, classMethod, methodName] = m if m = methodName.match /^(@)(.*)/
-    new @class merge(@props, methodName: methodName, classMethod: !!classMethod), @transformChildren()
+    new @class merge(@props, methodName: methodName, classMethod: !!classMethod), @children
 
   toJs: ->
     {args} = @

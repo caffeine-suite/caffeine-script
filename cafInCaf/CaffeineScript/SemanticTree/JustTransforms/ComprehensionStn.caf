@@ -59,7 +59,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       and so on for o, a, f, r, e >> 3x the functions
 
   postTransform: ->
-    # @children = @transformChildren()
     @initLabeledChildren()
     {outputType, variableDefinition, body, iterable, whenClause} = @labeledChildren
     intoChild = @labeledChildren.into

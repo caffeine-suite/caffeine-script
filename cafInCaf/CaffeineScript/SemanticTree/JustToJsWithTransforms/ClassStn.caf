@@ -80,7 +80,7 @@ class ClassStn extends &BaseStn
       body = null if statementsToCount <= 0
       children = compactFlatten [className, classExtends, body, classBody]
     else
-      children = @transformChildren()
+      children = @children
 
     new AssignmentStn
       new IdentifierStn identifier: className.toJs()
