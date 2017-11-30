@@ -14,6 +14,17 @@ Caf.defMod(module, () => {
       }
     },
     function(AssignmentStn, classSuper, instanceSuper) {
+      this.prototype.transform = function() {
+        return this.transformAccessorChain().postTransform();
+      };
+      this.getter({
+        value: function() {
+          return this.lValue;
+        },
+        key: function() {
+          return this.rValue;
+        }
+      });
       this.prototype.updateScope = function(scope) {
         let cafBase;
         this.scope = scope;
@@ -24,7 +35,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.postTransform = function() {
         let value1, value2;
-        return !this.operator.match(supportedOperatorsRegExp)
+        return !supportedOperatorsRegExp.test(this.operator)
           ? (({ value1, value2 } = this.getValueWithBaseCapture(this.lValue)),
             SemanticTree.BinaryOperatorStn(
               { operator: this.operator },
@@ -35,7 +46,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function(options) {
         let out;
-        out = this.operator.match(supportedOperatorsRegExp)
+        out = supportedOperatorsRegExp.test(this.operator)
           ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
               this.operator
             )}= ${Caf.toString(this.rValue.toJsExpression())}`

@@ -170,7 +170,7 @@ class ValueBaseCaptureStn extends &BaseStn
       current = @
       accessorChain = []
       while current
-          && current.type == "Accessor" || current.type == "FunctionInvocation"
+          && current.type == "Accessor" || current.type == "FunctionInvocation" || current.type == "Assignment"
         accessor = current
         current = current.value
         accessorChain.push accessor
@@ -217,22 +217,22 @@ class ValueBaseCaptureStn extends &BaseStn
 
         done = true
         value = @createExistanceAccessorStn value, isFunctionInvocation, (checkedValueStn) =>
-          access = @createAccessorStn checkedValueStn, key, isFunctionInvocation
+          access = @createAccessorStn checkedValueStn, key, accessor
+          access.props.existanceTest = false
           if i < accessorChain.length - 1
             @_transformAccessorChainR access, accessorChain.slice i + 1
           else
             access
 
       else
-        value = @createAccessorStn value, key, isFunctionInvocation
+        value = @createAccessorStn value, key, accessor
 
     value
 
-  createAccessorStn: (value, key, isFunctionInvocation) ->
-    if isFunctionInvocation
-      StnRegistry.FunctionInvocationStn value, key
-    else
-      StnRegistry.AccessorStn value, key
+  createAccessorStn: (value, key, oldStn) ->
+    stnName = oldStn.class.name
+    throw new Error "invalid stnName: #{formattedInspect stnName}" unless StnRegistry[stnName]
+    StnRegistry[stnName] oldStn.props, value, key
 
   createExistanceAccessorStn: (value, forFunctionInvocation, createRightStn) ->
     res = if forFunctionInvocation

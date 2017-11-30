@@ -5,9 +5,11 @@ Caf.defMod(module, () => {
     StnRegistry,
     ValueBaseCaptureStn,
     mergeInto,
-    isArray;
-  ({ mergeInto, isArray } = Caf.import(
-    ["mergeInto", "isArray"],
+    isArray,
+    Error,
+    formattedInspect;
+  ({ mergeInto, isArray, Error, formattedInspect } = Caf.import(
+    ["mergeInto", "isArray", "Error", "formattedInspect"],
     [global, require("../StandardImport")]
   ));
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
@@ -81,7 +83,9 @@ Caf.defMod(module, () => {
         accessorChain = [];
         while (
           current &&
-          (current.type === "Accessor" || current.type === "FunctionInvocation")
+          (current.type === "Accessor" ||
+            current.type === "FunctionInvocation" ||
+            current.type === "Assignment")
         ) {
           accessor = current;
           current = current.value;
@@ -114,8 +118,9 @@ Caf.defMod(module, () => {
                   access = this.createAccessorStn(
                     checkedValueStn,
                     key,
-                    isFunctionInvocation
+                    accessor
                   );
+                  access.props.existanceTest = false;
                   return i < accessorChain.length - 1
                     ? this._transformAccessorChainR(
                         access,
@@ -125,20 +130,21 @@ Caf.defMod(module, () => {
                 }
               );
             } else {
-              value = this.createAccessorStn(value, key, isFunctionInvocation);
+              value = this.createAccessorStn(value, key, accessor);
             }
           }
         });
         return value;
       };
-      this.prototype.createAccessorStn = function(
-        value,
-        key,
-        isFunctionInvocation
-      ) {
-        return isFunctionInvocation
-          ? StnRegistry.FunctionInvocationStn(value, key)
-          : StnRegistry.AccessorStn(value, key);
+      this.prototype.createAccessorStn = function(value, key, oldStn) {
+        let stnName;
+        stnName = oldStn.class.name;
+        if (!StnRegistry[stnName]) {
+          throw new Error(
+            `invalid stnName: ${Caf.toString(formattedInspect(stnName))}`
+          );
+        }
+        return StnRegistry[stnName](oldStn.props, value, key);
       };
       this.prototype.createExistanceAccessorStn = function(
         value,

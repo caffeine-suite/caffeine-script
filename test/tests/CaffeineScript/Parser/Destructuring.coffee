@@ -55,7 +55,8 @@ module.exports = suite: parseTestSuite
     "{a} = b ||= {}": "let a, b; ({a} = b || (b = {}));"
 
   conditionalLeftHandSide:
-    "a?.b = c":     knownFailing: "Caf.exists(a) && (a.b = c);"
-    "a?.b = c = d": knownFailing: "let c; Caf.exists(a) && (a.b = c = d);"
-    "a = b?.c = d": knownFailing: "let a; a = Caf.exists(b) && (b.c = d);"
+    "a?.b = c":     "Caf.exists(a) && (a.b = c);"
+    "a?.b = c = d": "let c; Caf.exists(a) && (a.b = c = d);"
+    "a = b?.c = d": "let a; a = Caf.exists(b) && (b.c = d);"
     "a = b = c?.d": "let a, b; a = b = Caf.exists(c) && c.d;"
+    "a()?.b = c":   "let cafBase; Caf.exists(cafBase = a()) && (cafBase.b = c);"

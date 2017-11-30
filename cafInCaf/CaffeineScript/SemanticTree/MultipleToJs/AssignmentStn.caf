@@ -10,12 +10,21 @@ class AssignmentStn extends &ValueBaseCaptureStn
     @lValue = children[0]
     @rValue = children[1]
 
+  transform: ->
+    @transformAccessorChain()
+    .postTransform()
+
+  # value and key are for compatibility with ValueBaseCaptureStn
+  @getter
+    value:  -> @lValue
+    key:    -> @rValue
+
   updateScope: (@scope) ->
     @scope.addIdentifierAssigned @lValue?.explicitIdentifier
     super
 
   postTransform: ->
-    unless @operator.match supportedOperatorsRegExp
+    unless supportedOperatorsRegExp.test @operator
       {value1, value2} = @getValueWithBaseCapture @lValue
 
       SemanticTree.BinaryOperatorStn
@@ -28,7 +37,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
       @
 
   toJs: (options) ->
-    out = if @operator.match supportedOperatorsRegExp
+    out = if supportedOperatorsRegExp.test @operator
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
     else
       "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
