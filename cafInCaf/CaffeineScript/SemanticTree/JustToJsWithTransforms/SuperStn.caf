@@ -14,12 +14,14 @@ class SuperStn extends &BaseStn
   needsParens: false
 
   postTransform: ->
-    throw new Error "super must be used inside an object-literal value" unless propValue = @findParent "ObjectPropValue"
-    # TODO: we should validate that propName has a legal value string
+    unless propValue = @pretransformedStn.findParent "ObjectPropValue"
+      throw new Error "super must be used inside an object-literal value"
 
-    methodName = propValue.labeledChildren.propName.props.value
+    unless isString methodName = propValue.propName
+      throw new Error "property name in parent object-literal must be constant, not computed"
+
     [__, classMethod, methodName] = m if m = methodName.match /^(@)(.*)/
-    new @class merge(@props, methodName: methodName, classMethod: !!classMethod), @children
+    new @class merge(@props, {} methodName, classMethod: !!classMethod), @children
 
   toJs: ->
     {args} = @
@@ -33,14 +35,12 @@ class SuperStn extends &BaseStn
       "super(#{args.join ', '})"
 
     else
-      objectPropValue = @findParent "ObjectPropValue"
       getSuperInput = if klass = @findParent "Class"
-        className = klass.labeledChildren.className.toJs()
 
         superObject = if @props.classMethod
-          klass.props.classSuperHandle
+          klass.classSuperHandle
         else
-          klass.props.instanceSuperHandle
+          klass.instanceSuperHandle
 
         method = if @props.passArguments
           args = "arguments"
