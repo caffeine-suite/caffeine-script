@@ -7,6 +7,14 @@ import Extensions
       :implicitObject
       :explicitObject
 
+    objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock
+      rule: :explicitObjectBlock
+
+    explicitObjectBlock:
+      ""
+        singleOrMultilineExplicitObject
+        end*
+
     singleOrMultilineExplicitObject:
       :multilineExplicitObject
       :oneLineExplicitObject
@@ -56,9 +64,6 @@ import Extensions
 
     multilineExplicitObjectExtension:
       "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression"
-
-    objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock
-      rule: :singleOrMultilineExplicitObject
 
     implicitObjectWithTwoOrMorePropsOnOneLine:
       "literalProp _ propertyList"

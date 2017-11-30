@@ -18,6 +18,10 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({
       object: ["implicitObject", "explicitObject"],
+      objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
+        rule: "explicitObjectBlock"
+      }),
+      explicitObjectBlock: "singleOrMultilineExplicitObject end*",
       singleOrMultilineExplicitObject: [
         "multilineExplicitObject",
         "oneLineExplicitObject"
@@ -57,9 +61,6 @@ Caf.defMod(module, () => {
         "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
       multilineExplicitObjectExtension:
         "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
-      objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
-        rule: "singleOrMultilineExplicitObject"
-      }),
       implicitObjectWithTwoOrMorePropsOnOneLine: [
         "literalProp _ propertyList",
         "valueProp _comma_ propertyList"
