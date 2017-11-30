@@ -14,7 +14,12 @@ Caf.defMod(module, () => {
   return (ObjectPropValueStn = Caf.defClass(
     class ObjectPropValueStn extends require("../BaseStn") {},
     function(ObjectPropValueStn, classSuper, instanceSuper) {
-      this.getter({ isObject: true });
+      this.getter({
+        isObject: true,
+        propName: function() {
+          return this.labeledChildren.propName.props.value;
+        }
+      });
       this.prototype.toJs = function() {
         let propNameStn, valueStn, valueJs, propertyName, structuringStn;
         switch (this.children.length) {

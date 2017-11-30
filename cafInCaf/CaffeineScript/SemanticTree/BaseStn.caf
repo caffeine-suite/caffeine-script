@@ -35,9 +35,10 @@ class BaseStn extends BaseClass
       children should be a compatoJsParenExpressionct, flat array of Stns
 
     TODO: I'd like to make setting the parseTreeNode cleaner.
-  constructor: (props, @children = []) ->
+  constructor: (props, @children = [], @pretransformedStn) ->
     super
     @parseTreeNode = props.parseTreeNode
+    @pretransformedStn ||= @
 
     @props = objectWithout props, "parseTreeNode"
     @initLabeledChildren()
@@ -58,6 +59,7 @@ class BaseStn extends BaseClass
     sourceFile: -> @parser.sourceFile
     label: -> @props.label
     pluralLabel: -> @props.pluralLabel
+    root: -> @parent?.root ? @
     inspectedObjects: ->
       {label} = @
 
@@ -242,7 +244,7 @@ class BaseStn extends BaseClass
 
   transform: ->
     if @children != newChildren = @transformChildren()
-      new @class @props, newChildren
+      new @class @props, newChildren, @
     else
       @
     .postTransform()

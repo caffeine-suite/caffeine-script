@@ -42,10 +42,12 @@ Caf.defMod(module, () => {
   ({ createObjectTreeFactory } = require("art-object-tree-factory"));
   return (BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
-      constructor(props, children = []) {
+      constructor(props, children = [], pretransformedStn) {
         super(...arguments);
         this.children = children;
+        this.pretransformedStn = pretransformedStn;
         this.parseTreeNode = props.parseTreeNode;
+        this.pretransformedStn || (this.pretransformedStn = this);
         this.props = objectWithout(props, "parseTreeNode");
         this.initLabeledChildren();
       }
@@ -97,6 +99,13 @@ Caf.defMod(module, () => {
         },
         pluralLabel: function() {
           return this.props.pluralLabel;
+        },
+        root: function() {
+          let cafTemp, cafBase;
+          return (cafTemp =
+            Caf.exists((cafBase = this.parent)) && cafBase.root) != null
+            ? cafTemp
+            : this;
         },
         inspectedObjects: function() {
           let label, props, name, a;
@@ -224,7 +233,7 @@ Caf.defMod(module, () => {
       this.prototype.transform = function() {
         let newChildren;
         return (this.children !== (newChildren = this.transformChildren())
-          ? new this.class(this.props, newChildren)
+          ? new this.class(this.props, newChildren, this)
           : this
         ).postTransform();
       };

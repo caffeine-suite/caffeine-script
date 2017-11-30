@@ -8,8 +8,13 @@ class ClassStn extends &BaseStn
   #   @scope.addIdentifierAssigned className.toJs()
   #   super
 
+  @getter
+    className:            -> @props.className
+    classSuperHandle:     -> @props.classSuperHandle
+    instanceSuperHandle:  -> @props.instanceSuperHandle
+
   postTransform: ->
-    {className, classExtends, body} = @labeledChildren
+    {className: classNameStn, classExtends, body} = @labeledChildren
     {FunctionDefinitionArgsStn,
     StatementsStn,
     FunctionDefinitionStn,
@@ -19,17 +24,15 @@ class ClassStn extends &BaseStn
     AccessorStn,
     ThisStn} = SemanticTree
 
-    # log labeledChildren:@labeledChildren, className: @className
-    className = className.transform()
-    classExtends = classExtends?.transform()
+    className = classNameStn.toJs()
 
-    if body = body?.transform()
+    if body
       constructorStn = null
       body = FunctionDefinitionStn
         label: "body"
         returnIgnored: true
         FunctionDefinitionArgsStn
-          FunctionDefinitionArgStn IdentifierStn identifier: className.toJs()
+          FunctionDefinitionArgStn IdentifierStn identifier: className
 
           ## TODO: switch to these:
             FunctionDefinitionArgStn IdentifierStn identifierHandle: classSuperHandle    = new UniqueIdentifierHandle "classSuper"
@@ -78,14 +81,14 @@ class ClassStn extends &BaseStn
           constructorStn
 
       body = null if statementsToCount <= 0
-      children = compactFlatten [className, classExtends, body, classBody]
+      children = compactFlatten [classNameStn, classExtends, body, classBody]
     else
       children = @children
 
     new AssignmentStn
-      new IdentifierStn identifier: className.toJs()
+      new IdentifierStn identifier: className
       new ClassStn
-        merge @props, classSuperHandle: classSuperHandle, instanceSuperHandle: instanceSuperHandle
+        merge @props, {} className, classSuperHandle, instanceSuperHandle
         children
 
   toJs: ->

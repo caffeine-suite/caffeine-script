@@ -10,8 +10,19 @@ Caf.defMod(module, () => {
   return (ClassStn = Caf.defClass(
     class ClassStn extends require("../BaseStn") {},
     function(ClassStn, classSuper, instanceSuper) {
+      this.getter({
+        className: function() {
+          return this.props.className;
+        },
+        classSuperHandle: function() {
+          return this.props.classSuperHandle;
+        },
+        instanceSuperHandle: function() {
+          return this.props.instanceSuperHandle;
+        }
+      });
       this.prototype.postTransform = function() {
-        let className,
+        let classNameStn,
           classExtends,
           body,
           FunctionDefinitionArgsStn,
@@ -22,6 +33,7 @@ Caf.defMod(module, () => {
           AssignmentStn,
           AccessorStn,
           ThisStn,
+          className,
           constructorStn,
           classSuperHandle,
           instanceSuperHandle,
@@ -30,7 +42,11 @@ Caf.defMod(module, () => {
           superCallChildren,
           classBody,
           children;
-        ({ className, classExtends, body } = this.labeledChildren);
+        ({
+          className: classNameStn,
+          classExtends,
+          body
+        } = this.labeledChildren);
         ({
           FunctionDefinitionArgsStn,
           StatementsStn,
@@ -41,15 +57,14 @@ Caf.defMod(module, () => {
           AccessorStn,
           ThisStn
         } = SemanticTree);
-        className = className.transform();
-        classExtends = Caf.exists(classExtends) && classExtends.transform();
-        if ((body = Caf.exists(body) && body.transform())) {
+        className = classNameStn.toJs();
+        if (body) {
           constructorStn = null;
           body = FunctionDefinitionStn(
             { label: "body", returnIgnored: true },
             FunctionDefinitionArgsStn(
               FunctionDefinitionArgStn(
-                IdentifierStn({ identifier: className.toJs() })
+                IdentifierStn({ identifier: className })
               ),
               FunctionDefinitionArgStn(
                 IdentifierStn({ identifier: (classSuperHandle = "classSuper") })
@@ -149,14 +164,23 @@ Caf.defMod(module, () => {
           if (statementsToCount <= 0) {
             body = null;
           }
-          children = compactFlatten([className, classExtends, body, classBody]);
+          children = compactFlatten([
+            classNameStn,
+            classExtends,
+            body,
+            classBody
+          ]);
         } else {
           children = this.children;
         }
         return new AssignmentStn(
-          new IdentifierStn({ identifier: className.toJs() }),
+          new IdentifierStn({ identifier: className }),
           new ClassStn(
-            merge(this.props, { classSuperHandle, instanceSuperHandle }),
+            merge(this.props, {
+              className,
+              classSuperHandle,
+              instanceSuperHandle
+            }),
             children
           )
         );

@@ -23,7 +23,9 @@ identifierRegexp =
 
 class ObjectPropValueStn extends &BaseStn
 
-  @getter isObject: true
+  @getter
+    isObject: true
+    propName: -> @labeledChildren.propName.props.value
 
   toJs: ->
     switch @children.length
