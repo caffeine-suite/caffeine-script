@@ -1,6 +1,18 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 
-### Do More with Less [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
+### Less Code is Better Code [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
+
+I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html). Blog post: [WLC @ EssenceAndArtifact.com](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+
+If you love concise, bracket-less languages, I've got a beautiful, graphically designed one for you. 
+
+### Inspired by CoffeeScript
+
+I love CoffeeScript. I love the visual blocking of bracket-less blocks. As I used it over the years, though, I started noting it wasn't very consistent. I was always frustrated by all-to-frequent edge cases where I had to use brackets anyway. For example, all array literals still require brackets ([]) in CoffeeScript. Eventually I couldn't stand it anymore. I set out to write a language that could parse bracket-less-blocks *consistently*. The result exceeded my already high expectations.
+
+If you love CoffeeScript, or even if you liked some parts but others drove you crazy, I've got an awesome language for you.
+
+### Introducing CaffeineScript
 
 CaffeineScript is an open-source programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. Design thinking is essential for achieving that goal. That means [user-experience](https://github.com/shanebdavis/caffeine-script/wiki/UX-Design-for-Langauges) and [graphic design](https://github.com/shanebdavis/caffeine-script/wiki/Graphic-Design-for-Languages) are as important as computer-science and software engineering. A well-designed language makes code more beautiful, programming more fun, and, ultimately, lets us get more done with less effort.
 
@@ -21,7 +33,7 @@ A brief, interactive slideshow written in CaffeineScript
 
 ### Status: BETA
 
-CaffeineScript is working and usable. The semantics are still shifting as I implement the remaining, planned v1 features.
+CaffeineScript is working and usable. The semantics and syntax may shift slightly as I work through the remaining bugs.
 
 ### Install
 
