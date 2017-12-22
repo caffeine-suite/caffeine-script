@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
     },
     function(AssignmentStn, classSuper, instanceSuper) {
       this.prototype.transform = function() {
-        return this.transformAccessorChain().postTransform();
+        return this.transformAccessorChain();
       };
       this.getter({
         value: function() {

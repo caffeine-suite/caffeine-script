@@ -74,7 +74,6 @@ module.exports = suite: parseTestSuite
           {doSomething();});"
 
     super:
-
       basics: ->
         "class MyClass\n foo: -> super":      "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.apply(this, arguments);};});"
         "class MyClass\n @foo: -> super":     "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.foo = function() {return classSuper.foo.apply(this, arguments);};});"

@@ -93,3 +93,5 @@ module.exports = suite: parseTestSuite
   regressions:
     "@b ||= 1":   "this.b || (this.b = 1);"
     "a.b ||= 1":  "a.b || (a.b = 1);"
+    "a ||= []": "let a; a || (a = []);"
+    "(a ||= []).a": "let a; (a || (a = [])).a;"

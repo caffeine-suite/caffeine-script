@@ -10,9 +10,7 @@ class AssignmentStn extends &ValueBaseCaptureStn
     @lValue = children[0]
     @rValue = children[1]
 
-  transform: ->
-    @transformAccessorChain()
-    .postTransform()
+  transform: -> @transformAccessorChain()
 
   # value and key are for compatibility with ValueBaseCaptureStn
   @getter

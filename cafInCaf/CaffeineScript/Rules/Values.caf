@@ -1,6 +1,89 @@
 import &StandardImport, &CaffeineEight
 
 ->
+  ##
+      assignmentAccess cannot come directly after a functionAccessor
+
+      it must come after:
+        baseAccessor:
+          identifier
+          '@' identifier
+        propertyAccessor
+        bracketAccessor
+
+      2017-12-02
+      Thoughts on doing Existance-Checks without Transforms:
+
+        I'm thinking this is the right answer. Parse it into
+        the right structure to start with. Which is:
+
+          Function, property and bracket accessors are left-associative:
+
+            a.b.c becomes (((a).b).c)
+
+            The right-most accessor is the root.
+
+          Existance-checks have lower priority and are right-associative:
+
+            The left-most existance-check in an accessor chain
+            becomes the root.
+
+            a?.b.c becomes ((a)?((.b).c)
+
+            The second-left-most existance-check becomes the first-most's
+            direct right-child.
+
+            Etc.
+
+        Assignment:
+
+          Assignment throws a small wrench in the works.
+
+          If there is an existance-check in its left-children accessor
+          chain, that existance-check needs to be able to abort
+          the assignment.
+
+          Assignment is right-associative:
+
+            a=b=c becomes (a=(b=c))
+
+        Assuming we can get the parsing right, the magic happens at code-generation:
+
+          An existance-check Stn will perform value-capture with a temp variable.
+
+          Then it will pass the name of the temp-variable down to its right-child.
+
+          Accessors which get a value-capture-temp variable passed in for code-generation
+          pass it down to their left-child UNLESS they have no left-child. In that case,
+          the value-capture-temp becomes the left-child.
+
+  ## @rule
+
+      valueWithoutExistanceCheck:
+
+      valueWithExistanceCheck:
+        "" valueWithoutExistanceCheck '?' accessorChain?
+
+      accessorChain:
+        :accessorChainWithExistanceCheck
+        :accessorChainWithoutExistanceCheck
+
+      accessorChainWithExistanceCheck:
+        "" accessorChainWithoutExistanceCheck '?' accessorChain?
+
+      accessorChainWithoutExistanceCheck:
+        "" accessor+
+
+      accessor:
+        :propertyAccessor
+        :bracketAccessor
+        :functionAccessor
+        :assignmentAccessor
+
+      value:
+        :valueWithExistanceCheck
+        :valueWithoutExistanceCheck
+
   @rule
     value:
       "valueBase blockValueExtension*"

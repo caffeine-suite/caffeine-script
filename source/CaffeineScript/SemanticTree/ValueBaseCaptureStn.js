@@ -115,7 +115,7 @@ Caf.defMod(module, () => {
                 isFunctionInvocation,
                 checkedValueStn => {
                   let access;
-                  access = this.createAccessorStn(
+                  access = this.createPostTransformedAccessorStn(
                     checkedValueStn,
                     key,
                     accessor
@@ -130,13 +130,21 @@ Caf.defMod(module, () => {
                 }
               );
             } else {
-              value = this.createAccessorStn(value, key, accessor);
+              value = this.createPostTransformedAccessorStn(
+                value,
+                key,
+                accessor
+              );
             }
           }
         });
         return value;
       };
-      this.prototype.createAccessorStn = function(value, key, oldStn) {
+      this.prototype.createPostTransformedAccessorStn = function(
+        value,
+        key,
+        oldStn
+      ) {
         let stnName;
         stnName = oldStn.class.name;
         if (!StnRegistry[stnName]) {
@@ -144,7 +152,7 @@ Caf.defMod(module, () => {
             `invalid stnName: ${Caf.toString(formattedInspect(stnName))}`
           );
         }
-        return StnRegistry[stnName](oldStn.props, value, key);
+        return StnRegistry[stnName](oldStn.props, value, key).postTransform();
       };
       this.prototype.createExistanceAccessorStn = function(
         value,
