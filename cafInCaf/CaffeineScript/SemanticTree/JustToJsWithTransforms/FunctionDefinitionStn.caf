@@ -29,12 +29,12 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
           - ensure there is a super and put it in the right order
           - returnIgnored: true is implicit
 
-  constructor: (props, children) ->
+  constructor: (props, children, pretransformedStn) ->
     if children.length == 1
       [onlyChild] = children
       unless onlyChild instanceof StnRegistry.FunctionDefinitionArgsStn.class
         children = [StnRegistry.FunctionDefinitionArgsStn(), children[0]]
-    super props, children
+    super props, children, pretransformedStn
 
     @arguments = children[0]
     @statements = children[1]
@@ -59,7 +59,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
   postTransform: ->
     if @props.bound == "auto"
-      @props.bound = if foundParent = @findParent /Class|FunctionDefinition/
+      @props.bound = if foundParent = @pretransformedStn.findParent /Class|FunctionDefinition/
         if foundParent.type == "Class"
           false
         else
@@ -84,8 +84,6 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     bodyJs = body?.toFunctionBodyJsArray !returnIgnored
     if @props.isConstructor
       constructorSuperIndex = find v, i in bodyJs when v.match /^super\(/ with i
-
-    # log constructorSuperIndex:constructorSuperIndex, bodyJs: bodyJs?
 
     statements = compactFlatten if constructorSuperIndex >= 0
       beforeSuper = bodyJs.slice 0, constructorSuperIndex

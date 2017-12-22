@@ -1,14 +1,9 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let StnRegistry,
-    AccessorChainStn,
-    mergeInto,
-    isArray,
-    Error,
-    formattedInspect;
-  ({ mergeInto, isArray, Error, formattedInspect } = Caf.import(
-    ["mergeInto", "isArray", "Error", "formattedInspect"],
+  let StnRegistry, AccessorChainStn, mergeInto, isArray, compactFlatten;
+  ({ mergeInto, isArray, compactFlatten } = Caf.import(
+    ["mergeInto", "isArray", "compactFlatten"],
     [global, require("../StandardImport")]
   ));
   StnRegistry = require("../StnRegistry");
@@ -92,14 +87,13 @@ Caf.defMod(module, () => {
         key,
         oldStn
       ) {
-        let stnName;
-        stnName = oldStn.class.name;
-        if (!StnRegistry[stnName]) {
-          throw new Error(
-            `invalid stnName: ${Caf.toString(formattedInspect(stnName))}`
-          );
-        }
-        return StnRegistry[stnName](oldStn.props, value, key).postTransform();
+        return oldStn
+          .newTransformedInstance(
+            oldStn.props,
+            compactFlatten([value, key]),
+            oldStn
+          )
+          .postTransform();
       };
       this.prototype._createExistanceAccessorStn = function(
         value,

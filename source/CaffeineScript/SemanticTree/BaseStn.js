@@ -43,10 +43,16 @@ Caf.defMod(module, () => {
   return (BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
       constructor(props, children = [], pretransformedStn) {
+        let cafTemp, cafBase;
         super(...arguments);
         this.children = children;
         this.pretransformedStn = pretransformedStn;
-        this.parseTreeNode = props.parseTreeNode;
+        this.parseTreeNode =
+          (cafTemp =
+            Caf.exists((cafBase = this.pretransformedStn)) &&
+            cafBase.parseTreeNode) != null
+            ? cafTemp
+            : props.parseTreeNode;
         this.pretransformedStn || (this.pretransformedStn = this);
         this.props = objectWithout(props, "parseTreeNode");
         this.initLabeledChildren();
@@ -230,10 +236,13 @@ Caf.defMod(module, () => {
       this.prototype.postTransform = function() {
         return this;
       };
+      this.prototype.newTransformedInstance = function(newProps, newChildren) {
+        return new this.class(newProps, newChildren, this);
+      };
       this.prototype.transform = function() {
         let newChildren;
         return (this.children !== (newChildren = this.transformChildren())
-          ? new this.class(this.props, newChildren, this)
+          ? this.newTransformedInstance(this.props, newChildren)
           : this
         ).postTransform();
       };

@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
     class FunctionDefinitionStn extends require("../ScopeStnMixin")(
       require("../BaseStn")
     ) {
-      constructor(props, children) {
+      constructor(props, children, pretransformedStn) {
         let onlyChild;
         if (children.length === 1) {
           [onlyChild] = children;
@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
             children = [StnRegistry.FunctionDefinitionArgsStn(), children[0]];
           }
         }
-        super(props, children);
+        super(props, children, pretransformedStn);
         this.arguments = children[0];
         this.statements = children[1];
       }
@@ -63,7 +63,7 @@ Caf.defMod(module, () => {
       this.prototype.postTransform = function() {
         let foundParent;
         if (this.props.bound === "auto") {
-          this.props.bound = (foundParent = this.findParent(
+          this.props.bound = (foundParent = this.pretransformedStn.findParent(
             /Class|FunctionDefinition/
           ))
             ? foundParent.type === "Class" ? false : true

@@ -129,9 +129,7 @@ class AccessorChainStn extends &ValueBaseCaptureStn
     value
 
   _createPostTransformedAccessorStn: (value, key, oldStn) ->
-    stnName = oldStn.class.name
-    throw new Error "invalid stnName: #{formattedInspect stnName}" unless StnRegistry[stnName]
-    StnRegistry[stnName] oldStn.props, value, key
+    oldStn.newTransformedInstance oldStn.props, compactFlatten([value, key]), oldStn
     .postTransform()
 
   _createExistanceAccessorStn: (value, forFunctionInvocation, createRightStn) ->

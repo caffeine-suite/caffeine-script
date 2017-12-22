@@ -37,7 +37,7 @@ class BaseStn extends BaseClass
     TODO: I'd like to make setting the parseTreeNode cleaner.
   constructor: (props, @children = [], @pretransformedStn) ->
     super
-    @parseTreeNode = props.parseTreeNode
+    @parseTreeNode = @pretransformedStn?.parseTreeNode ? props.parseTreeNode
     @pretransformedStn ||= @
 
     @props = objectWithout props, "parseTreeNode"
@@ -242,9 +242,12 @@ class BaseStn extends BaseClass
   # transform after children have been transformed
   postTransform: -> @
 
+  newTransformedInstance: (newProps, newChildren) ->
+    new @class newProps, newChildren, @
+
   transform: ->
     if @children != newChildren = @transformChildren()
-      new @class @props, newChildren, @
+      @newTransformedInstance @props, newChildren
     else
       @
     .postTransform()

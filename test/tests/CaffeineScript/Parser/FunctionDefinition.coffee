@@ -89,7 +89,6 @@ module.exports = suite: parseTestSuite
       c: 2
       """: "({a: function() {return {b: 1};}, c: 2});"
 
-
   argDestructuring:
     basic:
       "({a}) =>":       "({a}) => {};"
@@ -122,3 +121,10 @@ module.exports = suite: parseTestSuite
 
     regressions:
       "({a}) -> a = a + 1": "(function({a}) {return a = a + 1;});"
+
+  regressions:
+    """
+    ->
+      (c) -> @b c
+    """: "(function() {return (c) => {return this.b(c);};});"
+
