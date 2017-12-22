@@ -7,7 +7,7 @@ Caf.defMod(module, () => {
     [global, require("../../StandardImport")]
   ));
   return (AccessorStn = Caf.defClass(
-    class AccessorStn extends require("../ValueBaseCaptureStn") {
+    class AccessorStn extends require("../AccessorChainStn") {
       constructor(props, children) {
         super(...arguments);
         if (!(children.length === 2)) {
@@ -30,9 +30,6 @@ Caf.defMod(module, () => {
           return true;
         }
       });
-      this.prototype.transform = function() {
-        return this.transformAccessorChain();
-      };
       this.prototype.toJs = function() {
         let base, identierString;
         base = this.value.toJsExpression({ dotBase: true });

@@ -3,14 +3,12 @@ SemanticTree = &StnRegistry
 
 supportedOperatorsRegExp = /^([-+*\/%]|)$/
 
-class AssignmentStn extends &ValueBaseCaptureStn
+class AssignmentStn extends &AccessorChainStn
   constructor: (props, children) ->
     super
     @operator =  props.operator || ""
     @lValue = children[0]
     @rValue = children[1]
-
-  transform: -> @transformAccessorChain()
 
   # value and key are for compatibility with ValueBaseCaptureStn
   @getter

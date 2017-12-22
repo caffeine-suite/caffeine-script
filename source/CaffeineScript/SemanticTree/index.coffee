@@ -4,6 +4,7 @@
 module.exports = require './namespace'
 module.exports
 .addModules
+  AccessorChainStn:       require './AccessorChainStn'      
   BaseStn:                require './BaseStn'               
   ScopeStnMixin:          require './ScopeStnMixin'         
   UniqueIdentifierHandle: require './UniqueIdentifierHandle'

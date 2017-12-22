@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
   SemanticTree = require("../../StnRegistry");
   supportedOperatorsRegExp = /^([-+*\/%]|)$/;
   return (AssignmentStn = Caf.defClass(
-    class AssignmentStn extends require("../ValueBaseCaptureStn") {
+    class AssignmentStn extends require("../AccessorChainStn") {
       constructor(props, children) {
         super(...arguments);
         this.operator = props.operator || "";
@@ -14,9 +14,6 @@ Caf.defMod(module, () => {
       }
     },
     function(AssignmentStn, classSuper, instanceSuper) {
-      this.prototype.transform = function() {
-        return this.transformAccessorChain();
-      };
       this.getter({
         value: function() {
           return this.lValue;

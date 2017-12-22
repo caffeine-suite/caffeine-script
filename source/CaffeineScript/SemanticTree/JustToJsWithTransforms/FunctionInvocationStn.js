@@ -8,7 +8,7 @@ Caf.defMod(module, () => {
   ));
   SemanticTree = require("./namespace");
   return (FunctionInvocationStn = Caf.defClass(
-    class FunctionInvocationStn extends require("../ValueBaseCaptureStn") {
+    class FunctionInvocationStn extends require("../AccessorChainStn") {
       constructor(props, children) {
         let functionValue, argStns, cafBase, cafBase1, cafBase2;
         super(...arguments);
@@ -38,9 +38,6 @@ Caf.defMod(module, () => {
           return true;
         }
       });
-      this.prototype.transform = function() {
-        return this.transformAccessorChain();
-      };
       this.prototype.toJs = function() {
         let valueJs;
         if (this.existanceTest) {

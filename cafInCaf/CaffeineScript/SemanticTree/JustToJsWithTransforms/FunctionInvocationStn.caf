@@ -2,7 +2,7 @@ import &StandardImport
 
 SemanticTree = require './namespace'
 
-class FunctionInvocationStn extends &ValueBaseCaptureStn
+class FunctionInvocationStn extends &AccessorChainStn
 
   constructor: (props, children) ->
     super
@@ -21,8 +21,6 @@ class FunctionInvocationStn extends &ValueBaseCaptureStn
   @getter
     existanceTest: -> @props.existanceTest
     isFunctionInvocation: -> true
-
-  transform: -> @transformAccessorChain()
 
   toJs: ->
     throw new Error "can't be existanceTest here" if @existanceTest

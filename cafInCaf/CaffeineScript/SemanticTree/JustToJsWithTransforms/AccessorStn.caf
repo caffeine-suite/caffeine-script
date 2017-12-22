@@ -1,6 +1,6 @@
 import &StandardImport
 
-class AccessorStn extends &ValueBaseCaptureStn
+class AccessorStn extends &AccessorChainStn
 
   constructor: (props, children) ->
     super
@@ -14,8 +14,6 @@ class AccessorStn extends &ValueBaseCaptureStn
   @getter
     existanceTest: -> @props.existanceTest
     isAccessor: -> true
-
-  transform: -> @transformAccessorChain()
 
   toJs: ->
     base = @value.toJsExpression dotBase: true

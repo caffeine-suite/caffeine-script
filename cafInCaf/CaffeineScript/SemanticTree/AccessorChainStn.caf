@@ -1,0 +1,150 @@
+import &StandardImport
+
+StnRegistry = &StnRegistry
+
+###
+  NOTES:
+
+  IMPORTANT:
+    This overrides the default transform!
+
+  For the purpose of this transform, FunctionInvocations are considered a form of accessor.
+
+  I seriously considered doing this the same way I handle binary operators.
+  It's very similar in that it's a precidence issue. Existance-accessors have
+  "lower" precidence than non-existance accessors. And they are left-
+  associative. And that should be it... except! Except, in a normal binary
+  operator chain, all the leaf nodes are atomic from the perspective of the
+  chain. They can be moved anywhere in the constructed tree structure without
+  losing their semantics. However, with an accessor-chain, the existance
+  operator's left value becomes the left-most leaf value for its right-value -
+  with a "valueCapture". I could solve that, but this is probably just as
+  easy and I already had it half working.
+
+  EXISTANCE-TESTING-ACCESSOR-INTUITION
+
+    The intution is everything to the right of a ?., ?() or ?[] is ABORTED if
+    the value on the left is null or undefined. The left-value is returned.
+
+class AccessorChainStn extends &ValueBaseCaptureStn
+  @abstractClass()
+
+  transform: -> @transformAccessorChain()
+
+  transformAccessorChain:
+    ## <doc>
+      precondition: @type == "Accessor" || @type == "FunctionInvocation"
+      out: stn: ""
+        new root of re-arranged sub-tree
+
+      todo: ""
+
+    ->
+      accessorChain = @getLeftAccessorChain()
+
+      out = @_transformAccessorChainR
+        accessorChain[0].value.transform()
+        accessorChain
+
+      # don't lose the props - particularly props.label - SwitchStn needs it for the else-clause, and probably others do too.
+      # TODO: I want a more consistent way to do this. I think the right answer is the 'transform'
+      # we override has a standard wrapper which ensures props.label and props.parseTreeNode are preserved.
+      mergeInto out.props, @props, out.props
+      out
+
+  ## <doc>
+    precondition: @type == "Accessor" || @type == "FunctionInvocation"
+    in:
+      @value: :stn, ""
+
+        The value being accessed.
+
+        Ex:
+          value.foo
+          value[foo]
+          value foo
+
+    out: array: stn: ""
+      The left-most-branch of the STN tree:
+        - leaf-node-first
+        - this-node-last
+  getLeftAccessorChain: ->
+    current = @
+    accessorChain = []
+    while current
+        && current instanceof AccessorChainStn
+      accessor = current
+      current = current.value
+      accessorChain.push accessor
+
+    accessorChain.reverse()
+
+  ##
+    purpose: ""
+      Re-order the parsed-tree such that existance-testing-accessors
+      are at the top so if existance fails, everything to the right
+      is not evaluated.
+
+    in:
+      value: the inital, starting value
+      accessorChain:
+        the in-order sequence of accessors to apply to 'value'
+
+    out:
+      a new stn-tree where:
+        a) root is the left-most existance-testing accessor from the accessorChain
+           else, if there was no existance-testing-accessor, then it is
+           the last element in the accessorChain - effectively the same structure
+           as how it was parsed.
+        b) left-children-chain contains no existance-testing accessors
+        c) right-child == @_transformAccessorChainR ...
+           i.e. the right-child's root is the left-most-existince-testing-accessor
+           of the rest of the accessorChain (if there is an existnace-testing-accessor)
+  _transformAccessorChainR: (value, accessorChain) ->
+
+    done = false # caf-hack because we don't have 'return' or 'break' yet
+
+    each accessor, i in accessorChain when !done
+      {key, isFunctionInvocation} = accessor
+      if isArray key
+        key = array kk in key with kk.transform()
+      else
+        key = key.transform()
+
+      if accessor.existanceTest
+        reset = accessorChain.slice i
+
+        done = true
+        value = @_createExistanceAccessorStn value, isFunctionInvocation, (checkedValueStn) =>
+          access = @_createPostTransformedAccessorStn checkedValueStn, key, accessor
+          access.props.existanceTest = false
+          if i < accessorChain.length - 1
+            @_transformAccessorChainR access, accessorChain.slice i + 1
+          else
+            access
+
+      else
+        value = @_createPostTransformedAccessorStn value, key, accessor
+
+    value
+
+  _createPostTransformedAccessorStn: (value, key, oldStn) ->
+    stnName = oldStn.class.name
+    throw new Error "invalid stnName: #{formattedInspect stnName}" unless StnRegistry[stnName]
+    StnRegistry[stnName] oldStn.props, value, key
+    .postTransform()
+
+  _createExistanceAccessorStn: (value, forFunctionInvocation, createRightStn) ->
+    res = if forFunctionInvocation
+      @getValueWithBaseCapture value
+    else
+      @getValueWithCapture value
+
+    {value1, value2} = res
+
+    StnRegistry.BinaryOperatorStn
+      operator: "&&"
+      StnRegistry.FunctionInvocationStn
+        StnRegistry.IdentifierStn identifier: if forFunctionInvocation then "Caf.isF" else "Caf.exists"
+        value1
+      createRightStn value2
