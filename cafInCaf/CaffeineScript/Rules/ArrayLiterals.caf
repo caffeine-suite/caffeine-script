@@ -2,9 +2,8 @@ import &StandardImport, &CaffeineEight
 
 ->
   @rule
-
     array:
-      pattern: "'[]' _? valueList"
+      "'[]' _? valueList"
       "'[]'"
 
     brackedArray:

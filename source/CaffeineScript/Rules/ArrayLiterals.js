@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   return function() {
     return this.rule(
       {
-        array: [{ pattern: "'[]' _? valueList" }, "'[]'"],
+        array: ["'[]' _? valueList", "'[]'"],
         brackedArray: "openBracket_ valueList _comma_? _closeBracket",
         implicitArray: [
           {

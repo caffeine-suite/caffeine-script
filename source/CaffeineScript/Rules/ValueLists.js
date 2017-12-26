@@ -16,9 +16,9 @@ Caf.defMod(module, () => {
     });
     this.rule({
       simpleValueList: [
-        { pattern: "element:listItemExpression _comma_ simpleValueList" },
-        { pattern: "element:literal _ simpleValueList" },
-        { pattern: "element:listItemExpression" }
+        "element:listItemExpression _comma_ simpleValueList",
+        "element:literal _ simpleValueList",
+        "element:listItemExpression"
       ]
     });
     return this.rule({
