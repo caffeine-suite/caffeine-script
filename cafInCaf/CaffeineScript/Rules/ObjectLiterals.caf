@@ -12,6 +12,7 @@ import Extensions
 
     explicitObjectBlock:
       ""
+        end*
         singleOrMultilineExplicitObject
         end*
 

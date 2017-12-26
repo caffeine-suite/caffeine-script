@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
       objectLiteralBlock: IndentBlocks.getPropsToSubparseToEolAndBlock({
         rule: "explicitObjectBlock"
       }),
-      explicitObjectBlock: "singleOrMultilineExplicitObject end*",
+      explicitObjectBlock: "end* singleOrMultilineExplicitObject end*",
       singleOrMultilineExplicitObject: [
         "multilineExplicitObject",
         "oneLineExplicitObject"

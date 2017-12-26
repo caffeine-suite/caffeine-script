@@ -94,6 +94,11 @@ module.exports = suite: parseTestSuite
   explicitBlock:
     "{}\n a:1"        : "({a: 1});"
     "{}\n a:1\n b:2"  : "({a: 1, b: 2});"
+    """
+    {}
+      # comment on first line
+      a: 1
+    """: "({a: 1});"
 
   implicit:
     basic:
