@@ -160,12 +160,8 @@
     throw: /throw\b/
     with: /with\b/
     when: /when\b/
-    into: /(into|returning)\b/
-    withOrDo: /(with|do)\b/
 
   @rule
-    comprehensionOutputType: /(object|array|reduce|each|find)\b/
-    comprehensionIterationType: /(from|in)\b/
 
     # comprehensionIterationType: /from( +(object|array|iter))?/
     dot: /\./

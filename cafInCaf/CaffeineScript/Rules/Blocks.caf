@@ -5,6 +5,7 @@ import &StandardImport, &CaffeineEight
     blocks: 'block+'
 
   @rule
+    statementBlock: :block
     block:          "_? block:actualBlock"
     blockEmptyOk:   "_? block:actualBlockEmptyOk"
     toEolAndBlock:  "_? block:actualToEolAndBlock"

@@ -10,9 +10,9 @@ Caf.defMod(module, () => {
     this.rule(
       {
         controlStatement: [
-          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block             elseBody:elseClause?",
-          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?            elseBody:elseClause",
-          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:implicitArrayOrExpression elseBody:elseClause?"
+          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block                    elseBody:elseClause?",
+          "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?                   elseBody:elseClause",
+          "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:lineOfStatementsOrBlock  elseBody:elseClause?"
         ]
       },
       {

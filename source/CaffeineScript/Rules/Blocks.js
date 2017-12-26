@@ -9,6 +9,7 @@ Caf.defMod(module, () => {
   return function() {
     this.rule({ blocks: "block+" });
     this.rule({
+      statementBlock: "block",
       block: "_? block:actualBlock",
       blockEmptyOk: "_? block:actualBlockEmptyOk",
       toEolAndBlock: "_? block:actualToEolAndBlock"

@@ -2,6 +2,22 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return function() {
+    this.rule({ into: /(into|returning)\b/, withOrDo: /(with|do)\b/ });
+    this.rule(
+      {
+        comprehensionOutputType: /(object|array|reduce|each|find)\b/,
+        comprehensionIterationType: /(from|in)\b/
+      },
+      { stnFactory: "SemanticTokenStn" }
+    );
+    this.rule({
+      comprehensionValueClause: "_? /(into|returning|when)\b/",
+      comprehensionValueClauses: "comprehensionValueClause+",
+      expressionWithOneLessBlockOrBlock: [
+        "expressionWithOneLessBlock",
+        "requiredValue"
+      ]
+    });
     this.rule(
       {
         comprehensionVariableDef_:
@@ -11,11 +27,13 @@ Caf.defMod(module, () => {
     );
     this.rule({
       optionalArg: "_comma_? !with argDef",
-      comprehensionIterationTypeClause_: "comprehensionIterationType _",
-      comprehensionIterable: "expressionWithOneLessBlock",
-      comprehensionInto: "_? into _ expressionWithOneLessBlock",
-      comprehensionWhen: "_? when _ expressionWithOneLessBlock",
-      comprehensionWith: "_? withOrDo _ expression",
+      comprehensionIterationTypeClause_: "comprehensionIterationType _?",
+      comprehensionIterable: "expressionWithOneLessBlockOrBlock",
+      comprehensionInto:
+        "_? valueClauseType:into _? expressionWithOneLessBlockOrBlock",
+      comprehensionWhen:
+        "_? valueClauseType:when _? expressionWithOneLessBlockOrBlock",
+      comprehensionWith: "_? withOrDo _ lineOfStatementsOrBlock",
       comprehensionBody: ["block", "comprehensionWith"]
     });
     return this.rule(

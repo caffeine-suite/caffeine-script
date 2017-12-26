@@ -35,6 +35,7 @@ module.exports =
       testFunction name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
         js = try
           stn = (p = CaffeineScriptParser.parse(source, parseOptions)).getStn()
+          stn.validateAll()
           transformedStn = stn.transform()
           if compileModule
             transformedStn.toJsModule()
@@ -45,7 +46,7 @@ module.exports =
             expectedFailure = error
             error = null
           else
-            log.error error
+            log.error error unless knownFailing
 
           null
 
@@ -105,7 +106,10 @@ module.exports =
     if isString source = a
       ->
         test "illegal: #{source.replace(/\n/g, "\\n")}", ->
-          assert.rejects -> CaffeineScriptParser.parse source
+          assert.rejects ->
+            CaffeineScriptParser.parse source
+            .getStn()
+            .validateAll()
 
     else if isArray a
       object a, illegalSyntaxTests

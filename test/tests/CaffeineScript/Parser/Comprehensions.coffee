@@ -192,13 +192,16 @@ module.exports = suite: parseTestSuite
     object obj
     """: "Caf.each(obj, {}, (v, k, into) => {into[k] = v;});"
 
-    "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
-
     """
     each v from
-        a: b
-      v.a
-    """: knownFailing: "a"
+        a: 1
+      v + 2
+    """: "Caf.each({a: 1}, undefined, (v, k, into) => {v + 2;});"
+
+    """
+    array v from a into
+      [1]
+    """: "Caf.each(a, [1], (v, k, into) => {into.push(v);});"
 
     """
     find foo
@@ -208,3 +211,29 @@ module.exports = suite: parseTestSuite
       Caf.extendedEach(foo, undefined, (v, k, into, brk) =>
       {let cafRet; return (cafRet = bar ? baz : undefined)
       && (brk(), cafRet);});"
+
+  parameterNameRegressions:
+
+    "object k from b": knownFailing: "Caf.each(b, {}, (k, _k, into) => {into[_k] = k;});"
+    """
+    k = 123
+    object v from b with k * v
+    """: knownFailing: "let k; k = 123; Caf.each(b, {}, (v, _k, into) => {into[_k] = k * v;});"
+
+    "object k, v from b": "Caf.each(b, {}, (k, v, into) => {into[v] = k;});"
+    "object v, k from b": "Caf.each(b, {}, (v, k, into) => {into[k] = v;});"
+
+  multiStatementWith:
+    """
+    array v from a with foo(); v
+    """: multiStatementWithReturnsCorrectly = "Caf.each(a, [], (v, k, into) => {foo(); into.push(v);});"
+
+    """
+    array v from a
+      foo()
+      v
+    """: multiStatementWithReturnsCorrectly
+
+  # newComprehensionValidations:
+  #   "array v when a into b": whenIntoOrderDoesntMatter = "Caf.each(v, b, (v, k, into) => {if (a) {into.push(v);};});"
+  #   "array v into b when a": whenIntoOrderDoesntMatter

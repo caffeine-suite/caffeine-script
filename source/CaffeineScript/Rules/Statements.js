@@ -61,6 +61,7 @@ Caf.defMod(module, () => {
       pattern: "statementSemi* statementWithoutEnd",
       stnFactory: "StatementsStn"
     },
+    lineOfStatementsOrBlock: ["lineOfStatements", "statementBlock"],
     statementSemi: "statementWithoutEnd _? ';' _?"
   };
 });

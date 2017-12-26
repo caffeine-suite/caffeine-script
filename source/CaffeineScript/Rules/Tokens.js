@@ -35,17 +35,10 @@ Caf.defMod(module, () => {
       new: /new\b/,
       throw: /throw\b/,
       with: /with\b/,
-      when: /when\b/,
-      into: /(into|returning)\b/,
-      withOrDo: /(with|do)\b/
+      when: /when\b/
     });
     return this.rule(
-      {
-        comprehensionOutputType: /(object|array|reduce|each|find)\b/,
-        comprehensionIterationType: /(from|in)\b/,
-        dot: /\./,
-        questionMark: /\?/
-      },
+      { dot: /\./, questionMark: /\?/ },
       { stnFactory: "SemanticTokenStn" }
     );
   };

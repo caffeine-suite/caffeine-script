@@ -32,6 +32,17 @@ module.exports = suite: parseTestSuite
         boom
       """: "if (foo) {bar;} else {baz; boom;};"
 
+    thenStatements:
+      "if foo then a;b": "if (foo) {a; b;};"
+
+      "c = if foo then a;b": multiStatementThenReturnsCorrectly = "let c; c = foo ? (a, b) : undefined;"
+
+      """
+      c = if foo
+        a
+        b
+      """: multiStatementThenReturnsCorrectly
+
     chain:
       """
       if a

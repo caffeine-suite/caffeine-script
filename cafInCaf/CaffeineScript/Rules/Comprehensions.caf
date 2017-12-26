@@ -2,18 +2,39 @@ import &StandardImport
 
 ->
   @rule
+    into: /(into|returning)\b/
+    withOrDo: /(with|do)\b/
+
+  @rule
+    comprehensionOutputType:    /(object|array|reduce|each|find)\b/
+    comprehensionIterationType: /(from|in)\b/
+    {} stnFactory: :SemanticTokenStn
+
+  @rule
+    comprehensionValueClause:
+      ""
+        _?
+        /(into|returning|when)\b/
+
+    comprehensionValueClauses: "comprehensionValueClause+"
+
+    expressionWithOneLessBlockOrBlock:
+      :expressionWithOneLessBlock
+      :requiredValue
+
+  @rule
     comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType'
     {} stnFactory: :FunctionDefinitionArgsStn
 
   @rule
     optionalArg: "_comma_? !with argDef"
 
-    comprehensionIterationTypeClause_: 'comprehensionIterationType _'
-    comprehensionIterable: "expressionWithOneLessBlock"
+    comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
+    comprehensionIterable: "expressionWithOneLessBlockOrBlock"
 
-    comprehensionInto: '_? into _ expressionWithOneLessBlock'
-    comprehensionWhen: '_? when _ expressionWithOneLessBlock'
-    comprehensionWith: '_? withOrDo _ expression'
+    comprehensionInto: '_? valueClauseType:into _? expressionWithOneLessBlockOrBlock'
+    comprehensionWhen: '_? valueClauseType:when _? expressionWithOneLessBlockOrBlock'
+    comprehensionWith: '_? withOrDo _ lineOfStatementsOrBlock'
 
     comprehensionBody: :block :comprehensionWith
 
