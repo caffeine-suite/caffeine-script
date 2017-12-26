@@ -154,16 +154,11 @@
         =
         # \ *
 
-    # _assignmentOperator_: /// \ *#{assignmentOperator.source}\ *
-
     new: /new\b/
     throw: /throw\b/
-    with: /with\b/
-    when: /when\b/
 
   @rule
 
-    # comprehensionIterationType: /from( +(object|array|iter))?/
     dot: /\./
     questionMark: /\?/
     {} stnFactory: :SemanticTokenStn

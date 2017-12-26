@@ -234,6 +234,13 @@ module.exports = suite: parseTestSuite
       v
     """: multiStatementWithReturnsCorrectly
 
-  # newComprehensionValidations:
-  #   "array v when a into b": whenIntoOrderDoesntMatter = "Caf.each(v, b, (v, k, into) => {if (a) {into.push(v);};});"
-  #   "array v into b when a": whenIntoOrderDoesntMatter
+  newComprehensionValidations:
+    ok:
+      "array v": "Caf.each(v, [], (v, k, into) => {into.push(v);});"
+      "array v from a": "Caf.each(a, [], (v, k, into) => {into.push(v);});"
+      "array v from a into b": "Caf.each(a, b, (v, k, into) => {into.push(v);});"
+      "array v when a into b": whenIntoOrderDoesntMatter = "Caf.each(v, b, (v, k, into) => {if (a) {into.push(v);};});"
+      "array v into b when a": whenIntoOrderDoesntMatter
+
+    failures:
+      "array v into b into a": null

@@ -4,11 +4,11 @@ Caf.defMod(module, () => {
   let SemanticTree,
     UniqueIdentifierHandle,
     ComprehensionStn,
+    Error,
     arrayWithAllButLast,
-    peek,
-    Error;
-  ({ arrayWithAllButLast, peek, Error } = Caf.import(
-    ["arrayWithAllButLast", "peek", "Error"],
+    peek;
+  ({ Error, arrayWithAllButLast, peek } = Caf.import(
+    ["Error", "arrayWithAllButLast", "peek"],
     [global, require("../../StandardImport")]
   ));
   SemanticTree = require("../../StnRegistry");
@@ -18,13 +18,31 @@ Caf.defMod(module, () => {
       require("../BaseStn")
     ) {},
     function(ComprehensionStn, classSuper, instanceSuper) {
+      this.prototype.validate = function() {
+        let valueClauseChildren;
+        valueClauseChildren = {};
+        return Caf.each(
+          this.labeledChildren.valueClauses,
+          undefined,
+          (valueClause, k, into) => {
+            let type;
+            ({ type } = valueClause);
+            if (valueClauseChildren[type]) {
+              throw new Error(
+                `no more than one '${Caf.toString(type)}' clause allowed`
+              );
+            }
+            valueClauseChildren[type] = true;
+          }
+        );
+      };
       this.prototype.postTransform = function() {
         let outputType,
           variableDefinition,
           body,
           iterable,
-          whenClause,
           intoChild,
+          whenClause,
           iterationFunction,
           AccessorStn,
           ArrayStn,
@@ -60,10 +78,25 @@ Caf.defMod(module, () => {
           outputType,
           variableDefinition,
           body,
-          iterable,
-          whenClause
+          iterable
         } = this.labeledChildren);
-        intoChild = this.labeledChildren.into;
+        intoChild = whenClause = null;
+        Caf.each(
+          this.labeledChildren.valueClauses,
+          undefined,
+          (valueClause, k, into) => {
+            let type, value;
+            ({ type, value } = valueClause);
+            switch (type) {
+              case "into":
+              case "returning":
+                intoChild = value;
+                break;
+              case "when":
+                whenClause = value;
+            }
+          }
+        );
         outputType = Caf.exists(outputType) && outputType.props.token;
         iterationFunction = outputType.slice(0, 1);
         ({

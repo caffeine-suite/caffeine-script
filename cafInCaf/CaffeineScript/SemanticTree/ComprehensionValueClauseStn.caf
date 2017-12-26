@@ -1,0 +1,7 @@
+import &StandardImport
+
+class ComprehensionValueClauseStn extends &BaseStn
+
+  @getter
+    type: -> @props.type
+    value: -> @labeledChildren.value

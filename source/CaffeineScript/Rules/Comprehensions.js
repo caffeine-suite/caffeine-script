@@ -2,7 +2,10 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return function() {
-    this.rule({ into: /(into|returning)\b/, withOrDo: /(with|do)\b/ });
+    this.rule({
+      withOrDo: /(with|do)\b/,
+      comprehensionValueClauseType: /(into|returning|when)\b/
+    });
     this.rule(
       {
         comprehensionOutputType: /(object|array|reduce|each|find)\b/,
@@ -11,7 +14,15 @@ Caf.defMod(module, () => {
       { stnFactory: "SemanticTokenStn" }
     );
     this.rule({
-      comprehensionValueClause: "_? /(into|returning|when)\b/",
+      comprehensionValueClause: [
+        "_? comprehensionValueClauseType _? value:expressionWithOneLessBlockOrBlock",
+        {
+          stnFactory: "ComprehensionValueClauseStn",
+          stnProps: function() {
+            return { type: this.comprehensionValueClauseType.toString() };
+          }
+        }
+      ],
       comprehensionValueClauses: "comprehensionValueClause+",
       expressionWithOneLessBlockOrBlock: [
         "expressionWithOneLessBlock",
@@ -26,20 +37,16 @@ Caf.defMod(module, () => {
       { stnFactory: "FunctionDefinitionArgsStn" }
     );
     this.rule({
-      optionalArg: "_comma_? !with argDef",
+      optionalArg: "_comma_? !withOrDo argDef",
       comprehensionIterationTypeClause_: "comprehensionIterationType _?",
       comprehensionIterable: "expressionWithOneLessBlockOrBlock",
-      comprehensionInto:
-        "_? valueClauseType:into _? expressionWithOneLessBlockOrBlock",
-      comprehensionWhen:
-        "_? valueClauseType:when _? expressionWithOneLessBlockOrBlock",
       comprehensionWith: "_? withOrDo _ lineOfStatementsOrBlock",
       comprehensionBody: ["block", "comprehensionWith"]
     });
     return this.rule(
       {
         comprehension:
-          "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable into:comprehensionInto? whenClause:comprehensionWhen? body:comprehensionBody?"
+          "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable valueClause:comprehensionValueClause* body:comprehensionBody?"
       },
       { stnFactory: "ComprehensionStn" }
     );

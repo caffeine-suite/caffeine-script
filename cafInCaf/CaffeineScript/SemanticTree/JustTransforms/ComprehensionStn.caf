@@ -58,15 +58,23 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       and so on for o, a, f, r, e >> 3x the functions
 
-  # validate: ->
-  #   log "validate ComprehensionStn"
-  #   each valueClause in @children.valueClauses
-  #     log {valueClause}
+  validate: ->
+    valueClauseChildren = {}
+    each valueClause in @labeledChildren.valueClauses
+      {type} = valueClause
+      throw new Error "no more than one '#{type}' clause allowed" if valueClauseChildren[type]
+      valueClauseChildren[type] = true
 
   postTransform: ->
     @initLabeledChildren()
-    {outputType, variableDefinition, body, iterable, whenClause} = @labeledChildren
-    intoChild = @labeledChildren.into
+    {outputType, variableDefinition, body, iterable} = @labeledChildren
+
+    intoChild = whenClause = null
+    each valueClause in @labeledChildren.valueClauses
+      {type, value} = valueClause
+      switch type
+        when :into, :returning then intoChild = value
+        when :when then whenClause = value
 
     outputType = outputType?.props.token
     iterationFunction = outputType.slice 0,1

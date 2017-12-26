@@ -33,9 +33,7 @@ Caf.defMod(module, () => {
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|is|isnt|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
       assignmentOperator: (assignmentOperator = /(&&|\|\||&|\||\^|\?|((and|or|isnt|is|in)\b)|<<|>>>|>>|\/\/|%%|\*\*|[-+*\/%])?=/),
       new: /new\b/,
-      throw: /throw\b/,
-      with: /with\b/,
-      when: /when\b/
+      throw: /throw\b/
     });
     return this.rule(
       { dot: /\./, questionMark: /\?/ },
