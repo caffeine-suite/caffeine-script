@@ -21,23 +21,6 @@ Caf.defMod(module, () => {
           class NodeSubclass extends this {}
         ));
       };
-      this.prototype.isImplicitArray = function() {
-        return !!this.getImplicitArray();
-      };
-      this.prototype.getImplicitArray = function() {
-        return Caf.extendedEach(
-          this.matches,
-          undefined,
-          (match, k, into, brk) => {
-            let cafRet;
-            return (
-              (cafRet =
-                Caf.isF(match.getImplicitArray) && match.getImplicitArray()) &&
-              (brk(), cafRet)
-            );
-          }
-        );
-      };
       this.prototype.getMatchStns = function() {
         return Caf.each(this.matches, [], (m, k, into) => {
           if ((m = Caf.isF(m.getStn) && m.getStn())) {

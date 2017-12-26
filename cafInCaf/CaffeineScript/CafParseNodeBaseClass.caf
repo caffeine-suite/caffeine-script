@@ -15,19 +15,9 @@ StnRegistry = &StnRegistry
 
 
 class CafParseNodeBaseClass extends Nodes.Node
-  ##
-    asdf
-    sadf
 
   @_createSubclassBase: ->
     class NodeSubclass extends @
-
-  isImplicitArray: ->
-    !!@getImplicitArray()
-
-  getImplicitArray: ->
-    find match in @matches
-      match.getImplicitArray?()
 
   getMatchStns: ->
     array m from @matches when m = m.getStn?()

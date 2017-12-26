@@ -4,7 +4,7 @@ import &StandardImport, &CaffeineEight
   @rule
 
     array:
-      pattern: "'[]' _? valueList", getImplicitArray: ~> false # TODO: I shouldn't need to add this getImplicitArray!
+      pattern: "'[]' _? valueList"
       "'[]'"
 
     brackedArray:
@@ -13,13 +13,11 @@ import &StandardImport, &CaffeineEight
     implicitArray:
       {}
         pattern:          "start:expression _comma_ simpleValueList _comma_?"
-        getImplicitArray: ~> @
         stnFactory:       :ArrayStn
         stnProps:         implicitArray: true
 
       {}
         pattern:          "start:literal _ simpleValueList _comma_?"
-        getImplicitArray: ~> @
         stnFactory:       :ArrayStn
         stnProps:         implicitArray: true
 
