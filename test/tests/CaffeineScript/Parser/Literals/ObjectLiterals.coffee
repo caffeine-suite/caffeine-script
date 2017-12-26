@@ -226,3 +226,10 @@ module.exports = suite: parseTestSuite
       ({match:
         [{pattern: "blah", action: "boring"},
         {pattern: "zoom", action: "fast"}]});'
+
+  regressions:
+    """
+    b =
+      # comment here
+      a: 1
+    """: "let b; b = {a: 1};"
