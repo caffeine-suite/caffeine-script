@@ -7,12 +7,20 @@
 module.exports = suite: parseTestSuite
   bracketStrings:
     basic:
-        '"hi"':   '"hi";'
-        "'hi'":   '"hi";'
+      '"hi"':   '"hi";'
+      "'hi'":   '"hi";'
 
     empty:
-      '""': '"";'
-      "''": '"";'
+      '""':         '"";'
+      "''":         '"";'
+      '("")':       '"";'
+      '[""]':       '[""];'
+      '["", 1]':    '["", 1];'
+      '{a:""}':     '({a: ""});'
+
+    dotAccessor:
+      '"".length':    '("").length;'
+      '"a".length':   '("a").length;'
 
     multiline:
       doubleQuotes:
@@ -68,7 +76,8 @@ module.exports = suite: parseTestSuite
       ':*':         '"*";'
 
       ':-':         '"-";'
-      ':\\n':       null # backslashes not allowed until a decision == made
+      ':\\n':       '"\\n";'
+      ':a\\tb':      '"a\\tb";'
 
       ':-a':        '"-a";'
       ':a-':        '"a-";'
@@ -105,8 +114,12 @@ module.exports = suite: parseTestSuite
         '"" hi.there':  '"hi.there";'
         '"" hi-there':  '"hi-there";'
 
+    regressions:
+      '[] "", 1':   '["", 1];'
+      '[] "" , 1':  '[", 1"];'
+
     interpolation:
-        '""#{name}':                knownFailing: '`${Caf.toString(name)}`;'
+        '""#{name}':                '`${Caf.toString(name)}`;'
         '"" #{name}':               '`${Caf.toString(name)}`;'
         '"" a#{name}':              '`a${Caf.toString(name)}`;'
         '"" #{name}b':              '`${Caf.toString(name)}b`;'

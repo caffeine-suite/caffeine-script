@@ -1,7 +1,11 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let Extensions, StringStn, InterpolatedStringStn;
+  let wordStringChar,
+    blockStringStartChar,
+    Extensions,
+    StringStn,
+    InterpolatedStringStn;
   ({ Extensions, StringStn, InterpolatedStringStn } = Caf.import(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
     [
@@ -12,6 +16,8 @@ Caf.defMod(module, () => {
       require("../Lib")
     ]
   ));
+  wordStringChar = /[^\n\s,)\]\}]/;
+  blockStringStartChar = /( |\n|[^.\n\s,)\]\}])/;
   return function() {
     this.rule({
       doubleQuote: /"/,
@@ -25,7 +31,9 @@ Caf.defMod(module, () => {
     this.rule({
       stringLiteral: [
         {
-          pattern: '/""/ tripple:/"/? &/ +[^ \\n]| *\\n/ stringBlock',
+          pattern: `/""/ tripple:/"/? &/${Caf.toString(
+            blockStringStartChar.source
+          )}/ stringBlock`,
           getStn: function() {
             let ret;
             ret = this.stringBlock.getStn();
@@ -49,7 +57,7 @@ Caf.defMod(module, () => {
           }
         },
         {
-          pattern: /:(?!:)[^\\\n\s,)\]\}]+/,
+          pattern: RegExp(`:(?!:)${Caf.toString(wordStringChar.source)}+`),
           getStn: function() {
             return StringStn({ value: this.toString().slice(1) });
           }
