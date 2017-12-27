@@ -1,14 +1,26 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 
+### JavaScript's Golden Heart
+
+JavaScript has a golden heart. At its core, it is an powerful hybrid of object-oriented, functional and dynamically-typed languages. Combined with modern runtimes, world-class garbage collectors and JIT compilers, JavaScript can be a surprisingly good platform to build world class applications on.
+
+However, JavaScript has an ailing body. Even now, in 2018, JavaScript has major syntax and semantic problems which make it error prone and dangerous. JavaScript's syntax is excessively verbose. Code readability matters, especially for large projects, and JavaScript's syntax is the least readable of any major language. This is easy to fix, and the rewards can be huge.
+
+Further, JavaScript has many dangerous holes in its semantics which can introduce subtle, hard to find bugs. They include [accidental globals](https://github.com/caffeine-suite/caffeine-script/wiki/Globals), [weakly-typed truth](https://github.com/caffeine-suite/caffeine-script/wiki/Caffeine-Truth), [weakly-typed equality](https://github.com/caffeine-suite/caffeine-script/wiki/Equality) and other [weakly-typed operators](https://github.com/caffeine-suite/caffeine-script/wiki/Operator-Overloading). Thankfully, the core JavaScript semantics are good, and these auxiliary semantics can be partially or fully fixed without changing JavaScript.
+
+CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's semantics.
+
 ### Less Code is Better Code [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
 
-I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html). Blog post: [WLC @ EssenceAndArtifact.com](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html). 
 
-If you love concise, bracket-less languages, I've got a beautiful, graphically designed one for you. 
+> Full blog post on [Write Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+
+If you love concise, bracket-less languages, I've got a beautifully designed one for you.
 
 ### Inspired by CoffeeScript
 
-I love CoffeeScript. I love the visual blocking of bracket-less blocks. As I used it over the years, though, I started noting it wasn't very consistent. I was always frustrated by all-to-frequent edge cases where I had to use brackets anyway. For example, all array literals still require brackets ([]) in CoffeeScript. Eventually I couldn't stand it anymore. I set out to write a language that could parse bracket-less-blocks *consistently*. The result exceeded my already high expectations.
+I love CoffeeScript. I love the visual blocking of bracket-less blocks. As I used it over the years, though, I started noting it wasn't very consistent. I was always frustrated by all-to-frequent edge cases where I had to use brackets anyway. For example, all array literals still require brackets ([]) in CoffeeScript. Eventually I couldn't stand it anymore. I set out to write a language that could parse bracket-less-blocks *consistently*. The result exceeded even my  expectations.
 
 If you love CoffeeScript, or even if you liked some parts but others drove you crazy, I've got an awesome language for you.
 
@@ -55,7 +67,7 @@ npm install caffeine-script
 
 ### Contribute
 
-* [Discuss on Google Group](https://groups.google.com/d/forum/caffeinescript)
+* [Discuss on Google Groups](https://groups.google.com/d/forum/caffeinescript)
 * [Request, Suggest or Report Bugs on Github Issues](https://github.com/shanebdavis/caffeine-script/issues)
 * [View source or Fork on Github](https://github.com/shanebdavis/caffeine-script)
 
@@ -129,7 +141,7 @@ module.exports = class Login extends Component {
 ```
 
 ```coffeescript
-# CaffeineScript - 18 tokens
+# CaffeineScript - 18 tokens - 0 must-match-tokens
 users =
   id: 123 username: :shanebdavis born: 1976 fullName: "" Shane Brinkman-Davis Delamore
   id: 456 username: :alanturing  born: 1912 fullName: "" Alan Turing
@@ -137,7 +149,7 @@ users =
 
 
 ```JavaScript
-// JavaScript - 35 tokens
+// JavaScript - 35 tokens - 14 must-match tokens
 let users = [
   {id: 123, username: "shanebdavis", born: 1976, "Shane Brinkman-Davis Delamore"},
   {id: 456, username: "alanturing",  born: 1912, "Alan Turing"}
@@ -146,7 +158,7 @@ let users = [
 ##### [#hashStrings, :wordStrings, and 10unitStrings](https://github.com/shanebdavis/caffeine-script/wiki/String-Literals)
 
 ```coffeescript
-# CaffeineScript - 15 tokens
+# CaffeineScript - 15 tokens - 0 must-match-tokens
 nameToColor:
   red:   #f00
   green: #0f0
@@ -161,7 +173,7 @@ style:
 ```
 
 ```JavaScript
-// JavaScript - 40 tokens
+// JavaScript - 40 tokens - 24 must-match-tokens
 {
   nameToColor: { red:      "#f00", green:   "#0f0"  },
   colorToName: { "#f00":   "red",  "#0f0":  "green" },
@@ -172,12 +184,12 @@ style:
 ##### [Comprehensions and Iteration](https://github.com/shanebdavis/caffeine-script/wiki/Comprehensions-and-Iteration)
 
 ```coffeescript
-# CaffeineScript
+# CaffeineScript 15 tokens - 2 must-match tokens
 fontProps = object value, key from allProps when /^font/.test key
 ```
 
 ```javascript
-// JavaScript
+// JavaScript 44 tokens - 16 must-match tokens
 var fontProps = {}, key, value;
 
 for (key in allProps) {
