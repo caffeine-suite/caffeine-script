@@ -3,7 +3,7 @@
 
 ### JavaScript's Golden Heart
 
-JavaScript has a golden heart. At its core, it is an powerful hybrid of object-oriented, functional and dynamically-typed languages. Combined with modern runtimes, world-class garbage collectors and JIT compilers, JavaScript can be a surprisingly good platform to build world class applications on.
+JavaScript has a golden heart. At its core, it is a powerful hybrid of object-oriented, functional and dynamically-typed languages. Combined with modern runtimes, world-class garbage collectors and JIT compilers, JavaScript can be a surprisingly good platform for building world class applications.
 
 However, JavaScript has an ailing body. Even now, in 2018, JavaScript has major syntax and semantic problems which make it error prone and dangerous. JavaScript's syntax is excessively verbose. Code readability matters, especially for large projects, and JavaScript's syntax is the least readable of any major language. This is easy to fix, and the rewards can be huge.
 
