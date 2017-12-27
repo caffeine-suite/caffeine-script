@@ -1,4 +1,5 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
+[![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
 
 ### JavaScript's Golden Heart
 
@@ -10,8 +11,7 @@ Further, JavaScript has many dangerous holes in its semantics which can introduc
 
 CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's semantics.
 
-### Less Code is Better Code [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
-
+### Less Code is Better Code 
 I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html). 
 
 > Full blog post on [Write Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
