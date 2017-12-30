@@ -1,5 +1,16 @@
 import &StandardImport
 
+###
+  Refactor strategy:
+
+  don't overrid updateScope
+
+  instead, in toJs, we traverse the scope sub-tree:
+    importMap = {}
+    for each child-scope when child isnt ImportStn
+      mergeInto importMap, @identifiersUsedButNotAssigned
+
+
 class ImportStn extends &ScopeStnMixin &BaseStn
 
   updateScope: (@scope)->
@@ -15,9 +26,10 @@ class ImportStn extends &ScopeStnMixin &BaseStn
     @_scopeUpdated = true   # identical to super
 
     @statementsChild.updateScope @
-    @importing = Object.keys @identifiersUsedButNotAssigned
+    {identifiersUsedButNotAssigned} = @
+    @importing = Object.keys identifiersUsedButNotAssigned
 
-    each v, id in @identifiersUsedButNotAssigned
+    each v, id in identifiersUsedButNotAssigned
       @scope.addIdentifierAssigned id
 
   addIdentifierAssigned: (id, init) ->

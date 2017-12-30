@@ -90,6 +90,9 @@ Caf.defMod(module, () => {
           }
         });
       };
+      this.prototype.getInspectedProps = function() {
+        return objectWithout(this.props, "label", "pluralLabel");
+      };
       this.getter({
         sourceOffset: function() {
           return this.parseTreeNode.offset;
@@ -116,7 +119,7 @@ Caf.defMod(module, () => {
         inspectedObjects: function() {
           let label, props, name, a;
           ({ label } = this);
-          props = objectWithout(this.props, "label", "pluralLabel");
+          props = this.getInspectedProps();
           name = this.class.getName();
           if (label) {
             name = `${Caf.toString(label)}.${Caf.toString(name)}`;

@@ -19,15 +19,28 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     @_argumentNames =
     @_identifiersUsed =
     @_identifiersAssigned =
+    @_childScopes =
     @_identifiersInScope = null
 
     @_scopeUpdated = false
 
   @getter
+    childScopes:         -> @_childScopes ||= []
+
     argumentNames:       -> @_argumentNames ||= {}
     identifiersUsed:     -> @_identifiersUsed ||= {}
     identifiersAssigned: -> @_identifiersAssigned ||= {}
     identifiersInScope:  -> @_identifiersInScope ||= {}
+
+  getInspectedProps: ->
+    merge
+      super
+      scope: merge {}
+        @argumentNames
+        @identifiersUsed
+        @identifiersAssigned
+        @identifiersInScope
+
 
   addArgumentName: (identifier) ->
     @identifiersInScope[identifier] = true
@@ -86,7 +99,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 
   addChildScope: (child) ->
     unless child == @
-      (@childScopes ||= []).push child
+      @childScopes.push child
 
   bindAllUniqueIdentifiersRequested: ->
     if @_uniqueIdentifierHandles
@@ -145,15 +158,15 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       out
 
     identifiersUsedButNotAssigned: ->
-      assigned = @identifiersAssignedInParentThisOrChildrenScopes
+      assigned = @identifiersAssignedInThisOrParentScopes
       ret = object v, k from @identifiersUsed when !assigned[k] with true
 
-      each childScope in @childScopes
+      each childScope in @_childScopes
         mergeInto ret, childScope.identifiersUsedButNotAssigned
 
       @_identifiersUsedButNotAssigned = ret
 
-    identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
+    identifiersAssignedInThisOrParentScopes: -> merge @_argumentNames, @_identifiersAssigned, @identifiersAssignedInParentScopes
     identifiersAssignedInParentScopes: ->
       if @scope && @scope != @
-        merge @scope.identifiersAssignedInParentScopes, @scope.identifiersAssigned, @argumentNames
+        merge @scope.identifiersAssignedInParentScopes, @scope._identifiersAssigned, @_argumentNames

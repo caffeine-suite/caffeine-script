@@ -52,6 +52,7 @@ class BaseStn extends BaseClass
       if pluralLabel
         (@labeledChildren[pluralLabel] ||= []).push child
 
+  getInspectedProps: -> objectWithout @props, "label", "pluralLabel"
 
   @getter
     sourceOffset: -> @parseTreeNode.offset
@@ -63,7 +64,7 @@ class BaseStn extends BaseClass
     inspectedObjects: ->
       {label} = @
 
-      props = objectWithout @props, "label", "pluralLabel"
+      props = @getInspectedProps()
       name = @class.getName()
       name = "#{label}.#{name}" if label
 

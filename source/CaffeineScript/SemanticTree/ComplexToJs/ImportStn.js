@@ -12,6 +12,7 @@ Caf.defMod(module, () => {
     ) {},
     function(ImportStn, classSuper, instanceSuper) {
       this.prototype.updateScope = function(scope) {
+        let identifiersUsedButNotAssigned;
         this.scope = scope;
         this.bindAllUniqueIdentifiersRequested();
         this.statementsChild = peek(this.children);
@@ -22,14 +23,11 @@ Caf.defMod(module, () => {
         this.scope.addChildScope(this);
         this._scopeUpdated = true;
         this.statementsChild.updateScope(this);
-        this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        return Caf.each(
-          this.identifiersUsedButNotAssigned,
-          undefined,
-          (v, id) => {
-            this.scope.addIdentifierAssigned(id);
-          }
-        );
+        ({ identifiersUsedButNotAssigned } = this);
+        this.importing = Object.keys(identifiersUsedButNotAssigned);
+        return Caf.each(identifiersUsedButNotAssigned, undefined, (v, id) => {
+          this.scope.addIdentifierAssigned(id);
+        });
       };
       this.prototype.addIdentifierAssigned = function(id, init) {
         return this.scope.addIdentifierAssigned(id, init);

@@ -3,13 +3,13 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   let UniqueIdentifierHandle,
     lowerCamelCase,
+    merge,
     Error,
     log,
     isString,
-    merge,
     mergeInto;
-  ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
-    ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
+  ({ lowerCamelCase, merge, Error, log, isString, mergeInto } = Caf.import(
+    ["lowerCamelCase", "merge", "Error", "log", "isString", "mergeInto"],
     [global, require("../StandardImport")]
   ));
   UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
       class ScopeStnMixin extends toExtend {
         constructor() {
           super(...arguments);
-          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._identifiersInScope = null;
+          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
           this._scopeUpdated = false;
         }
       },
@@ -36,6 +36,9 @@ Caf.defMod(module, () => {
           );
         };
         this.getter({
+          childScopes: function() {
+            return this._childScopes || (this._childScopes = []);
+          },
           argumentNames: function() {
             return this._argumentNames || (this._argumentNames = {});
           },
@@ -51,6 +54,16 @@ Caf.defMod(module, () => {
             return this._identifiersInScope || (this._identifiersInScope = {});
           }
         });
+        this.prototype.getInspectedProps = function() {
+          return merge(instanceSuper.getInspectedProps.apply(this, arguments), {
+            scope: merge({
+              argumentNames: this.argumentNames,
+              identifiersUsed: this.identifiersUsed,
+              identifiersAssigned: this.identifiersAssigned,
+              identifiersInScope: this.identifiersInScope
+            })
+          });
+        };
         this.prototype.addArgumentName = function(identifier) {
           this.identifiersInScope[identifier] = true;
           return (this.argumentNames[identifier] = true);
@@ -144,9 +157,7 @@ Caf.defMod(module, () => {
                   name));
         };
         this.prototype.addChildScope = function(child) {
-          return !(child === this)
-            ? (this.childScopes || (this.childScopes = [])).push(child)
-            : undefined;
+          return !(child === this) ? this.childScopes.push(child) : undefined;
         };
         this.prototype.bindAllUniqueIdentifiersRequested = function() {
           return this._uniqueIdentifierHandles
@@ -254,20 +265,21 @@ Caf.defMod(module, () => {
           },
           identifiersUsedButNotAssigned: function() {
             let assigned, ret;
-            assigned = this.identifiersAssignedInParentThisOrChildrenScopes;
+            assigned = this.identifiersAssignedInThisOrParentScopes;
             ret = Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
               if (!assigned[k]) {
                 cafInto[k] = true;
               }
             });
-            Caf.each(this.childScopes, undefined, childScope => {
+            Caf.each(this._childScopes, undefined, childScope => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
             return (this._identifiersUsedButNotAssigned = ret);
           },
-          identifiersAssignedInParentThisOrChildrenScopes: function() {
+          identifiersAssignedInThisOrParentScopes: function() {
             return merge(
-              this.identifiersAssigned,
+              this._argumentNames,
+              this._identifiersAssigned,
               this.identifiersAssignedInParentScopes
             );
           },
@@ -275,8 +287,8 @@ Caf.defMod(module, () => {
             return this.scope && this.scope !== this
               ? merge(
                   this.scope.identifiersAssignedInParentScopes,
-                  this.scope.identifiersAssigned,
-                  this.argumentNames
+                  this.scope._identifiersAssigned,
+                  this._argumentNames
                 )
               : undefined;
           }
