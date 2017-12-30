@@ -14,8 +14,8 @@ Caf.defMod(module, () => {
         falsifyCases = !condition;
         options = { falsifyCases };
         return expression
-          ? ((cases = Caf.each(switchWhens, [], (clause, k, into) => {
-              into.push(clause.toFunctionBodyJs(options));
+          ? ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) => {
+              cafInto.push(clause.toFunctionBodyJs(options));
             })),
             switchElse
               ? cases.push(
@@ -25,8 +25,8 @@ Caf.defMod(module, () => {
             `(() => {switch (${Caf.toString(
               this.getConditionJs()
             )}) {${Caf.toString(cases.join(" "))}};})()`)
-          : ((cases = Caf.each(switchWhens, [], (clause, k, into) => {
-              into.push(clause.toJs(options));
+          : ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) => {
+              cafInto.push(clause.toJs(options));
             })),
             switchElse
               ? cases.push(`default: ${Caf.toString(switchElse.toJs())}`)

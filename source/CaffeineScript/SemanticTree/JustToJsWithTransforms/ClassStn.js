@@ -79,13 +79,13 @@ Caf.defMod(module, () => {
               (statementsToCount = Caf.each(
                 body.children,
                 [],
-                (stn, k, into) => {
-                  into.push(
+                (stn, cafK, cafInto) => {
+                  cafInto.push(
                     stn.type === "Object"
                       ? Caf.each(
                           stn.children,
                           [],
-                          (objectPropValueStn, k, into) => {
+                          (objectPropValueStn, cafK, cafInto) => {
                             let propNameStn,
                               propValueStn,
                               assignToStn,
@@ -137,7 +137,7 @@ Caf.defMod(module, () => {
                                   })();
                               }
                             })();
-                            into.push(
+                            cafInto.push(
                               assignToStn &&
                                 AssignmentStn(assignToStn, propValueStn)
                             );

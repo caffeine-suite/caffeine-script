@@ -24,7 +24,7 @@ Caf.defMod(module, () => {
         return Caf.each(
           this.labeledChildren.valueClauses,
           undefined,
-          (valueClause, k, into) => {
+          valueClause => {
             let type;
             ({ type } = valueClause);
             if (valueClauseChildren[type]) {
@@ -79,22 +79,18 @@ Caf.defMod(module, () => {
           iterable
         } = this.labeledChildren);
         intoChild = whenClause = null;
-        Caf.each(
-          this.labeledChildren.valueClauses,
-          undefined,
-          (valueClause, k, into) => {
-            let type, value;
-            ({ type, value } = valueClause);
-            switch (type) {
-              case "into":
-              case "returning":
-                intoChild = value;
-                break;
-              case "when":
-                whenClause = value;
-            }
+        Caf.each(this.labeledChildren.valueClauses, undefined, valueClause => {
+          let type, value;
+          ({ type, value } = valueClause);
+          switch (type) {
+            case "into":
+            case "returning":
+              intoChild = value;
+              break;
+            case "when":
+              whenClause = value;
           }
-        );
+        });
         outputType = Caf.exists(outputType) && outputType.props.token;
         iterationFunction = outputType.slice(0, 1);
         ({

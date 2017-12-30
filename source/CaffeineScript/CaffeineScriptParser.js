@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
     function(CaffeineScriptParser, classSuper, instanceSuper) {
       let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
       this.nodeBaseClass = require("./CafParseNodeBaseClass");
-      Caf.each(require("./Rules").modules, undefined, (mod, k, into) => {
+      Caf.each(require("./Rules").modules, undefined, mod => {
         if (isFunction(mod)) {
           mod.call(this);
         } else {

@@ -7,17 +7,17 @@ Caf.defMod(module, () => {
     function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
       this.getter({
         argumentNameList: function() {
-          return Caf.each(this.children, [], (c, k, into) => {
+          return Caf.each(this.children, [], (c, cafK, cafInto) => {
             if (c.argumentName) {
-              into.push(c.argumentName);
+              cafInto.push(c.argumentName);
             }
           });
         }
       });
       this.prototype.toJs = function() {
         return `(${Caf.toString(
-          Caf.each(this.children, [], (c, k, into) => {
-            into.push(c.toJs());
+          Caf.each(this.children, [], (c, cafK, cafInto) => {
+            cafInto.push(c.toJs());
           }).join(", ")
         )})`;
       };

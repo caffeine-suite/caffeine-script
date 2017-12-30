@@ -48,9 +48,13 @@ Caf.defMod(module, () => {
       this.prototype.updateScope = function() {
         instanceSuper.updateScope.apply(this, arguments);
         return this.arguments
-          ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
-              into[k] = this.addArgumentName(name);
-            }),
+          ? (Caf.each(
+              this.arguments.argumentNameList,
+              {},
+              (name, cafK, cafInto) => {
+                cafInto[cafK] = this.addArgumentName(name);
+              }
+            ),
             (this._updatingArgumentScope = true),
             this.arguments.updateScope(this),
             (this._updatingArgumentScope = false))
@@ -89,12 +93,18 @@ Caf.defMod(module, () => {
         [argsDef, body] = this.children;
         statements = [];
         argsDef = argsDef
-          ? ((statements = Caf.each(argsDef.children, [], (arg, k, into) => {
-              let preBodyStatements;
-              if ((preBodyStatements = arg.getFunctionPreBodyStatementsJs())) {
-                into.push(preBodyStatements);
+          ? ((statements = Caf.each(
+              argsDef.children,
+              [],
+              (arg, cafK, cafInto) => {
+                let preBodyStatements;
+                if (
+                  (preBodyStatements = arg.getFunctionPreBodyStatementsJs())
+                ) {
+                  cafInto.push(preBodyStatements);
+                }
               }
-            })),
+            )),
             argsDef.toJs())
           : "()";
         bodyJs = Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
@@ -102,8 +112,8 @@ Caf.defMod(module, () => {
           constructorSuperIndex = Caf.extendedEach(
             bodyJs,
             undefined,
-            (v, i, into, brk) => {
-              return v.match(/^super\(/) && (brk(), i);
+            (v, i, cafInto, cafBrk) => {
+              return v.match(/^super\(/) && (cafBrk(), i);
             }
           );
         }

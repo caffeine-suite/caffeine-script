@@ -17,16 +17,17 @@ Caf.defMod(module, () => {
             ? ((hasInterpolation = Caf.extendedEach(
                 this.children,
                 undefined,
-                (child, k, into, brk) => {
+                (child, cafK, cafInto, cafBrk) => {
                   let cafRet;
                   return (
-                    (cafRet = !isString(child.props.value)) && (brk(), cafRet)
+                    (cafRet = !isString(child.props.value)) &&
+                    (cafBrk(), cafRet)
                   );
                 }
               )),
-              Caf.each(this.children, [], (child, k, into) => {
+              Caf.each(this.children, [], (child, cafK, cafInto) => {
                 let v;
-                into.push(
+                cafInto.push(
                   isString((v = child.props.value))
                     ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
                     : `\${Caf.toString(${Caf.toString(

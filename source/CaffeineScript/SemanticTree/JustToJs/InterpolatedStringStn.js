@@ -7,7 +7,7 @@ Caf.defMod(module, () => {
     class InterpolatedStringStn extends require("../BaseStn") {},
     function(InterpolatedStringStn, classSuper, instanceSuper) {
       this.prototype.compactNewLines = function(compactLeft, compactRight) {
-        return Caf.each(this.children, undefined, (child, i, into) => {
+        return Caf.each(this.children, undefined, (child, i) => {
           if (child.type === "String") {
             child.compactNewLines(
               compactLeft && i === 0,
@@ -32,8 +32,8 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         return `\`${Caf.toString(
-          Caf.each(this.children, [], (c, k, into) => {
-            into.push(c.toInterpolatedJsStringPart());
+          Caf.each(this.children, [], (c, cafK, cafInto) => {
+            cafInto.push(c.toInterpolatedJsStringPart());
           }).join("")
         )}\``;
       };

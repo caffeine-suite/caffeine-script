@@ -8,8 +8,8 @@ Caf.defMod(module, () => {
   ));
   return {
     deescapeSpaces: function(string) {
-      return Caf.each(string.split(/((?:\\\\)+)/), [], (str, i, into) => {
-        into.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str);
+      return Caf.each(string.split(/((?:\\\\)+)/), [], (str, i, cafInto) => {
+        cafInto.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str);
       }).join("");
     },
     escapeNewLines: function(string) {
@@ -25,8 +25,10 @@ Caf.defMod(module, () => {
         "g"
       );
       split = charsToEscape.match(/\\/) ? [string] : string.split(/((?:\\.)+)/);
-      return Caf.each(split, [], (str, i, into) => {
-        into.push(Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str);
+      return Caf.each(split, [], (str, i, cafInto) => {
+        cafInto.push(
+          Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
+        );
       }).join("");
     }
   };

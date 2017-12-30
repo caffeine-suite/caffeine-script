@@ -44,8 +44,8 @@ Caf.defMod(module, () => {
         return this.props.calledInConstructor
           ? ((args = this.props.passArguments
               ? ["...arguments"]
-              : Caf.each(args, [], (a, k, into) => {
-                  into.push(a.toJsExpression());
+              : Caf.each(args, [], (a, cafK, cafInto) => {
+                  cafInto.push(a.toJsExpression());
                 })),
             `super(${Caf.toString(args.join(", "))})`)
           : (getSuperInput = (klass = this.findParent("Class"))
@@ -54,8 +54,8 @@ Caf.defMod(module, () => {
                   : klass.instanceSuperHandle),
                 (method = this.props.passArguments
                   ? ((args = "arguments"), "apply")
-                  : ((args = Caf.each(args, [], (a, k, into) => {
-                      into.push(a.toJsExpression());
+                  : ((args = Caf.each(args, [], (a, cafK, cafInto) => {
+                      cafInto.push(a.toJsExpression());
                     })),
                     "call")),
                 `${Caf.toString(superObject)}.${Caf.toString(

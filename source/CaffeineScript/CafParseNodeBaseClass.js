@@ -22,9 +22,9 @@ Caf.defMod(module, () => {
         ));
       };
       this.prototype.getMatchStns = function() {
-        return Caf.each(this.matches, [], (m, k, into) => {
+        return Caf.each(this.matches, [], (m, cafK, cafInto) => {
           if ((m = Caf.isF(m.getStn) && m.getStn())) {
-            into.push(m);
+            cafInto.push(m);
           }
         });
       };
@@ -34,9 +34,9 @@ Caf.defMod(module, () => {
       this.prototype.getStnChildren = function(left) {
         return this.stnChildren
           ? isFunction(this.stnChildren) ? this.stnChildren() : this.stnChildren
-          : Caf.each(this.nonStnExtensionMatches, [], (m, k, into) => {
+          : Caf.each(this.nonStnExtensionMatches, [], (m, cafK, cafInto) => {
               if ((m = m.getStn(left))) {
-                into.push(m);
+                cafInto.push(m);
               }
             });
       };
@@ -50,16 +50,16 @@ Caf.defMod(module, () => {
           );
         },
         stnExtensionMatches: function() {
-          return Caf.each(this.presentMatches, [], (m, k, into) => {
+          return Caf.each(this.presentMatches, [], (m, cafK, cafInto) => {
             if (m.getStn && m.isStnExtension) {
-              into.push(m);
+              cafInto.push(m);
             }
           });
         },
         nonStnExtensionMatches: function() {
-          return Caf.each(this.presentMatches, [], (m, k, into) => {
+          return Caf.each(this.presentMatches, [], (m, cafK, cafInto) => {
             if (m.getStn && !m.isStnExtension) {
-              into.push(m);
+              cafInto.push(m);
             }
           });
         }
@@ -75,7 +75,7 @@ Caf.defMod(module, () => {
             )
           : ((x = this.getStnChildren(left)),
             x.length === 1 ? x[0] : x.length === 0 ? left : x);
-        Caf.each(this.stnExtensionMatches, undefined, (extension, k, into) => {
+        Caf.each(this.stnExtensionMatches, undefined, extension => {
           stn = extension.getStn(stn);
         });
         if (Caf.exists(stn) && stn.props) {

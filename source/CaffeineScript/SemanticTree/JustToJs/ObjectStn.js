@@ -10,8 +10,8 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let out;
         out = `{${Caf.toString(
-          Caf.each(this.children, [], (c, k, into) => {
-            into.push(c.toJs());
+          Caf.each(this.children, [], (c, cafK, cafInto) => {
+            cafInto.push(c.toJs());
           }).join(", ")
         )}}`;
         return (Caf.exists(options) && options.dotBase) ||
@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
         let currentDefined, listOfObjectLiterals, currentOrder;
         currentDefined = {};
         listOfObjectLiterals = [(currentOrder = [])];
-        Caf.each(children, undefined, (child, k, into) => {
+        Caf.each(children, undefined, child => {
           let found, value;
           if ((found = child.find(/ObjectPropNameStn/))) {
             [{ props: { value } }] = found;
@@ -43,8 +43,8 @@ Caf.defMod(module, () => {
         return listOfObjectLiterals.length === 1
           ? new this(props, children)
           : new StnRegistry.ArrayStn(
-              Caf.each(listOfObjectLiterals, [], (c, k, into) => {
-                into.push(new this(props, c));
+              Caf.each(listOfObjectLiterals, [], (c, cafK, cafInto) => {
+                cafInto.push(new this(props, c));
               })
             );
       };

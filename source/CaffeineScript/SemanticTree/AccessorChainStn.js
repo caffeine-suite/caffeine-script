@@ -38,13 +38,13 @@ Caf.defMod(module, () => {
       this.prototype._transformAccessorChainR = function(value, accessorChain) {
         let done;
         done = false;
-        Caf.each(accessorChain, undefined, (accessor, i, into) => {
+        Caf.each(accessorChain, undefined, (accessor, i) => {
           let key, isFunctionInvocation, reset;
           if (!done) {
             ({ key, isFunctionInvocation } = accessor);
             if (isArray(key)) {
-              key = Caf.each(key, [], (kk, k, into) => {
-                into.push(kk.transform());
+              key = Caf.each(key, [], (kk, cafK, cafInto) => {
+                cafInto.push(kk.transform());
               });
             } else {
               key = key.transform();

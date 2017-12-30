@@ -33,8 +33,8 @@ Caf.defMod(module, () => {
         identifiersUsedButNotAssigned = Caf.each(
           identifiersUsedButNotAssigned,
           [],
-          (v, k, into) => {
-            into.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`);
+          (v, k, cafInto) => {
+            cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`);
           }
         );
         statementsJs = this.statements.toFunctionBodyJs();

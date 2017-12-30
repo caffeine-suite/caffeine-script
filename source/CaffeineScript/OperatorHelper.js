@@ -73,13 +73,13 @@ Caf.defMod(module, () => {
       this.leftAssociativityByPrecidence = Caf.each(
         this.precidence,
         [],
-        (v, i, into) => {
+        (v, i, cafInto) => {
           let leftAssociativityByPrecidence, operators;
           [leftAssociativityByPrecidence, ...operators] = v;
-          Caf.each(operators, undefined, (op, k, into) => {
+          Caf.each(operators, undefined, op => {
             this.opsToPrecidence[op] = i;
           });
-          into.push(leftAssociativityByPrecidence === "left");
+          cafInto.push(leftAssociativityByPrecidence === "left");
         }
       );
       this.validateOperator = validateOperator = operator => {
@@ -155,7 +155,7 @@ Caf.defMod(module, () => {
           lowestPrecidence = this.getOpPrecidence(operators[0]);
           firstOccurance = lastOccurance = 0;
           p = null;
-          Caf.each(operators, undefined, (op, i, into) => {
+          Caf.each(operators, undefined, (op, i) => {
             if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
               firstOccurance = lastOccurance = i;
               lowestPrecidence = p;

@@ -47,8 +47,8 @@ Caf.defMod(module, () => {
           (valueJs = this.functionValue.toJsExpression())
         )}${Caf.toString(
           this.applyRequiredParens(
-            Caf.each(this.argStns, [], (a, k, into) => {
-              into.push(a.toJsExpression());
+            Caf.each(this.argStns, [], (a, cafK, cafInto) => {
+              cafInto.push(a.toJsExpression());
             }).join(", ")
           )
         )}`;

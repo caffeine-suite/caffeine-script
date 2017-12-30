@@ -77,7 +77,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.initLabeledChildren = function() {
         this.labeledChildren = this.children && {};
-        return Caf.each(this.children, undefined, (child, k, into) => {
+        return Caf.each(this.children, undefined, child => {
           let label, pluralLabel, cafBase;
           child.parent = this;
           ({ label, pluralLabel } = child);
@@ -128,8 +128,8 @@ Caf.defMod(module, () => {
                 : ((a = []),
                   objectKeyCount(props) > 0 ? a.push(props) : undefined,
                   a.concat(
-                    Caf.each(this.children, [], (c, k, into) => {
-                      into.push(c.inspectedObjects);
+                    Caf.each(this.children, [], (c, cafK, cafInto) => {
+                      cafInto.push(c.inspectedObjects);
                     })
                   ))
           };
@@ -173,8 +173,8 @@ Caf.defMod(module, () => {
       this.prototype.find = function(stnTypePattern) {
         let a;
         a = compactFlatten(
-          Caf.each(this.children, [], (child, k, into) => {
-            into.push(
+          Caf.each(this.children, [], (child, cafK, cafInto) => {
+            cafInto.push(
               child.type.match(stnTypePattern)
                 ? child
                 : child.find(stnTypePattern)
@@ -184,8 +184,8 @@ Caf.defMod(module, () => {
         return a.length === 0 ? null : a;
       };
       this.prototype.childrenToJs = function(joiner = "") {
-        return Caf.each(this.children, [], (c, k, into) => {
-          into.push(c.toJs());
+        return Caf.each(this.children, [], (c, cafK, cafInto) => {
+          cafInto.push(c.toJs());
         }).join(joiner);
       };
       this.prototype.toJs = function(options) {
@@ -223,7 +223,7 @@ Caf.defMod(module, () => {
       this.prototype.transformChildren = function() {
         let ret;
         ret = null;
-        Caf.each(this.children, undefined, (child, i, into) => {
+        Caf.each(this.children, undefined, (child, i) => {
           let newChild;
           if (child !== (newChild = child.transform())) {
             ret != null ? ret : (ret = this.children.slice());
@@ -280,14 +280,14 @@ Caf.defMod(module, () => {
             info: e.info
           });
         }
-        Caf.each(this.children, undefined, (child, k, into) => {
+        Caf.each(this.children, undefined, child => {
           child.validateAll();
         });
         return this;
       };
       this.prototype.updateScope = function(scope) {
         this.scope = scope;
-        return Caf.each(this.children, undefined, (child, k, into) => {
+        return Caf.each(this.children, undefined, child => {
           child.updateScope(this.scope);
         });
       };

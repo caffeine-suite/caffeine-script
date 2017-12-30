@@ -49,8 +49,8 @@ Caf.defMod(module, () => {
       {
         getStn: function() {
           let children;
-          children = Caf.each(this.getMatchStns(), [], (m, k, into) => {
-            into.push(m instanceof ObjectStn.class ? m.children : m);
+          children = Caf.each(this.getMatchStns(), [], (m, cafK, cafInto) => {
+            cafInto.push(m instanceof ObjectStn.class ? m.children : m);
           });
           return ObjectStn(children);
         }

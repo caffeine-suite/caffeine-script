@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
         this.bindAllUniqueIdentifiersRequested();
         this.statementsChild = peek(this.children);
         this.importChildren = this.children.slice(0, this.children.length - 1);
-        Caf.each(this.importChildren, undefined, (child, k, into) => {
+        Caf.each(this.importChildren, undefined, child => {
           child.updateScope(this.scope);
         });
         this.scope.addChildScope(this);
@@ -26,7 +26,7 @@ Caf.defMod(module, () => {
         return Caf.each(
           this.identifiersUsedButNotAssigned,
           undefined,
-          (v, id, into) => {
+          (v, id) => {
             this.scope.addIdentifierAssigned(id);
           }
         );
@@ -72,11 +72,11 @@ Caf.defMod(module, () => {
         bodyJs = this.statementsChild.toFunctionBodyJs(
           !!generateReturnStatement
         );
-        importsJs = Caf.each(this.importChildren, [], (c, k, into) => {
-          into.push(c.toJsExpression());
+        importsJs = Caf.each(this.importChildren, [], (c, cafK, cafInto) => {
+          cafInto.push(c.toJsExpression());
         });
-        list = Caf.each(this.importing, [], (i, k, into) => {
-          into.push(`"${Caf.toString(i)}"`);
+        list = Caf.each(this.importing, [], (i, cafK, cafInto) => {
+          cafInto.push(`"${Caf.toString(i)}"`);
         });
         importingJs = `[${Caf.toString(list.join(", "))}]`;
         importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");

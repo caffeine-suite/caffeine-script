@@ -45,8 +45,8 @@ Caf.defMod(module, () => {
           Caf.each(
             this.binaryOperatorAndExpressions,
             [],
-            (opAndExp, k, into) => {
-              into.push(getNormalizedOperator(opAndExp.binaryOperator));
+            (opAndExp, cafK, cafInto) => {
+              cafInto.push(getNormalizedOperator(opAndExp.binaryOperator));
             }
           ),
           compactFlatten([
@@ -54,8 +54,8 @@ Caf.defMod(module, () => {
             Caf.each(
               this.binaryOperatorAndExpressions,
               [],
-              (opAndExp, k, into) => {
-                into.push(opAndExp.rValue.getStn());
+              (opAndExp, cafK, cafInto) => {
+                cafInto.push(opAndExp.rValue.getStn());
               }
             )
           ]),
@@ -95,20 +95,16 @@ Caf.defMod(module, () => {
       getStn: function() {
         let stn;
         stn = this.expressionWithoutBinOps.getStn();
-        Caf.each(
-          this.unaryTailOperators || [],
-          undefined,
-          (operand, k, into) => {
-            stn = UnaryOperatorStn(
-              { operand: operand.toString().trim(), tail: true },
-              stn
-            );
-          }
-        );
+        Caf.each(this.unaryTailOperators || [], undefined, operand => {
+          stn = UnaryOperatorStn(
+            { operand: operand.toString().trim(), tail: true },
+            stn
+          );
+        });
         Caf.each(
           (this.unaryOperator_s || []).slice().reverse(),
           undefined,
-          (operand, k, into) => {
+          operand => {
             stn = UnaryOperatorStn({ operand: operand.toString().trim() }, stn);
           }
         );
