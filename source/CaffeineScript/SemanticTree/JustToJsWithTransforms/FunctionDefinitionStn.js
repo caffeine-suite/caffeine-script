@@ -118,7 +118,7 @@ Caf.defMod(module, () => {
           );
         }
         statements = compactFlatten(
-          constructorSuperIndex >= 0
+          constructorSuperIndex != null && constructorSuperIndex >= 0
             ? ((beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
               (afterSuper = bodyJs.slice(
                 constructorSuperIndex + 1,

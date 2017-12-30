@@ -145,7 +145,7 @@ module.exports = suite: parseTestSuite
     .bar
     """: "let FooWithDot; (FooWithDot = Caf.defClass(class FooWithDot extends Object {})).bar;"
 
-  foo:
+  super:
     basics:
       "class MyClass\n foo: -> super":      "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.apply(this, arguments);};});"
       "class MyClass\n @foo: -> super":     "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.foo = function() {return classSuper.foo.apply(this, arguments);};});"
@@ -176,12 +176,11 @@ module.exports = suite: parseTestSuite
         A = Caf.defClass(class A extends Object
         {constructor(foo) {super(...arguments); this.foo = foo;}});"
 
-      # should auto-add super, but I don't think it does
       """
       class A
         constructor: (@foo) ->
           @bar = null
-      """: knownFailing: "
+      """: "
         let A;
         A = Caf.defClass(class A extends Object
         {constructor(foo) {super(...arguments); this.foo = foo; this.bar = null;}});"
@@ -190,7 +189,7 @@ module.exports = suite: parseTestSuite
       class A
         constructor: ->
           @foo = 1
-      """: knownFailing: "
+      """: "
         let A;
         A = Caf.defClass(class A extends Object
         {constructor() {super(...arguments); this.foo = 1;}});"

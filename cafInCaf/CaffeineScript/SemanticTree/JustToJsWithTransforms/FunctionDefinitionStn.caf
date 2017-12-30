@@ -91,7 +91,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     if @props.isConstructor
       constructorSuperIndex = find v, i in bodyJs when v.match /^super\(/ with i
 
-    statements = compactFlatten if constructorSuperIndex >= 0
+    statements = compactFlatten if constructorSuperIndex? && constructorSuperIndex >= 0
       beforeSuper = bodyJs.slice 0, constructorSuperIndex
       afterSuper = bodyJs.slice constructorSuperIndex + 1, bodyJs.length
       superJs = bodyJs[constructorSuperIndex]
