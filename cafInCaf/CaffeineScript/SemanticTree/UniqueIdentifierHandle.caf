@@ -1,10 +1,10 @@
 import &StandardImport
 
 class UniqueIdentifierHandle extends BaseClass
-  constructor: (@preferredName, @scope) ->
+  constructor: (@preferredName, @scope, @addToLets = true) ->
 
   @getter
     inspectedObjects: -> inspectedObjectLiteral "<UniqueIdentifierHandle preferredName: '#{@preferredName}', scopeSet: #{!!@scope}, _identifier: #{inspect @_identifier}>"
-    identifier: -> @_identifier ||= @scope.bindUniqueIdentifier @preferredName, @
+    identifier: -> @_identifier ||= @scope.bindUniqueIdentifier @preferredName, @, @addToLets
 
   toString: -> @identifier

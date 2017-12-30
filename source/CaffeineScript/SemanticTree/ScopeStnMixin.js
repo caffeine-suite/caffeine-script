@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
       class ScopeStnMixin extends toExtend {
         constructor() {
           super(...arguments);
-          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = null;
+          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._identifiersInScope = null;
           this._scopeUpdated = false;
         }
       },
@@ -35,16 +35,33 @@ Caf.defMod(module, () => {
               : `caf ${Caf.toString(preferredName)}`
           );
         };
+        this.getter({
+          argumentNames: function() {
+            return this._argumentNames || (this._argumentNames = {});
+          },
+          identifiersUsed: function() {
+            return this._identifiersUsed || (this._identifiersUsed = {});
+          },
+          identifiersAssigned: function() {
+            return (
+              this._identifiersAssigned || (this._identifiersAssigned = {})
+            );
+          },
+          identifiersInScope: function() {
+            return this._identifiersInScope || (this._identifiersInScope = {});
+          }
+        });
+        this.prototype.addArgumentName = function(identifier) {
+          return (this.argumentNames[identifier] = true);
+        };
         this.prototype.addIdentifierUsed = function(identifier) {
           if (this._boundUniqueIdentifiers) {
             throw new Error(
               "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
             );
           }
+          this.identifiersInScope[identifier] = true;
           return (this.identifiersUsed[identifier] = true);
-        };
-        this.prototype.addArgumentName = function(identifier) {
-          return (this.argumentNames[identifier] = true);
         };
         this.prototype.addIdentifierAssigned = function(
           identifier,
@@ -58,6 +75,7 @@ Caf.defMod(module, () => {
                     );
                   })()
                 : undefined,
+              (this.identifiersInScope[identifier] = true),
               (this.identifiersAssigned[identifier] = initializer || true))
             : undefined;
         };
@@ -80,17 +98,21 @@ Caf.defMod(module, () => {
         };
         this.prototype.bindUniqueIdentifier = function(
           preferredName,
-          uniqueIdentifierHandle
+          uniqueIdentifierHandle,
+          addToLets = true
         ) {
           let identifier;
           preferredName = normalizePerferredName(preferredName);
           identifier = this.getAvailableIdentifierName(preferredName);
           this.boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle;
-          this.identifiersAssigned[identifier] = true;
+          this.identifiersInScope[identifier] = true;
+          if (addToLets) {
+            this.identifiersAssigned[identifier] = true;
+          }
           return identifier;
         };
         this.prototype.getAvailableIdentifierName = function(preferredName) {
-          let identifiersUsed, count, name;
+          let identifiersActiveInScope, count, name;
           preferredName = normalizePerferredName(preferredName);
           return !this._scopeUpdated
             ? log.error({
@@ -103,13 +125,13 @@ Caf.defMod(module, () => {
                   ]
                 }
               })
-            : ((identifiersUsed = this.identifiersUsedOrAssigned),
-              !identifiersUsed[preferredName]
+            : (({ identifiersActiveInScope } = this),
+              !identifiersActiveInScope[preferredName]
                 ? preferredName
                 : ((count = 0),
                   (() => {
                     while (
-                      identifiersUsed[
+                      identifiersActiveInScope[
                         (name = `${Caf.toString(preferredName)}${Caf.toString(
                           (count += 1)
                         )}`)
@@ -139,7 +161,7 @@ Caf.defMod(module, () => {
         this.prototype.getAutoLets = function() {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
-          return this.props.identifiersAssigned &&
+          return this._identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
             ? `let ${Caf.toString(identifiers.join(", "))}`
             : undefined;
@@ -147,7 +169,7 @@ Caf.defMod(module, () => {
         this.prototype.getBareInitializers = function() {
           let identifiers;
           this.bindAllUniqueIdentifiersRequested();
-          return this.props.identifiersAssigned &&
+          return this._identifiersAssigned &&
             (identifiers = this.requiredIdentifierLets).length > 0
             ? ((identifiers = Caf.each(
                 identifiers,
@@ -218,30 +240,9 @@ Caf.defMod(module, () => {
               }
             );
           },
-          argumentNames: function() {
-            let cafBase;
-            return (
-              (cafBase = this.props).argumentNames ||
-              (cafBase.argumentNames = {})
-            );
-          },
-          identifiersUsed: function() {
-            let cafBase;
-            return (
-              (cafBase = this.props).identifiersUsed ||
-              (cafBase.identifiersUsed = {})
-            );
-          },
-          identifiersAssigned: function() {
-            let cafBase;
-            return (
-              (cafBase = this.props).identifiersAssigned ||
-              (cafBase.identifiersAssigned = {})
-            );
-          },
-          identifiersUsedOrAssigned: function() {
+          identifiersActiveInScope: function() {
             let out, scope, notDone;
-            out = merge(this.identifiersUsed, this.identifiersAssigned);
+            out = merge(this._identifiersInScope);
             ({ scope } = this);
             notDone = true;
             while (scope && notDone) {
@@ -265,7 +266,7 @@ Caf.defMod(module, () => {
             Caf.each(this.childScopes, undefined, (childScope, k, into) => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
-            return (this.props.identifiersUsedButNotAssigned = ret);
+            return (this._identifiersUsedButNotAssigned = ret);
           },
           identifiersAssignedInParentThisOrChildrenScopes: function() {
             return merge(

@@ -8,10 +8,11 @@ Caf.defMod(module, () => {
   ));
   return (UniqueIdentifierHandle = Caf.defClass(
     class UniqueIdentifierHandle extends BaseClass {
-      constructor(preferredName, scope) {
+      constructor(preferredName, scope, addToLets = true) {
         super(...arguments);
         this.preferredName = preferredName;
         this.scope = scope;
+        this.addToLets = addToLets;
       }
     },
     function(UniqueIdentifierHandle, classSuper, instanceSuper) {
@@ -30,7 +31,8 @@ Caf.defMod(module, () => {
             this._identifier ||
             (this._identifier = this.scope.bindUniqueIdentifier(
               this.preferredName,
-              this
+              this,
+              this.addToLets
             ))
           );
         }

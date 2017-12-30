@@ -12,19 +12,36 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 
   constructor: ->
     super
-    @_uniqueIdentifierHandles = @_boundUniqueIdentifiers = null
+    @_uniqueIdentifierHandles =
+    @_boundUniqueIdentifiers =
+
+    @_identifiersUsedButNotAssigned =
+    @_argumentNames =
+    @_identifiersUsed =
+    @_identifiersAssigned =
+    @_identifiersInScope = null
+
     @_scopeUpdated = false
 
-  addIdentifierUsed: (identifier)->
-    throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
-    @identifiersUsed[identifier] = true
+  @getter
+    argumentNames:       -> @_argumentNames ||= {}
+    identifiersUsed:     -> @_identifiersUsed ||= {}
+    identifiersAssigned: -> @_identifiersAssigned ||= {}
+    identifiersInScope:  -> @_identifiersInScope ||= {}
 
   addArgumentName: (identifier) ->
     @argumentNames[identifier] = true
 
+  addIdentifierUsed: (identifier)->
+    throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed" if @_boundUniqueIdentifiers
+    @identifiersInScope[identifier] = true
+    @identifiersUsed[identifier] = true
+
+
   addIdentifierAssigned: (identifier, initializer)->
     if identifier
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
+      @identifiersInScope[identifier] = true
       @identifiersAssigned[identifier] = initializer || true
 
   @getter
@@ -45,11 +62,12 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       uih
 
   # must be called after all calls to addIdentifierAssigned && addIdentifierUsed
-  bindUniqueIdentifier: (preferredName, uniqueIdentifierHandle ) ->
+  bindUniqueIdentifier: (preferredName, uniqueIdentifierHandle, addToLets = true) ->
     preferredName = normalizePerferredName preferredName
     identifier = @getAvailableIdentifierName preferredName
     @boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle
-    @identifiersAssigned[identifier] = true
+    @identifiersInScope[identifier] = true
+    @identifiersAssigned[identifier] = true if addToLets
     identifier
 
   getAvailableIdentifierName: (preferredName) ->
@@ -57,12 +75,12 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     unless @_scopeUpdated
       log.error ScopeStnMixin: getAvailableIdentifierName: "cannot be called before updateScope completes: #{@className}", new Error
     else
-      identifiersUsed = @identifiersUsedOrAssigned
-      unless identifiersUsed[preferredName]
+      {identifiersActiveInScope} = @
+      unless identifiersActiveInScope[preferredName]
         preferredName
       else
         count = 0
-        name while identifiersUsed[name = "#{preferredName}#{count+=1}"]
+        name while identifiersActiveInScope[name = "#{preferredName}#{count+=1}"]
         name
 
   addChildScope: (child) ->
@@ -76,12 +94,12 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 
   getAutoLets: ->
     @bindAllUniqueIdentifiersRequested()
-    if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
+    if @_identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
       "let #{identifiers.join ', '}"
 
   getBareInitializers: ->
     @bindAllUniqueIdentifiersRequested()
-    if @props.identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
+    if @_identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
       identifiers = array identifier from identifiers when identifier.match /=/
       if identifiers.length > 0
         "#{identifiers.join '; '}"
@@ -110,12 +128,9 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
         else
           identifier
 
-    argumentNames: -> @props.argumentNames ||= {}
-    identifiersUsed: -> @props.identifiersUsed ||= {}
-    identifiersAssigned: -> @props.identifiersAssigned ||= {}
 
-    identifiersUsedOrAssigned: ->
-      out = merge @identifiersUsed, @identifiersAssigned
+    identifiersActiveInScope: ->
+      out = merge @_identifiersInScope
       {scope} = @
 
       notDone = true
@@ -135,7 +150,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       each childScope in @childScopes
         mergeInto ret, childScope.identifiersUsedButNotAssigned
 
-      @props.identifiersUsedButNotAssigned = ret
+      @_identifiersUsedButNotAssigned = ret
 
     identifiersAssignedInParentThisOrChildrenScopes: -> merge @identifiersAssigned, @identifiersAssignedInParentScopes
     identifiersAssignedInParentScopes: ->
