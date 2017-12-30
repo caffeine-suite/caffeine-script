@@ -105,22 +105,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     # These should actually be
     #  a) extracted from variableDefinition...
     #  b) and if not present, unused var-names generated
-    valueIdentifer = "v"
-    keyIdentifer = "k"
-    intoIdentifer = "into"
-    brkIdentifer = "brk"
 
     useExtendedEach = switch outputType
       when "find" then true
       else false
 
+    basicEach = outputType == "each"
 
     variableDefinition = FunctionDefinitionArgsStn
-      valueVarDef = variableDefinition?.children[0] || FunctionDefinitionArgStn IdentifierStn identifier: valueIdentifer
-      keyVarDef   = variableDefinition?.children[1] || FunctionDefinitionArgStn IdentifierStn identifier: keyIdentifer
-      intoVarDef  = variableDefinition?.children[2] || FunctionDefinitionArgStn IdentifierStn identifier: intoIdentifer
-      useExtendedEach && FunctionDefinitionArgStn IdentifierStn identifier: brkIdentifer
-
+      valueVarDef = variableDefinition?.children[0] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "v"    false
+      keyVarDef   = variableDefinition?.children[1] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "k"    false
+      (useExtendedEach || !basicEach) &&               FunctionDefinitionArgStn intoIdentifer = IdentifierStn identifierHandle: new UniqueIdentifierHandle "into" false
+      useExtendedEach &&                               FunctionDefinitionArgStn brkIdentifer  = IdentifierStn identifierHandle: new UniqueIdentifierHandle "brk"  false
 
     if outputType == "object" || outputType == "array"
       lastBodyStatement = if body
@@ -167,7 +163,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
               bodyStatementsExceptLast
               AssignmentStn
                 AccessorStn
-                  IdentifierStn identifier: intoIdentifer
+                  intoIdentifer
                   ValueStn keyVarDef
                 lastBodyStatement
 
@@ -176,12 +172,12 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
               bodyStatementsExceptLast
               FunctionInvocationStn
                 AccessorStn
-                  IdentifierStn identifier: intoIdentifer
+                  intoIdentifer
                   IdentifierStn identifier: "push"
                 lastBodyStatement
 
           when "each"
-            whenClauseWrapper bodyWithDefault
+            whenClauseWrapper body
 
           when "find"
             if whenClause
@@ -191,8 +187,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   whenClause
 
                   StatementsStn
-                    FunctionInvocationStn
-                      IdentifierStn identifier: brkIdentifer
+                    FunctionInvocationStn brkIdentifer
                     body
               else
                 BinaryOperatorStn
@@ -200,8 +195,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   whenClause
 
                   StatementsStn
-                    FunctionInvocationStn
-                      IdentifierStn identifier: brkIdentifer
+                    FunctionInvocationStn brkIdentifer
 
                     valueVarDef
             else
@@ -211,18 +205,27 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   allButLast = StatementsStn body.children.slice 0, body.children.length - 1
                   body = peek body.children
 
-                foundTest = BinaryOperatorStn
-                  operator: "&&"
-
-                  AssignmentStn
-                    IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
+                foundTest = if body.type == "Reference"
+                  BinaryOperatorStn
+                    operator: "&&"
                     body
 
-                  StatementsStn
-                    FunctionInvocationStn
-                      IdentifierStn identifier: brkIdentifer
+                    StatementsStn
+                      FunctionInvocationStn brkIdentifer
+                      body
 
-                    IdentifierStn identifierHandle: baseIdentifierHandle
+                else
+                  BinaryOperatorStn
+                    operator: "&&"
+
+                    AssignmentStn
+                      IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
+                      body
+
+                    StatementsStn
+                      FunctionInvocationStn brkIdentifer
+
+                      IdentifierStn identifierHandle: baseIdentifierHandle
 
                 if allButLast
                   StatementsStn allButLast, foundTest
@@ -235,7 +238,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                   valueVarDef
 
                   StatementsStn
-                    FunctionInvocationStn
-                      IdentifierStn identifier: brkIdentifer
+                    FunctionInvocationStn brkIdentifer
 
                     valueVarDef

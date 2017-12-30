@@ -52,6 +52,7 @@ Caf.defMod(module, () => {
           }
         });
         this.prototype.addArgumentName = function(identifier) {
+          this.identifiersInScope[identifier] = true;
           return (this.argumentNames[identifier] = true);
         };
         this.prototype.addIdentifierUsed = function(identifier) {

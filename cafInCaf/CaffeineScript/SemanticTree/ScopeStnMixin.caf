@@ -30,6 +30,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     identifiersInScope:  -> @_identifiersInScope ||= {}
 
   addArgumentName: (identifier) ->
+    @identifiersInScope[identifier] = true
     @argumentNames[identifier] = true
 
   addIdentifierUsed: (identifier)->

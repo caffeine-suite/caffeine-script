@@ -1,7 +1,9 @@
 import &StandardImport
 
 class UniqueIdentifierHandle extends BaseClass
-  constructor: (@preferredName, @scope, @addToLets = true) ->
+  constructor: (@preferredName, @addToLets = true) ->
+    super
+    @_scope = null
 
   @getter
     inspectedObjects: -> inspectedObjectLiteral "<UniqueIdentifierHandle preferredName: '#{@preferredName}', scopeSet: #{!!@scope}, _identifier: #{inspect @_identifier}>"

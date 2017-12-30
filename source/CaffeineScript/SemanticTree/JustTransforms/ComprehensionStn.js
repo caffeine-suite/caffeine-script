@@ -58,14 +58,12 @@ Caf.defMod(module, () => {
           SimpleLiteralStn,
           StatementsStn,
           ValueStn,
-          valueIdentifer,
-          keyIdentifer,
-          intoIdentifer,
-          brkIdentifer,
           useExtendedEach,
+          basicEach,
           valueVarDef,
           keyVarDef,
-          intoVarDef,
+          intoIdentifer,
+          brkIdentifer,
           lastBodyStatement,
           bodyStatementsExceptLast,
           bodyWithDefault,
@@ -115,10 +113,6 @@ Caf.defMod(module, () => {
           StatementsStn,
           ValueStn
         } = SemanticTree);
-        valueIdentifer = "v";
-        keyIdentifer = "k";
-        intoIdentifer = "into";
-        brkIdentifer = "brk";
         useExtendedEach = (() => {
           switch (outputType) {
             case "find":
@@ -127,28 +121,37 @@ Caf.defMod(module, () => {
               return false;
           }
         })();
+        basicEach = outputType === "each";
         variableDefinition = FunctionDefinitionArgsStn(
           (valueVarDef =
             (Caf.exists(variableDefinition) &&
               variableDefinition.children[0]) ||
-            FunctionDefinitionArgStn(
-              IdentifierStn({ identifier: valueIdentifer })
-            )),
+            (!basicEach &&
+              FunctionDefinitionArgStn(
+                IdentifierStn({
+                  identifierHandle: new UniqueIdentifierHandle("v", false)
+                })
+              ))),
           (keyVarDef =
             (Caf.exists(variableDefinition) &&
               variableDefinition.children[1]) ||
+            (!basicEach &&
+              FunctionDefinitionArgStn(
+                IdentifierStn({
+                  identifierHandle: new UniqueIdentifierHandle("k", false)
+                })
+              ))),
+          (useExtendedEach || !basicEach) &&
             FunctionDefinitionArgStn(
-              IdentifierStn({ identifier: keyIdentifer })
-            )),
-          (intoVarDef =
-            (Caf.exists(variableDefinition) &&
-              variableDefinition.children[2]) ||
-            FunctionDefinitionArgStn(
-              IdentifierStn({ identifier: intoIdentifer })
-            )),
+              (intoIdentifer = IdentifierStn({
+                identifierHandle: new UniqueIdentifierHandle("into", false)
+              }))
+            ),
           useExtendedEach &&
             FunctionDefinitionArgStn(
-              IdentifierStn({ identifier: brkIdentifer })
+              (brkIdentifer = IdentifierStn({
+                identifierHandle: new UniqueIdentifierHandle("brk", false)
+              }))
             )
         );
         if (outputType === "object" || outputType === "array") {
@@ -212,10 +215,7 @@ Caf.defMod(module, () => {
                     StatementsStn(
                       bodyStatementsExceptLast,
                       AssignmentStn(
-                        AccessorStn(
-                          IdentifierStn({ identifier: intoIdentifer }),
-                          ValueStn(keyVarDef)
-                        ),
+                        AccessorStn(intoIdentifer, ValueStn(keyVarDef)),
                         lastBodyStatement
                       )
                     )
@@ -226,7 +226,7 @@ Caf.defMod(module, () => {
                       bodyStatementsExceptLast,
                       FunctionInvocationStn(
                         AccessorStn(
-                          IdentifierStn({ identifier: intoIdentifer }),
+                          intoIdentifer,
                           IdentifierStn({ identifier: "push" })
                         ),
                         lastBodyStatement
@@ -234,7 +234,7 @@ Caf.defMod(module, () => {
                     )
                   );
                 case "each":
-                  return whenClauseWrapper(bodyWithDefault);
+                  return whenClauseWrapper(body);
                 case "find":
                   return whenClause
                     ? body
@@ -242,9 +242,7 @@ Caf.defMod(module, () => {
                           { operator: "&&" },
                           whenClause,
                           StatementsStn(
-                            FunctionInvocationStn(
-                              IdentifierStn({ identifier: brkIdentifer })
-                            ),
+                            FunctionInvocationStn(brkIdentifer),
                             body
                           )
                         )
@@ -252,9 +250,7 @@ Caf.defMod(module, () => {
                           { operator: "&&" },
                           whenClause,
                           StatementsStn(
-                            FunctionInvocationStn(
-                              IdentifierStn({ identifier: brkIdentifer })
-                            ),
+                            FunctionInvocationStn(brkIdentifer),
                             valueVarDef
                           )
                         )
@@ -265,25 +261,33 @@ Caf.defMod(module, () => {
                             )),
                             (body = peek(body.children)))
                           : undefined,
-                        (foundTest = BinaryOperatorStn(
-                          { operator: "&&" },
-                          AssignmentStn(
-                            IdentifierStn({
-                              identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
-                                "_ret"
-                              ))
-                            }),
-                            body
-                          ),
-                          StatementsStn(
-                            FunctionInvocationStn(
-                              IdentifierStn({ identifier: brkIdentifer })
-                            ),
-                            IdentifierStn({
-                              identifierHandle: baseIdentifierHandle
-                            })
-                          )
-                        )),
+                        (foundTest =
+                          body.type === "Reference"
+                            ? BinaryOperatorStn(
+                                { operator: "&&" },
+                                body,
+                                StatementsStn(
+                                  FunctionInvocationStn(brkIdentifer),
+                                  body
+                                )
+                              )
+                            : BinaryOperatorStn(
+                                { operator: "&&" },
+                                AssignmentStn(
+                                  IdentifierStn({
+                                    identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                                      "_ret"
+                                    ))
+                                  }),
+                                  body
+                                ),
+                                StatementsStn(
+                                  FunctionInvocationStn(brkIdentifer),
+                                  IdentifierStn({
+                                    identifierHandle: baseIdentifierHandle
+                                  })
+                                )
+                              )),
                         allButLast
                           ? StatementsStn(allButLast, foundTest)
                           : foundTest)
@@ -291,9 +295,7 @@ Caf.defMod(module, () => {
                           { operator: "&&" },
                           valueVarDef,
                           StatementsStn(
-                            FunctionInvocationStn(
-                              IdentifierStn({ identifier: brkIdentifer })
-                            ),
+                            FunctionInvocationStn(brkIdentifer),
                             valueVarDef
                           )
                         );

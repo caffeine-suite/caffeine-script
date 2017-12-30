@@ -24,6 +24,7 @@ Caf.defMod(module, () => {
         super(props, children, pretransformedStn);
         this.arguments = children[0];
         this.statements = children[1];
+        this._updatingArgumentScope = false;
       }
     },
     function(FunctionDefinitionStn, classSuper, instanceSuper) {
@@ -50,15 +51,15 @@ Caf.defMod(module, () => {
           ? (Caf.each(this.arguments.argumentNameList, {}, (name, k, into) => {
               into[k] = this.addArgumentName(name);
             }),
-            this.arguments.updateScope({
-              addIdentifierUsed: identifier => {
-                return this.addIdentifierUsed(identifier);
-              },
-              addIdentifierAssigned: identifier => {
-                return this.addArgumentName(identifier);
-              }
-            }))
+            (this._updatingArgumentScope = true),
+            this.arguments.updateScope(this),
+            (this._updatingArgumentScope = false))
           : undefined;
+      };
+      this.prototype.addIdentifierAssigned = function(identifier) {
+        return this._updatingArgumentScope
+          ? this.addArgumentName(identifier)
+          : instanceSuper.addIdentifierAssigned.apply(this, arguments);
       };
       this.prototype.postTransform = function() {
         let foundParent;

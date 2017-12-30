@@ -73,28 +73,6 @@ module.exports = suite: parseTestSuite
         function(Foo, classSuper, instanceSuper)
           {doSomething();});"
 
-    super:
-      basics: ->
-        "class MyClass\n foo: -> super":      "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.apply(this, arguments);};});"
-        "class MyClass\n @foo: -> super":     "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.foo = function() {return classSuper.foo.apply(this, arguments);};});"
-        "class MyClass\n foo: -> super()":    "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this);};});"
-        "class MyClass\n foo: -> super 1":    "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1);};});"
-        "class MyClass\n foo: -> super 1 2":  "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1, 2);};});"
-        "class MyClass\n foo: -> superFoo":   "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return superFoo;};});"
-
-      complex: ->
-        """
-        class CaffeineScriptParser
-
-          parse: ->
-            super foo 1
-
-        """: "let CaffeineScriptParser;
-          CaffeineScriptParser =
-          Caf.defClass(class CaffeineScriptParser extends Object {},
-          function(CaffeineScriptParser, classSuper, instanceSuper)
-          {this.prototype.parse = function() {return instanceSuper.parse.call(this, foo(1));};});"
-
     constructors:
       """
       class Foo extends Bar
@@ -166,3 +144,53 @@ module.exports = suite: parseTestSuite
     class FooWithDot
     .bar
     """: "let FooWithDot; (FooWithDot = Caf.defClass(class FooWithDot extends Object {})).bar;"
+
+  foo:
+    basics:
+      "class MyClass\n foo: -> super":      "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.apply(this, arguments);};});"
+      "class MyClass\n @foo: -> super":     "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.foo = function() {return classSuper.foo.apply(this, arguments);};});"
+      "class MyClass\n foo: -> super()":    "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this);};});"
+      "class MyClass\n foo: -> super 1":    "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1);};});"
+      "class MyClass\n foo: -> super 1 2":  "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return instanceSuper.foo.call(this, 1, 2);};});"
+      "class MyClass\n foo: -> superFoo":   "let MyClass; MyClass = Caf.defClass(class MyClass extends Object {}, function(MyClass, classSuper, instanceSuper) {this.prototype.foo = function() {return superFoo;};});"
+
+    complex:
+      """
+      class CaffeineScriptParser
+
+        parse: ->
+          super foo 1
+
+      """: "let CaffeineScriptParser;
+        CaffeineScriptParser =
+        Caf.defClass(class CaffeineScriptParser extends Object {},
+        function(CaffeineScriptParser, classSuper, instanceSuper)
+        {this.prototype.parse = function() {return instanceSuper.parse.call(this, foo(1));};});"
+
+    constructors:
+      """
+      class A
+        constructor: (@foo) ->
+      """: "
+        let A;
+        A = Caf.defClass(class A extends Object
+        {constructor(foo) {super(...arguments); this.foo = foo;}});"
+
+      # should auto-add super, but I don't think it does
+      """
+      class A
+        constructor: (@foo) ->
+          @bar = null
+      """: knownFailing: "
+        let A;
+        A = Caf.defClass(class A extends Object
+        {constructor(foo) {super(...arguments); this.foo = foo; this.bar = null;}});"
+
+      """
+      class A
+        constructor: ->
+          @foo = 1
+      """: knownFailing: "
+        let A;
+        A = Caf.defClass(class A extends Object
+        {constructor() {super(...arguments); this.foo = 1;}});"

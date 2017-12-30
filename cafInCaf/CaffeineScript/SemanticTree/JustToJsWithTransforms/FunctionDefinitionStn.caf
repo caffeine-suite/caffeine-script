@@ -38,6 +38,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
     @arguments = children[0]
     @statements = children[1]
+    @_updatingArgumentScope = false
 
   cloneWithNewStatements: (statements)->
     new @class @props, [@arguments, StnRegistry.StatementsStn compactFlatten statements]
@@ -48,14 +49,19 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
     childrenToUpdateScope: -> compactFlatten [@statements]
 
-
   updateScope: ->
     super
     if @arguments
       object name from @arguments.argumentNameList with @addArgumentName name
-      @arguments.updateScope
-        addIdentifierUsed:     (identifier) -> @addIdentifierUsed identifier
-        addIdentifierAssigned: (identifier) -> @addArgumentName identifier
+      @_updatingArgumentScope = true
+      @arguments.updateScope @
+      @_updatingArgumentScope = false
+
+  addIdentifierAssigned: (identifier) ->
+    if @_updatingArgumentScope
+      @addArgumentName identifier
+    else
+      super
 
   postTransform: ->
     if @props.bound == "auto"

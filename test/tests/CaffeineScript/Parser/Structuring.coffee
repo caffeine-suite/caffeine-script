@@ -47,4 +47,4 @@ module.exports = suite: parseTestSuite
       """
       {}
         (array v from a when a > 10).length
-      """: "({length: Caf.each(a, [], (v, k, into) => {if (a > 10) {into.push(v);};}).length});"
+      """: "({length: Caf.each(a, [], (v, cafK, cafInto) => {if (a > 10) {cafInto.push(v);};}).length});"
