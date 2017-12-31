@@ -5,6 +5,7 @@ module.exports = require './namespace'
 module.exports
 .addModules
   FunctionDefinitionArgStn: require './FunctionDefinitionArgStn'
+  ImportBodyStn:            require './ImportBodyStn'           
   ImportStn:                require './ImportStn'               
   RootStn:                  require './RootStn'                 
   StatementsStn:            require './StatementsStn'           

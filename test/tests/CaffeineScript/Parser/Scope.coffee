@@ -9,4 +9,4 @@ module.exports = suite: parseTestSuite
     """
     import Foo
     a = @b?.c
-    """: "let a; a = Caf.exists(cafBase = this.b) && cafBase.c;"
+    """: "(() => {let a, cafBase; return a = Caf.exists(cafBase = this.b) && cafBase.c;})();"

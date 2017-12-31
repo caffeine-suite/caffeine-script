@@ -38,12 +38,3 @@ module.exports = suite: parseTestSuite {compileModule: true},
     "(foo) -> foo":     applyModuleWrapper "return function(foo) {return foo;};"
     "([foo]) -> foo":   applyModuleWrapper "return function([foo]) {return foo;};"
     "a = true":         applyModuleWrapper "let a; return a = true;"
-
-  withImport:
-    """
-    import Foo
-    a
-    """: applyModuleWrapper "
-      let Foo = global.Foo, a;
-      ({a} = Caf.import([\"a\"], [global, Foo]));return a;
-      "

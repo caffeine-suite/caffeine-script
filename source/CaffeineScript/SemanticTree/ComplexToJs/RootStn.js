@@ -16,22 +16,22 @@ Caf.defMod(module, () => {
       }
     },
     function(RootStn, classSuper, instanceSuper) {
+      this.prototype.isImports = true;
       this.prototype.cloneWithNewStatements = function(statements) {
         return new RootStn(this.props, [
           StatementsStn(compactFlatten(statements))
         ]);
       };
-      this.prototype.updateScope = function() {
+      this.prototype.rootUpdateScope = function() {
         return !this._scopeHasBeenUpdated
-          ? instanceSuper.updateScope.call(this, this)
+          ? ((this._scopeHasBeenUpdated = true), this.updateScope(this))
           : undefined;
       };
       this.prototype.toJsModule = function() {
-        let identifiersUsedButNotAssigned, statementsJs, lets, statements;
-        this.updateScope();
-        ({ identifiersUsedButNotAssigned } = this);
-        identifiersUsedButNotAssigned = Caf.each(
-          identifiersUsedButNotAssigned,
+        let identifiersToImport, statementsJs, lets, statements;
+        this.rootUpdateScope();
+        identifiersToImport = Caf.each(
+          this.generateImportMap(),
           [],
           (v, k, cafInto) => {
             cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`);
@@ -39,7 +39,7 @@ Caf.defMod(module, () => {
         );
         statementsJs = this.statements.toFunctionBodyJs();
         lets = compactFlatten([
-          identifiersUsedButNotAssigned,
+          identifiersToImport,
           this.requiredIdentifierLets
         ]);
         statements = compactFlatten([
@@ -52,7 +52,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let statements;
-        this.updateScope();
+        this.rootUpdateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
@@ -60,7 +60,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toBareJs = function() {
         let statements;
-        this.updateScope();
+        this.rootUpdateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([

@@ -206,6 +206,28 @@ Caf.defMod(module, () => {
           });
           return (this._scopeUpdated = true);
         };
+        this.prototype.generateImportMap = function(
+          map = {},
+          assignedInParentScope = this.identifiersAssignedInParentScopes
+        ) {
+          let assignedInThisOrParentScope;
+          assignedInThisOrParentScope = merge(
+            assignedInParentScope,
+            this._identifiersAssigned,
+            this._argumentNames
+          );
+          Caf.each(this._identifiersUsed, map, (v, identifier, cafInto) => {
+            if (!assignedInThisOrParentScope[identifier]) {
+              cafInto[identifier] = v;
+            }
+          });
+          Caf.each(this._childScopes, undefined, childScope => {
+            if (!childScope.isImports) {
+              childScope.generateImportMap(map, assignedInThisOrParentScope);
+            }
+          });
+          return map;
+        };
         this.getter({
           childrenToUpdateScope: function() {
             return this.children;
@@ -262,6 +284,15 @@ Caf.defMod(module, () => {
               }
             }
             return out;
+          },
+          identifiersUsedInThisScopeButNotAssigned: function() {
+            let assigned;
+            assigned = this.identifiersAssignedInThisOrParentScopes;
+            return Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
+              if (!assigned[k]) {
+                cafInto[k] = true;
+              }
+            });
           },
           identifiersUsedButNotAssigned: function() {
             let assigned, ret;

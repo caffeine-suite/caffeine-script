@@ -11,23 +11,28 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import a
     foo()
     """:
-      applyModuleWrapper 'let a = global.a, foo;
-      ({foo} = Caf.import(["foo"], [global, a]));return foo();'
+      applyModuleWrapper '
+        let a = global.a;
+        return Caf.importInvoke(["foo"], [global, a], (foo) => {return foo();});
+        '
 
     """
     import a
     foo bar
     """:
-      applyModuleWrapper 'let a = global.a, foo, bar;
-      ({foo, bar} = Caf.import(["foo", "bar"], [global, a]));return foo(bar);'
+      applyModuleWrapper '
+        let a = global.a;
+        return Caf.importInvoke(["foo", "bar"], [global, a], (foo, bar) => {return foo(bar);});
+        '
 
     """
     import a, b
     foo()
     """:
-      applyModuleWrapper 'let a = global.a,
-      b = global.b, foo;
-      ({foo} = Caf.import(["foo"], [global, a, b]));return foo();'
+      applyModuleWrapper '
+        let a = global.a, b = global.b;
+        return Caf.importInvoke(["foo"], [global, a, b], (foo) => {return foo();});
+        '
 
   nested:
     """
@@ -35,18 +40,20 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import b
     foo()
     """:
-      applyModuleWrapper 'let a = global.a, foo, b, cafParentImports;
-      ({b} = Caf.import(["b"], cafParentImports = [global, a]));({foo}
-      = Caf.import(["foo"], [cafParentImports, b]));return foo();
-      '
+      applyModuleWrapper '
+        let a = global.a, cafParentImports;
+        return Caf.importInvoke(["b"], cafParentImports = [global, a], (b) =>
+        {return Caf.importInvoke(["foo"], [cafParentImports, b], (foo) => {return foo();});});
+        '
 
   scopes:
     """
     import global.Math
     -> min
     """:
-      applyModuleWrapper 'let min;
-      ({min} = Caf.import(["min"], [global, global.Math]));return function() {return min;};'
+      applyModuleWrapper '
+      return Caf.importInvoke(["min"], [global, global.Math], (min) =>
+      {return function() {return min;};});'
 
   insideScopes:
     """
@@ -54,11 +61,14 @@ module.exports = suite: parseTestSuite {compileModule: true},
     (arg) ->
       import LibB
       fromLibB arg
-    """: knownFailing:
-      applyModuleWrapper 'let LibA = global.LibA, LibB, cafParentImports;
-      ({LibB} = Caf.import(["LibB"], cafParentImports = [global, LibA]));return
-      function(arg) {let fromLibB; ({fromLibB} = Caf.import(["fromLibB"], [cafParentImports, LibB]));return fromLibB(arg);}'
-
+    """: applyModuleWrapper '
+      let LibA = global.LibA, cafParentImports;
+      return Caf.importInvoke(["LibB"], cafParentImports = [global, LibA],
+      (LibB) =>
+      {return function(arg)
+      {return Caf.importInvoke(["fromLibB"], [cafParentImports, LibB],
+      (fromLibB) => {return fromLibB(arg);});};});
+      '
 
   deepNested:
     """
@@ -67,10 +77,11 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import c
     foo()
     """:
-      applyModuleWrapper 'let a = global.a, foo, c, b, cafParentImports, cafParentImports1;
-      ({b} = Caf.import(["b"], cafParentImports = [global, a]));({c}
-      = Caf.import(["c"], cafParentImports1 = [cafParentImports, b]));({foo}
-      = Caf.import(["foo"], [cafParentImports1, c]));return foo();
+      applyModuleWrapper '
+      let a = global.a, cafParentImports; return
+      Caf.importInvoke(["b"], cafParentImports = [global, a], (b) => {return
+      Caf.importInvoke(["c"], cafParentImports1 = [cafParentImports, b], (c) => {return
+      Caf.importInvoke(["foo"], [cafParentImports1, c], (foo) => {return foo();});});});
       '
 
   list:
@@ -78,10 +89,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import a, b, c
     foo()
     """:
-      applyModuleWrapper '
-        let a = global.a, b = global.b, c = global.c, foo;
-        ({foo} = Caf.import(["foo"], [global, a, b, c]));return foo();
-      '
+      a = applyModuleWrapper '
+        let a = global.a, b = global.b, c = global.c; return
+        Caf.importInvoke(["foo"], [global, a, b, c], (foo) => {return foo();});
+        '
 
     """
     import
@@ -89,15 +100,21 @@ module.exports = suite: parseTestSuite {compileModule: true},
       b
       c
     foo()
-    """:
-      applyModuleWrapper '
-        let a = global.a, b = global.b, c = global.c, foo;
-        ({foo} = Caf.import(["foo"], [global, a, b, c]));return foo();
-      '
+    """: a
+
+  assignedInImportBody:
+    """
+    import global
+    foo = 123
+    """: applyModuleWrapper "
+      return (() => {let foo; return foo = 123;})();
+      "
 
   regressions:
     """
     import global
     global.Neptune?.Art
-    """: knownFailing: applyModuleWrapper "let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;"
+    """: applyModuleWrapper "
+      return (() => {let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;})();
+      "
 

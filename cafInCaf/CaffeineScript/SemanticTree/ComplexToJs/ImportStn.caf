@@ -11,31 +11,9 @@ import &StandardImport
       mergeInto importMap, @identifiersUsedButNotAssigned
 
 
-class ImportStn extends &ScopeStnMixin &BaseStn
+class ImportStn extends &BaseStn
 
-  updateScope: (@scope)->
-    @bindAllUniqueIdentifiersRequested()  # identical to super
-
-    @statementsChild = peek @children
-    @importChildren = @children.slice 0, @children.length - 1
-
-    each child in @importChildren # slightly different from super
-      child.updateScope @scope
-
-    @scope.addChildScope @  # identical to super other than order
-    @_scopeUpdated = true   # identical to super
-
-    @statementsChild.updateScope @
-    {identifiersUsedButNotAssigned} = @
-    @importing = Object.keys identifiersUsedButNotAssigned
-
-    each v, id in identifiersUsedButNotAssigned
-      @scope.addIdentifierAssigned id
-
-  addIdentifierAssigned: (id, init) ->
-    @scope.addIdentifierAssigned id, init
-
-  jsExpressionUsesReturn: true
+  # jsExpressionUsesReturn: true
 
   @getter
     nonImportScope: ->
@@ -48,32 +26,34 @@ class ImportStn extends &ScopeStnMixin &BaseStn
       @_importFromCaptureIdentifier ||= @nonImportScope.bindUniqueIdentifier "parentImports"
 
   toJs: (options = {})->
-    {generateReturnStatement} = options
     importFromCaptureIdentifier = null
-    if p = @findParent "Import"
+    if p = @findParent /^Import$/
       {importFromCaptureIdentifier} = p
       true
 
-    # importFromCaptureIdentifier ||= "global"
+    {importBody} = @labeledChildren
+    importFromList = arrayWithoutLast @children
 
-    bodyJs = @statementsChild.toFunctionBodyJs !!generateReturnStatement
+    identifiersToImport = Object.keys importBody.generateImportMap()
 
-    importsJs = array c in @importChildren with c.toJsExpression()
+    # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
+    bodyJs =
+      compactFlatten []
+        importBody.getAutoLets()
+        importBody.toFunctionBodyJs true
+      .join '; '
 
-    list = array i in @importing with "" "#{i}"
-    importingJs = "" [#{list.join ', '}]
+    if identifiersToImport.length > 0
 
-    importFromCaptureIdentifier ||= "global"
 
-    importsJs = compactFlatten [importFromCaptureIdentifier, importsJs]
+      importsJs = compactFlatten []
+        importFromCaptureIdentifier || "global"
+        array c in importFromList with c.toJsExpression()
 
-    imports = if @importing?.length > 0
       ""
-        ({#{@importing.join ', '}} =
+        Caf.importInvoke(["#{identifiersToImport.join '", "'}"],
+        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}],
+        (#{identifiersToImport.join ', '}) => {#{bodyJs};})
 
-        Caf.import(#{importingJs},
-        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}]));
-
-    else ""
-
-    "#{imports}#{bodyJs}"
+    else
+      "" (() => {#{bodyJs};})()

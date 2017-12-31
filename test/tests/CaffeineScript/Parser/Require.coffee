@@ -42,19 +42,16 @@ module.exports = suite: parseTestSuite {
     """
     import &ArtStandardLib
     &CaffeineEight
-    """: "require('caffeine-eight');"
+    """: "(() => {return require('caffeine-eight');})();"
 
     """
     import &ArtStandardLib
     &CaffeineEight
     foo
     """: "
-      let foo;
-      ({foo} = Caf.import([\"foo\"], [global, require('art-standard-lib')]));require('caffeine-eight');
-      foo;
+      Caf.importInvoke([\"foo\"], [global, require('art-standard-lib')],
+      (foo) => {return (require('caffeine-eight'), foo);});
       "
-
-    "-> &Lib": "(function() {return require('./Lib');});"
 
     """
     &CaffeineEight

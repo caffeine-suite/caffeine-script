@@ -50,9 +50,10 @@ Caf.defMod(module, () => {
       }
     },
     importStatement: {
-      pattern: "/import/ _? valueList end root",
+      pattern: "/import/ _? importFromList:valueList end importBody",
       stnFactory: "ImportStn"
     },
+    importBody: ["root", { stnFactory: "ImportBodyStn" }],
     newLineStatementExtension: [
       "end lineStartBinaryOperatorAndExpression",
       "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"

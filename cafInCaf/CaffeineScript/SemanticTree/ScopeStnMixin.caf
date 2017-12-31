@@ -51,7 +51,6 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     @identifiersInScope[identifier] = true
     @identifiersUsed[identifier] = true
 
-
   addIdentifierAssigned: (identifier, initializer)->
     if identifier
       throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
@@ -124,6 +123,20 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     each child in @getChildrenToUpdateScope() do child.updateScope @
     @_scopeUpdated = true
 
+  generateImportMap: (map = {}, assignedInParentScope = @identifiersAssignedInParentScopes)->
+    assignedInThisOrParentScope = merge
+      assignedInParentScope
+      @_identifiersAssigned
+      @_argumentNames
+
+    object v, identifier from @_identifiersUsed into map when
+      !assignedInThisOrParentScope[identifier]
+
+    each childScope in @_childScopes when !childScope.isImports
+      childScope.generateImportMap map, assignedInThisOrParentScope
+
+    map
+
   @getter
     childrenToUpdateScope: -> @children
 
@@ -156,6 +169,10 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
           {scope} = scope
 
       out
+
+    identifiersUsedInThisScopeButNotAssigned: ->
+      assigned = @identifiersAssignedInThisOrParentScopes
+      object v, k from @identifiersUsed when !assigned[k] with true
 
     identifiersUsedButNotAssigned: ->
       assigned = @identifiersAssignedInThisOrParentScopes

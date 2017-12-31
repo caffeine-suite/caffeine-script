@@ -8,21 +8,23 @@ class RootStn extends &ScopeStnMixin &BaseStn
     @_scopeHasBeenUpdated = false
     @statements = children[0]
 
+  isImports: true
+
   cloneWithNewStatements: (statements)->
     new RootStn @props, [] StatementsStn compactFlatten statements
 
-  updateScope: ->
+  rootUpdateScope: ->
     unless @_scopeHasBeenUpdated
-      super @
+      @_scopeHasBeenUpdated = true
+      @updateScope @
 
   toJsModule: ->
-    @updateScope()
-    {identifiersUsedButNotAssigned} = @
-    identifiersUsedButNotAssigned = array v, k in identifiersUsedButNotAssigned with "#{k} = global.#{k}"
+    @rootUpdateScope()
+    identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
 
     statementsJs = @statements.toFunctionBodyJs()
 
-    lets = compactFlatten [] identifiersUsedButNotAssigned, @requiredIdentifierLets
+    lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
     statements = compactFlatten []
       "let #{lets.join ', '}" if lets.length > 0
       statementsJs
@@ -33,7 +35,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
       Caf.defMod(module, () => {#{statements.join '; '};});
 
   toJs: ->
-    @updateScope()
+    @rootUpdateScope()
     statements = @statements.toJs()
     compactFlatten []
       @getAutoLets()
@@ -42,7 +44,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
     + ";"
 
   toBareJs: ->
-    @updateScope()
+    @rootUpdateScope()
     statements = @statements.toJs()
     compactFlatten []
       "" Caf = require('caffeine-script-runtime')
