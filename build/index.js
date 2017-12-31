@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 102);
+/******/ 	return __webpack_require__(__webpack_require__.s = 103);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -147,7 +147,7 @@ Caf.defMod(module, () => {
     ],
     [global, __webpack_require__(3)]
   ));
-  ({ createObjectTreeFactory } = __webpack_require__(109));
+  ({ createObjectTreeFactory } = __webpack_require__(110));
   return (BaseStn = Caf.defClass(
     class BaseStn extends BaseClass {
       constructor(props, children = [], pretransformedStn) {
@@ -198,6 +198,9 @@ Caf.defMod(module, () => {
           }
         });
       };
+      this.prototype.getInspectedProps = function() {
+        return objectWithout(this.props, "label", "pluralLabel");
+      };
       this.getter({
         sourceOffset: function() {
           return this.parseTreeNode.offset;
@@ -224,7 +227,7 @@ Caf.defMod(module, () => {
         inspectedObjects: function() {
           let label, props, name, a;
           ({ label } = this);
-          props = objectWithout(this.props, "label", "pluralLabel");
+          props = this.getInspectedProps();
           name = this.class.getName();
           if (label) {
             name = `${Caf.toString(label)}.${Caf.toString(name)}`;
@@ -414,7 +417,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   return __webpack_require__(11).merge(
-    __webpack_require__(108),
+    __webpack_require__(109),
     __webpack_require__(11),
     { javaScriptReservedWords: __webpack_require__(17) }
   );
@@ -489,15 +492,15 @@ module.exports = (__webpack_require__(15)).addNamespace('SemanticTree', Semantic
 
 })(Neptune.PackageNamespace));
 
-__webpack_require__(22);
-
 __webpack_require__(23);
-
-__webpack_require__(14);
 
 __webpack_require__(24);
 
+__webpack_require__(14);
+
 __webpack_require__(25);
+
+__webpack_require__(26);
 
 
 /***/ }),
@@ -510,13 +513,13 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let UniqueIdentifierHandle,
     lowerCamelCase,
+    merge,
     Error,
     log,
     isString,
-    merge,
     mergeInto;
-  ({ lowerCamelCase, Error, log, isString, merge, mergeInto } = Caf.import(
-    ["lowerCamelCase", "Error", "log", "isString", "merge", "mergeInto"],
+  ({ lowerCamelCase, merge, Error, log, isString, mergeInto } = Caf.import(
+    ["lowerCamelCase", "merge", "Error", "log", "isString", "mergeInto"],
     [global, __webpack_require__(3)]
   ));
   UniqueIdentifierHandle = __webpack_require__(10);
@@ -526,7 +529,7 @@ Caf.defMod(module, () => {
       class ScopeStnMixin extends toExtend {
         constructor() {
           super(...arguments);
-          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._identifiersInScope = null;
+          this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
           this._scopeUpdated = false;
         }
       },
@@ -543,6 +546,9 @@ Caf.defMod(module, () => {
           );
         };
         this.getter({
+          childScopes: function() {
+            return this._childScopes || (this._childScopes = []);
+          },
           argumentNames: function() {
             return this._argumentNames || (this._argumentNames = {});
           },
@@ -558,6 +564,16 @@ Caf.defMod(module, () => {
             return this._identifiersInScope || (this._identifiersInScope = {});
           }
         });
+        this.prototype.getInspectedProps = function() {
+          return merge(instanceSuper.getInspectedProps.apply(this, arguments), {
+            scope: merge({
+              argumentNames: this.argumentNames,
+              identifiersUsed: this.identifiersUsed,
+              identifiersAssigned: this.identifiersAssigned,
+              identifiersInScope: this.identifiersInScope
+            })
+          });
+        };
         this.prototype.addArgumentName = function(identifier) {
           this.identifiersInScope[identifier] = true;
           return (this.argumentNames[identifier] = true);
@@ -651,9 +667,7 @@ Caf.defMod(module, () => {
                   name));
         };
         this.prototype.addChildScope = function(child) {
-          return !(child === this)
-            ? (this.childScopes || (this.childScopes = [])).push(child)
-            : undefined;
+          return !(child === this) ? this.childScopes.push(child) : undefined;
         };
         this.prototype.bindAllUniqueIdentifiersRequested = function() {
           return this._uniqueIdentifierHandles
@@ -701,6 +715,28 @@ Caf.defMod(module, () => {
             child.updateScope(this);
           });
           return (this._scopeUpdated = true);
+        };
+        this.prototype.generateImportMap = function(
+          map = {},
+          assignedInParentScope = this.identifiersAssignedInParentScopes
+        ) {
+          let assignedInThisOrParentScope;
+          assignedInThisOrParentScope = merge(
+            assignedInParentScope,
+            this._identifiersAssigned,
+            this._argumentNames
+          );
+          Caf.each(this._identifiersUsed, map, (v, identifier, cafInto) => {
+            if (!assignedInThisOrParentScope[identifier]) {
+              cafInto[identifier] = v;
+            }
+          });
+          Caf.each(this._childScopes, undefined, childScope => {
+            if (!childScope.isImports) {
+              childScope.generateImportMap(map, assignedInThisOrParentScope);
+            }
+          });
+          return map;
         };
         this.getter({
           childrenToUpdateScope: function() {
@@ -759,22 +795,32 @@ Caf.defMod(module, () => {
             }
             return out;
           },
+          identifiersUsedInThisScopeButNotAssigned: function() {
+            let assigned;
+            assigned = this.identifiersAssignedInThisOrParentScopes;
+            return Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
+              if (!assigned[k]) {
+                cafInto[k] = true;
+              }
+            });
+          },
           identifiersUsedButNotAssigned: function() {
             let assigned, ret;
-            assigned = this.identifiersAssignedInParentThisOrChildrenScopes;
+            assigned = this.identifiersAssignedInThisOrParentScopes;
             ret = Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
               if (!assigned[k]) {
                 cafInto[k] = true;
               }
             });
-            Caf.each(this.childScopes, undefined, childScope => {
+            Caf.each(this._childScopes, undefined, childScope => {
               mergeInto(ret, childScope.identifiersUsedButNotAssigned);
             });
             return (this._identifiersUsedButNotAssigned = ret);
           },
-          identifiersAssignedInParentThisOrChildrenScopes: function() {
+          identifiersAssignedInThisOrParentScopes: function() {
             return merge(
-              this.identifiersAssigned,
+              this._argumentNames,
+              this._identifiersAssigned,
               this.identifiersAssignedInParentScopes
             );
           },
@@ -782,8 +828,8 @@ Caf.defMod(module, () => {
             return this.scope && this.scope !== this
               ? merge(
                   this.scope.identifiersAssignedInParentScopes,
-                  this.scope.identifiersAssigned,
-                  this.argumentNames
+                  this.scope._identifiersAssigned,
+                  this._argumentNames
                 )
               : undefined;
           }
@@ -853,7 +899,7 @@ Caf.defMod(module, () => {
   ));
   StnRegistry = __webpack_require__(4);
   return (AccessorChainStn = Caf.defClass(
-    class AccessorChainStn extends __webpack_require__(19) {},
+    class AccessorChainStn extends __webpack_require__(20) {},
     function(AccessorChainStn, classSuper, instanceSuper) {
       this.abstractClass();
       this.prototype.transform = function() {
@@ -1356,20 +1402,20 @@ var CaffeineScript,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-module.exports = (__webpack_require__(111)).addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
+module.exports = (__webpack_require__(112)).addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
 
   function CaffeineScript() {
     return CaffeineScript.__super__.constructor.apply(this, arguments);
   }
 
-  CaffeineScript.version = __webpack_require__(27).version;
+  CaffeineScript.version = __webpack_require__(28).version;
 
   return CaffeineScript;
 
 })(Neptune.PackageNamespace));
 
-__webpack_require__(21);
+__webpack_require__(22);
 
 __webpack_require__(6);
 
@@ -1397,7 +1443,7 @@ Caf.defMod(module, () => {
     function(CaffeineScriptParser, classSuper, instanceSuper) {
       let mixedIndentationRegexp, tabIndentationRegexp, spaceIndentationRegexp;
       this.nodeBaseClass = __webpack_require__(12);
-      Caf.each(__webpack_require__(20).modules, undefined, mod => {
+      Caf.each(__webpack_require__(21).modules, undefined, mod => {
         if (isFunction(mod)) {
           mod.call(this);
         } else {
@@ -1465,6 +1511,84 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
+  let ImportStn, arrayWithoutLast, Object, compactFlatten;
+  ({ arrayWithoutLast, Object, compactFlatten } = Caf.import(
+    ["arrayWithoutLast", "Object", "compactFlatten"],
+    [global, __webpack_require__(3)]
+  ));
+  return (ImportStn = Caf.defClass(
+    class ImportStn extends __webpack_require__(2) {},
+    function(ImportStn, classSuper, instanceSuper) {
+      this.getter({
+        nonImportScope: function() {
+          let scope;
+          ({ scope } = this);
+          while (scope.type === "Import") {
+            ({ scope } = scope);
+          }
+          return scope;
+        },
+        importFromCaptureIdentifier: function() {
+          return (
+            this._importFromCaptureIdentifier ||
+            (this._importFromCaptureIdentifier = this.nonImportScope.bindUniqueIdentifier(
+              "parentImports"
+            ))
+          );
+        }
+      });
+      this.prototype.toJs = function(options = {}) {
+        let importFromCaptureIdentifier,
+          p,
+          importBody,
+          importFromList,
+          identifiersToImport,
+          bodyJs,
+          importsJs;
+        importFromCaptureIdentifier = null;
+        if ((p = this.findParent(/^Import$/))) {
+          ({ importFromCaptureIdentifier } = p);
+          true;
+        }
+        ({ importBody } = this.labeledChildren);
+        importFromList = arrayWithoutLast(this.children);
+        identifiersToImport = Object.keys(importBody.generateImportMap());
+        bodyJs = compactFlatten([
+          importBody.getAutoLets(),
+          importBody.toFunctionBodyJs(true)
+        ]).join("; ");
+        return identifiersToImport.length > 0
+          ? ((importsJs = compactFlatten([
+              importFromCaptureIdentifier || "global",
+              Caf.each(importFromList, [], (c, cafK, cafInto) => {
+                cafInto.push(c.toJsExpression());
+              })
+            ])),
+            `Caf.importInvoke(["${Caf.toString(
+              identifiersToImport.join('", "')
+            )}"], ${Caf.toString(
+              this._importFromCaptureIdentifier
+                ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
+                : ""
+            )}[${Caf.toString(importsJs.join(", "))}], (${Caf.toString(
+              identifiersToImport.join(", ")
+            )}) => {${Caf.toString(bodyJs)};})`)
+          : `(() => {${Caf.toString(bodyJs)};})()`;
+      };
+    }
+  ));
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(0);
+Caf.defMod(module, () => {
   let StatementsStn;
   return (StatementsStn = Caf.defClass(
     class StatementsStn extends __webpack_require__(2) {},
@@ -1525,7 +1649,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1595,42 +1719,42 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(21);
+module.exports = __webpack_require__(22);
 
 module.exports.addModules({
-  Accessors: __webpack_require__(30),
-  ArrayLiterals: __webpack_require__(31),
-  Assignment: __webpack_require__(32),
-  Blocks: __webpack_require__(33),
-  Classes: __webpack_require__(34),
-  Comments: __webpack_require__(35),
-  Comprehensions: __webpack_require__(36),
-  ControlStructures: __webpack_require__(37),
-  DestructuringAssignment: __webpack_require__(38),
-  Expressions: __webpack_require__(39),
-  Functions: __webpack_require__(40),
-  KeywordLiterals: __webpack_require__(41),
-  Literals: __webpack_require__(42),
-  NumberLiterals: __webpack_require__(43),
-  ObjectLiterals: __webpack_require__(44),
-  Operators: __webpack_require__(45),
-  RegExp: __webpack_require__(46),
-  Require: __webpack_require__(47),
-  Root: __webpack_require__(48),
-  Statements: __webpack_require__(49),
-  StringLiterals: __webpack_require__(50),
-  TagMacros: __webpack_require__(51),
-  Tokens: __webpack_require__(52),
-  ValueLists: __webpack_require__(53),
-  Values: __webpack_require__(54)
+  Accessors: __webpack_require__(31),
+  ArrayLiterals: __webpack_require__(32),
+  Assignment: __webpack_require__(33),
+  Blocks: __webpack_require__(34),
+  Classes: __webpack_require__(35),
+  Comments: __webpack_require__(36),
+  Comprehensions: __webpack_require__(37),
+  ControlStructures: __webpack_require__(38),
+  DestructuringAssignment: __webpack_require__(39),
+  Expressions: __webpack_require__(40),
+  Functions: __webpack_require__(41),
+  KeywordLiterals: __webpack_require__(42),
+  Literals: __webpack_require__(43),
+  NumberLiterals: __webpack_require__(44),
+  ObjectLiterals: __webpack_require__(45),
+  Operators: __webpack_require__(46),
+  RegExp: __webpack_require__(47),
+  Require: __webpack_require__(48),
+  Root: __webpack_require__(49),
+  Statements: __webpack_require__(50),
+  StringLiterals: __webpack_require__(51),
+  TagMacros: __webpack_require__(52),
+  Tokens: __webpack_require__(53),
+  ValueLists: __webpack_require__(54),
+  Values: __webpack_require__(55)
 });
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Rules,
@@ -1650,7 +1774,7 @@ module.exports = (__webpack_require__(15)).addNamespace('Rules', Rules = (functi
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ComplexToJs,
@@ -1670,7 +1794,7 @@ module.exports = (__webpack_require__(6)).addNamespace('ComplexToJs', ComplexToJ
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var JustToJs,
@@ -1690,7 +1814,7 @@ module.exports = (__webpack_require__(6)).addNamespace('JustToJs', JustToJs = (f
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var JustTransforms,
@@ -1710,7 +1834,7 @@ module.exports = (__webpack_require__(6)).addNamespace('JustTransforms', JustTra
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var MultipleToJs,
@@ -1730,7 +1854,7 @@ module.exports = (__webpack_require__(6)).addNamespace('MultipleToJs', MultipleT
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(6);
@@ -1738,13 +1862,11 @@ module.exports = __webpack_require__(6);
 module.exports.addModules({
   AccessorChainStn: __webpack_require__(9),
   BaseStn: __webpack_require__(2),
-  ComprehensionValueClauseStn: __webpack_require__(60),
+  ComprehensionValueClauseStn: __webpack_require__(61),
   ScopeStnMixin: __webpack_require__(7),
   UniqueIdentifierHandle: __webpack_require__(10),
-  ValueBaseCaptureStn: __webpack_require__(19)
+  ValueBaseCaptureStn: __webpack_require__(20)
 });
-
-__webpack_require__(103);
 
 __webpack_require__(104);
 
@@ -1754,20 +1876,22 @@ __webpack_require__(106);
 
 __webpack_require__(107);
 
+__webpack_require__(108);
 
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.48.2"}
 
 /***/ }),
 /* 28 */
+/***/ (function(module, exports) {
+
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.48.3"}
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(15);
 
-module.exports.includeInNamespace(__webpack_require__(29)).addModules({
+module.exports.includeInNamespace(__webpack_require__(30)).addModules({
   CaffeineScriptParser: __webpack_require__(16),
   CafParseNodeBaseClass: __webpack_require__(12),
   JavaScriptReservedWords: __webpack_require__(17),
@@ -1777,13 +1901,13 @@ module.exports.includeInNamespace(__webpack_require__(29)).addModules({
   StnRegistry: __webpack_require__(4)
 });
 
-__webpack_require__(20);
+__webpack_require__(21);
 
-__webpack_require__(26);
+__webpack_require__(27);
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1792,9 +1916,9 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let log;
   ({ log } = Caf.import(["log"], [global, __webpack_require__(11)]));
-  __webpack_require__(26);
+  __webpack_require__(27);
   return {
-    version: __webpack_require__(27).version,
+    version: __webpack_require__(28).version,
     compile: function(source, options = {}) {
       let transformedStn, stn, parseTree, e, cafError;
       return (() => {
@@ -1835,7 +1959,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1867,7 +1991,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1900,7 +2024,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1926,7 +2050,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1967,7 +2091,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1992,7 +2116,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2024,7 +2148,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2086,7 +2210,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2185,7 +2309,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2272,7 +2396,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2383,7 +2507,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2472,7 +2596,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2495,7 +2619,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2517,7 +2641,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2542,7 +2666,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2665,7 +2789,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2788,7 +2912,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2886,7 +3010,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2907,7 +3031,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2929,7 +3053,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2985,9 +3109,10 @@ Caf.defMod(module, () => {
       }
     },
     importStatement: {
-      pattern: "/import/ _? valueList end root",
+      pattern: "/import/ _? importFromList:valueList end importBody",
       stnFactory: "ImportStn"
     },
+    importBody: ["root", { stnFactory: "ImportBodyStn" }],
     newLineStatementExtension: [
       "end lineStartBinaryOperatorAndExpression",
       "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
@@ -3004,7 +3129,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3154,7 +3279,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3190,7 +3315,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3241,7 +3366,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3288,7 +3413,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3413,7 +3538,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3461,104 +3586,23 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
-  let ImportStn, peek, Object, compactFlatten;
-  ({ peek, Object, compactFlatten } = Caf.import(
-    ["peek", "Object", "compactFlatten"],
-    [global, __webpack_require__(3)]
-  ));
-  return (ImportStn = Caf.defClass(
-    class ImportStn extends __webpack_require__(7)(
+  let ImportStn, ImportBodyStn;
+  ImportStn = __webpack_require__(18);
+  return (ImportBodyStn = Caf.defClass(
+    class ImportBodyStn extends __webpack_require__(7)(
       __webpack_require__(2)
     ) {},
-    function(ImportStn, classSuper, instanceSuper) {
-      this.prototype.updateScope = function(scope) {
-        this.scope = scope;
-        this.bindAllUniqueIdentifiersRequested();
-        this.statementsChild = peek(this.children);
-        this.importChildren = this.children.slice(0, this.children.length - 1);
-        Caf.each(this.importChildren, undefined, child => {
-          child.updateScope(this.scope);
-        });
-        this.scope.addChildScope(this);
-        this._scopeUpdated = true;
-        this.statementsChild.updateScope(this);
-        this.importing = Object.keys(this.identifiersUsedButNotAssigned);
-        return Caf.each(
-          this.identifiersUsedButNotAssigned,
-          undefined,
-          (v, id) => {
-            this.scope.addIdentifierAssigned(id);
-          }
-        );
-      };
-      this.prototype.addIdentifierAssigned = function(id, init) {
-        return this.scope.addIdentifierAssigned(id, init);
-      };
-      this.prototype.jsExpressionUsesReturn = true;
-      this.getter({
-        nonImportScope: function() {
-          let scope;
-          ({ scope } = this);
-          while (scope.type === "Import") {
-            ({ scope } = scope);
-          }
-          return scope;
-        },
-        importFromCaptureIdentifier: function() {
-          return (
-            this._importFromCaptureIdentifier ||
-            (this._importFromCaptureIdentifier = this.nonImportScope.bindUniqueIdentifier(
-              "parentImports"
-            ))
-          );
-        }
-      });
-      this.prototype.toJs = function(options = {}) {
-        let generateReturnStatement,
-          importFromCaptureIdentifier,
-          p,
-          bodyJs,
-          importsJs,
-          list,
-          importingJs,
-          imports,
-          cafBase;
-        ({ generateReturnStatement } = options);
-        importFromCaptureIdentifier = null;
-        if ((p = this.findParent("Import"))) {
-          ({ importFromCaptureIdentifier } = p);
-          true;
-        }
-        bodyJs = this.statementsChild.toFunctionBodyJs(
-          !!generateReturnStatement
-        );
-        importsJs = Caf.each(this.importChildren, [], (c, cafK, cafInto) => {
-          cafInto.push(c.toJsExpression());
-        });
-        list = Caf.each(this.importing, [], (i, cafK, cafInto) => {
-          cafInto.push(`"${Caf.toString(i)}"`);
-        });
-        importingJs = `[${Caf.toString(list.join(", "))}]`;
-        importFromCaptureIdentifier || (importFromCaptureIdentifier = "global");
-        importsJs = compactFlatten([importFromCaptureIdentifier, importsJs]);
-        imports =
-          (Caf.exists((cafBase = this.importing)) && cafBase.length) > 0
-            ? `({${Caf.toString(
-                this.importing.join(", ")
-              )}} = Caf.import(${Caf.toString(importingJs)}, ${Caf.toString(
-                this._importFromCaptureIdentifier
-                  ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
-                  : ""
-              )}[${Caf.toString(importsJs.join(", "))}]));`
-            : "";
-        return `${Caf.toString(imports)}${Caf.toString(bodyJs)}`;
+    function(ImportBodyStn, classSuper, instanceSuper) {
+      this.prototype.isImports = true;
+      this.prototype.toJs = function(options) {
+        return this.children[0].toJs(options);
       };
     }
   ));
@@ -3567,7 +3611,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3579,7 +3623,7 @@ Caf.defMod(module, () => {
     ["compactFlatten"],
     [global, __webpack_require__(3)]
   ));
-  StatementsStn = __webpack_require__(18);
+  StatementsStn = __webpack_require__(19);
   return (RootStn = Caf.defClass(
     class RootStn extends __webpack_require__(7)(__webpack_require__(2)) {
       constructor(props, children) {
@@ -3589,22 +3633,22 @@ Caf.defMod(module, () => {
       }
     },
     function(RootStn, classSuper, instanceSuper) {
+      this.prototype.isImports = true;
       this.prototype.cloneWithNewStatements = function(statements) {
         return new RootStn(this.props, [
           StatementsStn(compactFlatten(statements))
         ]);
       };
-      this.prototype.updateScope = function() {
+      this.prototype.rootUpdateScope = function() {
         return !this._scopeHasBeenUpdated
-          ? instanceSuper.updateScope.call(this, this)
+          ? ((this._scopeHasBeenUpdated = true), this.updateScope(this))
           : undefined;
       };
       this.prototype.toJsModule = function() {
-        let identifiersUsedButNotAssigned, statementsJs, lets, statements;
-        this.updateScope();
-        ({ identifiersUsedButNotAssigned } = this);
-        identifiersUsedButNotAssigned = Caf.each(
-          identifiersUsedButNotAssigned,
+        let identifiersToImport, statementsJs, lets, statements;
+        this.rootUpdateScope();
+        identifiersToImport = Caf.each(
+          this.generateImportMap(),
           [],
           (v, k, cafInto) => {
             cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`);
@@ -3612,7 +3656,7 @@ Caf.defMod(module, () => {
         );
         statementsJs = this.statements.toFunctionBodyJs();
         lets = compactFlatten([
-          identifiersUsedButNotAssigned,
+          identifiersToImport,
           this.requiredIdentifierLets
         ]);
         statements = compactFlatten([
@@ -3625,7 +3669,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toJs = function() {
         let statements;
-        this.updateScope();
+        this.rootUpdateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
@@ -3633,7 +3677,7 @@ Caf.defMod(module, () => {
       };
       this.prototype.toBareJs = function() {
         let statements;
-        this.updateScope();
+        this.rootUpdateScope();
         statements = this.statements.toJs();
         return (
           compactFlatten([
@@ -3650,7 +3694,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3722,7 +3766,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3767,7 +3811,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3793,7 +3837,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3814,7 +3858,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3835,7 +3879,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3876,7 +3920,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3996,7 +4040,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4055,7 +4099,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4187,7 +4231,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4212,7 +4256,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4248,7 +4292,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4277,7 +4321,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4311,7 +4355,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4333,7 +4377,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4373,7 +4417,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4423,7 +4467,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4444,7 +4488,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4479,7 +4523,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4502,7 +4546,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4523,7 +4567,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4581,7 +4625,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4643,7 +4687,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4704,7 +4748,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4752,7 +4796,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4809,7 +4853,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4817,7 +4861,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   let findModuleSync, RequireStn;
-  ({ findModuleSync } = __webpack_require__(110));
+  ({ findModuleSync } = __webpack_require__(111));
   return (RequireStn = Caf.defClass(
     class RequireStn extends __webpack_require__(2) {},
     function(RequireStn, classSuper, instanceSuper) {
@@ -4843,7 +4887,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4886,7 +4930,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4912,7 +4956,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4965,7 +5009,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4989,7 +5033,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5012,7 +5056,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5041,7 +5085,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5098,7 +5142,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5120,7 +5164,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5141,7 +5185,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5193,7 +5237,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5408,7 +5452,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5570,7 +5614,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5636,7 +5680,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5677,7 +5721,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5757,7 +5801,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5791,7 +5835,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6104,7 +6148,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6177,26 +6221,10 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
 
 /***/ }),
-/* 102 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(28);
-
-
-/***/ }),
 /* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(22);
-
-module.exports.addModules({
-  FunctionDefinitionArgStn: __webpack_require__(55),
-  ImportStn: __webpack_require__(56),
-  RootStn: __webpack_require__(57),
-  StatementsStn: __webpack_require__(18),
-  StringStn: __webpack_require__(58),
-  SwitchWhenStn: __webpack_require__(59)
-});
+module.exports = __webpack_require__(29);
 
 
 /***/ }),
@@ -6206,38 +6234,13 @@ module.exports.addModules({
 module.exports = __webpack_require__(23);
 
 module.exports.addModules({
-  ArrayDestructuringStn: __webpack_require__(61),
-  ArraySpreadElementStn: __webpack_require__(62),
-  ArrayStn: __webpack_require__(63),
-  BinaryOperatorStn: __webpack_require__(64),
-  CatchStn: __webpack_require__(65),
-  ControlOperatorStn: __webpack_require__(66),
-  DestructuringAssignmentStn: __webpack_require__(67),
-  DestructuringIdentifierStn: __webpack_require__(68),
-  DoStn: __webpack_require__(69),
-  FunctionDefinitionArgsStn: __webpack_require__(70),
-  GlobalIdentifierStn: __webpack_require__(71),
-  IdentifierStn: __webpack_require__(72),
-  InterpolatedStringStn: __webpack_require__(73),
-  LabeledDestructuringTargetStn: __webpack_require__(74),
-  LetStn: __webpack_require__(75),
-  NewInstanceStn: __webpack_require__(76),
-  ObjectDestructuringStn: __webpack_require__(77),
-  ObjectPropNameStn: __webpack_require__(78),
-  ObjectPropValueStn: __webpack_require__(79),
-  ObjectStn: __webpack_require__(80),
-  ReferenceStn: __webpack_require__(81),
-  RegExpStn: __webpack_require__(82),
-  RequireStn: __webpack_require__(83),
-  SemanticTokenStn: __webpack_require__(84),
-  SimpleLiteralStn: __webpack_require__(85),
-  SwitchStn: __webpack_require__(86),
-  ThisStn: __webpack_require__(87),
-  ThrowStn: __webpack_require__(88),
-  TryStn: __webpack_require__(89),
-  UnaryOperatorStn: __webpack_require__(90),
-  UndefinedStn: __webpack_require__(91),
-  ValueStn: __webpack_require__(92)
+  FunctionDefinitionArgStn: __webpack_require__(56),
+  ImportBodyStn: __webpack_require__(57),
+  ImportStn: __webpack_require__(18),
+  RootStn: __webpack_require__(58),
+  StatementsStn: __webpack_require__(19),
+  StringStn: __webpack_require__(59),
+  SwitchWhenStn: __webpack_require__(60)
 });
 
 
@@ -6245,15 +6248,41 @@ module.exports.addModules({
 /* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(14);
+module.exports = __webpack_require__(24);
 
 module.exports.addModules({
-  AccessorStn: __webpack_require__(93),
-  ClassStn: __webpack_require__(94),
-  FunctionDefinitionStn: __webpack_require__(95),
-  FunctionInvocationStn: __webpack_require__(96),
-  ObjectLiteralAccessorStn: __webpack_require__(97),
-  SuperStn: __webpack_require__(98)
+  ArrayDestructuringStn: __webpack_require__(62),
+  ArraySpreadElementStn: __webpack_require__(63),
+  ArrayStn: __webpack_require__(64),
+  BinaryOperatorStn: __webpack_require__(65),
+  CatchStn: __webpack_require__(66),
+  ControlOperatorStn: __webpack_require__(67),
+  DestructuringAssignmentStn: __webpack_require__(68),
+  DestructuringIdentifierStn: __webpack_require__(69),
+  DoStn: __webpack_require__(70),
+  FunctionDefinitionArgsStn: __webpack_require__(71),
+  GlobalIdentifierStn: __webpack_require__(72),
+  IdentifierStn: __webpack_require__(73),
+  InterpolatedStringStn: __webpack_require__(74),
+  LabeledDestructuringTargetStn: __webpack_require__(75),
+  LetStn: __webpack_require__(76),
+  NewInstanceStn: __webpack_require__(77),
+  ObjectDestructuringStn: __webpack_require__(78),
+  ObjectPropNameStn: __webpack_require__(79),
+  ObjectPropValueStn: __webpack_require__(80),
+  ObjectStn: __webpack_require__(81),
+  ReferenceStn: __webpack_require__(82),
+  RegExpStn: __webpack_require__(83),
+  RequireStn: __webpack_require__(84),
+  SemanticTokenStn: __webpack_require__(85),
+  SimpleLiteralStn: __webpack_require__(86),
+  SwitchStn: __webpack_require__(87),
+  ThisStn: __webpack_require__(88),
+  ThrowStn: __webpack_require__(89),
+  TryStn: __webpack_require__(90),
+  UnaryOperatorStn: __webpack_require__(91),
+  UndefinedStn: __webpack_require__(92),
+  ValueStn: __webpack_require__(93)
 });
 
 
@@ -6261,11 +6290,15 @@ module.exports.addModules({
 /* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(24);
+module.exports = __webpack_require__(14);
 
 module.exports.addModules({
-  CaptureStn: __webpack_require__(99),
-  ComprehensionStn: __webpack_require__(100)
+  AccessorStn: __webpack_require__(94),
+  ClassStn: __webpack_require__(95),
+  FunctionDefinitionStn: __webpack_require__(96),
+  FunctionInvocationStn: __webpack_require__(97),
+  ObjectLiteralAccessorStn: __webpack_require__(98),
+  SuperStn: __webpack_require__(99)
 });
 
 
@@ -6276,30 +6309,42 @@ module.exports.addModules({
 module.exports = __webpack_require__(25);
 
 module.exports.addModules({
-  AssignmentStn: __webpack_require__(101)
+  CaptureStn: __webpack_require__(100),
+  ComprehensionStn: __webpack_require__(101)
 });
 
 
 /***/ }),
 /* 108 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("art-class-system");
+module.exports = __webpack_require__(26);
+
+module.exports.addModules({
+  AssignmentStn: __webpack_require__(102)
+});
+
 
 /***/ }),
 /* 109 */
 /***/ (function(module, exports) {
 
-module.exports = require("art-object-tree-factory");
+module.exports = require("art-class-system");
 
 /***/ }),
 /* 110 */
 /***/ (function(module, exports) {
 
-module.exports = require("caffeine-mc");
+module.exports = require("art-object-tree-factory");
 
 /***/ }),
 /* 111 */
+/***/ (function(module, exports) {
+
+module.exports = require("caffeine-mc");
+
+/***/ }),
+/* 112 */
 /***/ (function(module, exports) {
 
 module.exports = require("neptune-namespaces");

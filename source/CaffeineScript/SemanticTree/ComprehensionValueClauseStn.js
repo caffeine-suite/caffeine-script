@@ -1,18 +1,20 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let ComprehensionValueClauseStn;
-  return (ComprehensionValueClauseStn = Caf.defClass(
-    class ComprehensionValueClauseStn extends require("./BaseStn") {},
-    function(ComprehensionValueClauseStn, classSuper, instanceSuper) {
-      this.getter({
-        type: function() {
-          return this.props.type;
-        },
-        value: function() {
-          return this.labeledChildren.value;
-        }
-      });
-    }
-  ));
+  return (() => {
+    let ComprehensionValueClauseStn;
+    return (ComprehensionValueClauseStn = Caf.defClass(
+      class ComprehensionValueClauseStn extends require("./BaseStn") {},
+      function(ComprehensionValueClauseStn, classSuper, instanceSuper) {
+        this.getter({
+          type: function() {
+            return this.props.type;
+          },
+          value: function() {
+            return this.labeledChildren.value;
+          }
+        });
+      }
+    ));
+  })();
 });
