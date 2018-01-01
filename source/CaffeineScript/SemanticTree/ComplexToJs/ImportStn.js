@@ -42,28 +42,34 @@ Caf.defMod(module, () => {
             }
             ({ importBody } = this.labeledChildren);
             importFromList = arrayWithoutLast(this.children);
-            identifiersToImport = Object.keys(importBody.generateImportMap());
-            bodyJs = compactFlatten([
-              importBody.getAutoLets(),
-              importBody.toFunctionBodyJs(true)
-            ]).join("; ");
-            return identifiersToImport.length > 0
-              ? ((importsJs = compactFlatten([
-                  importFromCaptureIdentifier || "global",
-                  Caf.each(importFromList, [], (c, cafK, cafInto) => {
-                    cafInto.push(c.toJsExpression());
-                  })
-                ])),
-                `Caf.importInvoke(["${Caf.toString(
-                  identifiersToImport.join('", "')
-                )}"], ${Caf.toString(
-                  this._importFromCaptureIdentifier
-                    ? `${Caf.toString(this._importFromCaptureIdentifier)} = `
-                    : ""
-                )}[${Caf.toString(importsJs.join(", "))}], (${Caf.toString(
-                  identifiersToImport.join(", ")
-                )}) => {${Caf.toString(bodyJs)};})`)
-              : `(() => {${Caf.toString(bodyJs)};})()`;
+            return importBody
+              ? ((identifiersToImport = Object.keys(
+                  importBody.generateImportMap()
+                )),
+                (bodyJs = compactFlatten([
+                  importBody.getAutoLets(),
+                  importBody.toFunctionBodyJs(true)
+                ]).join("; ")),
+                identifiersToImport.length > 0
+                  ? ((importsJs = compactFlatten([
+                      importFromCaptureIdentifier || "global",
+                      Caf.each(importFromList, [], (c, cafK, cafInto) => {
+                        cafInto.push(c.toJsExpression());
+                      })
+                    ])),
+                    `Caf.importInvoke(["${Caf.toString(
+                      identifiersToImport.join('", "')
+                    )}"], ${Caf.toString(
+                      this._importFromCaptureIdentifier
+                        ? `${Caf.toString(
+                            this._importFromCaptureIdentifier
+                          )} = `
+                        : ""
+                    )}[${Caf.toString(importsJs.join(", "))}], (${Caf.toString(
+                      identifiersToImport.join(", ")
+                    )}) => {${Caf.toString(bodyJs)};})`)
+                  : `(() => {${Caf.toString(bodyJs)};})()`)
+              : "undefined";
           };
         }
       ));

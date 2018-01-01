@@ -34,26 +34,29 @@ class ImportStn extends &BaseStn
     {importBody} = @labeledChildren
     importFromList = arrayWithoutLast @children
 
-    identifiersToImport = Object.keys importBody.generateImportMap()
+    if importBody
+      identifiersToImport = Object.keys importBody.generateImportMap()
 
-    # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
-    bodyJs =
-      compactFlatten []
-        importBody.getAutoLets()
-        importBody.toFunctionBodyJs true
-      .join '; '
+      # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
+      bodyJs =
+        compactFlatten []
+          importBody.getAutoLets()
+          importBody.toFunctionBodyJs true
+        .join '; '
 
-    if identifiersToImport.length > 0
+      if identifiersToImport.length > 0
 
 
-      importsJs = compactFlatten []
-        importFromCaptureIdentifier || "global"
-        array c in importFromList with c.toJsExpression()
+        importsJs = compactFlatten []
+          importFromCaptureIdentifier || "global"
+          array c in importFromList with c.toJsExpression()
 
-      ""
-        Caf.importInvoke(["#{identifiersToImport.join '", "'}"],
-        #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}],
-        (#{identifiersToImport.join ', '}) => {#{bodyJs};})
+        ""
+          Caf.importInvoke(["#{identifiersToImport.join '", "'}"],
+          #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}],
+          (#{identifiersToImport.join ', '}) => {#{bodyJs};})
 
+      else
+        "" (() => {#{bodyJs};})()
     else
-      "" (() => {#{bodyJs};})()
+      "undefined"

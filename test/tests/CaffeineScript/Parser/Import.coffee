@@ -118,3 +118,5 @@ module.exports = suite: parseTestSuite {compileModule: true},
       return (() => {let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;})();
       "
 
+  bare:
+    "import global": applyModuleWrapper "return undefined;"
