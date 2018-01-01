@@ -22,28 +22,40 @@ class Preprocessors
   blockCommentStartRegexp = /(^|\n) *##/
   nonBlankLineRegexp = /[^ ]/
 
-  fixCommentLine = (lines, indentLevel, commentLineIndex, commentLineIndentLevel) ->
-    if commentLineIndex >= 0 && indentLevel != commentLineIndentLevel
-      # comment-indent is not normalized, fix it
-      [unindentedComment] = lines[commentLineIndex].match /[^\ ].*$/
-      # log fixCommentLine: {commentLineIndex, indentLevel, commentLineIndentLevel, unindentedComment, padding: getPadding(indentLevel)},
-      lines[commentLineIndex] = getPadding(indentLevel) + unindentedComment
+  fixCommentLines = (lines, indentLevel, commentLineIndex, stopIndex) ->
+    if commentLineIndex >= 0
+      indentChange = 0
+      padding = null
+      i = commentLineIndex
+      while i < stopIndex
+        line = lines[i]
+        if commentOnlyLine = lineWithOnlyCommentRegexp.test line
+          indentChange = indentLevel - getIndentLevel line
+          padding = if indentChange > 0 then getPadding indentChange else null
 
+        if indentChange != 0
+          lines[i] = if indentChange > 0
+            padding + line
+          else
+            line.slice -indentChange, line.length
+        i++
+
+  getIndentLevel = (line) -> line.search /[^\ ]/
   # find all lines which start with a comment and:
   #   fix there indentation to match the max indentation level
   #   of the previous and next non-comment, non-blank lines
-  # FUTURE - it would be nice to re-indent the full block-comment, but
-  #   currently we don't actually output these results, they just make
-  #   parsing work.
+  # FUTURE - this is ALMOST perfect, but, if there are lines that look like
+  #   comments inside block-comments, they get moved out of the block comment.
+  #   This shouldn't effect parsing, but it changes the comment.
+  #   This'll need to be fixed if we ever start outputting comments.
   @normalizeComments: (source) =>
     if lineWithOnlyCommentRegexp.test source
       previousIndentLevel = 0
       blockCommentIndentLevel = 0
       lastCommentLineStartIndex = -1
-      lastCommentLineIndentLevel = -1
       inBlockComment = false
       each line, i in lines = source.split "\n" when nonBlankLineRegexp.test line
-        indentLevel = line.search /[^\ ]/
+        indentLevel = getIndentLevel line
         inBlockComment = false if indentLevel <= blockCommentIndentLevel
         # log {}
         #   i
@@ -55,25 +67,25 @@ class Preprocessors
 
         unless inBlockComment
           if commentOnlyLine = lineWithOnlyCommentRegexp.test line
-            lastCommentLineStartIndex = i
-            lastCommentLineIndentLevel = indentLevel
+
+            lastCommentLineStartIndex = i unless lastCommentLineStartIndex >= 0
 
             if inBlockComment = blockCommentStartRegexp.test line
               blockCommentIndentLevel = indentLevel
 
           else # non-comment-line
             if lastCommentLineStartIndex >= 0
-              fixCommentLine
+              fixCommentLines
                 lines
                 max indentLevel, previousIndentLevel
                 lastCommentLineStartIndex
-                lastCommentLineIndentLevel
+                i
 
               lastCommentLineStartIndex = -1
 
             previousIndentLevel = indentLevel
 
-      fixCommentLine lines, previousIndentLevel, lastCommentLineStartIndex, lastCommentLineIndentLevel
+      fixCommentLines lines, previousIndentLevel, lastCommentLineStartIndex, lines.length
 
       lines.join '\n'
     else

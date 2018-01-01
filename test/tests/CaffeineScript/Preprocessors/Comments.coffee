@@ -1,12 +1,15 @@
 {generateTransformTests} = require './TestPreprocessorsHelper'
 {log} = require 'art-standard-lib'
-module.exports = suite: generateTransformTests Neptune.CaffeineScript.Preprocessors.normalizeComments,
+normalizeComments = (source) ->
+  out = Neptune.CaffeineScript.Preprocessors.normalizeComments source
+
+  # normalized doesn't change if normalized again
+  assert.eq out, Neptune.CaffeineScript.Preprocessors.normalizeComments out
+  out
+
+module.exports = suite: generateTransformTests normalizeComments,
 
   singleLine:
-    noop:
-      "a\n# b":     "a\n# b"
-      "# b\na":     "# b\na"
-      "a\n# b\nc":  "a\n# b\nc"
 
     minimal:
       """
@@ -36,48 +39,82 @@ module.exports = suite: generateTransformTests Neptune.CaffeineScript.Preprocess
         c
         """
 
+    sequences:
+      """
+      a
+        # b
+        # c
+      """: """
+        a
+        # b
+        # c
+        """
+
+      """
+      a
+        # b
+      # c
+      """: """
+        a
+        # b
+        # c
+        """
+
+      """
+      a
+        # b
+      # c
+        # d
+      """: """
+        a
+        # b
+        # c
+        # d
+        """
+      """
+      a
+      # b
+        # c
+          # d
+      """: """
+        a
+        # b
+        # c
+        # d
+        """
+      """
+      a
+      # b
+        # c
+      # d
+      """: """
+        a
+        # b
+        # c
+        # d
+        """
+
     inBlock:
-      noop:
-        """
-        if a
-          c
+
+      """
+      if a
           # b
-        """: """
-          if a
-            c
-            # b
-          """
-        """
+        c
+      """: """
         if a
           # b
           c
-        """: """
-          if a
-            # b
-            c
-          """
-
-
-      op:
         """
-        if a
-            # b
-          c
-        """: """
-          if a
-            # b
-            c
-          """
 
-        """
+      """
+      if a
+        c
+          # b
+      """: """
         if a
           c
-            # b
-        """: """
-          if a
-            c
-            # b
-          """
+          # b
+        """
 
   commentBlocks:
     minimal:
@@ -87,7 +124,7 @@ module.exports = suite: generateTransformTests Neptune.CaffeineScript.Preprocess
       a
       """: """
         ##
-            b
+          b
         a
         """
 
@@ -98,7 +135,7 @@ module.exports = suite: generateTransformTests Neptune.CaffeineScript.Preprocess
       """: """
         a
         ##
-            b
+          b
         """
 
     middle:
@@ -110,117 +147,66 @@ module.exports = suite: generateTransformTests Neptune.CaffeineScript.Preprocess
       """: """
         c
         ##
-            b
-        a
-        """
-
-    noop:
-      """
-      ##
-        b
-      a
-      """: """
-        ##
           b
         a
         """
 
-      """
-      a
-      ##
-        b
-      """: """
-        a
-        ##
-          b
-        """
-
-      """
-      c
-      ##
-        b
-      a
-      """: """
-        c
-        ##
-          b
-        a
-        """
 
     inBlock:
-      noop:
-        """
+      """
+      if a
+          ##
+            b
+        c
+      """: """
         if a
           ##
             b
           c
-        """: """
-          if a
-            ##
-              b
-            c
-          """
         """
-        if a
-          c
-          ##
-            b
-        """: """
-          if a
-            c
-            ##
-              b
-          """
 
+
+      """
+      if a
+        c
+          ##
+            b
+      """: """
+        if a
+          c
+          ##
+            b
         """
+
+      """
+      if a
+        c
+          ##
+            b
+        d
+      """: """
         if a
           c
           ##
             b
           d
-        """: """
-          if a
-            c
-            ##
-              b
-            d
-          """
-
-      op:
         """
-        if a
-            ##
-              b
-          c
-        """: """
-          if a
-            ##
-                b
-            c
-          """
 
-        """
-        if a
-          c
-            ##
-              b
-        """: """
-          if a
-            c
-            ##
-                b
-          """
 
-        """
-        if a
-          c
-            ##
-              b
-          d
-        """: """
-          if a
-            c
-            ##
-                b
-            d
-          """
+      # knownFailing
+      # """
+      # if a
+      #   c
+      #     ##
+      #       b
+      #         # c
+      #   d
+      # """: """
+      #   if a
+      #     c
+      #     ##
+      #       b
+      #         # c
+
+      #     d
+      #   """

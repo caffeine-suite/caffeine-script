@@ -15,7 +15,8 @@ Caf.defMod(module, () => {
             lineWithOnlyCommentRegexp,
             blockCommentStartRegexp,
             nonBlankLineRegexp,
-            fixCommentLine;
+            fixCommentLines,
+            getIndentLevel;
           mixedIndentationRegexp = /(^|\n)( +\t|\t+ )/;
           tabIndentationRegexp = /(^|\n)\t/;
           spaceIndentationRegexp = /(^|\n) /;
@@ -40,39 +41,56 @@ Caf.defMod(module, () => {
           lineWithOnlyCommentRegexp = /(^|\n) +#([^{\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/;
           blockCommentStartRegexp = /(^|\n) *##/;
           nonBlankLineRegexp = /[^ ]/;
-          fixCommentLine = function(
+          fixCommentLines = function(
             lines,
             indentLevel,
             commentLineIndex,
-            commentLineIndentLevel
+            stopIndex
           ) {
-            let unindentedComment;
-            return commentLineIndex >= 0 &&
-              indentLevel !== commentLineIndentLevel
-              ? (([unindentedComment] = lines[commentLineIndex].match(
-                  /[^\ ].*$/
-                )),
-                (lines[commentLineIndex] =
-                  getPadding(indentLevel) + unindentedComment))
+            let indentChange, padding, i, line, commentOnlyLine;
+            return commentLineIndex >= 0
+              ? ((indentChange = 0),
+                (padding = null),
+                (i = commentLineIndex),
+                (() => {
+                  while (i < stopIndex) {
+                    line = lines[i];
+                    if (
+                      (commentOnlyLine = lineWithOnlyCommentRegexp.test(line))
+                    ) {
+                      indentChange = indentLevel - getIndentLevel(line);
+                      padding =
+                        indentChange > 0 ? getPadding(indentChange) : null;
+                    }
+                    if (indentChange !== 0) {
+                      lines[i] =
+                        indentChange > 0
+                          ? padding + line
+                          : line.slice(-indentChange, line.length);
+                    }
+                    i++;
+                  }
+                })())
               : undefined;
+          };
+          getIndentLevel = function(line) {
+            return line.search(/[^\ ]/);
           };
           this.normalizeComments = source => {
             let previousIndentLevel,
               blockCommentIndentLevel,
               lastCommentLineStartIndex,
-              lastCommentLineIndentLevel,
               inBlockComment,
               lines;
             return lineWithOnlyCommentRegexp.test(source)
               ? ((previousIndentLevel = 0),
                 (blockCommentIndentLevel = 0),
                 (lastCommentLineStartIndex = -1),
-                (lastCommentLineIndentLevel = -1),
                 (inBlockComment = false),
                 Caf.each((lines = source.split("\n")), undefined, (line, i) => {
                   let indentLevel, commentOnlyLine;
                   if (nonBlankLineRegexp.test(line)) {
-                    indentLevel = line.search(/[^\ ]/);
+                    indentLevel = getIndentLevel(line);
                     if (indentLevel <= blockCommentIndentLevel) {
                       inBlockComment = false;
                     }
@@ -80,8 +98,9 @@ Caf.defMod(module, () => {
                       if (
                         (commentOnlyLine = lineWithOnlyCommentRegexp.test(line))
                       ) {
-                        lastCommentLineStartIndex = i;
-                        lastCommentLineIndentLevel = indentLevel;
+                        if (!(lastCommentLineStartIndex >= 0)) {
+                          lastCommentLineStartIndex = i;
+                        }
                         if (
                           (inBlockComment = blockCommentStartRegexp.test(line))
                         ) {
@@ -89,11 +108,11 @@ Caf.defMod(module, () => {
                         }
                       } else {
                         if (lastCommentLineStartIndex >= 0) {
-                          fixCommentLine(
+                          fixCommentLines(
                             lines,
                             max(indentLevel, previousIndentLevel),
                             lastCommentLineStartIndex,
-                            lastCommentLineIndentLevel
+                            i
                           );
                           lastCommentLineStartIndex = -1;
                         }
@@ -102,11 +121,11 @@ Caf.defMod(module, () => {
                     }
                   }
                 }),
-                fixCommentLine(
+                fixCommentLines(
                   lines,
                   previousIndentLevel,
                   lastCommentLineStartIndex,
-                  lastCommentLineIndentLevel
+                  lines.length
                 ),
                 lines.join("\n"))
               : source;

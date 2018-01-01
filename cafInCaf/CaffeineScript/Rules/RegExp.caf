@@ -12,9 +12,9 @@ import &StandardImport, &CaffeineEight, &StnRegistry
       matchthis
 
 regExpLiteral:
-  "regExpStart regExpMiddle regExpEnd regExpModifiers?"
-  "'///' regExpBlockModifiers regExpBlock? "
-  /// /// (?=$|\\n)
+  "" regExpStart regExpMiddle regExpEnd regExpModifiers?
+  "" '///' regExpBlockModifiers regExpBlock?
+  "" '///' ?/$|\\n/
   stnFactory: :RegExpStn
   stnProps:   ~>
     if @regExpMiddle

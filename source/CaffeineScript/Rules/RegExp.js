@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
       return {
         regExpLiteral: [
           "regExpStart regExpMiddle regExpEnd regExpModifiers?",
-          "'///' regExpBlockModifiers regExpBlock? ",
+          "'///' regExpBlockModifiers regExpBlock?",
           "'///' ?/$|\\n/",
           {
             stnFactory: "RegExpStn",
