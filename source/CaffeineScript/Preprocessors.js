@@ -38,7 +38,7 @@ Caf.defMod(module, () => {
             }
             return source.replace(/\t/g, " ");
           };
-          lineWithOnlyCommentRegexp = /(^|\n) +#([^{\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/;
+          lineWithOnlyCommentRegexp = /(^|\n) *#([^{\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/;
           blockCommentStartRegexp = /(^|\n) *##/;
           nonBlankLineRegexp = /[^ ]/;
           fixCommentLines = function(
@@ -47,26 +47,50 @@ Caf.defMod(module, () => {
             commentLineIndex,
             stopIndex
           ) {
-            let indentChange, padding, i, line, commentOnlyLine;
+            let indentChange,
+              padding,
+              blockCommentIndentLevel,
+              inBlockComment,
+              i,
+              line,
+              lineIndentLevel,
+              commentOnlyLine;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
                 (padding = null),
+                (blockCommentIndentLevel = -1),
+                (inBlockComment = false),
                 (i = commentLineIndex),
                 (() => {
                   while (i < stopIndex) {
                     line = lines[i];
-                    if (
-                      (commentOnlyLine = lineWithOnlyCommentRegexp.test(line))
-                    ) {
-                      indentChange = indentLevel - getIndentLevel(line);
-                      padding =
-                        indentChange > 0 ? getPadding(indentChange) : null;
-                    }
-                    if (indentChange !== 0) {
-                      lines[i] =
-                        indentChange > 0
-                          ? padding + line
-                          : line.slice(-indentChange, line.length);
+                    if (nonBlankLineRegexp.test(line)) {
+                      lineIndentLevel = getIndentLevel(line);
+                      if (lineIndentLevel <= blockCommentIndentLevel) {
+                        inBlockComment = false;
+                      }
+                      if (!inBlockComment) {
+                        if (
+                          (commentOnlyLine = lineWithOnlyCommentRegexp.test(
+                            line
+                          ))
+                        ) {
+                          indentChange = indentLevel - lineIndentLevel;
+                          padding =
+                            indentChange > 0 ? getPadding(indentChange) : null;
+                        }
+                        if (
+                          (inBlockComment = blockCommentStartRegexp.test(line))
+                        ) {
+                          blockCommentIndentLevel = lineIndentLevel;
+                        }
+                      }
+                      if (indentChange !== 0) {
+                        lines[i] =
+                          indentChange > 0
+                            ? padding + line
+                            : line.slice(-indentChange, line.length);
+                      }
                     }
                     i++;
                   }

@@ -2,9 +2,9 @@
 {log} = require 'art-standard-lib'
 normalizeComments = (source) ->
   out = Neptune.CaffeineScript.Preprocessors.normalizeComments source
-
-  # normalized doesn't change if normalized again
-  assert.eq out, Neptune.CaffeineScript.Preprocessors.normalizeComments out
+  # log "Verify normalize is stable...": {source, out}
+  assert.eq out, Neptune.CaffeineScript.Preprocessors.normalizeComments(out),
+    "normalized doesn't change if normalized again"
   out
 
 module.exports = suite: generateTransformTests normalizeComments,
@@ -210,3 +210,54 @@ module.exports = suite: generateTransformTests normalizeComments,
 
       #     d
       #   """
+
+  regressions:
+    """
+    ->
+      ## TODO - with "tap", this is just:
+        {parent} = @
+        while parent
+          if parent.type.match stnTypePattern
+            parent tap parent = null
+          else
+            parent extract parent
+
+        # - with "return", this is just:
+        {parent} = @
+        while parent
+          if parent.type.match stnTypePattern
+            return parent
+          else
+            parent extract parent
+
+        # recursion:
+        if parent.type.match stnTypePattern
+          parent
+        else
+          parent.findParent stnTypePattern
+
+    """: """
+      ->
+      ## TODO - with "tap", this is just:
+        {parent} = @
+        while parent
+          if parent.type.match stnTypePattern
+            parent tap parent = null
+          else
+            parent extract parent
+
+        # - with "return", this is just:
+        {parent} = @
+        while parent
+          if parent.type.match stnTypePattern
+            return parent
+          else
+            parent extract parent
+
+        # recursion:
+        if parent.type.match stnTypePattern
+          parent
+        else
+          parent.findParent stnTypePattern
+
+      """
