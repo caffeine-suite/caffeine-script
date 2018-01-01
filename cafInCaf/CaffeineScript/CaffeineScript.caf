@@ -58,8 +58,16 @@ compile: (source, options = {}) ->
         transformedStn.toJsModule()
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i
-      log.error
-        parseTree: parseTree
-        stn: stn
-        transformedStn: transformedStn
+      log.error CaffeineScriptBETA: {}
+        message:
+          """
+            Uh-oh! There was an internal error compiling your file. We'd love to fix it. Could you submit an issue with a copy of the code that won't compile?
+
+            Submit issues here: https://github.com/caffeine-suite/caffeine-script/issues
+
+            Sorry for the inconvenience. Thank you so much for trying CaffeineScript!
+        options
+        parseTree
+        stn
+        transformedStn
     throw e

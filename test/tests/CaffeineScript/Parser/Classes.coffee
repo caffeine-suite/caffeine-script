@@ -9,12 +9,13 @@ module.exports = suite: parseTestSuite
 
   new:
     basic:
-      "new Foo": "new Foo;"
-      "new Foo 1": "new Foo(1);"
-      "new Foo.Bar": "new Foo.Bar;"
+      "new Foo":        "new Foo;"
+      "new Foo 1":      "new Foo(1);"
+      "new Foo.Bar":    "new Foo.Bar;"
+      "(new Foo).Bar":  "(new Foo).Bar;"
 
     regressions:
-      "new &CaffeineEight 123":             knownFailing: "(new require('caffeine-eight'))(123)"
+      "new &CaffeineEight 123":             knownFailing: "new (require('caffeine-eight'))(123)"
       "new CaffeineEight 123":              "new CaffeineEight(123);"
 
       "new require('caffeine-eight') 123":  knownFailing: "(new require('caffeine-eight'))(123)"

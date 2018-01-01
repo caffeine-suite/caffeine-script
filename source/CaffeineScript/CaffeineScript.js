@@ -35,7 +35,16 @@ Caf.defMod(module, () => {
                     e.message.match(/parse|expect/i)
                   )
                 ) {
-                  log.error({ parseTree, stn, transformedStn });
+                  log.error({
+                    CaffeineScriptBETA: {
+                      message:
+                        "Uh-oh! There was an internal error compiling your file. We'd love to fix it. Could you submit an issue with a copy of the code that won't compile?\n\nSubmit issues here: https://github.com/caffeine-suite/caffeine-script/issues\n\nSorry for the inconvenience. Thank you so much for trying CaffeineScript!",
+                      options,
+                      parseTree,
+                      stn,
+                      transformedStn
+                    }
+                  });
                 }
                 return (() => {
                   throw e;
