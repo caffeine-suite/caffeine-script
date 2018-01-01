@@ -12,30 +12,26 @@ Caf.defMod(module, () => {
     Extensions => {
       return {
         regExpLiteral: [
+          "regExpStart regExpMiddle regExpEnd regExpModifiers?",
+          "'///' regExpBlockModifiers regExpBlock? ",
+          "'///' ?/$|\\n/",
           {
-            pattern: "regExpStart regExpMiddle regExpEnd regExpModifiers?",
             stnFactory: "RegExpStn",
             stnProps: function() {
-              let cafBase;
-              return {
-                value: this.regExpMiddle.toString(),
-                modifiers:
-                  Caf.exists((cafBase = this.regExpModifiers)) &&
-                  cafBase.toString()
-              };
-            }
-          },
-          {
-            pattern: "'///' regExpBlockModifiers regExpBlock ",
-            stnFactory: "RegExpStn",
-            stnProps: function() {
-              let cafBase, cafBase1;
-              return {
-                modifiers:
-                  Caf.exists((cafBase = this.regExpBlockModifiers)) &&
-                  (Caf.exists((cafBase1 = cafBase.regExpModifiers)) &&
-                    cafBase1.toString())
-              };
+              let cafBase, cafBase1, cafBase2;
+              return this.regExpMiddle
+                ? {
+                    value: this.regExpMiddle.toString(),
+                    modifiers:
+                      Caf.exists((cafBase = this.regExpModifiers)) &&
+                      cafBase.toString()
+                  }
+                : {
+                    modifiers:
+                      Caf.exists((cafBase1 = this.regExpBlockModifiers)) &&
+                      (Caf.exists((cafBase2 = cafBase1.regExpModifiers)) &&
+                        cafBase2.toString())
+                  };
             }
           }
         ],

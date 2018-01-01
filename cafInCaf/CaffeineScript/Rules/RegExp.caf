@@ -12,14 +12,15 @@ import &StandardImport, &CaffeineEight, &StnRegistry
       matchthis
 
 regExpLiteral:
-  {}
-    pattern:    "regExpStart regExpMiddle regExpEnd regExpModifiers?"
-    stnFactory: :RegExpStn
-    stnProps:   ~> value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
-  {}
-    pattern:    "'///' regExpBlockModifiers regExpBlock "
-    stnFactory: :RegExpStn
-    stnProps:   ~> modifiers: @regExpBlockModifiers?.regExpModifiers?.toString()
+  "regExpStart regExpMiddle regExpEnd regExpModifiers?"
+  "'///' regExpBlockModifiers regExpBlock? "
+  /// /// (?=$|\\n)
+  stnFactory: :RegExpStn
+  stnProps:   ~>
+    if @regExpMiddle
+      value: @regExpMiddle.toString(), modifiers: @regExpModifiers?.toString()
+    else
+      modifiers: @regExpBlockModifiers?.regExpModifiers?.toString()
 
 regExpBlockModifiers:
   :regExpModifiers

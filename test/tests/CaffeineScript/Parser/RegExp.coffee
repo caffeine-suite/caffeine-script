@@ -41,6 +41,7 @@ module.exports = suite: parseTestSuite
 
   multiline:
     basics:
+      "///":        "/(?:)/;"
       "/// hi":     "/hi/;"
       "///  hi":    "/hi/;"
       "///  hi//":  "/hi\\/\\//;"

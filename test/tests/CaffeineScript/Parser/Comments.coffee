@@ -133,7 +133,7 @@ module.exports = suite: parseTestSuite
       a
     """: "(function() {return a;});"
 
-  failures:
+  legitFailures:
     functions:
       """
       ->

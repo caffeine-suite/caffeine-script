@@ -17,7 +17,7 @@ class RegExpStn extends &BaseStn
           "${Caf.toString(#{child.toJsExpression()})}"
       .join ''
     else
-      value
+      value ? ""
 
     if str.length == 0
       "/(?:)/"

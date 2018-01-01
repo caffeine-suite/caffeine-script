@@ -20,23 +20,7 @@ class CaffeineScriptParser extends Parser
     else
       @rule mod
 
-  mixedIndentationRegexp = /(^|\n)( +\t|\t+ )/
-  tabIndentationRegexp = /(^|\n)\t/
-  spaceIndentationRegexp = /(^|\n) /
-
-  hasMixedIndentation: (source) ->
-    mixedIndentationRegexp.test source
-    || (tabIndentationRegexp.test(source) && spaceIndentationRegexp.test source)
-
-  normalizeIndentation: (source) ->
-    if @hasMixedIndentation source
-      e = new Error "file must only contain spaces OR tabs for indentation, not both"
-      e.failureIndex = 0 # make it look like a parse-error (TODO: HACK)
-      throw e
-
-    source.replace /\t/g, ' '
-
   parse: (source, options) ->
     super
-      @normalizeIndentation source
+      &Preprocessors.preprocess source
       options

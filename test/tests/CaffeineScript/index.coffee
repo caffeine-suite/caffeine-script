@@ -10,3 +10,4 @@ module.exports
   OperatorHelper: require './OperatorHelper'
   ParseFailure:   require './ParseFailure'  
 require './Parser'
+require './Preprocessors'

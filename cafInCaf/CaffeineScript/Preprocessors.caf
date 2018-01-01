@@ -1,0 +1,83 @@
+import &StandardImport
+
+class Preprocessors
+
+  mixedIndentationRegexp = /(^|\n)( +\t|\t+ )/
+  tabIndentationRegexp = /(^|\n)\t/
+  spaceIndentationRegexp = /(^|\n) /
+
+  @hasMixedIndentation: (source) =>
+    mixedIndentationRegexp.test source
+    || (tabIndentationRegexp.test(source) && spaceIndentationRegexp.test source)
+
+  @normalizeIndentation: (source) =>
+    if @hasMixedIndentation source
+      e = new Error "file must only contain spaces OR tabs for indentation, not both"
+      e.failureIndex = 0 # make it look like a parse-error (TODO: HACK)
+      throw e
+
+    source.replace /\t/g, ' '
+
+  lineWithOnlyCommentRegexp = /(^|\n) +#([^{\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/
+  blockCommentStartRegexp = /(^|\n) *##/
+  nonBlankLineRegexp = /[^ ]/
+
+  fixCommentLine = (lines, indentLevel, commentLineIndex, commentLineIndentLevel) ->
+    if commentLineIndex >= 0 && indentLevel != commentLineIndentLevel
+      # comment-indent is not normalized, fix it
+      [unindentedComment] = lines[commentLineIndex].match /[^\ ].*$/
+      # log fixCommentLine: {commentLineIndex, indentLevel, commentLineIndentLevel, unindentedComment, padding: getPadding(indentLevel)},
+      lines[commentLineIndex] = getPadding(indentLevel) + unindentedComment
+
+  # find all lines which start with a comment and:
+  #   fix there indentation to match the max indentation level
+  #   of the previous and next non-comment, non-blank lines
+  # FUTURE - it would be nice to re-indent the full block-comment, but
+  #   currently we don't actually output these results, they just make
+  #   parsing work.
+  @normalizeComments: (source) =>
+    if lineWithOnlyCommentRegexp.test source
+      previousIndentLevel = 0
+      blockCommentIndentLevel = 0
+      lastCommentLineStartIndex = -1
+      lastCommentLineIndentLevel = -1
+      inBlockComment = false
+      each line, i in lines = source.split "\n" when nonBlankLineRegexp.test line
+        indentLevel = line.search /[^\ ]/
+        inBlockComment = false if indentLevel <= blockCommentIndentLevel
+        # log {}
+        #   i
+        #   line
+        #   indentLevel
+        #   previousIndentLevel
+        #   inBlockComment
+        #   commentOnlyLine: lineWithOnlyCommentRegexp.test line
+
+        unless inBlockComment
+          if commentOnlyLine = lineWithOnlyCommentRegexp.test line
+            lastCommentLineStartIndex = i
+            lastCommentLineIndentLevel = indentLevel
+
+            if inBlockComment = blockCommentStartRegexp.test line
+              blockCommentIndentLevel = indentLevel
+
+          else # non-comment-line
+            if lastCommentLineStartIndex >= 0
+              fixCommentLine
+                lines
+                max indentLevel, previousIndentLevel
+                lastCommentLineStartIndex
+                lastCommentLineIndentLevel
+
+              lastCommentLineStartIndex = -1
+
+            previousIndentLevel = indentLevel
+
+      fixCommentLine lines, previousIndentLevel, lastCommentLineStartIndex, lastCommentLineIndentLevel
+
+      lines.join '\n'
+    else
+      source
+
+  @preprocess: (source) =>
+    @normalizeComments @normalizeIndentation source

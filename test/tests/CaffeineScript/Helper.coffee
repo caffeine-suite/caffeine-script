@@ -4,10 +4,15 @@
 require "colors"
 
 module.exports =
+
+
+  niceTest: niceTest = (testName, testFunction) ->
+    test testName.replace(/\t/g, "\\t").replace(/\n/g, "\\n"), testFunction
+
   parseToAst: (map) ->
     for k, v of map
       do (k, v) ->
-        test "ast: " + k.replace(/\n/g, "\\n"), ->
+        niceTest "ast: " + k.replace(/\n/g, "\\n"), ->
           p = CaffeineScriptParser.parse k, verbose: true
           assert.eq p.getStn(), v
 
@@ -27,7 +32,7 @@ module.exports =
         knownFailing = true
         skipKnownFailingTest
       else
-        test
+        niceTest
 
       expectFailure = !expectedJs?
 
@@ -105,7 +110,7 @@ module.exports =
     # log illegalSyntaxTests: {a}
     if isString source = a
       ->
-        test "illegal: #{source.replace(/\n/g, "\\n")}", ->
+        niceTest "illegal: #{source.replace(/\n/g, "\\n")}", ->
           assert.rejects ->
             CaffeineScriptParser.parse source
             .getStn()

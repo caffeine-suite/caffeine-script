@@ -35,7 +35,7 @@ Caf.defMod(module, () => {
                           )})}`
                     );
                   }).join(""))
-                : value;
+                : value != null ? value : "";
             return str.length === 0
               ? "/(?:)/"
               : hasInterpolation

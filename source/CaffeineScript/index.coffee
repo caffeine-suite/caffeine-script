@@ -10,6 +10,7 @@ module.exports
   JavaScriptReservedWords: require './JavaScriptReservedWords'
   Lib:                     require './Lib'                    
   OperatorHelper:          require './OperatorHelper'         
+  Preprocessors:           require './Preprocessors'          
   StandardImport:          require './StandardImport'         
   StnRegistry:             require './StnRegistry'            
 require './Rules'
