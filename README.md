@@ -55,7 +55,7 @@ npm install caffeine-script
 
 ### Learn More
 
-* [Wiki Home](https://github.com/shanebdavis/caffeine-script/wiki/Home)
+* [CaffeineScript Documentation Wiki](https://github.com/shanebdavis/caffeine-script/wiki/Home)
 * [Get Started](https://github.com/shanebdavis/caffeine-script/wiki/Get-Started)
 * [Benefits](https://github.com/shanebdavis/caffeine-script/wiki/Benefits)
 * [Highlights](https://github.com/shanebdavis/caffeine-script/wiki/Highlights)
