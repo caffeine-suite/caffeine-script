@@ -11,8 +11,8 @@ Further, JavaScript has many dangerous holes in its semantics which can introduc
 
 CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's semantics.
 
-### Less Code is Better Code 
-I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html). 
+### Less Code is Better Code
+I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html).
 
 > Full blog post on [Write Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
 
@@ -40,8 +40,8 @@ Related: [ArtSuite](https://github.com/imikimi/art-suite)
 
 A brief, interactive slideshow written in CaffeineScript
 
-* [View the Slideshow](https://shanebdavis.github.io/caffeine-script-demo)
-* [View or Clone the Slideshow's Source](https://github.com/shanebdavis/caffeine-script-demo/)
+* [View the Slideshow](https://caffeine-suite.github.io/caffeine-script-demo/)
+* [View or Clone the Slideshow's Source](https://github.com/caffeine-suite/caffeine-script-demo/)
 
 ### Status: BETA
 
