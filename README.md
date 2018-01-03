@@ -200,6 +200,12 @@ for (key in allProps) {
 }
 ```
 
+## What about TypeScript
+
+Is there interested in TypeScript support? If so, with some help, I could add it. CaffeineScript could easily support a modified TypeScript syntax for type annotation and integration into the TypeScript universe.
+
+[More on CaffeineScript and Static Typing](https://github.com/caffeine-suite/caffeine-script/wiki/Static-Typing])
+
 ## CaffeineScript and CoffeeScript
 
 I owe a debt of gratitude to Jeremy Ashkenas and the CoffeeScript community. It is my primary inspiration, and what the CaffeineScript compiler was originally written in. More on inspirations from CoffeeScript: [Coming from CoffeeScript](https://github.com/shanebdavis/caffeine-script/wiki/Coming-from-CoffeeScript).
