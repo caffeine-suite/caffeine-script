@@ -9,12 +9,13 @@ However, JavaScript has an ailing body. Even now, in 2018, JavaScript has major 
 
 Further, JavaScript has many dangerous holes in its semantics which can introduce subtle, hard to find bugs. They include [accidental globals](https://github.com/caffeine-suite/caffeine-script/wiki/Globals), [weakly-typed truth](https://github.com/caffeine-suite/caffeine-script/wiki/Caffeine-Truth), [weakly-typed equality](https://github.com/caffeine-suite/caffeine-script/wiki/Equality) and other [weakly-typed operators](https://github.com/caffeine-suite/caffeine-script/wiki/Operator-Overloading). Thankfully, the core JavaScript semantics are good, and these auxiliary semantics can be partially or fully fixed without changing JavaScript.
 
-CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's semantics.
+CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's [semantics](https://github.com/caffeine-suite/caffeine-script/wiki/Semantics).
 
 ### Less Code is Better Code
 I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html).
 
-> Full blog post on [Write Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+* My blog post on [Writing Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+* CaffeineScript requires 60/90% less code than JavaScript and 10/90% less code than CoffeeScript (average/[module-specific-code](https://github.com/caffeine-suite/caffeine-script/wiki/Streamlined-Modules) respectively). Examples below.
 
 If you love concise, bracket-less languages, I've got a beautifully designed one for you.
 
@@ -32,7 +33,45 @@ CaffeineScript starts where CoffeeScripts left off, fixing its shortcomings and 
 
 ### Example
 
+CaffeineScript:
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptDemo.png)
+
+JavaScript:
+```JavaScript
+"use strict";
+let Caf = require("caffeine-script-runtime");
+Caf.defMod(module, () => {
+  return Caf.importInvoke(
+    ["FluxComponent", "Element"],
+    [global, require("art-suite")],
+    (FluxComponent, Element) => {
+      let PlayerList;
+      return (PlayerList = Caf.defClass(
+        class PlayerList extends FluxComponent {},
+        function(PlayerList, classSuper, instanceSuper) {
+          this.subscriptions("players.currentPlayers");
+          this.prototype.render = function() {
+            return Element(
+              { childrenLayout: "column" },
+              Caf.each(
+                this.currentPlayers.sort((a, b) => {
+                  return b.score - a.score;
+                }),
+                [],
+                (player, cafK, cafInto) => {
+                  cafInto.push(
+                    require("./PlayerLine")(player, { key: player.name })
+                  );
+                }
+              )
+            );
+          };
+        }
+      ));
+    }
+  );
+});
+```
 
 Related: [ArtSuite](https://github.com/imikimi/art-suite)
 
