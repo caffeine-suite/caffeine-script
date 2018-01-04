@@ -200,7 +200,7 @@ for (key in allProps) {
 }
 ```
 
-## What about TypeScript
+## What about TypeScript?
 
 Is there interested in TypeScript support? If so, with some help, I could add it. CaffeineScript could easily support a modified TypeScript syntax for type annotation and integration into the TypeScript universe.
 
