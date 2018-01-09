@@ -193,23 +193,21 @@ module.exports = suite: generateTransformTests normalizeComments,
         """
 
 
-      # knownFailing
-      # """
-      # if a
-      #   c
-      #     ##
-      #       b
-      #         # c
-      #   d
-      # """: """
-      #   if a
-      #     c
-      #     ##
-      #       b
-      #         # c
-
-      #     d
-      #   """
+      """
+      if a
+        c
+          ##
+            b
+              # c
+        d
+      """: """
+        if a
+          c
+          ##
+            b
+              # c
+          d
+        """
 
   regressions:
     """

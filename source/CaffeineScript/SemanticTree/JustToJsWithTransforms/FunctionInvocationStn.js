@@ -43,14 +43,26 @@ Caf.defMod(module, () => {
                 return true;
               }
             });
-            this.prototype.toJs = function() {
-              let valueJs;
+            this.prototype.toJs = function(options) {
+              let newObjectFunctionInvocation, valueJs;
+              if (options) {
+                ({ newObjectFunctionInvocation } = options);
+              }
               if (this.existanceTest) {
                 throw new Error("can't be existanceTest here");
               }
-              return `${Caf.toString(
-                (valueJs = this.functionValue.toJsExpression())
-              )}${Caf.toString(
+              valueJs = this.functionValue.toJsExpression();
+              if (newObjectFunctionInvocation) {
+                if (
+                  !(
+                    this.functionValue.type === "Reference" ||
+                    this.functionValue.type === "GlobalIdentifier"
+                  )
+                ) {
+                  valueJs = `(${Caf.toString(valueJs)})`;
+                }
+              }
+              return `${Caf.toString(valueJs)}${Caf.toString(
                 this.applyRequiredParens(
                   Caf.each(this.argStns, [], (a, cafK, cafInto) => {
                     cafInto.push(a.toJsExpression());

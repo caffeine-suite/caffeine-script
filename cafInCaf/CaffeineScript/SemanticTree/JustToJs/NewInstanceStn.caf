@@ -3,7 +3,15 @@ import &StandardImport
 class NewInstanceStn extends &BaseStn
 
   toJs: (options) ->
+    [child] = @children
+    childJs =
+      switch child.type
+      when :FunctionInvocation, :Reference, :GlobalIdentifier
+        child.toJs newObjectFunctionInvocation: true
+      else
+        "(#{child.toJs()})"
+
     if options?.dotBase
-      "(new #{@childrenToJs()})"
+      "(new #{childJs})"
     else
-      "new #{@childrenToJs()}"
+      "new #{childJs}"

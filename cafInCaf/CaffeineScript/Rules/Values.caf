@@ -86,7 +86,8 @@ import &StandardImport, &CaffeineEight
 
   @rule
     value:
-      "valueBase blockValueExtension*"
+      "" valueBase blockValueExtension*"
+      "" newInstance valueExtension*
 
     valueBase:
       "" nonAssignableValue !accessorExtension
@@ -126,6 +127,27 @@ import &StandardImport, &CaffeineEight
 
     extendedFunctionInvocationExtension:
       "" accessorExtension* functionInvocationExtension
+
+  @rule
+    simpleNewValue:
+      :thisProperty
+      :globalIdentifier
+      :identifierReference
+      :require
+
+    newValue:
+      "" simpleNewValue accessorExtension*
+      "" parentheticalExpression accessorExtension*
+
+    explicitNewFunctionInvocation:
+      "newValue functionInvocationExtension"
+
+    # TODO: I think we need to convert this to a functionInvocation
+    #  i.e. functionInvocation can take an optional 'new ' at the start
+    newInstance:
+      "new _ explicitNewFunctionInvocation"
+      "new _ newValue"
+      stnFactory: :NewInstanceStn
 
   @rule
     parentheticalExpression: "" '(' _? expression _? ')'

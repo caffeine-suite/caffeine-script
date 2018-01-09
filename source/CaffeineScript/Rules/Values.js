@@ -7,7 +7,10 @@ Caf.defMod(module, () => {
     Extensions => {
       return function() {
         this.rule({
-          value: "valueBase blockValueExtension*",
+          value: [
+            'valueBase blockValueExtension*"',
+            "newInstance valueExtension*"
+          ],
           valueBase: [
             "nonAssignableValue !accessorExtension",
             "assignableValue assignmentExtension?"
@@ -40,6 +43,24 @@ Caf.defMod(module, () => {
           ],
           extendedFunctionInvocationExtension:
             "accessorExtension* functionInvocationExtension"
+        });
+        this.rule({
+          simpleNewValue: [
+            "thisProperty",
+            "globalIdentifier",
+            "identifierReference",
+            "require"
+          ],
+          newValue: [
+            "simpleNewValue accessorExtension*",
+            "parentheticalExpression accessorExtension*"
+          ],
+          explicitNewFunctionInvocation: "newValue functionInvocationExtension",
+          newInstance: [
+            "new _ explicitNewFunctionInvocation",
+            "new _ newValue",
+            { stnFactory: "NewInstanceStn" }
+          ]
         });
         this.rule({
           parentheticalExpression: "'(' _? expression _? ')'",

@@ -9,16 +9,33 @@ module.exports = suite: parseTestSuite
 
   new:
     basic:
-      "new Foo":        "new Foo;"
+      "new Fud":        "new Fud;"
       "new Foo 1":      "new Foo(1);"
-      "new Foo.Bar":    "new Foo.Bar;"
+      "new Foo.Bar":    "new (Foo.Bar);"
       "(new Foo).Bar":  "(new Foo).Bar;"
 
-    regressions:
-      "new &CaffeineEight 123":             knownFailing: "new (require('caffeine-eight'))(123)"
-      "new CaffeineEight 123":              "new CaffeineEight(123);"
+    withSmartRequire:
+      basic:
+        "new &CaffeineEight":                 "new (require('caffeine-eight'));"
+        "new &CaffeineEight 123":             "new (require('caffeine-eight'))(123);"
 
-      "new require('caffeine-eight') 123":  knownFailing: "(new require('caffeine-eight'))(123)"
+      withAccessor:
+        "new &CaffeineEight.foo":             "new (require('caffeine-eight').foo);"
+        "new (&CaffeineEight).foo":           "new (require('caffeine-eight').foo);"
+
+      withParenthesis:
+        "new &CaffeineEight().foo":           "(new (require('caffeine-eight'))()).foo;"
+        "(new &CaffeineEight).foo":           "(new (require('caffeine-eight'))).foo;"
+
+    regressions:
+        """
+        new Foo
+        .bar
+        """:             "(new Foo).bar;"
+
+    withLiteralRequire:
+      "new require('caffeine-eight').foo":  '(new require("caffeine-eight")).foo;'
+      "new require('caffeine-eight') 123":  'new require("caffeine-eight")(123);'
       "new require 'caffeine-eight' 123":   'new require("caffeine-eight", 123);'
       "new require 'caffeine-eight'":       'new require("caffeine-eight");'
 

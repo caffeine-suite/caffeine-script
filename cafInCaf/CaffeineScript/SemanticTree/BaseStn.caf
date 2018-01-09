@@ -142,8 +142,8 @@ class BaseStn extends BaseClass
   ############################################
     Unique to CafScript
 
-  childrenToJs: (joiner = '')->
-    array c in @children with c.toJs()
+  childrenToJs: (joiner = '', options)->
+    array c in @children with c.toJs options
     .join joiner
 
   ##

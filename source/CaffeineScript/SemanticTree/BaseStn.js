@@ -178,9 +178,9 @@ Caf.defMod(module, () => {
               );
               return a.length === 0 ? null : a;
             };
-            this.prototype.childrenToJs = function(joiner = "") {
+            this.prototype.childrenToJs = function(joiner = "", options) {
               return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs());
+                cafInto.push(c.toJs(options));
               }).join(joiner);
             };
             this.prototype.toJs = function(options) {

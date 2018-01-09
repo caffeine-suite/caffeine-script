@@ -25,17 +25,12 @@ upToButNotEol = /[^\n]*/y
       :destructuringAssignment
       :structuredLiteral
       :throwExpression
-      :newInstance
       :functionDefinition
       :value
 
     structuredLiteral:
       :object
       :array
-
-  @rule
-    newInstance: "new _ expressionWithoutBinOps"
-    {} stnFactory: :NewInstanceStn
 
   @rule
     incDecUnaryExpression:

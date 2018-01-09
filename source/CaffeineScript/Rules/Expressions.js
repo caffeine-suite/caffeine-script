@@ -31,16 +31,11 @@ Caf.defMod(module, () => {
               "destructuringAssignment",
               "structuredLiteral",
               "throwExpression",
-              "newInstance",
               "functionDefinition",
               "value"
             ],
             structuredLiteral: ["object", "array"]
           });
-          this.rule(
-            { newInstance: "new _ expressionWithoutBinOps" },
-            { stnFactory: "NewInstanceStn" }
-          );
           this.rule({
             incDecUnaryExpression: [
               "prefix:/\\+\\+|--/ assignableValue",
