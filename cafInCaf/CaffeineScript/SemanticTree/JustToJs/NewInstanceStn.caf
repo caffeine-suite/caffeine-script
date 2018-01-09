@@ -6,7 +6,7 @@ class NewInstanceStn extends &BaseStn
     [child] = @children
     childJs =
       switch child.type
-      when :FunctionInvocation, :Reference, :GlobalIdentifier
+      when :FunctionInvocation, :Reference, :GlobalIdentifier, :This
         child.toJs newObjectFunctionInvocation: true
       else
         "(#{child.toJs()})"

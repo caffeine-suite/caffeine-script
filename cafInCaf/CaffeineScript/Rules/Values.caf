@@ -130,6 +130,7 @@ import &StandardImport, &CaffeineEight
 
   @rule
     simpleNewValue:
+      :this
       :thisProperty
       :globalIdentifier
       :identifierReference

@@ -33,6 +33,14 @@ module.exports = suite: parseTestSuite
         .bar
         """:             "(new Foo).bar;"
 
+    withThisBase:
+      "new @":                  "new this;"
+      "new @ props, children":  "new this(props, children);"
+
+    withThisProp:
+      "new @foo":                  "new this.foo;"
+      "new @foo props, children":  "new this.foo(props, children);"
+
     withLiteralRequire:
       "new require('caffeine-eight').foo":  '(new require("caffeine-eight")).foo;'
       "new require('caffeine-eight') 123":  'new require("caffeine-eight")(123);'

@@ -28,7 +28,11 @@ class FunctionInvocationStn extends &AccessorChainStn
     valueJs = @functionValue.toJsExpression()
 
     if newObjectFunctionInvocation
-      valueJs = "(#{valueJs})" unless @functionValue.type == :Reference || @functionValue.type == :GlobalIdentifier
+      switch @functionValue.type
+      when :Reference, :GlobalIdentifier, :This
+        null
+      else
+        valueJs = "(#{valueJs})"
 
     "#{valueJs}#{@applyRequiredParens (array a in @argStns with a.toJsExpression()).join ', '}"
 

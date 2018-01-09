@@ -53,13 +53,14 @@ Caf.defMod(module, () => {
               }
               valueJs = this.functionValue.toJsExpression();
               if (newObjectFunctionInvocation) {
-                if (
-                  !(
-                    this.functionValue.type === "Reference" ||
-                    this.functionValue.type === "GlobalIdentifier"
-                  )
-                ) {
-                  valueJs = `(${Caf.toString(valueJs)})`;
+                switch (this.functionValue.type) {
+                  case "Reference":
+                  case "GlobalIdentifier":
+                  case "This":
+                    null;
+                    break;
+                  default:
+                    valueJs = `(${Caf.toString(valueJs)})`;
                 }
               }
               return `${Caf.toString(valueJs)}${Caf.toString(

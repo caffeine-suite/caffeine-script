@@ -14,6 +14,7 @@ Caf.defMod(module, () => {
               case "FunctionInvocation":
               case "Reference":
               case "GlobalIdentifier":
+              case "This":
                 return child.toJs({ newObjectFunctionInvocation: true });
               default:
                 return `(${Caf.toString(child.toJs())})`;

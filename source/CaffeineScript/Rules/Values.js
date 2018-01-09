@@ -46,6 +46,7 @@ Caf.defMod(module, () => {
         });
         this.rule({
           simpleNewValue: [
+            "this",
             "thisProperty",
             "globalIdentifier",
             "identifierReference",
