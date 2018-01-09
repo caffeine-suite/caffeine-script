@@ -286,9 +286,9 @@ Caf.defMod(module, () => {
               );
               return a.length === 0 ? null : a;
             };
-            this.prototype.childrenToJs = function(joiner = "") {
+            this.prototype.childrenToJs = function(joiner = "", options) {
               return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs());
+                cafInto.push(c.toJs(options));
               }).join(joiner);
             };
             this.prototype.toJs = function(options) {
@@ -2110,7 +2110,7 @@ __webpack_require__(109);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.48.8"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.48.10"}
 
 /***/ }),
 /* 30 */
@@ -2693,16 +2693,11 @@ Caf.defMod(module, () => {
               "destructuringAssignment",
               "structuredLiteral",
               "throwExpression",
-              "newInstance",
               "functionDefinition",
               "value"
             ],
             structuredLiteral: ["object", "array"]
           });
-          this.rule(
-            { newInstance: "new _ expressionWithoutBinOps" },
-            { stnFactory: "NewInstanceStn" }
-          );
           this.rule({
             incDecUnaryExpression: [
               "prefix:/\\+\\+|--/ assignableValue",
@@ -3639,7 +3634,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(for|yes|no|on|off|null|undefined|global|require|module|eval|this|true|false|super|instanceof|delete|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not)\b/,
+      reservedWord: /(for|yes|no|on|off|null|undefined|global|require|module|eval|this|true|false|super|instanceof|delete|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not|new)\b/,
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {
@@ -3732,7 +3727,10 @@ Caf.defMod(module, () => {
     Extensions => {
       return function() {
         this.rule({
-          value: "valueBase blockValueExtension*",
+          value: [
+            'valueBase blockValueExtension*"',
+            "newInstance valueExtension*"
+          ],
           valueBase: [
             "nonAssignableValue !accessorExtension",
             "assignableValue assignmentExtension?"
@@ -3765,6 +3763,25 @@ Caf.defMod(module, () => {
           ],
           extendedFunctionInvocationExtension:
             "accessorExtension* functionInvocationExtension"
+        });
+        this.rule({
+          simpleNewValue: [
+            "this",
+            "thisProperty",
+            "globalIdentifier",
+            "identifierReference",
+            "require"
+          ],
+          newValue: [
+            "simpleNewValue accessorExtension*",
+            "parentheticalExpression accessorExtension*"
+          ],
+          explicitNewFunctionInvocation: "newValue functionInvocationExtension",
+          newInstance: [
+            "new _ explicitNewFunctionInvocation",
+            "new _ newValue",
+            { stnFactory: "NewInstanceStn" }
+          ]
         });
         this.rule({
           parentheticalExpression: "'(' _? expression _? ')'",
@@ -4914,9 +4931,22 @@ Caf.defMod(module, () => {
       class NewInstanceStn extends __webpack_require__(2) {},
       function(NewInstanceStn, classSuper, instanceSuper) {
         this.prototype.toJs = function(options) {
+          let child, childJs;
+          [child] = this.children;
+          childJs = (() => {
+            switch (child.type) {
+              case "FunctionInvocation":
+              case "Reference":
+              case "GlobalIdentifier":
+              case "This":
+                return child.toJs({ newObjectFunctionInvocation: true });
+              default:
+                return `(${Caf.toString(child.toJs())})`;
+            }
+          })();
           return Caf.exists(options) && options.dotBase
-            ? `(new ${Caf.toString(this.childrenToJs())})`
-            : `new ${Caf.toString(this.childrenToJs())}`;
+            ? `(new ${Caf.toString(childJs)})`
+            : `new ${Caf.toString(childJs)}`;
         };
       }
     ));
@@ -6120,14 +6150,27 @@ Caf.defMod(module, () => {
                 return true;
               }
             });
-            this.prototype.toJs = function() {
-              let valueJs;
+            this.prototype.toJs = function(options) {
+              let newObjectFunctionInvocation, valueJs;
+              if (options) {
+                ({ newObjectFunctionInvocation } = options);
+              }
               if (this.existanceTest) {
                 throw new Error("can't be existanceTest here");
               }
-              return `${Caf.toString(
-                (valueJs = this.functionValue.toJsExpression())
-              )}${Caf.toString(
+              valueJs = this.functionValue.toJsExpression();
+              if (newObjectFunctionInvocation) {
+                switch (this.functionValue.type) {
+                  case "Reference":
+                  case "GlobalIdentifier":
+                  case "This":
+                    null;
+                    break;
+                  default:
+                    valueJs = `(${Caf.toString(valueJs)})`;
+                }
+              }
+              return `${Caf.toString(valueJs)}${Caf.toString(
                 this.applyRequiredParens(
                   Caf.each(this.argStns, [], (a, cafK, cafInto) => {
                     cafInto.push(a.toJsExpression());
