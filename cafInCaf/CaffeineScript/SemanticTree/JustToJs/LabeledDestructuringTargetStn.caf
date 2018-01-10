@@ -2,5 +2,8 @@ import &StandardImport
 
 class LabeledDestructuringTargetStn extends &BaseStn
 
-  toJs: ->
-    @childrenToJs ': '
+  toJs: (options)->
+    if options?.restructuring
+      @children[1].toJs options
+    else
+      @childrenToJs ': '

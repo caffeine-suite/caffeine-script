@@ -253,3 +253,7 @@ module.exports = suite: parseTestSuite
 
     failures:
       "array v into b into a": null
+
+  destructuring:
+    "array {id} from users":         "Caf.each(users, [], ({id}, cafK, cafInto) => {cafInto.push({id});});"
+    "array {id} from users with id": "Caf.each(users, [], ({id}, cafK, cafInto) => {cafInto.push(id);});"

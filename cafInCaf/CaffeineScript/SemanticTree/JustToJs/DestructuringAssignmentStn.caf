@@ -3,6 +3,11 @@ import &StandardImport
 
 class DestructuringAssignmentStn extends &BaseStn
 
-  toJs: ->
+  toJs: (options)->
+    {expression} = options if options
     {structure, value} = @labeledChildren
-    "(#{structure.toJs()} = #{value.toJsExpression()})"
+
+    if expression
+      "(#{structure.toJs()} = #{value.toJsExpression()}, #{structure.toJs restructuringStart: true})"
+    else
+      "(#{structure.toJs()} = #{value.toJsExpression()})"

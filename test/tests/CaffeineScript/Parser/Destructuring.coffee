@@ -24,6 +24,34 @@ module.exports = suite: parseTestSuite
     "[a...] = c":     "let a; ([...a] = c);"
     "[a, b ...] = c": "let a, b; ([a, ...b] = c);"
 
+  restructuring: # postAssignment
+    object:
+      basic:
+        "a = {b} = c":        "let a, b; a = ({b} = c, {b});"
+      defaults:
+        "a = {b = 2} = c":    "let a, b; a = ({b = 2} = c, {b});"
+      labeled:
+        "a = {b:d} = c":      "let a, d; a = ({b: d} = c, {d});"
+      nested:
+        "a = {b:[d]} = c":      "let a, d; a = ({b: [d]} = c, {d});"
+        "a = {b:{d}} = c":      "let a, d; a = ({b: {d}} = c, {d});"
+        "a = {b1:{d1, d2}, b2:[d3, d4]} = c":
+          "let a, d1, d2, d3, d4; a = ({b1: {d1, d2}, b2: [d3, d4]} = c, {d1, d2, d3, d4});"
+
+    array:
+      basic:
+        "a = [b] = c":        "let a, b; a = ([b] = c, [b]);"
+      defaults:
+        "a = [b = 2] = c":    "let a, b; a = ([b = 2] = c, [b]);"
+      ellipsis:
+        "a = [b...] = c":       "let a, b; a = ([...b] = c, [b]);"
+        "a = [b1, b2...] = c":  "let a, b1, b2; a = ([b1, ...b2] = c, [b1, b2]);"
+      nested:
+        "a = [[d]] = c":      "let a, d; a = ([[d]] = c, [d]);"
+        "a = [{d}] = c":      "let a, d; a = ([{d}] = c, [d]);"
+        "a = [{d1, d2}, [d3, d4], d5...] = c":
+          "let a, d1, d2, d3, d4, d5; a = ([{d1, d2}, [d3, d4], ...d5] = c, [d1, d2, d3, d4, d5]);"
+
   nesting:
     array:
       "[{a}] = b":    "let a; ([{a}] = b);"
@@ -37,12 +65,18 @@ module.exports = suite: parseTestSuite
       "{[a]} = b":    null
       "{{a}} = b":    null
 
-  inLists:
+  expressions:
     """
     a = if b
       c
       {d} = e
-    """: "let a, d; a = b ? (c, ({d} = e)) : undefined;"
+    """: "let a, d; a = b ? (c, ({d} = e, {d})) : undefined;"
+
+    """
+    a =
+      c
+      {d} = e
+    """: "let a, d; a = [c, ({d} = e, {d})];"
 
   regressions:
     "{a} = if true\n 1": "let a; ({a} = true ? 1 : undefined);"

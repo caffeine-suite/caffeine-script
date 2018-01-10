@@ -13,16 +13,19 @@ Caf.defMod(module, () => {
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
-        this.prototype.toJs = function() {
-          let identifier, destructuringDefault;
+        this.prototype.toJs = function(options = {}) {
+          let restructuring, identifier, destructuringDefault;
+          ({ restructuring } = options);
           ({ identifier, destructuringDefault } = this.labeledChildren);
-          return `${Caf.toString(
-            this.props.ellipsis ? "..." : ""
-          )}${Caf.toString(identifier.toJs())}${Caf.toString(
-            destructuringDefault
-              ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
-              : ""
-          )}`;
+          return restructuring
+            ? identifier.toJs()
+            : `${Caf.toString(this.props.ellipsis ? "..." : "")}${Caf.toString(
+                identifier.toJs()
+              )}${Caf.toString(
+                destructuringDefault
+                  ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
+                  : ""
+              )}`;
         };
       }
     ));

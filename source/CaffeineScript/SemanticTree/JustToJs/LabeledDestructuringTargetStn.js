@@ -6,8 +6,10 @@ Caf.defMod(module, () => {
     return (LabeledDestructuringTargetStn = Caf.defClass(
       class LabeledDestructuringTargetStn extends require("../BaseStn") {},
       function(LabeledDestructuringTargetStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          return this.childrenToJs(": ");
+        this.prototype.toJs = function(options) {
+          return Caf.exists(options) && options.restructuring
+            ? this.children[1].toJs(options)
+            : this.childrenToJs(": ");
         };
       }
     ));
