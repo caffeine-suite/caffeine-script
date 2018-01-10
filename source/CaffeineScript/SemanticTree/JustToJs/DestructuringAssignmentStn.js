@@ -7,11 +7,14 @@ Caf.defMod(module, () => {
       class DestructuringAssignmentStn extends require("../BaseStn") {},
       function(DestructuringAssignmentStn, classSuper, instanceSuper) {
         this.prototype.toJs = function(options) {
-          let expression, structure, value;
+          let expression, returnValueIsIgnored, structure, value;
           if (options) {
-            ({ expression } = options);
+            ({ expression, returnValueIsIgnored } = options);
           }
           ({ structure, value } = this.labeledChildren);
+          if (returnValueIsIgnored) {
+            expression = false;
+          }
           return expression
             ? `(${Caf.toString(structure.toJs())} = ${Caf.toString(
                 value.toJsExpression()

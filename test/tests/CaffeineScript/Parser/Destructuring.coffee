@@ -72,11 +72,18 @@ module.exports = suite: parseTestSuite
       {d} = e
     """: "let a, d; a = b ? (c, ({d} = e, {d})) : undefined;"
 
+    # """
+    # a =
+    #   c
+    #   {d} = e
+    # """: "let a, d; a = [c, ({d} = e, {d})];"
+
+  statements:
     """
-    a =
-      c
-      {d} = e
-    """: "let a, d; a = [c, ({d} = e, {d})];"
+    a = if b
+      {d} = c
+      d
+    """: "let a, d; a = b ? (({d} = c), d) : undefined;"
 
   regressions:
     "{a} = if true\n 1": "let a; ({a} = true ? 1 : undefined);"

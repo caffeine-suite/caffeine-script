@@ -40,11 +40,13 @@ Caf.defMod(module, () => {
           return Caf.each((lines = this.children), [], (c, i, cafInto) => {
             let statement;
             cafInto.push(
-              returnAction && i === lines.length - 1
+              returnAction != null && i === lines.length - 1
                 ? !c.jsExpressionUsesReturn
-                  ? `${Caf.toString(returnAction)} ${Caf.toString(
-                      c.toJsExpression()
-                    )}`
+                  ? returnAction.length > 0
+                    ? `${Caf.toString(returnAction)} ${Caf.toString(
+                        c.toJsExpression()
+                      )}`
+                    : c.toJsExpression()
                   : c.toJs({ generateReturnStatement: true })
                 : generateStatements
                   ? ((statement = c.toJs({ statement: true })),

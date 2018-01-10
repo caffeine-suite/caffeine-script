@@ -4,8 +4,10 @@ import &StandardImport
 class DestructuringAssignmentStn extends &BaseStn
 
   toJs: (options)->
-    {expression} = options if options
+    {expression, returnValueIsIgnored} = options if options
     {structure, value} = @labeledChildren
+
+    expression = false if returnValueIsIgnored
 
     if expression
       "(#{structure.toJs()} = #{value.toJsExpression()}, #{structure.toJs restructuringStart: true})"

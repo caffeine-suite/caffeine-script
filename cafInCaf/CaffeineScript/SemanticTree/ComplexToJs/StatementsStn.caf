@@ -30,9 +30,12 @@ class StatementsStn extends &BaseStn
       returnAction = :return
 
     array c, i in lines = @children
-      if returnAction && i == lines.length - 1
+      if returnAction? && i == lines.length - 1
         if !c.jsExpressionUsesReturn
-          "#{returnAction} #{c.toJsExpression()}"
+          if returnAction.length > 0
+            "#{returnAction} #{c.toJsExpression()}"
+          else
+            c.toJsExpression()
         else c.toJs generateReturnStatement: true
 
       else
