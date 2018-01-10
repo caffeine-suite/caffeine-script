@@ -13,9 +13,11 @@ Caf.defMod(module, () => {
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
-        this.prototype.toJs = function(options = {}) {
+        this.prototype.toJs = function(options) {
           let restructuring, identifier, destructuringDefault;
-          ({ restructuring } = options);
+          if (options) {
+            ({ restructuring } = options);
+          }
           ({ identifier, destructuringDefault } = this.labeledChildren);
           return restructuring
             ? identifier.toJs()

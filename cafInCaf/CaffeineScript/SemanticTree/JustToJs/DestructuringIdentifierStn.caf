@@ -9,8 +9,8 @@ class DestructuringIdentifierStn extends &BaseStn
 
   # TODO: check that etc is only used on the last element of an array destructure - javascript limitations
 
-  toJs: (options = {})->
-    {restructuring} = options
+  toJs: (options)->
+    {restructuring} = options if options
 
     {identifier, destructuringDefault} = @labeledChildren
     if restructuring
