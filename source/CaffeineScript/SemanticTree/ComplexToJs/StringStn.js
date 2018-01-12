@@ -2,29 +2,27 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    [
-      "escapeJavascriptString",
-      "deescapeSpaces",
-      "escapeUnescaped",
-      "escapeMustEscapes"
-    ],
+    ["deescapeSpaces", "escapeUnescaped", "escapeMustEscapes"],
     [global, require("../../StandardImport"), require("../../Lib")],
-    (
-      escapeJavascriptString,
-      deescapeSpaces,
-      escapeUnescaped,
-      escapeMustEscapes
-    ) => {
+    (deescapeSpaces, escapeUnescaped, escapeMustEscapes) => {
       let StringStn;
       return (StringStn = Caf.defClass(
         class StringStn extends require("../BaseStn") {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toJs = function(options) {
-            let out;
-            out = escapeJavascriptString(deescapeSpaces(this.value)).replace(
-              /\\\\/g,
-              "\\"
-            );
+            let base, quotes, singleCount, doubleCount, out;
+            base = deescapeSpaces(this.value);
+            quotes = /"/.test(base)
+              ? "'"
+              : /'/.test(base)
+                ? ((singleCount = base.split("'").length - 1),
+                  (doubleCount = base.split('"').length - 1),
+                  doubleCount <= singleCount ? '"' : "'")
+                : '"';
+            out =
+              quotes +
+              escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +
+              quotes;
             return Caf.exists(options) && options.dotBase
               ? `(${Caf.toString(out)})`
               : out;

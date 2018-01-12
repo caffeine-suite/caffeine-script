@@ -21,9 +21,9 @@ Caf.defMod(module, () => {
             singleQuote: /'/,
             interpolationStart: /\#\{/,
             interpolationEnd: /\}/,
-            dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
-            sqStringMiddle: /([^'\\#]|\\.|\#(?!\{))*/,
-            blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
+            dqStringMiddle: /([^"\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+            sqStringMiddle: /([^'\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+            blockStringMiddle: /([^\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/
           });
           this.rule({
             stringLiteral: [

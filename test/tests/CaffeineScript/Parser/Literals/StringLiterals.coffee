@@ -242,6 +242,30 @@ module.exports = suite: parseTestSuite
             '''
 
       escapes:
+        null:
+          "'foo\\0hi'": '"foo\\0hi";'
+
+        octal:
+          "'foo\\01hi'": '"foo\\01hi";'
+          "'foo\\012hi'": '"foo\\012hi";'
+          "'foo\\12hi'": '"foo\\12hi";'
+          "'foo\\123hi'": '"foo\\123hi";'
+
+        hex:
+          "'foo\\xabhi'": '"foo\\xabhi";'
+
+        unicode:
+          "'foo\\ubeefhi'":   '"foo\\ubeefhi";'
+          "'foo\\u{b}hi'":    '"foo\\u{b}hi";'
+          "'foo\\u{beef}hi'": '"foo\\u{beef}hi";'
+
+        regressions:
+          """
+          'a"b\\'c'
+          """: """
+            'a"b\\'c';
+            """
+
         escapedNewLines:
           """
           ""
