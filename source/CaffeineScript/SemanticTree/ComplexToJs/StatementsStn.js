@@ -34,9 +34,16 @@ Caf.defMod(module, () => {
           generateStatements = true
         ) {
           let lines;
-          if (returnAction === true) {
-            returnAction = "return";
-          }
+          returnAction = (() => {
+            switch (returnAction) {
+              case true:
+                return (returnAction = "return");
+              case false:
+                return null;
+              default:
+                return returnAction;
+            }
+          })();
           return Caf.each((lines = this.children), [], (c, i, cafInto) => {
             let statement;
             cafInto.push(

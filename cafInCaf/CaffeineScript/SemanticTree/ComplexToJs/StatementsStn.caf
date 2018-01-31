@@ -26,8 +26,10 @@ class StatementsStn extends &BaseStn
   ###########
     PRIVATE
   _getChildrenStatementsJsArray: (returnAction, generateStatements = true)->
-    if returnAction == true
-      returnAction = :return
+    returnAction = switch returnAction
+    when true then returnAction = :return
+    when false then null
+    else returnAction
 
     array c, i in lines = @children
       if returnAction? && i == lines.length - 1

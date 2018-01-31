@@ -216,6 +216,13 @@ module.exports = suite: parseTestSuite
       return (cafRet = bar ? baz : undefined)
       && (cafBrk(), cafRet);});"
 
+
+    """
+    each mod
+      if bar
+        foo
+    """: "Caf.each(mod, undefined, () => {if (bar) {foo;};});"
+
   parameterNameRegressions:
 
     "object k from b":    "Caf.each(b, {}, (k, cafK, cafInto) => {cafInto[cafK] = k;});"
