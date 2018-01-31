@@ -1837,17 +1837,26 @@ Caf.defMod(module, () => {
           generateStatements = true
         ) {
           let lines;
-          if (returnAction === true) {
-            returnAction = "return";
-          }
+          returnAction = (() => {
+            switch (returnAction) {
+              case true:
+                return (returnAction = "return");
+              case false:
+                return null;
+              default:
+                return returnAction;
+            }
+          })();
           return Caf.each((lines = this.children), [], (c, i, cafInto) => {
             let statement;
             cafInto.push(
-              returnAction && i === lines.length - 1
+              returnAction != null && i === lines.length - 1
                 ? !c.jsExpressionUsesReturn
-                  ? `${Caf.toString(returnAction)} ${Caf.toString(
-                      c.toJsExpression()
-                    )}`
+                  ? returnAction.length > 0
+                    ? `${Caf.toString(returnAction)} ${Caf.toString(
+                        c.toJsExpression()
+                      )}`
+                    : c.toJsExpression()
                   : c.toJs({ generateReturnStatement: true })
                 : generateStatements
                   ? ((statement = c.toJs({ statement: true })),
@@ -2110,7 +2119,7 @@ __webpack_require__(109);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.48.10"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.49.3"}
 
 /***/ }),
 /* 30 */
@@ -3446,9 +3455,9 @@ Caf.defMod(module, () => {
             singleQuote: /'/,
             interpolationStart: /\#\{/,
             interpolationEnd: /\}/,
-            dqStringMiddle: /([^"\\#]|\\.|\#(?!\{))*/,
-            sqStringMiddle: /([^'\\#]|\\.|\#(?!\{))*/,
-            blockStringMiddle: /([^\\#]|\\.|\#(?!\{))*/
+            dqStringMiddle: /([^"\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+            sqStringMiddle: /([^'\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+            blockStringMiddle: /([^\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/
           });
           this.rule({
             stringLiteral: [
@@ -4046,29 +4055,27 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    [
-      "escapeJavascriptString",
-      "deescapeSpaces",
-      "escapeUnescaped",
-      "escapeMustEscapes"
-    ],
+    ["deescapeSpaces", "escapeUnescaped", "escapeMustEscapes"],
     [global, __webpack_require__(3), __webpack_require__(8)],
-    (
-      escapeJavascriptString,
-      deescapeSpaces,
-      escapeUnescaped,
-      escapeMustEscapes
-    ) => {
+    (deescapeSpaces, escapeUnescaped, escapeMustEscapes) => {
       let StringStn;
       return (StringStn = Caf.defClass(
         class StringStn extends __webpack_require__(2) {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toJs = function(options) {
-            let out;
-            out = escapeJavascriptString(deescapeSpaces(this.value)).replace(
-              /\\\\/g,
-              "\\"
-            );
+            let base, quotes, singleCount, doubleCount, out;
+            base = deescapeSpaces(this.value);
+            quotes = /"/.test(base)
+              ? "'"
+              : /'/.test(base)
+                ? ((singleCount = base.split("'").length - 1),
+                  (doubleCount = base.split('"').length - 1),
+                  doubleCount <= singleCount ? '"' : "'")
+                : '"';
+            out =
+              quotes +
+              escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +
+              quotes;
             return Caf.exists(options) && options.dotBase
               ? `(${Caf.toString(out)})`
               : out;
@@ -4195,8 +4202,17 @@ Caf.defMod(module, () => {
     return (ArrayDestructuringStn = Caf.defClass(
       class ArrayDestructuringStn extends __webpack_require__(2) {},
       function(ArrayDestructuringStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          return `[${Caf.toString(this.childrenToJs(", "))}]`;
+        this.prototype.toJs = function(options) {
+          let restructuring, restructuringStart, subOptions;
+          if (options) {
+            ({ restructuring, restructuringStart } = options);
+          }
+          if (restructuringStart || restructuring) {
+            subOptions = { restructuring: true };
+          }
+          return restructuring
+            ? `${Caf.toString(this.childrenToJs(", ", subOptions))}`
+            : `[${Caf.toString(this.childrenToJs(", ", subOptions))}]`;
         };
       }
     ));
@@ -4619,12 +4635,24 @@ Caf.defMod(module, () => {
     return (DestructuringAssignmentStn = Caf.defClass(
       class DestructuringAssignmentStn extends __webpack_require__(2) {},
       function(DestructuringAssignmentStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          let structure, value;
+        this.prototype.toJs = function(options) {
+          let expression, returnValueIsIgnored, structure, value;
+          if (options) {
+            ({ expression, returnValueIsIgnored } = options);
+          }
           ({ structure, value } = this.labeledChildren);
-          return `(${Caf.toString(structure.toJs())} = ${Caf.toString(
-            value.toJsExpression()
-          )})`;
+          if (returnValueIsIgnored) {
+            expression = false;
+          }
+          return expression
+            ? `(${Caf.toString(structure.toJs())} = ${Caf.toString(
+                value.toJsExpression()
+              )}, ${Caf.toString(
+                structure.toJs({ restructuringStart: true })
+              )})`
+            : `(${Caf.toString(structure.toJs())} = ${Caf.toString(
+                value.toJsExpression()
+              )})`;
         };
       }
     ));
@@ -4653,16 +4681,21 @@ Caf.defMod(module, () => {
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
-        this.prototype.toJs = function() {
-          let identifier, destructuringDefault;
+        this.prototype.toJs = function(options) {
+          let restructuring, identifier, destructuringDefault;
+          if (options) {
+            ({ restructuring } = options);
+          }
           ({ identifier, destructuringDefault } = this.labeledChildren);
-          return `${Caf.toString(
-            this.props.ellipsis ? "..." : ""
-          )}${Caf.toString(identifier.toJs())}${Caf.toString(
-            destructuringDefault
-              ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
-              : ""
-          )}`;
+          return restructuring
+            ? identifier.toJs()
+            : `${Caf.toString(this.props.ellipsis ? "..." : "")}${Caf.toString(
+                identifier.toJs()
+              )}${Caf.toString(
+                destructuringDefault
+                  ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
+                  : ""
+              )}`;
         };
       }
     ));
@@ -4872,8 +4905,10 @@ Caf.defMod(module, () => {
     return (LabeledDestructuringTargetStn = Caf.defClass(
       class LabeledDestructuringTargetStn extends __webpack_require__(2) {},
       function(LabeledDestructuringTargetStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          return this.childrenToJs(": ");
+        this.prototype.toJs = function(options) {
+          return Caf.exists(options) && options.restructuring
+            ? this.children[1].toJs(options)
+            : this.childrenToJs(": ");
         };
       }
     ));
@@ -4968,8 +5003,17 @@ Caf.defMod(module, () => {
     return (ObjectDestructuringStn = Caf.defClass(
       class ObjectDestructuringStn extends __webpack_require__(2) {},
       function(ObjectDestructuringStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          return `{${Caf.toString(this.childrenToJs(", "))}}`;
+        this.prototype.toJs = function(options) {
+          let restructuring, restructuringStart, subOptions;
+          if (options) {
+            ({ restructuring, restructuringStart } = options);
+          }
+          if (restructuringStart || restructuring) {
+            subOptions = { restructuring: true };
+          }
+          return restructuring
+            ? `${Caf.toString(this.childrenToJs(", ", subOptions))}`
+            : `{${Caf.toString(this.childrenToJs(", ", subOptions))}}`;
         };
       }
     ));
