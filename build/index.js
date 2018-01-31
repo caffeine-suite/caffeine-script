@@ -1599,7 +1599,8 @@ Caf.defMod(module, () => {
               i,
               line,
               lineIndentLevel,
-              commentOnlyLine;
+              commentOnlyLine,
+              cafTemp;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
                 (padding = null),
@@ -1637,8 +1638,9 @@ Caf.defMod(module, () => {
                             : line.slice(-indentChange, line.length);
                       }
                     }
-                    i++;
+                    cafTemp = i++;
                   }
+                  return cafTemp;
                 })())
               : undefined;
           };
