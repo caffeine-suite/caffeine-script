@@ -1,0 +1,7 @@
+This:
+  topic: if foo then a: 1
+  colors: 3
+Should outoput:
+  { topic: foo ? { a: 1 } : undefined, colors: 3 }
+Instead it generates:
+  { topic: foo ? { a: 1, colors: 3 } : undefined }
