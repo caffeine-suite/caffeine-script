@@ -19,6 +19,9 @@ TicTacToe live:
 
 Of course, just because CaffeineScript can reduce code-size by 3x doesn't mean you'll be a full 3x faster. CaffeineScript cannot reduce the essential logic of your code. However, it dramatically cuts back the noise so you can see your core logic clearly.
 
+Read more about less-is-more and programming:
+* [Writing Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
+
 ### JavaScript's Golden Heart
 
 JavaScript has a golden heart. At its core, it is a powerful hybrid of object-oriented, functional and dynamically-typed languages. Combined with modern runtimes, world-class garbage collectors and JIT compilers, JavaScript can be a surprisingly good platform for building great applications.
@@ -28,14 +31,6 @@ However, JavaScript has an ailing body. Even now, in 2018, JavaScript has major 
 Further, JavaScript has many dangerous holes in its semantics which can introduce subtle, hard to find bugs. They include [accidental globals](https://github.com/caffeine-suite/caffeine-script/wiki/Globals), [weakly-typed truth](https://github.com/caffeine-suite/caffeine-script/wiki/Caffeine-Truth), [weakly-typed equality](https://github.com/caffeine-suite/caffeine-script/wiki/Equality) and other [weakly-typed operators](https://github.com/caffeine-suite/caffeine-script/wiki/Operator-Overloading). Thankfully, the core JavaScript semantics are good, and these auxiliary semantics can be partially or fully fixed without changing JavaScript.
 
 CaffeineScript's goal is to maximize productivity for JavaScript-based projects. It does this primarily by minimizing syntax and patching the holes in JavaScript's [semantics](https://github.com/caffeine-suite/caffeine-script/wiki/Semantics).
-
-### Less Code is Better Code
-I believe less is more. My fundamental guiding principle for programming is "write less code" (WLC). Less code means less to read, less to change and, of course, less to write in the first place. Most software engineering principles boil down to WLC: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html).
-
-* My blog post on [Writing Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
-* CaffeineScript requires 60/90% less code than JavaScript and 10/90% less code than CoffeeScript (average/[module-specific-code](https://github.com/caffeine-suite/caffeine-script/wiki/Streamlined-Modules) respectively). Examples below.
-
-If you love concise, bracket-less languages, I've got a beautifully designed one for you.
 
 ### Inspired by CoffeeScript
 
