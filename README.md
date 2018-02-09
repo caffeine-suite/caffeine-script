@@ -19,7 +19,7 @@ TicTacToe live:
 
 Of course, just because CaffeineScript can reduce code-size by 3x doesn't mean you'll be a full 3x faster. CaffeineScript cannot reduce the essential logic of your code. However, it dramatically cuts back the noise so you can see your core logic clearly.
 
-Read more about less-is-more and programming:
+Read more about programming with less:
 * [Writing Less Code](http://www.essenceandartifact.com/2016/06/write-less-code.html)
 
 ### JavaScript's Golden Heart
