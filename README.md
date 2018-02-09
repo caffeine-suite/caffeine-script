@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
 ### Why CaffeineScript and not JSX, TypeScript or JavaScript?
 
-I believe less is more. It is the first principle of design and the foundation of just about every good programming practice: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html), [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), [interface segregation](https://en.wikipedia.org/wiki/Interface_segregation_principle), etc... That's why I wrote CaffeineScript. This info-graphic shows the result:
+I believe less is more. It is the first principle of design and foundation of just about every good programming practice: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html), [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), [interface segregation](https://en.wikipedia.org/wiki/Interface_segregation_principle), etc... That's why I wrote CaffeineScript. This info-graphic shows the result:
 
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic.png)
 
