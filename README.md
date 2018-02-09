@@ -1,5 +1,23 @@
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptLogo.png)
 [![Build Status](https://travis-ci.org/caffeine-suite/caffeine-script.svg?branch=master)](https://travis-ci.org/caffeine-suite/caffeine-script) [![NPM version](https://img.shields.io/npm/v/caffeine-script.svg)](https://www.npmjs.com/package/caffeine-script)
+### Why CaffeineScript and not JSX, TypeScript or JavaScript?
+
+I believe less is more. It is the first principle of design and the foundation of just about every good programming practice: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html), [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), [interface segregation](https://en.wikipedia.org/wiki/Interface_segregation_principle), etc... That's why I wrote CaffeineScript. This info-graphic shows the result:
+
+![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic.png)
+
+CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **2.5-3x** more efficient than JSX, TypeScript or JavaScript. Imagine seeing 3x as much code on screen at once. Imagine having 3x less code to write. Imagine having 3x less code to change when you need to refactor. Imagine having 3x less code to debug.
+
+TicTacToe source:
+* [CaffeineScript source](https://github.com/imikimi/art-suite-demos/blob/master/source/Art.SuiteDemos/Demos/TicTacToe/Main.caf)
+* [React/JSX combined source](https://github.com/imikimi/art-suite-demos/blob/master/source/Art.SuiteDemos/Demos/TicTacToe/TTT_react_comparison.jsx)
+* [React/JSX tutorial](https://reactjs.org/tutorial/tutorial.html)
+
+TicTacToe live:
+* [ArtSuite/CaffeineScript on github](http://imikimi.github.io/art-suite-demos/?demo=TicTacToe)
+* [React/JSX on codepen](https://codepen.io/gaearon/pen/gWWZgR?editors=0010)
+
+Of course, just because CaffeineScript can reduce code-size by 3x doesn't mean you'll be a full 3x faster. CaffeineScript cannot reduce the essential logic of your code. However, it dramatically cuts back the noise so you can see your core logic clearly.
 
 ### JavaScript's Golden Heart
 
