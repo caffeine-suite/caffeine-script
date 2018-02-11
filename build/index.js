@@ -2121,7 +2121,7 @@ __webpack_require__(109);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.49.3"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.50.1"}
 
 /***/ }),
 /* 30 */
@@ -2363,7 +2363,7 @@ Caf.defMod(module, () => {
     return {
       classDefinition: {
         pattern:
-          "/class/ _ className:identifier classExtends:_extendsClause? body:actualBlockEmptyOk?",
+          "/class/ _ className:identifier classExtends:_extendsClause? _? body:actualBlockEmptyOk?",
         stnFactory: "ClassStn"
       },
       _extendsClause: {
@@ -2793,13 +2793,13 @@ Caf.defMod(module, () => {
     (Extensions, Error) => {
       return {
         functionDefinition: [
-          "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?",
+          "args:argsDefinition? _arrow _? body:functionDefinitionBodyBlock?",
           {
             stnFactory: "FunctionDefinitionStn",
             stnProps: function() {
               return {
                 bound: (() => {
-                  switch (this._arrow_.text.match(/(=>|~>|->)/)[0]) {
+                  switch (this._arrow.text.match(/(=>|~>|->)/)[0]) {
                     case "=>":
                       return true;
                     case "~>":
@@ -2816,9 +2816,12 @@ Caf.defMod(module, () => {
             }
           }
         ],
-        functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-          { allowPartialMatch: true }
-        ),
+        functionDefinitionBodyBlock: [
+          Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(),
+          Extensions.IndentBlocks.getPropsToSubparseToEol({
+            allowPartialMatch: true
+          })
+        ],
         argsDefinition: [
           "openParen_ argDefList? _closeParen",
           { stnFactory: "FunctionDefinitionArgsStn" }
@@ -3636,7 +3639,7 @@ Caf.defMod(module, () => {
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
       _comma_: /\ *, *\n*/,
-      _arrow_: /\ *[-~=]> */,
+      _arrow: /\ *[-~=]>/,
       openParen_: /\( */,
       _closeParen: /\ *\)/,
       openBracket_: /\[ *(\n*(?!\s))?/,
