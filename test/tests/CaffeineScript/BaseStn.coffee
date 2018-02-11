@@ -31,6 +31,6 @@ module.exports = suite:
       try
         Neptune.CaffeineScript.compile "&FooBar"
       catch e
-        assert.eq e.info.line, 1
-        assert.eq e.info.column, 8
+        assert.eq e.info.line, 0
+        assert.eq e.info.column, 7
         assert.match e.message, /could not find.*foobar/i

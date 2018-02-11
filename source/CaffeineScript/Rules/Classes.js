@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     return {
       classDefinition: {
         pattern:
-          "/class/ _ className:identifier classExtends:_extendsClause? body:actualBlockEmptyOk?",
+          "/class/ _ className:identifier classExtends:_extendsClause? _? body:actualBlockEmptyOk?",
         stnFactory: "ClassStn"
       },
       _extendsClause: {

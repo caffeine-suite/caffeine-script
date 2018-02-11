@@ -1,17 +1,18 @@
 import &StandardImport, &CaffeineEight
 
 functionDefinition:
-  "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?"
+  "args:argsDefinition? _arrow _? body:functionDefinitionBodyBlock?"
   stnFactory: :FunctionDefinitionStn
   stnProps: ~>
-    bound: switch @_arrow_.text.match(/(=>|~>|->)/)[0]
+    bound: switch @_arrow.text.match(/(=>|~>|->)/)[0]
       when :=> then true
       when :~> then false
       when :-> then :auto
       else throw new Error
 
-functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock
-  allowPartialMatch: true
+functionDefinitionBodyBlock:
+  Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock()
+  Extensions.IndentBlocks.getPropsToSubparseToEol allowPartialMatch: true
 
 argsDefinition:
   "openParen_ argDefList? _closeParen"

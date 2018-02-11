@@ -7,13 +7,13 @@ Caf.defMod(module, () => {
     (Extensions, Error) => {
       return {
         functionDefinition: [
-          "args:argsDefinition? _arrow_ body:functionDefinitionBodyBlock?",
+          "args:argsDefinition? _arrow _? body:functionDefinitionBodyBlock?",
           {
             stnFactory: "FunctionDefinitionStn",
             stnProps: function() {
               return {
                 bound: (() => {
-                  switch (this._arrow_.text.match(/(=>|~>|->)/)[0]) {
+                  switch (this._arrow.text.match(/(=>|~>|->)/)[0]) {
                     case "=>":
                       return true;
                     case "~>":
@@ -30,9 +30,12 @@ Caf.defMod(module, () => {
             }
           }
         ],
-        functionDefinitionBodyBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-          { allowPartialMatch: true }
-        ),
+        functionDefinitionBodyBlock: [
+          Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(),
+          Extensions.IndentBlocks.getPropsToSubparseToEol({
+            allowPartialMatch: true
+          })
+        ],
         argsDefinition: [
           "openParen_ argDefList? _closeParen",
           { stnFactory: "FunctionDefinitionArgsStn" }

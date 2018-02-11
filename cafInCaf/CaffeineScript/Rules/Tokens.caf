@@ -8,7 +8,7 @@
     _colon_:        /: *| +:( +|(?=\n))/
     # _colon_:        /\ *: */
     _comma_:        /\ *, *\n*/
-    _arrow_:        /\ *[-~=]> */
+    _arrow:         /\ *[-~=]>/
 
     openParen_:     /\( */
     _closeParen:    /\ *\)/

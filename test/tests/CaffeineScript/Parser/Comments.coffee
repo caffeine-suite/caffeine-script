@@ -40,6 +40,27 @@ module.exports = suite: parseTestSuite
 
     """: "1;"
 
+  eolBeforeBlock:
+    """
+    -> # comment
+      1
+    """: "(function() {return 1;});"
+
+    """
+    class Foo # comment
+      1
+    """: "let Foo; Foo = Caf.defClass(class Foo extends Object {}, function(Foo, classSuper, instanceSuper) {1;});"
+
+    """
+    [] # comment
+      1
+    """: "[1];"
+
+    """
+    if true # comment
+      1
+    """: "if (true) {1;};"
+
   regressions:
     " # indented comment == OK": ";"
     """

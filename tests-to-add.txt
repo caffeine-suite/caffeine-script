@@ -5,3 +5,29 @@ Should outoput:
   { topic: foo ? { a: 1 } : undefined, colors: 3 }
 Instead it generates:
   { topic: foo ? { a: 1, colors: 3 } : undefined }
+
+This doesn't compile!:
+  log update: # pipelines.userFollower.update
+    key: 1
+
+Should compile:
+  class Style # 19
+    @textStyle:
+      fontFamily: "" "Century Gothic", Futura, sans-serif
+      fontSize:   16
+      margin:     10
+      size:       cs: 1
+
+    @cellStyle: merge
+      @textStyle
+      fontWeight: :bold
+      fontSize:   24
+
+Should compile
+  foo:
+    bar
+    /1/
+
+Should Compile
+  bar
+  /1/
