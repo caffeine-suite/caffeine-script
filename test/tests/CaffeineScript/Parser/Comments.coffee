@@ -61,6 +61,16 @@ module.exports = suite: parseTestSuite
       1
     """: "if (true) {1;};"
 
+    """
+    foo: # comment
+      1
+    """: "({foo: 1});"
+
+    """
+    log update: # comment
+      key: 1
+    """: "log({update: {key: 1}});"
+
   regressions:
     " # indented comment == OK": ";"
     """

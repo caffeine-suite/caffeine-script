@@ -121,7 +121,7 @@ Caf.defMod(module, () => {
         return this.rule({
           requiredValue: [
             "_? _end? implicitArrayOrExpression",
-            "_? rValueBlock"
+            "/ */ comment? rValueBlock"
           ],
           rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
             rule: "rValueBlockSubParse"
