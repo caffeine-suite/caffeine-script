@@ -4,7 +4,7 @@
 
 I believe less is more. It is the first principle of design and foundation of just about every good programming practice: [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself), [KISS](https://en.wikipedia.org/wiki/KISS_principle), [ZEN (YAGNI)](http://www.essenceandartifact.com/2016/02/yagni-and-building-in-house-frameworks.html), [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), [interface segregation](https://en.wikipedia.org/wiki/Interface_segregation_principle), etc... That's why I wrote CaffeineScript. This info-graphic shows the result:
 
-![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic.png)
+[![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic.png)](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic-Large.png)
 
 CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **2.5-3x** more efficient than JSX, TypeScript or JavaScript. Imagine seeing 3x as much code on screen at once. Imagine having 3x less code to write. Imagine having 3x less code to change when you need to refactor. Imagine having 3x less code to debug.
 
