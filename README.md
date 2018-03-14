@@ -256,7 +256,7 @@ for (key in allProps) {
 
 Is there interested in TypeScript support? If so, with some help, I could add it. CaffeineScript could easily support a modified TypeScript syntax for type annotation and integration into the TypeScript universe.
 
-[More on CaffeineScript and Static Typing](https://github.com/caffeine-suite/caffeine-script/wiki/Static-Typing])
+[More on CaffeineScript and Static Typing](https://github.com/caffeine-suite/caffeine-script/wiki/Static-Typing)
 
 ## CaffeineScript and CoffeeScript
 
