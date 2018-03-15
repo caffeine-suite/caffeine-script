@@ -61,7 +61,10 @@ Caf.defMod(module, () => {
           "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
         ],
         lineOfStatements: {
-          pattern: "statementSemi* statementWithoutEnd",
+          pattern: [
+            "statementSemi+ statementWithoutEnd",
+            "statementWithoutEnd"
+          ],
           stnFactory: "StatementsStn"
         },
         lineOfStatementsOrBlock: ["lineOfStatements", "statementBlock"],

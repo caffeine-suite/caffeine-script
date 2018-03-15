@@ -437,6 +437,7 @@ module.exports = suite: parseTestSuite
       {}
     .foo
     """: "(true ? {} : {}).foo;"
+    "if a then b;": "if (a) {b;};"
 
   mixedWithTailControl:
     """
