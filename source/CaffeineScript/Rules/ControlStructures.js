@@ -5,16 +5,14 @@ Caf.defMod(module, () => {
     ["Extensions"],
     [global, require("../StandardImport"), require("caffeine-eight")],
     Extensions => {
-      return function() {
-        this.rule(
+      return {
+        controlStatement: [
           {
-            controlStatement: [
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block                    elseBody:elseClause?",
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?                   elseBody:elseClause",
-              "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:lineOfStatementsOrBlock  elseBody:elseClause?"
-            ]
-          },
-          {
+            pattern: [
+              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+            ],
             stnFactory: "ControlOperatorStn",
             stnProps: function() {
               let cafBase;
@@ -24,69 +22,47 @@ Caf.defMod(module, () => {
                   Caf.exists((cafBase = this.thenDo)) && cafBase.toString()
               };
             }
-          }
-        );
-        this.rule(
-          {
-            controlStatement: [
-              "/try/ _ body:implicitArrayOrExpression _? optionalCatch:catchClause?",
-              "/try/ body:block optionalCatch:catchClause?"
-            ]
           },
-          { stnFactory: "TryStn" }
-        );
-        this.rule(
           {
-            catchClause: [
-              "_end? /catch/ _ errorIdentifier:identifier body:block?",
-              "_end? /catch/ _? body:block?"
-            ]
+            pattern:
+              "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause?",
+            stnFactory: "TryStn"
           },
-          { stnFactory: "CatchStn" }
-        );
-        this.rule({
-          controlStatement: {
-            pattern: "/do/ _ functionDefinition",
-            stnFactory: "DoStn"
-          }
-        });
-        this.rule(
+          { pattern: "/do/ _ functionDefinition", stnFactory: "DoStn" },
           {
-            controlStatement: [
+            pattern: [
               "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
               "/switch/ _ condition:expression? switchBody",
               "/switch/ switchBodyBlock",
               "/switch/ switchBody"
-            ]
-          },
-          { stnFactory: "SwitchStn" }
-        );
-        this.rule({
-          switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
-          thenClause: "_ /then/ _ lineOfStatements",
-          switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
-            rule: "switchBody"
-          })
-        });
-        this.rule(
-          {
-            switchWhenClause: [
-              "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
-              "end? when _ whenValue:implicitArrayOrExpression thenDo:thenClause"
-            ]
-          },
+            ],
+            stnFactory: "SwitchStn"
+          }
+        ],
+        catchClause: [
+          "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?",
+          { stnFactory: "CatchStn" }
+        ],
+        switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
+        switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+          rule: "switchBody"
+        }),
+        switchWhenClause: [
+          "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
+          "end? when _ whenValue:implicitArrayOrExpression thenDo:thenClause",
           { stnFactory: "SwitchWhenStn" }
-        );
-        return this.rule({
-          ifUnlessWhileUntil: /if|unless|while|until/,
-          thenDo: /then|do/,
-          when: /when/,
-          elseClause: [
-            "controlStructorClauseJoiner /else/ block",
-            "controlStructorClauseJoiner /else/ _ implicitArrayOrExpression"
-          ],
-          controlStructorClauseJoiner: ["/ +/", "end"]
-        });
+        ],
+        catch: /catch\b/,
+        try: /try\b/,
+        ifUnlessWhileUntil: /(if|unless|while|until)\b/,
+        thenDo: /(then|do)\b/,
+        when: /when\b/,
+        else: /else\b/,
+        thenClause:
+          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
+        elseClause:
+          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
+        controlStructorClauseJoiner: ["/ +/", "end"]
       };
     }
   );

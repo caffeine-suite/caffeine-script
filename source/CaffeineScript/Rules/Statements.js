@@ -15,7 +15,7 @@ Caf.defMod(module, () => {
           "statementWithoutEnd newLineStatementExtension* end",
           "importStatement"
         ],
-        tailControlOperator: /\ +(if|while|until|unless) +/,
+        tailControlOperator: /\ *\b(if|while|until|unless) +/,
         tailControlOperatorComplexExpression:
           "tailControlOperator implicitArrayOrExpression",
         statementWithoutEnd: [

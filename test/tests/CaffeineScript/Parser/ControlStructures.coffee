@@ -18,6 +18,24 @@ module.exports = suite: parseTestSuite
       """: "if (foo) {bar; baz;};"
 
       """
+      if foo then
+        bar
+        baz
+      """: "if (foo) {bar; baz;};"
+
+      """
+      if foo
+      then
+        bar
+        baz
+      """: "if (foo) {bar; baz;};"
+
+      """
+      if foo
+      then bar
+      """: "if (foo) {bar;};"
+
+      """
       if foo
         bar
       else
@@ -260,6 +278,10 @@ module.exports = suite: parseTestSuite
         """: "try {foo;} catch (cafError) {};"
 
         """
+        try foo catch bar
+        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError;};"
+
+        """
         try foo
         catch
           bar
@@ -415,3 +437,23 @@ module.exports = suite: parseTestSuite
       {}
     .foo
     """: "(true ? {} : {}).foo;"
+
+  mixedWithTailControl:
+    """
+    if foo then bar if baz
+    """: "if (foo) {if (baz) {bar;};};"
+
+    """
+    if foo then bod; bar if baz
+    """: "if (foo) {bod; if (baz) {bar;};};"
+
+    """
+    if foo
+      bar if baz
+    """: "if (foo) {if (baz) {bar;};};"
+
+    """
+    if foo
+      bar
+    else bod if baz
+    """: "if (foo) {bar;} else {if (baz) {bod;};};"

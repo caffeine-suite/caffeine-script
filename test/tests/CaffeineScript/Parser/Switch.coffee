@@ -65,6 +65,13 @@ module.exports = suite: parseTestSuite
 
         """
         switch a
+        when b then
+          c
+          d
+        """: "switch (a) {case b: c; d;};"
+
+        """
+        switch a
         when b
           c
           d
