@@ -1,18 +1,24 @@
 import &StandardImport, &CaffeineEight, &StnRegistry
 
-statement: [
-  "statementWithoutEnd newLineStatementExtension* end"
+# statement:
+#   "statementWithoutEnd newLineStatementExtension* end"
+#   :importStatement
+
+lineStartStatement:
+  "lineStartStatementWithoutEnd newLineStatementExtension* end"
   :importStatement
-]
 
 tailControlOperator: /\ *\b(if|while|until|unless) +/
 tailControlOperatorComplexExpression: "tailControlOperator implicitArrayOrExpression"
 
-statementWithoutEnd:
+lineStartStatementWithoutEnd:
   :lineStartExpression
+  :statementWithoutEnd
+
+statementWithoutEnd:
   "" implicitArrayOrExpression !tailControlOperator
 
-  pattern: 'implicitArrayOrExpression tailControlOperatorComplexExpression+',
+  pattern: 'implicitArrayOrExpression tailControlOperatorComplexExpression+'
   getStn: ~>
     stn = @implicitArrayOrExpression.getStn()
     each tco in @tailControlOperatorComplexExpressions

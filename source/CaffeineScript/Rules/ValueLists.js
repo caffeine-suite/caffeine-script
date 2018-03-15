@@ -27,7 +27,10 @@ Caf.defMod(module, () => {
                 "statementWithoutEnd newLineStatementExtension* ellipsis end",
               stnFactory: "ArraySpreadElementStn"
             },
-            { pattern: "statementWithoutEnd newLineStatementExtension* end" }
+            {
+              pattern:
+                "lineStartStatementWithoutEnd newLineStatementExtension* end"
+            }
           ],
           listItemExpression: [
             {

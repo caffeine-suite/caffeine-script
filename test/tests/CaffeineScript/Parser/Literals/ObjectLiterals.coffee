@@ -78,6 +78,55 @@ module.exports = suite: parseTestSuite
 
       "a:-b": "({a: -b});"
 
+      """
+      foo: 1 if bar
+      """: "if (bar) {{foo: 1};};"
+
+      """
+      foo: 1 if bar
+      baz: 2
+      """: "if (bar) {{foo: 1};}; ({baz: 2});"
+
+
+      """
+      baz: 2
+      foo: 1 if bar
+      """: null
+        ###
+        NOTE: this could reasonably be interpreted as:
+          if bar
+            baz: 2
+            foo: 1
+
+        All we need to do is let lineStartExpression be followed by a tailControlOperator.
+        Further note, this is how we already interpret this:
+
+          if foo
+            1
+          else 2 if baz
+
+          # interpreted as
+          if bax
+            if foo
+              1
+            else
+              2
+
+        BUT - coffeeScript finally go it right, and I want it right, too:
+
+          a: b if c
+          d: 1
+          e: f if g
+
+        should be
+
+          ({
+            a: c ? b : void 0,
+            e: g ? f : void 0
+          });
+
+        ###
+
 
     quotedKeys:
       "{'hi mom':1}": '({"hi mom": 1});'
@@ -234,3 +283,15 @@ module.exports = suite: parseTestSuite
       # comment here
       a: 1
     """: "let b; b = {a: 1};"
+
+  withTailControl:
+    """
+    foo: if bar then a: 1
+    bar: 999
+    """: "({foo: bar ? {a: 1} : undefined, bar: 999});"
+
+    """
+    bar: 999
+    foo: if bar then a: 1
+    """: "({bar: 999, foo: bar ? {a: 1} : undefined});"
+

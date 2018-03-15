@@ -11,15 +11,18 @@ Caf.defMod(module, () => {
     ],
     ControlOperatorStn => {
       return {
-        statement: [
-          "statementWithoutEnd newLineStatementExtension* end",
+        lineStartStatement: [
+          "lineStartStatementWithoutEnd newLineStatementExtension* end",
           "importStatement"
         ],
         tailControlOperator: /\ *\b(if|while|until|unless) +/,
         tailControlOperatorComplexExpression:
           "tailControlOperator implicitArrayOrExpression",
-        statementWithoutEnd: [
+        lineStartStatementWithoutEnd: [
           "lineStartExpression",
+          "statementWithoutEnd"
+        ],
+        statementWithoutEnd: [
           "implicitArrayOrExpression !tailControlOperator",
           {
             pattern:
