@@ -2121,7 +2121,7 @@ __webpack_require__(109);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.50.1"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.50.3"}
 
 /***/ }),
 /* 30 */
@@ -2488,17 +2488,15 @@ Caf.defMod(module, () => {
     ["Extensions"],
     [global, __webpack_require__(3), __webpack_require__(5)],
     Extensions => {
-      return function() {
-        this.rule(
-          {
-            controlStatement: [
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block                    elseBody:elseClause?",
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block?                   elseBody:elseClause",
-              "ifUnlessWhileUntil _ expression:expression _ thenDo _      body:lineOfStatementsOrBlock  elseBody:elseClause?"
-            ]
-          },
+      return {
+        controlStatement: [
           {
             stnFactory: "ControlOperatorStn",
+            pattern: [
+              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+            ],
             stnProps: function() {
               let cafBase;
               return {
@@ -2507,69 +2505,47 @@ Caf.defMod(module, () => {
                   Caf.exists((cafBase = this.thenDo)) && cafBase.toString()
               };
             }
-          }
-        );
-        this.rule(
-          {
-            controlStatement: [
-              "/try/ _ body:implicitArrayOrExpression _? optionalCatch:catchClause?",
-              "/try/ body:block optionalCatch:catchClause?"
-            ]
           },
-          { stnFactory: "TryStn" }
-        );
-        this.rule(
           {
-            catchClause: [
-              "_end? /catch/ _ errorIdentifier:identifier body:block?",
-              "_end? /catch/ _? body:block?"
-            ]
+            stnFactory: "TryStn",
+            pattern:
+              "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause?"
           },
-          { stnFactory: "CatchStn" }
-        );
-        this.rule({
-          controlStatement: {
-            pattern: "/do/ _ functionDefinition",
-            stnFactory: "DoStn"
-          }
-        });
-        this.rule(
+          { stnFactory: "DoStn", pattern: "/do/ _ functionDefinition" },
           {
-            controlStatement: [
+            stnFactory: "SwitchStn",
+            pattern: [
               "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
               "/switch/ _ condition:expression? switchBody",
               "/switch/ switchBodyBlock",
               "/switch/ switchBody"
             ]
-          },
-          { stnFactory: "SwitchStn" }
-        );
-        this.rule({
-          switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
-          thenClause: "_ /then/ _ lineOfStatements",
-          switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
-            rule: "switchBody"
-          })
-        });
-        this.rule(
-          {
-            switchWhenClause: [
-              "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
-              "end? when _ whenValue:implicitArrayOrExpression thenDo:thenClause"
-            ]
-          },
+          }
+        ],
+        catchClause: [
+          "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?",
+          { stnFactory: "CatchStn" }
+        ],
+        switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
+        switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+          rule: "switchBody"
+        }),
+        switchWhenClause: [
+          "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
+          "end? when _ whenValue:implicitArrayOrExpression  thenDo:thenClause",
           { stnFactory: "SwitchWhenStn" }
-        );
-        return this.rule({
-          ifUnlessWhileUntil: /if|unless|while|until/,
-          thenDo: /then|do/,
-          when: /when/,
-          elseClause: [
-            "controlStructorClauseJoiner /else/ block",
-            "controlStructorClauseJoiner /else/ _ implicitArrayOrExpression"
-          ],
-          controlStructorClauseJoiner: ["/ +/", "end"]
-        });
+        ],
+        thenClause:
+          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
+        elseClause:
+          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
+        controlStructorClauseJoiner: ["_", "end"],
+        catch: /catch\b/,
+        try: /try\b/,
+        ifUnlessWhileUntil: /(if|unless|while|until)\b/,
+        thenDo: /(then|do)\b/,
+        when: /when\b/,
+        else: /else\b/
       };
     }
   );
@@ -3343,11 +3319,11 @@ let Caf = __webpack_require__(0);
 Caf.defMod(module, () => {
   return {
     root: {
-      pattern: "lineStartComment* statement*",
+      pattern: "lineStartComment* statement:lineStartStatement*",
       stnFactory: "StatementsStn"
     },
     nonEmptyRoot: {
-      pattern: "lineStartComment* statement+",
+      pattern: "lineStartComment* statement:lineStartStatement+",
       stnFactory: "StatementsStn"
     }
   };
@@ -3373,15 +3349,18 @@ Caf.defMod(module, () => {
     ],
     ControlOperatorStn => {
       return {
-        statement: [
-          "statementWithoutEnd newLineStatementExtension* end",
+        lineStartStatement: [
+          "lineStartStatementWithoutEnd newLineStatementExtension* end",
           "importStatement"
         ],
-        tailControlOperator: /\ +(if|while|until|unless) +/,
+        tailControlOperator: /\ *\b(if|while|until|unless) +/,
         tailControlOperatorComplexExpression:
           "tailControlOperator implicitArrayOrExpression",
-        statementWithoutEnd: [
+        lineStartStatementWithoutEnd: [
           "lineStartExpression",
+          "statementWithoutEnd"
+        ],
+        statementWithoutEnd: [
           "implicitArrayOrExpression !tailControlOperator",
           {
             pattern:
@@ -3420,7 +3399,10 @@ Caf.defMod(module, () => {
           "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
         ],
         lineOfStatements: {
-          pattern: "statementSemi* statementWithoutEnd",
+          pattern: [
+            "statementSemi+ statementWithoutEnd",
+            "statementWithoutEnd"
+          ],
           stnFactory: "StatementsStn"
         },
         lineOfStatementsOrBlock: ["lineOfStatements", "statementBlock"],
@@ -3710,7 +3692,10 @@ Caf.defMod(module, () => {
                 "statementWithoutEnd newLineStatementExtension* ellipsis end",
               stnFactory: "ArraySpreadElementStn"
             },
-            { pattern: "statementWithoutEnd newLineStatementExtension* end" }
+            {
+              pattern:
+                "lineStartStatementWithoutEnd newLineStatementExtension* end"
+            }
           ],
           listItemExpression: [
             {
@@ -3855,7 +3840,7 @@ Caf.defMod(module, () => {
         return this.rule({
           requiredValue: [
             "_? _end? implicitArrayOrExpression",
-            "_? rValueBlock"
+            "/ */ comment? rValueBlock"
           ],
           rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
             rule: "rValueBlockSubParse"
