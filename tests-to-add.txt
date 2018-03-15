@@ -6,22 +6,6 @@ Should outoput:
 Instead it generates:
   { topic: foo ? { a: 1, colors: 3 } : undefined }
 
-This doesn't compile!:
-  log update: # pipelines.userFollower.update
-    key: 1
-
-Should compile:
-  class Style # 19
-    @textStyle:
-      fontFamily: "" "Century Gothic", Futura, sans-serif
-      fontSize:   16
-      margin:     10
-      size:       cs: 1
-
-    @cellStyle: merge
-      @textStyle
-      fontWeight: :bold
-      fontSize:   24
 
 Should compile
   foo:
@@ -31,3 +15,39 @@ Should compile
 Should Compile
   bar
   /1/
+
+Should NOT compile
+  testUpdatesAfterBillsAndAlicesMessages = =>
+    @testCreateBillsMessage()
+    .then @testCreateAlicesMessage
+    .then (message) =>
+      .then @setup
+
+Should compile to identical JS
+  a |= 0  # caffeinescript
+  a |= 0; // javascript
+
+Should work:
+  {
+    WEB_CONCURRENCY
+    WEB_MEMORY
+    MEMORY_AVAILABLE
+    PORT
+    ART_EXPRESS_SERVER_MAX_AGE_SECONDS
+    ART_EXPRESS_SERVER_MAX_SIZE_MB
+  } = getEnv()
+
+"when" should expect a BLOCK, not a VALUE:
+  this:
+    find v, k in searchUser when
+      a
+      b
+  should be geneate a when-function like:
+    () => {a; return b;}
+
+"when" one-liner should handle ';' correctly:
+
+  find v, k in searchUser when log k; test k
+
+  should generate when-function:
+    () => {log(k); return test(k);}
