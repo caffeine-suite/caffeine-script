@@ -34,7 +34,7 @@ CaffeineScript's goal is to maximize productivity for JavaScript-based projects.
 
 ### Inspired by CoffeeScript
 
-I love CoffeeScript. I love the visual blocking of bracket-less blocks. As I used it over the years, though, I started noting it wasn't very consistent. I was always frustrated by all-to-frequent edge cases where I had to use brackets anyway. For example, all array literals still require brackets ([]) in CoffeeScript. Eventually I couldn't stand it anymore. I set out to write a language that could parse bracket-less-blocks *consistently*.
+I love CoffeeScript. I love the visual blocking of bracket-less blocks. As I used it over the years, though, I started noting it wasn't very consistent. I was frustrated by all-to-frequent edge cases where I had to revert to using brackets. For example, all array literals still require brackets ([]) in CoffeeScript. Eventually I couldn't stand it anymore. I set out to write a language that could parse bracket-less-blocks *consistently*.
 
 If you love CoffeeScript, or even if you liked some parts but others drove you crazy, I've got an awesome language for you.
 
@@ -254,7 +254,7 @@ for (key in allProps) {
 
 ## What about TypeScript?
 
-Is there interested in TypeScript support? If so, with some help, I could add it. CaffeineScript could easily support a modified TypeScript syntax for type annotation and integration into the TypeScript universe.
+Is there interest in TypeScript support? If so, with some help, I could add it. CaffeineScript could easily support a modified TypeScript syntax for type annotation and integration into the TypeScript universe.
 
 [More on CaffeineScript and Static Typing](https://github.com/caffeine-suite/caffeine-script/wiki/Static-Typing)
 
