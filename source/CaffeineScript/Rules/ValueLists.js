@@ -16,6 +16,7 @@ Caf.defMod(module, () => {
         this.rule({
           simpleValueList: [
             "element:listItemExpression _comma_ simpleValueList",
+            "element:listItemExpression _? ',' _? valueListBlock",
             "element:literal _ simpleValueList",
             "element:listItemExpression"
           ]

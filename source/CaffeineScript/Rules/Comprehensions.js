@@ -34,7 +34,7 @@ Caf.defMod(module, () => {
         { stnFactory: "FunctionDefinitionArgsStn" }
       );
       this.rule({
-        optionalArg: "_comma_? !withOrDo argDef",
+        optionalArg: "_comma_ !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
         comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
         comprehensionWith: "_? withOrDo _? lineOfStatementsOrBlock",

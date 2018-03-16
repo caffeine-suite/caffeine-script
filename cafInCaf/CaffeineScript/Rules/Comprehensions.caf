@@ -32,7 +32,7 @@ import &StandardImport
     {} stnFactory: :FunctionDefinitionArgsStn
 
   @rule
-    optionalArg: "_comma_? !withOrDo argDef"
+    optionalArg: "_comma_ !withOrDo argDef"
 
     comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
     comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock"
