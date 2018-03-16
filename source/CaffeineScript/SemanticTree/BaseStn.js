@@ -4,27 +4,23 @@ Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "BaseClass",
-      "log",
-      "Object",
-      "Error",
-      "merge",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
+      "Error",
+      "merge",
       "isString"
     ],
     [global, require("../StandardImport")],
     (
       BaseClass,
-      log,
-      Object,
-      Error,
-      merge,
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
       compactFlatten,
+      Error,
+      merge,
       isString
     ) => {
       let createObjectTreeFactory, BaseStn;
@@ -50,23 +46,7 @@ Caf.defMod(module, () => {
           },
           function(BaseStn, classSuper, instanceSuper) {
             let applyRequiredParens, applyParens;
-            if (
-              !(require("caffeine-script-runtime").getSuper(this) === BaseClass)
-            ) {
-              log({
-                self: this,
-                selfName: this.getName(),
-                "Object.getPrototypeOf@": Object.getPrototypeOf(this),
-                badSuper: require("caffeine-script-runtime").getSuper(this),
-                BaseClass,
-                "selfIsBaseObject?": this === BaseClass
-              });
-              throw new Error("bad super");
-            }
             this.abstractClass();
-            this.prototype.toJsParenExpression = function(options) {
-              return this.toJs(merge(options, { expression: true }));
-            };
             this.prototype.initLabeledChildren = function() {
               this.labeledChildren = this.children && {};
               return Caf.each(this.children, undefined, child => {
@@ -178,11 +158,6 @@ Caf.defMod(module, () => {
               );
               return a.length === 0 ? null : a;
             };
-            this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs(options));
-              }).join(joiner);
-            };
             this.prototype.toJs = function(options) {
               return (() => {
                 throw new Error(
@@ -191,6 +166,14 @@ Caf.defMod(module, () => {
                   )}`
                 );
               })();
+            };
+            this.prototype.toJsParenExpression = function(options) {
+              return this.toJs(merge(options, { expression: true }));
+            };
+            this.prototype.childrenToJs = function(joiner = "", options) {
+              return Caf.each(this.children, [], (c, cafK, cafInto) => {
+                cafInto.push(c.toJs(options));
+              }).join(joiner);
             };
             this.prototype.doJs = function(args, body) {
               if (args) {
@@ -257,6 +240,7 @@ Caf.defMod(module, () => {
             this.applyRequiredParens = applyRequiredParens = function(expr) {
               return `(${Caf.toString(expr)})`;
             };
+            this.prototype.applyRequiredParens = applyRequiredParens;
             this.applyParens = applyParens = function(expr) {
               return expr.match(
                 /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
@@ -264,7 +248,6 @@ Caf.defMod(module, () => {
                 ? expr
                 : `(${Caf.toString(expr)})`;
             };
-            this.prototype.applyRequiredParens = applyRequiredParens;
             this.prototype.applyParens = applyParens;
             this.prototype.validate = function() {};
             this.prototype.validateAll = function() {
