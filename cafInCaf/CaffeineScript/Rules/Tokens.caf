@@ -132,6 +132,9 @@
       - definitly not: space, comma, [], (), {}
       - could, could not: '', "", ``
       - questionables: |, \
+      - should we allow escaping?
+      - should we allow #{} interpolation?
+
     unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
 
     unaryTailOperator:  /// \?
