@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
     return (
       (SemanticTree = require("../../StnRegistry")),
-      (supportedOperatorsRegExp = /^([-+*\/%]|)$/),
+      (supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/),
       (AssignmentStn = Caf.defClass(
         class AssignmentStn extends require("../AccessorChainStn") {
           constructor(props, children) {

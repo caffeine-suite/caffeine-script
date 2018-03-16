@@ -36,3 +36,9 @@ module.exports = suite: parseTestSuite
     """
     123;456
     """: "123; 456;"
+
+  regressions:
+    """
+    a
+    /1/
+    """: "a; /1/;"

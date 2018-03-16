@@ -1,20 +1,3 @@
-This:
-  topic: if foo then a: 1
-  colors: 3
-Should outoput:
-  { topic: foo ? { a: 1 } : undefined, colors: 3 }
-Instead it generates:
-  { topic: foo ? { a: 1, colors: 3 } : undefined }
-
-
-Should compile
-  foo:
-    bar
-    /1/
-
-Should Compile
-  bar
-  /1/
 
 Should NOT compile
   testUpdatesAfterBillsAndAlicesMessages = =>
@@ -22,10 +5,6 @@ Should NOT compile
     .then @testCreateAlicesMessage
     .then (message) =>
       .then @setup
-
-Should compile to identical JS
-  a |= 0  # caffeinescript
-  a |= 0; // javascript
 
 Should work:
   {
@@ -36,18 +15,3 @@ Should work:
     ART_EXPRESS_SERVER_MAX_AGE_SECONDS
     ART_EXPRESS_SERVER_MAX_SIZE_MB
   } = getEnv()
-
-"when" should expect a BLOCK, not a VALUE:
-  this:
-    find v, k in searchUser when
-      a
-      b
-  should be geneate a when-function like:
-    () => {a; return b;}
-
-"when" one-liner should handle ';' correctly:
-
-  find v, k in searchUser when log k; test k
-
-  should generate when-function:
-    () => {log(k); return test(k);}

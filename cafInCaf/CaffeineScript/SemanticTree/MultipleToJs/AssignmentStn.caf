@@ -1,7 +1,7 @@
 import &StandardImport
 SemanticTree = &StnRegistry
 
-supportedOperatorsRegExp = /^([-+*\/%]|)$/
+supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/
 
 class AssignmentStn extends &AccessorChainStn
   constructor: (props, children) ->

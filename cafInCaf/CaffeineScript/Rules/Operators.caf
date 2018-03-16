@@ -28,7 +28,7 @@ binaryOperatorAndExpression:
 
 lineStartBinaryOperatorAndExpression:
   {}
-    pattern:      "!/[-+][^ ]/ binaryOperator _? binOpExpression"
+    pattern:      "!/[-+][^ ]/ !regExpLiteral binaryOperator _? binOpExpression"
     stnProps:     ~> operator: getNormalizedOperator @binaryOperator
     stnFactory:   "BinaryOperatorStn"
     stnExtension: true

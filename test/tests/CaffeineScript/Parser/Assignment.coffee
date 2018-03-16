@@ -57,11 +57,16 @@ module.exports = suite: parseTestSuite
 
   binopAssignment:
     javascriptSupported:
-      "a += b":  "let a; a += b;"
-      "a -= b":  "let a; a -= b;"
-      "a *= b":  "let a; a *= b;"
-      "a /= b":  "let a; a /= b;"
-      "a %= b":  "let a; a %= b;"
+      "a += b": "let a; a += b;"
+      "a -= b": "let a; a -= b;"
+      "a *= b": "let a; a *= b;"
+      "a /= b": "let a; a /= b;"
+      "a %= b": "let a; a %= b;"
+      "a |= b": "let a; a |= b;"
+      "a ^= b": "let a; a ^= b;"
+      "a <<= b": "let a; a <<= b;"
+      "a >>= b": "let a; a >>= b;"
+      "a >>>= b": "let a; a >>>= b;"
 
     basic:
       "a &&= b":  "let a; a && (a = b);"

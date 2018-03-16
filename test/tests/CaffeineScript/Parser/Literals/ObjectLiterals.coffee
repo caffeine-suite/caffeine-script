@@ -126,6 +126,11 @@ module.exports = suite: parseTestSuite
           });
 
         ###
+      """
+      foo:
+        bar
+        /1/
+      """:"({foo: [bar, /1/]});"
 
 
     quotedKeys:
