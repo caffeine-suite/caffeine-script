@@ -94,7 +94,7 @@ Caf.defMod(module, () => {
                     this.pluralLabel || this.pluralRuleName;
                 }
               }
-              return this.isRoot ? RootStn(stn) : stn;
+              return this.isRoot ? RootStn(stn, { parseTreeNode: this }) : stn;
             };
             this.prototype.getTransformedSemanticTree = function() {
               return this.getStn().transform();

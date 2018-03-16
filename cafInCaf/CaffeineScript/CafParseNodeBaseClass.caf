@@ -61,7 +61,7 @@ class CafParseNodeBaseClass extends Nodes.Node
         stn.props.pluralLabel = @pluralLabel || @pluralRuleName
 
     if @isRoot
-      RootStn stn
+      RootStn stn, parseTreeNode: @
     else
       stn
 

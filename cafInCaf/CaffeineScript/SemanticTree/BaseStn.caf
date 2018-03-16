@@ -1,5 +1,7 @@
 import &StandardImport
 {createObjectTreeFactory} = &ArtObjectTreeFactory
+{SourceNode} = &SourceMap
+{binary} = &ArtFoundation.Binary
 
 ##
   TODO:
@@ -40,7 +42,10 @@ class BaseStn extends BaseClass
       if pluralLabel
         (@labeledChildren[pluralLabel] ||= []).push child
 
-  getInspectedProps: -> objectWithout @props, "label", "pluralLabel"
+  getInspectedProps: ->
+    merge
+      objectWithout @props, "label", "pluralLabel"
+      parseTreeNode: !!@parseTreeNode
 
   @getter
     sourceOffset: -> @parseTreeNode.offset
@@ -132,6 +137,41 @@ class BaseStn extends BaseClass
   ############################################
 
   ##########################
+    NEW CODE GENERATION
+  ##########################
+    New code-gen generates "SourceNodes" from the 'source-map' npm.
+
+    https://www.npmjs.com/package/source-map
+
+  sourceNodeLineColumnScratch = {}
+  @getter
+    sourceFile: -> @parseTreeNode?.sourceFile ? "caffeine-script"
+    sourceNodeBase: ->
+      # both are 0-base
+      {line, column} = @parseTreeNode.getSourceLineColumn sourceNodeLineColumnScratch
+      log sourceFile: @parseTreeNode.parser.sourceFile
+
+      new SourceNode
+        line + 1  # should be 1-based
+        column    # should be 0-based
+        @parseTreeNode.sourceFile
+
+  # options are the same options passed to "toJs" - see below
+  toSourceNode: (options) ->
+    @sourceNodeBase.add @toJs options
+
+  toJsWithInlineSourceMap: (options = {}) ->
+    {code, map} =
+      @toSourceNode options
+      .toStringWithSourceMap file: options?.outputFile
+
+    """
+      #{code}
+      //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json}
+      //# sourceURL=#{@sourceFile}
+      HI
+
+  ##########################
     CODE GENERATION
   ##########################
 
@@ -145,10 +185,10 @@ class BaseStn extends BaseClass
         in a binary operator
 
       statement: t/f
-        true: is used as a s
+        true: is used as a statement
 
       dotBase: t/f
-        true: is used as the base for a . or [] accessor.
+        true: is used as the base for a "." or "[]" accessor.
 
       returnValueIsIgnored: t/f
         if true and expression is true, still return
@@ -156,7 +196,8 @@ class BaseStn extends BaseClass
         return-value is ignored.
 
         This is for use in expressiong-statement-lists: (expressionStatement1, es2, es3)
-        Only the last value, es3, has a meaningful return-value.
+        JavaScript requires they be expressions, but it ignores the return value of all
+        but the last one in the list, in this example, "es3".
 
   toJs: (options) ->
     throw new Error "must override one of the toJs* functions: #{@className}"

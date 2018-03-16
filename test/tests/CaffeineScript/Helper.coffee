@@ -16,6 +16,86 @@ module.exports =
           p = CaffeineScriptParser.parse k, verbose: true
           assert.eq p.getStn(), v
 
+  generateSourceMapParseTest: (name, source, options) ->
+    {compileModule, parseOptions} = options if options
+
+    niceTest name, ->
+      sourceNode = try
+        parseTree               = CaffeineScriptParser.parse source, merge parseOptions, sourceFile: "mySourceFile.caf"
+        semanticTree            = parseTree.getStn()
+        transformedSemanticTree = semanticTree.validateAll().transform()
+        transformedSemanticTree.toSourceNode()
+
+      catch error
+        log "\nFAIL: #{name}".red
+        transformedSemanticTree = "no change" if transformedSemanticTree == semanticTree
+        log info: {parseTree, semanticTree, transformedSemanticTree}
+        throw error
+
+      {code, map} = sourceNode.toStringWithSourceMap file: "mySourceFile.js"
+      log {
+        name, source, sourceNode
+        output: {
+          code
+          map: map.toString()
+        }
+        toJsWithInlineSourceMap: transformedSemanticTree.toJsWithInlineSourceMap()
+      }
+
+      assert.equal true, !!sourceNode
+
+  generateParseTest: generateParseTest = (expectedJs, source, options) ->
+    {compileModule, parseOptions} = options if options
+
+    testFunction = if isString expectedJs?.knownFailing
+      expectedJs = expectedJs?.knownFailing
+      knownFailing = true
+      skipKnownFailingTest
+    else
+      niceTest
+
+    expectFailure = !expectedJs?
+
+    testFunction name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+      expectedFailure = null
+
+      js = try
+        parseTree = CaffeineScriptParser.parse source, parseOptions
+        semanticTree = parseTree.getStn()
+        transformedSemanticTree = semanticTree.validateAll().transform()
+
+        if compileModule
+          transformedSemanticTree.toJsModule()
+        else
+          transformedSemanticTree.toJs()
+
+      catch error
+        if expectFailure && isNumber error.failureIndex
+          expectedFailure = error
+          error = null
+        else
+          log.error error unless knownFailing
+
+        null
+
+      showInfo = if expectFailure
+        js || !expectedFailure
+      else
+        js != expectedJs
+
+      if showInfo && !knownFailing
+        log "\nFAIL: #{name}".red
+        transformedSemanticTree = "no change" if transformedSemanticTree == semanticTree
+        log info: {js, expectedJs, parseTree, semanticTree, transformedSemanticTree}
+        log "\n"
+
+      throw error if error
+
+      if expectFailure
+        assert.eq js, null
+      else
+        assert.eq js, expectedJs
+
   parseTests: parseTests = (a, b) ->
     map = if b
       {compileModule} = options = a
@@ -23,59 +103,11 @@ module.exports =
     else
       a
 
-    parseOptions = merge options, verbose: true
-    knownFailing = false
+    options =
+      compileModule: compileModule
+      parseOptions: merge options, verbose: true
 
-    object map, (expectedJs, source) ->
-      testFunction = if isString expectedJs?.knownFailing
-        expectedJs = expectedJs?.knownFailing
-        knownFailing = true
-        skipKnownFailingTest
-      else
-        niceTest
-
-      expectFailure = !expectedJs?
-
-      expectedFailure = null
-      testFunction name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
-        js = try
-          stn = (p = CaffeineScriptParser.parse(source, parseOptions)).getStn()
-          stn.validateAll()
-          transformedStn = stn.transform()
-          if compileModule
-            transformedStn.toJsModule()
-          else
-            transformedStn.toJs()
-        catch error
-          if expectFailure && isNumber error.failureIndex
-            expectedFailure = error
-            error = null
-          else
-            log.error error unless knownFailing
-
-          null
-
-        showInfo = if expectFailure
-          js || !expectedFailure
-        else
-          js != expectedJs
-
-        if showInfo && !knownFailing
-          log "\nFAIL: #{name}".red
-          log info:
-            js:js
-            expectedJs: expectedJs
-            parseTree: p
-            semanticTree: stn
-            transformedSemanticTree: if transformedStn != stn then transformedStn else "no change"
-          log "\n"
-
-        throw error if error
-
-        if expectFailure
-          assert.eq js, null
-        else
-          assert.eq js, expectedJs
+    object map, (expectedJs, source) -> generateParseTest expectedJs, source, options
 
   parseTestSuite: parseTestSuite = (a, b) ->
     map = if b

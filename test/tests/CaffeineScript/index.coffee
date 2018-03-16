@@ -9,5 +9,6 @@ module.exports
   Lib:            require './Lib'           
   OperatorHelper: require './OperatorHelper'
   ParseFailure:   require './ParseFailure'  
+  SourceMap:      require './SourceMap'     
 require './Parser'
 require './Preprocessors'

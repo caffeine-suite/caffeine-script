@@ -2,15 +2,15 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["log"],
+    ["log", "mergeInto"],
     [global, require("art-standard-lib")],
-    log => {
+    (log, mergeInto) => {
       return (
         require("./SemanticTree"),
         {
           version: require("../../package.json").version,
           compile: function(source, options = {}) {
-            let transformedStn, stn, parseTree, e, cafError;
+            let transformedStn, stn, parseTree, e, cafTemp, cafError;
             return (() => {
               try {
                 transformedStn = (stn = (parseTree = require("./CaffeineScriptParser").parse(
@@ -44,6 +44,15 @@ Caf.defMod(module, () => {
                       stn,
                       transformedStn
                     }
+                  });
+                }
+                if (options.debug) {
+                  (cafTemp = e.info) != null ? cafTemp : (e.info = {});
+                  mergeInto(e.info, {
+                    options,
+                    parseTree,
+                    stn,
+                    transformedStn
                   });
                 }
                 return (() => {

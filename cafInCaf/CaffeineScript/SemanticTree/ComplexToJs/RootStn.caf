@@ -11,6 +11,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
   isImports: true
 
   cloneWithNewStatements: (statements)->
+    log "RootStn cloneWithNewStatements"
     new RootStn @props, [] StatementsStn compactFlatten statements
 
   rootUpdateScope: ->

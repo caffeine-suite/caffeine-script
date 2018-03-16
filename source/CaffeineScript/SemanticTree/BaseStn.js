@@ -4,28 +4,34 @@ Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "BaseClass",
+      "merge",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
+      "log",
+      "JSON",
       "Error",
-      "merge",
       "isString"
     ],
     [global, require("../StandardImport")],
     (
       BaseClass,
+      merge,
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
       compactFlatten,
+      log,
+      JSON,
       Error,
-      merge,
       isString
     ) => {
-      let createObjectTreeFactory, BaseStn;
+      let createObjectTreeFactory, SourceNode, binary, BaseStn;
       return (
         ({ createObjectTreeFactory } = require("art-object-tree-factory")),
+        ({ SourceNode } = require("source-map")),
+        ({ binary } = require("art-foundation").Binary),
         (BaseStn = Caf.defClass(
           class BaseStn extends BaseClass {
             constructor(props, children = [], pretransformedStn) {
@@ -45,7 +51,7 @@ Caf.defMod(module, () => {
             }
           },
           function(BaseStn, classSuper, instanceSuper) {
-            let applyRequiredParens, applyParens;
+            let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
             this.abstractClass();
             this.prototype.initLabeledChildren = function() {
               this.labeledChildren = this.children && {};
@@ -63,7 +69,9 @@ Caf.defMod(module, () => {
               });
             };
             this.prototype.getInspectedProps = function() {
-              return objectWithout(this.props, "label", "pluralLabel");
+              return merge(objectWithout(this.props, "label", "pluralLabel"), {
+                parseTreeNode: !!this.parseTreeNode
+              });
             };
             this.getter({
               sourceOffset: function() {
@@ -157,6 +165,47 @@ Caf.defMod(module, () => {
                 })
               );
               return a.length === 0 ? null : a;
+            };
+            sourceNodeLineColumnScratch = {};
+            this.getter({
+              sourceFile: function() {
+                let cafTemp, cafBase;
+                return (cafTemp =
+                  Caf.exists((cafBase = this.parseTreeNode)) &&
+                  cafBase.sourceFile) != null
+                  ? cafTemp
+                  : "caffeine-script";
+              },
+              sourceNodeBase: function() {
+                let line, column;
+                ({ line, column } = this.parseTreeNode.getSourceLineColumn(
+                  sourceNodeLineColumnScratch
+                ));
+                log({ sourceFile: this.parseTreeNode.parser.sourceFile });
+                return new SourceNode(
+                  line + 1,
+                  column,
+                  this.parseTreeNode.sourceFile
+                );
+              }
+            });
+            this.prototype.toSourceNode = function(options) {
+              return this.sourceNodeBase.add(this.toJs(options));
+            };
+            this.prototype.toJsWithInlineSourceMap = function(options = {}) {
+              let code, map;
+              ({ code, map } = this.toSourceNode(options).toStringWithSourceMap(
+                { file: Caf.exists(options) && options.outputFile }
+              ));
+              return `${Caf.toString(
+                code
+              )}\n//# sourceMappingURL=${Caf.toString(
+                binary(JSON.stringify(map.toString())).toDataUri(
+                  "application/json"
+                )
+              )}\n//# sourceURL=${Caf.toString(
+                this.sourceFile
+              )}\nHI\n\n##########################\n  CODE GENERATION\n##########################\n\n##\n  IN: options:\n    expression: t/f\n      if true, return JS for an expression\n\n    subExpression: t/f\n      currently this means the result is used\n      in a binary operator\n\n    statement: t/f\n      true: is used as a statement\n\n    dotBase: t/f\n      true: is used as the base for a "." or "[]" accessor.\n\n    returnValueIsIgnored: t/f\n      if true and expression is true, still return\n      an expression, but it's OK to streamline since the\n      return-value is ignored.\n\n      This is for use in expressiong-statement-lists: (expressionStatement1, es2, es3)\n      JavaScript requires they be expressions, but it ignores the return value of all\n      but the last one in the list, in this example, "es3".`;
             };
             this.prototype.toJs = function(options) {
               return (() => {

@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten"],
+    ["log", "compactFlatten"],
     [global, require("../../StandardImport")],
-    compactFlatten => {
+    (log, compactFlatten) => {
       let StatementsStn, RootStn;
       return (
         (StatementsStn = require("./StatementsStn")),
@@ -21,6 +21,7 @@ Caf.defMod(module, () => {
           function(RootStn, classSuper, instanceSuper) {
             this.prototype.isImports = true;
             this.prototype.cloneWithNewStatements = function(statements) {
+              log("RootStn cloneWithNewStatements");
               return new RootStn(this.props, [
                 StatementsStn(compactFlatten(statements))
               ]);
