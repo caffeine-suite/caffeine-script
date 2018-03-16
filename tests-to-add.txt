@@ -25,3 +25,31 @@ Should work:
     a
     b
   = myObject
+
+Comment Preprocessing has to go:
+
+  This:
+    """
+      abc
+    ## comment
+
+  Currently compiles to: "abc\n## comment"
+  The comment should not be in the string.
+
+  OH NOES!
+
+  Also,
+    """
+      abc
+        ## comment
+
+  Currently compiles to: "abc\n## comment"
+  The comment SHOULD be in the string, but it should have 2 spaces first.
+
+  I tried just stripping comments in the preprocessor, but that breaks the
+  second example above.
+
+  The real solution looks like this: Every block sub-parsed, other than literals
+  like string-blocks or comment-blocks themselves, needs something akin to the
+  current preprocess step: Any under-indented comments should be up-indented to
+  the base of the sub-block. I -think- that'll solve it.

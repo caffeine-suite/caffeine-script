@@ -203,10 +203,9 @@ Caf.defMod(module, () => {
                 binary(JSON.stringify(map.toString())).toDataUri(
                   "application/json"
                 )
-              )}\n//# sourceURL=${Caf.toString(
-                this.sourceFile
-              )}\nHI\n\n##########################\n  CODE GENERATION\n##########################\n\n##\n  IN: options:\n    expression: t/f\n      if true, return JS for an expression\n\n    subExpression: t/f\n      currently this means the result is used\n      in a binary operator\n\n    statement: t/f\n      true: is used as a statement\n\n    dotBase: t/f\n      true: is used as the base for a "." or "[]" accessor.\n\n    returnValueIsIgnored: t/f\n      if true and expression is true, still return\n      an expression, but it's OK to streamline since the\n      return-value is ignored.\n\n      This is for use in expressiong-statement-lists: (expressionStatement1, es2, es3)\n      JavaScript requires they be expressions, but it ignores the return value of all\n      but the last one in the list, in this example, "es3".`;
+              )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
             };
+            null;
             this.prototype.toJs = function(options) {
               return (() => {
                 throw new Error(
