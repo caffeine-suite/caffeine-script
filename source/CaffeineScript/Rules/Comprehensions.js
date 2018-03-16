@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
       );
       this.rule({
         comprehensionValueClause: [
-          "_? comprehensionValueClauseType _? value:expressionWithOneLessBlockOrBlock",
+          "_? comprehensionValueClauseType _? value:keywordLabeledStatementsWithOneLessBlock",
           {
             stnFactory: "ComprehensionValueClauseStn",
             stnProps: function() {
@@ -24,11 +24,7 @@ Caf.defMod(module, () => {
             }
           }
         ],
-        comprehensionValueClauses: "comprehensionValueClause+",
-        expressionWithOneLessBlockOrBlock: [
-          "expressionWithOneLessBlock",
-          "requiredValue"
-        ]
+        comprehensionValueClauses: "comprehensionValueClause+"
       });
       this.rule(
         {
@@ -40,8 +36,8 @@ Caf.defMod(module, () => {
       this.rule({
         optionalArg: "_comma_? !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
-        comprehensionIterable: "expressionWithOneLessBlockOrBlock",
-        comprehensionWith: "_? withOrDo _ lineOfStatementsOrBlock",
+        comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
+        comprehensionWith: "_? withOrDo _? lineOfStatementsOrBlock",
         comprehensionBody: ["block", "comprehensionWith"]
       });
       return this.rule(

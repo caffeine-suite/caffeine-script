@@ -15,6 +15,7 @@ Caf.defMod(module, () => {
         ({ matchBlock } = Extensions.IndentBlocks),
         (upToButNotEol = /[^\n]*/y),
         function() {
+          let oneLessBlockSubparser;
           this.rule({
             lineStartExpression: "multilineImplicitObject",
             implicitArrayOrExpression: ["implicitArray", "expression"],
@@ -58,45 +59,52 @@ Caf.defMod(module, () => {
             { throwExpression: "throw _ expressionWithoutBinOps" },
             { stnFactory: "ThrowStn" }
           );
+          oneLessBlockSubparser = rule => {
+            return function(parentNode) {
+              let nextOffset,
+                source,
+                offset,
+                originalOffset,
+                match,
+                m,
+                endOffset,
+                matchLength,
+                expressionSource;
+              ({ nextOffset, source } = parentNode);
+              offset = nextOffset;
+              originalOffset = offset;
+              upToButNotEol.lastIndex = offset;
+              return (match = upToButNotEol.exec(source))
+                ? (([m] = match),
+                  (endOffset = offset += m.length),
+                  (() => {
+                    while ((match = matchBlock(source, offset))) {
+                      endOffset = offset;
+                      ({ matchLength } = match);
+                      offset += matchLength;
+                    }
+                  })(),
+                  (expressionSource = source.slice(originalOffset, endOffset)),
+                  parentNode.subparse(expressionSource, {
+                    allowPartialMatch: true,
+                    rule,
+                    originalOffset,
+                    originalMatchLength: endOffset - originalOffset
+                  }))
+                : undefined;
+            };
+          };
           return this.rule({
             expressionWithOneLessBlock: {
-              parse: function(parentNode) {
-                let nextOffset,
-                  source,
-                  offset,
-                  originalOffset,
-                  match,
-                  m,
-                  endOffset,
-                  matchLength,
-                  expressionSource;
-                ({ nextOffset, source } = parentNode);
-                offset = nextOffset;
-                originalOffset = offset;
-                upToButNotEol.lastIndex = offset;
-                return (match = upToButNotEol.exec(source))
-                  ? (([m] = match),
-                    (endOffset = offset += m.length),
-                    (() => {
-                      while ((match = matchBlock(source, offset))) {
-                        endOffset = offset;
-                        ({ matchLength } = match);
-                        offset += matchLength;
-                      }
-                    })(),
-                    (expressionSource = source.slice(
-                      originalOffset,
-                      endOffset
-                    )),
-                    parentNode.subparse(expressionSource, {
-                      allowPartialMatch: true,
-                      rule: "implicitArrayOrExpression",
-                      originalOffset,
-                      originalMatchLength: endOffset - originalOffset
-                    }))
-                  : undefined;
-              }
-            }
+              parse: oneLessBlockSubparser("implicitArrayOrExpression")
+            },
+            lineOfStatementsWithOneLessBlock: {
+              parse: oneLessBlockSubparser("lineOfStatementsOrBlock")
+            },
+            keywordLabeledStatementsWithOneLessBlock: [
+              "lineOfStatementsWithOneLessBlock",
+              "statementBlock"
+            ]
           });
         }
       );

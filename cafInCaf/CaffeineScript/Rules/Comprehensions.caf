@@ -16,16 +16,16 @@ import &StandardImport
         _?
         comprehensionValueClauseType
         _?
-        value:expressionWithOneLessBlockOrBlock
+        value:keywordLabeledStatementsWithOneLessBlock
       stnFactory: :ComprehensionValueClauseStn
       stnProps: ~>
         type: @comprehensionValueClauseType.toString()
 
     comprehensionValueClauses: "comprehensionValueClause+"
 
-    expressionWithOneLessBlockOrBlock:
-      :expressionWithOneLessBlock
-      :requiredValue
+    # expressionWithOneLessBlockOrBlock:
+    #   :expressionWithOneLessBlock
+    #   :requiredValue
 
   @rule
     comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType'
@@ -35,8 +35,8 @@ import &StandardImport
     optionalArg: "_comma_? !withOrDo argDef"
 
     comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
-    comprehensionIterable: "expressionWithOneLessBlockOrBlock"
-    comprehensionWith: '_? withOrDo _ lineOfStatementsOrBlock'
+    comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock"
+    comprehensionWith: '_? withOrDo _? lineOfStatementsOrBlock'
     comprehensionBody: :block :comprehensionWith
 
   @rule

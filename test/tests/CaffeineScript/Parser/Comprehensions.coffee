@@ -48,8 +48,23 @@ module.exports = suite: parseTestSuite
 
       """
       object a from b when a
-        a
-      """: "Caf.each(b, {}, (a, cafK, cafInto) => {if (a) {cafInto[cafK] = a;};});"
+        c
+      """: a = "Caf.each(b, {}, (a, cafK, cafInto) => {if (a) {cafInto[cafK] = c;};});"
+
+      """
+      object a from b when
+          a
+        c
+      """: a
+
+      "object a from b when b;a with c":      a = "Caf.each(b, {}, (a, cafK, cafInto) => {if ((b, a)) {cafInto[cafK] = c;};});"
+
+      """
+      object a from b when
+          b
+          a
+        c
+      """: a
 
   multilineWith:
     """
@@ -238,6 +253,23 @@ module.exports = suite: parseTestSuite
 
     "object k, v from b": "Caf.each(b, {}, (k, v, cafInto) => {cafInto[v] = k;});"
     "object v, k from b": "Caf.each(b, {}, (v, k, cafInto) => {cafInto[k] = v;});"
+
+    """
+    object v, k
+      b
+    """:"Caf.each([v, k], {}, (cafV, cafK, cafInto) => {cafInto[cafK] = b;});"
+
+    """
+    object a
+      b
+    """:"Caf.each(a, {}, (cafV, cafK, cafInto) => {cafInto[cafK] = b;});"
+
+    """
+    object a from
+        b
+        c
+      d
+    """:"Caf.each((b, c), {}, (a, cafK, cafInto) => {cafInto[cafK] = d;});"
 
   multiStatementWith:
     """

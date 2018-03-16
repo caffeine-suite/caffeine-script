@@ -45,26 +45,38 @@ upToButNotEol = /[^\n]*/y
     throwExpression: "throw _ expressionWithoutBinOps"
     {} stnFactory: :ThrowStn
 
+
+  oneLessBlockSubparser = (rule) ->
+    (parentNode) ~>
+      {nextOffset, source} = parentNode
+      offset = nextOffset
+      originalOffset = offset
+      upToButNotEol.lastIndex = offset
+      if match = upToButNotEol.exec source
+        [m] = match
+        endOffset = offset += m.length
+
+        while (match = matchBlock source, offset)
+          endOffset = offset
+          {matchLength} = match
+          offset += matchLength
+
+        expressionSource = source.slice originalOffset, endOffset
+        parentNode.subparse
+          expressionSource
+          {}
+            allowPartialMatch:    true
+            rule
+            originalOffset
+            originalMatchLength:  endOffset - originalOffset
+
   @rule
     expressionWithOneLessBlock:
-      parse: (parentNode) ~>
-        {nextOffset, source} = parentNode
-        offset = nextOffset
-        originalOffset = offset
-        upToButNotEol.lastIndex = offset
-        if match = upToButNotEol.exec source
-          [m] = match
-          endOffset = offset += m.length
+      parse: oneLessBlockSubparser :implicitArrayOrExpression
 
-          while (match = matchBlock source, offset)
-            endOffset = offset
-            {matchLength} = match
-            offset += matchLength
+    lineOfStatementsWithOneLessBlock:
+      parse: oneLessBlockSubparser :lineOfStatementsOrBlock
 
-          expressionSource = source.slice originalOffset, endOffset
-          parentNode.subparse
-            expressionSource
-            allowPartialMatch:    true
-            rule:                 "implicitArrayOrExpression"
-            originalOffset:       originalOffset
-            originalMatchLength:  endOffset - originalOffset
+    keywordLabeledStatementsWithOneLessBlock:
+      :lineOfStatementsWithOneLessBlock
+      :statementBlock
