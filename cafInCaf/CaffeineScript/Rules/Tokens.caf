@@ -24,52 +24,91 @@
     reservedWord:
       ///
         (
-        # forbidden by javascript, but not used by Caf
-        for | yes | no | on | off |
 
-        null | undefined |
+        ### Modules
 
-        global | require | module | eval | this |
+        import
 
-        true | false |
+        ### Constants
 
-        super |
+        | true
+        | false
+        | null
+        | undefined
 
-        instanceof |
+        ### Untranslated JavaScript Globals
 
-        delete |
+        | global
+        | require
+        | module
+        | eval
 
-        import |
+        ### Object Oriented
 
-        throw |
+        | super
+        | class
+        | new
+        | this
+        | delete
 
-        return |
+        ### Introspection
 
-        break |
+        | instanceof
+        | is
+        | isnt
 
-        into | returning |
+        ### Control Structurs
 
-        with | do |
+        | switch
+        | when
+        | then
+        | else
+        | if
+        | until
+        | while
+        | unless
 
-        switch |
+        ### Comprehensions
 
-        when |
+        | array
+        | each
+        | find
+        | object
+        | from | in
+        | with | do
+        | into | returning
 
-        if | until |
 
-        try | catch |
+        ### Error Handling
 
-        while | unless |
+        | try
+        | catch
+        | throw
 
-        then | else |
+        ### Logic
 
-        and | or | is | isnt |
+        | and
+        | or
+        | not
 
-        in | from |
+        ### Reserved but not Used (from CoffeeScript)
 
-        not |
+        | for
+        | return
+        | break
+        | of
+        | yes | on
+        | no | off
+        | typeof
 
-        new
+        ### Reserved but not Used (future CaffeineScript)
+
+        | extract
+        | reduce | inject
+        | promise | await
+        | to | by | short | skip
+        | mixin
+
         )
 
         \b

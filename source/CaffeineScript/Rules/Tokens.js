@@ -16,7 +16,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(for|yes|no|on|off|null|undefined|global|require|module|eval|this|true|false|super|instanceof|delete|import|throw|return|break|into|returning|with|do|switch|when|if|until|try|catch|while|unless|then|else|and|or|is|isnt|in|from|not|new)\b/,
+      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|try|catch|throw|and|or|not|for|return|break|of|yes|on|no|off|typeof|extract|reduce|inject|promise|await|to|by|short|skip|mixin)\b/,
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {

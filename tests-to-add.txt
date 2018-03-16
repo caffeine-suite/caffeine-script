@@ -1,5 +1,9 @@
 
 Should NOT compile
+  foo (a)->
+    .bar
+
+Should NOT compile
   testUpdatesAfterBillsAndAlicesMessages = =>
     @testCreateBillsMessage()
     .then @testCreateAlicesMessage
@@ -8,10 +12,16 @@ Should NOT compile
 
 Should work:
   {
-    WEB_CONCURRENCY
-    WEB_MEMORY
-    MEMORY_AVAILABLE
-    PORT
-    ART_EXPRESS_SERVER_MAX_AGE_SECONDS
-    ART_EXPRESS_SERVER_MAX_SIZE_MB
-  } = getEnv()
+    a
+    b
+  } = myObject
+
+  {
+  a
+  b
+  } = myObject
+
+  {}
+    a
+    b
+  = myObject
