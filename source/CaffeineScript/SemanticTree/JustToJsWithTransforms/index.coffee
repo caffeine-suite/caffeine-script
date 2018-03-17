@@ -5,6 +5,7 @@ module.exports = require './namespace'
 module.exports
 .addModules
   AccessorStn:              require './AccessorStn'             
+  AssignmentStn:            require './AssignmentStn'           
   ClassStn:                 require './ClassStn'                
   FunctionDefinitionStn:    require './FunctionDefinitionStn'   
   FunctionInvocationStn:    require './FunctionInvocationStn'   

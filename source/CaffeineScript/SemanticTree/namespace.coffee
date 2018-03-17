@@ -5,5 +5,4 @@ module.exports = (require '../namespace').addNamespace('SemanticTree', class Sem
 require './ComplexToJs/namespace';
 require './JustToJs/namespace';
 require './JustToJsWithTransforms/namespace';
-require './JustTransforms/namespace';
-require './MultipleToJs/namespace'
+require './JustTransforms/namespace'
