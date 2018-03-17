@@ -46,7 +46,10 @@ Caf.defMod(module, () => {
                 pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock",
                 getStn: function() {
                   let ret;
-                  ret = StringStn({ value: this.unparsedBlock.toString() });
+                  ret = StringStn({
+                    parseTreeNode: this,
+                    value: this.unparsedBlock.toString()
+                  });
                   if (!this.tripple) {
                     ret.compactNewLines();
                   }
@@ -58,19 +61,28 @@ Caf.defMod(module, () => {
                   `:(?!:)${Caf.toString(wordStringChar.source)}+`
                 ),
                 getStn: function() {
-                  return StringStn({ value: this.toString().slice(1) });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString().slice(1)
+                  });
                 }
               },
               {
                 pattern: /#[$\w\u007f-\uffff]+/,
                 getStn: function() {
-                  return StringStn({ value: this.toString() });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString()
+                  });
                 }
               },
               {
                 pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
                 getStn: function() {
-                  return StringStn({ value: this.toString() });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString()
+                  });
                 }
               }
             ],
@@ -91,7 +103,12 @@ Caf.defMod(module, () => {
               getStnChildren: function(appendTo = []) {
                 let cafBase;
                 if (this.mid.matchLength > 0) {
-                  appendTo.push(StringStn({ value: this.mid.toString() }));
+                  appendTo.push(
+                    StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    })
+                  );
                 }
                 Caf.exists((cafBase = this.interpolation)) &&
                   cafBase.getStnChildren(appendTo);
@@ -101,7 +118,10 @@ Caf.defMod(module, () => {
                 let ret;
                 ret = this.interpolation
                   ? InterpolatedStringStn(this.getStnChildren())
-                  : StringStn({ value: this.mid.toString() });
+                  : StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    });
                 if (this.bracketStart) {
                   ret.compactNewLines(true, true);
                 }
@@ -129,7 +149,12 @@ Caf.defMod(module, () => {
                 let cafBase;
                 appendTo.push(this.interpolation.expression.getStn());
                 if (this.mid.matchLength > 0) {
-                  appendTo.push(StringStn({ value: this.mid.toString() }));
+                  appendTo.push(
+                    StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    })
+                  );
                 }
                 Caf.exists((cafBase = this.interpolationContinues)) &&
                   cafBase.getStnChildren(appendTo);

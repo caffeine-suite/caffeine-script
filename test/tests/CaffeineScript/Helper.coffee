@@ -20,11 +20,14 @@ module.exports =
     {compileModule, parseOptions} = options if options
 
     niceTest name, ->
-      sourceNode = try
+      # log "TEST sourceNode"
+      try
         parseTree               = CaffeineScriptParser.parse source, merge parseOptions, sourceFile: "mySourceFile.caf"
         semanticTree            = parseTree.getStn()
         transformedSemanticTree = semanticTree.validateAll().transform()
-        transformedSemanticTree.toSourceNode()
+        # log "HERE1"
+        # sourceNode              = transformedSemanticTree.toSourceNode()
+        # log "HERE2"
 
       catch error
         log "\nFAIL: #{name}".red
@@ -32,17 +35,31 @@ module.exports =
         log info: {parseTree, semanticTree, transformedSemanticTree}
         throw error
 
-      {code, map} = sourceNode.toStringWithSourceMap file: "mySourceFile.js"
+      # log "HERE3"
+      # {code, map} = sourceNode.toStringWithSourceMap file: "mySourceFile.js"
+      # log "HERE4"
       log {
-        name, source, sourceNode
-        output: {
-          code
-          map: map.toString()
-        }
-        toJsWithInlineSourceMap: transformedSemanticTree.toJsWithInlineSourceMap()
-      }
+        # name, source, sourceNode
+        # output: {
+        #   code
+        #   map: map.toString()
+        # }
+        compileModule
+        compareWith: oldJs =
+          if compileModule
+            transformedSemanticTree.toJsModule()
+          else
+            transformedSemanticTree.toJs()
 
-      assert.equal true, !!sourceNode
+        toJsWithInlineSourceMap: withSourceMapJs = transformedSemanticTree.toJsWithInlineSourceMap
+          verbose: true
+          module: compileModule
+      }
+      # log "HERE5"
+      [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
+      assert.equal oldJs, newJs
+
+      # assert.equal true, !!sourceNode
 
   generateParseTest: generateParseTest = (expectedJs, source, options) ->
     {compileModule, parseOptions} = options if options

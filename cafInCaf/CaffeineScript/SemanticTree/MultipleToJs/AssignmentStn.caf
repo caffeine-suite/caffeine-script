@@ -32,6 +32,29 @@ class AssignmentStn extends &AccessorChainStn
     else
       @
 
+  toSourceNode: (options) ->
+    out = if supportedOperatorsRegExp.test @operator
+      []
+        @lValue.toSourceNode()
+        " #{@operator}= "
+        @rValue.toSourceNode expression:true
+
+    else
+      []
+        @lValue.toSourceNode expression:true
+        " #{@operator} "
+        @lValue.toSourceNode()
+        " = "
+        @rValue.toSourceNode expression:true
+
+    @newSourceNode.add
+      if options?.dotBase || options?.subExpression
+        compactFlatten []
+          "("
+          out
+          ")"
+      else out
+
   toJs: (options) ->
     out = if supportedOperatorsRegExp.test @operator
       "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"

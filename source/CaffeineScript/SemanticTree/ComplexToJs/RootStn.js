@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["log", "compactFlatten"],
+    ["compactFlatten", "present", "log"],
     [global, require("../../StandardImport")],
-    (log, compactFlatten) => {
+    (compactFlatten, present, log) => {
       let StatementsStn, RootStn;
       return (
         (StatementsStn = require("./StatementsStn")),
@@ -20,6 +20,50 @@ Caf.defMod(module, () => {
           },
           function(RootStn, classSuper, instanceSuper) {
             this.prototype.isImports = true;
+            this.getter({
+              statementsSourceNodes: function() {
+                return this.statements.toSourceNode();
+              }
+            });
+            this.prototype.toSourceNode = function(options = {}) {
+              let identifiersToImport, lets, autoLets;
+              this.rootUpdateScope();
+              return this.newSourceNode.add(
+                options.bare
+                  ? compactFlatten([
+                      this.getBareInitializers(),
+                      this.statementsSourceNodes
+                    ])
+                  : options.module
+                    ? ((identifiersToImport = Caf.each(
+                        this.generateImportMap(),
+                        [],
+                        (v, k, cafInto) => {
+                          cafInto.push(
+                            `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                          );
+                        }
+                      )),
+                      (lets = compactFlatten([
+                        identifiersToImport,
+                        this.requiredIdentifierLets
+                      ])),
+                      [
+                        "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                        lets.length > 0
+                          ? `let ${Caf.toString(lets.join(", "))}; `
+                          : undefined,
+                        this.statementsSourceNodes,
+                        "};});"
+                      ])
+                    : compactFlatten([
+                        present((autoLets = this.getAutoLets()))
+                          ? [autoLets, "; "]
+                          : undefined,
+                        this.statementsSourceNodes
+                      ])
+              );
+            };
             this.prototype.cloneWithNewStatements = function(statements) {
               log("RootStn cloneWithNewStatements");
               return new RootStn(this.props, [
@@ -73,7 +117,7 @@ Caf.defMod(module, () => {
               statements = this.statements.toJs();
               return (
                 compactFlatten([
-                  "Caf = require('caffeine-script-runtime')",
+                  "Caf = global.Caf || require('caffeine-script-runtime')",
                   this.getBareInitializers(),
                   statements
                 ]).join(";\n") + ";"

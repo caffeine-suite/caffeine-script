@@ -4,6 +4,20 @@ class StatementsStn extends &BaseStn
 
   needsParens: false
 
+  toSourceNode: (options)->
+    @newSourceNode.add
+      if options?.expression
+        switch @children.length
+        when 0 then "undefined"
+        when 1 then @children[0].toSourceNode options
+        else
+          compactFlatten []
+            "("
+            @_getChildrenSourceNodes "", false
+            ")"
+      else
+        @_getChildrenSourceNodes()
+
   toJs: (options)->
     if options?.expression
       switch @children.length
@@ -49,3 +63,32 @@ class StatementsStn extends &BaseStn
             statement
         else
           c.toJsExpression returnValueIsIgnored: true
+
+  _getChildrenSourceNodes: (returnAction, generateStatements = true)->
+    returnAction = switch returnAction
+    when true then returnAction = :return
+    when false then null
+    else returnAction
+
+    array c, i in lines = @children into out=[]
+      out.push "; " if i>0
+      if returnAction? && i == lines.length - 1
+        if !c.jsExpressionUsesReturn
+          childExpression = c.toSourceNode expression: true
+          if returnAction.length > 0
+            [] returnAction, " ", childExpression
+          else
+            childExpression
+        else c.toJs generateReturnStatement: true
+
+      else
+        if generateStatements
+          statement = c.toSourceNode statement: true
+          if c.type == :FunctionDefinition
+            [] "(", statement, ")"
+          else
+            statement
+        else
+          c.toSourceNode expression: true, returnValueIsIgnored: true
+    out.push ";"
+    out

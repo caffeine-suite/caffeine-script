@@ -1,6 +1,18 @@
 class SimpleLiteralStn extends &BaseStn
   needsParens: false
 
+  toSourceNode: (options) ->
+    {value} = @props
+
+    @newSourceNode.add
+      if options?.dotBase
+        []
+          "("
+          value
+          ")"
+      else
+        value
+
   toJs: (options) ->
     {value} = @props
     if options?.dotBase

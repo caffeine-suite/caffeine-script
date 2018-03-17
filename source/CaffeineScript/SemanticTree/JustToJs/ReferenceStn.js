@@ -28,6 +28,9 @@ Caf.defMod(module, () => {
           }
         });
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function(options) {
+          return this.toJs(options);
+        };
         this.prototype.toJs = function() {
           let cafBase;
           return (

@@ -17,6 +17,8 @@ class ReferenceStn extends &BaseStn
       @labeledChildren.identifier?.explicitIdentifier
 
   needsParens: false
+
+  toSourceNode: (options) -> @toJs options
   toJs: ->
     @props.identifierHandle?.identifier
     || @labeledChildren.identifier.toJs()

@@ -10,6 +10,37 @@ class RootStn extends &ScopeStnMixin &BaseStn
 
   isImports: true
 
+  @getter
+    statementsSourceNodes: ->
+      @statements.toSourceNode()
+
+  toSourceNode: (options = {})->
+    @rootUpdateScope()
+    @newSourceNode.add if options.bare
+      compactFlatten []
+        @getBareInitializers()
+        @statementsSourceNodes
+    else if options.module
+      identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
+      lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
+
+      []
+        """
+          "use strict"
+          let Caf = require('caffeine-script-runtime');
+          Caf.defMod(module, () => {
+
+        "let #{lets.join ', '}; " if lets.length > 0
+        @statementsSourceNodes
+
+        """
+          };});
+    else
+      compactFlatten []
+        if present autoLets = @getAutoLets()
+          [] autoLets, "; "
+        @statementsSourceNodes
+
   cloneWithNewStatements: (statements)->
     log "RootStn cloneWithNewStatements"
     new RootStn @props, [] StatementsStn compactFlatten statements
@@ -48,7 +79,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
     @rootUpdateScope()
     statements = @statements.toJs()
     compactFlatten []
-      "" Caf = require('caffeine-script-runtime')
+      "" Caf = global.Caf || require('caffeine-script-runtime')
       @getBareInitializers()
       statements
     .join ';\n'

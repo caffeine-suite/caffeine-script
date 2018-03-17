@@ -2,6 +2,8 @@ import &StandardImport, &Lib
 
 class StringStn extends &BaseStn
 
+  toSourceNode: (options) -> @toJs options
+
   toJs: (options) ->
     base = deescapeSpaces @value
     quotes = if /"/.test base
@@ -19,8 +21,8 @@ class StringStn extends &BaseStn
     out =
       quotes
       + escapeUnescaped
-        base.replace /\n/g, '\\n'
-        quotes
+          base.replace /\n/g, '\\n'
+          quotes
       + quotes
 
     if options?.dotBase

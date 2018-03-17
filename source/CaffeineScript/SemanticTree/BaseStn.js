@@ -176,12 +176,11 @@ Caf.defMod(module, () => {
                   ? cafTemp
                   : "caffeine-script";
               },
-              sourceNodeBase: function() {
+              newSourceNode: function() {
                 let line, column;
                 ({ line, column } = this.parseTreeNode.getSourceLineColumn(
                   sourceNodeLineColumnScratch
                 ));
-                log({ sourceFile: this.parseTreeNode.parser.sourceFile });
                 return new SourceNode(
                   line + 1,
                   column,
@@ -190,13 +189,21 @@ Caf.defMod(module, () => {
               }
             });
             this.prototype.toSourceNode = function(options) {
-              return this.sourceNodeBase.add(this.toJs(options));
+              log.warn(
+                `WARNING: sourceMap generation not fully supported (SemanticTreeNode: ${Caf.toString(
+                  this.type
+                )})`
+              );
+              return this.newSourceNode.add(this.toJs(options));
             };
             this.prototype.toJsWithInlineSourceMap = function(options = {}) {
               let code, map;
               ({ code, map } = this.toSourceNode(options).toStringWithSourceMap(
                 { file: Caf.exists(options) && options.outputFile }
               ));
+              if (options.verbose) {
+                log({ sourceMap: map.toString(), sourceFile: this.sourceFile });
+              }
               return `${Caf.toString(
                 code
               )}\n//# sourceMappingURL=${Caf.toString(

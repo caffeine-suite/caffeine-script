@@ -28,6 +28,7 @@ class BaseStn extends BaseClass
   constructor: (props, @children = [], @pretransformedStn) ->
     super
     @parseTreeNode = @pretransformedStn?.parseTreeNode ? props.parseTreeNode
+    # throw new Error "no @parseTreeNode (#{@type})" unless @parseTreeNode
     @pretransformedStn ||= @
 
     @props = objectWithout props, "parseTreeNode"
@@ -146,10 +147,9 @@ class BaseStn extends BaseClass
   sourceNodeLineColumnScratch = {}
   @getter
     sourceFile: -> @parseTreeNode?.sourceFile ? "caffeine-script"
-    sourceNodeBase: ->
+    newSourceNode: ->
       # both are 0-base
       {line, column} = @parseTreeNode.getSourceLineColumn sourceNodeLineColumnScratch
-      log sourceFile: @parseTreeNode.parser.sourceFile
 
       new SourceNode
         line + 1  # should be 1-based
@@ -158,12 +158,16 @@ class BaseStn extends BaseClass
 
   # options are the same options passed to "toJs" - see below
   toSourceNode: (options) ->
-    @sourceNodeBase.add @toJs options
+    log.warn "WARNING: sourceMap generation not fully supported (SemanticTreeNode: #{@type})"
+    @newSourceNode.add @toJs options
 
   toJsWithInlineSourceMap: (options = {}) ->
     {code, map} =
       @toSourceNode options
       .toStringWithSourceMap file: options?.outputFile
+
+    if options.verbose
+      log {sourceMap:map.toString(),@sourceFile}
 
     """
       #{code}

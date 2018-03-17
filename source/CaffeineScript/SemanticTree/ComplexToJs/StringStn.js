@@ -9,6 +9,9 @@ Caf.defMod(module, () => {
       return (StringStn = Caf.defClass(
         class StringStn extends require("../BaseStn") {},
         function(StringStn, classSuper, instanceSuper) {
+          this.prototype.toSourceNode = function(options) {
+            return this.toJs(options);
+          };
           this.prototype.toJs = function(options) {
             let base, quotes, singleCount, doubleCount, out;
             base = deescapeSpaces(this.value);

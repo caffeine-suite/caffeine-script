@@ -32,7 +32,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
       {}
         pattern: "" /''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock
         getStn: ~>
-          ret = StringStn value: @unparsedBlock.toString()
+          ret = StringStn parseTreeNode: @, value: @unparsedBlock.toString()
           ret.compactNewLines() unless @tripple
           ret
 
@@ -46,14 +46,14 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
           Could be interesting: :foo\sbar could == "foo bar"
       {}
         pattern: /// :(?!:) #{wordStringChar.source}+
-        getStn: ~> StringStn value: @toString().slice 1
+        getStn: ~> StringStn parseTreeNode: @, value: @toString().slice 1
 
       ## hashtag-strings
         #hashtag and color (#fff) strings
         The # is preserved
       {}
         pattern: /#[$\w\u007f-\uffff]+/
-        getStn: ~> StringStn value: @toString()
+        getStn: ~> StringStn parseTreeNode: @, value: @toString()
 
       # number-with-unit strings
       {}
@@ -69,7 +69,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
             # followed by one or more identifier characters
             [$\w\u007f-\uffff]+
 
-        getStn: ~> StringStn value: @toString()
+        getStn: ~> StringStn parseTreeNode: @, value: @toString()
 
     stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock rule: "stringBlockBody"
 
@@ -82,7 +82,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
 
     {}
       getStnChildren: (appendTo = [])~>
-        appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+        appendTo.push StringStn parseTreeNode: @, value: @mid.toString() if @mid.matchLength > 0
         @interpolation?.getStnChildren appendTo
         appendTo
 
@@ -90,7 +90,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
         ret = if @interpolation
           InterpolatedStringStn @getStnChildren()
         else
-          StringStn value: @mid.toString()
+          StringStn parseTreeNode: @, value: @mid.toString()
 
         if @bracketStart
           ret.compactNewLines true, true
@@ -108,6 +108,6 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
     {}
       getStnChildren: (appendTo = [])~>
         appendTo.push @interpolation.expression.getStn()
-        appendTo.push StringStn value: @mid.toString() if @mid.matchLength > 0
+        appendTo.push StringStn parseTreeNode: @, value: @mid.toString() if @mid.matchLength > 0
         @interpolationContinues?.getStnChildren appendTo
         appendTo
