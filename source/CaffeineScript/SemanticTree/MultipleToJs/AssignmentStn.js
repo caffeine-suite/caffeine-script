@@ -87,9 +87,6 @@ Caf.defMod(module, () => {
                 ? `(${Caf.toString(out)})`
                 : out;
             };
-            this.prototype.toJsParenExpression = function() {
-              return `(${Caf.toString(this.toJs())})`;
-            };
           }
         ))
       );

@@ -63,6 +63,3 @@ class AssignmentStn extends &AccessorChainStn
     if options?.dotBase || options?.subExpression
       "(#{out})"
     else out
-
-  toJsParenExpression: ->
-    "(#{@toJs()})"

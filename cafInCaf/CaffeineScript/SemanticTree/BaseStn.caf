@@ -208,9 +208,6 @@ class BaseStn extends BaseClass
   toJs: (options) ->
     throw new Error "must override one of the toJs* functions: #{@className}"
 
-  toJsParenExpression: (options)->
-    @toJs merge options, expression: true
-
   childrenToJs: (joiner = '', options)->
     array c in @children with c.toJs options
     .join joiner

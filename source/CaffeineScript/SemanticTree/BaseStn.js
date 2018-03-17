@@ -222,9 +222,6 @@ Caf.defMod(module, () => {
                 );
               })();
             };
-            this.prototype.toJsParenExpression = function(options) {
-              return this.toJs(merge(options, { expression: true }));
-            };
             this.prototype.childrenToJs = function(joiner = "", options) {
               return Caf.each(this.children, [], (c, cafK, cafInto) => {
                 cafInto.push(c.toJs(options));
