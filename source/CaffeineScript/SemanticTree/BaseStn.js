@@ -279,7 +279,18 @@ Caf.defMod(module, () => {
               return (this.children !== (newChildren = this.transformChildren())
                 ? this.newTransformedInstance(this.props, newChildren)
                 : this
-              ).postTransform();
+              )
+                .postTransform()
+                .setDefaultParseTreeNode(this.parseTreeNode);
+            };
+            this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
+              if (!this.parseTreeNode) {
+                this.parseTreeNode = parseTreeNode;
+                Caf.each(this.children, undefined, child => {
+                  child.setDefaultParseTreeNode(parseTreeNode);
+                });
+              }
+              return this;
             };
             this.prototype.needsParens = true;
             this.prototype.needsParensAsStatement = false;

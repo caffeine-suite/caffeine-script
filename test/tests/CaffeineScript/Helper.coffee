@@ -25,36 +25,25 @@ module.exports =
         parseTree               = CaffeineScriptParser.parse source, merge parseOptions, sourceFile: "mySourceFile.caf"
         semanticTree            = parseTree.getStn()
         transformedSemanticTree = semanticTree.validateAll().transform()
-        # log "HERE1"
-        # sourceNode              = transformedSemanticTree.toSourceNode()
-        # log "HERE2"
+
+        log {
+          compileModule
+          compareWith: oldJs =
+            if compileModule
+              transformedSemanticTree.toJsModule()
+            else
+              transformedSemanticTree.toJs()
+
+          toJsWithInlineSourceMap: withSourceMapJs = transformedSemanticTree.toJsWithInlineSourceMap
+            verbose: true
+            module: compileModule
+        }
 
       catch error
         log "\nFAIL: #{name}".red
         transformedSemanticTree = "no change" if transformedSemanticTree == semanticTree
         log info: {parseTree, semanticTree, transformedSemanticTree}
         throw error
-
-      # log "HERE3"
-      # {code, map} = sourceNode.toStringWithSourceMap file: "mySourceFile.js"
-      # log "HERE4"
-      log {
-        # name, source, sourceNode
-        # output: {
-        #   code
-        #   map: map.toString()
-        # }
-        compileModule
-        compareWith: oldJs =
-          if compileModule
-            transformedSemanticTree.toJsModule()
-          else
-            transformedSemanticTree.toJs()
-
-        toJsWithInlineSourceMap: withSourceMapJs = transformedSemanticTree.toJsWithInlineSourceMap
-          verbose: true
-          module: compileModule
-      }
       # log "HERE5"
       [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
       assert.equal oldJs, newJs

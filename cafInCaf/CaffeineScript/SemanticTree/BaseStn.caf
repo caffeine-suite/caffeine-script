@@ -178,7 +178,7 @@ class BaseStn extends BaseClass
     # hack-fix for caf-script's current but of comments-getting-sucked-up-into
     # immediately proceeding block-strings. see: tests-to-add.txt for details
   ##########################
-    CODE GENERATION
+    OLD CODE GENERATION
   ##########################
 
   ##
@@ -295,6 +295,14 @@ class BaseStn extends BaseClass
     else
       @
     .postTransform()
+    .setDefaultParseTreeNode @parseTreeNode
+
+  setDefaultParseTreeNode: (parseTreeNode)->
+    unless @parseTreeNode
+      @parseTreeNode = parseTreeNode
+      each child in @children
+        child.setDefaultParseTreeNode parseTreeNode
+    @
 
   ##########################
     PARENTHESIS

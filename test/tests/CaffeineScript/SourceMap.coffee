@@ -10,7 +10,11 @@ module.exports = suite:
     generateSourceMapParseTest "SimpleLiteralStn",  "1"
     generateSourceMapParseTest "StringStn",         ":hi"
     generateSourceMapParseTest "ReferenceStn",      "a"
-    generateSourceMapParseTest "AssignmentStn",      "a=1"
+    generateSourceMapParseTest "AssignmentStn1",    "a = 1"
+    generateSourceMapParseTest "AssignmentStn2",    "a += 1"
+    generateSourceMapParseTest "AssignmentStn3",    "a ||= 1"
+    generateSourceMapParseTest "BinaryOperatorStn", "a + 1"
+    generateSourceMapParseTest "BinaryOperatorStn", "->"
 
   # generateSourceMapParseTest "every SourceTreeNodeType", """
   #   1

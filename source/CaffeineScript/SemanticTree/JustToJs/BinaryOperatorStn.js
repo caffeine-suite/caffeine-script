@@ -4,8 +4,10 @@ Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "operatorIsInfixJs",
-      "binaryOperatorToJs",
+      "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
+      "compactFlatten",
+      "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
       "formattedInspect"
@@ -13,8 +15,10 @@ Caf.defMod(module, () => {
     [global, require("../../StandardImport"), require("../../OperatorHelper")],
     (
       operatorIsInfixJs,
-      binaryOperatorToJs,
+      binaryOperatorToSourceNodeArray,
       getOpPrecidence,
+      compactFlatten,
+      binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
       formattedInspect
@@ -43,6 +47,56 @@ Caf.defMod(module, () => {
               this.uniqueIdentifierHandle = this.scope.uniqueIdentifierHandle;
             }
             return instanceSuper.updateScope.apply(this, arguments);
+          };
+          this.prototype.toSourceNode = function(options) {
+            let out, identifier, parentOperatorPrecidence;
+            out = (() => {
+              switch (false) {
+                case !(this.operator === "?" && this.uniqueIdentifierHandle):
+                  ({ identifier } = this.uniqueIdentifierHandle);
+                  return this.newSourceNode.add([
+                    "((",
+                    identifier,
+                    " = ",
+                    this.left.toSourceNode({ expression: true }),
+                    ") != null ? ",
+                    identifier,
+                    " : ",
+                    this.right.toSourceNode({ expression: true }),
+                    ")"
+                  ]);
+                case !!operatorIsInfixJs(this.operator):
+                  return this.newSourceNode.add(
+                    binaryOperatorToSourceNodeArray(
+                      this.operator,
+                      this.left.toSourceNode({ expression: true }),
+                      this.right.toSourceNode({ expression: true })
+                    )
+                  );
+                default:
+                  parentOperatorPrecidence = getOpPrecidence(this.operator);
+                  return this.newSourceNode.add(
+                    binaryOperatorToSourceNodeArray(
+                      this.operator,
+                      this.left.toSourceNode({
+                        expression: true,
+                        subExpression: true,
+                        parentOperatorPrecidence,
+                        isLeftOperand: true
+                      }),
+                      this.right.toSourceNode({
+                        expression: true,
+                        subExpression: true,
+                        parentOperatorPrecidence,
+                        isLeftOperand: false
+                      })
+                    )
+                  );
+              }
+            })();
+            return options && this._needsParens(options)
+              ? compactFlatten(["(", out, ")"])
+              : out;
           };
           this.prototype.toJs = function(options) {
             let out, identifier, parentOperatorPrecidence;

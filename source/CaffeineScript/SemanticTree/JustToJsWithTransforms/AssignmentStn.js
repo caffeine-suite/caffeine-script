@@ -45,7 +45,11 @@ Caf.defMod(module, () => {
                   SemanticTree.BinaryOperatorStn(
                     { operator: this.operator },
                     value1,
-                    SemanticTree.AssignmentStn(value2, this.rValue)
+                    SemanticTree.AssignmentStn(
+                      { parseTreeNode: this.parseTreeNode },
+                      value2,
+                      this.rValue
+                    )
                   ))
                 : this;
             };

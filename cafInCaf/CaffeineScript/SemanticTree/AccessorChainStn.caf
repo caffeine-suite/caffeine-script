@@ -29,7 +29,9 @@ StnRegistry = &StnRegistry
 class AccessorChainStn extends &ValueBaseCaptureStn
   @abstractClass()
 
-  transform: -> @transformAccessorChain()
+  transform: ->
+    @transformAccessorChain()
+    .setDefaultParseTreeNode @parseTreeNode
 
   transformAccessorChain:
     ## <doc>
@@ -142,6 +144,7 @@ class AccessorChainStn extends &ValueBaseCaptureStn
 
     StnRegistry.BinaryOperatorStn
       operator: "&&"
+
       StnRegistry.FunctionInvocationStn
         StnRegistry.IdentifierStn identifier: if forFunctionInvocation then "Caf.isF" else "Caf.exists"
         value1

@@ -113,6 +113,73 @@ Caf.defMod(module, () => {
             f = OperatorHelper.operatorMap[operand] || infix;
             return f(a, b, operand);
           };
+          this.binaryOperatorToSourceNodeArray = function(operand, a, b) {
+            return (() => {
+              switch (operand) {
+                case "**":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.pow(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "//":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.div(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "%%":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.mod(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "in":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.in(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "is":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.is(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "isnt":
+                  return [
+                    `!${Caf.toString(CoffeeScriptGlobal)}.is(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "?":
+                  return a.match(/^@?[_a-z0-9]+$/i)
+                    ? [a, " != null ? ", a, " : ", b]
+                    : [
+                        CoffeeScriptGlobal,
+                        ".existsOr(",
+                        a,
+                        ", (() => {return ",
+                        b,
+                        "})())"
+                      ];
+                default:
+                  return [a, ` ${Caf.toString(operand)} `, b];
+              }
+            })();
+          };
           this.getOpPrecidence = op => {
             let p;
             if (!((p = this.opsToPrecidence[op]) != null)) {

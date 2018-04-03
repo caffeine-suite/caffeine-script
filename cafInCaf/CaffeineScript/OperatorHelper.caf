@@ -4,11 +4,11 @@ class OperatorHelper
   @CoffeeScriptGlobal: CoffeeScriptGlobal = "Caf"
 
   @operatorMap:
-    **: (a, b) -> "#{CoffeeScriptGlobal}.pow(#{a}, #{b})"
-    //: (a, b) -> "#{CoffeeScriptGlobal}.div(#{a}, #{b})"
-    %%: (a, b) -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
-    in: (a, b) -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
-    is: (a, b) -> "#{CoffeeScriptGlobal}.is(#{a}, #{b})"
+    **: (a, b)   -> "#{CoffeeScriptGlobal}.pow(#{a}, #{b})"
+    //: (a, b)   -> "#{CoffeeScriptGlobal}.div(#{a}, #{b})"
+    %%: (a, b)   -> "#{CoffeeScriptGlobal}.mod(#{a}, #{b})"
+    in: (a, b)   -> "#{CoffeeScriptGlobal}.in(#{a}, #{b})"
+    is: (a, b)   -> "#{CoffeeScriptGlobal}.is(#{a}, #{b})"
     isnt: (a, b) -> "!#{CoffeeScriptGlobal}.is(#{a}, #{b})"
 
     ?:  (a, b) ->
@@ -18,6 +18,7 @@ class OperatorHelper
         "#{CoffeeScriptGlobal}.existsOr(#{a}, (() => {return #{b}})())"
 
   @infix: infix = (a, b, op) -> "#{a} #{op} #{b}"
+
   @precidence:
     :left  :?
     :right :**
@@ -55,6 +56,23 @@ class OperatorHelper
   @binaryOperatorToJs: (operand, a, b) ->
     f = OperatorHelper.operatorMap[operand] || infix
     f a, b, operand
+
+  @binaryOperatorToSourceNodeArray: (operand, a, b) ->
+    switch operand
+    when :**    then [] "#{ CoffeeScriptGlobal}.pow(", a, ", ", b, ")"
+    when ://    then [] "#{ CoffeeScriptGlobal}.div(", a, ", ", b, ")"
+    when :%%    then [] "#{ CoffeeScriptGlobal}.mod(", a, ", ", b, ")"
+    when :in    then [] "#{ CoffeeScriptGlobal}.in(",  a, ", ", b, ")"
+    when :is    then [] "#{ CoffeeScriptGlobal}.is(",  a, ", ", b, ")"
+    when :isnt  then [] "!#{CoffeeScriptGlobal}.is(",  a, ", ", b, ")"
+
+    when :?
+      if a.match /^@?[_a-z0-9]+$/i
+        [] a, " != null ? ", a, " : ", b
+      else
+        [] CoffeeScriptGlobal, ".existsOr(", a, ", (() => {return ", b, "})())"
+
+    else [] a, " #{operand} ", b
 
   @getOpPrecidence: (op) =>
     unless (p = @opsToPrecidence[op])?

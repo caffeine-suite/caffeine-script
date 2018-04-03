@@ -24,9 +24,10 @@ class AssignmentStn extends &AccessorChainStn
       {value1, value2} = @getValueWithBaseCapture @lValue
 
       SemanticTree.BinaryOperatorStn
-        operator: @operator
+        {@operator}
         value1
         SemanticTree.AssignmentStn
+          {@parseTreeNode}
           value2
           @rValue
     else

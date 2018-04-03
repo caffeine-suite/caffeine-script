@@ -14,6 +14,40 @@ class BinaryOperatorStn extends &BaseStn
       @uniqueIdentifierHandle = @scope.uniqueIdentifierHandle
     super
 
+  toSourceNode: (options)->
+    out = switch
+    when @operator == "?" && @uniqueIdentifierHandle
+      {identifier} = @uniqueIdentifierHandle
+
+      @newSourceNode.add []
+        "(("
+        identifier
+        " = "
+        @left.toSourceNode expression: true
+        ") != null ? "
+        identifier
+        " : "
+        @right.toSourceNode expression: true
+        ")"
+
+    when !operatorIsInfixJs @operator
+      @newSourceNode.add binaryOperatorToSourceNodeArray
+        @operator
+        @left.toSourceNode expression: true
+        @right.toSourceNode expression: true
+
+    else
+      parentOperatorPrecidence = getOpPrecidence @operator
+      @newSourceNode.add binaryOperatorToSourceNodeArray
+        @operator
+        @left.toSourceNode  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
+        @right.toSourceNode {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
+
+    if options && @_needsParens options
+      compactFlatten [] "(", out, ")"
+    else
+      out
+
   toJs: (options)->
     out = if @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle

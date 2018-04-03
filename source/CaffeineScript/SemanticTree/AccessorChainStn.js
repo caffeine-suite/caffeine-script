@@ -13,7 +13,9 @@ Caf.defMod(module, () => {
           function(AccessorChainStn, classSuper, instanceSuper) {
             this.abstractClass();
             this.prototype.transform = function() {
-              return this.transformAccessorChain();
+              return this.transformAccessorChain().setDefaultParseTreeNode(
+                this.parseTreeNode
+              );
             };
             this.prototype.transformAccessorChain = function() {
               let accessorChain, out;

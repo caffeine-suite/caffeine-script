@@ -53,8 +53,12 @@ Caf.defMod(module, () => {
                   }
                 )
               ]),
-              function(operandA, operandB, operator) {
-                return BinaryOperatorStn({ operator }, operandA, operandB);
+              (operandA, operandB, operator) => {
+                return BinaryOperatorStn(
+                  { parseTreeNode: this, operator },
+                  operandA,
+                  operandB
+                );
               }
             );
           }

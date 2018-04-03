@@ -16,8 +16,9 @@ binaryOperatorSequenceExtension:
       compactFlatten [] left, array opAndExp in @binaryOperatorAndExpressions
         opAndExp.rValue.getStn()
 
-      (operandA, operandB, operator) ~>
+      (operandA, operandB, operator) ->
         BinaryOperatorStn
+          parseTreeNode: @
           operator: operator
           operandA
           operandB
