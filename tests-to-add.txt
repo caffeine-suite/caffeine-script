@@ -67,6 +67,10 @@ SHOULD NOT COMPILE
     .then (message) =>
       .then @setup
 
+-----
+App extends FluxComponent
+
+
 #################################
 WRONG COMPILE
 #################################
