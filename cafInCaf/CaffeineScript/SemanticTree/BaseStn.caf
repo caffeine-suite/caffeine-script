@@ -158,7 +158,7 @@ class BaseStn extends BaseClass
 
   # options are the same options passed to "toJs" - see below
   toSourceNode: (options) ->
-    log.warn "WARNING: sourceMap generation not fully supported (SemanticTreeNode: #{@type})"
+    log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
     @newSourceNode.add @toJs options
 
   toJsWithInlineSourceMap: (options = {}) ->

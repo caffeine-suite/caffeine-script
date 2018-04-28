@@ -190,9 +190,9 @@ Caf.defMod(module, () => {
             });
             this.prototype.toSourceNode = function(options) {
               log.warn(
-                `WARNING: sourceMap generation not fully supported (SemanticTreeNode: ${Caf.toString(
-                  this.type
-                )})`
+                `WARNING: toSourceNode not overridden in ${Caf.toString(
+                  this.class.name
+                )}. Falling back to old toJs().`
               );
               return this.newSourceNode.add(this.toJs(options));
             };

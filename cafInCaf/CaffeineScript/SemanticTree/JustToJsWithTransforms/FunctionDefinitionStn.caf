@@ -75,6 +75,20 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
     super
 
+  ##
+    NOTES:
+
+    toSourceNode: (options) ->
+
+    Handling super in constructors is the trick. It may not be too hard.
+
+    We have to scan the body-statements and determine the first one
+    that contains a "super" call.
+
+      Specifically, we recurse down the Semantic tree, looking for
+      super, but not recursing into function or class definitions.
+
+
   toJs: ->
     {returnIgnored, isConstructor, bound} = @props
     returnIgnored ||= isConstructor
@@ -83,22 +97,28 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     statements = []
     argsDef = if argsDef
 
-      statements = array arg in argsDef.children when preBodyStatements = arg.getFunctionPreBodyStatementsJs() with preBodyStatements
+      preBodyStatements = array arg in argsDef.children
+        arg.getFunctionPreBodyStatementsJs()
+
       argsDef.toJs()
     else "()"
 
-    bodyJs = body?.toFunctionBodyJsArray !returnIgnored
-    if @props.isConstructor
-      constructorSuperIndex = find v, i in bodyJs when v.match /^super\(/ with i
+    bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
 
-    statements = compactFlatten if constructorSuperIndex? && constructorSuperIndex >= 0
-      beforeSuper = bodyJs.slice 0, constructorSuperIndex
-      afterSuper = bodyJs.slice constructorSuperIndex + 1, bodyJs.length
-      superJs = bodyJs[constructorSuperIndex]
-      [@getAutoLets(), beforeSuper, superJs, statements, afterSuper]
+    statements = compactFlatten if @props.isConstructor
+      constructorSuperIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
+
+      if constructorSuperIndex? && constructorSuperIndex >= 0
+        beforeSuper = bodyJsArray.slice 0, constructorSuperIndex
+        afterSuper = bodyJsArray.slice constructorSuperIndex + 1, bodyJsArray.length
+        superJs = bodyJsArray[constructorSuperIndex]
+        [@getAutoLets(), beforeSuper, superJs, preBodyStatements, afterSuper]
+
+      else
+        [@getAutoLets(), "super(...arguments)", preBodyStatements, bodyJsArray]
 
     else
-      [@getAutoLets(), isConstructor && "super(...arguments)", statements, bodyJs]
+      [@getAutoLets(), preBodyStatements, bodyJsArray]
 
     body = if statements.length > 0
       "{#{statements.join '; '};}"

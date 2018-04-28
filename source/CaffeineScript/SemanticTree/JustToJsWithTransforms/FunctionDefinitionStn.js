@@ -92,7 +92,8 @@ Caf.defMod(module, () => {
                 argsDef,
                 body,
                 statements,
-                bodyJs,
+                preBodyStatements,
+                bodyJsArray,
                 constructorSuperIndex,
                 beforeSuper,
                 afterSuper,
@@ -102,52 +103,50 @@ Caf.defMod(module, () => {
               [argsDef, body] = this.children;
               statements = [];
               argsDef = argsDef
-                ? ((statements = Caf.each(
+                ? ((preBodyStatements = Caf.each(
                     argsDef.children,
                     [],
                     (arg, cafK, cafInto) => {
-                      let preBodyStatements;
-                      if (
-                        (preBodyStatements = arg.getFunctionPreBodyStatementsJs())
-                      ) {
-                        cafInto.push(preBodyStatements);
-                      }
+                      cafInto.push(arg.getFunctionPreBodyStatementsJs());
                     }
                   )),
                   argsDef.toJs())
                 : "()";
-              bodyJs =
+              bodyJsArray =
                 Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
-              if (this.props.isConstructor) {
-                constructorSuperIndex = Caf.extendedEach(
-                  bodyJs,
-                  undefined,
-                  (v, i, cafInto, cafBrk) => {
-                    return v.match(/^super\(/) && (cafBrk(), i);
-                  }
-                );
-              }
               statements = compactFlatten(
-                constructorSuperIndex != null && constructorSuperIndex >= 0
-                  ? ((beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
-                    (afterSuper = bodyJs.slice(
-                      constructorSuperIndex + 1,
-                      bodyJs.length
+                this.props.isConstructor
+                  ? ((constructorSuperIndex = Caf.extendedEach(
+                      bodyJsArray,
+                      undefined,
+                      (v, i, cafInto, cafBrk) => {
+                        return v.match(/^super\(/) && (cafBrk(), i);
+                      }
                     )),
-                    (superJs = bodyJs[constructorSuperIndex]),
-                    [
-                      this.getAutoLets(),
-                      beforeSuper,
-                      superJs,
-                      statements,
-                      afterSuper
-                    ])
-                  : [
-                      this.getAutoLets(),
-                      isConstructor && "super(...arguments)",
-                      statements,
-                      bodyJs
-                    ]
+                    constructorSuperIndex != null && constructorSuperIndex >= 0
+                      ? ((beforeSuper = bodyJsArray.slice(
+                          0,
+                          constructorSuperIndex
+                        )),
+                        (afterSuper = bodyJsArray.slice(
+                          constructorSuperIndex + 1,
+                          bodyJsArray.length
+                        )),
+                        (superJs = bodyJsArray[constructorSuperIndex]),
+                        [
+                          this.getAutoLets(),
+                          beforeSuper,
+                          superJs,
+                          preBodyStatements,
+                          afterSuper
+                        ])
+                      : [
+                          this.getAutoLets(),
+                          "super(...arguments)",
+                          preBodyStatements,
+                          bodyJsArray
+                        ])
+                  : [this.getAutoLets(), preBodyStatements, bodyJsArray]
               );
               body =
                 statements.length > 0
