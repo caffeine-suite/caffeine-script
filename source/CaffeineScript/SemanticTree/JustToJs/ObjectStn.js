@@ -28,7 +28,11 @@ Caf.defMod(module, () => {
             Caf.each(children, undefined, child => {
               let found, value;
               if ((found = child.find(/ObjectPropNameStn/))) {
-                [{ props: { value } }] = found;
+                [
+                  {
+                    props: { value }
+                  }
+                ] = found;
                 if (currentDefined[value]) {
                   currentDefined = {};
                   listOfObjectLiterals.push((currentOrder = []));

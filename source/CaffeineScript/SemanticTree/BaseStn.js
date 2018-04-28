@@ -31,7 +31,7 @@ Caf.defMod(module, () => {
       return (
         ({ createObjectTreeFactory } = require("art-object-tree-factory")),
         ({ SourceNode } = require("source-map")),
-        ({ binary } = require("art-foundation").Binary),
+        ({ binary } = require("art-binary")),
         (BaseStn = Caf.defClass(
           class BaseStn extends BaseClass {
             constructor(props, children = [], pretransformedStn) {

@@ -6,10 +6,10 @@
     }
   },
   "dependencies": {
+    "art-binary": "*",
     "art-build-configurator": "*",
     "art-class-system": "*",
     "art-config": "*",
-    "art-foundation": "*",
     "art-object-tree-factory": "*",
     "art-standard-lib": "*",
     "art-testbench": "*",

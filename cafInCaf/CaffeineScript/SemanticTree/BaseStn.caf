@@ -1,7 +1,7 @@
 import &StandardImport
 {createObjectTreeFactory} = &ArtObjectTreeFactory
 {SourceNode} = &SourceMap
-{binary} = &ArtFoundation.Binary
+{binary} = &ArtBinary
 
 ##
   TODO:

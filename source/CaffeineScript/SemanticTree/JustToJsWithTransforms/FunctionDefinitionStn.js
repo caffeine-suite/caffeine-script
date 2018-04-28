@@ -78,7 +78,9 @@ Caf.defMod(module, () => {
                 this.props.bound = (foundParent = this.pretransformedStn.findParent(
                   /Class|FunctionDefinition/
                 ))
-                  ? foundParent.type === "Class" ? false : true
+                  ? foundParent.type === "Class"
+                    ? false
+                    : true
                   : false;
               }
               return instanceSuper.postTransform.apply(this, arguments);

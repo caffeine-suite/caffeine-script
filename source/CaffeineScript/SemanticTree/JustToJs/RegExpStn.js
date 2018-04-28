@@ -29,13 +29,17 @@ Caf.defMod(module, () => {
                     let v;
                     cafInto.push(
                       isString((v = child.props.value))
-                        ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
+                        ? hasInterpolation
+                          ? v.replace(/([`$\\])/g, "\\$1")
+                          : v
                         : `\${Caf.toString(${Caf.toString(
                             child.toJsExpression()
                           )})}`
                     );
                   }).join(""))
-                : value != null ? value : "";
+                : value != null
+                  ? value
+                  : "";
             return str.length === 0
               ? "/(?:)/"
               : hasInterpolation

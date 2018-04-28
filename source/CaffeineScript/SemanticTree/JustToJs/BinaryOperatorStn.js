@@ -133,7 +133,9 @@ Caf.defMod(module, () => {
                       })
                     ));
             return options
-              ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
+              ? this._needsParens(options)
+                ? `(${Caf.toString(out)})`
+                : out
               : out;
           };
           this.prototype._needsParens = function(toJsOptions) {
