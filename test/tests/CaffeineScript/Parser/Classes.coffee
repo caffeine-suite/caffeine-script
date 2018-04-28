@@ -220,7 +220,19 @@ module.exports = suite: parseTestSuite
         A = Caf.defClass(class A extends Object
         {constructor() {super(...arguments); this.foo = 1;}});"
 
-    regs:
+      # """
+      # class A
+      #   constructor: (a)->
+      #     if a > 0
+      #       super 1
+      #     else
+      #       super 2
+      # """: "
+      #   let A;
+      #   A = Caf.defClass(class A extends Object
+      #   {constructor() {super(...arguments); this.foo = 1;}});"
+
+    regressions:
       """
       class A
         constructor: ->

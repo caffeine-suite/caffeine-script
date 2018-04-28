@@ -85,6 +85,83 @@ Caf.defMod(module, () => {
               }
               return instanceSuper.postTransform.apply(this, arguments);
             };
+            this.getter({
+              statementStns: function() {
+                return this.children[1].children;
+              },
+              argumentStns: function() {
+                return this.children[0].children;
+              }
+            });
+            this.prototype.getPostTransformStatementStns = function() {
+              let SuperStn,
+                ArraySpreadElementStn,
+                ReferenceStn,
+                IdentifierStn,
+                isConstructor,
+                statementStns,
+                preBodyStatements,
+                lastSuperContainingStatementIndex;
+              ({
+                SuperStn,
+                ArraySpreadElementStn,
+                ReferenceStn,
+                IdentifierStn
+              } = require("../../StnRegistry"));
+              ({ isConstructor } = this.props);
+              ({ statementStns } = this);
+              preBodyStatements = null;
+              Caf.each(this.argumentStns, undefined, arg => {
+                let stn;
+                if ((stn = arg.generatePreBodyStatementStn())) {
+                  (preBodyStatements != null
+                    ? preBodyStatements
+                    : (preBodyStatements = [])
+                  ).push(stn);
+                }
+              });
+              return compactFlatten(
+                isConstructor
+                  ? ((lastSuperContainingStatementIndex = null),
+                    Caf.each(statementStns, undefined, (v, i) => {
+                      if (
+                        Caf.is(v, SuperStn) ||
+                        v.find(/Super/, /FunctionDefinition|Class/)
+                      ) {
+                        lastSuperContainingStatementIndex = i;
+                      }
+                    }),
+                    lastSuperContainingStatementIndex != null &&
+                    lastSuperContainingStatementIndex >= 0
+                      ? preBodyStatements
+                        ? [
+                            statementStns.slice(
+                              0,
+                              lastSuperContainingStatementIndex + 1
+                            ),
+                            preBodyStatements,
+                            statementStns.slice(
+                              lastSuperContainingStatementIndex + 1,
+                              statementStns.length
+                            )
+                          ]
+                        : statementStns
+                      : [
+                          SuperStn(
+                            ArraySpreadElementStn(
+                              ReferenceStn(
+                                IdentifierStn({ identifier: "arguments" })
+                              )
+                            )
+                          ),
+                          preBodyStatements,
+                          statementStns
+                        ])
+                  : preBodyStatements
+                    ? [preBodyStatements, statementStns]
+                    : statementStns
+              );
+            };
             this.prototype.getBodyJs = function() {
               let returnIgnored,
                 isConstructor,
@@ -93,7 +170,7 @@ Caf.defMod(module, () => {
                 preBodyStatements,
                 bodyJsArray,
                 statements,
-                constructorSuperIndex,
+                lastSuperContainingStatementIndex,
                 beforeSuper,
                 afterSuper,
                 superJs;
@@ -111,23 +188,25 @@ Caf.defMod(module, () => {
                 Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
               statements = compactFlatten(
                 isConstructor
-                  ? ((constructorSuperIndex = Caf.extendedEach(
+                  ? ((lastSuperContainingStatementIndex = Caf.extendedEach(
                       bodyJsArray,
                       undefined,
                       (v, i, cafInto, cafBrk) => {
                         return v.match(/^super\(/) && (cafBrk(), i);
                       }
                     )),
-                    constructorSuperIndex != null && constructorSuperIndex >= 0
+                    lastSuperContainingStatementIndex != null &&
+                    lastSuperContainingStatementIndex >= 0
                       ? ((beforeSuper = bodyJsArray.slice(
                           0,
-                          constructorSuperIndex
+                          lastSuperContainingStatementIndex
                         )),
                         (afterSuper = bodyJsArray.slice(
-                          constructorSuperIndex + 1,
+                          lastSuperContainingStatementIndex + 1,
                           bodyJsArray.length
                         )),
-                        (superJs = bodyJsArray[constructorSuperIndex]),
+                        (superJs =
+                          bodyJsArray[lastSuperContainingStatementIndex]),
                         [
                           this.getAutoLets(),
                           beforeSuper,

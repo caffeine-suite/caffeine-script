@@ -73,7 +73,69 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
       else
         false
 
+    # if @statementStns != newStatementStns = @getPostTransformStatementStns()
+    #   {FunctionDefinitionStn, StatementsStn} = &StnRegistry
+    #   FunctionDefinitionStn
+    #     @props
+    #     @children[0]
+    #     StatementsStn newStatementStns
+
+    # else
     super
+
+  @getter
+    statementStns:  -> @children[1].children
+    argumentStns:   -> @children[0].children
+
+  getPostTransformStatementStns: ->
+    {SuperStn, ArraySpreadElementStn, ReferenceStn, IdentifierStn} = &StnRegistry
+
+    {isConstructor} = @props
+    {statementStns} = @
+
+    preBodyStatements = null
+    each arg in @argumentStns
+      if stn = arg.generatePreBodyStatementStn()
+        preBodyStatements ?= []
+        .push stn
+
+    compactFlatten if isConstructor
+
+      lastSuperContainingStatementIndex = null
+      each v, i in statementStns when
+          v is SuperStn
+          or v.find /Super/, /FunctionDefinition|Class/
+        lastSuperContainingStatementIndex = i
+
+      if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
+        # have super
+        if preBodyStatements
+          # insert preBodyStatements just after the last super-containting statement
+          []
+            statementStns.slice 0, lastSuperContainingStatementIndex + 1
+            preBodyStatements
+            statementStns.slice lastSuperContainingStatementIndex + 1, statementStns.length
+        else
+          statementStns
+
+      else
+        # no super, insert one first
+        []
+          SuperStn
+            ArraySpreadElementStn
+              ReferenceStn
+                IdentifierStn identifier: :arguments
+
+          preBodyStatements
+          statementStns
+
+    else if preBodyStatements
+      []
+        preBodyStatements
+        statementStns
+
+    else
+      statementStns
 
   ##
     NOTES:
@@ -100,6 +162,8 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
 
   getBodyJs: ->
+    # return @children[1].toFunctionBodyJs !@props.returnIgnored
+
     {returnIgnored, isConstructor} = @props
     returnIgnored ||= isConstructor
 
@@ -111,12 +175,12 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
 
     statements = compactFlatten if isConstructor
-      constructorSuperIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
+      lastSuperContainingStatementIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
 
-      if constructorSuperIndex? && constructorSuperIndex >= 0
-        beforeSuper = bodyJsArray.slice 0, constructorSuperIndex
-        afterSuper = bodyJsArray.slice constructorSuperIndex + 1, bodyJsArray.length
-        superJs = bodyJsArray[constructorSuperIndex]
+      if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
+        beforeSuper = bodyJsArray.slice 0, lastSuperContainingStatementIndex
+        afterSuper = bodyJsArray.slice lastSuperContainingStatementIndex + 1, bodyJsArray.length
+        superJs = bodyJsArray[lastSuperContainingStatementIndex]
         [@getAutoLets(), beforeSuper, superJs, preBodyStatements, afterSuper]
 
       else

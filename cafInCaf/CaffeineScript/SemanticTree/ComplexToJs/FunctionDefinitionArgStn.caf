@@ -15,6 +15,15 @@ class FunctionDefinitionArgStn extends &BaseStn
   @getter
     argumentName: -> @target.name
 
+  generatePreBodyStatementStn: ->
+    if @assignThisProperty
+      {IdentifierStn, AssignmentStn, ThisStn, ReferenceStn} = &StnRegistry
+      identifierStn = IdentifierStn {identifier} = @target.identifier
+
+      AssignmentStn
+        ThisStn      identifierStn
+        ReferenceStn identifierStn
+
   getFunctionPreBodyStatementsJs: ->
     "this.#{@target.toJs()} = #{@target.toJs()}" if @assignThisProperty
 

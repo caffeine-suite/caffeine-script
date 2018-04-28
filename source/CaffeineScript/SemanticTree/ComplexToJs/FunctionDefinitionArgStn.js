@@ -20,6 +20,29 @@ Caf.defMod(module, () => {
             return this.target.name;
           }
         });
+        this.prototype.generatePreBodyStatementStn = function() {
+          let IdentifierStn,
+            AssignmentStn,
+            ThisStn,
+            ReferenceStn,
+            identifierStn,
+            identifier;
+          return this.assignThisProperty
+            ? (({
+                IdentifierStn,
+                AssignmentStn,
+                ThisStn,
+                ReferenceStn
+              } = require("../../StnRegistry")),
+              (identifierStn = IdentifierStn(
+                (({ identifier } = this.target.identifier), { identifier })
+              )),
+              AssignmentStn(
+                ThisStn(identifierStn),
+                ReferenceStn(identifierStn)
+              ))
+            : undefined;
+        };
         this.prototype.getFunctionPreBodyStatementsJs = function() {
           return this.assignThisProperty
             ? `this.${Caf.toString(this.target.toJs())} = ${Caf.toString(

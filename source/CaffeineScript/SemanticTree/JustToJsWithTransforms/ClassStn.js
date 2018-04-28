@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "compactFlatten", "merge"],
+    ["compactFlatten", "merge", "Error"],
     [global, require("../../StandardImport")],
-    (Error, compactFlatten, merge) => {
+    (compactFlatten, merge, Error) => {
       let SemanticTree, ClassStn;
       return (
         (SemanticTree = require("../../StnRegistry")),
@@ -40,7 +40,6 @@ Caf.defMod(module, () => {
                 instanceSuperHandle,
                 statementsToCount,
                 statementCount,
-                superCallChildren,
                 classBody,
                 children;
               ({
@@ -159,12 +158,13 @@ Caf.defMod(module, () => {
                 if (constructorStn) {
                   statementCount -= 1;
                   constructorStn.props.isConstructor = true;
-                  if ((superCallChildren = constructorStn.find(/Super/))) {
-                    if (!(superCallChildren.length === 1)) {
-                      throw new Error("at most one super call in constructor");
+                  Caf.each(
+                    constructorStn.find(/Super/),
+                    undefined,
+                    superCallChild => {
+                      superCallChild.props.calledInConstructor = true;
                     }
-                    superCallChildren[0].props.calledInConstructor = true;
-                  }
+                  );
                   classBody = StatementsStn(
                     { label: "classBody" },
                     constructorStn
