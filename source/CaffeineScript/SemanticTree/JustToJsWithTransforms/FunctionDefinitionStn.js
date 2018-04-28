@@ -85,37 +85,32 @@ Caf.defMod(module, () => {
               }
               return instanceSuper.postTransform.apply(this, arguments);
             };
-            this.prototype.toJs = function() {
+            this.prototype.getBodyJs = function() {
               let returnIgnored,
                 isConstructor,
-                bound,
                 argsDef,
                 body,
-                statements,
                 preBodyStatements,
                 bodyJsArray,
+                statements,
                 constructorSuperIndex,
                 beforeSuper,
                 afterSuper,
                 superJs;
-              ({ returnIgnored, isConstructor, bound } = this.props);
+              ({ returnIgnored, isConstructor } = this.props);
               returnIgnored || (returnIgnored = isConstructor);
               [argsDef, body] = this.children;
-              statements = [];
-              argsDef = argsDef
-                ? ((preBodyStatements = Caf.each(
-                    argsDef.children,
-                    [],
-                    (arg, cafK, cafInto) => {
-                      cafInto.push(arg.getFunctionPreBodyStatementsJs());
-                    }
-                  )),
-                  argsDef.toJs())
-                : "()";
+              preBodyStatements = Caf.each(
+                Caf.exists(argsDef) && argsDef.children,
+                [],
+                (arg, cafK, cafInto) => {
+                  cafInto.push(arg.getFunctionPreBodyStatementsJs());
+                }
+              );
               bodyJsArray =
                 Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
               statements = compactFlatten(
-                this.props.isConstructor
+                isConstructor
                   ? ((constructorSuperIndex = Caf.extendedEach(
                       bodyJsArray,
                       undefined,
@@ -148,15 +143,30 @@ Caf.defMod(module, () => {
                         ])
                   : [this.getAutoLets(), preBodyStatements, bodyJsArray]
               );
-              body =
-                statements.length > 0
-                  ? `{${Caf.toString(statements.join("; "))};}`
-                  : "{}";
+              return statements.length > 0
+                ? `${Caf.toString(statements.join("; "))};`
+                : "";
+            };
+            this.prototype.getArgsJs = function() {
+              let cafTemp, cafBase;
+              return (cafTemp =
+                Caf.exists((cafBase = this.children[0])) && cafBase.toJs()) !=
+                null
+                ? cafTemp
+                : "()";
+            };
+            this.prototype.toJs = function() {
+              let isConstructor, bound;
+              ({ isConstructor, bound } = this.props);
               return bound
-                ? `${Caf.toString(argsDef)} => ${Caf.toString(body)}`
+                ? `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
+                    this.getBodyJs()
+                  )}}`
                 : `${Caf.toString(
                     isConstructor ? "constructor" : "function"
-                  )}${Caf.toString(argsDef)} ${Caf.toString(body)}`;
+                  )}${Caf.toString(this.getArgsJs())} {${Caf.toString(
+                    this.getBodyJs()
+                  )}}`;
             };
           }
         ))

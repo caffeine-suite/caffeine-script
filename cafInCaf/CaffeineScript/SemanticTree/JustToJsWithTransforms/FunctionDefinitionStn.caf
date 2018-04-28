@@ -88,24 +88,29 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
       Specifically, we recurse down the Semantic tree, looking for
       super, but not recursing into function or class definitions.
 
+    ON! And, super-insertion should be a transform; It shouldn't
+    even be in toJs / toSourceNode.
 
-  toJs: ->
-    {returnIgnored, isConstructor, bound} = @props
+    What about preBodyStatements?
+
+    Ultimately, they probably should also be part of the transform.
+
+    But we can do this refactor incrementally. except... prebody statements must come after
+    super...
+
+
+  getBodyJs: ->
+    {returnIgnored, isConstructor} = @props
     returnIgnored ||= isConstructor
 
     [argsDef, body] = @children
-    statements = []
-    argsDef = if argsDef
 
-      preBodyStatements = array arg in argsDef.children
-        arg.getFunctionPreBodyStatementsJs()
-
-      argsDef.toJs()
-    else "()"
+    preBodyStatements = array arg in argsDef?.children
+      arg.getFunctionPreBodyStatementsJs()
 
     bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
 
-    statements = compactFlatten if @props.isConstructor
+    statements = compactFlatten if isConstructor
       constructorSuperIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
 
       if constructorSuperIndex? && constructorSuperIndex >= 0
@@ -120,11 +125,17 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     else
       [@getAutoLets(), preBodyStatements, bodyJsArray]
 
-    body = if statements.length > 0
-      "{#{statements.join '; '};}"
-    else "{}"
+    if statements.length > 0
+      "#{statements.join '; '};"
+    else ""
+
+  getArgsJs: ->
+    @children[0]?.toJs() ? "()"
+
+  toJs: ->
+    {isConstructor, bound} = @props
 
     if bound
-      "#{argsDef} => #{body}"
+      "#{@getArgsJs()} => {#{@getBodyJs()}}"
     else
-      "#{if isConstructor then "constructor" else "function"}#{argsDef} #{body}"
+      "#{if isConstructor then "constructor" else "function"}#{@getArgsJs()} {#{@getBodyJs()}}"
