@@ -8,7 +8,6 @@ Caf.defMod(module, () => {
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
-      "compactFlatten",
       "log",
       "JSON",
       "Error",
@@ -21,7 +20,6 @@ Caf.defMod(module, () => {
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
-      compactFlatten,
       log,
       JSON,
       Error,
@@ -153,18 +151,26 @@ Caf.defMod(module, () => {
               }
               return found;
             };
-            this.prototype.find = function(stnTypePattern) {
-              let a;
-              a = compactFlatten(
-                Caf.each(this.children, [], (child, cafK, cafInto) => {
-                  cafInto.push(
-                    child.type.match(stnTypePattern)
-                      ? child
-                      : child.find(stnTypePattern)
-                  );
-                })
-              );
-              return a.length === 0 ? null : a;
+            this.prototype.find = function(
+              stnTypePattern,
+              stnTypeStopPattern,
+              _foundList = []
+            ) {
+              Caf.each(this.children, undefined, child => {
+                if (stnTypePattern.test(child.type)) {
+                  _foundList.push(child);
+                } else {
+                  if (
+                    !(
+                      Caf.exists(stnTypeStopPattern) &&
+                      stnTypeStopPattern.test(child.type)
+                    )
+                  ) {
+                    child.find(stnTypePattern, stnTypeStopPattern, _foundList);
+                  }
+                }
+              });
+              return _foundList.length === 0 ? null : _foundList;
             };
             sourceNodeLineColumnScratch = {};
             this.getter({

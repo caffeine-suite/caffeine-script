@@ -72,7 +72,7 @@ class ClassStn extends &BaseStn
       if constructorStn
         statementCount -= 1
         constructorStn.props.isConstructor = true
-        if superCallChildren = constructorStn.find "Super"
+        if superCallChildren = constructorStn.find /Super/
           throw new Error "at most one super call in constructor" unless superCallChildren.length == 1
           superCallChildren[0].props.calledInConstructor = true
 

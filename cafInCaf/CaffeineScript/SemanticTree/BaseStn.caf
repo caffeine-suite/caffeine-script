@@ -121,17 +121,29 @@ class BaseStn extends BaseClass
       else
         parent.findParent stnTypePattern
 
-  find: (stnTypePattern) ->
-    a = compactFlatten array child in @children
-      if child.type.match stnTypePattern
-        child
-      else
-        child.find stnTypePattern
+  ##
+    OUT:
+      null: if no matches
+      [...]: array of matches if 1 or more
 
-    if a.length == 0
+    IN:
+      stnTypePattern: regexp pattern
+        Tests each child's 'type'
+
+      stnTypeStopPattern: regexp (optional)
+        prevents recursing into children that match this pattern
+
+  find: (stnTypePattern, stnTypeStopPattern, _foundList = []) ->
+    each child in @children
+      if stnTypePattern.test child.type
+        _foundList.push child
+      else unless stnTypeStopPattern?.test child.type
+        child.find stnTypePattern, stnTypeStopPattern, _foundList
+
+    if _foundList.length == 0
       null
     else
-      a
+      _foundList
 
   ############################################
     Unique to CafScript

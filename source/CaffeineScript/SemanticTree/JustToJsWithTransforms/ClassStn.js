@@ -159,7 +159,7 @@ Caf.defMod(module, () => {
                 if (constructorStn) {
                   statementCount -= 1;
                   constructorStn.props.isConstructor = true;
-                  if ((superCallChildren = constructorStn.find("Super"))) {
+                  if ((superCallChildren = constructorStn.find(/Super/))) {
                     if (!(superCallChildren.length === 1)) {
                       throw new Error("at most one super call in constructor");
                     }
