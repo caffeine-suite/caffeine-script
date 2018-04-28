@@ -208,7 +208,8 @@ Caf.defMod(module, () => {
                 code
               )}\n//# sourceMappingURL=${Caf.toString(
                 binary(JSON.stringify(map.toString())).toDataUri(
-                  "application/json"
+                  "application/json",
+                  true
                 )
               )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
             };
