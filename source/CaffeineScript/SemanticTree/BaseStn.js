@@ -275,6 +275,7 @@ Caf.defMod(module, () => {
             this.prototype.postTransform = function() {
               return this;
             };
+            this.prototype.decorate = function() {};
             this.prototype.newTransformedInstance = function(
               newProps,
               newChildren
@@ -283,6 +284,7 @@ Caf.defMod(module, () => {
             };
             this.prototype.transform = function() {
               let newChildren;
+              this.decorate();
               return (this.children !== (newChildren = this.transformChildren())
                 ? this.newTransformedInstance(this.props, newChildren)
                 : this

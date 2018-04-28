@@ -35,7 +35,7 @@ Caf.defMod(module, () => {
                 ReferenceStn
               } = require("../../StnRegistry")),
               (identifierStn = IdentifierStn(
-                (({ identifier } = this.target.identifier), { identifier })
+                (({ identifier } = this.target.props), { identifier })
               )),
               AssignmentStn(
                 ThisStn(identifierStn),

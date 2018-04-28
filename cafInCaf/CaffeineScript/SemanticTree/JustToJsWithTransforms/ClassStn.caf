@@ -12,6 +12,18 @@ class ClassStn extends &BaseStn
     className:            -> @props.className
     classSuperHandle:     -> @props.classSuperHandle
     instanceSuperHandle:  -> @props.instanceSuperHandle
+    body:                 -> @labeledChildren.body
+
+  # add isConstructor to the constructor, if found
+  # add calledInConstructor to any Super calls in the constructor
+  decorate: ->
+    each stn in @body?.children when stn.type == :Object
+      each objectPropValueStn in stn.children
+        [propNameStn, propValueStn] = objectPropValueStn.children
+        if propNameStn.type == :ObjectPropName && propNameStn.toJs() == :constructor
+          propValueStn.props.isConstructor = true
+          each superCallChild in propValueStn.find /Super/
+            superCallChild.props.calledInConstructor = true
 
   postTransform: ->
     {className: classNameStn, classExtends, body} = @labeledChildren
@@ -41,30 +53,36 @@ class ClassStn extends &BaseStn
           FunctionDefinitionArgStn IdentifierStn identifier: instanceSuperHandle = "instanceSuper"
         StatementsStn
           statementsToCount = array stn in body.children
-            if stn.type == "Object"
+            if stn.type == :Object
               array objectPropValueStn in stn.children
                 [propNameStn, propValueStn] = objectPropValueStn.children
                 assignToStn = switch propNameStn.type
-                  when "ObjectPropName"
+                  when :ObjectPropName
                     propName = propNameStn.toJs()
                     if m = propName.match /^"@(.*)"$/
                       [__, classPropName] = m
                       ThisStn IdentifierStn identifier: classPropName
+
                     else
-                      if propName == "constructor"
+                      if propName == :constructor
                         constructorStn = propValueStn
                         null
+
                       else
                         AccessorStn
-                          ThisStn IdentifierStn identifier: "prototype"
+                          ThisStn IdentifierStn identifier: :prototype
                           IdentifierStn identifier: propName
-                  when "ObjectLiteralAccessor"
+
+                  when :ObjectLiteralAccessor
                     AccessorStn
-                      ThisStn IdentifierStn identifier: "prototype"
+                      ThisStn IdentifierStn identifier: :prototype
                       propNameStn.children
+
                   else
                     throw new Error "unknown object property name Stn type: #{propNameStn.type}"
+
                 assignToStn && AssignmentStn assignToStn, propValueStn
+
             else
               stn
 
@@ -76,7 +94,7 @@ class ClassStn extends &BaseStn
           superCallChild.props.calledInConstructor = true
 
         classBody = StatementsStn
-          label: "classBody"
+          label: :classBody
           constructorStn
 
       body = null if statementsToCount <= 0

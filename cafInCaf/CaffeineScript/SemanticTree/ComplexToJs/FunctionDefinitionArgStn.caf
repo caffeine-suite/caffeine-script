@@ -18,7 +18,7 @@ class FunctionDefinitionArgStn extends &BaseStn
   generatePreBodyStatementStn: ->
     if @assignThisProperty
       {IdentifierStn, AssignmentStn, ThisStn, ReferenceStn} = &StnRegistry
-      identifierStn = IdentifierStn {identifier} = @target.identifier
+      identifierStn = IdentifierStn {identifier} = @target.props
 
       AssignmentStn
         ThisStn      identifierStn

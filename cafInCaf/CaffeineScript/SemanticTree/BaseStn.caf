@@ -298,10 +298,19 @@ class BaseStn extends BaseClass
   # transform after children have been transformed
   postTransform: -> @
 
+  # called before transforming children
+  # Should ONLY be used to ADD props to this node or its children
+  # Use this if the children need additional information to
+  # properly transform themselves.
+  # Example: ClassStn uses this to notify the constructor funcitonDefinitionStn
+  #   taat it is, indead, a constructor.
+  decorate: ->
+
   newTransformedInstance: (newProps, newChildren) ->
     new @class newProps, newChildren, @
 
   transform: ->
+    @decorate()
     if @children != newChildren = @transformChildren()
       @newTransformedInstance @props, newChildren
     else

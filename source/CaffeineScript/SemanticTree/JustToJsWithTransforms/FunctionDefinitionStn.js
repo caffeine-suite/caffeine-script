@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten"],
+    ["compactFlatten", "log"],
     [global, require("../../StandardImport")],
-    compactFlatten => {
+    (compactFlatten, log) => {
       let StnRegistry, FunctionDefinitionStn;
       return (
         (StnRegistry = require("../../StnRegistry")),
@@ -86,11 +86,19 @@ Caf.defMod(module, () => {
               return instanceSuper.postTransform.apply(this, arguments);
             };
             this.getter({
+              body: function() {
+                return this.children[1];
+              },
+              args: function() {
+                return this.children[0];
+              },
               statementStns: function() {
-                return this.children[1].children;
+                let cafBase;
+                return Caf.exists((cafBase = this.body)) && cafBase.children;
               },
               argumentStns: function() {
-                return this.children[0].children;
+                let cafBase;
+                return Caf.exists((cafBase = this.args)) && cafBase.children;
               }
             });
             this.prototype.getPostTransformStatementStns = function() {
@@ -122,10 +130,12 @@ Caf.defMod(module, () => {
               });
               return compactFlatten(
                 isConstructor
-                  ? ((lastSuperContainingStatementIndex = null),
+                  ? (log("isConstructor"),
+                    (lastSuperContainingStatementIndex = null),
+                    log({ statementStns }),
                     Caf.each(statementStns, undefined, (v, i) => {
                       if (
-                        Caf.is(v, SuperStn) ||
+                        v.type === "Super" ||
                         v.find(/Super/, /FunctionDefinition|Class/)
                       ) {
                         lastSuperContainingStatementIndex = i;
@@ -133,20 +143,25 @@ Caf.defMod(module, () => {
                     }),
                     lastSuperContainingStatementIndex != null &&
                     lastSuperContainingStatementIndex >= 0
-                      ? preBodyStatements
-                        ? [
-                            statementStns.slice(
-                              0,
-                              lastSuperContainingStatementIndex + 1
+                      ? (log("have super"),
+                        preBodyStatements
+                          ? (log(
+                              "insert preBodyStatements just after the last super-containting statement"
                             ),
-                            preBodyStatements,
-                            statementStns.slice(
-                              lastSuperContainingStatementIndex + 1,
-                              statementStns.length
-                            )
-                          ]
-                        : statementStns
-                      : [
+                            [
+                              statementStns.slice(
+                                0,
+                                lastSuperContainingStatementIndex + 1
+                              ),
+                              preBodyStatements,
+                              statementStns.slice(
+                                lastSuperContainingStatementIndex + 1,
+                                statementStns.length
+                              )
+                            ])
+                          : statementStns)
+                      : (log("no super, insert one first"),
+                        [
                           SuperStn(
                             ArraySpreadElementStn(
                               ReferenceStn(
@@ -156,10 +171,11 @@ Caf.defMod(module, () => {
                           ),
                           preBodyStatements,
                           statementStns
-                        ])
+                        ]))
                   : preBodyStatements
-                    ? [preBodyStatements, statementStns]
-                    : statementStns
+                    ? (log("not constructor, but have preBodyStatements"),
+                      [preBodyStatements, statementStns])
+                    : (log("just return statementStns"), statementStns)
               );
             };
             this.prototype.getBodyJs = function() {

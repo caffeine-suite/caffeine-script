@@ -20,8 +20,39 @@ Caf.defMod(module, () => {
               },
               instanceSuperHandle: function() {
                 return this.props.instanceSuperHandle;
+              },
+              body: function() {
+                return this.labeledChildren.body;
               }
             });
+            this.prototype.decorate = function() {
+              let cafBase;
+              return Caf.each(
+                Caf.exists((cafBase = this.body)) && cafBase.children,
+                undefined,
+                stn => {
+                  if (stn.type === "Object") {
+                    Caf.each(stn.children, undefined, objectPropValueStn => {
+                      let propNameStn, propValueStn;
+                      [propNameStn, propValueStn] = objectPropValueStn.children;
+                      if (
+                        propNameStn.type === "ObjectPropName" &&
+                        propNameStn.toJs() === "constructor"
+                      ) {
+                        propValueStn.props.isConstructor = true;
+                        Caf.each(
+                          propValueStn.find(/Super/),
+                          undefined,
+                          superCallChild => {
+                            superCallChild.props.calledInConstructor = true;
+                          }
+                        );
+                      }
+                    });
+                  }
+                }
+              );
+            };
             this.prototype.postTransform = function() {
               let classNameStn,
                 classExtends,
