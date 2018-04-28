@@ -11,6 +11,7 @@ npm:
     caffeine-eight:           :*
     caffeine-script-runtime:  :*
     art-object-tree-factory:  :*
+    art-foundation:           :*
 
   scripts:
     perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"
