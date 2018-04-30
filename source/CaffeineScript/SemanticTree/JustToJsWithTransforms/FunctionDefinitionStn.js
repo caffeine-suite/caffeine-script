@@ -35,12 +35,6 @@ Caf.defMod(module, () => {
             }
           },
           function(FunctionDefinitionStn, classSuper, instanceSuper) {
-            this.prototype.cloneWithNewStatements = function(statements) {
-              return new this.class(this.props, [
-                this.arguments,
-                StnRegistry.StatementsStn(compactFlatten(statements))
-              ]);
-            };
             this.getter({
               needsParens: function() {
                 return false;

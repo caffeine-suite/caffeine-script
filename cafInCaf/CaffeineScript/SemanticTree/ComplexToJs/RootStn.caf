@@ -41,10 +41,6 @@ class RootStn extends &ScopeStnMixin &BaseStn
           [] autoLets, "; "
         @statementsSourceNodes
 
-  cloneWithNewStatements: (statements)->
-    log "RootStn cloneWithNewStatements"
-    new RootStn @props, [] StatementsStn compactFlatten statements
-
   rootUpdateScope: ->
     unless @_scopeHasBeenUpdated
       @_scopeHasBeenUpdated = true

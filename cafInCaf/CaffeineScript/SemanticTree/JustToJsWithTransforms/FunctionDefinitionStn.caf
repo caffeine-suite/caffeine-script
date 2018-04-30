@@ -40,9 +40,6 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     @statements = children[1]
     @_updatingArgumentScope = false
 
-  cloneWithNewStatements: (statements)->
-    new @class @props, [@arguments, StnRegistry.StatementsStn compactFlatten statements]
-
   @getter
     needsParens:            -> false
     needsParensAsStatement: -> !@props.bound

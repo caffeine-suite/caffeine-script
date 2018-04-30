@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten", "present", "log"],
+    ["compactFlatten", "present"],
     [global, require("../../StandardImport")],
-    (compactFlatten, present, log) => {
+    (compactFlatten, present) => {
       let StatementsStn, RootStn;
       return (
         (StatementsStn = require("./StatementsStn")),
@@ -63,12 +63,6 @@ Caf.defMod(module, () => {
                         this.statementsSourceNodes
                       ])
               );
-            };
-            this.prototype.cloneWithNewStatements = function(statements) {
-              log("RootStn cloneWithNewStatements");
-              return new RootStn(this.props, [
-                StatementsStn(compactFlatten(statements))
-              ]);
             };
             this.prototype.rootUpdateScope = function() {
               return !this._scopeHasBeenUpdated
