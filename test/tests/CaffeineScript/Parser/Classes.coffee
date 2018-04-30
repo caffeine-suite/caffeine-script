@@ -203,22 +203,32 @@ module.exports = suite: parseTestSuite
         {constructor(foo) {super(...arguments); this.foo = foo;}});"
 
       """
-      class A
+      class B
         constructor: (@foo) ->
           @bar = null
       """: "
-        let A;
-        A = Caf.defClass(class A extends Object
+        let B;
+        B = Caf.defClass(class B extends Object
         {constructor(foo) {super(...arguments); this.foo = foo; this.bar = null;}});"
 
       """
-      class A
+      class C
         constructor: ->
           @foo = 1
       """: "
-        let A;
-        A = Caf.defClass(class A extends Object
+        let C;
+        C = Caf.defClass(class C extends Object
         {constructor() {super(...arguments); this.foo = 1;}});"
+
+
+      """
+      class D
+        constructor: ->
+          foo = 1
+      """: "
+        let D;
+        D = Caf.defClass(class D extends Object
+        {constructor() {let foo; super(...arguments); foo = 1;}});"
 
       # """
       # class A
@@ -245,9 +255,9 @@ module.exports = suite: parseTestSuite
         B = Caf.defClass(class B extends Object {constructor() {super(123);}});}});"
 
       """
-      class A
+      class C
         constructor: (@foo) ->
           bar()
           super
       """: "
-        let A; A = Caf.defClass(class A extends Object {constructor(foo) {bar(); super(...arguments); this.foo = foo;}});"
+        let C; C = Caf.defClass(class C extends Object {constructor(foo) {bar(); super(...arguments); this.foo = foo;}});"

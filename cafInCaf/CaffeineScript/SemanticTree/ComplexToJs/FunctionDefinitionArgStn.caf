@@ -22,7 +22,7 @@ class FunctionDefinitionArgStn extends &BaseStn
 
       AssignmentStn
         ThisStn      identifierStn
-        ReferenceStn identifierStn
+        identifierStn
 
   getFunctionPreBodyStatementsJs: ->
     "this.#{@target.toJs()} = #{@target.toJs()}" if @assignThisProperty

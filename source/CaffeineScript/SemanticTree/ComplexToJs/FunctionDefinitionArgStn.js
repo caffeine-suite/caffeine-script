@@ -37,10 +37,7 @@ Caf.defMod(module, () => {
               (identifierStn = IdentifierStn(
                 (({ identifier } = this.target.props), { identifier })
               )),
-              AssignmentStn(
-                ThisStn(identifierStn),
-                ReferenceStn(identifierStn)
-              ))
+              AssignmentStn(ThisStn(identifierStn), identifierStn))
             : undefined;
         };
         this.prototype.getFunctionPreBodyStatementsJs = function() {

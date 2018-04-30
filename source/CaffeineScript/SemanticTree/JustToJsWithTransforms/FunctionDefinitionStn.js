@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten", "log"],
+    ["compactFlatten", "merge"],
     [global, require("../../StandardImport")],
-    (compactFlatten, log) => {
+    (compactFlatten, merge) => {
       let StnRegistry, FunctionDefinitionStn;
       return (
         (StnRegistry = require("../../StnRegistry")),
@@ -73,7 +73,7 @@ Caf.defMod(module, () => {
                 : instanceSuper.addIdentifierAssigned.apply(this, arguments);
             };
             this.prototype.postTransform = function() {
-              let foundParent;
+              let foundParent, newStatementStns, StatementsStn, cafBase;
               if (this.props.bound === "auto") {
                 this.props.bound = (foundParent = this.pretransformedStn.findParent(
                   /Class|FunctionDefinition/
@@ -83,7 +83,21 @@ Caf.defMod(module, () => {
                     : true
                   : false;
               }
-              return instanceSuper.postTransform.apply(this, arguments);
+              return this.statementStns !==
+                (newStatementStns = this.getPostTransformStatementStns())
+                ? (({
+                    FunctionDefinitionStn,
+                    StatementsStn
+                  } = require("../../StnRegistry")),
+                  FunctionDefinitionStn(
+                    (Caf.exists((cafBase = this.body)) &&
+                      cafBase.children.length) > 0
+                      ? this.props
+                      : merge(this.props, { returnIgnored: true }),
+                    this.children[0],
+                    StatementsStn(newStatementStns)
+                  ))
+                : instanceSuper.postTransform.apply(this, arguments);
             };
             this.getter({
               body: function() {
@@ -130,9 +144,7 @@ Caf.defMod(module, () => {
               });
               return compactFlatten(
                 isConstructor
-                  ? (log("isConstructor"),
-                    (lastSuperContainingStatementIndex = null),
-                    log({ statementStns }),
+                  ? ((lastSuperContainingStatementIndex = null),
                     Caf.each(statementStns, undefined, (v, i) => {
                       if (
                         v.type === "Super" ||
@@ -143,102 +155,45 @@ Caf.defMod(module, () => {
                     }),
                     lastSuperContainingStatementIndex != null &&
                     lastSuperContainingStatementIndex >= 0
-                      ? (log("have super"),
-                        preBodyStatements
-                          ? (log(
-                              "insert preBodyStatements just after the last super-containting statement"
+                      ? preBodyStatements
+                        ? [
+                            statementStns.slice(
+                              0,
+                              lastSuperContainingStatementIndex + 1
                             ),
-                            [
-                              statementStns.slice(
-                                0,
-                                lastSuperContainingStatementIndex + 1
-                              ),
-                              preBodyStatements,
-                              statementStns.slice(
-                                lastSuperContainingStatementIndex + 1,
-                                statementStns.length
-                              )
-                            ])
-                          : statementStns)
-                      : (log("no super, insert one first"),
-                        [
+                            preBodyStatements,
+                            statementStns.slice(
+                              lastSuperContainingStatementIndex + 1,
+                              statementStns.length
+                            )
+                          ]
+                        : statementStns
+                      : [
                           SuperStn(
                             ArraySpreadElementStn(
-                              ReferenceStn(
-                                IdentifierStn({ identifier: "arguments" })
-                              )
+                              IdentifierStn({ identifier: "arguments" })
                             )
                           ),
                           preBodyStatements,
                           statementStns
-                        ]))
+                        ])
                   : preBodyStatements
-                    ? (log("not constructor, but have preBodyStatements"),
-                      [preBodyStatements, statementStns])
-                    : (log("just return statementStns"), statementStns)
+                    ? [preBodyStatements, statementStns]
+                    : statementStns
               );
             };
             this.prototype.getBodyJs = function() {
-              let returnIgnored,
-                isConstructor,
-                argsDef,
-                body,
-                preBodyStatements,
-                bodyJsArray,
-                statements,
-                lastSuperContainingStatementIndex,
-                beforeSuper,
-                afterSuper,
-                superJs;
+              let returnIgnored, isConstructor, statements, lets, cafBase;
               ({ returnIgnored, isConstructor } = this.props);
-              returnIgnored || (returnIgnored = isConstructor);
-              [argsDef, body] = this.children;
-              preBodyStatements = Caf.each(
-                Caf.exists(argsDef) && argsDef.children,
-                [],
-                (arg, cafK, cafInto) => {
-                  cafInto.push(arg.getFunctionPreBodyStatementsJs());
-                }
-              );
-              bodyJsArray =
-                Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
-              statements = compactFlatten(
-                isConstructor
-                  ? ((lastSuperContainingStatementIndex = Caf.extendedEach(
-                      bodyJsArray,
-                      undefined,
-                      (v, i, cafInto, cafBrk) => {
-                        return v.match(/^super\(/) && (cafBrk(), i);
-                      }
-                    )),
-                    lastSuperContainingStatementIndex != null &&
-                    lastSuperContainingStatementIndex >= 0
-                      ? ((beforeSuper = bodyJsArray.slice(
-                          0,
-                          lastSuperContainingStatementIndex
-                        )),
-                        (afterSuper = bodyJsArray.slice(
-                          lastSuperContainingStatementIndex + 1,
-                          bodyJsArray.length
-                        )),
-                        (superJs =
-                          bodyJsArray[lastSuperContainingStatementIndex]),
-                        [
-                          this.getAutoLets(),
-                          beforeSuper,
-                          superJs,
-                          preBodyStatements,
-                          afterSuper
-                        ])
-                      : [
-                          this.getAutoLets(),
-                          "super(...arguments)",
-                          preBodyStatements,
-                          bodyJsArray
-                        ])
-                  : [this.getAutoLets(), preBodyStatements, bodyJsArray]
-              );
-              return statements.length > 0
+              statements =
+                Caf.exists((cafBase = this.body)) &&
+                cafBase.toFunctionBodyJsArray(
+                  !(isConstructor || returnIgnored)
+                );
+              if ((lets = this.getAutoLets())) {
+                statements = compactFlatten([lets, statements]);
+              }
+              return (Caf.exists(statements) && statements.length) > 0
                 ? `${Caf.toString(statements.join("; "))};`
                 : "";
             };

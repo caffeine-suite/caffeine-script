@@ -74,15 +74,20 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         false
 
     # TODO - make this work, it's close
-    # if @statementStns != newStatementStns = @getPostTransformStatementStns()
-    #   {FunctionDefinitionStn, StatementsStn} = &StnRegistry
-    #   log FunctionDefinitionStn
-    #     @props
-    #     @children[0]
-    #     StatementsStn newStatementStns
+    if @statementStns != newStatementStns = @getPostTransformStatementStns()
+      {FunctionDefinitionStn, StatementsStn} = &StnRegistry
+      FunctionDefinitionStn
 
-    # else
-    super
+        if @body?.children.length > 0
+          @props
+        else
+          merge @props, returnIgnored: true
+
+        @children[0]
+        StatementsStn newStatementStns
+
+    else
+      super
 
   @getter
     body: -> @children[1]
@@ -103,18 +108,18 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         .push stn
 
     compactFlatten if isConstructor
-      log "" isConstructor
+      # log "" isConstructor
       lastSuperContainingStatementIndex = null
-      log {statementStns}
+      # log {statementStns}
       each v, i in statementStns when
           v.type == "Super"
           or v.find /Super/, /FunctionDefinition|Class/
         lastSuperContainingStatementIndex = i
 
       if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
-        log "" have super
+        # log "" have super
         if preBodyStatements
-          log "" insert preBodyStatements just after the last super-containting statement
+          # log "" insert preBodyStatements just after the last super-containting statement
           []
             statementStns.slice 0, lastSuperContainingStatementIndex + 1
             preBodyStatements
@@ -123,24 +128,23 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
           statementStns
 
       else
-        log "" no super, insert one first
+        # log "" no super, insert one first
         []
           SuperStn
             ArraySpreadElementStn
-              ReferenceStn
-                IdentifierStn identifier: :arguments
+              IdentifierStn identifier: :arguments
 
           preBodyStatements
           statementStns
 
     else if preBodyStatements
-      log "" not constructor, but have preBodyStatements
+      # log "" not constructor, but have preBodyStatements
       []
         preBodyStatements
         statementStns
 
     else
-      log "" just return statementStns
+      # log "" just return statementStns
       statementStns
 
   ##
@@ -168,34 +172,38 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
 
   getBodyJs: ->
-    # return @children[1].toFunctionBodyJs !@props.returnIgnored
-
     {returnIgnored, isConstructor} = @props
-    returnIgnored ||= isConstructor
+    statements = @body?.toFunctionBodyJsArray !(isConstructor || returnIgnored)
 
-    [argsDef, body] = @children
+    # {returnIgnored, isConstructor} = @props
+    # returnIgnored ||= isConstructor
 
-    preBodyStatements = array arg in argsDef?.children
-      arg.getFunctionPreBodyStatementsJs()
+    # [argsDef, body] = @children
 
-    bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
+    # preBodyStatements = array arg in argsDef?.children
+    #   arg.getFunctionPreBodyStatementsJs()
 
-    statements = compactFlatten if isConstructor
-      lastSuperContainingStatementIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
+    # bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
 
-      if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
-        beforeSuper = bodyJsArray.slice 0, lastSuperContainingStatementIndex
-        afterSuper = bodyJsArray.slice lastSuperContainingStatementIndex + 1, bodyJsArray.length
-        superJs = bodyJsArray[lastSuperContainingStatementIndex]
-        [@getAutoLets(), beforeSuper, superJs, preBodyStatements, afterSuper]
+    # statements = compactFlatten if isConstructor
+    #   lastSuperContainingStatementIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
 
-      else
-        [@getAutoLets(), "super(...arguments)", preBodyStatements, bodyJsArray]
+    #   if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
+    #     beforeSuper = bodyJsArray.slice 0, lastSuperContainingStatementIndex
+    #     afterSuper = bodyJsArray.slice lastSuperContainingStatementIndex + 1, bodyJsArray.length
+    #     superJs = bodyJsArray[lastSuperContainingStatementIndex]
+    #     [@getAutoLets(), beforeSuper, superJs, preBodyStatements, afterSuper]
 
-    else
-      [@getAutoLets(), preBodyStatements, bodyJsArray]
+    #   else
+    #     [@getAutoLets(), "super(...arguments)", preBodyStatements, bodyJsArray]
 
-    if statements.length > 0
+    # else
+    #   [@getAutoLets(), preBodyStatements, bodyJsArray]
+
+    if lets = @getAutoLets()
+      statements = compactFlatten [lets, statements]
+
+    if statements?.length > 0
       "#{statements.join '; '};"
     else ""
 
