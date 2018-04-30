@@ -11,6 +11,11 @@ Caf.defMod(module, () => {
             ? this.children[1].toJs(options)
             : this.childrenToJs(": ");
         };
+        this.prototype.toSourceNode = function(options) {
+          return Caf.exists(options) && options.restructuring
+            ? this.children[1].toSourceNode(options)
+            : this.childrenToSourceNodes(": ");
+        };
       }
     ));
   })();

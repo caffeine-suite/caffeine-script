@@ -19,7 +19,7 @@ class BinaryOperatorStn extends &BaseStn
     when @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
 
-      @createSourceNode
+      []
         "(("
         identifier
         " = "
@@ -31,19 +31,19 @@ class BinaryOperatorStn extends &BaseStn
         ")"
 
     when !operatorIsInfixJs @operator
-      @createSourceNode binaryOperatorToSourceNodeArray
+      binaryOperatorToSourceNodeArray
         @operator
         @left.toSourceNode expression: true
         @right.toSourceNode expression: true
 
     else
       parentOperatorPrecidence = getOpPrecidence @operator
-      @createSourceNode binaryOperatorToSourceNodeArray
+      binaryOperatorToSourceNodeArray
         @operator
         @left.toSourceNode  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
         @right.toSourceNode {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
 
-    if options && @_needsParens options
+    @createSourceNode if options && @_needsParens options
       compactFlatten [] "(", out, ")"
     else
       out

@@ -1,5 +1,4 @@
 import &StandardImport
-StnRegistry = &StnRegistry
 
 class ControlOperatorStn extends &BaseStn
 
@@ -15,6 +14,11 @@ class ControlOperatorStn extends &BaseStn
       @expression = children[0]
       @body       = children[1] || StnRegistry.UndefinedStn()
       @elseBody   = children[2]
+
+    unless @body.type == "Statements"
+      @body = StnRegistry.StatementsStn @body
+      .parent = @
+
     @validate()
 
   validate: ->
@@ -71,3 +75,75 @@ class ControlOperatorStn extends &BaseStn
       #{@applyRequiredParens jsExpression}
       {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
       "
+
+  toSourceNode: (options = {})->
+    {expression, returnValueIsIgnored, noParens} = options
+    {operand} = @
+
+    negate = applyParens = false
+
+    expressionSourceNode =
+
+    expressionSourceNode = switch operand
+    when :until, :unless
+      operand = if operand == :until
+        :while
+      else
+        :if
+
+      expressionSourceNode = []
+        "!"
+        @expression.toSourceNode dotBase: true
+
+    else
+      @expression.toSourceNode noParens: true
+
+    parts = if expression
+      switch operand
+      when :while
+        if returnValueIsIgnored
+          []
+            "(() => {while("
+            expressionSourceNode
+            ") {"
+            @body.toSourceNode()
+            "})()"
+
+        else
+          tempVarIdentifier = @scope.uniqueIdentifier
+          []
+            "(() => {let #{tempVarIdentifier}; while("
+            expressionSourceNode
+            ") {"
+            @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
+            "}; return #{tempVarIdentifier};})()"
+
+      when :if
+        applyParens = options.subExpression || options.dotBase
+
+        []
+          "("
+          expressionSourceNode
+          ")"
+          " ? "
+          @body.toSourceNode expression: true
+          " : "
+          @elseBody?.toSourceNode(expression: true) || 'undefined'
+
+    else
+      []
+        operand
+        " ("
+        expressionSourceNode
+        ") {"
+        @body.toSourceNode()
+        "}"
+        if @elseBody then []
+          " else {"
+          @elseBody.toSourceNode()
+          "}"
+
+    @createSourceNode
+      "(" if applyParens && !noParens
+      parts
+      ")" if applyParens && !noParens

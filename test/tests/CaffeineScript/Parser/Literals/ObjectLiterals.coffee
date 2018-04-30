@@ -80,12 +80,12 @@ module.exports = suite: parseTestSuite
 
       """
       foo: 1 if bar
-      """: "if (bar) {{foo: 1};};"
+      """: "if (bar) {({foo: 1});};"
 
       """
       foo: 1 if bar
       baz: 2
-      """: "if (bar) {{foo: 1};}; ({baz: 2});"
+      """: "if (bar) {({foo: 1});}; ({baz: 2});"
 
 
       """

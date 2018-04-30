@@ -3,6 +3,20 @@ import &StandardImport
 
 class DestructuringAssignmentStn extends &BaseStn
 
+  toSourceNode: (options) ->
+    {expression, returnValueIsIgnored, noParens} = options if options
+    {structure, value} = @labeledChildren
+    expression = false if returnValueIsIgnored
+
+    @createSourceNode
+      "(" unless noParens
+      structure.toSourceNode()
+      " = "
+      value.toSourceNode expression: true
+      expression && ", "
+      expression && structure.toSourceNode restructuringStart: true
+      ")" unless noParens
+
   toJs: (options)->
     {expression, returnValueIsIgnored} = options if options
     {structure, value} = @labeledChildren

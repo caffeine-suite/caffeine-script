@@ -19,4 +19,7 @@ class IdentifierStn extends &BaseStn
   # toJsg: ->
   #   JsgOut (@props.identifierHandle || @props).identifier
 
+  toSourceNode: ->
+    @createSourceNode (@props.identifierHandle || @props).identifier
+
   toJs: -> (@props.identifierHandle || @props).identifier

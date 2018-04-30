@@ -3,7 +3,7 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
-    [global, require("./StandardImport")],
+    [global, require("art-standard-lib"), require("art-class-system")],
     (BaseClass, isFunction, isString, Error, formattedInspect) => {
       let StnRegistry;
       return (StnRegistry = Caf.defClass(

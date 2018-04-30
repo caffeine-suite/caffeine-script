@@ -3,6 +3,20 @@ import &StandardImport
 
 class ArrayDestructuringStn extends &BaseStn
 
+  toSourceNode: (options) ->
+    {restructuring, restructuringStart} = options if options
+    subOptions = restructuring: true if restructuringStart || restructuring
+
+    base = @childrenToSourceNodes ', ', subOptions
+    if restructuring
+      base
+
+    else
+      @createSourceNode
+        "["
+        base
+        "]"
+
   toJs: (options)->
     {restructuring, restructuringStart} = options if options
     subOptions = restructuring: true if restructuringStart || restructuring

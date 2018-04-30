@@ -54,7 +54,7 @@ Caf.defMod(module, () => {
               switch (false) {
                 case !(this.operator === "?" && this.uniqueIdentifierHandle):
                   ({ identifier } = this.uniqueIdentifierHandle);
-                  return this.createSourceNode(
+                  return [
                     "((",
                     identifier,
                     " = ",
@@ -64,39 +64,37 @@ Caf.defMod(module, () => {
                     " : ",
                     this.right.toSourceNode({ expression: true }),
                     ")"
-                  );
+                  ];
                 case !!operatorIsInfixJs(this.operator):
-                  return this.createSourceNode(
-                    binaryOperatorToSourceNodeArray(
-                      this.operator,
-                      this.left.toSourceNode({ expression: true }),
-                      this.right.toSourceNode({ expression: true })
-                    )
+                  return binaryOperatorToSourceNodeArray(
+                    this.operator,
+                    this.left.toSourceNode({ expression: true }),
+                    this.right.toSourceNode({ expression: true })
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
-                  return this.createSourceNode(
-                    binaryOperatorToSourceNodeArray(
-                      this.operator,
-                      this.left.toSourceNode({
-                        expression: true,
-                        subExpression: true,
-                        parentOperatorPrecidence,
-                        isLeftOperand: true
-                      }),
-                      this.right.toSourceNode({
-                        expression: true,
-                        subExpression: true,
-                        parentOperatorPrecidence,
-                        isLeftOperand: false
-                      })
-                    )
+                  return binaryOperatorToSourceNodeArray(
+                    this.operator,
+                    this.left.toSourceNode({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: true
+                    }),
+                    this.right.toSourceNode({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: false
+                    })
                   );
               }
             })();
-            return options && this._needsParens(options)
-              ? compactFlatten(["(", out, ")"])
-              : out;
+            return this.createSourceNode(
+              options && this._needsParens(options)
+                ? compactFlatten(["(", out, ")"])
+                : out
+            );
           };
           this.prototype.toJs = function(options) {
             let out, identifier, parentOperatorPrecidence;

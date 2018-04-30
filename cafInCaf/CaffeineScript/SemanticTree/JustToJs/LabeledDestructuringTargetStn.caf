@@ -7,3 +7,9 @@ class LabeledDestructuringTargetStn extends &BaseStn
       @children[1].toJs options
     else
       @childrenToJs ': '
+
+  toSourceNode: (options)->
+    if options?.restructuring
+      @children[1].toSourceNode options
+    else
+      @childrenToSourceNodes ': '

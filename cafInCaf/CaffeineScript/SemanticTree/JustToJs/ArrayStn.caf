@@ -11,6 +11,20 @@ class ArrayStn extends &BaseStn
       children = children[0].children
     super props, children
 
+  toSourceNode: (options) ->
+    dotBase = options?.dotBase
+    @createSourceNode
+      if dotBase then "([" else "["
+      array c, i in @children
+        sn = c.toSourceNode()
+        if i > 0
+          []
+            ", "
+            sn
+        else
+          sn
+      if dotBase then "])" else "]"
+
   toJs: (options) ->
     out = "[#{(array c in @children with c.toJsExpression()).join ', '}]"
     if options?.dotBase

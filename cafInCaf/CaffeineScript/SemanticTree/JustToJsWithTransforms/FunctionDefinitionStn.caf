@@ -169,25 +169,30 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props
+    {statement} = options if options
 
     argsSouceNode = @args?.toSourceNode() ? "()"
     bodySourceNode = @body?.toSourceNode returnAction: !(isConstructor || returnIgnored)
     if bound
       @createSourceNode
+        "(" if statement
         argsSouceNode
         " => {"
         @autoLetsForSouceNode
         bodySourceNode
         "}"
+        ")" if statement
 
     else
       @createSourceNode
+        "(" if statement
         if isConstructor then "constructor" else "function"
         argsSouceNode
         " {"
         @autoLetsForSouceNode
         bodySourceNode
         "}"
+        ")" if statement
 
   getBodyJs: ->
     {returnIgnored, isConstructor} = @props

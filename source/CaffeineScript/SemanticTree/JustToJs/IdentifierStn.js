@@ -25,6 +25,11 @@ Caf.defMod(module, () => {
           return instanceSuper.updateScope.apply(this, arguments);
         };
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(
+            (this.props.identifierHandle || this.props).identifier
+          );
+        };
         this.prototype.toJs = function() {
           return (this.props.identifierHandle || this.props).identifier;
         };

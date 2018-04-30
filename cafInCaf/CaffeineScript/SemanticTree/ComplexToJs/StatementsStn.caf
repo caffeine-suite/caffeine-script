@@ -5,17 +5,18 @@ class StatementsStn extends &BaseStn
   needsParens: false
 
   toSourceNode: (options)->
-    {returnAction, generateStatements} = options if options
+    {returnAction, generateStatements, expression} = options if options
+    generateStatements ?= expression ? true
 
     @createSourceNode
-      if options?.expression
+      if expression
         switch @children.length
         when 0 then !generateStatements && "undefined"
         when 1 then @children[0].toSourceNode options
         else
           []
             "("
-            @_getChildrenSourceNodes "", false
+            @_getChildrenSourceNodes null, false
             ")"
       else
         @_getChildrenSourceNodes returnAction, generateStatements
@@ -68,11 +69,11 @@ class StatementsStn extends &BaseStn
 
   _getChildrenSourceNodes: (returnAction, generateStatements = true)->
     returnAction = switch returnAction
-    when true then returnAction = :return
-    when false then null
-    else returnAction
+      when true then returnAction = :return
+      when false then null
+      else returnAction
 
-    array c, i in lines = @children into out=[]
+    array c, i in lines = @children into out = []
       out.push "; " if i>0
       if returnAction? && i == lines.length - 1
         if !c.jsExpressionUsesReturn
@@ -85,11 +86,7 @@ class StatementsStn extends &BaseStn
 
       else
         if generateStatements
-          statement = c.toSourceNode statement: true
-          if c.type == :FunctionDefinition
-            [] "(", statement, ")"
-          else
-            statement
+          c.toSourceNode statement: true
         else
           c.toSourceNode expression: true, returnValueIsIgnored: true
     out.push ";"

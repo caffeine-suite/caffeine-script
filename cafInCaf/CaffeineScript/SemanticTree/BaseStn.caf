@@ -175,7 +175,36 @@ class BaseStn extends BaseClass
   createSourceNode: (args...) ->
     @newSourceNode.add compactFlatten args
 
-  # options are the same options passed to "toJs" - see below
+  ###
+    IN: options:
+      expression: t/f
+        if true, return JS for an expression
+
+      subExpression: t/f
+        currently this means the result is used
+        in a binary operator
+
+      statement: t/f
+        true: is used as a statement
+
+      dotBase: t/f
+        true: is used as the base for a "." or "[]" accessor.
+
+      returnValueIsIgnored: t/f
+        if true and expression is true, still return
+        an expression, but it's OK to streamline since the
+        return-value is ignored.
+
+        This is for use in expressiong-statement-lists: (expressionStatement1, es2, es3)
+        JavaScript requires they be expressions, but it ignores the return value of all
+        but the last one in the list, in this example, "es3".
+
+      noParens: if true, indicates the parent is already going to wrap
+        this in parens, so don't add our own.
+
+      restructuring:
+      restructuringStart: - see DestructuringAssignmentStn
+
   toSourceNode: (options) ->
     log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
     @createSourceNode @toJs options
@@ -193,8 +222,14 @@ class BaseStn extends BaseClass
       //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json, true}
       //# sourceURL=#{@sourceFile}
 
+  childrenToSourceNodes: (joiner, options)->
+    array c, i in @children into out = []
+      if joiner? && i > 0
+        out.push joiner
+      c.toSourceNode options
+
   null
-    # hack-fix for caf-script's current but of comments-getting-sucked-up-into
+    # this null is a hack-fix for caf-script's current bug of comments-getting-sucked-up-into
     # immediately proceeding block-strings. see: tests-to-add.txt for details
   ##########################
     OLD CODE GENERATION

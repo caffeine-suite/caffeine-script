@@ -8,12 +8,15 @@ Caf.defMod(module, () => {
       function(StatementsStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
-          let returnAction, generateStatements;
+          let returnAction, generateStatements, expression;
           if (options) {
-            ({ returnAction, generateStatements } = options);
+            ({ returnAction, generateStatements, expression } = options);
           }
+          generateStatements != null
+            ? generateStatements
+            : (generateStatements = expression != null ? expression : true);
           return this.createSourceNode(
-            Caf.exists(options) && options.expression
+            expression
               ? (() => {
                   switch (this.children.length) {
                     case 0:
@@ -23,7 +26,7 @@ Caf.defMod(module, () => {
                     default:
                       return [
                         "(",
-                        this._getChildrenSourceNodes("", false),
+                        this._getChildrenSourceNodes(null, false),
                         ")"
                       ];
                   }
@@ -104,7 +107,7 @@ Caf.defMod(module, () => {
             }
           })();
           Caf.each((lines = this.children), (out = []), (c, i, cafInto) => {
-            let childExpression, statement;
+            let childExpression;
             if (i > 0) {
               out.push("; ");
             }
@@ -117,10 +120,7 @@ Caf.defMod(module, () => {
                       : childExpression)
                   : c.toJs({ generateReturnStatement: true })
                 : generateStatements
-                  ? ((statement = c.toSourceNode({ statement: true })),
-                    c.type === "FunctionDefinition"
-                      ? ["(", statement, ")"]
-                      : statement)
+                  ? c.toSourceNode({ statement: true })
                   : c.toSourceNode({
                       expression: true,
                       returnValueIsIgnored: true

@@ -15,7 +15,43 @@ module.exports = suite:
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
     generateSourceMapParseTest "BinaryOperatorStn",     "a + 1"
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
-    # generateSourceMapParseTest "ArrayStn",              "[]"
+
+  control: ->
+    generateSourceMapParseTest "ControlOperatorStn",    "a if b"
+    generateSourceMapParseTest "ControlOperatorStn",    "a while b"
+    generateSourceMapParseTest "ControlOperatorStn",    "a unless b"
+    generateSourceMapParseTest "ControlOperatorStn",    "a until b"
+    generateSourceMapParseTest "ControlOperatorStn",    """
+      if b
+        a
+      """
+
+    generateSourceMapParseTest "ControlOperatorStn",    """
+      if b
+        a
+      else
+        c
+      """
+
+    generateSourceMapParseTest "ControlOperatorStn",    """
+      while b
+        a
+      """
+
+  data: ->
+    generateSourceMapParseTest "ArrayStn",              "[] 1"
+    generateSourceMapParseTest "ArrayStn",              "[] a..."
+    generateSourceMapParseTest "ArrayStn",              "[] 1 2"
+
+  destructuring: ->
+    generateSourceMapParseTest "ArrayDestructuringStn", "[a] = b"
+    generateSourceMapParseTest "ArrayDestructuringStn", "[a = 2] = b"
+    generateSourceMapParseTest "ArrayDestructuringStn", "[a, b] = c"
+    generateSourceMapParseTest "ObjectDestructuringStn", "{a} = b"
+    generateSourceMapParseTest "ObjectDestructuringStn", "{a, b} = c"
+    generateSourceMapParseTest "ObjectDestructuringStn", "{a = 2} = c"
+    generateSourceMapParseTest "ObjectDestructuringStn", "{a: b} = c"
+    generateSourceMapParseTest "ObjectDestructuringStn", "{a: [c, d]} = b"
 
   functionDefinition: ->
     generateSourceMapParseTest "FunctionDefinitionStn", "-> 1"

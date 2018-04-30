@@ -234,6 +234,15 @@ Caf.defMod(module, () => {
                 )
               )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
             };
+            this.prototype.childrenToSourceNodes = function(joiner, options) {
+              let out;
+              return Caf.each(this.children, (out = []), (c, i, cafInto) => {
+                if (joiner != null && i > 0) {
+                  out.push(joiner);
+                }
+                cafInto.push(c.toSourceNode(options));
+              });
+            };
             null;
             this.prototype.toJs = function(options) {
               return (() => {

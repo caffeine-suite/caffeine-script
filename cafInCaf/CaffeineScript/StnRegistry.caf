@@ -1,4 +1,4 @@
-import &StandardImport
+import &ArtStandardLib, &ArtClassSystem
 
 class StnRegistry extends BaseClass
 

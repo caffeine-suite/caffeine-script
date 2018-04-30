@@ -184,12 +184,16 @@ Caf.defMod(module, () => {
               let isConstructor,
                 bound,
                 returnIgnored,
+                statement,
                 argsSouceNode,
                 bodySourceNode,
                 cafTemp,
                 cafBase,
                 cafBase1;
               ({ isConstructor, bound, returnIgnored } = this.props);
+              if (options) {
+                ({ statement } = options);
+              }
               argsSouceNode =
                 (cafTemp =
                   Caf.exists((cafBase = this.args)) &&
@@ -203,19 +207,23 @@ Caf.defMod(module, () => {
                 });
               return bound
                 ? this.createSourceNode(
+                    statement ? "(" : undefined,
                     argsSouceNode,
                     " => {",
                     this.autoLetsForSouceNode,
                     bodySourceNode,
-                    "}"
+                    "}",
+                    statement ? ")" : undefined
                   )
                 : this.createSourceNode(
+                    statement ? "(" : undefined,
                     isConstructor ? "constructor" : "function",
                     argsSouceNode,
                     " {",
                     this.autoLetsForSouceNode,
                     bodySourceNode,
-                    "}"
+                    "}",
+                    statement ? ")" : undefined
                   );
             };
             this.prototype.getBodyJs = function() {

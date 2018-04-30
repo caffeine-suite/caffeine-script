@@ -13,6 +13,24 @@ Caf.defMod(module, () => {
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
+        this.prototype.toSourceNode = function(options) {
+          let restructuring, identifier, destructuringDefault;
+          if (options) {
+            ({ restructuring } = options);
+          }
+          ({ identifier, destructuringDefault } = this.labeledChildren);
+          return restructuring
+            ? identifier.toSourceNode()
+            : this.createSourceNode(
+                this.props.ellipsis ? "..." : undefined,
+                identifier.toSourceNode(),
+                destructuringDefault
+                  ? ` = ${Caf.toString(
+                      destructuringDefault.toSourceNode({ expression: true })
+                    )}`
+                  : undefined
+              );
+        };
         this.prototype.toJs = function(options) {
           let restructuring, identifier, destructuringDefault;
           if (options) {

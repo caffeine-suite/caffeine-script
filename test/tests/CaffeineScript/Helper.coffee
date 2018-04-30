@@ -19,25 +19,22 @@ module.exports =
   generateSourceMapParseTest: (name, source, options) ->
     {compileModule, parseOptions} = options if options
 
-    niceTest name, ->
+    niceTest "#{name}: #{source}", ->
       # log "TEST sourceNode"
       try
         parseTree               = CaffeineScriptParser.parse source, merge parseOptions, sourceFile: "mySourceFile.caf"
         semanticTree            = parseTree.getStn()
         transformedSemanticTree = semanticTree.validateAll().transform()
 
-        log {
-          compileModule
-          compareWith: oldJs =
-            if compileModule
-              transformedSemanticTree.toJsModule()
-            else
-              transformedSemanticTree.toJs()
+        oldToJs =
+          if compileModule
+            transformedSemanticTree.toJsModule()
+          else
+            transformedSemanticTree.toJs()
 
-          toJsWithInlineSourceMap: withSourceMapJs = transformedSemanticTree.toJsWithInlineSourceMap
-            verbose: true
-            module: compileModule
-        }
+        withSourceMapJs = transformedSemanticTree.toJsWithInlineSourceMap
+          # verbose: true
+          module: compileModule
 
       catch error
         log "\nFAIL: #{name}".red
@@ -45,8 +42,26 @@ module.exports =
         log info: {parseTree, semanticTree, transformedSemanticTree}
         throw error
       # log "HERE5"
-      [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
-      assert.equal oldJs, newJs
+      try
+        [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
+        assert.equal oldToJs, newJs
+        assert.match withSourceMapJs, ///
+          //\#\ sourceMappingURL=data:application/json;base64,[a-z0-9]+
+          ///i
+        assert.match withSourceMapJs, ///
+          //\#\ sourceURL=[a-z0-9]+.caf
+          ///i
+      catch error
+
+        log {
+          name
+          source
+          options
+          oldToJs
+          withSourceMapJs
+        }
+
+        throw error
 
       # assert.equal true, !!sourceNode
 

@@ -9,6 +9,9 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function() {
           return `...${Caf.toString(this.childrenToJs())}`;
         };
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode("...", this.childrenToSourceNodes());
+        };
       }
     ));
   })();

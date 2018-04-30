@@ -18,6 +18,19 @@ Caf.defMod(module, () => {
             return this.props.implicitArray;
           }
         });
+        this.prototype.toSourceNode = function(options) {
+          let dotBase;
+          dotBase = Caf.exists(options) && options.dotBase;
+          return this.createSourceNode(
+            dotBase ? "([" : "[",
+            Caf.each(this.children, [], (c, i, cafInto) => {
+              let sn;
+              sn = c.toSourceNode();
+              cafInto.push(i > 0 ? [", ", sn] : sn);
+            }),
+            dotBase ? "])" : "]"
+          );
+        };
         this.prototype.toJs = function(options) {
           let out;
           out = `[${Caf.toString(
