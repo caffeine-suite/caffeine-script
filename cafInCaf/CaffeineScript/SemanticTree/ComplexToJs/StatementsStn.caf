@@ -7,13 +7,13 @@ class StatementsStn extends &BaseStn
   toSourceNode: (options)->
     {returnAction, generateStatements} = options if options
 
-    @newSourceNode.add
+    @createSourceNode
       if options?.expression
         switch @children.length
-        when 0 then "undefined"
+        when 0 then !generateStatements && "undefined"
         when 1 then @children[0].toSourceNode options
         else
-          compactFlatten []
+          []
             "("
             @_getChildrenSourceNodes "", false
             ")"

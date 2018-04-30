@@ -48,9 +48,9 @@ class AssignmentStn extends &AccessorChainStn
         " = "
         @rValue.toSourceNode expression:true
 
-    @newSourceNode.add
+    @createSourceNode
       if options?.dotBase || options?.subExpression
-        compactFlatten []
+        []
           "("
           out
           ")"

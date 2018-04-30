@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
       this.prototype.toSourceNode = function(options) {
         let value;
         ({ value } = this.props);
-        return this.newSourceNode.add(
+        return this.createSourceNode(
           Caf.exists(options) && options.dotBase ? ["(", value, ")"] : value
         );
       };

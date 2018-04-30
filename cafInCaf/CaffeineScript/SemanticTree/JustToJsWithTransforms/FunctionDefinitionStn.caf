@@ -165,7 +165,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
   @getter
     autoLetsForSouceNode: ->
       if lets = @getAutoLets()
-        lets + ";"
+        lets + "; "
 
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props
@@ -173,7 +173,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     argsSouceNode = @args?.toSourceNode() ? "()"
     bodySourceNode = @body?.toSourceNode returnAction: !(isConstructor || returnIgnored)
     if bound
-      @newSourceNode.add compactFlatten []
+      @createSourceNode
         argsSouceNode
         " => {"
         @autoLetsForSouceNode
@@ -181,7 +181,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         "}"
 
     else
-      @newSourceNode.add compactFlatten []
+      @createSourceNode
         if isConstructor then "constructor" else "function"
         argsSouceNode
         " {"

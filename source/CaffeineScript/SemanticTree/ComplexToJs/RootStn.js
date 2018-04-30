@@ -28,12 +28,9 @@ Caf.defMod(module, () => {
             this.prototype.toSourceNode = function(options = {}) {
               let identifiersToImport, lets, autoLets;
               this.rootUpdateScope();
-              return this.newSourceNode.add(
+              return this.createSourceNode(
                 options.bare
-                  ? compactFlatten([
-                      this.getBareInitializers(),
-                      this.statementsSourceNodes
-                    ])
+                  ? [this.getBareInitializers(), this.statementsSourceNodes]
                   : options.module
                     ? ((identifiersToImport = Caf.each(
                         this.generateImportMap(),
@@ -56,12 +53,12 @@ Caf.defMod(module, () => {
                         this.statementsSourceNodes,
                         "};});"
                       ])
-                    : compactFlatten([
+                    : [
                         present((autoLets = this.getAutoLets()))
                           ? [autoLets, "; "]
                           : undefined,
                         this.statementsSourceNodes
-                      ])
+                      ]
               );
             };
             this.prototype.rootUpdateScope = function() {

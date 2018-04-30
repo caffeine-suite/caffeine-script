@@ -15,9 +15,15 @@ module.exports = suite:
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
     generateSourceMapParseTest "BinaryOperatorStn",     "a + 1"
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
+    # generateSourceMapParseTest "ArrayStn",              "[]"
 
   functionDefinition: ->
     generateSourceMapParseTest "FunctionDefinitionStn", "-> 1"
+    generateSourceMapParseTest "FunctionDefinitionStn", """
+      ->
+        a = 1
+        a
+      """
 
   # generateSourceMapParseTest "every SourceTreeNodeType", """
   #   1

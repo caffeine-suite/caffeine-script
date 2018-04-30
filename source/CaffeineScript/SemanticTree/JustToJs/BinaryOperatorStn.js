@@ -54,7 +54,7 @@ Caf.defMod(module, () => {
               switch (false) {
                 case !(this.operator === "?" && this.uniqueIdentifierHandle):
                   ({ identifier } = this.uniqueIdentifierHandle);
-                  return this.newSourceNode.add([
+                  return this.createSourceNode(
                     "((",
                     identifier,
                     " = ",
@@ -64,9 +64,9 @@ Caf.defMod(module, () => {
                     " : ",
                     this.right.toSourceNode({ expression: true }),
                     ")"
-                  ]);
+                  );
                 case !!operatorIsInfixJs(this.operator):
-                  return this.newSourceNode.add(
+                  return this.createSourceNode(
                     binaryOperatorToSourceNodeArray(
                       this.operator,
                       this.left.toSourceNode({ expression: true }),
@@ -75,7 +75,7 @@ Caf.defMod(module, () => {
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
-                  return this.newSourceNode.add(
+                  return this.createSourceNode(
                     binaryOperatorToSourceNodeArray(
                       this.operator,
                       this.left.toSourceNode({

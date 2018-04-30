@@ -16,8 +16,8 @@ class RootStn extends &ScopeStnMixin &BaseStn
 
   toSourceNode: (options = {})->
     @rootUpdateScope()
-    @newSourceNode.add if options.bare
-      compactFlatten []
+    @createSourceNode if options.bare
+      []
         @getBareInitializers()
         @statementsSourceNodes
     else if options.module
@@ -36,7 +36,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
         """
           };});
     else
-      compactFlatten []
+      []
         if present autoLets = @getAutoLets()
           [] autoLets, "; "
         @statementsSourceNodes

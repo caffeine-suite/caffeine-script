@@ -8,6 +8,7 @@ Caf.defMod(module, () => {
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
+      "compactFlatten",
       "log",
       "JSON",
       "Error",
@@ -20,6 +21,7 @@ Caf.defMod(module, () => {
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
+      compactFlatten,
       log,
       JSON,
       Error,
@@ -204,13 +206,16 @@ Caf.defMod(module, () => {
                 );
               }
             });
+            this.prototype.createSourceNode = function(...args) {
+              return this.newSourceNode.add(compactFlatten(args));
+            };
             this.prototype.toSourceNode = function(options) {
               log.warn(
                 `WARNING: toSourceNode not overridden in ${Caf.toString(
                   this.class.name
                 )}. Falling back to old toJs().`
               );
-              return this.newSourceNode.add(this.toJs(options));
+              return this.createSourceNode(this.toJs(options));
             };
             this.prototype.toJsWithInlineSourceMap = function(options = {}) {
               let code, map;

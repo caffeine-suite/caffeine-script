@@ -177,7 +177,7 @@ Caf.defMod(module, () => {
             this.getter({
               autoLetsForSouceNode: function() {
                 let lets;
-                return (lets = this.getAutoLets()) ? lets + ";" : undefined;
+                return (lets = this.getAutoLets()) ? lets + "; " : undefined;
               }
             });
             this.prototype.toSourceNode = function(options) {
@@ -202,24 +202,20 @@ Caf.defMod(module, () => {
                   returnAction: !(isConstructor || returnIgnored)
                 });
               return bound
-                ? this.newSourceNode.add(
-                    compactFlatten([
-                      argsSouceNode,
-                      " => {",
-                      this.autoLetsForSouceNode,
-                      bodySourceNode,
-                      "}"
-                    ])
+                ? this.createSourceNode(
+                    argsSouceNode,
+                    " => {",
+                    this.autoLetsForSouceNode,
+                    bodySourceNode,
+                    "}"
                   )
-                : this.newSourceNode.add(
-                    compactFlatten([
-                      isConstructor ? "constructor" : "function",
-                      argsSouceNode,
-                      " {",
-                      this.autoLetsForSouceNode,
-                      bodySourceNode,
-                      "}"
-                    ])
+                : this.createSourceNode(
+                    isConstructor ? "constructor" : "function",
+                    argsSouceNode,
+                    " {",
+                    this.autoLetsForSouceNode,
+                    bodySourceNode,
+                    "}"
                   );
             };
             this.prototype.getBodyJs = function() {

@@ -15,6 +15,17 @@ Caf.defMod(module, () => {
             });
           }
         });
+        this.prototype.toSourceNode = function(options) {
+          return this.createSourceNode(
+            "(",
+            Caf.each(this.children, [], (c, i, cafInto) => {
+              let sn;
+              sn = c.toSourceNode();
+              cafInto.push(i > 0 ? [", ", sn] : sn);
+            }),
+            ")"
+          );
+        };
         this.prototype.toJs = function() {
           return `(${Caf.toString(
             Caf.each(this.children, [], (c, cafK, cafInto) => {

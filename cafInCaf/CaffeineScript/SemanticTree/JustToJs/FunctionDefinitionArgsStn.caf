@@ -7,5 +7,19 @@ class FunctionDefinitionArgsStn extends &BaseStn
       array c in @children when c.argumentName
         c.argumentName
 
+  toSourceNode: (options) ->
+    @createSourceNode
+      "("
+
+      array c, i in @children
+        sn = c.toSourceNode()
+        if i > 0
+          []
+            ", "
+            sn
+        else sn
+
+      ")"
+
   toJs: ->
     "(#{(array c in @children with c.toJs()).join(', ')})"

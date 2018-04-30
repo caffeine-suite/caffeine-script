@@ -172,10 +172,13 @@ class BaseStn extends BaseClass
         column    # should be 0-based
         @parseTreeNode.sourceFile
 
+  createSourceNode: (args...) ->
+    @newSourceNode.add compactFlatten args
+
   # options are the same options passed to "toJs" - see below
   toSourceNode: (options) ->
     log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
-    @newSourceNode.add @toJs options
+    @createSourceNode @toJs options
 
   toJsWithInlineSourceMap: (options = {}) ->
     {code, map} =
