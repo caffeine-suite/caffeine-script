@@ -50,6 +50,20 @@ Caf.defMod(module, () => {
               },
               childrenToUpdateScope: function() {
                 return compactFlatten([this.statements]);
+              },
+              body: function() {
+                return this.children[1];
+              },
+              args: function() {
+                return this.children[0];
+              },
+              statementStns: function() {
+                let cafBase;
+                return Caf.exists((cafBase = this.body)) && cafBase.children;
+              },
+              argumentStns: function() {
+                let cafBase;
+                return Caf.exists((cafBase = this.args)) && cafBase.children;
               }
             });
             this.prototype.updateScope = function() {
@@ -99,22 +113,6 @@ Caf.defMod(module, () => {
                   ))
                 : instanceSuper.postTransform.apply(this, arguments);
             };
-            this.getter({
-              body: function() {
-                return this.children[1];
-              },
-              args: function() {
-                return this.children[0];
-              },
-              statementStns: function() {
-                let cafBase;
-                return Caf.exists((cafBase = this.body)) && cafBase.children;
-              },
-              argumentStns: function() {
-                let cafBase;
-                return Caf.exists((cafBase = this.args)) && cafBase.children;
-              }
-            });
             this.prototype.getPostTransformStatementStns = function() {
               let SuperStn,
                 ArraySpreadElementStn,

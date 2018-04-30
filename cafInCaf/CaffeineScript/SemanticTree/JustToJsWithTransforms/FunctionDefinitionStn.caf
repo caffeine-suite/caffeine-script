@@ -44,10 +44,13 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     new @class @props, [@arguments, StnRegistry.StatementsStn compactFlatten statements]
 
   @getter
-    needsParens: -> false
+    needsParens:            -> false
     needsParensAsStatement: -> !@props.bound
-
-    childrenToUpdateScope: -> compactFlatten [@statements]
+    childrenToUpdateScope:  -> compactFlatten [@statements]
+    body:                   -> @children[1]
+    args:                   -> @children[0]
+    statementStns:          -> @body?.children
+    argumentStns:           -> @args?.children
 
   updateScope: ->
     super
@@ -89,12 +92,6 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     else
       super
 
-  @getter
-    body: -> @children[1]
-    args: -> @children[0]
-    statementStns:  -> @body?.children
-    argumentStns:   -> @args?.children
-
   getPostTransformStatementStns: ->
     {SuperStn, ArraySpreadElementStn, ReferenceStn, IdentifierStn} = &StnRegistry
 
@@ -108,18 +105,17 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         .push stn
 
     compactFlatten if isConstructor
-      # log "" isConstructor
       lastSuperContainingStatementIndex = null
-      # log {statementStns}
+
       each v, i in statementStns when
           v.type == "Super"
           or v.find /Super/, /FunctionDefinition|Class/
         lastSuperContainingStatementIndex = i
 
       if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
-        # log "" have super
+        # have super
         if preBodyStatements
-          # log "" insert preBodyStatements just after the last super-containting statement
+          # insert preBodyStatements just after the last super-containting statement
           []
             statementStns.slice 0, lastSuperContainingStatementIndex + 1
             preBodyStatements
@@ -128,7 +124,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
           statementStns
 
       else
-        # log "" no super, insert one first
+        # no super, insert one first
         []
           SuperStn
             ArraySpreadElementStn
@@ -138,13 +134,13 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
           statementStns
 
     else if preBodyStatements
-      # log "" not constructor, but have preBodyStatements
+      # not constructor, but have preBodyStatements
       []
         preBodyStatements
         statementStns
 
     else
-      # log "" just return statementStns
+      # just return statementStns
       statementStns
 
   ##
@@ -170,35 +166,9 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     But we can do this refactor incrementally. except... prebody statements must come after
     super...
 
-
   getBodyJs: ->
     {returnIgnored, isConstructor} = @props
     statements = @body?.toFunctionBodyJsArray !(isConstructor || returnIgnored)
-
-    # {returnIgnored, isConstructor} = @props
-    # returnIgnored ||= isConstructor
-
-    # [argsDef, body] = @children
-
-    # preBodyStatements = array arg in argsDef?.children
-    #   arg.getFunctionPreBodyStatementsJs()
-
-    # bodyJsArray = body?.toFunctionBodyJsArray !returnIgnored
-
-    # statements = compactFlatten if isConstructor
-    #   lastSuperContainingStatementIndex = find v, i in bodyJsArray when v.match /^super\(/ with i
-
-    #   if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
-    #     beforeSuper = bodyJsArray.slice 0, lastSuperContainingStatementIndex
-    #     afterSuper = bodyJsArray.slice lastSuperContainingStatementIndex + 1, bodyJsArray.length
-    #     superJs = bodyJsArray[lastSuperContainingStatementIndex]
-    #     [@getAutoLets(), beforeSuper, superJs, preBodyStatements, afterSuper]
-
-    #   else
-    #     [@getAutoLets(), "super(...arguments)", preBodyStatements, bodyJsArray]
-
-    # else
-    #   [@getAutoLets(), preBodyStatements, bodyJsArray]
 
     if lets = @getAutoLets()
       statements = compactFlatten [lets, statements]
