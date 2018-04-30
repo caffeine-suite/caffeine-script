@@ -5,6 +5,8 @@ class StatementsStn extends &BaseStn
   needsParens: false
 
   toSourceNode: (options)->
+    {returnAction, generateStatements} = options if options
+
     @newSourceNode.add
       if options?.expression
         switch @children.length
@@ -16,7 +18,7 @@ class StatementsStn extends &BaseStn
             @_getChildrenSourceNodes "", false
             ")"
       else
-        @_getChildrenSourceNodes()
+        @_getChildrenSourceNodes returnAction, generateStatements
 
   toJs: (options)->
     if options?.expression

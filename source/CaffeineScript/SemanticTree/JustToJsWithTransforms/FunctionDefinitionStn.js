@@ -174,6 +174,54 @@ Caf.defMod(module, () => {
                     : statementStns
               );
             };
+            this.getter({
+              autoLetsForSouceNode: function() {
+                let lets;
+                return (lets = this.getAutoLets()) ? lets + ";" : undefined;
+              }
+            });
+            this.prototype.toSourceNode = function(options) {
+              let isConstructor,
+                bound,
+                returnIgnored,
+                argsSouceNode,
+                bodySourceNode,
+                cafTemp,
+                cafBase,
+                cafBase1;
+              ({ isConstructor, bound, returnIgnored } = this.props);
+              argsSouceNode =
+                (cafTemp =
+                  Caf.exists((cafBase = this.args)) &&
+                  cafBase.toSourceNode()) != null
+                  ? cafTemp
+                  : "()";
+              bodySourceNode =
+                Caf.exists((cafBase1 = this.body)) &&
+                cafBase1.toSourceNode({
+                  returnAction: !(isConstructor || returnIgnored)
+                });
+              return bound
+                ? this.newSourceNode.add(
+                    compactFlatten([
+                      argsSouceNode,
+                      " => {",
+                      this.autoLetsForSouceNode,
+                      bodySourceNode,
+                      "}"
+                    ])
+                  )
+                : this.newSourceNode.add(
+                    compactFlatten([
+                      isConstructor ? "constructor" : "function",
+                      argsSouceNode,
+                      " {",
+                      this.autoLetsForSouceNode,
+                      bodySourceNode,
+                      "}"
+                    ])
+                  );
+            };
             this.prototype.getBodyJs = function() {
               let returnIgnored, isConstructor, statements, lets, cafBase;
               ({ returnIgnored, isConstructor } = this.props);

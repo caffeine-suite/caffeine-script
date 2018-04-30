@@ -73,7 +73,6 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
       else
         false
 
-    # TODO - make this work, it's close
     if @statementStns != newStatementStns = @getPostTransformStatementStns()
       {FunctionDefinitionStn, StatementsStn} = &StnRegistry
       FunctionDefinitionStn
@@ -162,6 +161,33 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
     But we can do this refactor incrementally. except... prebody statements must come after
     super...
+
+  @getter
+    autoLetsForSouceNode: ->
+      if lets = @getAutoLets()
+        lets + ";"
+
+  toSourceNode: (options) ->
+    {isConstructor, bound, returnIgnored} = @props
+
+    argsSouceNode = @args?.toSourceNode() ? "()"
+    bodySourceNode = @body?.toSourceNode returnAction: !(isConstructor || returnIgnored)
+    if bound
+      @newSourceNode.add compactFlatten []
+        argsSouceNode
+        " => {"
+        @autoLetsForSouceNode
+        bodySourceNode
+        "}"
+
+    else
+      @newSourceNode.add compactFlatten []
+        if isConstructor then "constructor" else "function"
+        argsSouceNode
+        " {"
+        @autoLetsForSouceNode
+        bodySourceNode
+        "}"
 
   getBodyJs: ->
     {returnIgnored, isConstructor} = @props

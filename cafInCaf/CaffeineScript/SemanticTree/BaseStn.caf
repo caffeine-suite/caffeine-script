@@ -34,6 +34,10 @@ class BaseStn extends BaseClass
     @props = objectWithout props, "parseTreeNode"
     @initLabeledChildren()
 
+  @setter "parseTreeNode"
+  @getter
+    parseTreeNode: -> @_parseTreeNode ? @parent?.parseTreeNode
+
   initLabeledChildren: ->
     @labeledChildren = @children && {}
     each child in @children

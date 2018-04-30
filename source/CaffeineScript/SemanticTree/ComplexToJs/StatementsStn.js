@@ -11,6 +11,13 @@ Caf.defMod(module, () => {
         function(StatementsStn, classSuper, instanceSuper) {
           this.prototype.needsParens = false;
           this.prototype.toSourceNode = function(options) {
+            let returnAction, generateStatements;
+            if (options) {
+              ({ returnAction, generateStatements } = options);
+            }
+            generateStatements != null
+              ? generateStatements
+              : (generateStatements = true);
             return this.newSourceNode.add(
               Caf.exists(options) && options.expression
                 ? (() => {
@@ -27,7 +34,7 @@ Caf.defMod(module, () => {
                         ]);
                     }
                   })()
-                : this._getChildrenSourceNodes()
+                : this._getChildrenSourceNodes(returnAction, generateStatements)
             );
           };
           this.prototype.toJs = function(options) {

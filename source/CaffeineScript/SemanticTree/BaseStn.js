@@ -51,6 +51,16 @@ Caf.defMod(module, () => {
           function(BaseStn, classSuper, instanceSuper) {
             let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
             this.abstractClass();
+            this.setter("parseTreeNode");
+            this.getter({
+              parseTreeNode: function() {
+                let cafTemp, cafBase;
+                return (cafTemp = this._parseTreeNode) != null
+                  ? cafTemp
+                  : Caf.exists((cafBase = this.parent)) &&
+                      cafBase.parseTreeNode;
+              }
+            });
             this.prototype.initLabeledChildren = function() {
               this.labeledChildren = this.children && {};
               return Caf.each(this.children, undefined, child => {
