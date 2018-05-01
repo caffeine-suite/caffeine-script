@@ -7,6 +7,9 @@ Caf.defMod(module, () => {
       class GlobalIdentifierStn extends require("../BaseStn") {},
       function(GlobalIdentifierStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(this.props.identifier);
+        };
         this.prototype.toJs = function() {
           return this.props.identifier;
         };

@@ -1,33 +1,32 @@
 import &StandardImport
 
-legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i
-
 class ObjectPropNameStn extends &BaseStn
-  @escapePropName: escapePropName = (rawPropName) ->
-    if rawPropName.match legalUnquotedPropName
-      rawPropName
-    else
-      escapeJavascriptString rawPropName
 
-  constructor: ->
-    super
-    [nameStn] = @children
+  @getter
+    canBeUsedInES6Structuring: ->
+      if name = @simpleName
+        identifierRegexp.test name
 
-    # NOTE: props.value is used by SuperStn even it if isn't used in @toJs here.
-    @props.value ||= if nameStn
-      nameStn.toJs() # TODO: we should validate
-    else
-      @parseTreeNode.toString()
+    isThisProp: ->
+      !!(@children[0]?.type == :This)
+
+    simpleName: ->
+      [nameStn] = @children
+      if nameStn
+        # log simpleName: {nameStn, nameStn.type, nameStn.identifier, @isThisProp}
+        switch nameStn.type
+          when :Reference, :Identifier, :SimpleLiteral, :String
+            nameStn.toJs()
+          when :This
+            nameStn.identifier
+      else
+        escapePropName @props.value # ? @parseTreeNode.toString()
+
+    propName: -> @simpleName
 
   toJs: ->
     [nameStn] = @children
-    if nameStn
-      str = nameStn.toJs()
-      if nameStn.children.length > 0
-        "[#{str}]"
-      else
-        unless nameStn.type == "String" || nameStn.type == "Identifier"
-          throw new Error "internal error - should be a StringStn or IdentifierStn. Actual type: #{nameStn.type}"
-        str
+    if nameStn?.children.length > 0
+      "[#{nameStn.toJs()}]"
     else
-      escapePropName @props.value
+      @simpleName

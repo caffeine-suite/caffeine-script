@@ -7,10 +7,15 @@ Caf.defMod(module, () => {
       class ThisStn extends require("../BaseStn") {},
       function(ThisStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
+        this.getter({
+          identifier: function() {
+            let cafBase;
+            return Caf.exists((cafBase = this.children[0])) && cafBase.toJs();
+          }
+        });
         this.prototype.toJs = function() {
-          return this.children[0]
-            ? `this.${Caf.toString(this.children[0].toJs())}`
-            : "this";
+          let id;
+          return (id = this.identifier) ? `this.${Caf.toString(id)}` : "this";
         };
       }
     ));

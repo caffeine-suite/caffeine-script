@@ -10,6 +10,19 @@ class ObjectStn extends &BaseStn
       "(#{out})"
     else out
 
+  toSourceNode: (options) ->
+    base = []
+      "{"
+      @childrenToSourceNodes ', ', expression: true
+      "}"
+
+    if options?.dotBase || options?.statement
+      @createSourceNode
+        "("
+        base
+        ")"
+    else @createSourceNode base
+
   ##
     TODO: sometimes this should merge with a parent implicit array OR
     a parent argument list

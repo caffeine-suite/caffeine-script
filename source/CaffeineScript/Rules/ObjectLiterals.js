@@ -116,15 +116,29 @@ Caf.defMod(module, () => {
             this.rule({
               stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
             });
+            this.rule(
+              { thisPropName: "/@/ identifier" },
+              { stnFactory: "ThisStn" }
+            );
             return this.rule(
               {
                 propName: [
                   "!/then\\s/ str:identifier &_colon_",
+                  "!/then\\s/ str:thisPropName &_colon_",
                   "!/then\\s/ str:unquotedString &/:/",
-                  "str:stringLiteral &stringLiteralPropNameTail"
+                  "quotedString:stringLiteral &stringLiteralPropNameTail"
                 ]
               },
-              { stnFactory: "ObjectPropNameStn" }
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  let cafBase;
+                  return {
+                    value:
+                      Caf.exists((cafBase = this.str)) && cafBase.toString()
+                  };
+                }
+              }
             );
           };
         }

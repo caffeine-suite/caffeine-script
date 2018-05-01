@@ -31,15 +31,22 @@ Caf.defMod(module, () => {
             }
           });
           this.prototype.toJs = function() {
-            let base, identierString;
+            let base, identifierString;
             base = this.value.toJsExpression({ dotBase: true });
             return this.key.isIdentifier
-              ? (identierString = this.key.toJs()).match(/['"`]/)
-                ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
-                : `${Caf.toString(base)}.${Caf.toString(identierString)}`
+              ? (identifierString = this.key.toJs()).match(/['"`]/)
+                ? `${Caf.toString(base)}[${Caf.toString(identifierString)}]`
+                : `${Caf.toString(base)}.${Caf.toString(identifierString)}`
               : `${Caf.toString(base)}[${Caf.toString(
                   this.key.toJsExpression()
                 )}]`;
+          };
+          this.prototype.toSourceNode = function() {
+            let base;
+            base = this.value.toSourceNode({ expression: true, dotBase: true });
+            return this.key.isIdentifier
+              ? this.createSourceNode(base, ".", this.key.toSourceNode())
+              : this.createSourceNode(base, "[", this.key.toSourceNode(), "]");
           };
         }
       ));

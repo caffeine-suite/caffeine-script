@@ -15,3 +15,28 @@ class NewInstanceStn extends &BaseStn
       "(new #{childJs})"
     else
       "new #{childJs}"
+
+  toSourceNode: (options) ->
+    {noParens} = options if options
+    [child] = @children
+
+    childNodes = switch child.type
+      when :FunctionInvocation, :Reference, :GlobalIdentifier, :This
+        child.toSourceNode newObjectFunctionInvocation: true
+      else
+        []
+          "("
+          child.toSourceNode()
+          ")"
+
+    if options?.dotBase
+      @createSourceNode
+        "(" unless noParens
+        "new "
+        childNodes
+        ")" unless noParens
+
+    else
+      @createSourceNode
+        "new "
+        childNodes

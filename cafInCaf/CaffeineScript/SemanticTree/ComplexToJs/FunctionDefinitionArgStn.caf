@@ -15,6 +15,13 @@ class FunctionDefinitionArgStn extends &BaseStn
   @getter
     argumentName: -> @target.name
 
+  toSourceNode: ->
+    @createSourceNode
+      '...' if @rest
+      @target.toSourceNode()
+      [] " = " @defaultValue.toSourceNode() if @defaultValue
+
+
   generatePreBodyStatementStn: ->
     if @assignThisProperty
       {IdentifierStn, AssignmentStn, ThisStn, ReferenceStn} = &StnRegistry

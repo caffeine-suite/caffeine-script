@@ -16,6 +16,17 @@ Caf.defMod(module, () => {
               Object.keys(functionDefinition.argumentNames).join(", ")
             )})`;
           };
+          this.prototype.toSourceNode = function() {
+            let functionDefinition;
+            ({ functionDefinition } = this.labeledChildren);
+            return this.createSourceNode(
+              "(",
+              functionDefinition.toSourceNode(),
+              ")(",
+              Object.keys(functionDefinition.argumentNames).join(", "),
+              ")"
+            );
+          };
         }
       ));
     }

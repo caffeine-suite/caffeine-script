@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
         function(SuperStn, classSuper, instanceSuper) {
           this.prototype.needsParens = false;
           this.prototype.postTransform = function() {
-            let propValue, methodName, m, __, classMethod;
+            let propValue, methodName;
             if (
               !(propValue = this.pretransformedStn.findParent(
                 "ObjectPropValue"
@@ -34,11 +34,11 @@ Caf.defMod(module, () => {
                 "property name in parent object-literal must be constant, not computed"
               );
             }
-            if ((m = methodName.match(/^(@)(.*)/))) {
-              [__, classMethod, methodName] = m;
-            }
             return new this.class(
-              merge(this.props, { methodName, classMethod: !!classMethod }),
+              merge(this.props, {
+                methodName,
+                classMethod: !!propValue.isThisProp
+              }),
               this.children
             );
           };

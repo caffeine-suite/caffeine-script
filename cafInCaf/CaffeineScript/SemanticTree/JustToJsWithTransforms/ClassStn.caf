@@ -58,10 +58,9 @@ class ClassStn extends &BaseStn
                 [propNameStn, propValueStn] = objectPropValueStn.children
                 assignToStn = switch propNameStn.type
                   when :ObjectPropName
-                    propName = propNameStn.toJs()
-                    if m = propName.match /^"@(.*)"$/
-                      [__, classPropName] = m
-                      ThisStn IdentifierStn identifier: classPropName
+                    {propName, isThisProp} = propNameStn
+                    if isThisProp
+                      ThisStn IdentifierStn identifier: propName
 
                     else
                       if propName == :constructor

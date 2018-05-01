@@ -2,56 +2,57 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["escapeJavascriptString", "Error"],
+    ["identifierRegexp", "escapePropName"],
     [global, require("../../StandardImport")],
-    (escapeJavascriptString, Error) => {
-      let legalUnquotedPropName, ObjectPropNameStn;
-      return (
-        (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),
-        (ObjectPropNameStn = Caf.defClass(
-          class ObjectPropNameStn extends require("../BaseStn") {
-            constructor() {
-              let nameStn, cafBase;
-              super(...arguments);
-              [nameStn] = this.children;
-              (cafBase = this.props).value ||
-                (cafBase.value = nameStn
-                  ? nameStn.toJs()
-                  : this.parseTreeNode.toString());
-            }
-          },
-          function(ObjectPropNameStn, classSuper, instanceSuper) {
-            let escapePropName;
-            this.escapePropName = escapePropName = function(rawPropName) {
-              return rawPropName.match(legalUnquotedPropName)
-                ? rawPropName
-                : escapeJavascriptString(rawPropName);
-            };
-            this.prototype.toJs = function() {
-              let nameStn, str;
+    (identifierRegexp, escapePropName) => {
+      let ObjectPropNameStn;
+      return (ObjectPropNameStn = Caf.defClass(
+        class ObjectPropNameStn extends require("../BaseStn") {},
+        function(ObjectPropNameStn, classSuper, instanceSuper) {
+          this.getter({
+            canBeUsedInES6Structuring: function() {
+              let name;
+              return (name = this.simpleName)
+                ? identifierRegexp.test(name)
+                : undefined;
+            },
+            isThisProp: function() {
+              let cafBase;
+              return !!(
+                (Caf.exists((cafBase = this.children[0])) && cafBase.type) ===
+                "This"
+              );
+            },
+            simpleName: function() {
+              let nameStn;
               [nameStn] = this.children;
               return nameStn
-                ? ((str = nameStn.toJs()),
-                  nameStn.children.length > 0
-                    ? `[${Caf.toString(str)}]`
-                    : (!(
-                        nameStn.type === "String" ||
-                        nameStn.type === "Identifier"
-                      )
-                        ? (() => {
-                            throw new Error(
-                              `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
-                                nameStn.type
-                              )}`
-                            );
-                          })()
-                        : undefined,
-                      str))
+                ? (() => {
+                    switch (nameStn.type) {
+                      case "Reference":
+                      case "Identifier":
+                      case "SimpleLiteral":
+                      case "String":
+                        return nameStn.toJs();
+                      case "This":
+                        return nameStn.identifier;
+                    }
+                  })()
                 : escapePropName(this.props.value);
-            };
-          }
-        ))
-      );
+            },
+            propName: function() {
+              return this.simpleName;
+            }
+          });
+          this.prototype.toJs = function() {
+            let nameStn;
+            [nameStn] = this.children;
+            return (Caf.exists(nameStn) && nameStn.children.length) > 0
+              ? `[${Caf.toString(nameStn.toJs())}]`
+              : this.simpleName;
+          };
+        }
+      ));
     }
   );
 });

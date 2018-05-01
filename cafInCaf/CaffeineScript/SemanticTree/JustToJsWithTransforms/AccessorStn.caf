@@ -18,9 +18,25 @@ class AccessorStn extends &AccessorChainStn
   toJs: ->
     base = @value.toJsExpression dotBase: true
     if @key.isIdentifier
-      if (identierString = @key.toJs()).match /['"`]/
-        "#{base}[#{identierString}]"
+      if (identifierString = @key.toJs()).match /['"`]/
+        "#{base}[#{identifierString}]"
       else
-        "#{base}.#{identierString}"
+        "#{base}.#{identifierString}"
     else
       "#{base}[#{@key.toJsExpression()}]"
+
+  toSourceNode: ->
+    base = @value.toSourceNode expression: true dotBase: true
+
+    if @key.isIdentifier
+      @createSourceNode
+        base
+        "."
+        @key.toSourceNode()
+
+    else
+      @createSourceNode
+        base
+        "["
+        @key.toSourceNode()
+        "]"

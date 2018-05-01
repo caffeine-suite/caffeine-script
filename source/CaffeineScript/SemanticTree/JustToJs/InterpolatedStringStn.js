@@ -33,6 +33,15 @@ Caf.defMod(module, () => {
               (Caf.isF(cafBase.trimRight) && cafBase.trimRight())
             );
           };
+          this.prototype.toSourceNode = function() {
+            return this.createSourceNode(
+              "`",
+              Caf.each(this.children, [], (c, cafK, cafInto) => {
+                cafInto.push(c.toInterpolatedJsStringPart());
+              }),
+              "`"
+            );
+          };
           this.prototype.toJs = function() {
             return `\`${Caf.toString(
               Caf.each(this.children, [], (c, cafK, cafInto) => {

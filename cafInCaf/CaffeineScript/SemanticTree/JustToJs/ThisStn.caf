@@ -4,8 +4,11 @@ class ThisStn extends &BaseStn
 
   needsParens: false
 
+  @getter
+    identifier: -> @children[0]?.toJs()
+
   toJs: ->
-    if @children[0]
-      "this.#{@children[0].toJs()}"
+    if id = @identifier
+      "this.#{id}"
     else
       "this"

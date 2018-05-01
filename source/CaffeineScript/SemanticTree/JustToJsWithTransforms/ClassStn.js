@@ -123,9 +123,7 @@ Caf.defMod(module, () => {
                                     propValueStn,
                                     assignToStn,
                                     propName,
-                                    m,
-                                    __,
-                                    classPropName;
+                                    isThisProp;
                                   [
                                     propNameStn,
                                     propValueStn
@@ -133,14 +131,16 @@ Caf.defMod(module, () => {
                                   assignToStn = (() => {
                                     switch (propNameStn.type) {
                                       case "ObjectPropName":
-                                        propName = propNameStn.toJs();
-                                        return (m = propName.match(/^"@(.*)"$/))
-                                          ? (([__, classPropName] = m),
-                                            ThisStn(
+                                        ({
+                                          propName,
+                                          isThisProp
+                                        } = propNameStn);
+                                        return isThisProp
+                                          ? ThisStn(
                                               IdentifierStn({
-                                                identifier: classPropName
+                                                identifier: propName
                                               })
-                                            ))
+                                            )
                                           : propName === "constructor"
                                             ? ((constructorStn = propValueStn),
                                               null)

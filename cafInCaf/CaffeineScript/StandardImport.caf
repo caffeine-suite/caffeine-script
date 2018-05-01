@@ -1,5 +1,6 @@
 &ArtStandardLib.merge
   &ArtClassSystem
+  &Lib
   &ArtStandardLib
   # &CaffeineJsGen
   StnRegistry: &StnRegistry

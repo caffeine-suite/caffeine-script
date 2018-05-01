@@ -8,12 +8,17 @@ class InterpolatedStringStn extends &BaseStn
         compactLeft && i == 0
         compactRight && i == @children.length - 1
 
-
   trimLeft: ->
     @children[0]?.trimLeft?()
 
   trimRight: ->
     peek(@children)?.trimRight?()
+
+  toSourceNode: ->
+    @createSourceNode
+      :`
+      array c in @children with c.toInterpolatedJsStringPart()
+      :`
 
   toJs: ->
     "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"

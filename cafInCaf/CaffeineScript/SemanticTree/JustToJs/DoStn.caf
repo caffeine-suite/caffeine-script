@@ -5,3 +5,13 @@ class DoStn extends &BaseStn
   toJs: ->
     {functionDefinition} = @labeledChildren
     "(#{functionDefinition.toJs()})(#{(Object.keys functionDefinition.argumentNames).join ', '})"
+
+  toSourceNode: ->
+    {functionDefinition} = @labeledChildren
+
+    @createSourceNode
+      "("
+      functionDefinition.toSourceNode()
+      ")("
+      (Object.keys functionDefinition.argumentNames).join ', '
+      ")"

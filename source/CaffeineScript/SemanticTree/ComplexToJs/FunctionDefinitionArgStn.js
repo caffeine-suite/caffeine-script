@@ -20,6 +20,15 @@ Caf.defMod(module, () => {
             return this.target.name;
           }
         });
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(
+            this.rest ? "..." : undefined,
+            this.target.toSourceNode(),
+            this.defaultValue
+              ? [" = ", this.defaultValue.toSourceNode()]
+              : undefined
+          );
+        };
         this.prototype.generatePreBodyStatementStn = function() {
           let IdentifierStn,
             AssignmentStn,

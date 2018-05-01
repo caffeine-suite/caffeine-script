@@ -14,40 +14,69 @@ import &StandardImport
   props:
     propertyName: string (optional)
 
-identifierRegexp =
-  ///
-    ^
-    (?!\d)
-    ( (?!\s) [$\w\u007f-\uffff] )+
-    $
-
 class ObjectPropValueStn extends &BaseStn
 
   @getter
     isObject: true
-    propName: -> @labeledChildren.propName.props.value
+    propNameChild: -> @children[0]
+    valueChild: -> peek @children
+
+    isThisProp: -> @children[0]?.isThisProp
+
+    propName: ->
+      switch @children.length
+      when 2
+        [propNameStn] = @children
+        propNameStn?.simpleName ? propNameStn
+
+      when 1
+        structuringStn = @children[0]
+
+        switch structuringStn.type
+          when :Accessor
+            structuringStn.key.toJs()
+          when :Require
+            structuringStn.rawRequireString
+          when :This
+            structuringStn.children[0].toJs()
+          when :SimpleLiteral, :Reference, :Identifier
+            structuringStn.toJs()
+          else
+            throw new Error "When structuring an object, only Accessors, &requires and identifiers are allowed. (#{structuringStn.type} not allowed)"
+
+    canUseES6Structuring: ->
+      (same = @propNameChild == @valueChild)
+      || propName = @propNameChild.simpleName
+      && switch @valueChild.type
+        when :SimpleLiteral, :Reference, :Identifier
+          !javaScriptReservedWords[valueChildString = @valueChild.toJs()]
+          && identifierRegexp.test valueChildString
+          && same || valueChildString == propName
 
   toJs: ->
-    switch @children.length
-    when 2
-      [propNameStn, valueStn] = @children
-      valueJs = valueStn.toJsExpression()
-      propertyName = propNameStn.toJs()
-    when 1
-      structuringStn = @children[0]
+    {valueChild, propName} = @
+    base = @valueChild.toJsExpression()
 
-      valueJs = structuringStn.toJsExpression()
-      propertyName = peek valueJs.split "."
+    unless isString propName
+      propName = propName.toJs()
 
-      unless identifierRegexp.test propertyName
-        # TODO - use propery validator system so we can get line-numbers with this
-        throw new Error "expression not allowed in explicit object literal: #{valueJs}"
-
+    if @canUseES6Structuring
+      base
     else
-      throw new Error "internal error - expecint 1 or 2 children"
+      "#{propName}: #{base}"
 
-    if propertyName == valueJs && !javaScriptReservedWords[propertyName] && identifierRegexp.test propertyName
+  validate: ->
+    throw new Error "no prop name" unless present @propName
 
-      valueJs
+  toSourceNode: ->
+    {valueChild, propName} = @
+    base = valueChild.toSourceNode()
+    propName = propName.toSourceNode() unless isString propName
+
+    if @canUseES6Structuring
+      base
     else
-      "#{propertyName}: #{valueJs}"
+      @createSourceNode
+        propName
+        ": "
+        base

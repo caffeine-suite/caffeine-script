@@ -30,6 +30,9 @@ module.exports = suite: parseTestSuite
     pathing:
       "{a.b}": "({b: a.b});"
 
+    requires:
+      "{&ArtStandardLib}": "({ArtStandardLib: require('art-standard-lib')});"
+
     reservedWords:
       "{true}":       "({true: true});"
       "{true: true}": "({true: true});"

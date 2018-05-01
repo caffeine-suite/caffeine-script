@@ -17,11 +17,11 @@ class SuperStn extends &BaseStn
     unless propValue = @pretransformedStn.findParent "ObjectPropValue"
       throw new Error "super must be used inside an object-literal value"
 
+    # log {propValue, propValue.isThisProp, propValue.propName}
     unless isString methodName = propValue.propName
       throw new Error "property name in parent object-literal must be constant, not computed"
 
-    [__, classMethod, methodName] = m if m = methodName.match /^(@)(.*)/
-    new @class merge(@props, {} methodName, classMethod: !!classMethod), @children
+    new @class merge(@props, {} methodName, classMethod: !!propValue.isThisProp), @children
 
   toJs: ->
     {args} = @

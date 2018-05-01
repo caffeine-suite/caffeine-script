@@ -114,11 +114,16 @@ import Extensions
     ]
 
   @rule
+    thisPropName: "/@/ identifier"
+    {} stnFactory: :ThisStn
+
+  @rule
     propName:
       "!/then\\s/ str:identifier &_colon_"
+      "!/then\\s/ str:thisPropName &_colon_"
       "!/then\\s/ str:unquotedString &/:/"
-      "str:stringLiteral &stringLiteralPropNameTail"
+      "quotedString:stringLiteral &stringLiteralPropNameTail"
 
     {}
       stnFactory: "ObjectPropNameStn"
-
+      stnProps: ~> value: @str?.toString()

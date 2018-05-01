@@ -21,6 +21,18 @@ Caf.defMod(module, () => {
               ? `(${Caf.toString(out)})`
               : out;
           };
+          this.prototype.toSourceNode = function(options) {
+            let base;
+            base = [
+              "{",
+              this.childrenToSourceNodes(", ", { expression: true }),
+              "}"
+            ];
+            return (Caf.exists(options) && options.dotBase) ||
+              (Caf.exists(options) && options.statement)
+              ? this.createSourceNode("(", base, ")")
+              : this.createSourceNode(base);
+          };
           splitObjectsAtSameProps = function(children) {
             let currentDefined, listOfObjectLiterals, currentOrder;
             currentDefined = {};

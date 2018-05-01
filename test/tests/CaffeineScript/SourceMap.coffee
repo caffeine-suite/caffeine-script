@@ -15,6 +15,13 @@ module.exports = suite:
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
     generateSourceMapParseTest "BinaryOperatorStn",     "a + 1"
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
+    generateSourceMapParseTest "DoStn", "do (a) -> a"
+    generateSourceMapParseTest "GlobalIdentifierStn",   "global"
+    generateSourceMapParseTest "InterpolatedStringStn", '"#{a}"'
+    generateSourceMapParseTest "NewInstanceStn",        'new Foo'
+    generateSourceMapParseTest "AccessorStn",           'a.b'
+    generateSourceMapParseTest "AccessorStn",           'a: 1'
+
 
   control: ->
     generateSourceMapParseTest "ControlOperatorStn",    "a if b"
