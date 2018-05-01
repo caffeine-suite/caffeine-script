@@ -81,7 +81,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn,
     FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn,
-    FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn, ValueStn} = SemanticTree
+    FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn} = SemanticTree
     # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
 
 
@@ -127,9 +127,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           body
       else
         bodyStatementsExceptLast = null
-        ValueStn valueVarDef
+        valueVarDef
     else
-      bodyWithDefault = body || ValueStn valueVarDef
+      bodyWithDefault = body || valueVarDef
 
     whenClauseWrapper = if whenClause
       (actionStn) ->
@@ -164,7 +164,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
               AssignmentStn
                 AccessorStn
                   intoIdentifer
-                  ValueStn keyVarDef
+                  keyVarDef
                 lastBodyStatement
 
           when "array"

@@ -53,7 +53,6 @@ Caf.defMod(module, () => {
                 ObjectStn,
                 SimpleLiteralStn,
                 StatementsStn,
-                ValueStn,
                 useExtendedEach,
                 basicEach,
                 valueVarDef,
@@ -106,8 +105,7 @@ Caf.defMod(module, () => {
                 IdentifierStn,
                 ObjectStn,
                 SimpleLiteralStn,
-                StatementsStn,
-                ValueStn
+                StatementsStn
               } = SemanticTree);
               useExtendedEach = (() => {
                 switch (outputType) {
@@ -161,9 +159,9 @@ Caf.defMod(module, () => {
                       )),
                       peek(body.children))
                     : body
-                  : ((bodyStatementsExceptLast = null), ValueStn(valueVarDef));
+                  : ((bodyStatementsExceptLast = null), valueVarDef);
               } else {
-                bodyWithDefault = body || ValueStn(valueVarDef);
+                bodyWithDefault = body || valueVarDef;
               }
               whenClauseWrapper = whenClause
                 ? actionStn => {
@@ -214,7 +212,7 @@ Caf.defMod(module, () => {
                           StatementsStn(
                             bodyStatementsExceptLast,
                             AssignmentStn(
-                              AccessorStn(intoIdentifer, ValueStn(keyVarDef)),
+                              AccessorStn(intoIdentifer, keyVarDef),
                               lastBodyStatement
                             )
                           )

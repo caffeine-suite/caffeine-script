@@ -4,7 +4,6 @@ Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "BaseClass",
-      "merge",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
@@ -12,12 +11,12 @@ Caf.defMod(module, () => {
       "log",
       "JSON",
       "Error",
-      "isString"
+      "isString",
+      "merge"
     ],
     [global, require("../StandardImport")],
     (
       BaseClass,
-      merge,
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
@@ -25,7 +24,8 @@ Caf.defMod(module, () => {
       log,
       JSON,
       Error,
-      isString
+      isString,
+      merge
     ) => {
       let createObjectTreeFactory, SourceNode, binary, BaseStn;
       return (
@@ -79,9 +79,7 @@ Caf.defMod(module, () => {
               });
             };
             this.prototype.getInspectedProps = function() {
-              return merge(objectWithout(this.props, "label", "pluralLabel"), {
-                parseTreeNode: !!this.parseTreeNode
-              });
+              return objectWithout(this.props, "label", "pluralLabel");
             };
             this.getter({
               sourceOffset: function() {

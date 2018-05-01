@@ -54,6 +54,9 @@ module.exports =
       catch error
 
         log {
+          parseTree
+          semanticTree
+          transformedSemanticTree
           name
           source
           options

@@ -48,9 +48,7 @@ class BaseStn extends BaseClass
         (@labeledChildren[pluralLabel] ||= []).push child
 
   getInspectedProps: ->
-    merge
-      objectWithout @props, "label", "pluralLabel"
-      parseTreeNode: !!@parseTreeNode
+    objectWithout @props, "label", "pluralLabel"
 
   @getter
     sourceOffset: -> @parseTreeNode.offset

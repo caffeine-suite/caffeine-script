@@ -1,2 +1,0 @@
-class ValueStn extends &BaseStn
-  toJs: ->  @childrenToJs()

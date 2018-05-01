@@ -102,7 +102,9 @@ Caf.defMod(module, () => {
               return this.createSourceNode(
                 valueSourceNode,
                 "(",
-                this.stnArrayToSourceNodes(this.argStns, ", "),
+                this.stnArrayToSourceNodes(this.argStns, ", ", {
+                  expression: true
+                }),
                 ")"
               );
             };

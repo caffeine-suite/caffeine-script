@@ -27,6 +27,7 @@ module.exports = suite:
     generateSourceMapParseTest "ObjectStn",             '{a} = b'
     generateSourceMapParseTest "ObjectStn",             '{a:c} = b'
     generateSourceMapParseTest "FunctionInvocationStn", 'a b'
+    generateSourceMapParseTest "FunctionInvocationStn", 'array b'
 
 
   control: ->

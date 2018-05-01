@@ -56,5 +56,5 @@ class FunctionInvocationStn extends &AccessorChainStn
     @createSourceNode
       valueSourceNode
       "("
-      @stnArrayToSourceNodes @argStns, ', '
+      @stnArrayToSourceNodes @argStns, ', ', expression: true
       ")"
