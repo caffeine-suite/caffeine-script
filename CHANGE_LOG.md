@@ -1,3 +1,13 @@
+### 0.53
+
+NEW structuring options:
+
+```
+{foo 123}   # {} foo: foo 123
+{foo = 123} # {} foo: foo = 123
+{&foo}      # {} foo: &foo
+```
+
 ### 0.52.1
 
 ```
