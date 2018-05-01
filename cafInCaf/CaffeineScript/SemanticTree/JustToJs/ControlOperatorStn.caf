@@ -102,21 +102,21 @@ class ControlOperatorStn extends &BaseStn
       switch operand
       when :while
         if returnValueIsIgnored
-          []
-            "(() => {while("
+          @doSourceNode
+            "while("
             expressionSourceNode
             ") {"
             @body.toSourceNode()
-            "})()"
+            "};"
 
         else
           tempVarIdentifier = @scope.uniqueIdentifier
-          []
-            "(() => {let #{tempVarIdentifier}; while("
+          @doSourceNode
+            "let #{tempVarIdentifier}; while("
             expressionSourceNode
             ") {"
             @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
-            "}; return #{tempVarIdentifier};})()"
+            "}; return #{tempVarIdentifier};"
 
       when :if
         applyParens = options.subExpression || options.dotBase

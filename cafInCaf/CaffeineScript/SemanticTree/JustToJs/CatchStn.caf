@@ -5,8 +5,7 @@ class CatchStn extends &BaseStn
   updateScope: (@scope) ->
     {errorIdentifier, body} = @labeledChildren
 
-    if errorIdentifier || body
-      @uniqueIdentifierHandle = @scope.getUniqueIdentifierHandle "error"
+    @uniqueIdentifierHandle = @scope.getUniqueIdentifierHandle "error", false
 
     if errorIdentifier
       @scope.addIdentifierAssigned errorIdentifier.name
@@ -19,7 +18,7 @@ class CatchStn extends &BaseStn
     {errorIdentifier, body} = @labeledChildren
     body = body && if expression then body.toFunctionBodyJs() else body.toJs()
 
-    errorIdentifierString = @uniqueIdentifierHandle?.identifier || "cafError"
+    errorIdentifierString = @uniqueIdentifierHandle.identifier
 
     if errorIdentifier
       body =
@@ -30,3 +29,24 @@ class CatchStn extends &BaseStn
 
     body = if body then body + ";" else ''
     "catch (#{errorIdentifierString}) {#{body}}"
+
+  toSourceNode: (options = {}) ->
+    {expression} = options
+    {errorIdentifier, body} = @labeledChildren
+
+    body = body?.toSourceNode returnAction: !!expression
+
+    errorIdentifierString = @uniqueIdentifierHandle.identifier
+
+    if errorIdentifier
+      body = []
+        "#{errorIdentifier.name} = #{errorIdentifierString};"
+        " " if body
+        body
+
+    @createSourceNode
+      "catch ("
+      errorIdentifierString
+      ") {"
+      body
+      "}"

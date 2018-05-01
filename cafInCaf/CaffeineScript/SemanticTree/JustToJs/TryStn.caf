@@ -2,13 +2,35 @@ import &StandardImport
 
 class TryStn extends &BaseStn
 
+  constructor: ->
+    super
+    unless @labeledChildren.optionalCatch
+      @children[1] = @labeledChildren.optionalCatch ?= StnRegistry.CatchStn()
+      .parent = @
+
   toJs: (options = {})->
     {expression} = options
     {body, optionalCatch} = @labeledChildren
     body = if expression then body.toFunctionBodyJs() else body.toJs();
-    optionalCatch = optionalCatch?.toJs(options) || "catch (cafError) {}"
-    js = "try {#{body};} #{optionalCatch}"
+
+    base = "try {#{body};} #{optionalCatch.toJs options}"
+
     if expression
-      @doJs null, js
+      @doJs null, base
     else
-      js
+      base
+
+  toSourceNode: (options = {})->
+    {expression} = options
+    {body, optionalCatch} = @labeledChildren
+
+    base = []
+      "try {"
+      body.toSourceNode returnAction: !!expression
+      "} "
+      optionalCatch.toSourceNode options
+
+    if expression
+      @doSourceNode null, [] base, ";"
+    else
+      base

@@ -13,11 +13,10 @@ Caf.defMod(module, () => {
             let errorIdentifier, body;
             this.scope = scope;
             ({ errorIdentifier, body } = this.labeledChildren);
-            if (errorIdentifier || body) {
-              this.uniqueIdentifierHandle = this.scope.getUniqueIdentifierHandle(
-                "error"
-              );
-            }
+            this.uniqueIdentifierHandle = this.scope.getUniqueIdentifierHandle(
+              "error",
+              false
+            );
             if (errorIdentifier) {
               this.scope.addIdentifierAssigned(errorIdentifier.name);
               this.scope.addIdentifierUsed(errorIdentifier.name);
@@ -25,18 +24,11 @@ Caf.defMod(module, () => {
             return instanceSuper.updateScope.apply(this, arguments);
           };
           this.prototype.toJs = function(options = {}) {
-            let expression,
-              errorIdentifier,
-              body,
-              errorIdentifierString,
-              cafBase;
+            let expression, errorIdentifier, body, errorIdentifierString;
             ({ expression } = options);
             ({ errorIdentifier, body } = this.labeledChildren);
             body = body && (expression ? body.toFunctionBodyJs() : body.toJs());
-            errorIdentifierString =
-              (Caf.exists((cafBase = this.uniqueIdentifierHandle)) &&
-                cafBase.identifier) ||
-              "cafError";
+            errorIdentifierString = this.uniqueIdentifierHandle.identifier;
             if (errorIdentifier) {
               body = compactFlatten([
                 `${Caf.toString(errorIdentifier.name)} = ${Caf.toString(
@@ -49,6 +41,31 @@ Caf.defMod(module, () => {
             return `catch (${Caf.toString(
               errorIdentifierString
             )}) {${Caf.toString(body)}}`;
+          };
+          this.prototype.toSourceNode = function(options = {}) {
+            let expression, errorIdentifier, body, errorIdentifierString;
+            ({ expression } = options);
+            ({ errorIdentifier, body } = this.labeledChildren);
+            body =
+              Caf.exists(body) &&
+              body.toSourceNode({ returnAction: !!expression });
+            errorIdentifierString = this.uniqueIdentifierHandle.identifier;
+            if (errorIdentifier) {
+              body = [
+                `${Caf.toString(errorIdentifier.name)} = ${Caf.toString(
+                  errorIdentifierString
+                )};`,
+                body ? " " : undefined,
+                body
+              ];
+            }
+            return this.createSourceNode(
+              "catch (",
+              errorIdentifierString,
+              ") {",
+              body,
+              "}"
+            );
           };
         }
       ));

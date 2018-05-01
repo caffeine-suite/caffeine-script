@@ -101,10 +101,10 @@ Caf.defMod(module, () => {
                   return this.getUniqueIdentifierHandle(preferredName)
                     .identifier;
                 },
-                uniqueIdentifierHandle: function(preferredName) {
+                uniqueIdentifierHandle: function(preferredName, addToLets) {
                   preferredName = normalizePerferredName(preferredName);
                   return this.addUniqueIdentifierHandle(
-                    new UniqueIdentifierHandle(preferredName)
+                    new UniqueIdentifierHandle(preferredName, addToLets)
                   );
                 }
               });

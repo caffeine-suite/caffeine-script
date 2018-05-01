@@ -38,6 +38,25 @@ module.exports = suite:
         a
       """
 
+    generateSourceMapParseTest "Try",    """
+      try
+        foo
+      """
+
+    generateSourceMapParseTest "Try Catch",    """
+      try
+        foo
+      catch e
+        bar
+      """
+
+    generateSourceMapParseTest "Try Catch",    """
+      a = try
+        foo
+      catch e
+        bar
+      """
+
   data: ->
     generateSourceMapParseTest "ArrayStn",              "[] 1"
     generateSourceMapParseTest "ArrayStn",              "[] a..."

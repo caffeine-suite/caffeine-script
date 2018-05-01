@@ -163,18 +163,16 @@ Caf.defMod(module, () => {
                   switch (operand) {
                     case "while":
                       return returnValueIsIgnored
-                        ? [
-                            "(() => {while(",
+                        ? this.doSourceNode(
+                            "while(",
                             expressionSourceNode,
                             ") {",
                             this.body.toSourceNode(),
-                            "})()"
-                          ]
+                            "};"
+                          )
                         : ((tempVarIdentifier = this.scope.uniqueIdentifier),
-                          [
-                            `(() => {let ${Caf.toString(
-                              tempVarIdentifier
-                            )}; while(`,
+                          this.doSourceNode(
+                            `let ${Caf.toString(tempVarIdentifier)}; while(`,
                             expressionSourceNode,
                             ") {",
                             this.body.toSourceNode({
@@ -182,8 +180,8 @@ Caf.defMod(module, () => {
                                 tempVarIdentifier
                               )} =`
                             }),
-                            `}; return ${Caf.toString(tempVarIdentifier)};})()`
-                          ]);
+                            `}; return ${Caf.toString(tempVarIdentifier)};`
+                          ));
                     case "if":
                       applyParens = options.subExpression || options.dotBase;
                       return [

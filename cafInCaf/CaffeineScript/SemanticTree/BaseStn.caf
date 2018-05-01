@@ -272,6 +272,13 @@ class BaseStn extends BaseClass
 
     "(() => {#{body};})()"
 
+  doSourceNode: (args, body) ->
+    throw "TODO" if args
+    @createSourceNode
+      "(() => {"
+      body
+      "})()"
+
   toFunctionBodyJsArray: (returnAction = true)->
     if returnAction
       ["return #{@toJsExpression()}"]

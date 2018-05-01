@@ -267,6 +267,12 @@ Caf.defMod(module, () => {
               }
               return `(() => {${Caf.toString(body)};})()`;
             };
+            this.prototype.doSourceNode = function(args, body) {
+              if (args) {
+                throw "TODO";
+              }
+              return this.createSourceNode("(() => {", body, "})()");
+            };
             this.prototype.toFunctionBodyJsArray = function(
               returnAction = true
             ) {

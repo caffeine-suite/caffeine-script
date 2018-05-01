@@ -259,7 +259,7 @@ module.exports = suite: parseTestSuite
       """
       cafError = null
       try foo
-      """: "let cafError; cafError = null; try {foo;} catch (cafError) {};"
+      """: "let cafError; cafError = null; try {foo;} catch (cafError1) {};"
 
     asExpression:
       "a = try foo": "let a; a = (() => {try {return foo;} catch (cafError) {};})();"
@@ -269,7 +269,7 @@ module.exports = suite: parseTestSuite
         bar
       """: "let a; a = (() => {try {foo; return bar;} catch (cafError) {};})();"
 
-      "a = try foo catch bar": "let a, bar, cafError; a = (() => {try {return foo;} catch (cafError) {bar = cafError;};})();"
+      "a = try foo catch bar": "let a, bar; a = (() => {try {return foo;} catch (cafError) {bar = cafError;};})();"
 
     catch:
       basic:
@@ -279,42 +279,42 @@ module.exports = suite: parseTestSuite
 
         """
         try foo catch bar
-        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError;};"
+        """: "let bar; try {foo;} catch (cafError) {bar = cafError;};"
 
         """
         try foo
         catch
           bar
-        """: "let cafError; try {foo;} catch (cafError) {bar;};"
+        """: "try {foo;} catch (cafError) {bar;};"
 
         """
         try foo
         catch bar
           bar
-        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; bar;};"
+        """: "let bar; try {foo;} catch (cafError) {bar = cafError; bar;};"
 
       body:
         """
         try foo catch bar
           baz
-        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz;};"
+        """: "let bar; try {foo;} catch (cafError) {bar = cafError; baz;};"
 
         """
         try
           foo
         catch bar
           baz
-        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz;};"
+        """: "let bar; try {foo;} catch (cafError) {bar = cafError; baz;};"
 
         """
         try foo catch bar
           baz
           bud
-        """: "let bar, cafError; try {foo;} catch (cafError) {bar = cafError; baz; bud;};"
+        """: "let bar; try {foo;} catch (cafError) {bar = cafError; baz; bud;};"
 
       asExpression:
         "a = try foo catch bar":
-          "let a, bar, cafError;
+          "let a, bar;
           a = (() =>
             {try
               {return foo;}
@@ -324,7 +324,7 @@ module.exports = suite: parseTestSuite
         """
         a = try foo catch bar
           baz
-        """: "let a, bar, cafError;
+        """: "let a, bar;
           a = (() =>
             {try
               {return foo;}
@@ -336,7 +336,7 @@ module.exports = suite: parseTestSuite
           baz
           bud
         """:
-          "let a, bar, cafError;
+          "let a, bar;
           a = (() =>
             {try {return foo;}
             catch (cafError)
@@ -349,7 +349,7 @@ module.exports = suite: parseTestSuite
           catch cafError
             1
           """:
-            "let result, cafError, cafError1;
+            "let result, cafError;
             result = (() =>
             {try
               {return foo;}
@@ -362,7 +362,7 @@ module.exports = suite: parseTestSuite
           catch error
             1
           """:   # TODO: this really shouldn't 'let' cafError
-            "let result, error, cafError;
+            "let result, error;
             result = (() =>
             {try
               {return foo;}
@@ -375,7 +375,7 @@ module.exports = suite: parseTestSuite
             error = try foo catch cafError
               cafError
             """:
-              "let error, cafError, cafError1;
+              "let error, cafError;
               error = (() =>
               {try
                 {return foo;}
@@ -387,15 +387,18 @@ module.exports = suite: parseTestSuite
             try foo catch cafError
               cafError
             """:
-              "let cafError, cafError1;
+              "let cafError;
               try
                 {foo;}
               catch (cafError1)
                 {cafError = cafError1; cafError;};"
 
         catchReturnValueIsDefaultIdentifier:
-          "try foo catch bar\n  cafError":
-            "let bar, cafError1;
+          """
+          try foo catch bar
+            cafError
+          """:
+            "let bar;
             try
               {foo;}
             catch (cafError1)

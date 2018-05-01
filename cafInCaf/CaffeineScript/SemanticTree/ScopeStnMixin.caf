@@ -64,9 +64,9 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       @getUniqueIdentifierHandle(preferredName).identifier
 
     # call during transform
-    uniqueIdentifierHandle: (preferredName) ->
+    uniqueIdentifierHandle: (preferredName, addToLets) ->
       preferredName = normalizePerferredName preferredName
-      @addUniqueIdentifierHandle new UniqueIdentifierHandle preferredName
+      @addUniqueIdentifierHandle new UniqueIdentifierHandle preferredName, addToLets
 
   addUniqueIdentifierHandle: (uih) ->
     unless uih.scope
