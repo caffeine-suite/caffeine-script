@@ -1,8 +1,9 @@
-### 0.53
+### 0.54
 
 NEW structuring options:
 
 ```
+{@}         # {} this: @
 {foo 123}   # {} foo: foo 123
 {foo = 123} # {} foo: foo = 123
 {&foo}      # {} foo: &foo
