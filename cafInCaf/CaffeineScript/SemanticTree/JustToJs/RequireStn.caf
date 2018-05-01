@@ -19,6 +19,8 @@ class RequireStn extends &BaseStn
 
     rawRequireString: -> @props.require
 
+    propName: -> @rawRequireString
+
     requireString: ->
       findModuleSync @rawRequireString, @parser.options
       .requireString

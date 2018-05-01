@@ -34,65 +34,39 @@ Caf.defMod(module, () => {
             isThisProp: function() {
               let cafBase;
               return (
-                Caf.exists((cafBase = this.children[0])) && cafBase.isThisProp
+                Caf.exists((cafBase = this.propNameChild)) && cafBase.isThisProp
               );
             },
             propName: function() {
-              let propNameStn, structuringStn, cafTemp;
+              let propNameChild, cafTemp, cafTemp1;
+              ({ propNameChild } = this);
               return (() => {
                 switch (this.children.length) {
                   case 2:
-                    [propNameStn] = this.children;
-                    return (cafTemp =
-                      Caf.exists(propNameStn) && propNameStn.simpleName) != null
+                    return (cafTemp = propNameChild.propName) != null
                       ? cafTemp
-                      : propNameStn;
+                      : propNameChild;
                   case 1:
-                    structuringStn = this.children[0];
-                    return (() => {
-                      switch (structuringStn.type) {
-                        case "Accessor":
-                          return structuringStn.key.toJs();
-                        case "Require":
-                          return structuringStn.rawRequireString;
-                        case "This":
-                          return structuringStn.children[0].toJs();
-                        case "SimpleLiteral":
-                        case "Reference":
-                        case "Identifier":
-                          return structuringStn.toJs();
-                        default:
-                          return (() => {
-                            throw new Error(
-                              `When structuring an object, only Accessors, &requires and identifiers are allowed. (${Caf.toString(
-                                structuringStn.type
-                              )} not allowed)`
-                            );
-                          })();
-                      }
-                    })();
+                    return (cafTemp1 = propNameChild.propName) != null
+                      ? cafTemp1
+                      : (() => {
+                          throw new Error(
+                            `${Caf.toString(
+                              propNameChild.type
+                            )} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.`
+                          );
+                        })();
                 }
               })();
             },
-            canUseES6Structuring: function() {
-              let same, propName, valueChildString;
+            canBeUsedInES6Structuring: function() {
+              let propName;
               return (
-                ((same = this.propNameChild === this.valueChild) ||
-                  (propName = this.propNameChild.simpleName)) &&
-                (() => {
-                  switch (this.valueChild.type) {
-                    case "SimpleLiteral":
-                    case "Reference":
-                    case "Identifier":
-                      return (
-                        !javaScriptReservedWords[
-                          (valueChildString = this.valueChild.toJs())
-                        ] &&
-                        identifierRegexp.test(valueChildString) &&
-                        (same || valueChildString === propName)
-                      );
-                  }
-                })()
+                (propName = this.propNameChild.propName) &&
+                !javaScriptReservedWords[propName] &&
+                identifierRegexp.test(propName) &&
+                this.valueChild.canBeUsedInES6Structuring &&
+                this.valueChild.propName === propName
               );
             }
           });
@@ -103,7 +77,7 @@ Caf.defMod(module, () => {
             if (!isString(propName)) {
               propName = propName.toJs();
             }
-            return this.canUseES6Structuring
+            return this.canBeUsedInES6Structuring
               ? base
               : `${Caf.toString(propName)}: ${Caf.toString(base)}`;
           };
@@ -121,7 +95,7 @@ Caf.defMod(module, () => {
             if (!isString(propName)) {
               propName = propName.toSourceNode();
             }
-            return this.canUseES6Structuring
+            return this.canBeUsedInES6Structuring
               ? base
               : this.createSourceNode(propName, ": ", base);
           };

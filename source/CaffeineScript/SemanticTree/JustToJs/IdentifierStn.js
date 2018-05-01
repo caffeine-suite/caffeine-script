@@ -13,8 +13,17 @@ Caf.defMod(module, () => {
           isIdentifier: function() {
             return true;
           },
+          propName: function() {
+            return this.identifier;
+          },
+          identifier: function() {
+            return (this.props.identifierHandle || this.props).identifier;
+          },
           explicitIdentifier: function() {
             return this.props.identifier;
+          },
+          canBeUsedInES6Structuring: function() {
+            return true;
           }
         });
         this.prototype.updateScope = function(scope) {

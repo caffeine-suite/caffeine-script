@@ -12,9 +12,15 @@ class ReferenceStn extends &BaseStn
   @getter
     isReference: -> true
 
+    propName: ->
+      @props.identifierHandle?.identifier
+      || @labeledChildren.identifier.propName
+
     # explicitly in the source-code
     explicitIdentifier: ->
       @labeledChildren.identifier?.explicitIdentifier
+
+    canBeUsedInES6Structuring: -> true
 
   needsParens: false
 

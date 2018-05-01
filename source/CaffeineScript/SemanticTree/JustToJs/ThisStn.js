@@ -11,6 +11,9 @@ Caf.defMod(module, () => {
           identifier: function() {
             let cafBase;
             return Caf.exists((cafBase = this.children[0])) && cafBase.toJs();
+          },
+          propName: function() {
+            return this.identifier;
           }
         });
         this.prototype.toJs = function() {

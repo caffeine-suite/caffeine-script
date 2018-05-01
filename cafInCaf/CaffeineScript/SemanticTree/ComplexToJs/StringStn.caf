@@ -4,6 +4,9 @@ class StringStn extends &BaseStn
 
   toSourceNode: (options) -> @toJs options
 
+  @getter
+    propName: -> @toJs()
+
   toJs: (options) ->
     base = deescapeSpaces @value
     quotes = if /"/.test base

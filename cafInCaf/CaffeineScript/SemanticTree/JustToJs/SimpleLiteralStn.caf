@@ -13,6 +13,10 @@ class SimpleLiteralStn extends &BaseStn
       else
         value
 
+  @getter
+    propName: -> @props.value
+    canBeUsedInES6Structuring: -> true
+
   toJs: (options) ->
     {value} = @props
     if options?.dotBase

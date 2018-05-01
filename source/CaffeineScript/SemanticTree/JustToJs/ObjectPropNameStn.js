@@ -17,27 +17,13 @@ Caf.defMod(module, () => {
                 : undefined;
             },
             isThisProp: function() {
-              let cafBase;
-              return !!(
-                (Caf.exists((cafBase = this.children[0])) && cafBase.type) ===
-                "This"
-              );
+              return this.props.isThisProp;
             },
             simpleName: function() {
               let nameStn;
               [nameStn] = this.children;
               return nameStn
-                ? (() => {
-                    switch (nameStn.type) {
-                      case "Reference":
-                      case "Identifier":
-                      case "SimpleLiteral":
-                      case "String":
-                        return nameStn.toJs();
-                      case "This":
-                        return nameStn.identifier;
-                    }
-                  })()
+                ? nameStn.propName
                 : escapePropName(this.props.value);
             },
             propName: function() {

@@ -28,6 +28,9 @@ Caf.defMod(module, () => {
             },
             isAccessor: function() {
               return true;
+            },
+            propName: function() {
+              return this.key.toJs();
             }
           });
           this.prototype.toJs = function() {

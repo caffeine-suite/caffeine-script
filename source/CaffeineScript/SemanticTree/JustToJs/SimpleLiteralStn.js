@@ -13,6 +13,14 @@ Caf.defMod(module, () => {
           Caf.exists(options) && options.dotBase ? ["(", value, ")"] : value
         );
       };
+      this.getter({
+        propName: function() {
+          return this.props.value;
+        },
+        canBeUsedInES6Structuring: function() {
+          return true;
+        }
+      });
       this.prototype.toJs = function(options) {
         let value;
         ({ value } = this.props);

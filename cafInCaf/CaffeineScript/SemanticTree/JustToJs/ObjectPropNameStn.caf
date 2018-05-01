@@ -7,18 +7,12 @@ class ObjectPropNameStn extends &BaseStn
       if name = @simpleName
         identifierRegexp.test name
 
-    isThisProp: ->
-      !!(@children[0]?.type == :This)
+    isThisProp: -> @props.isThisProp
 
     simpleName: ->
       [nameStn] = @children
       if nameStn
-        # log simpleName: {nameStn, nameStn.type, nameStn.identifier, @isThisProp}
-        switch nameStn.type
-          when :Reference, :Identifier, :SimpleLiteral, :String
-            nameStn.toJs()
-          when :This
-            nameStn.identifier
+        nameStn.propName
       else
         escapePropName @props.value # ? @parseTreeNode.toString()
 

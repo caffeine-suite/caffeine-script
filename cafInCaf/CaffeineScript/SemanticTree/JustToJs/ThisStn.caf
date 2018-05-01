@@ -6,6 +6,7 @@ class ThisStn extends &BaseStn
 
   @getter
     identifier: -> @children[0]?.toJs()
+    propName: -> @identifier
 
   toJs: ->
     if id = @identifier

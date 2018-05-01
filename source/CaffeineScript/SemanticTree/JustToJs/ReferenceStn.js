@@ -19,12 +19,23 @@ Caf.defMod(module, () => {
           isReference: function() {
             return true;
           },
+          propName: function() {
+            let cafBase;
+            return (
+              (Caf.exists((cafBase = this.props.identifierHandle)) &&
+                cafBase.identifier) ||
+              this.labeledChildren.identifier.propName
+            );
+          },
           explicitIdentifier: function() {
             let cafBase;
             return (
               Caf.exists((cafBase = this.labeledChildren.identifier)) &&
               cafBase.explicitIdentifier
             );
+          },
+          canBeUsedInES6Structuring: function() {
+            return true;
           }
         });
         this.prototype.needsParens = false;

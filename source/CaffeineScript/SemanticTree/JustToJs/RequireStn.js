@@ -12,6 +12,9 @@ Caf.defMod(module, () => {
             rawRequireString: function() {
               return this.props.require;
             },
+            propName: function() {
+              return this.rawRequireString;
+            },
             requireString: function() {
               return findModuleSync(this.rawRequireString, this.parser.options)
                 .requireString;

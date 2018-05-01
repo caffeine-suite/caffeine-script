@@ -119,11 +119,21 @@ import Extensions
 
   @rule
     propName:
-      "!/then\\s/ str:identifier &_colon_"
       "!/then\\s/ str:thisPropName &_colon_"
+    {}
+      stnFactory: "ObjectPropNameStn"
+      stnProps: ~>
+        value: @str?.toString()
+        isThisProp: true
+
+  @rule
+    propName:
+      "!/then\\s/ str:identifier &_colon_"
       "!/then\\s/ str:unquotedString &/:/"
       "quotedString:stringLiteral &stringLiteralPropNameTail"
 
     {}
       stnFactory: "ObjectPropNameStn"
-      stnProps: ~> value: @str?.toString()
+      stnProps: ~>
+        value: @str?.toString()
+        isThisProp: false

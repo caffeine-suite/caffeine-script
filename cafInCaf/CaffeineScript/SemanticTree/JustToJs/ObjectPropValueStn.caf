@@ -21,37 +21,24 @@ class ObjectPropValueStn extends &BaseStn
     propNameChild: -> @children[0]
     valueChild: -> peek @children
 
-    isThisProp: -> @children[0]?.isThisProp
+    isThisProp: -> @propNameChild?.isThisProp
 
     propName: ->
+      {propNameChild} = @
       switch @children.length
       when 2
-        [propNameStn] = @children
-        propNameStn?.simpleName ? propNameStn
+        propNameChild.propName ? propNameChild
 
       when 1
-        structuringStn = @children[0]
+        propNameChild.propName ?
+          throw new Error "#{propNameChild.type} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers."
 
-        switch structuringStn.type
-          when :Accessor
-            structuringStn.key.toJs()
-          when :Require
-            structuringStn.rawRequireString
-          when :This
-            structuringStn.children[0].toJs()
-          when :SimpleLiteral, :Reference, :Identifier
-            structuringStn.toJs()
-          else
-            throw new Error "When structuring an object, only Accessors, &requires and identifiers are allowed. (#{structuringStn.type} not allowed)"
-
-    canUseES6Structuring: ->
-      (same = @propNameChild == @valueChild)
-      || propName = @propNameChild.simpleName
-      && switch @valueChild.type
-        when :SimpleLiteral, :Reference, :Identifier
-          !javaScriptReservedWords[valueChildString = @valueChild.toJs()]
-          && identifierRegexp.test valueChildString
-          && same || valueChildString == propName
+    canBeUsedInES6Structuring: ->
+      propName = @propNameChild.propName
+      && !javaScriptReservedWords[propName]
+      && identifierRegexp.test propName
+      && @valueChild.canBeUsedInES6Structuring
+      && @valueChild.propName == propName
 
   toJs: ->
     {valueChild, propName} = @
@@ -60,7 +47,7 @@ class ObjectPropValueStn extends &BaseStn
     unless isString propName
       propName = propName.toJs()
 
-    if @canUseES6Structuring
+    if @canBeUsedInES6Structuring
       base
     else
       "#{propName}: #{base}"
@@ -73,7 +60,7 @@ class ObjectPropValueStn extends &BaseStn
     base = valueChild.toSourceNode()
     propName = propName.toSourceNode() unless isString propName
 
-    if @canUseES6Structuring
+    if @canBeUsedInES6Structuring
       base
     else
       @createSourceNode

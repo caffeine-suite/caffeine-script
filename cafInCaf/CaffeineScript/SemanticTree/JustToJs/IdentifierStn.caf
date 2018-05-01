@@ -5,9 +5,13 @@ class IdentifierStn extends &BaseStn
   @getter
     name: -> @props.identifier
     isIdentifier: -> true
+    propName: -> @identifier
+
+    identifier: -> (@props.identifierHandle || @props).identifier
 
     # explicitly in the source-code
     explicitIdentifier: -> @props.identifier
+    canBeUsedInES6Structuring: -> true
 
   updateScope: (@scope) ->
     if @props.identifierHandle

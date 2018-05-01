@@ -120,11 +120,24 @@ Caf.defMod(module, () => {
               { thisPropName: "/@/ identifier" },
               { stnFactory: "ThisStn" }
             );
+            this.rule(
+              { propName: "!/then\\s/ str:thisPropName &_colon_" },
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  let cafBase;
+                  return {
+                    value:
+                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
+                    isThisProp: true
+                  };
+                }
+              }
+            );
             return this.rule(
               {
                 propName: [
                   "!/then\\s/ str:identifier &_colon_",
-                  "!/then\\s/ str:thisPropName &_colon_",
                   "!/then\\s/ str:unquotedString &/:/",
                   "quotedString:stringLiteral &stringLiteralPropNameTail"
                 ]
@@ -135,7 +148,8 @@ Caf.defMod(module, () => {
                   let cafBase;
                   return {
                     value:
-                      Caf.exists((cafBase = this.str)) && cafBase.toString()
+                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
+                    isThisProp: false
                   };
                 }
               }

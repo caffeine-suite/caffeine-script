@@ -12,6 +12,11 @@ Caf.defMod(module, () => {
           this.prototype.toSourceNode = function(options) {
             return this.toJs(options);
           };
+          this.getter({
+            propName: function() {
+              return this.toJs();
+            }
+          });
           this.prototype.toJs = function(options) {
             let base, quotes, singleCount, doubleCount, out;
             base = deescapeSpaces(this.value);
