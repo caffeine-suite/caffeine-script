@@ -235,8 +235,15 @@ Caf.defMod(module, () => {
               )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
             };
             this.prototype.childrenToSourceNodes = function(joiner, options) {
+              return this.stnArrayToSourceNodes(this.children, joiner, options);
+            };
+            this.prototype.stnArrayToSourceNodes = function(
+              stnArray,
+              joiner,
+              options
+            ) {
               let out;
-              return Caf.each(this.children, (out = []), (c, i, cafInto) => {
+              return Caf.each(stnArray, (out = []), (c, i, cafInto) => {
                 if (joiner != null && i > 0) {
                   out.push(joiner);
                 }

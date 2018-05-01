@@ -37,3 +37,24 @@ class FunctionInvocationStn extends &AccessorChainStn
 
     "#{valueJs}#{@applyRequiredParens (array a in @argStns with a.toJsExpression()).join ', '}"
 
+  toSourceNode: (options)->
+    {newObjectFunctionInvocation, noParens} = options if options
+
+    throw new Error "internal error: can't be existanceTest here" if @existanceTest
+    valueSourceNode = @functionValue.toSourceNode()
+
+    if newObjectFunctionInvocation
+      switch @functionValue.type
+      when :Reference, :GlobalIdentifier, :This
+        null
+      else unless noParens
+        valueSourceNode = []
+          "("
+          valueSourceNode
+          ")"
+
+    @createSourceNode
+      valueSourceNode
+      "("
+      @stnArrayToSourceNodes @argStns, ', '
+      ")"

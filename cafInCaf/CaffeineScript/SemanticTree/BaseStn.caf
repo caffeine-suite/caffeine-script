@@ -223,7 +223,10 @@ class BaseStn extends BaseClass
       //# sourceURL=#{@sourceFile}
 
   childrenToSourceNodes: (joiner, options)->
-    array c, i in @children into out = []
+    @stnArrayToSourceNodes @children, joiner, options
+
+  stnArrayToSourceNodes: (stnArray, joiner, options) ->
+    array c, i in stnArray into out = []
       if joiner? && i > 0
         out.push joiner
       c.toSourceNode options

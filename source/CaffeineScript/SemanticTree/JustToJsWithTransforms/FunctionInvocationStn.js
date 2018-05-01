@@ -77,6 +77,35 @@ Caf.defMod(module, () => {
                 )
               )}`;
             };
+            this.prototype.toSourceNode = function(options) {
+              let newObjectFunctionInvocation, noParens, valueSourceNode;
+              if (options) {
+                ({ newObjectFunctionInvocation, noParens } = options);
+              }
+              if (this.existanceTest) {
+                throw new Error("internal error: can't be existanceTest here");
+              }
+              valueSourceNode = this.functionValue.toSourceNode();
+              if (newObjectFunctionInvocation) {
+                switch (this.functionValue.type) {
+                  case "Reference":
+                  case "GlobalIdentifier":
+                  case "This":
+                    null;
+                    break;
+                  default:
+                    if (!noParens) {
+                      valueSourceNode = ["(", valueSourceNode, ")"];
+                    }
+                }
+              }
+              return this.createSourceNode(
+                valueSourceNode,
+                "(",
+                this.stnArrayToSourceNodes(this.argStns, ", "),
+                ")"
+              );
+            };
           }
         ))
       );
