@@ -12,39 +12,48 @@ NEW structuring options:
 ### 0.52.1
 
 ```
+CHANGE: "when" now expects a BLOCK, not a VALUE:
+  this:
+    find v, k in searchUser when
+      a
+      b
+
+  is now equivelent to:
+    out = []
+    each v, k in searchUser
+      a
+      out.push v if b
+
 FIXED:
-  This:
+  Compiling this:
     topic: if foo then a: 1
     colors: 3
-  Should outoput:
+
+  Now correctly outputs:
     { topic: foo ? { a: 1 } : undefined, colors: 3 }
-  Instead it generates:
+
+  Instead of:
     { topic: foo ? { a: 1, colors: 3 } : undefined }
 
-FIXED: Should Compile:
+FIXED: This compiles now:
   bar
   /1/
 
-FIXED: Should compile to identical JS
+FIXED: Compiles to identical JS, now:
   a |= 0  # caffeinescript
   a |= 0; // javascript
 
   Also fixed: ^=, >>=, <<=, >>>=
 
-FIXED: "when" should expect a BLOCK, not a VALUE:
-  this:
-    find v, k in searchUser when
-      a
-      b
-  should be geneate a when-function like:
-    () => {a; return b;}
-
-FIXED: "when" one-liner should handle ';' correctly:
+FIXED: "when" one-liner now handles ';' correctly:
 
   find v, k in searchUser when log k; test k
 
-  should generate when-function:
-    () => {log(k); return test(k);}
+  is now equivelent to:
+    out = []
+    each v, k in searchUser
+      log k
+      out.push v if test k
 ```
 
 ## 0.52
