@@ -14,6 +14,7 @@ class AssignmentStn extends &AccessorChainStn
   @getter
     value:  -> @lValue
     key:    -> @rValue
+    propName: -> @lValue?.propName
 
   updateScope: (@scope) ->
     @scope.addIdentifierAssigned @lValue?.explicitIdentifier

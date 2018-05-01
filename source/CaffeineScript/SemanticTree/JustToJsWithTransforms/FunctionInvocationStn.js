@@ -41,6 +41,12 @@ Caf.defMod(module, () => {
               },
               isFunctionInvocation: function() {
                 return true;
+              },
+              propName: function() {
+                let cafBase;
+                return (
+                  Caf.exists((cafBase = this.functionValue)) && cafBase.propName
+                );
               }
             });
             this.prototype.toJs = function(options) {

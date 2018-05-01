@@ -22,6 +22,10 @@ Caf.defMod(module, () => {
             },
             key: function() {
               return this.rValue;
+            },
+            propName: function() {
+              let cafBase;
+              return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
             }
           });
           this.prototype.updateScope = function(scope) {

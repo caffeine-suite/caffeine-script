@@ -414,7 +414,7 @@ class BaseStn extends BaseClass
       @validate()
     catch e
       throw @parseTreeNode.parser.generateCompileError {}
-        failureOffset: @sourceOffset
+        failureIndex: @sourceOffset
         errorType: "Validation"
         e.message
         e.info

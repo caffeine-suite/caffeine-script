@@ -33,6 +33,12 @@ module.exports = suite: parseTestSuite
     requires:
       "{&ArtStandardLib}": "({ArtStandardLib: require('art-standard-lib')});"
 
+    assignment:
+      "{abc = 123}": "let abc; ({abc: abc = 123});"
+
+    functionInvocation:
+      "{abc 123}": "({abc: abc(123)});"
+
     reservedWords:
       "{true}":       "({true: true});"
       "{true: true}": "({true: true});"
@@ -51,3 +57,5 @@ module.exports = suite: parseTestSuite
       {}
         (array v from a when a > 10).length
       """: "({length: Caf.each(a, [], (v, cafK, cafInto) => {if (a > 10) {cafInto.push(v);};}).length});"
+
+      "{abc.def 123}": "({def: abc.def(123)});"

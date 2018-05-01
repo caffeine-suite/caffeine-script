@@ -359,7 +359,7 @@ Caf.defMod(module, () => {
               } catch (cafError) {
                 e = cafError;
                 throw this.parseTreeNode.parser.generateCompileError({
-                  failureOffset: this.sourceOffset,
+                  failureIndex: this.sourceOffset,
                   errorType: "Validation",
                   message: e.message,
                   info: e.info
