@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
         {
           version: require("../../package.json").version,
           compile: function(source, options = {}) {
-            let transformedStn, stn, parseTree, e, cafTemp, cafError;
+            let transformedStn, stn, parseTree, e, cafTemp;
             return (() => {
               try {
                 transformedStn = (stn = (parseTree = require("./CaffeineScriptParser").parse(

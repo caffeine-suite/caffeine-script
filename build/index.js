@@ -64,17 +64,11 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 104);
+/******/ 	return __webpack_require__(__webpack_require__.s = 109);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("caffeine-script-runtime");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -102,42 +96,50 @@ module.exports = function(module) {
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = require("caffeine-script-runtime");
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "BaseClass",
-      "log",
-      "Object",
-      "Error",
       "merge",
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
       "compactFlatten",
+      "log",
+      "JSON",
+      "Error",
       "isString"
     ],
     [global, __webpack_require__(3)],
     (
       BaseClass,
-      log,
-      Object,
-      Error,
       merge,
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
       compactFlatten,
+      log,
+      JSON,
+      Error,
       isString
     ) => {
-      let createObjectTreeFactory, BaseStn;
+      let createObjectTreeFactory, SourceNode, binary, BaseStn;
       return (
-        ({ createObjectTreeFactory } = __webpack_require__(111)),
+        ({ createObjectTreeFactory } = __webpack_require__(122)),
+        ({ SourceNode } = __webpack_require__(120)),
+        ({ binary } = __webpack_require__(121)),
         (BaseStn = Caf.defClass(
           class BaseStn extends BaseClass {
             constructor(props, children = [], pretransformedStn) {
@@ -157,24 +159,18 @@ Caf.defMod(module, () => {
             }
           },
           function(BaseStn, classSuper, instanceSuper) {
-            let applyRequiredParens, applyParens;
-            if (
-              !(__webpack_require__(0).getSuper(this) === BaseClass)
-            ) {
-              log({
-                self: this,
-                selfName: this.getName(),
-                "Object.getPrototypeOf@": Object.getPrototypeOf(this),
-                badSuper: __webpack_require__(0).getSuper(this),
-                BaseClass,
-                "selfIsBaseObject?": this === BaseClass
-              });
-              throw new Error("bad super");
-            }
+            let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
             this.abstractClass();
-            this.prototype.toJsParenExpression = function(options) {
-              return this.toJs(merge(options, { expression: true }));
-            };
+            this.setter("parseTreeNode");
+            this.getter({
+              parseTreeNode: function() {
+                let cafTemp, cafBase;
+                return (cafTemp = this._parseTreeNode) != null
+                  ? cafTemp
+                  : Caf.exists((cafBase = this.parent)) &&
+                      cafBase.parseTreeNode;
+              }
+            });
             this.prototype.initLabeledChildren = function() {
               this.labeledChildren = this.children && {};
               return Caf.each(this.children, undefined, child => {
@@ -191,7 +187,9 @@ Caf.defMod(module, () => {
               });
             };
             this.prototype.getInspectedProps = function() {
-              return objectWithout(this.props, "label", "pluralLabel");
+              return merge(objectWithout(this.props, "label", "pluralLabel"), {
+                parseTreeNode: !!this.parseTreeNode
+              });
             };
             this.getter({
               sourceOffset: function() {
@@ -273,24 +271,87 @@ Caf.defMod(module, () => {
               }
               return found;
             };
-            this.prototype.find = function(stnTypePattern) {
-              let a;
-              a = compactFlatten(
-                Caf.each(this.children, [], (child, cafK, cafInto) => {
-                  cafInto.push(
-                    child.type.match(stnTypePattern)
-                      ? child
-                      : child.find(stnTypePattern)
-                  );
-                })
+            this.prototype.find = function(
+              stnTypePattern,
+              stnTypeStopPattern,
+              _foundList = []
+            ) {
+              Caf.each(this.children, undefined, child => {
+                if (stnTypePattern.test(child.type)) {
+                  _foundList.push(child);
+                } else {
+                  if (
+                    !(
+                      Caf.exists(stnTypeStopPattern) &&
+                      stnTypeStopPattern.test(child.type)
+                    )
+                  ) {
+                    child.find(stnTypePattern, stnTypeStopPattern, _foundList);
+                  }
+                }
+              });
+              return _foundList.length === 0 ? null : _foundList;
+            };
+            sourceNodeLineColumnScratch = {};
+            this.getter({
+              sourceFile: function() {
+                let cafTemp, cafBase;
+                return (cafTemp =
+                  Caf.exists((cafBase = this.parseTreeNode)) &&
+                  cafBase.sourceFile) != null
+                  ? cafTemp
+                  : "caffeine-script";
+              },
+              newSourceNode: function() {
+                let line, column;
+                ({ line, column } = this.parseTreeNode.getSourceLineColumn(
+                  sourceNodeLineColumnScratch
+                ));
+                return new SourceNode(
+                  line + 1,
+                  column,
+                  this.parseTreeNode.sourceFile
+                );
+              }
+            });
+            this.prototype.createSourceNode = function(...args) {
+              return this.newSourceNode.add(compactFlatten(args));
+            };
+            this.prototype.toSourceNode = function(options) {
+              log.warn(
+                `WARNING: toSourceNode not overridden in ${Caf.toString(
+                  this.class.name
+                )}. Falling back to old toJs().`
               );
-              return a.length === 0 ? null : a;
+              return this.createSourceNode(this.toJs(options));
             };
-            this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs(options));
-              }).join(joiner);
+            this.prototype.toJsWithInlineSourceMap = function(options = {}) {
+              let code, map;
+              ({ code, map } = this.toSourceNode(options).toStringWithSourceMap(
+                { file: Caf.exists(options) && options.outputFile }
+              ));
+              if (options.verbose) {
+                log({ sourceMap: map.toString(), sourceFile: this.sourceFile });
+              }
+              return `${Caf.toString(
+                code
+              )}\n//# sourceMappingURL=${Caf.toString(
+                binary(JSON.stringify(map.toString())).toDataUri(
+                  "application/json",
+                  true
+                )
+              )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
             };
+            this.prototype.childrenToSourceNodes = function(joiner, options) {
+              let out;
+              return Caf.each(this.children, (out = []), (c, i, cafInto) => {
+                if (joiner != null && i > 0) {
+                  out.push(joiner);
+                }
+                cafInto.push(c.toSourceNode(options));
+              });
+            };
+            null;
             this.prototype.toJs = function(options) {
               return (() => {
                 throw new Error(
@@ -300,6 +361,11 @@ Caf.defMod(module, () => {
                 );
               })();
             };
+            this.prototype.childrenToJs = function(joiner = "", options) {
+              return Caf.each(this.children, [], (c, cafK, cafInto) => {
+                cafInto.push(c.toJs(options));
+              }).join(joiner);
+            };
             this.prototype.doJs = function(args, body) {
               if (args) {
                 throw "TODO";
@@ -308,6 +374,12 @@ Caf.defMod(module, () => {
                 body = body.toFunctionBodyJs();
               }
               return `(() => {${Caf.toString(body)};})()`;
+            };
+            this.prototype.doSourceNode = function(args, body) {
+              if (args) {
+                throw "TODO";
+              }
+              return this.createSourceNode("(() => {", body, "})()");
             };
             this.prototype.toFunctionBodyJsArray = function(
               returnAction = true
@@ -341,6 +413,7 @@ Caf.defMod(module, () => {
             this.prototype.postTransform = function() {
               return this;
             };
+            this.prototype.decorate = function() {};
             this.prototype.newTransformedInstance = function(
               newProps,
               newChildren
@@ -349,10 +422,22 @@ Caf.defMod(module, () => {
             };
             this.prototype.transform = function() {
               let newChildren;
+              this.decorate();
               return (this.children !== (newChildren = this.transformChildren())
                 ? this.newTransformedInstance(this.props, newChildren)
                 : this
-              ).postTransform();
+              )
+                .postTransform()
+                .setDefaultParseTreeNode(this.parseTreeNode);
+            };
+            this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
+              if (!this.parseTreeNode) {
+                this.parseTreeNode = parseTreeNode;
+                Caf.each(this.children, undefined, child => {
+                  child.setDefaultParseTreeNode(parseTreeNode);
+                });
+              }
+              return this;
             };
             this.prototype.needsParens = true;
             this.prototype.needsParensAsStatement = false;
@@ -365,6 +450,7 @@ Caf.defMod(module, () => {
             this.applyRequiredParens = applyRequiredParens = function(expr) {
               return `(${Caf.toString(expr)})`;
             };
+            this.prototype.applyRequiredParens = applyRequiredParens;
             this.applyParens = applyParens = function(expr) {
               return expr.match(
                 /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
@@ -372,7 +458,6 @@ Caf.defMod(module, () => {
                 ? expr
                 : `(${Caf.toString(expr)})`;
             };
-            this.prototype.applyRequiredParens = applyRequiredParens;
             this.prototype.applyParens = applyParens;
             this.prototype.validate = function() {};
             this.prototype.validateAll = function() {
@@ -382,7 +467,7 @@ Caf.defMod(module, () => {
               } catch (cafError) {
                 e = cafError;
                 throw this.parseTreeNode.parser.generateCompileError({
-                  failureOffset: this.sourceOffset,
+                  failureIndex: this.sourceOffset,
                   errorType: "Validation",
                   message: e.message,
                   info: e.info
@@ -406,7 +491,7 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
 /* 3 */
@@ -414,16 +499,20 @@ Caf.defMod(module, () => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
-  return __webpack_require__(11).merge(
-    __webpack_require__(110),
-    __webpack_require__(11),
-    { javaScriptReservedWords: __webpack_require__(17) }
+  return __webpack_require__(7).merge(
+    __webpack_require__(34),
+    __webpack_require__(8),
+    __webpack_require__(7),
+    {
+      StnRegistry: __webpack_require__(4),
+      javaScriptReservedWords: __webpack_require__(18)
+    }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
 /* 4 */
@@ -431,11 +520,11 @@ Caf.defMod(module, () => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["BaseClass", "isFunction", "isString", "Error", "formattedInspect"],
-    [global, __webpack_require__(3)],
+    [global, __webpack_require__(7), __webpack_require__(34)],
     (BaseClass, isFunction, isString, Error, formattedInspect) => {
       let StnRegistry;
       return (StnRegistry = Caf.defClass(
@@ -467,7 +556,7 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
 /* 5 */
@@ -483,7 +572,7 @@ var SemanticTree,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-module.exports = (__webpack_require__(15)).addNamespace('SemanticTree', SemanticTree = (function(superClass) {
+module.exports = (__webpack_require__(16)).addNamespace('SemanticTree', SemanticTree = (function(superClass) {
   extend(SemanticTree, superClass);
 
   function SemanticTree() {
@@ -494,24 +583,88 @@ module.exports = (__webpack_require__(15)).addNamespace('SemanticTree', Semantic
 
 })(Neptune.PackageNamespace));
 
-__webpack_require__(24);
-
 __webpack_require__(25);
 
-__webpack_require__(14);
-
 __webpack_require__(26);
+
+__webpack_require__(15);
 
 __webpack_require__(27);
 
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("art-standard-lib");
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
+Caf.defMod(module, () => {
+  return Caf.importInvoke(
+    ["escapeRegExp", "escapeJavascriptString"],
+    [global, __webpack_require__(7)],
+    (escapeRegExp, escapeJavascriptString) => {
+      let legalUnquotedPropName;
+      return {
+        deescapeSpaces: function(string) {
+          return Caf.each(
+            string.split(/((?:\\\\)+)/),
+            [],
+            (str, i, cafInto) => {
+              cafInto.push(
+                Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
+              );
+            }
+          ).join("");
+        },
+        escapeNewLines: function(string) {
+          return string.replace(/\n/g, "\\n");
+        },
+        escapeMustEscapes: function(string) {
+          return string.replace(/[\n]/g, "\\n");
+        },
+        escapeUnescaped: function(string, charsToEscape = '"') {
+          let charsRegExp, split;
+          charsRegExp = RegExp(
+            `([${Caf.toString(escapeRegExp(charsToEscape))}])`,
+            "g"
+          );
+          split = charsToEscape.match(/\\/)
+            ? [string]
+            : string.split(/((?:\\.)+)/);
+          return Caf.each(split, [], (str, i, cafInto) => {
+            cafInto.push(
+              Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
+            );
+          }).join("");
+        },
+        legalUnquotedPropName: (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),
+        escapePropName: function(rawPropName) {
+          return legalUnquotedPropName.test(rawPropName)
+            ? rawPropName
+            : escapeJavascriptString(rawPropName);
+        },
+        identifierRegexp: /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/
+      };
+    }
+  );
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["lowerCamelCase", "merge", "Error", "log", "isString", "mergeInto"],
@@ -519,7 +672,7 @@ Caf.defMod(module, () => {
     (lowerCamelCase, merge, Error, log, isString, mergeInto) => {
       let UniqueIdentifierHandle;
       return (
-        (UniqueIdentifierHandle = __webpack_require__(10)),
+        (UniqueIdentifierHandle = __webpack_require__(12)),
         function(toExtend) {
           let ScopeStnMixin;
           return (ScopeStnMixin = Caf.defClass(
@@ -613,10 +766,10 @@ Caf.defMod(module, () => {
                   return this.getUniqueIdentifierHandle(preferredName)
                     .identifier;
                 },
-                uniqueIdentifierHandle: function(preferredName) {
+                uniqueIdentifierHandle: function(preferredName, addToLets) {
                   preferredName = normalizePerferredName(preferredName);
                   return this.addUniqueIdentifierHandle(
-                    new UniqueIdentifierHandle(preferredName)
+                    new UniqueIdentifierHandle(preferredName, addToLets)
                   );
                 }
               });
@@ -862,67 +1015,564 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 10 */
+/***/ (function(module, exports) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
-Caf.defMod(module, () => {
-  return Caf.importInvoke(
-    ["escapeRegExp"],
-    [global, __webpack_require__(3)],
-    escapeRegExp => {
-      return {
-        deescapeSpaces: function(string) {
-          return Caf.each(
-            string.split(/((?:\\\\)+)/),
-            [],
-            (str, i, cafInto) => {
-              cafInto.push(
-                Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
-              );
-            }
-          ).join("");
-        },
-        escapeNewLines: function(string) {
-          return string.replace(/\n/g, "\\n");
-        },
-        escapeMustEscapes: function(string) {
-          return string.replace(/[\n]/g, "\\n");
-        },
-        escapeUnescaped: function(string, charsToEscape = '"') {
-          let charsRegExp, split;
-          charsRegExp = RegExp(
-            `([${Caf.toString(escapeRegExp(charsToEscape))}])`,
-            "g"
-          );
-          split = charsToEscape.match(/\\/)
-            ? [string]
-            : string.split(/((?:\\.)+)/);
-          return Caf.each(split, [], (str, i, cafInto) => {
-            cafInto.push(
-              Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
-            );
-          }).join("");
-        }
-      };
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+/**
+ * This is a helper function for getting values from parameter/options
+ * objects.
+ *
+ * @param args The object we are extracting values from
+ * @param name The name of the property we are getting.
+ * @param defaultValue An optional value to return if the property is missing
+ * from the object. If this is not specified and the property is missing, an
+ * error will be thrown.
+ */
+function getArg(aArgs, aName, aDefaultValue) {
+  if (aName in aArgs) {
+    return aArgs[aName];
+  } else if (arguments.length === 3) {
+    return aDefaultValue;
+  } else {
+    throw new Error('"' + aName + '" is a required argument.');
+  }
+}
+exports.getArg = getArg;
+
+var urlRegexp = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(.*)$/;
+var dataUrlRegexp = /^data:.+\,.+$/;
+
+function urlParse(aUrl) {
+  var match = aUrl.match(urlRegexp);
+  if (!match) {
+    return null;
+  }
+  return {
+    scheme: match[1],
+    auth: match[2],
+    host: match[3],
+    port: match[4],
+    path: match[5]
+  };
+}
+exports.urlParse = urlParse;
+
+function urlGenerate(aParsedUrl) {
+  var url = '';
+  if (aParsedUrl.scheme) {
+    url += aParsedUrl.scheme + ':';
+  }
+  url += '//';
+  if (aParsedUrl.auth) {
+    url += aParsedUrl.auth + '@';
+  }
+  if (aParsedUrl.host) {
+    url += aParsedUrl.host;
+  }
+  if (aParsedUrl.port) {
+    url += ":" + aParsedUrl.port
+  }
+  if (aParsedUrl.path) {
+    url += aParsedUrl.path;
+  }
+  return url;
+}
+exports.urlGenerate = urlGenerate;
+
+const MAX_CACHED_INPUTS = 32;
+
+/**
+ * Takes some function `f(input) -> result` and returns a memoized version of
+ * `f`.
+ *
+ * We keep at most `MAX_CACHED_INPUTS` memoized results of `f` alive. The
+ * memoization is a dumb-simple, linear least-recently-used cache.
+ */
+function lruMemoize(f) {
+  const cache = [];
+
+  return function (input) {
+    for (var i = 0; i < cache.length; i++) {
+      if (cache[i].input === input) {
+        var temp = cache[0];
+        cache[0] = cache[i];
+        cache[i] = temp;
+        return cache[0].result;
+      }
     }
-  );
-});
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+    var result = f(input);
+
+    cache.unshift({
+      input,
+      result,
+    });
+
+    if (cache.length > MAX_CACHED_INPUTS) {
+      cache.pop();
+    }
+
+    return result;
+  };
+}
+
+/**
+ * Normalizes a path, or the path portion of a URL:
+ *
+ * - Replaces consecutive slashes with one slash.
+ * - Removes unnecessary '.' parts.
+ * - Removes unnecessary '<dir>/..' parts.
+ *
+ * Based on code in the Node.js 'path' core module.
+ *
+ * @param aPath The path or url to normalize.
+ */
+var normalize = lruMemoize(function normalize(aPath) {
+  var path = aPath;
+  var url = urlParse(aPath);
+  if (url) {
+    if (!url.path) {
+      return aPath;
+    }
+    path = url.path;
+  }
+  var isAbsolute = exports.isAbsolute(path);
+
+  // Split the path into parts between `/` characters. This is much faster than
+  // using `.split(/\/+/g)`.
+  var parts = [];
+  var start = 0;
+  var i = 0;
+  while (true) {
+    start = i;
+    i = path.indexOf("/", start);
+    if (i === -1) {
+      parts.push(path.slice(start));
+      break;
+    } else {
+      parts.push(path.slice(start, i));
+      while (i < path.length && path[i] === "/") {
+        i++;
+      }
+    }
+  }
+
+  for (var part, up = 0, i = parts.length - 1; i >= 0; i--) {
+    part = parts[i];
+    if (part === '.') {
+      parts.splice(i, 1);
+    } else if (part === '..') {
+      up++;
+    } else if (up > 0) {
+      if (part === '') {
+        // The first part is blank if the path is absolute. Trying to go
+        // above the root is a no-op. Therefore we can remove all '..' parts
+        // directly after the root.
+        parts.splice(i + 1, up);
+        up = 0;
+      } else {
+        parts.splice(i, 2);
+        up--;
+      }
+    }
+  }
+  path = parts.join('/');
+
+  if (path === '') {
+    path = isAbsolute ? '/' : '.';
+  }
+
+  if (url) {
+    url.path = path;
+    return urlGenerate(url);
+  }
+  return path;
+});
+exports.normalize = normalize;
+
+/**
+ * Joins two paths/URLs.
+ *
+ * @param aRoot The root path or URL.
+ * @param aPath The path or URL to be joined with the root.
+ *
+ * - If aPath is a URL or a data URI, aPath is returned, unless aPath is a
+ *   scheme-relative URL: Then the scheme of aRoot, if any, is prepended
+ *   first.
+ * - Otherwise aPath is a path. If aRoot is a URL, then its path portion
+ *   is updated with the result and aRoot is returned. Otherwise the result
+ *   is returned.
+ *   - If aPath is absolute, the result is aPath.
+ *   - Otherwise the two paths are joined with a slash.
+ * - Joining for example 'http://' and 'www.example.com' is also supported.
+ */
+function join(aRoot, aPath) {
+  if (aRoot === "") {
+    aRoot = ".";
+  }
+  if (aPath === "") {
+    aPath = ".";
+  }
+  var aPathUrl = urlParse(aPath);
+  var aRootUrl = urlParse(aRoot);
+  if (aRootUrl) {
+    aRoot = aRootUrl.path || '/';
+  }
+
+  // `join(foo, '//www.example.org')`
+  if (aPathUrl && !aPathUrl.scheme) {
+    if (aRootUrl) {
+      aPathUrl.scheme = aRootUrl.scheme;
+    }
+    return urlGenerate(aPathUrl);
+  }
+
+  if (aPathUrl || aPath.match(dataUrlRegexp)) {
+    return aPath;
+  }
+
+  // `join('http://', 'www.example.com')`
+  if (aRootUrl && !aRootUrl.host && !aRootUrl.path) {
+    aRootUrl.host = aPath;
+    return urlGenerate(aRootUrl);
+  }
+
+  var joined = aPath.charAt(0) === '/'
+    ? aPath
+    : normalize(aRoot.replace(/\/+$/, '') + '/' + aPath);
+
+  if (aRootUrl) {
+    aRootUrl.path = joined;
+    return urlGenerate(aRootUrl);
+  }
+  return joined;
+}
+exports.join = join;
+
+exports.isAbsolute = function (aPath) {
+  return aPath.charAt(0) === '/' || urlRegexp.test(aPath);
+};
+
+/**
+ * Make a path relative to a URL or another path.
+ *
+ * @param aRoot The root path or URL.
+ * @param aPath The path or URL to be made relative to aRoot.
+ */
+function relative(aRoot, aPath) {
+  if (aRoot === "") {
+    aRoot = ".";
+  }
+
+  aRoot = aRoot.replace(/\/$/, '');
+
+  // It is possible for the path to be above the root. In this case, simply
+  // checking whether the root is a prefix of the path won't work. Instead, we
+  // need to remove components from the root one by one, until either we find
+  // a prefix that fits, or we run out of components to remove.
+  var level = 0;
+  while (aPath.indexOf(aRoot + '/') !== 0) {
+    var index = aRoot.lastIndexOf("/");
+    if (index < 0) {
+      return aPath;
+    }
+
+    // If the only part of the root that is left is the scheme (i.e. http://,
+    // file:///, etc.), one or more slashes (/), or simply nothing at all, we
+    // have exhausted all components, so the path is not relative to the root.
+    aRoot = aRoot.slice(0, index);
+    if (aRoot.match(/^([^\/]+:\/)?\/*$/)) {
+      return aPath;
+    }
+
+    ++level;
+  }
+
+  // Make sure we add a "../" for each component we removed from the root.
+  return Array(level + 1).join("../") + aPath.substr(aRoot.length + 1);
+}
+exports.relative = relative;
+
+var supportsNullProto = (function () {
+  var obj = Object.create(null);
+  return !('__proto__' in obj);
+}());
+
+function identity (s) {
+  return s;
+}
+
+/**
+ * Because behavior goes wacky when you set `__proto__` on objects, we
+ * have to prefix all the strings in our set with an arbitrary character.
+ *
+ * See https://github.com/mozilla/source-map/pull/31 and
+ * https://github.com/mozilla/source-map/issues/30
+ *
+ * @param String aStr
+ */
+function toSetString(aStr) {
+  if (isProtoString(aStr)) {
+    return '$' + aStr;
+  }
+
+  return aStr;
+}
+exports.toSetString = supportsNullProto ? identity : toSetString;
+
+function fromSetString(aStr) {
+  if (isProtoString(aStr)) {
+    return aStr.slice(1);
+  }
+
+  return aStr;
+}
+exports.fromSetString = supportsNullProto ? identity : fromSetString;
+
+function isProtoString(s) {
+  if (!s) {
+    return false;
+  }
+
+  var length = s.length;
+
+  if (length < 9 /* "__proto__".length */) {
+    return false;
+  }
+
+  if (s.charCodeAt(length - 1) !== 95  /* '_' */ ||
+      s.charCodeAt(length - 2) !== 95  /* '_' */ ||
+      s.charCodeAt(length - 3) !== 111 /* 'o' */ ||
+      s.charCodeAt(length - 4) !== 116 /* 't' */ ||
+      s.charCodeAt(length - 5) !== 111 /* 'o' */ ||
+      s.charCodeAt(length - 6) !== 114 /* 'r' */ ||
+      s.charCodeAt(length - 7) !== 112 /* 'p' */ ||
+      s.charCodeAt(length - 8) !== 95  /* '_' */ ||
+      s.charCodeAt(length - 9) !== 95  /* '_' */) {
+    return false;
+  }
+
+  for (var i = length - 10; i >= 0; i--) {
+    if (s.charCodeAt(i) !== 36 /* '$' */) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Comparator between two mappings where the original positions are compared.
+ *
+ * Optionally pass in `true` as `onlyCompareGenerated` to consider two
+ * mappings with the same original source/line/column, but different generated
+ * line and column the same. Useful when searching for a mapping with a
+ * stubbed out mapping.
+ */
+function compareByOriginalPositions(mappingA, mappingB, onlyCompareOriginal) {
+  var cmp = strcmp(mappingA.source, mappingB.source);
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalLine - mappingB.originalLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalColumn - mappingB.originalColumn;
+  if (cmp !== 0 || onlyCompareOriginal) {
+    return cmp;
+  }
+
+  cmp = mappingA.generatedColumn - mappingB.generatedColumn;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.generatedLine - mappingB.generatedLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  return strcmp(mappingA.name, mappingB.name);
+}
+exports.compareByOriginalPositions = compareByOriginalPositions;
+
+/**
+ * Comparator between two mappings with deflated source and name indices where
+ * the generated positions are compared.
+ *
+ * Optionally pass in `true` as `onlyCompareGenerated` to consider two
+ * mappings with the same generated line and column, but different
+ * source/name/original line and column the same. Useful when searching for a
+ * mapping with a stubbed out mapping.
+ */
+function compareByGeneratedPositionsDeflated(mappingA, mappingB, onlyCompareGenerated) {
+  var cmp = mappingA.generatedLine - mappingB.generatedLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.generatedColumn - mappingB.generatedColumn;
+  if (cmp !== 0 || onlyCompareGenerated) {
+    return cmp;
+  }
+
+  cmp = strcmp(mappingA.source, mappingB.source);
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalLine - mappingB.originalLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalColumn - mappingB.originalColumn;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  return strcmp(mappingA.name, mappingB.name);
+}
+exports.compareByGeneratedPositionsDeflated = compareByGeneratedPositionsDeflated;
+
+function strcmp(aStr1, aStr2) {
+  if (aStr1 === aStr2) {
+    return 0;
+  }
+
+  if (aStr1 === null) {
+    return 1; // aStr2 !== null
+  }
+
+  if (aStr2 === null) {
+    return -1; // aStr1 !== null
+  }
+
+  if (aStr1 > aStr2) {
+    return 1;
+  }
+
+  return -1;
+}
+
+/**
+ * Comparator between two mappings with inflated source and name strings where
+ * the generated positions are compared.
+ */
+function compareByGeneratedPositionsInflated(mappingA, mappingB) {
+  var cmp = mappingA.generatedLine - mappingB.generatedLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.generatedColumn - mappingB.generatedColumn;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = strcmp(mappingA.source, mappingB.source);
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalLine - mappingB.originalLine;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  cmp = mappingA.originalColumn - mappingB.originalColumn;
+  if (cmp !== 0) {
+    return cmp;
+  }
+
+  return strcmp(mappingA.name, mappingB.name);
+}
+exports.compareByGeneratedPositionsInflated = compareByGeneratedPositionsInflated;
+
+/**
+ * Strip any JSON XSSI avoidance prefix from the string (as documented
+ * in the source maps specification), and then parse the string as
+ * JSON.
+ */
+function parseSourceMapInput(str) {
+  return JSON.parse(str.replace(/^\)]}'[^\n]*\n/, ''));
+}
+exports.parseSourceMapInput = parseSourceMapInput;
+
+/**
+ * Compute the URL of a source given the the source root, the source's
+ * URL, and the source map's URL.
+ */
+function computeSourceURL(sourceRoot, sourceURL, sourceMapURL) {
+  sourceURL = sourceURL || '';
+
+  if (sourceRoot) {
+    // This follows what Chrome does.
+    if (sourceRoot[sourceRoot.length - 1] !== '/' && sourceURL[0] !== '/') {
+      sourceRoot += '/';
+    }
+    // The spec says:
+    //   Line 4: An optional source root, useful for relocating source
+    //   files on a server or removing repeated values in the
+    //   “sources” entry.  This value is prepended to the individual
+    //   entries in the “source” field.
+    sourceURL = sourceRoot + sourceURL;
+  }
+
+  // Historically, SourceMapConsumer did not take the sourceMapURL as
+  // a parameter.  This mode is still somewhat supported, which is why
+  // this code block is conditional.  However, it's preferable to pass
+  // the source map URL to SourceMapConsumer, so that this function
+  // can implement the source URL resolution algorithm as outlined in
+  // the spec.  This block is basically the equivalent of:
+  //    new URL(sourceURL, sourceMapURL).toString()
+  // ... except it avoids using URL, which wasn't available in the
+  // older releases of node still supported by this library.
+  //
+  // The spec says:
+  //   If the sources are not absolute URLs after prepending of the
+  //   “sourceRoot”, the sources are resolved relative to the
+  //   SourceMap (like resolving script src in a html document).
+  if (sourceMapURL) {
+    var parsed = urlParse(sourceMapURL);
+    if (!parsed) {
+      throw new Error("sourceMapURL could not be parsed");
+    }
+    if (parsed.path) {
+      // Strip the last path component, but keep the "/".
+      var index = parsed.path.lastIndexOf('/');
+      if (index >= 0) {
+        parsed.path = parsed.path.substring(0, index + 1);
+      }
+    }
+    sourceURL = join(urlGenerate(parsed), sourceURL);
+  }
+
+  return normalize(sourceURL);
+}
+exports.computeSourceURL = computeSourceURL;
+
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["mergeInto", "isArray", "compactFlatten"],
@@ -932,11 +1582,13 @@ Caf.defMod(module, () => {
       return (
         (StnRegistry = __webpack_require__(4)),
         (AccessorChainStn = Caf.defClass(
-          class AccessorChainStn extends __webpack_require__(21) {},
+          class AccessorChainStn extends __webpack_require__(22) {},
           function(AccessorChainStn, classSuper, instanceSuper) {
             this.abstractClass();
             this.prototype.transform = function() {
-              return this.transformAccessorChain();
+              return this.transformAccessorChain().setDefaultParseTreeNode(
+                this.parseTreeNode
+              );
             };
             this.prototype.transformAccessorChain = function() {
               let accessorChain, out;
@@ -1050,15 +1702,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["BaseClass", "inspectedObjectLiteral", "inspect"],
@@ -1105,21 +1757,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = require("art-standard-lib");
-
-/***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Nodes", "isFunction", "RootStn"],
@@ -1214,7 +1860,7 @@ Caf.defMod(module, () => {
                     this.pluralLabel || this.pluralRuleName;
                 }
               }
-              return this.isRoot ? RootStn(stn) : stn;
+              return this.isRoot ? RootStn(stn, { parseTreeNode: this }) : stn;
             };
             this.prototype.getTransformedSemanticTree = function() {
               return this.getStn().transform();
@@ -1229,15 +1875,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error", "arrayWithout"],
@@ -1351,6 +1997,73 @@ Caf.defMod(module, () => {
             f = OperatorHelper.operatorMap[operand] || infix;
             return f(a, b, operand);
           };
+          this.binaryOperatorToSourceNodeArray = function(operand, a, b) {
+            return (() => {
+              switch (operand) {
+                case "**":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.pow(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "//":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.div(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "%%":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.mod(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "in":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.in(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "is":
+                  return [
+                    `${Caf.toString(CoffeeScriptGlobal)}.is(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "isnt":
+                  return [
+                    `!${Caf.toString(CoffeeScriptGlobal)}.is(`,
+                    a,
+                    ", ",
+                    b,
+                    ")"
+                  ];
+                case "?":
+                  return a.match(/^@?[_a-z0-9]+$/i)
+                    ? [a, " != null ? ", a, " : ", b]
+                    : [
+                        CoffeeScriptGlobal,
+                        ".existsOr(",
+                        a,
+                        ", (() => {return ",
+                        b,
+                        "})())"
+                      ];
+                default:
+                  return [a, ` ${Caf.toString(operand)} `, b];
+              }
+            })();
+          };
           this.getOpPrecidence = op => {
             let p;
             if (!((p = this.opsToPrecidence[op]) != null)) {
@@ -1427,10 +2140,10 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var JustToJsWithTransforms,
@@ -1450,14 +2163,14 @@ module.exports = (__webpack_require__(6)).addNamespace('JustToJsWithTransforms',
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var CaffeineScript,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-module.exports = (__webpack_require__(113)).addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
+module.exports = (__webpack_require__(125)).addNamespace('CaffeineScript', CaffeineScript = (function(superClass) {
   extend(CaffeineScript, superClass);
 
   function CaffeineScript() {
@@ -1470,18 +2183,18 @@ module.exports = (__webpack_require__(113)).addNamespace('CaffeineScript', Caffe
 
 })(Neptune.PackageNamespace));
 
-__webpack_require__(23);
+__webpack_require__(24);
 
 __webpack_require__(6);
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Parser", "isFunction"],
@@ -1489,15 +2202,15 @@ Caf.defMod(module, () => {
       global,
       __webpack_require__(3),
       __webpack_require__(5),
-      __webpack_require__(12)
+      __webpack_require__(13)
     ],
     (Parser, isFunction) => {
       let CaffeineScriptParser;
       return (CaffeineScriptParser = Caf.defClass(
         class CaffeineScriptParser extends Parser {},
         function(CaffeineScriptParser, classSuper, instanceSuper) {
-          this.nodeBaseClass = __webpack_require__(12);
-          Caf.each(__webpack_require__(22).modules, undefined, mod => {
+          this.nodeBaseClass = __webpack_require__(13);
+          Caf.each(__webpack_require__(23).modules, undefined, mod => {
             if (isFunction(mod)) {
               mod.call(this);
             } else {
@@ -1507,7 +2220,7 @@ Caf.defMod(module, () => {
           this.prototype.parse = function(source, options) {
             return instanceSuper.parse.call(
               this,
-              __webpack_require__(18).preprocess(source),
+              __webpack_require__(19).preprocess(source),
               options
             );
           };
@@ -1517,26 +2230,7 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
-Caf.defMod(module, () => {
-  let words, out;
-  words = __webpack_require__(11).w(
-    "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
-  );
-  return Caf.each(words, (out = {}), word => {
-    out[word] = true;
-  });
-});
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
 /* 18 */
@@ -1544,7 +2238,26 @@ Caf.defMod(module, () => {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
+Caf.defMod(module, () => {
+  let words, out;
+  words = __webpack_require__(7).w(
+    "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
+  );
+  return Caf.each(words, (out = {}), word => {
+    out[word] = true;
+  });
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error", "getPadding", "max"],
@@ -1710,15 +2423,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["arrayWithoutLast", "Object", "compactFlatten"],
@@ -1796,15 +2509,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let StatementsStn;
@@ -1812,6 +2525,33 @@ Caf.defMod(module, () => {
       class StatementsStn extends __webpack_require__(2) {},
       function(StatementsStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function(options) {
+          let returnAction, generateStatements, expression;
+          if (options) {
+            ({ returnAction, generateStatements, expression } = options);
+          }
+          generateStatements != null
+            ? generateStatements
+            : (generateStatements = expression != null ? expression : true);
+          return this.createSourceNode(
+            expression
+              ? (() => {
+                  switch (this.children.length) {
+                    case 0:
+                      return !generateStatements && "undefined";
+                    case 1:
+                      return this.children[0].toSourceNode(options);
+                    default:
+                      return [
+                        "(",
+                        this._getChildrenSourceNodes(null, false),
+                        ")"
+                      ];
+                  }
+                })()
+              : this._getChildrenSourceNodes(returnAction, generateStatements)
+          );
+        };
         this.prototype.toJs = function(options) {
           return Caf.exists(options) && options.expression
             ? (() => {
@@ -1869,25 +2609,64 @@ Caf.defMod(module, () => {
             );
           });
         };
+        this.prototype._getChildrenSourceNodes = function(
+          returnAction,
+          generateStatements = true
+        ) {
+          let lines, out;
+          returnAction = (() => {
+            switch (returnAction) {
+              case true:
+                return (returnAction = "return");
+              case false:
+                return null;
+              default:
+                return returnAction;
+            }
+          })();
+          Caf.each((lines = this.children), (out = []), (c, i, cafInto) => {
+            let childExpression;
+            if (i > 0) {
+              out.push("; ");
+            }
+            cafInto.push(
+              returnAction != null && i === lines.length - 1
+                ? !c.jsExpressionUsesReturn
+                  ? ((childExpression = c.toSourceNode({ expression: true })),
+                    returnAction.length > 0
+                      ? [returnAction, " ", childExpression]
+                      : childExpression)
+                  : c.toJs({ generateReturnStatement: true })
+                : generateStatements
+                  ? c.toSourceNode({ statement: true })
+                  : c.toSourceNode({
+                      expression: true,
+                      returnValueIsIgnored: true
+                    })
+            );
+          });
+          out.push(";");
+          return out;
+        };
       }
     ));
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let UniqueIdentifierHandle, StnRegistry, ValueBaseCaptureStn;
     return (
-      (UniqueIdentifierHandle = __webpack_require__(10)),
+      (UniqueIdentifierHandle = __webpack_require__(12)),
       (StnRegistry = __webpack_require__(4)),
       (ValueBaseCaptureStn = Caf.defClass(
         class ValueBaseCaptureStn extends __webpack_require__(2) {},
@@ -1954,52 +2733,52 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(23);
+module.exports = __webpack_require__(24);
 
 module.exports.addModules({
-  Accessors: __webpack_require__(32),
-  ArrayLiterals: __webpack_require__(33),
-  Assignment: __webpack_require__(34),
-  Blocks: __webpack_require__(35),
-  Classes: __webpack_require__(36),
-  Comments: __webpack_require__(37),
-  Comprehensions: __webpack_require__(38),
-  ControlStructures: __webpack_require__(39),
-  DestructuringAssignment: __webpack_require__(40),
-  Expressions: __webpack_require__(41),
-  Functions: __webpack_require__(42),
-  KeywordLiterals: __webpack_require__(43),
-  Literals: __webpack_require__(44),
-  NumberLiterals: __webpack_require__(45),
-  ObjectLiterals: __webpack_require__(46),
-  Operators: __webpack_require__(47),
-  RegExp: __webpack_require__(48),
-  Require: __webpack_require__(49),
-  Root: __webpack_require__(50),
-  Statements: __webpack_require__(51),
-  StringLiterals: __webpack_require__(52),
-  TagMacros: __webpack_require__(53),
-  Tokens: __webpack_require__(54),
-  ValueLists: __webpack_require__(55),
-  Values: __webpack_require__(56)
+  Accessors: __webpack_require__(37),
+  ArrayLiterals: __webpack_require__(38),
+  Assignment: __webpack_require__(39),
+  Blocks: __webpack_require__(40),
+  Classes: __webpack_require__(41),
+  Comments: __webpack_require__(42),
+  Comprehensions: __webpack_require__(43),
+  ControlStructures: __webpack_require__(44),
+  DestructuringAssignment: __webpack_require__(45),
+  Expressions: __webpack_require__(46),
+  Functions: __webpack_require__(47),
+  KeywordLiterals: __webpack_require__(48),
+  Literals: __webpack_require__(49),
+  NumberLiterals: __webpack_require__(50),
+  ObjectLiterals: __webpack_require__(51),
+  Operators: __webpack_require__(52),
+  RegExp: __webpack_require__(53),
+  Require: __webpack_require__(54),
+  Root: __webpack_require__(55),
+  Statements: __webpack_require__(56),
+  StringLiterals: __webpack_require__(57),
+  TagMacros: __webpack_require__(58),
+  Tokens: __webpack_require__(59),
+  ValueLists: __webpack_require__(60),
+  Values: __webpack_require__(61)
 });
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Rules,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-module.exports = (__webpack_require__(15)).addNamespace('Rules', Rules = (function(superClass) {
+module.exports = (__webpack_require__(16)).addNamespace('Rules', Rules = (function(superClass) {
   extend(Rules, superClass);
 
   function Rules() {
@@ -2012,7 +2791,7 @@ module.exports = (__webpack_require__(15)).addNamespace('Rules', Rules = (functi
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ComplexToJs,
@@ -2032,7 +2811,7 @@ module.exports = (__webpack_require__(6)).addNamespace('ComplexToJs', ComplexToJ
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var JustToJs,
@@ -2052,7 +2831,7 @@ module.exports = (__webpack_require__(6)).addNamespace('JustToJs', JustToJs = (f
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var JustTransforms,
@@ -2072,100 +2851,807 @@ module.exports = (__webpack_require__(6)).addNamespace('JustTransforms', JustTra
 
 
 /***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var MultipleToJs,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
-
-module.exports = (__webpack_require__(6)).addNamespace('MultipleToJs', MultipleToJs = (function(superClass) {
-  extend(MultipleToJs, superClass);
-
-  function MultipleToJs() {
-    return MultipleToJs.__super__.constructor.apply(this, arguments);
-  }
-
-  return MultipleToJs;
-
-})(Neptune.PackageNamespace));
-
-
-/***/ }),
 /* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(6);
 
 module.exports.addModules({
-  AccessorChainStn: __webpack_require__(9),
+  AccessorChainStn: __webpack_require__(11),
   BaseStn: __webpack_require__(2),
-  ComprehensionValueClauseStn: __webpack_require__(62),
-  ScopeStnMixin: __webpack_require__(7),
-  UniqueIdentifierHandle: __webpack_require__(10),
-  ValueBaseCaptureStn: __webpack_require__(21)
+  ComprehensionValueClauseStn: __webpack_require__(67),
+  ScopeStnMixin: __webpack_require__(9),
+  UniqueIdentifierHandle: __webpack_require__(12),
+  ValueBaseCaptureStn: __webpack_require__(22)
 });
 
-__webpack_require__(105);
+__webpack_require__(110);
 
-__webpack_require__(106);
+__webpack_require__(111);
 
-__webpack_require__(107);
+__webpack_require__(112);
 
-__webpack_require__(108);
-
-__webpack_require__(109);
+__webpack_require__(113);
 
 
 /***/ }),
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.1","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.1.2","commander":"^2.9.0","css-loader":"^0.28.4","dateformat":"^2.0.0","detect-node":"^2.0.3","fs-extra":"^3.0.1","glob":"^7.1.2","glob-promise":"^3.1.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.52.2"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.0"}
 
 /***/ }),
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(15);
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
 
-module.exports.includeInNamespace(__webpack_require__(31)).addModules({
-  CaffeineScriptParser: __webpack_require__(16),
-  CafParseNodeBaseClass: __webpack_require__(12),
-  JavaScriptReservedWords: __webpack_require__(17),
-  Lib: __webpack_require__(8),
-  OperatorHelper: __webpack_require__(13),
-  Preprocessors: __webpack_require__(18),
-  StandardImport: __webpack_require__(3),
-  StnRegistry: __webpack_require__(4)
-});
+var util = __webpack_require__(10);
+var has = Object.prototype.hasOwnProperty;
+var hasNativeMap = typeof Map !== "undefined";
 
-__webpack_require__(22);
+/**
+ * A data structure which is a combination of an array and a set. Adding a new
+ * member is O(1), testing for membership is O(1), and finding the index of an
+ * element is O(1). Removing elements from the set is not supported. Only
+ * strings are supported for membership.
+ */
+function ArraySet() {
+  this._array = [];
+  this._set = hasNativeMap ? new Map() : Object.create(null);
+}
 
-__webpack_require__(28);
+/**
+ * Static method for creating ArraySet instances from an existing array.
+ */
+ArraySet.fromArray = function ArraySet_fromArray(aArray, aAllowDuplicates) {
+  var set = new ArraySet();
+  for (var i = 0, len = aArray.length; i < len; i++) {
+    set.add(aArray[i], aAllowDuplicates);
+  }
+  return set;
+};
+
+/**
+ * Return how many unique items are in this ArraySet. If duplicates have been
+ * added, than those do not count towards the size.
+ *
+ * @returns Number
+ */
+ArraySet.prototype.size = function ArraySet_size() {
+  return hasNativeMap ? this._set.size : Object.getOwnPropertyNames(this._set).length;
+};
+
+/**
+ * Add the given string to this set.
+ *
+ * @param String aStr
+ */
+ArraySet.prototype.add = function ArraySet_add(aStr, aAllowDuplicates) {
+  var sStr = hasNativeMap ? aStr : util.toSetString(aStr);
+  var isDuplicate = hasNativeMap ? this.has(aStr) : has.call(this._set, sStr);
+  var idx = this._array.length;
+  if (!isDuplicate || aAllowDuplicates) {
+    this._array.push(aStr);
+  }
+  if (!isDuplicate) {
+    if (hasNativeMap) {
+      this._set.set(aStr, idx);
+    } else {
+      this._set[sStr] = idx;
+    }
+  }
+};
+
+/**
+ * Is the given string a member of this set?
+ *
+ * @param String aStr
+ */
+ArraySet.prototype.has = function ArraySet_has(aStr) {
+  if (hasNativeMap) {
+    return this._set.has(aStr);
+  } else {
+    var sStr = util.toSetString(aStr);
+    return has.call(this._set, sStr);
+  }
+};
+
+/**
+ * What is the index of the given string in the array?
+ *
+ * @param String aStr
+ */
+ArraySet.prototype.indexOf = function ArraySet_indexOf(aStr) {
+  if (hasNativeMap) {
+    var idx = this._set.get(aStr);
+    if (idx >= 0) {
+        return idx;
+    }
+  } else {
+    var sStr = util.toSetString(aStr);
+    if (has.call(this._set, sStr)) {
+      return this._set[sStr];
+    }
+  }
+
+  throw new Error('"' + aStr + '" is not in the set.');
+};
+
+/**
+ * What is the element at the given index?
+ *
+ * @param Number aIdx
+ */
+ArraySet.prototype.at = function ArraySet_at(aIdx) {
+  if (aIdx >= 0 && aIdx < this._array.length) {
+    return this._array[aIdx];
+  }
+  throw new Error('No element indexed by ' + aIdx);
+};
+
+/**
+ * Returns the array representation of this set (which has the proper indices
+ * indicated by indexOf). Note that this is a copy of the internal array used
+ * for storing the members so that no one can mess with internal state.
+ */
+ArraySet.prototype.toArray = function ArraySet_toArray() {
+  return this._array.slice();
+};
+
+exports.ArraySet = ArraySet;
 
 
 /***/ }),
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ *
+ * Based on the Base 64 VLQ implementation in Closure Compiler:
+ * https://code.google.com/p/closure-compiler/source/browse/trunk/src/com/google/debugging/sourcemap/Base64VLQ.java
+ *
+ * Copyright 2011 The Closure Compiler Authors. All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above
+ *    copyright notice, this list of conditions and the following
+ *    disclaimer in the documentation and/or other materials provided
+ *    with the distribution.
+ *  * Neither the name of Google Inc. nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+var base64 = __webpack_require__(114);
+
+// A single base 64 digit can contain 6 bits of data. For the base 64 variable
+// length quantities we use in the source map spec, the first bit is the sign,
+// the next four bits are the actual value, and the 6th bit is the
+// continuation bit. The continuation bit tells us whether there are more
+// digits in this value following this digit.
+//
+//   Continuation
+//   |    Sign
+//   |    |
+//   V    V
+//   101011
+
+var VLQ_BASE_SHIFT = 5;
+
+// binary: 100000
+var VLQ_BASE = 1 << VLQ_BASE_SHIFT;
+
+// binary: 011111
+var VLQ_BASE_MASK = VLQ_BASE - 1;
+
+// binary: 100000
+var VLQ_CONTINUATION_BIT = VLQ_BASE;
+
+/**
+ * Converts from a two-complement value to a value where the sign bit is
+ * placed in the least significant bit.  For example, as decimals:
+ *   1 becomes 2 (10 binary), -1 becomes 3 (11 binary)
+ *   2 becomes 4 (100 binary), -2 becomes 5 (101 binary)
+ */
+function toVLQSigned(aValue) {
+  return aValue < 0
+    ? ((-aValue) << 1) + 1
+    : (aValue << 1) + 0;
+}
+
+/**
+ * Converts to a two-complement value from a value where the sign bit is
+ * placed in the least significant bit.  For example, as decimals:
+ *   2 (10 binary) becomes 1, 3 (11 binary) becomes -1
+ *   4 (100 binary) becomes 2, 5 (101 binary) becomes -2
+ */
+function fromVLQSigned(aValue) {
+  var isNegative = (aValue & 1) === 1;
+  var shifted = aValue >> 1;
+  return isNegative
+    ? -shifted
+    : shifted;
+}
+
+/**
+ * Returns the base 64 VLQ encoded value.
+ */
+exports.encode = function base64VLQ_encode(aValue) {
+  var encoded = "";
+  var digit;
+
+  var vlq = toVLQSigned(aValue);
+
+  do {
+    digit = vlq & VLQ_BASE_MASK;
+    vlq >>>= VLQ_BASE_SHIFT;
+    if (vlq > 0) {
+      // There are still more digits in this value, so we must make sure the
+      // continuation bit is marked.
+      digit |= VLQ_CONTINUATION_BIT;
+    }
+    encoded += base64.encode(digit);
+  } while (vlq > 0);
+
+  return encoded;
+};
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__dirname) {if (typeof fetch === "function") {
+  // Web version of reading a wasm file into an array buffer.
+
+  let mappingsWasmUrl = null;
+
+  module.exports = function readWasm() {
+    if (typeof mappingsWasmUrl !== "string") {
+      throw new Error("You must provide the URL of lib/mappings.wasm by calling " +
+                      "SourceMapConsumer.initialize({ 'lib/mappings.wasm': ... }) " +
+                      "before using SourceMapConsumer");
+    }
+
+    return fetch(mappingsWasmUrl)
+      .then(response => response.arrayBuffer());
+  };
+
+  module.exports.initialize = url => mappingsWasmUrl = url;
+} else {
+  // Node version of reading a wasm file into an array buffer.
+  const fs = __webpack_require__(124);
+  const path = __webpack_require__(126);
+
+  module.exports = function readWasm() {
+    return new Promise((resolve, reject) => {
+      const wasmPath = path.join(__dirname, "mappings.wasm");
+      fs.readFile(wasmPath, null, (error, data) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        resolve(data.buffer);
+      });
+    });
+  };
+
+  module.exports.initialize = _ => {
+    console.debug("SourceMapConsumer.initialize is a no-op when running in node.js");
+  };
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, "/"))
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+var base64VLQ = __webpack_require__(31);
+var util = __webpack_require__(10);
+var ArraySet = __webpack_require__(30).ArraySet;
+var MappingList = __webpack_require__(116).MappingList;
+
+/**
+ * An instance of the SourceMapGenerator represents a source map which is
+ * being built incrementally. You may pass an object with the following
+ * properties:
+ *
+ *   - file: The filename of the generated source.
+ *   - sourceRoot: A root for all relative URLs in this source map.
+ */
+function SourceMapGenerator(aArgs) {
+  if (!aArgs) {
+    aArgs = {};
+  }
+  this._file = util.getArg(aArgs, 'file', null);
+  this._sourceRoot = util.getArg(aArgs, 'sourceRoot', null);
+  this._skipValidation = util.getArg(aArgs, 'skipValidation', false);
+  this._sources = new ArraySet();
+  this._names = new ArraySet();
+  this._mappings = new MappingList();
+  this._sourcesContents = null;
+}
+
+SourceMapGenerator.prototype._version = 3;
+
+/**
+ * Creates a new SourceMapGenerator based on a SourceMapConsumer
+ *
+ * @param aSourceMapConsumer The SourceMap.
+ */
+SourceMapGenerator.fromSourceMap =
+  function SourceMapGenerator_fromSourceMap(aSourceMapConsumer) {
+    var sourceRoot = aSourceMapConsumer.sourceRoot;
+    var generator = new SourceMapGenerator({
+      file: aSourceMapConsumer.file,
+      sourceRoot: sourceRoot
+    });
+    aSourceMapConsumer.eachMapping(function (mapping) {
+      var newMapping = {
+        generated: {
+          line: mapping.generatedLine,
+          column: mapping.generatedColumn
+        }
+      };
+
+      if (mapping.source != null) {
+        newMapping.source = mapping.source;
+        if (sourceRoot != null) {
+          newMapping.source = util.relative(sourceRoot, newMapping.source);
+        }
+
+        newMapping.original = {
+          line: mapping.originalLine,
+          column: mapping.originalColumn
+        };
+
+        if (mapping.name != null) {
+          newMapping.name = mapping.name;
+        }
+      }
+
+      generator.addMapping(newMapping);
+    });
+    aSourceMapConsumer.sources.forEach(function (sourceFile) {
+      var sourceRelative = sourceFile;
+      if (sourceRoot !== null) {
+        sourceRelative = util.relative(sourceRoot, sourceFile);
+      }
+
+      if (!generator._sources.has(sourceRelative)) {
+        generator._sources.add(sourceRelative);
+      }
+
+      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
+      if (content != null) {
+        generator.setSourceContent(sourceFile, content);
+      }
+    });
+    return generator;
+  };
+
+/**
+ * Add a single mapping from original source line and column to the generated
+ * source's line and column for this source map being created. The mapping
+ * object should have the following properties:
+ *
+ *   - generated: An object with the generated line and column positions.
+ *   - original: An object with the original line and column positions.
+ *   - source: The original source file (relative to the sourceRoot).
+ *   - name: An optional original token name for this mapping.
+ */
+SourceMapGenerator.prototype.addMapping =
+  function SourceMapGenerator_addMapping(aArgs) {
+    var generated = util.getArg(aArgs, 'generated');
+    var original = util.getArg(aArgs, 'original', null);
+    var source = util.getArg(aArgs, 'source', null);
+    var name = util.getArg(aArgs, 'name', null);
+
+    if (!this._skipValidation) {
+      this._validateMapping(generated, original, source, name);
+    }
+
+    if (source != null) {
+      source = String(source);
+      if (!this._sources.has(source)) {
+        this._sources.add(source);
+      }
+    }
+
+    if (name != null) {
+      name = String(name);
+      if (!this._names.has(name)) {
+        this._names.add(name);
+      }
+    }
+
+    this._mappings.add({
+      generatedLine: generated.line,
+      generatedColumn: generated.column,
+      originalLine: original != null && original.line,
+      originalColumn: original != null && original.column,
+      source: source,
+      name: name
+    });
+  };
+
+/**
+ * Set the source content for a source file.
+ */
+SourceMapGenerator.prototype.setSourceContent =
+  function SourceMapGenerator_setSourceContent(aSourceFile, aSourceContent) {
+    var source = aSourceFile;
+    if (this._sourceRoot != null) {
+      source = util.relative(this._sourceRoot, source);
+    }
+
+    if (aSourceContent != null) {
+      // Add the source content to the _sourcesContents map.
+      // Create a new _sourcesContents map if the property is null.
+      if (!this._sourcesContents) {
+        this._sourcesContents = Object.create(null);
+      }
+      this._sourcesContents[util.toSetString(source)] = aSourceContent;
+    } else if (this._sourcesContents) {
+      // Remove the source file from the _sourcesContents map.
+      // If the _sourcesContents map is empty, set the property to null.
+      delete this._sourcesContents[util.toSetString(source)];
+      if (Object.keys(this._sourcesContents).length === 0) {
+        this._sourcesContents = null;
+      }
+    }
+  };
+
+/**
+ * Applies the mappings of a sub-source-map for a specific source file to the
+ * source map being generated. Each mapping to the supplied source file is
+ * rewritten using the supplied source map. Note: The resolution for the
+ * resulting mappings is the minimium of this map and the supplied map.
+ *
+ * @param aSourceMapConsumer The source map to be applied.
+ * @param aSourceFile Optional. The filename of the source file.
+ *        If omitted, SourceMapConsumer's file property will be used.
+ * @param aSourceMapPath Optional. The dirname of the path to the source map
+ *        to be applied. If relative, it is relative to the SourceMapConsumer.
+ *        This parameter is needed when the two source maps aren't in the same
+ *        directory, and the source map to be applied contains relative source
+ *        paths. If so, those relative source paths need to be rewritten
+ *        relative to the SourceMapGenerator.
+ */
+SourceMapGenerator.prototype.applySourceMap =
+  function SourceMapGenerator_applySourceMap(aSourceMapConsumer, aSourceFile, aSourceMapPath) {
+    var sourceFile = aSourceFile;
+    // If aSourceFile is omitted, we will use the file property of the SourceMap
+    if (aSourceFile == null) {
+      if (aSourceMapConsumer.file == null) {
+        throw new Error(
+          'SourceMapGenerator.prototype.applySourceMap requires either an explicit source file, ' +
+          'or the source map\'s "file" property. Both were omitted.'
+        );
+      }
+      sourceFile = aSourceMapConsumer.file;
+    }
+    var sourceRoot = this._sourceRoot;
+    // Make "sourceFile" relative if an absolute Url is passed.
+    if (sourceRoot != null) {
+      sourceFile = util.relative(sourceRoot, sourceFile);
+    }
+    // Applying the SourceMap can add and remove items from the sources and
+    // the names array.
+    var newSources = this._mappings.toArray().length > 0
+      ? new ArraySet()
+      : this._sources;
+    var newNames = new ArraySet();
+
+    // Find mappings for the "sourceFile"
+    this._mappings.unsortedForEach(function (mapping) {
+      if (mapping.source === sourceFile && mapping.originalLine != null) {
+        // Check if it can be mapped by the source map, then update the mapping.
+        var original = aSourceMapConsumer.originalPositionFor({
+          line: mapping.originalLine,
+          column: mapping.originalColumn
+        });
+        if (original.source != null) {
+          // Copy mapping
+          mapping.source = original.source;
+          if (aSourceMapPath != null) {
+            mapping.source = util.join(aSourceMapPath, mapping.source)
+          }
+          if (sourceRoot != null) {
+            mapping.source = util.relative(sourceRoot, mapping.source);
+          }
+          mapping.originalLine = original.line;
+          mapping.originalColumn = original.column;
+          if (original.name != null) {
+            mapping.name = original.name;
+          }
+        }
+      }
+
+      var source = mapping.source;
+      if (source != null && !newSources.has(source)) {
+        newSources.add(source);
+      }
+
+      var name = mapping.name;
+      if (name != null && !newNames.has(name)) {
+        newNames.add(name);
+      }
+
+    }, this);
+    this._sources = newSources;
+    this._names = newNames;
+
+    // Copy sourcesContents of applied map.
+    aSourceMapConsumer.sources.forEach(function (sourceFile) {
+      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
+      if (content != null) {
+        if (aSourceMapPath != null) {
+          sourceFile = util.join(aSourceMapPath, sourceFile);
+        }
+        if (sourceRoot != null) {
+          sourceFile = util.relative(sourceRoot, sourceFile);
+        }
+        this.setSourceContent(sourceFile, content);
+      }
+    }, this);
+  };
+
+/**
+ * A mapping can have one of the three levels of data:
+ *
+ *   1. Just the generated position.
+ *   2. The Generated position, original position, and original source.
+ *   3. Generated and original position, original source, as well as a name
+ *      token.
+ *
+ * To maintain consistency, we validate that any new mapping being added falls
+ * in to one of these categories.
+ */
+SourceMapGenerator.prototype._validateMapping =
+  function SourceMapGenerator_validateMapping(aGenerated, aOriginal, aSource,
+                                              aName) {
+    // When aOriginal is truthy but has empty values for .line and .column,
+    // it is most likely a programmer error. In this case we throw a very
+    // specific error message to try to guide them the right way.
+    // For example: https://github.com/Polymer/polymer-bundler/pull/519
+    if (aOriginal && typeof aOriginal.line !== 'number' && typeof aOriginal.column !== 'number') {
+        throw new Error(
+            'original.line and original.column are not numbers -- you probably meant to omit ' +
+            'the original mapping entirely and only map the generated position. If so, pass ' +
+            'null for the original mapping instead of an object with empty or null values.'
+        );
+    }
+
+    if (aGenerated && 'line' in aGenerated && 'column' in aGenerated
+        && aGenerated.line > 0 && aGenerated.column >= 0
+        && !aOriginal && !aSource && !aName) {
+      // Case 1.
+      return;
+    }
+    else if (aGenerated && 'line' in aGenerated && 'column' in aGenerated
+             && aOriginal && 'line' in aOriginal && 'column' in aOriginal
+             && aGenerated.line > 0 && aGenerated.column >= 0
+             && aOriginal.line > 0 && aOriginal.column >= 0
+             && aSource) {
+      // Cases 2 and 3.
+      return;
+    }
+    else {
+      throw new Error('Invalid mapping: ' + JSON.stringify({
+        generated: aGenerated,
+        source: aSource,
+        original: aOriginal,
+        name: aName
+      }));
+    }
+  };
+
+/**
+ * Serialize the accumulated mappings in to the stream of base 64 VLQs
+ * specified by the source map format.
+ */
+SourceMapGenerator.prototype._serializeMappings =
+  function SourceMapGenerator_serializeMappings() {
+    var previousGeneratedColumn = 0;
+    var previousGeneratedLine = 1;
+    var previousOriginalColumn = 0;
+    var previousOriginalLine = 0;
+    var previousName = 0;
+    var previousSource = 0;
+    var result = '';
+    var next;
+    var mapping;
+    var nameIdx;
+    var sourceIdx;
+
+    var mappings = this._mappings.toArray();
+    for (var i = 0, len = mappings.length; i < len; i++) {
+      mapping = mappings[i];
+      next = ''
+
+      if (mapping.generatedLine !== previousGeneratedLine) {
+        previousGeneratedColumn = 0;
+        while (mapping.generatedLine !== previousGeneratedLine) {
+          next += ';';
+          previousGeneratedLine++;
+        }
+      }
+      else {
+        if (i > 0) {
+          if (!util.compareByGeneratedPositionsInflated(mapping, mappings[i - 1])) {
+            continue;
+          }
+          next += ',';
+        }
+      }
+
+      next += base64VLQ.encode(mapping.generatedColumn
+                                 - previousGeneratedColumn);
+      previousGeneratedColumn = mapping.generatedColumn;
+
+      if (mapping.source != null) {
+        sourceIdx = this._sources.indexOf(mapping.source);
+        next += base64VLQ.encode(sourceIdx - previousSource);
+        previousSource = sourceIdx;
+
+        // lines are stored 0-based in SourceMap spec version 3
+        next += base64VLQ.encode(mapping.originalLine - 1
+                                   - previousOriginalLine);
+        previousOriginalLine = mapping.originalLine - 1;
+
+        next += base64VLQ.encode(mapping.originalColumn
+                                   - previousOriginalColumn);
+        previousOriginalColumn = mapping.originalColumn;
+
+        if (mapping.name != null) {
+          nameIdx = this._names.indexOf(mapping.name);
+          next += base64VLQ.encode(nameIdx - previousName);
+          previousName = nameIdx;
+        }
+      }
+
+      result += next;
+    }
+
+    return result;
+  };
+
+SourceMapGenerator.prototype._generateSourcesContent =
+  function SourceMapGenerator_generateSourcesContent(aSources, aSourceRoot) {
+    return aSources.map(function (source) {
+      if (!this._sourcesContents) {
+        return null;
+      }
+      if (aSourceRoot != null) {
+        source = util.relative(aSourceRoot, source);
+      }
+      var key = util.toSetString(source);
+      return Object.prototype.hasOwnProperty.call(this._sourcesContents, key)
+        ? this._sourcesContents[key]
+        : null;
+    }, this);
+  };
+
+/**
+ * Externalize the source map.
+ */
+SourceMapGenerator.prototype.toJSON =
+  function SourceMapGenerator_toJSON() {
+    var map = {
+      version: this._version,
+      sources: this._sources.toArray(),
+      names: this._names.toArray(),
+      mappings: this._serializeMappings()
+    };
+    if (this._file != null) {
+      map.file = this._file;
+    }
+    if (this._sourceRoot != null) {
+      map.sourceRoot = this._sourceRoot;
+    }
+    if (this._sourcesContents) {
+      map.sourcesContent = this._generateSourcesContent(map.sources, map.sourceRoot);
+    }
+
+    return map;
+  };
+
+/**
+ * Render the source map being generated to a string.
+ */
+SourceMapGenerator.prototype.toString =
+  function SourceMapGenerator_toString() {
+    return JSON.stringify(this.toJSON());
+  };
+
+exports.SourceMapGenerator = SourceMapGenerator;
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
+
+module.exports = require("art-class-system");
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(16);
+
+module.exports.includeInNamespace(__webpack_require__(36)).addModules({
+  CaffeineScriptParser: __webpack_require__(17),
+  CafParseNodeBaseClass: __webpack_require__(13),
+  JavaScriptReservedWords: __webpack_require__(18),
+  Lib: __webpack_require__(8),
+  OperatorHelper: __webpack_require__(14),
+  Preprocessors: __webpack_require__(19),
+  StandardImport: __webpack_require__(3),
+  StnRegistry: __webpack_require__(4)
+});
+
+__webpack_require__(23);
+
+__webpack_require__(28);
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["log"],
-    [global, __webpack_require__(11)],
-    log => {
+    ["log", "mergeInto"],
+    [global, __webpack_require__(7)],
+    (log, mergeInto) => {
       return (
         __webpack_require__(28),
         {
           version: __webpack_require__(29).version,
           compile: function(source, options = {}) {
-            let transformedStn, stn, parseTree, e, cafError;
+            let transformedStn, stn, parseTree, e, cafTemp, cafError;
             return (() => {
               try {
-                transformedStn = (stn = (parseTree = __webpack_require__(16).parse(
+                transformedStn = (stn = (parseTree = __webpack_require__(17).parse(
                   source,
                   options
                 )).getStn())
@@ -2198,6 +3684,15 @@ Caf.defMod(module, () => {
                     }
                   });
                 }
+                if (options.debug) {
+                  (cafTemp = e.info) != null ? cafTemp : (e.info = {});
+                  mergeInto(e.info, {
+                    options,
+                    parseTree,
+                    stn,
+                    transformedStn
+                  });
+                }
                 return (() => {
                   throw e;
                 })();
@@ -2210,15 +3705,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 32 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2244,15 +3739,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 33 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2279,15 +3774,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 34 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2307,15 +3802,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 35 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -2349,15 +3844,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return {
@@ -2376,15 +3871,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 37 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2410,15 +3905,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 38 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2470,15 +3965,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 39 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -2547,15 +4042,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 40 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2636,15 +4131,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 41 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -2757,15 +4252,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 42 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions", "Error"],
@@ -2854,15 +4349,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 43 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2879,15 +4374,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 44 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return {
@@ -2903,15 +4398,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 45 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     return function() {
@@ -2930,15 +4425,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 46 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   let cafParentImports;
   return Caf.importInvoke(
@@ -3055,15 +4550,38 @@ Caf.defMod(module, () => {
             this.rule({
               stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
             });
+            this.rule(
+              { thisPropName: "/@/ identifier?" },
+              { stnFactory: "ThisStn" }
+            );
+            this.rule(
+              { propName: "!/then\\s/ str:thisPropName &_colon_" },
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  return { isThisProp: true };
+                }
+              }
+            );
             return this.rule(
               {
                 propName: [
                   "!/then\\s/ str:identifier &_colon_",
                   "!/then\\s/ str:unquotedString &/:/",
-                  "str:stringLiteral &stringLiteralPropNameTail"
+                  "quotedString:stringLiteral &stringLiteralPropNameTail"
                 ]
               },
-              { stnFactory: "ObjectPropNameStn" }
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  let cafBase;
+                  return {
+                    value:
+                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
+                    isThisProp: false
+                  };
+                }
+              }
             );
           };
         }
@@ -3072,15 +4590,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 47 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
@@ -3094,7 +4612,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(3),
-      __webpack_require__(13),
+      __webpack_require__(14),
       __webpack_require__(4)
     ],
     (
@@ -3134,8 +4652,12 @@ Caf.defMod(module, () => {
                   }
                 )
               ]),
-              function(operandA, operandB, operator) {
-                return BinaryOperatorStn({ operator }, operandA, operandB);
+              (operandA, operandB, operator) => {
+                return BinaryOperatorStn(
+                  { parseTreeNode: this, operator },
+                  operandA,
+                  operandB
+                );
               }
             );
           }
@@ -3195,15 +4717,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 48 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -3291,15 +4813,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 49 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return {
     require: {
@@ -3312,15 +4834,15 @@ Caf.defMod(module, () => {
   };
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 50 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return {
     root: {
@@ -3334,15 +4856,15 @@ Caf.defMod(module, () => {
   };
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 51 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["ControlOperatorStn"],
@@ -3417,15 +4939,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 52 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions", "StringStn", "InterpolatedStringStn"],
@@ -3472,7 +4994,10 @@ Caf.defMod(module, () => {
                 pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock",
                 getStn: function() {
                   let ret;
-                  ret = StringStn({ value: this.unparsedBlock.toString() });
+                  ret = StringStn({
+                    parseTreeNode: this,
+                    value: this.unparsedBlock.toString()
+                  });
                   if (!this.tripple) {
                     ret.compactNewLines();
                   }
@@ -3484,19 +5009,28 @@ Caf.defMod(module, () => {
                   `:(?!:)${Caf.toString(wordStringChar.source)}+`
                 ),
                 getStn: function() {
-                  return StringStn({ value: this.toString().slice(1) });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString().slice(1)
+                  });
                 }
               },
               {
                 pattern: /#[$\w\u007f-\uffff]+/,
                 getStn: function() {
-                  return StringStn({ value: this.toString() });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString()
+                  });
                 }
               },
               {
                 pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
                 getStn: function() {
-                  return StringStn({ value: this.toString() });
+                  return StringStn({
+                    parseTreeNode: this,
+                    value: this.toString()
+                  });
                 }
               }
             ],
@@ -3517,7 +5051,12 @@ Caf.defMod(module, () => {
               getStnChildren: function(appendTo = []) {
                 let cafBase;
                 if (this.mid.matchLength > 0) {
-                  appendTo.push(StringStn({ value: this.mid.toString() }));
+                  appendTo.push(
+                    StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    })
+                  );
                 }
                 Caf.exists((cafBase = this.interpolation)) &&
                   cafBase.getStnChildren(appendTo);
@@ -3527,7 +5066,10 @@ Caf.defMod(module, () => {
                 let ret;
                 ret = this.interpolation
                   ? InterpolatedStringStn(this.getStnChildren())
-                  : StringStn({ value: this.mid.toString() });
+                  : StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    });
                 if (this.bracketStart) {
                   ret.compactNewLines(true, true);
                 }
@@ -3555,7 +5097,12 @@ Caf.defMod(module, () => {
                 let cafBase;
                 appendTo.push(this.interpolation.expression.getStn());
                 if (this.mid.matchLength > 0) {
-                  appendTo.push(StringStn({ value: this.mid.toString() }));
+                  appendTo.push(
+                    StringStn({
+                      parseTreeNode: this,
+                      value: this.mid.toString()
+                    })
+                  );
                 }
                 Caf.exists((cafBase = this.interpolationContinues)) &&
                   cafBase.getStnChildren(appendTo);
@@ -3569,15 +5116,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 53 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["upperCamelCase", "Error"],
@@ -3610,15 +5157,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 54 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return function() {
     let assignmentOperator;
@@ -3661,15 +5208,15 @@ Caf.defMod(module, () => {
   };
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 55 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -3716,15 +5263,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 56 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
@@ -3867,15 +5414,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 57 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let FunctionDefinitionArgStn;
@@ -3896,6 +5443,35 @@ Caf.defMod(module, () => {
             return this.target.name;
           }
         });
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(
+            this.rest ? "..." : undefined,
+            this.target.toSourceNode(),
+            this.defaultValue
+              ? [" = ", this.defaultValue.toSourceNode()]
+              : undefined
+          );
+        };
+        this.prototype.generatePreBodyStatementStn = function() {
+          let IdentifierStn,
+            AssignmentStn,
+            ThisStn,
+            ReferenceStn,
+            identifierStn,
+            identifier;
+          return this.assignThisProperty
+            ? (({
+                IdentifierStn,
+                AssignmentStn,
+                ThisStn,
+                ReferenceStn
+              } = __webpack_require__(4)),
+              (identifierStn = IdentifierStn(
+                (({ identifier } = this.target.props), { identifier })
+              )),
+              AssignmentStn(ThisStn(identifierStn), identifierStn))
+            : undefined;
+        };
         this.prototype.getFunctionPreBodyStatementsJs = function() {
           return this.assignThisProperty
             ? `this.${Caf.toString(this.target.toJs())} = ${Caf.toString(
@@ -3917,22 +5493,22 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 58 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ImportStn, ImportBodyStn;
     return (
-      (ImportStn = __webpack_require__(19)),
+      (ImportStn = __webpack_require__(20)),
       (ImportBodyStn = Caf.defClass(
-        class ImportBodyStn extends __webpack_require__(7)(
+        class ImportBodyStn extends __webpack_require__(9)(
           __webpack_require__(2)
         ) {},
         function(ImportBodyStn, classSuper, instanceSuper) {
@@ -3946,25 +5522,25 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 59 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten"],
+    ["compactFlatten", "present"],
     [global, __webpack_require__(3)],
-    compactFlatten => {
+    (compactFlatten, present) => {
       let StatementsStn, RootStn;
       return (
-        (StatementsStn = __webpack_require__(20)),
+        (StatementsStn = __webpack_require__(21)),
         (RootStn = Caf.defClass(
-          class RootStn extends __webpack_require__(7)(
+          class RootStn extends __webpack_require__(9)(
             __webpack_require__(2)
           ) {
             constructor(props, children) {
@@ -3975,10 +5551,46 @@ Caf.defMod(module, () => {
           },
           function(RootStn, classSuper, instanceSuper) {
             this.prototype.isImports = true;
-            this.prototype.cloneWithNewStatements = function(statements) {
-              return new RootStn(this.props, [
-                StatementsStn(compactFlatten(statements))
-              ]);
+            this.getter({
+              statementsSourceNodes: function() {
+                return this.statements.toSourceNode();
+              }
+            });
+            this.prototype.toSourceNode = function(options = {}) {
+              let identifiersToImport, lets, autoLets;
+              this.rootUpdateScope();
+              return this.createSourceNode(
+                options.bare
+                  ? [this.getBareInitializers(), this.statementsSourceNodes]
+                  : options.module
+                    ? ((identifiersToImport = Caf.each(
+                        this.generateImportMap(),
+                        [],
+                        (v, k, cafInto) => {
+                          cafInto.push(
+                            `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                          );
+                        }
+                      )),
+                      (lets = compactFlatten([
+                        identifiersToImport,
+                        this.requiredIdentifierLets
+                      ])),
+                      [
+                        "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                        lets.length > 0
+                          ? `let ${Caf.toString(lets.join(", "))}; `
+                          : undefined,
+                        this.statementsSourceNodes,
+                        "};});"
+                      ])
+                    : [
+                        present((autoLets = this.getAutoLets()))
+                          ? [autoLets, "; "]
+                          : undefined,
+                        this.statementsSourceNodes
+                      ]
+              );
             };
             this.prototype.rootUpdateScope = function() {
               return !this._scopeHasBeenUpdated
@@ -4027,7 +5639,7 @@ Caf.defMod(module, () => {
               statements = this.statements.toJs();
               return (
                 compactFlatten([
-                  "Caf = require('caffeine-script-runtime')",
+                  "Caf = global.Caf || require('caffeine-script-runtime')",
                   this.getBareInitializers(),
                   statements
                 ]).join(";\n") + ";"
@@ -4040,15 +5652,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 60 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["deescapeSpaces", "escapeUnescaped", "escapeMustEscapes"],
@@ -4058,6 +5670,14 @@ Caf.defMod(module, () => {
       return (StringStn = Caf.defClass(
         class StringStn extends __webpack_require__(2) {},
         function(StringStn, classSuper, instanceSuper) {
+          this.prototype.toSourceNode = function(options) {
+            return this.toJs(options);
+          };
+          this.getter({
+            propName: function() {
+              return this.toJs();
+            }
+          });
           this.prototype.toJs = function(options) {
             let base, quotes, singleCount, doubleCount, out;
             base = deescapeSpaces(this.value);
@@ -4108,15 +5728,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 61 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let SwitchWhenStn;
@@ -4155,15 +5775,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 62 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ComprehensionValueClauseStn;
@@ -4183,21 +5803,32 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 63 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ArrayDestructuringStn;
     return (ArrayDestructuringStn = Caf.defClass(
       class ArrayDestructuringStn extends __webpack_require__(2) {},
       function(ArrayDestructuringStn, classSuper, instanceSuper) {
+        this.prototype.toSourceNode = function(options) {
+          let restructuring, restructuringStart, subOptions, base;
+          if (options) {
+            ({ restructuring, restructuringStart } = options);
+          }
+          if (restructuringStart || restructuring) {
+            subOptions = { restructuring: true };
+          }
+          base = this.childrenToSourceNodes(", ", subOptions);
+          return restructuring ? base : this.createSourceNode("[", base, "]");
+        };
         this.prototype.toJs = function(options) {
           let restructuring, restructuringStart, subOptions;
           if (options) {
@@ -4215,15 +5846,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 64 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ArraySpreadElementStn;
@@ -4233,20 +5864,23 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function() {
           return `...${Caf.toString(this.childrenToJs())}`;
         };
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode("...", this.childrenToSourceNodes());
+        };
       }
     ));
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 65 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ArrayStn;
@@ -4265,6 +5899,19 @@ Caf.defMod(module, () => {
             return this.props.implicitArray;
           }
         });
+        this.prototype.toSourceNode = function(options) {
+          let dotBase;
+          dotBase = Caf.exists(options) && options.dotBase;
+          return this.createSourceNode(
+            dotBase ? "([" : "[",
+            Caf.each(this.children, [], (c, i, cafInto) => {
+              let sn;
+              sn = c.toSourceNode();
+              cafInto.push(i > 0 ? [", ", sn] : sn);
+            }),
+            dotBase ? "])" : "]"
+          );
+        };
         this.prototype.toJs = function(options) {
           let out;
           out = `[${Caf.toString(
@@ -4281,30 +5928,34 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 66 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     [
       "operatorIsInfixJs",
-      "binaryOperatorToJs",
+      "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
+      "compactFlatten",
+      "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
       "formattedInspect"
     ],
-    [global, __webpack_require__(3), __webpack_require__(13)],
+    [global, __webpack_require__(3), __webpack_require__(14)],
     (
       operatorIsInfixJs,
-      binaryOperatorToJs,
+      binaryOperatorToSourceNodeArray,
       getOpPrecidence,
+      compactFlatten,
+      binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
       formattedInspect
@@ -4333,6 +5984,54 @@ Caf.defMod(module, () => {
               this.uniqueIdentifierHandle = this.scope.uniqueIdentifierHandle;
             }
             return instanceSuper.updateScope.apply(this, arguments);
+          };
+          this.prototype.toSourceNode = function(options) {
+            let out, identifier, parentOperatorPrecidence;
+            out = (() => {
+              switch (false) {
+                case !(this.operator === "?" && this.uniqueIdentifierHandle):
+                  ({ identifier } = this.uniqueIdentifierHandle);
+                  return [
+                    "((",
+                    identifier,
+                    " = ",
+                    this.left.toSourceNode({ expression: true }),
+                    ") != null ? ",
+                    identifier,
+                    " : ",
+                    this.right.toSourceNode({ expression: true }),
+                    ")"
+                  ];
+                case !!operatorIsInfixJs(this.operator):
+                  return binaryOperatorToSourceNodeArray(
+                    this.operator,
+                    this.left.toSourceNode({ expression: true }),
+                    this.right.toSourceNode({ expression: true })
+                  );
+                default:
+                  parentOperatorPrecidence = getOpPrecidence(this.operator);
+                  return binaryOperatorToSourceNodeArray(
+                    this.operator,
+                    this.left.toSourceNode({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: true
+                    }),
+                    this.right.toSourceNode({
+                      expression: true,
+                      subExpression: true,
+                      parentOperatorPrecidence,
+                      isLeftOperand: false
+                    })
+                  );
+              }
+            })();
+            return this.createSourceNode(
+              options && this._needsParens(options)
+                ? compactFlatten(["(", out, ")"])
+                : out
+            );
           };
           this.prototype.toJs = function(options) {
             let out, identifier, parentOperatorPrecidence;
@@ -4369,7 +6068,9 @@ Caf.defMod(module, () => {
                       })
                     ));
             return options
-              ? this._needsParens(options) ? `(${Caf.toString(out)})` : out
+              ? this._needsParens(options)
+                ? `(${Caf.toString(out)})`
+                : out
               : out;
           };
           this.prototype._needsParens = function(toJsOptions) {
@@ -4403,15 +6104,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 67 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["compactFlatten"],
@@ -4425,11 +6126,10 @@ Caf.defMod(module, () => {
             let errorIdentifier, body;
             this.scope = scope;
             ({ errorIdentifier, body } = this.labeledChildren);
-            if (errorIdentifier || body) {
-              this.uniqueIdentifierHandle = this.scope.getUniqueIdentifierHandle(
-                "error"
-              );
-            }
+            this.uniqueIdentifierHandle = this.scope.getUniqueIdentifierHandle(
+              "error",
+              false
+            );
             if (errorIdentifier) {
               this.scope.addIdentifierAssigned(errorIdentifier.name);
               this.scope.addIdentifierUsed(errorIdentifier.name);
@@ -4437,18 +6137,11 @@ Caf.defMod(module, () => {
             return instanceSuper.updateScope.apply(this, arguments);
           };
           this.prototype.toJs = function(options = {}) {
-            let expression,
-              errorIdentifier,
-              body,
-              errorIdentifierString,
-              cafBase;
+            let expression, errorIdentifier, body, errorIdentifierString;
             ({ expression } = options);
             ({ errorIdentifier, body } = this.labeledChildren);
             body = body && (expression ? body.toFunctionBodyJs() : body.toJs());
-            errorIdentifierString =
-              (Caf.exists((cafBase = this.uniqueIdentifierHandle)) &&
-                cafBase.identifier) ||
-              "cafError";
+            errorIdentifierString = this.uniqueIdentifierHandle.identifier;
             if (errorIdentifier) {
               body = compactFlatten([
                 `${Caf.toString(errorIdentifier.name)} = ${Caf.toString(
@@ -4462,175 +6155,300 @@ Caf.defMod(module, () => {
               errorIdentifierString
             )}) {${Caf.toString(body)}}`;
           };
+          this.prototype.toSourceNode = function(options = {}) {
+            let expression, errorIdentifier, body, errorIdentifierString;
+            ({ expression } = options);
+            ({ errorIdentifier, body } = this.labeledChildren);
+            body =
+              Caf.exists(body) &&
+              body.toSourceNode({ returnAction: !!expression });
+            errorIdentifierString = this.uniqueIdentifierHandle.identifier;
+            if (errorIdentifier) {
+              body = [
+                `${Caf.toString(errorIdentifier.name)} = ${Caf.toString(
+                  errorIdentifierString
+                )};`,
+                body ? " " : undefined,
+                body
+              ];
+            }
+            return this.createSourceNode(
+              "catch (",
+              errorIdentifierString,
+              ") {",
+              body,
+              "}"
+            );
+          };
         }
       ));
     }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 68 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "formattedInspect"],
+    ["Error", "formattedInspect", "StnRegistry"],
     [global, __webpack_require__(3)],
-    (Error, formattedInspect) => {
-      let StnRegistry, ControlOperatorStn;
-      return (
-        (StnRegistry = __webpack_require__(4)),
-        (ControlOperatorStn = Caf.defClass(
-          class ControlOperatorStn extends __webpack_require__(2) {
-            constructor(props, children) {
-              super(...arguments);
-              this.operand = props.operand;
-              this.joiner = props.joiner;
-              if (this.labeledChildren.expression) {
-                this.expression = this.labeledChildren.expression;
-                this.body =
-                  this.labeledChildren.body || StnRegistry.UndefinedStn();
-                this.elseBody = this.labeledChildren.elseBody;
-              } else {
-                this.expression = children[0];
-                this.body = children[1] || StnRegistry.UndefinedStn();
-                this.elseBody = children[2];
-              }
-              this.validate();
+    (Error, formattedInspect, StnRegistry) => {
+      let ControlOperatorStn;
+      return (ControlOperatorStn = Caf.defClass(
+        class ControlOperatorStn extends __webpack_require__(2) {
+          constructor(props, children) {
+            super(...arguments);
+            this.operand = props.operand;
+            this.joiner = props.joiner;
+            if (this.labeledChildren.expression) {
+              this.expression = this.labeledChildren.expression;
+              this.body =
+                this.labeledChildren.body || StnRegistry.UndefinedStn();
+              this.elseBody = this.labeledChildren.elseBody;
+            } else {
+              this.expression = children[0];
+              this.body = children[1] || StnRegistry.UndefinedStn();
+              this.elseBody = children[2];
             }
-          },
-          function(ControlOperatorStn, classSuper, instanceSuper) {
-            this.prototype.validate = function() {
-              return (() => {
-                switch (this.operand) {
-                  case "while":
-                  case "until":
-                    if (this.elseBody) {
-                      throw new Error(
-                        `else not expected after ${Caf.toString(this.operand)}`
-                      );
-                    }
-                    return this.joiner === "then"
-                      ? (() => {
-                          throw new Error(
-                            `then not expected after ${Caf.toString(
-                              this.operand
-                            )}`
-                          );
-                        })()
-                      : undefined;
-                  case "if":
-                  case "unless":
-                    return this.joiner === "do"
-                      ? (() => {
-                          throw new Error(
-                            `do not expected after ${Caf.toString(
-                              this.operand
-                            )}`
-                          );
-                        })()
-                      : undefined;
-                  default:
-                    return (() => {
-                      throw new Error(
-                        `INTERNAL: invalid control-operator: ${Caf.toString(
-                          formattedInspect(this.operand)
-                        )}`
-                      );
-                    })();
-                }
-              })();
-            };
-            this.prototype.toJs = function(options = {}) {
-              let expression,
-                returnValueIsIgnored,
-                jsExpression,
-                operand,
-                tempVarIdentifier,
-                out,
-                cafBase,
-                cafBase1;
-              ({ expression, returnValueIsIgnored } = options);
-              jsExpression = this.expression.toJsExpression();
-              ({ operand } = this);
-              operand = (() => {
-                switch (operand) {
-                  case "until":
-                  case "unless":
-                    jsExpression = `!${Caf.toString(
-                      this.applyParens(jsExpression)
-                    )}`;
-                    return operand === "until" ? "while" : "if";
-                  default:
-                    return operand;
-                }
-              })();
-              return expression
-                ? operand === "while"
-                  ? returnValueIsIgnored
-                    ? `(() => {while ${Caf.toString(
-                        this.applyRequiredParens(jsExpression)
-                      )} {${Caf.toString(
-                        this.body.toFunctionBodyJs(false)
-                      )};};})()`
-                    : ((tempVarIdentifier = this.scope.uniqueIdentifier),
-                      `(() => {while ${Caf.toString(
-                        this.applyRequiredParens(jsExpression)
-                      )} {${Caf.toString(
-                        this.body.toFunctionBodyJs(
-                          `${Caf.toString(tempVarIdentifier)} =`
-                        )
-                      )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
-                  : ((out = `${Caf.toString(
-                      this.applyParens(jsExpression)
-                    )} ? ${Caf.toString(
-                      this.body.toJsExpression()
-                    )} : ${Caf.toString(
-                      (Caf.exists((cafBase = this.elseBody)) &&
-                        cafBase.toJsExpression()) ||
-                        "undefined"
-                    )}`),
-                    options.subExpression || options.dotBase
-                      ? (out = `(${Caf.toString(out)})`)
-                      : out)
-                : `${Caf.toString(operand)} ${Caf.toString(
-                    this.applyRequiredParens(jsExpression)
-                  )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
-                    this.elseBody
-                      ? ` else {${Caf.toString(
-                          Caf.exists((cafBase1 = this.elseBody)) &&
-                            cafBase1.toJs()
-                        )};}`
-                      : ""
-                  )}`;
-            };
+            if (!(this.body.type === "Statements")) {
+              (this.body = StnRegistry.StatementsStn(this.body)).parent = this;
+            }
+            this.validate();
           }
-        ))
-      );
+        },
+        function(ControlOperatorStn, classSuper, instanceSuper) {
+          this.prototype.validate = function() {
+            return (() => {
+              switch (this.operand) {
+                case "while":
+                case "until":
+                  if (this.elseBody) {
+                    throw new Error(
+                      `else not expected after ${Caf.toString(this.operand)}`
+                    );
+                  }
+                  return this.joiner === "then"
+                    ? (() => {
+                        throw new Error(
+                          `then not expected after ${Caf.toString(
+                            this.operand
+                          )}`
+                        );
+                      })()
+                    : undefined;
+                case "if":
+                case "unless":
+                  return this.joiner === "do"
+                    ? (() => {
+                        throw new Error(
+                          `do not expected after ${Caf.toString(this.operand)}`
+                        );
+                      })()
+                    : undefined;
+                default:
+                  return (() => {
+                    throw new Error(
+                      `INTERNAL: invalid control-operator: ${Caf.toString(
+                        formattedInspect(this.operand)
+                      )}`
+                    );
+                  })();
+              }
+            })();
+          };
+          this.prototype.toJs = function(options = {}) {
+            let expression,
+              returnValueIsIgnored,
+              jsExpression,
+              operand,
+              tempVarIdentifier,
+              out,
+              cafBase,
+              cafBase1;
+            ({ expression, returnValueIsIgnored } = options);
+            jsExpression = this.expression.toJsExpression();
+            ({ operand } = this);
+            operand = (() => {
+              switch (operand) {
+                case "until":
+                case "unless":
+                  jsExpression = `!${Caf.toString(
+                    this.applyParens(jsExpression)
+                  )}`;
+                  return operand === "until" ? "while" : "if";
+                default:
+                  return operand;
+              }
+            })();
+            return expression
+              ? operand === "while"
+                ? returnValueIsIgnored
+                  ? `(() => {while ${Caf.toString(
+                      this.applyRequiredParens(jsExpression)
+                    )} {${Caf.toString(
+                      this.body.toFunctionBodyJs(false)
+                    )};};})()`
+                  : ((tempVarIdentifier = this.scope.uniqueIdentifier),
+                    `(() => {while ${Caf.toString(
+                      this.applyRequiredParens(jsExpression)
+                    )} {${Caf.toString(
+                      this.body.toFunctionBodyJs(
+                        `${Caf.toString(tempVarIdentifier)} =`
+                      )
+                    )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
+                : ((out = `${Caf.toString(
+                    this.applyParens(jsExpression)
+                  )} ? ${Caf.toString(
+                    this.body.toJsExpression()
+                  )} : ${Caf.toString(
+                    (Caf.exists((cafBase = this.elseBody)) &&
+                      cafBase.toJsExpression()) ||
+                      "undefined"
+                  )}`),
+                  options.subExpression || options.dotBase
+                    ? (out = `(${Caf.toString(out)})`)
+                    : out)
+              : `${Caf.toString(operand)} ${Caf.toString(
+                  this.applyRequiredParens(jsExpression)
+                )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
+                  this.elseBody
+                    ? ` else {${Caf.toString(
+                        Caf.exists((cafBase1 = this.elseBody)) &&
+                          cafBase1.toJs()
+                      )};}`
+                    : ""
+                )}`;
+          };
+          this.prototype.toSourceNode = function(options = {}) {
+            let expression,
+              returnValueIsIgnored,
+              noParens,
+              operand,
+              negate,
+              applyParens,
+              expressionSourceNode,
+              parts,
+              tempVarIdentifier,
+              cafBase;
+            ({ expression, returnValueIsIgnored, noParens } = options);
+            ({ operand } = this);
+            negate = applyParens = false;
+            expressionSourceNode = expressionSourceNode = (() => {
+              switch (operand) {
+                case "until":
+                case "unless":
+                  operand = operand === "until" ? "while" : "if";
+                  return (expressionSourceNode = [
+                    "!",
+                    this.expression.toSourceNode({ dotBase: true })
+                  ]);
+                default:
+                  return this.expression.toSourceNode({ noParens: true });
+              }
+            })();
+            parts = expression
+              ? (() => {
+                  switch (operand) {
+                    case "while":
+                      return returnValueIsIgnored
+                        ? this.doSourceNode(
+                            "while(",
+                            expressionSourceNode,
+                            ") {",
+                            this.body.toSourceNode(),
+                            "};"
+                          )
+                        : ((tempVarIdentifier = this.scope.uniqueIdentifier),
+                          this.doSourceNode(
+                            `let ${Caf.toString(tempVarIdentifier)}; while(`,
+                            expressionSourceNode,
+                            ") {",
+                            this.body.toSourceNode({
+                              returnAction: `${Caf.toString(
+                                tempVarIdentifier
+                              )} =`
+                            }),
+                            `}; return ${Caf.toString(tempVarIdentifier)};`
+                          ));
+                    case "if":
+                      applyParens = options.subExpression || options.dotBase;
+                      return [
+                        "(",
+                        expressionSourceNode,
+                        ")",
+                        " ? ",
+                        this.body.toSourceNode({ expression: true }),
+                        " : ",
+                        (Caf.exists((cafBase = this.elseBody)) &&
+                          cafBase.toSourceNode({ expression: true })) ||
+                          "undefined"
+                      ];
+                  }
+                })()
+              : [
+                  operand,
+                  " (",
+                  expressionSourceNode,
+                  ") {",
+                  this.body.toSourceNode(),
+                  "}",
+                  this.elseBody
+                    ? [" else {", this.elseBody.toSourceNode(), "}"]
+                    : undefined
+                ];
+            return this.createSourceNode(
+              applyParens && !noParens ? "(" : undefined,
+              parts,
+              applyParens && !noParens ? ")" : undefined
+            );
+          };
+        }
+      ));
     }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 69 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let DestructuringAssignmentStn;
     return (DestructuringAssignmentStn = Caf.defClass(
       class DestructuringAssignmentStn extends __webpack_require__(2) {},
       function(DestructuringAssignmentStn, classSuper, instanceSuper) {
+        this.prototype.toSourceNode = function(options) {
+          let expression, returnValueIsIgnored, noParens, structure, value;
+          if (options) {
+            ({ expression, returnValueIsIgnored, noParens } = options);
+          }
+          ({ structure, value } = this.labeledChildren);
+          if (returnValueIsIgnored) {
+            expression = false;
+          }
+          return this.createSourceNode(
+            !noParens ? "(" : undefined,
+            structure.toSourceNode(),
+            " = ",
+            value.toSourceNode({ expression: true }),
+            expression && ", ",
+            expression && structure.toSourceNode({ restructuringStart: true }),
+            !noParens ? ")" : undefined
+          );
+        };
         this.prototype.toJs = function(options) {
           let expression, returnValueIsIgnored, structure, value;
           if (options) {
@@ -4655,15 +6473,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 70 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let DestructuringIdentifierStn;
@@ -4676,6 +6494,24 @@ Caf.defMod(module, () => {
             this.labeledChildren.identifier.toJs()
           );
           return instanceSuper.updateScope.apply(this, arguments);
+        };
+        this.prototype.toSourceNode = function(options) {
+          let restructuring, identifier, destructuringDefault;
+          if (options) {
+            ({ restructuring } = options);
+          }
+          ({ identifier, destructuringDefault } = this.labeledChildren);
+          return restructuring
+            ? identifier.toSourceNode()
+            : this.createSourceNode(
+                this.props.ellipsis ? "..." : undefined,
+                identifier.toSourceNode(),
+                destructuringDefault
+                  ? ` = ${Caf.toString(
+                      destructuringDefault.toSourceNode({ expression: true })
+                    )}`
+                  : undefined
+              );
         };
         this.prototype.toJs = function(options) {
           let restructuring, identifier, destructuringDefault;
@@ -4698,15 +6534,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 71 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Object"],
@@ -4723,21 +6559,32 @@ Caf.defMod(module, () => {
               Object.keys(functionDefinition.argumentNames).join(", ")
             )})`;
           };
+          this.prototype.toSourceNode = function() {
+            let functionDefinition;
+            ({ functionDefinition } = this.labeledChildren);
+            return this.createSourceNode(
+              "(",
+              functionDefinition.toSourceNode(),
+              ")(",
+              Object.keys(functionDefinition.argumentNames).join(", "),
+              ")"
+            );
+          };
         }
       ));
     }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 72 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let FunctionDefinitionArgsStn;
@@ -4753,6 +6600,17 @@ Caf.defMod(module, () => {
             });
           }
         });
+        this.prototype.toSourceNode = function(options) {
+          return this.createSourceNode(
+            "(",
+            Caf.each(this.children, [], (c, i, cafInto) => {
+              let sn;
+              sn = c.toSourceNode();
+              cafInto.push(i > 0 ? [", ", sn] : sn);
+            }),
+            ")"
+          );
+        };
         this.prototype.toJs = function() {
           return `(${Caf.toString(
             Caf.each(this.children, [], (c, cafK, cafInto) => {
@@ -4765,15 +6623,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 73 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let GlobalIdentifierStn;
@@ -4781,6 +6639,9 @@ Caf.defMod(module, () => {
       class GlobalIdentifierStn extends __webpack_require__(2) {},
       function(GlobalIdentifierStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(this.props.identifier);
+        };
         this.prototype.toJs = function() {
           return this.props.identifier;
         };
@@ -4789,15 +6650,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 74 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let IdentifierStn;
@@ -4811,8 +6672,17 @@ Caf.defMod(module, () => {
           isIdentifier: function() {
             return true;
           },
+          propName: function() {
+            return this.identifier;
+          },
+          identifier: function() {
+            return (this.props.identifierHandle || this.props).identifier;
+          },
           explicitIdentifier: function() {
             return this.props.identifier;
+          },
+          canBeUsedInES6Structuring: function() {
+            return true;
           }
         });
         this.prototype.updateScope = function(scope) {
@@ -4823,6 +6693,11 @@ Caf.defMod(module, () => {
           return instanceSuper.updateScope.apply(this, arguments);
         };
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(
+            (this.props.identifierHandle || this.props).identifier
+          );
+        };
         this.prototype.toJs = function() {
           return (this.props.identifierHandle || this.props).identifier;
         };
@@ -4831,15 +6706,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 75 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["peek"],
@@ -4873,6 +6748,15 @@ Caf.defMod(module, () => {
               (Caf.isF(cafBase.trimRight) && cafBase.trimRight())
             );
           };
+          this.prototype.toSourceNode = function() {
+            return this.createSourceNode(
+              "`",
+              Caf.each(this.children, [], (c, cafK, cafInto) => {
+                cafInto.push(c.toInterpolatedJsStringPart());
+              }),
+              "`"
+            );
+          };
           this.prototype.toJs = function() {
             return `\`${Caf.toString(
               Caf.each(this.children, [], (c, cafK, cafInto) => {
@@ -4886,15 +6770,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 76 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let LabeledDestructuringTargetStn;
@@ -4906,20 +6790,25 @@ Caf.defMod(module, () => {
             ? this.children[1].toJs(options)
             : this.childrenToJs(": ");
         };
+        this.prototype.toSourceNode = function(options) {
+          return Caf.exists(options) && options.restructuring
+            ? this.children[1].toSourceNode(options)
+            : this.childrenToSourceNodes(": ");
+        };
       }
     ));
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 77 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   let Error = global.Error,
     LetStn;
@@ -4946,15 +6835,15 @@ Caf.defMod(module, () => {
   ));
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 78 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let NewInstanceStn;
@@ -4979,26 +6868,65 @@ Caf.defMod(module, () => {
             ? `(new ${Caf.toString(childJs)})`
             : `new ${Caf.toString(childJs)}`;
         };
+        this.prototype.toSourceNode = function(options) {
+          let noParens, child, childNodes;
+          if (options) {
+            ({ noParens } = options);
+          }
+          [child] = this.children;
+          childNodes = (() => {
+            switch (child.type) {
+              case "FunctionInvocation":
+              case "Reference":
+              case "GlobalIdentifier":
+              case "This":
+                return child.toSourceNode({
+                  newObjectFunctionInvocation: true
+                });
+              default:
+                return ["(", child.toSourceNode(), ")"];
+            }
+          })();
+          return Caf.exists(options) && options.dotBase
+            ? this.createSourceNode(
+                !noParens ? "(" : undefined,
+                "new ",
+                childNodes,
+                !noParens ? ")" : undefined
+              )
+            : this.createSourceNode("new ", childNodes);
+        };
       }
     ));
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 79 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ObjectDestructuringStn;
     return (ObjectDestructuringStn = Caf.defClass(
       class ObjectDestructuringStn extends __webpack_require__(2) {},
       function(ObjectDestructuringStn, classSuper, instanceSuper) {
+        this.prototype.toSourceNode = function(options) {
+          let restructuring, restructuringStart, subOptions, base;
+          if (options) {
+            ({ restructuring, restructuringStart } = options);
+          }
+          if (restructuringStart || restructuring) {
+            subOptions = { restructuring: true };
+          }
+          base = this.childrenToSourceNodes(", ", subOptions);
+          return restructuring ? base : this.createSourceNode("{", base, "}");
+        };
         this.prototype.toJs = function(options) {
           let restructuring, restructuringStart, subOptions;
           if (options) {
@@ -5016,142 +6944,181 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 80 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["escapeJavascriptString", "Error"],
+    ["identifierRegexp", "escapePropName"],
     [global, __webpack_require__(3)],
-    (escapeJavascriptString, Error) => {
-      let legalUnquotedPropName, ObjectPropNameStn;
-      return (
-        (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),
-        (ObjectPropNameStn = Caf.defClass(
-          class ObjectPropNameStn extends __webpack_require__(2) {
-            constructor() {
-              let nameStn, cafBase;
-              super(...arguments);
-              [nameStn] = this.children;
-              (cafBase = this.props).value ||
-                (cafBase.value = nameStn
-                  ? nameStn.toJs()
-                  : this.parseTreeNode.toString());
-            }
-          },
-          function(ObjectPropNameStn, classSuper, instanceSuper) {
-            let escapePropName;
-            this.escapePropName = escapePropName = function(rawPropName) {
-              return rawPropName.match(legalUnquotedPropName)
-                ? rawPropName
-                : escapeJavascriptString(rawPropName);
-            };
-            this.prototype.toJs = function() {
-              let nameStn, str;
+    (identifierRegexp, escapePropName) => {
+      let ObjectPropNameStn;
+      return (ObjectPropNameStn = Caf.defClass(
+        class ObjectPropNameStn extends __webpack_require__(2) {},
+        function(ObjectPropNameStn, classSuper, instanceSuper) {
+          this.getter({
+            canBeUsedInES6Structuring: function() {
+              let name;
+              return (name = this.simpleName)
+                ? identifierRegexp.test(name)
+                : undefined;
+            },
+            isThisProp: function() {
+              return this.props.isThisProp;
+            },
+            simpleName: function() {
+              let nameStn;
               [nameStn] = this.children;
               return nameStn
-                ? ((str = nameStn.toJs()),
-                  nameStn.children.length > 0
-                    ? `[${Caf.toString(str)}]`
-                    : (!(
-                        nameStn.type === "String" ||
-                        nameStn.type === "Identifier"
-                      )
-                        ? (() => {
-                            throw new Error(
-                              `internal error - should be a StringStn or IdentifierStn. Actual type: ${Caf.toString(
-                                nameStn.type
-                              )}`
-                            );
-                          })()
-                        : undefined,
-                      str))
+                ? nameStn.propName
                 : escapePropName(this.props.value);
-            };
-          }
-        ))
-      );
+            },
+            propName: function() {
+              return this.simpleName;
+            }
+          });
+          this.prototype.toJs = function() {
+            let nameStn;
+            [nameStn] = this.children;
+            return (Caf.exists(nameStn) && nameStn.children.length) > 0
+              ? `[${Caf.toString(nameStn.toJs())}]`
+              : this.simpleName;
+          };
+        }
+      ));
     }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 81 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["peek", "Error", "javaScriptReservedWords"],
+    [
+      "peek",
+      "Error",
+      "javaScriptReservedWords",
+      "identifierRegexp",
+      "isString",
+      "present"
+    ],
     [global, __webpack_require__(3)],
-    (peek, Error, javaScriptReservedWords) => {
-      let identifierRegexp, ObjectPropValueStn;
-      return (
-        (identifierRegexp = /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/),
-        (ObjectPropValueStn = Caf.defClass(
-          class ObjectPropValueStn extends __webpack_require__(2) {},
-          function(ObjectPropValueStn, classSuper, instanceSuper) {
-            this.getter({
-              isObject: true,
-              propName: function() {
-                return this.labeledChildren.propName.props.value;
-              }
-            });
-            this.prototype.toJs = function() {
-              let propNameStn, valueStn, valueJs, propertyName, structuringStn;
-              switch (this.children.length) {
-                case 2:
-                  [propNameStn, valueStn] = this.children;
-                  valueJs = valueStn.toJsExpression();
-                  propertyName = propNameStn.toJs();
-                  break;
-                case 1:
-                  structuringStn = this.children[0];
-                  valueJs = structuringStn.toJsExpression();
-                  propertyName = peek(valueJs.split("."));
-                  if (!identifierRegexp.test(propertyName)) {
-                    throw new Error(
-                      `expression not allowed in explicit object literal: ${Caf.toString(
-                        valueJs
-                      )}`
-                    );
-                  }
-                  break;
-                default:
-                  throw new Error("internal error - expecint 1 or 2 children");
-              }
-              return propertyName === valueJs &&
-                !javaScriptReservedWords[propertyName] &&
-                identifierRegexp.test(propertyName)
-                ? valueJs
-                : `${Caf.toString(propertyName)}: ${Caf.toString(valueJs)}`;
-            };
-          }
-        ))
-      );
+    (
+      peek,
+      Error,
+      javaScriptReservedWords,
+      identifierRegexp,
+      isString,
+      present
+    ) => {
+      let ObjectPropValueStn;
+      return (ObjectPropValueStn = Caf.defClass(
+        class ObjectPropValueStn extends __webpack_require__(2) {},
+        function(ObjectPropValueStn, classSuper, instanceSuper) {
+          this.getter({
+            isObject: true,
+            propNameChild: function() {
+              return this.children[0];
+            },
+            valueChild: function() {
+              return peek(this.children);
+            },
+            isThisProp: function() {
+              let cafBase;
+              return (
+                Caf.exists((cafBase = this.propNameChild)) && cafBase.isThisProp
+              );
+            },
+            propName: function() {
+              let propNameChild, cafTemp, cafTemp1;
+              ({ propNameChild } = this);
+              return (() => {
+                switch (this.children.length) {
+                  case 2:
+                    return (cafTemp = propNameChild.propName) != null
+                      ? cafTemp
+                      : propNameChild;
+                  case 1:
+                    return (cafTemp1 = propNameChild.propName) != null
+                      ? cafTemp1
+                      : (() => {
+                          throw new Error(
+                            `${Caf.toString(
+                              propNameChild.type
+                            )} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.`
+                          );
+                        })();
+                }
+              })();
+            },
+            canBeUsedInES6Structuring: function() {
+              let propName;
+              return (
+                (propName = this.propNameChild.propName) &&
+                !javaScriptReservedWords[propName] &&
+                identifierRegexp.test(propName) &&
+                this.valueChild.canBeUsedInES6Structuring &&
+                this.valueChild.propName === propName
+              );
+            }
+          });
+          this.prototype.toJs = function() {
+            let valueChild, propName, base;
+            ({ valueChild, propName } = this);
+            base = this.valueChild.toJsExpression();
+            if (!isString(propName)) {
+              propName = propName.toJs();
+            }
+            return this.canBeUsedInES6Structuring
+              ? base
+              : `${Caf.toString(propName)}: ${Caf.toString(base)}`;
+          };
+          this.prototype.validate = function() {
+            return !present(this.propName)
+              ? (() => {
+                  throw new Error("no prop name");
+                })()
+              : undefined;
+          };
+          this.prototype.toSourceNode = function() {
+            let valueChild, propName, base;
+            ({ valueChild, propName } = this);
+            base = valueChild.toSourceNode();
+            if (!isString(propName)) {
+              propName = propName.toSourceNode();
+            }
+            return this.canBeUsedInES6Structuring
+              ? base
+              : this.createSourceNode(propName, ": ", base);
+          };
+        }
+      ));
     }
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 82 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let StnRegistry, ObjectStn;
@@ -5173,6 +7140,18 @@ Caf.defMod(module, () => {
               ? `(${Caf.toString(out)})`
               : out;
           };
+          this.prototype.toSourceNode = function(options) {
+            let base;
+            base = [
+              "{",
+              this.childrenToSourceNodes(", ", { expression: true }),
+              "}"
+            ];
+            return (Caf.exists(options) && options.dotBase) ||
+              (Caf.exists(options) && options.statement)
+              ? this.createSourceNode("(", base, ")")
+              : this.createSourceNode(base);
+          };
           splitObjectsAtSameProps = function(children) {
             let currentDefined, listOfObjectLiterals, currentOrder;
             currentDefined = {};
@@ -5180,7 +7159,11 @@ Caf.defMod(module, () => {
             Caf.each(children, undefined, child => {
               let found, value;
               if ((found = child.find(/ObjectPropNameStn/))) {
-                [{ props: { value } }] = found;
+                [
+                  {
+                    props: { value }
+                  }
+                ] = found;
                 if (currentDefined[value]) {
                   currentDefined = {};
                   listOfObjectLiterals.push((currentOrder = []));
@@ -5208,15 +7191,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 83 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ReferenceStn;
@@ -5236,15 +7219,29 @@ Caf.defMod(module, () => {
           isReference: function() {
             return true;
           },
+          propName: function() {
+            let cafBase;
+            return (
+              (Caf.exists((cafBase = this.props.identifierHandle)) &&
+                cafBase.identifier) ||
+              this.labeledChildren.identifier.propName
+            );
+          },
           explicitIdentifier: function() {
             let cafBase;
             return (
               Caf.exists((cafBase = this.labeledChildren.identifier)) &&
               cafBase.explicitIdentifier
             );
+          },
+          canBeUsedInES6Structuring: function() {
+            return true;
           }
         });
         this.prototype.needsParens = false;
+        this.prototype.toSourceNode = function(options) {
+          return this.toJs(options);
+        };
         this.prototype.toJs = function() {
           let cafBase;
           return (
@@ -5258,15 +7255,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 84 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["isString"],
@@ -5296,13 +7293,17 @@ Caf.defMod(module, () => {
                     let v;
                     cafInto.push(
                       isString((v = child.props.value))
-                        ? hasInterpolation ? v.replace(/([`$\\])/g, "\\$1") : v
+                        ? hasInterpolation
+                          ? v.replace(/([`$\\])/g, "\\$1")
+                          : v
                         : `\${Caf.toString(${Caf.toString(
                             child.toJsExpression()
                           )})}`
                     );
                   }).join(""))
-                : value != null ? value : "";
+                : value != null
+                  ? value
+                  : "";
             return str.length === 0
               ? "/(?:)/"
               : hasInterpolation
@@ -5319,26 +7320,29 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 85 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let findModuleSync, RequireStn;
     return (
-      ({ findModuleSync } = __webpack_require__(112)),
+      ({ findModuleSync } = __webpack_require__(123)),
       (RequireStn = Caf.defClass(
         class RequireStn extends __webpack_require__(2) {},
         function(RequireStn, classSuper, instanceSuper) {
           this.getter({
             rawRequireString: function() {
               return this.props.require;
+            },
+            propName: function() {
+              return this.rawRequireString;
             },
             requireString: function() {
               return findModuleSync(this.rawRequireString, this.parser.options)
@@ -5357,15 +7361,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 86 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error", "formattedInspect"],
@@ -5402,21 +7406,36 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 87 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   let SimpleLiteralStn;
   return (SimpleLiteralStn = Caf.defClass(
     class SimpleLiteralStn extends __webpack_require__(2) {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {
       this.prototype.needsParens = false;
+      this.prototype.toSourceNode = function(options) {
+        let value;
+        ({ value } = this.props);
+        return this.createSourceNode(
+          Caf.exists(options) && options.dotBase ? ["(", value, ")"] : value
+        );
+      };
+      this.getter({
+        propName: function() {
+          return this.props.value;
+        },
+        canBeUsedInES6Structuring: function() {
+          return true;
+        }
+      });
       this.prototype.toJs = function(options) {
         let value;
         ({ value } = this.props);
@@ -5428,15 +7447,15 @@ Caf.defMod(module, () => {
   ));
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 88 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let SwitchStn;
@@ -5488,15 +7507,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 89 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ThisStn;
@@ -5504,25 +7523,34 @@ Caf.defMod(module, () => {
       class ThisStn extends __webpack_require__(2) {},
       function(ThisStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
+        this.getter({
+          identifier: function() {
+            let cafBase;
+            return Caf.exists((cafBase = this.children[0])) && cafBase.toJs();
+          },
+          propName: function() {
+            let cafTemp;
+            return (cafTemp = this.identifier) != null ? cafTemp : "this";
+          }
+        });
         this.prototype.toJs = function() {
-          return this.children[0]
-            ? `this.${Caf.toString(this.children[0].toJs())}`
-            : "this";
+          let id;
+          return (id = this.identifier) ? `this.${Caf.toString(id)}` : "this";
         };
       }
     ));
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 90 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ThrowStn;
@@ -5539,46 +7567,73 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 91 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
-  return (() => {
-    let TryStn;
-    return (TryStn = Caf.defClass(
-      class TryStn extends __webpack_require__(2) {},
-      function(TryStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function(options = {}) {
-          let expression, body, optionalCatch, js;
-          ({ expression } = options);
-          ({ body, optionalCatch } = this.labeledChildren);
-          body = expression ? body.toFunctionBodyJs() : body.toJs();
-          optionalCatch =
-            (Caf.exists(optionalCatch) && optionalCatch.toJs(options)) ||
-            "catch (cafError) {}";
-          js = `try {${Caf.toString(body)};} ${Caf.toString(optionalCatch)}`;
-          return expression ? this.doJs(null, js) : js;
-        };
-      }
-    ));
-  })();
+  return Caf.importInvoke(
+    ["StnRegistry"],
+    [global, __webpack_require__(3)],
+    StnRegistry => {
+      let TryStn;
+      return (TryStn = Caf.defClass(
+        class TryStn extends __webpack_require__(2) {
+          constructor() {
+            let cafTemp, cafBase;
+            super(...arguments);
+            if (!this.labeledChildren.optionalCatch) {
+              (this.children[1] =
+                (cafTemp = (cafBase = this.labeledChildren).optionalCatch) !=
+                null
+                  ? cafTemp
+                  : (cafBase.optionalCatch = StnRegistry.CatchStn())).parent = this;
+            }
+          }
+        },
+        function(TryStn, classSuper, instanceSuper) {
+          this.prototype.toJs = function(options = {}) {
+            let expression, body, optionalCatch, base;
+            ({ expression } = options);
+            ({ body, optionalCatch } = this.labeledChildren);
+            body = expression ? body.toFunctionBodyJs() : body.toJs();
+            base = `try {${Caf.toString(body)};} ${Caf.toString(
+              optionalCatch.toJs(options)
+            )}`;
+            return expression ? this.doJs(null, base) : base;
+          };
+          this.prototype.toSourceNode = function(options = {}) {
+            let expression, body, optionalCatch, base;
+            ({ expression } = options);
+            ({ body, optionalCatch } = this.labeledChildren);
+            base = [
+              "try {",
+              body.toSourceNode({ returnAction: !!expression }),
+              "} ",
+              optionalCatch.toSourceNode(options)
+            ];
+            return expression ? this.doSourceNode(null, [base, ";"]) : base;
+          };
+        }
+      ));
+    }
+  );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 92 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let UnaryOperatorStn;
@@ -5629,15 +7684,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 93 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let UndefinedStn;
@@ -5653,15 +7708,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 94 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   let ValueStn;
   return (ValueStn = Caf.defClass(
@@ -5674,15 +7729,15 @@ Caf.defMod(module, () => {
   ));
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 95 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error"],
@@ -5690,7 +7745,7 @@ Caf.defMod(module, () => {
     Error => {
       let AccessorStn;
       return (AccessorStn = Caf.defClass(
-        class AccessorStn extends __webpack_require__(9) {
+        class AccessorStn extends __webpack_require__(11) {
           constructor(props, children) {
             super(...arguments);
             if (!(children.length === 2)) {
@@ -5711,18 +7766,28 @@ Caf.defMod(module, () => {
             },
             isAccessor: function() {
               return true;
+            },
+            propName: function() {
+              return this.key.toJs();
             }
           });
           this.prototype.toJs = function() {
-            let base, identierString;
+            let base, identifierString;
             base = this.value.toJsExpression({ dotBase: true });
             return this.key.isIdentifier
-              ? (identierString = this.key.toJs()).match(/['"`]/)
-                ? `${Caf.toString(base)}[${Caf.toString(identierString)}]`
-                : `${Caf.toString(base)}.${Caf.toString(identierString)}`
+              ? (identifierString = this.key.toJs()).match(/['"`]/)
+                ? `${Caf.toString(base)}[${Caf.toString(identifierString)}]`
+                : `${Caf.toString(base)}.${Caf.toString(identifierString)}`
               : `${Caf.toString(base)}[${Caf.toString(
                   this.key.toJsExpression()
                 )}]`;
+          };
+          this.prototype.toSourceNode = function() {
+            let base;
+            base = this.value.toSourceNode({ expression: true, dotBase: true });
+            return this.key.isIdentifier
+              ? this.createSourceNode(base, ".", this.key.toSourceNode())
+              : this.createSourceNode(base, "[", this.key.toSourceNode(), "]");
           };
         }
       ));
@@ -5730,20 +7795,126 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 96 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
+Caf.defMod(module, () => {
+  return (() => {
+    let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
+    return (
+      (SemanticTree = __webpack_require__(4)),
+      (supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/),
+      (AssignmentStn = Caf.defClass(
+        class AssignmentStn extends __webpack_require__(11) {
+          constructor(props, children) {
+            super(...arguments);
+            this.operator = props.operator || "";
+            this.lValue = children[0];
+            this.rValue = children[1];
+          }
+        },
+        function(AssignmentStn, classSuper, instanceSuper) {
+          this.getter({
+            value: function() {
+              return this.lValue;
+            },
+            key: function() {
+              return this.rValue;
+            },
+            propName: function() {
+              let cafBase;
+              return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
+            }
+          });
+          this.prototype.updateScope = function(scope) {
+            let cafBase;
+            this.scope = scope;
+            this.scope.addIdentifierAssigned(
+              Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
+            );
+            return instanceSuper.updateScope.apply(this, arguments);
+          };
+          this.prototype.postTransform = function() {
+            let value1, value2;
+            return !supportedOperatorsRegExp.test(this.operator)
+              ? (({ value1, value2 } = this.getValueWithBaseCapture(
+                  this.lValue
+                )),
+                SemanticTree.BinaryOperatorStn(
+                  { operator: this.operator },
+                  value1,
+                  SemanticTree.AssignmentStn(
+                    { parseTreeNode: this.parseTreeNode },
+                    value2,
+                    this.rValue
+                  )
+                ))
+              : this;
+          };
+          this.prototype.toSourceNode = function(options) {
+            let out;
+            out = supportedOperatorsRegExp.test(this.operator)
+              ? [
+                  this.lValue.toSourceNode(),
+                  ` ${Caf.toString(this.operator)}= `,
+                  this.rValue.toSourceNode({ expression: true })
+                ]
+              : [
+                  this.lValue.toSourceNode({ expression: true }),
+                  ` ${Caf.toString(this.operator)} `,
+                  this.lValue.toSourceNode(),
+                  " = ",
+                  this.rValue.toSourceNode({ expression: true })
+                ];
+            return this.createSourceNode(
+              (Caf.exists(options) && options.dotBase) ||
+              (Caf.exists(options) && options.subExpression)
+                ? ["(", out, ")"]
+                : out
+            );
+          };
+          this.prototype.toJs = function(options) {
+            let out;
+            out = supportedOperatorsRegExp.test(this.operator)
+              ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
+                  this.operator
+                )}= ${Caf.toString(this.rValue.toJsExpression())}`
+              : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
+                  this.operator
+                )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
+                  this.rValue.toJsExpression()
+                )}`;
+            return (Caf.exists(options) && options.dotBase) ||
+              (Caf.exists(options) && options.subExpression)
+              ? `(${Caf.toString(out)})`
+              : out;
+          };
+        }
+      ))
+    );
+  })();
+});
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "compactFlatten", "merge"],
+    ["compactFlatten", "merge", "Error"],
     [global, __webpack_require__(3)],
-    (Error, compactFlatten, merge) => {
+    (compactFlatten, merge, Error) => {
       let SemanticTree, ClassStn;
       return (
         (SemanticTree = __webpack_require__(4)),
@@ -5759,8 +7930,39 @@ Caf.defMod(module, () => {
               },
               instanceSuperHandle: function() {
                 return this.props.instanceSuperHandle;
+              },
+              body: function() {
+                return this.labeledChildren.body;
               }
             });
+            this.prototype.decorate = function() {
+              let cafBase;
+              return Caf.each(
+                Caf.exists((cafBase = this.body)) && cafBase.children,
+                undefined,
+                stn => {
+                  if (stn.type === "Object") {
+                    Caf.each(stn.children, undefined, objectPropValueStn => {
+                      let propNameStn, propValueStn;
+                      [propNameStn, propValueStn] = objectPropValueStn.children;
+                      if (
+                        propNameStn.type === "ObjectPropName" &&
+                        propNameStn.toJs() === "constructor"
+                      ) {
+                        propValueStn.props.isConstructor = true;
+                        Caf.each(
+                          propValueStn.find(/Super/),
+                          undefined,
+                          superCallChild => {
+                            superCallChild.props.calledInConstructor = true;
+                          }
+                        );
+                      }
+                    });
+                  }
+                }
+              );
+            };
             this.prototype.postTransform = function() {
               let classNameStn,
                 classExtends,
@@ -5779,7 +7981,6 @@ Caf.defMod(module, () => {
                 instanceSuperHandle,
                 statementsToCount,
                 statementCount,
-                superCallChildren,
                 classBody,
                 children;
               ({
@@ -5832,9 +8033,7 @@ Caf.defMod(module, () => {
                                     propValueStn,
                                     assignToStn,
                                     propName,
-                                    m,
-                                    __,
-                                    classPropName;
+                                    isThisProp;
                                   [
                                     propNameStn,
                                     propValueStn
@@ -5842,14 +8041,16 @@ Caf.defMod(module, () => {
                                   assignToStn = (() => {
                                     switch (propNameStn.type) {
                                       case "ObjectPropName":
-                                        propName = propNameStn.toJs();
-                                        return (m = propName.match(/^"@(.*)"$/))
-                                          ? (([__, classPropName] = m),
-                                            ThisStn(
+                                        ({
+                                          propName,
+                                          isThisProp
+                                        } = propNameStn);
+                                        return isThisProp
+                                          ? ThisStn(
                                               IdentifierStn({
-                                                identifier: classPropName
+                                                identifier: propName
                                               })
-                                            ))
+                                            )
                                           : propName === "constructor"
                                             ? ((constructorStn = propValueStn),
                                               null)
@@ -5898,12 +8099,13 @@ Caf.defMod(module, () => {
                 if (constructorStn) {
                   statementCount -= 1;
                   constructorStn.props.isConstructor = true;
-                  if ((superCallChildren = constructorStn.find("Super"))) {
-                    if (!(superCallChildren.length === 1)) {
-                      throw new Error("at most one super call in constructor");
+                  Caf.each(
+                    constructorStn.find(/Super/),
+                    undefined,
+                    superCallChild => {
+                      superCallChild.props.calledInConstructor = true;
                     }
-                    superCallChildren[0].props.calledInConstructor = true;
-                  }
+                  );
                   classBody = StatementsStn(
                     { label: "classBody" },
                     constructorStn
@@ -5965,25 +8167,25 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 97 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten"],
+    ["compactFlatten", "merge"],
     [global, __webpack_require__(3)],
-    compactFlatten => {
+    (compactFlatten, merge) => {
       let StnRegistry, FunctionDefinitionStn;
       return (
         (StnRegistry = __webpack_require__(4)),
         (FunctionDefinitionStn = Caf.defClass(
-          class FunctionDefinitionStn extends __webpack_require__(7)(
+          class FunctionDefinitionStn extends __webpack_require__(9)(
             __webpack_require__(2)
           ) {
             constructor(props, children, pretransformedStn) {
@@ -6009,12 +8211,6 @@ Caf.defMod(module, () => {
             }
           },
           function(FunctionDefinitionStn, classSuper, instanceSuper) {
-            this.prototype.cloneWithNewStatements = function(statements) {
-              return new this.class(this.props, [
-                this.arguments,
-                StnRegistry.StatementsStn(compactFlatten(statements))
-              ]);
-            };
             this.getter({
               needsParens: function() {
                 return false;
@@ -6024,6 +8220,20 @@ Caf.defMod(module, () => {
               },
               childrenToUpdateScope: function() {
                 return compactFlatten([this.statements]);
+              },
+              body: function() {
+                return this.children[1];
+              },
+              args: function() {
+                return this.children[0];
+              },
+              statementStns: function() {
+                let cafBase;
+                return Caf.exists((cafBase = this.body)) && cafBase.children;
+              },
+              argumentStns: function() {
+                let cafBase;
+                return Caf.exists((cafBase = this.args)) && cafBase.children;
               }
             });
             this.prototype.updateScope = function() {
@@ -6047,89 +8257,186 @@ Caf.defMod(module, () => {
                 : instanceSuper.addIdentifierAssigned.apply(this, arguments);
             };
             this.prototype.postTransform = function() {
-              let foundParent;
+              let foundParent, newStatementStns, StatementsStn, cafBase;
               if (this.props.bound === "auto") {
                 this.props.bound = (foundParent = this.pretransformedStn.findParent(
                   /Class|FunctionDefinition/
                 ))
-                  ? foundParent.type === "Class" ? false : true
+                  ? foundParent.type === "Class"
+                    ? false
+                    : true
                   : false;
               }
-              return instanceSuper.postTransform.apply(this, arguments);
+              return this.statementStns !==
+                (newStatementStns = this.getPostTransformStatementStns())
+                ? (({
+                    FunctionDefinitionStn,
+                    StatementsStn
+                  } = __webpack_require__(4)),
+                  FunctionDefinitionStn(
+                    (Caf.exists((cafBase = this.body)) &&
+                      cafBase.children.length) > 0
+                      ? this.props
+                      : merge(this.props, { returnIgnored: true }),
+                    this.children[0],
+                    StatementsStn(newStatementStns)
+                  ))
+                : instanceSuper.postTransform.apply(this, arguments);
+            };
+            this.prototype.getPostTransformStatementStns = function() {
+              let SuperStn,
+                ArraySpreadElementStn,
+                ReferenceStn,
+                IdentifierStn,
+                isConstructor,
+                statementStns,
+                preBodyStatements,
+                lastSuperContainingStatementIndex;
+              ({
+                SuperStn,
+                ArraySpreadElementStn,
+                ReferenceStn,
+                IdentifierStn
+              } = __webpack_require__(4));
+              ({ isConstructor } = this.props);
+              ({ statementStns } = this);
+              preBodyStatements = null;
+              Caf.each(this.argumentStns, undefined, arg => {
+                let stn;
+                if ((stn = arg.generatePreBodyStatementStn())) {
+                  (preBodyStatements != null
+                    ? preBodyStatements
+                    : (preBodyStatements = [])
+                  ).push(stn);
+                }
+              });
+              return compactFlatten(
+                isConstructor
+                  ? ((lastSuperContainingStatementIndex = null),
+                    Caf.each(statementStns, undefined, (v, i) => {
+                      if (
+                        v.type === "Super" ||
+                        v.find(/Super/, /FunctionDefinition|Class/)
+                      ) {
+                        lastSuperContainingStatementIndex = i;
+                      }
+                    }),
+                    lastSuperContainingStatementIndex != null &&
+                    lastSuperContainingStatementIndex >= 0
+                      ? preBodyStatements
+                        ? [
+                            statementStns.slice(
+                              0,
+                              lastSuperContainingStatementIndex + 1
+                            ),
+                            preBodyStatements,
+                            statementStns.slice(
+                              lastSuperContainingStatementIndex + 1,
+                              statementStns.length
+                            )
+                          ]
+                        : statementStns
+                      : [
+                          SuperStn(
+                            ArraySpreadElementStn(
+                              IdentifierStn({ identifier: "arguments" })
+                            )
+                          ),
+                          preBodyStatements,
+                          statementStns
+                        ])
+                  : preBodyStatements
+                    ? [preBodyStatements, statementStns]
+                    : statementStns
+              );
+            };
+            this.getter({
+              autoLetsForSouceNode: function() {
+                let lets;
+                return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+              }
+            });
+            this.prototype.toSourceNode = function(options) {
+              let isConstructor,
+                bound,
+                returnIgnored,
+                statement,
+                argsSouceNode,
+                bodySourceNode,
+                cafTemp,
+                cafBase,
+                cafBase1;
+              ({ isConstructor, bound, returnIgnored } = this.props);
+              if (options) {
+                ({ statement } = options);
+              }
+              argsSouceNode =
+                (cafTemp =
+                  Caf.exists((cafBase = this.args)) &&
+                  cafBase.toSourceNode()) != null
+                  ? cafTemp
+                  : "()";
+              bodySourceNode =
+                Caf.exists((cafBase1 = this.body)) &&
+                cafBase1.toSourceNode({
+                  returnAction: !(isConstructor || returnIgnored)
+                });
+              return bound
+                ? this.createSourceNode(
+                    statement ? "(" : undefined,
+                    argsSouceNode,
+                    " => {",
+                    this.autoLetsForSouceNode,
+                    bodySourceNode,
+                    "}",
+                    statement ? ")" : undefined
+                  )
+                : this.createSourceNode(
+                    statement ? "(" : undefined,
+                    isConstructor ? "constructor" : "function",
+                    argsSouceNode,
+                    " {",
+                    this.autoLetsForSouceNode,
+                    bodySourceNode,
+                    "}",
+                    statement ? ")" : undefined
+                  );
+            };
+            this.prototype.getBodyJs = function() {
+              let returnIgnored, isConstructor, statements, lets, cafBase;
+              ({ returnIgnored, isConstructor } = this.props);
+              statements =
+                Caf.exists((cafBase = this.body)) &&
+                cafBase.toFunctionBodyJsArray(
+                  !(isConstructor || returnIgnored)
+                );
+              if ((lets = this.getAutoLets())) {
+                statements = compactFlatten([lets, statements]);
+              }
+              return (Caf.exists(statements) && statements.length) > 0
+                ? `${Caf.toString(statements.join("; "))};`
+                : "";
+            };
+            this.prototype.getArgsJs = function() {
+              let cafTemp, cafBase;
+              return (cafTemp =
+                Caf.exists((cafBase = this.children[0])) && cafBase.toJs()) !=
+                null
+                ? cafTemp
+                : "()";
             };
             this.prototype.toJs = function() {
-              let returnIgnored,
-                isConstructor,
-                bound,
-                argsDef,
-                body,
-                statements,
-                bodyJs,
-                constructorSuperIndex,
-                beforeSuper,
-                afterSuper,
-                superJs;
-              ({ returnIgnored, isConstructor, bound } = this.props);
-              returnIgnored || (returnIgnored = isConstructor);
-              [argsDef, body] = this.children;
-              statements = [];
-              argsDef = argsDef
-                ? ((statements = Caf.each(
-                    argsDef.children,
-                    [],
-                    (arg, cafK, cafInto) => {
-                      let preBodyStatements;
-                      if (
-                        (preBodyStatements = arg.getFunctionPreBodyStatementsJs())
-                      ) {
-                        cafInto.push(preBodyStatements);
-                      }
-                    }
-                  )),
-                  argsDef.toJs())
-                : "()";
-              bodyJs =
-                Caf.exists(body) && body.toFunctionBodyJsArray(!returnIgnored);
-              if (this.props.isConstructor) {
-                constructorSuperIndex = Caf.extendedEach(
-                  bodyJs,
-                  undefined,
-                  (v, i, cafInto, cafBrk) => {
-                    return v.match(/^super\(/) && (cafBrk(), i);
-                  }
-                );
-              }
-              statements = compactFlatten(
-                constructorSuperIndex != null && constructorSuperIndex >= 0
-                  ? ((beforeSuper = bodyJs.slice(0, constructorSuperIndex)),
-                    (afterSuper = bodyJs.slice(
-                      constructorSuperIndex + 1,
-                      bodyJs.length
-                    )),
-                    (superJs = bodyJs[constructorSuperIndex]),
-                    [
-                      this.getAutoLets(),
-                      beforeSuper,
-                      superJs,
-                      statements,
-                      afterSuper
-                    ])
-                  : [
-                      this.getAutoLets(),
-                      isConstructor && "super(...arguments)",
-                      statements,
-                      bodyJs
-                    ]
-              );
-              body =
-                statements.length > 0
-                  ? `{${Caf.toString(statements.join("; "))};}`
-                  : "{}";
+              let isConstructor, bound;
+              ({ isConstructor, bound } = this.props);
               return bound
-                ? `${Caf.toString(argsDef)} => ${Caf.toString(body)}`
+                ? `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
+                    this.getBodyJs()
+                  )}}`
                 : `${Caf.toString(
                     isConstructor ? "constructor" : "function"
-                  )}${Caf.toString(argsDef)} ${Caf.toString(body)}`;
+                  )}${Caf.toString(this.getArgsJs())} {${Caf.toString(
+                    this.getBodyJs()
+                  )}}`;
             };
           }
         ))
@@ -6138,15 +8445,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 98 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error"],
@@ -6154,9 +8461,9 @@ Caf.defMod(module, () => {
     Error => {
       let SemanticTree, FunctionInvocationStn;
       return (
-        (SemanticTree = __webpack_require__(14)),
+        (SemanticTree = __webpack_require__(15)),
         (FunctionInvocationStn = Caf.defClass(
-          class FunctionInvocationStn extends __webpack_require__(9) {
+          class FunctionInvocationStn extends __webpack_require__(11) {
             constructor(props, children) {
               let functionValue, argStns, cafBase, cafBase1, cafBase2;
               super(...arguments);
@@ -6188,6 +8495,12 @@ Caf.defMod(module, () => {
               },
               isFunctionInvocation: function() {
                 return true;
+              },
+              propName: function() {
+                let cafBase;
+                return (
+                  Caf.exists((cafBase = this.functionValue)) && cafBase.propName
+                );
               }
             });
             this.prototype.toJs = function(options) {
@@ -6225,15 +8538,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 99 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ObjectLiteralAccessorStn;
@@ -6268,15 +8581,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 100 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error", "isString", "merge"],
@@ -6296,7 +8609,7 @@ Caf.defMod(module, () => {
         function(SuperStn, classSuper, instanceSuper) {
           this.prototype.needsParens = false;
           this.prototype.postTransform = function() {
-            let propValue, methodName, m, __, classMethod;
+            let propValue, methodName;
             if (
               !(propValue = this.pretransformedStn.findParent(
                 "ObjectPropValue"
@@ -6311,11 +8624,11 @@ Caf.defMod(module, () => {
                 "property name in parent object-literal must be constant, not computed"
               );
             }
-            if ((m = methodName.match(/^(@)(.*)/))) {
-              [__, classMethod, methodName] = m;
-            }
             return new this.class(
-              merge(this.props, { methodName, classMethod: !!classMethod }),
+              merge(this.props, {
+                methodName,
+                classMethod: !!propValue.isThisProp
+              }),
               this.children
             );
           };
@@ -6354,15 +8667,15 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 101 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let SemanticTree, CaptureStn;
@@ -6392,15 +8705,15 @@ Caf.defMod(module, () => {
   })();
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
-/* 102 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
+let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Error", "arrayWithAllButLast", "peek"],
@@ -6409,9 +8722,9 @@ Caf.defMod(module, () => {
       let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
       return (
         (SemanticTree = __webpack_require__(4)),
-        (UniqueIdentifierHandle = __webpack_require__(10)),
+        (UniqueIdentifierHandle = __webpack_require__(12)),
         (ComprehensionStn = Caf.defClass(
-          class ComprehensionStn extends __webpack_require__(7)(
+          class ComprehensionStn extends __webpack_require__(9)(
             __webpack_require__(2)
           ) {},
           function(ComprehensionStn, classSuper, instanceSuper) {
@@ -6715,215 +9028,2206 @@ Caf.defMod(module, () => {
   );
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(0);
-Caf.defMod(module, () => {
-  return (() => {
-    let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
-    return (
-      (SemanticTree = __webpack_require__(4)),
-      (supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/),
-      (AssignmentStn = Caf.defClass(
-        class AssignmentStn extends __webpack_require__(9) {
-          constructor(props, children) {
-            super(...arguments);
-            this.operator = props.operator || "";
-            this.lValue = children[0];
-            this.rValue = children[1];
-          }
-        },
-        function(AssignmentStn, classSuper, instanceSuper) {
-          this.getter({
-            value: function() {
-              return this.lValue;
-            },
-            key: function() {
-              return this.rValue;
-            }
-          });
-          this.prototype.updateScope = function(scope) {
-            let cafBase;
-            this.scope = scope;
-            this.scope.addIdentifierAssigned(
-              Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
-            );
-            return instanceSuper.updateScope.apply(this, arguments);
-          };
-          this.prototype.postTransform = function() {
-            let value1, value2;
-            return !supportedOperatorsRegExp.test(this.operator)
-              ? (({ value1, value2 } = this.getValueWithBaseCapture(
-                  this.lValue
-                )),
-                SemanticTree.BinaryOperatorStn(
-                  { operator: this.operator },
-                  value1,
-                  SemanticTree.AssignmentStn(value2, this.rValue)
-                ))
-              : this;
-          };
-          this.prototype.toJs = function(options) {
-            let out;
-            out = supportedOperatorsRegExp.test(this.operator)
-              ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
-                  this.operator
-                )}= ${Caf.toString(this.rValue.toJsExpression())}`
-              : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
-                  this.operator
-                )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
-                  this.rValue.toJsExpression()
-                )}`;
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.subExpression)
-              ? `(${Caf.toString(out)})`
-              : out;
-          };
-          this.prototype.toJsParenExpression = function() {
-            return `(${Caf.toString(this.toJs())})`;
-          };
-        }
-      ))
-    );
-  })();
-});
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)(module)))
-
-/***/ }),
-/* 104 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(30);
-
-
-/***/ }),
-/* 105 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(24);
-
-module.exports.addModules({
-  FunctionDefinitionArgStn: __webpack_require__(57),
-  ImportBodyStn: __webpack_require__(58),
-  ImportStn: __webpack_require__(19),
-  RootStn: __webpack_require__(59),
-  StatementsStn: __webpack_require__(20),
-  StringStn: __webpack_require__(60),
-  SwitchWhenStn: __webpack_require__(61)
-});
-
-
-/***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(25);
-
-module.exports.addModules({
-  ArrayDestructuringStn: __webpack_require__(63),
-  ArraySpreadElementStn: __webpack_require__(64),
-  ArrayStn: __webpack_require__(65),
-  BinaryOperatorStn: __webpack_require__(66),
-  CatchStn: __webpack_require__(67),
-  ControlOperatorStn: __webpack_require__(68),
-  DestructuringAssignmentStn: __webpack_require__(69),
-  DestructuringIdentifierStn: __webpack_require__(70),
-  DoStn: __webpack_require__(71),
-  FunctionDefinitionArgsStn: __webpack_require__(72),
-  GlobalIdentifierStn: __webpack_require__(73),
-  IdentifierStn: __webpack_require__(74),
-  InterpolatedStringStn: __webpack_require__(75),
-  LabeledDestructuringTargetStn: __webpack_require__(76),
-  LetStn: __webpack_require__(77),
-  NewInstanceStn: __webpack_require__(78),
-  ObjectDestructuringStn: __webpack_require__(79),
-  ObjectPropNameStn: __webpack_require__(80),
-  ObjectPropValueStn: __webpack_require__(81),
-  ObjectStn: __webpack_require__(82),
-  ReferenceStn: __webpack_require__(83),
-  RegExpStn: __webpack_require__(84),
-  RequireStn: __webpack_require__(85),
-  SemanticTokenStn: __webpack_require__(86),
-  SimpleLiteralStn: __webpack_require__(87),
-  SwitchStn: __webpack_require__(88),
-  ThisStn: __webpack_require__(89),
-  ThrowStn: __webpack_require__(90),
-  TryStn: __webpack_require__(91),
-  UnaryOperatorStn: __webpack_require__(92),
-  UndefinedStn: __webpack_require__(93),
-  ValueStn: __webpack_require__(94)
-});
-
-
-/***/ }),
-/* 107 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(14);
-
-module.exports.addModules({
-  AccessorStn: __webpack_require__(95),
-  ClassStn: __webpack_require__(96),
-  FunctionDefinitionStn: __webpack_require__(97),
-  FunctionInvocationStn: __webpack_require__(98),
-  ObjectLiteralAccessorStn: __webpack_require__(99),
-  SuperStn: __webpack_require__(100)
-});
-
-
-/***/ }),
-/* 108 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(26);
-
-module.exports.addModules({
-  CaptureStn: __webpack_require__(101),
-  ComprehensionStn: __webpack_require__(102)
-});
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
 
 /***/ }),
 /* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(27);
-
-module.exports.addModules({
-  AssignmentStn: __webpack_require__(103)
-});
+module.exports = __webpack_require__(35);
 
 
 /***/ }),
 /* 110 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = require("art-class-system");
+module.exports = __webpack_require__(25);
+
+module.exports.addModules({
+  FunctionDefinitionArgStn: __webpack_require__(62),
+  ImportBodyStn: __webpack_require__(63),
+  ImportStn: __webpack_require__(20),
+  RootStn: __webpack_require__(64),
+  StatementsStn: __webpack_require__(21),
+  StringStn: __webpack_require__(65),
+  SwitchWhenStn: __webpack_require__(66)
+});
+
 
 /***/ }),
 /* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(26);
+
+module.exports.addModules({
+  ArrayDestructuringStn: __webpack_require__(68),
+  ArraySpreadElementStn: __webpack_require__(69),
+  ArrayStn: __webpack_require__(70),
+  BinaryOperatorStn: __webpack_require__(71),
+  CatchStn: __webpack_require__(72),
+  ControlOperatorStn: __webpack_require__(73),
+  DestructuringAssignmentStn: __webpack_require__(74),
+  DestructuringIdentifierStn: __webpack_require__(75),
+  DoStn: __webpack_require__(76),
+  FunctionDefinitionArgsStn: __webpack_require__(77),
+  GlobalIdentifierStn: __webpack_require__(78),
+  IdentifierStn: __webpack_require__(79),
+  InterpolatedStringStn: __webpack_require__(80),
+  LabeledDestructuringTargetStn: __webpack_require__(81),
+  LetStn: __webpack_require__(82),
+  NewInstanceStn: __webpack_require__(83),
+  ObjectDestructuringStn: __webpack_require__(84),
+  ObjectPropNameStn: __webpack_require__(85),
+  ObjectPropValueStn: __webpack_require__(86),
+  ObjectStn: __webpack_require__(87),
+  ReferenceStn: __webpack_require__(88),
+  RegExpStn: __webpack_require__(89),
+  RequireStn: __webpack_require__(90),
+  SemanticTokenStn: __webpack_require__(91),
+  SimpleLiteralStn: __webpack_require__(92),
+  SwitchStn: __webpack_require__(93),
+  ThisStn: __webpack_require__(94),
+  ThrowStn: __webpack_require__(95),
+  TryStn: __webpack_require__(96),
+  UnaryOperatorStn: __webpack_require__(97),
+  UndefinedStn: __webpack_require__(98),
+  ValueStn: __webpack_require__(99)
+});
+
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(15);
+
+module.exports.addModules({
+  AccessorStn: __webpack_require__(100),
+  AssignmentStn: __webpack_require__(101),
+  ClassStn: __webpack_require__(102),
+  FunctionDefinitionStn: __webpack_require__(103),
+  FunctionInvocationStn: __webpack_require__(104),
+  ObjectLiteralAccessorStn: __webpack_require__(105),
+  SuperStn: __webpack_require__(106)
+});
+
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(27);
+
+module.exports.addModules({
+  CaptureStn: __webpack_require__(107),
+  ComprehensionStn: __webpack_require__(108)
+});
+
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+var intToCharMap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
+
+/**
+ * Encode an integer in the range of 0 to 63 to a single base 64 digit.
+ */
+exports.encode = function (number) {
+  if (0 <= number && number < intToCharMap.length) {
+    return intToCharMap[number];
+  }
+  throw new TypeError("Must be between 0 and 63: " + number);
+};
+
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+exports.GREATEST_LOWER_BOUND = 1;
+exports.LEAST_UPPER_BOUND = 2;
+
+/**
+ * Recursive implementation of binary search.
+ *
+ * @param aLow Indices here and lower do not contain the needle.
+ * @param aHigh Indices here and higher do not contain the needle.
+ * @param aNeedle The element being searched for.
+ * @param aHaystack The non-empty array being searched.
+ * @param aCompare Function which takes two elements and returns -1, 0, or 1.
+ * @param aBias Either 'binarySearch.GREATEST_LOWER_BOUND' or
+ *     'binarySearch.LEAST_UPPER_BOUND'. Specifies whether to return the
+ *     closest element that is smaller than or greater than the one we are
+ *     searching for, respectively, if the exact element cannot be found.
+ */
+function recursiveSearch(aLow, aHigh, aNeedle, aHaystack, aCompare, aBias) {
+  // This function terminates when one of the following is true:
+  //
+  //   1. We find the exact element we are looking for.
+  //
+  //   2. We did not find the exact element, but we can return the index of
+  //      the next-closest element.
+  //
+  //   3. We did not find the exact element, and there is no next-closest
+  //      element than the one we are searching for, so we return -1.
+  var mid = Math.floor((aHigh - aLow) / 2) + aLow;
+  var cmp = aCompare(aNeedle, aHaystack[mid], true);
+  if (cmp === 0) {
+    // Found the element we are looking for.
+    return mid;
+  }
+  else if (cmp > 0) {
+    // Our needle is greater than aHaystack[mid].
+    if (aHigh - mid > 1) {
+      // The element is in the upper half.
+      return recursiveSearch(mid, aHigh, aNeedle, aHaystack, aCompare, aBias);
+    }
+
+    // The exact needle element was not found in this haystack. Determine if
+    // we are in termination case (3) or (2) and return the appropriate thing.
+    if (aBias == exports.LEAST_UPPER_BOUND) {
+      return aHigh < aHaystack.length ? aHigh : -1;
+    } else {
+      return mid;
+    }
+  }
+  else {
+    // Our needle is less than aHaystack[mid].
+    if (mid - aLow > 1) {
+      // The element is in the lower half.
+      return recursiveSearch(aLow, mid, aNeedle, aHaystack, aCompare, aBias);
+    }
+
+    // we are in termination case (3) or (2) and return the appropriate thing.
+    if (aBias == exports.LEAST_UPPER_BOUND) {
+      return mid;
+    } else {
+      return aLow < 0 ? -1 : aLow;
+    }
+  }
+}
+
+/**
+ * This is an implementation of binary search which will always try and return
+ * the index of the closest element if there is no exact hit. This is because
+ * mappings between original and generated line/col pairs are single points,
+ * and there is an implicit region between each of them, so a miss just means
+ * that you aren't on the very start of a region.
+ *
+ * @param aNeedle The element you are looking for.
+ * @param aHaystack The array that is being searched.
+ * @param aCompare A function which takes the needle and an element in the
+ *     array and returns -1, 0, or 1 depending on whether the needle is less
+ *     than, equal to, or greater than the element, respectively.
+ * @param aBias Either 'binarySearch.GREATEST_LOWER_BOUND' or
+ *     'binarySearch.LEAST_UPPER_BOUND'. Specifies whether to return the
+ *     closest element that is smaller than or greater than the one we are
+ *     searching for, respectively, if the exact element cannot be found.
+ *     Defaults to 'binarySearch.GREATEST_LOWER_BOUND'.
+ */
+exports.search = function search(aNeedle, aHaystack, aCompare, aBias) {
+  if (aHaystack.length === 0) {
+    return -1;
+  }
+
+  var index = recursiveSearch(-1, aHaystack.length, aNeedle, aHaystack,
+                              aCompare, aBias || exports.GREATEST_LOWER_BOUND);
+  if (index < 0) {
+    return -1;
+  }
+
+  // We have found either the exact element, or the next-closest element than
+  // the one we are searching for. However, there may be more than one such
+  // element. Make sure we always return the smallest of these.
+  while (index - 1 >= 0) {
+    if (aCompare(aHaystack[index], aHaystack[index - 1], true) !== 0) {
+      break;
+    }
+    --index;
+  }
+
+  return index;
+};
+
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2014 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+var util = __webpack_require__(10);
+
+/**
+ * Determine whether mappingB is after mappingA with respect to generated
+ * position.
+ */
+function generatedPositionAfter(mappingA, mappingB) {
+  // Optimized for most common case
+  var lineA = mappingA.generatedLine;
+  var lineB = mappingB.generatedLine;
+  var columnA = mappingA.generatedColumn;
+  var columnB = mappingB.generatedColumn;
+  return lineB > lineA || lineB == lineA && columnB >= columnA ||
+         util.compareByGeneratedPositionsInflated(mappingA, mappingB) <= 0;
+}
+
+/**
+ * A data structure to provide a sorted view of accumulated mappings in a
+ * performance conscious manner. It trades a negligible overhead in general
+ * case for a large speedup in case of mappings being added in order.
+ */
+function MappingList() {
+  this._array = [];
+  this._sorted = true;
+  // Serves as infimum
+  this._last = {generatedLine: -1, generatedColumn: 0};
+}
+
+/**
+ * Iterate through internal items. This method takes the same arguments that
+ * `Array.prototype.forEach` takes.
+ *
+ * NOTE: The order of the mappings is NOT guaranteed.
+ */
+MappingList.prototype.unsortedForEach =
+  function MappingList_forEach(aCallback, aThisArg) {
+    this._array.forEach(aCallback, aThisArg);
+  };
+
+/**
+ * Add the given source mapping.
+ *
+ * @param Object aMapping
+ */
+MappingList.prototype.add = function MappingList_add(aMapping) {
+  if (generatedPositionAfter(this._last, aMapping)) {
+    this._last = aMapping;
+    this._array.push(aMapping);
+  } else {
+    this._sorted = false;
+    this._array.push(aMapping);
+  }
+};
+
+/**
+ * Returns the flat, sorted array of mappings. The mappings are sorted by
+ * generated position.
+ *
+ * WARNING: This method returns internal data without copying, for
+ * performance. The return value must NOT be mutated, and should be treated as
+ * an immutable borrow. If you want to take ownership, you must make your own
+ * copy.
+ */
+MappingList.prototype.toArray = function MappingList_toArray() {
+  if (!this._sorted) {
+    this._array.sort(util.compareByGeneratedPositionsInflated);
+    this._sorted = true;
+  }
+  return this._array;
+};
+
+exports.MappingList = MappingList;
+
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+var util = __webpack_require__(10);
+var binarySearch = __webpack_require__(115);
+var ArraySet = __webpack_require__(30).ArraySet;
+var base64VLQ = __webpack_require__(31);
+var readWasm = __webpack_require__(32);
+var wasm = __webpack_require__(119);
+
+function SourceMapConsumer(aSourceMap, aSourceMapURL) {
+  var sourceMap = aSourceMap;
+  if (typeof aSourceMap === 'string') {
+    sourceMap = util.parseSourceMapInput(aSourceMap);
+  }
+
+  return Promise.resolve().then(_ => {
+    return sourceMap.sections != null
+      ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
+      : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
+  });
+}
+
+SourceMapConsumer.initialize = opts => {
+  readWasm.initialize(opts["lib/mappings.wasm"]);
+};
+
+SourceMapConsumer.fromSourceMap = function(aSourceMap, aSourceMapURL) {
+  return BasicSourceMapConsumer.fromSourceMap(aSourceMap, aSourceMapURL);
+}
+
+/**
+ * Construct a new `SourceMapConsumer` from `rawSourceMap` and `sourceMapUrl`
+ * (see the `SourceMapConsumer` constructor for details. Then, invoke the `async
+ * function f(SourceMapConsumer) -> T` with the newly constructed consumer, wait
+ * for `f` to complete, call `destroy` on the consumer, and return `f`'s return
+ * value.
+ *
+ * You must not use the consumer after `f` completes!
+ *
+ * By using `with`, you do not have to remember to manually call `destroy` on
+ * the consumer, since it will be called automatically once `f` completes.
+ *
+ * ```js
+ * const xSquared = await SourceMapConsumer.with(
+ *   myRawSourceMap,
+ *   null,
+ *   async function (consumer) {
+ *     // Use `consumer` inside here and don't worry about remembering
+ *     // to call `destroy`.
+ *
+ *     const x = await whatever(consumer);
+ *     return x * x;
+ *   }
+ * );
+ *
+ * // You may not use that `consumer` anymore out here; it has
+ * // been destroyed. But you can use `xSquared`.
+ * console.log(xSquared);
+ * ```
+ */
+SourceMapConsumer.with = function(rawSourceMap, sourceMapUrl, f) {
+  // Note: The `acorn` version that `webpack` currently depends on doesn't
+  // support `async` functions, and the nodes that we support don't all have
+  // `.finally`. Therefore, this is written a bit more convolutedly than it
+  // should really be.
+
+  let consumer = null;
+  const promise = new SourceMapConsumer(rawSourceMap, sourceMapUrl);
+  return promise
+    .then(c => {
+      consumer = c;
+      return f(c);
+    })
+    .then(x => {
+      if (consumer) {
+        consumer.destroy();
+      }
+      return x;
+    }, e => {
+      if (consumer) {
+        consumer.destroy();
+      }
+      throw e;
+    });
+};
+
+/**
+ * The version of the source mapping spec that we are consuming.
+ */
+SourceMapConsumer.prototype._version = 3;
+
+/**
+ * Parse the mappings in a string in to a data structure which we can easily
+ * query (the ordered arrays in the `this.__generatedMappings` and
+ * `this.__originalMappings` properties).
+ */
+SourceMapConsumer.prototype._parseMappings =
+  function SourceMapConsumer_parseMappings(aStr, aSourceRoot) {
+    throw new Error("Subclasses must implement _parseMappings");
+  };
+
+SourceMapConsumer.GENERATED_ORDER = 1;
+SourceMapConsumer.ORIGINAL_ORDER = 2;
+
+SourceMapConsumer.GREATEST_LOWER_BOUND = 1;
+SourceMapConsumer.LEAST_UPPER_BOUND = 2;
+
+/**
+ * Iterate over each mapping between an original source/line/column and a
+ * generated line/column in this source map.
+ *
+ * @param Function aCallback
+ *        The function that is called with each mapping.
+ * @param Object aContext
+ *        Optional. If specified, this object will be the value of `this` every
+ *        time that `aCallback` is called.
+ * @param aOrder
+ *        Either `SourceMapConsumer.GENERATED_ORDER` or
+ *        `SourceMapConsumer.ORIGINAL_ORDER`. Specifies whether you want to
+ *        iterate over the mappings sorted by the generated file's line/column
+ *        order or the original's source/line/column order, respectively. Defaults to
+ *        `SourceMapConsumer.GENERATED_ORDER`.
+ */
+SourceMapConsumer.prototype.eachMapping =
+  function SourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
+    throw new Error("Subclasses must implement eachMapping");
+  };
+
+/**
+ * Returns all generated line and column information for the original source,
+ * line, and column provided. If no column is provided, returns all mappings
+ * corresponding to a either the line we are searching for or the next
+ * closest line that has any mappings. Otherwise, returns all mappings
+ * corresponding to the given line and either the column we are searching for
+ * or the next closest column that has any offsets.
+ *
+ * The only argument is an object with the following properties:
+ *
+ *   - source: The filename of the original source.
+ *   - line: The line number in the original source.  The line number is 1-based.
+ *   - column: Optional. the column number in the original source.
+ *    The column number is 0-based.
+ *
+ * and an array of objects is returned, each with the following properties:
+ *
+ *   - line: The line number in the generated source, or null.  The
+ *    line number is 1-based.
+ *   - column: The column number in the generated source, or null.
+ *    The column number is 0-based.
+ */
+SourceMapConsumer.prototype.allGeneratedPositionsFor =
+  function SourceMapConsumer_allGeneratedPositionsFor(aArgs) {
+    throw new Error("Subclasses must implement allGeneratedPositionsFor");
+  };
+
+SourceMapConsumer.prototype.destroy =
+  function SourceMapConsumer_destroy() {
+    throw new Error("Subclasses must implement destroy");
+  };
+
+exports.SourceMapConsumer = SourceMapConsumer;
+
+/**
+ * A BasicSourceMapConsumer instance represents a parsed source map which we can
+ * query for information about the original file positions by giving it a file
+ * position in the generated source.
+ *
+ * The first parameter is the raw source map (either as a JSON string, or
+ * already parsed to an object). According to the spec, source maps have the
+ * following attributes:
+ *
+ *   - version: Which version of the source map spec this map is following.
+ *   - sources: An array of URLs to the original source files.
+ *   - names: An array of identifiers which can be referenced by individual mappings.
+ *   - sourceRoot: Optional. The URL root from which all sources are relative.
+ *   - sourcesContent: Optional. An array of contents of the original source files.
+ *   - mappings: A string of base64 VLQs which contain the actual mappings.
+ *   - file: Optional. The generated file this source map is associated with.
+ *
+ * Here is an example source map, taken from the source map spec[0]:
+ *
+ *     {
+ *       version : 3,
+ *       file: "out.js",
+ *       sourceRoot : "",
+ *       sources: ["foo.js", "bar.js"],
+ *       names: ["src", "maps", "are", "fun"],
+ *       mappings: "AA,AB;;ABCDE;"
+ *     }
+ *
+ * The second parameter, if given, is a string whose value is the URL
+ * at which the source map was found.  This URL is used to compute the
+ * sources array.
+ *
+ * [0]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
+ */
+function BasicSourceMapConsumer(aSourceMap, aSourceMapURL) {
+  var sourceMap = aSourceMap;
+  if (typeof aSourceMap === 'string') {
+    sourceMap = util.parseSourceMapInput(aSourceMap);
+  }
+
+  var version = util.getArg(sourceMap, 'version');
+  var sources = util.getArg(sourceMap, 'sources');
+  // Sass 3.3 leaves out the 'names' array, so we deviate from the spec (which
+  // requires the array) to play nice here.
+  var names = util.getArg(sourceMap, 'names', []);
+  var sourceRoot = util.getArg(sourceMap, 'sourceRoot', null);
+  var sourcesContent = util.getArg(sourceMap, 'sourcesContent', null);
+  var mappings = util.getArg(sourceMap, 'mappings');
+  var file = util.getArg(sourceMap, 'file', null);
+
+  // Once again, Sass deviates from the spec and supplies the version as a
+  // string rather than a number, so we use loose equality checking here.
+  if (version != this._version) {
+    throw new Error('Unsupported version: ' + version);
+  }
+
+  if (sourceRoot) {
+    sourceRoot = util.normalize(sourceRoot);
+  }
+
+  sources = sources
+    .map(String)
+    // Some source maps produce relative source paths like "./foo.js" instead of
+    // "foo.js".  Normalize these first so that future comparisons will succeed.
+    // See bugzil.la/1090768.
+    .map(util.normalize)
+    // Always ensure that absolute sources are internally stored relative to
+    // the source root, if the source root is absolute. Not doing this would
+    // be particularly problematic when the source root is a prefix of the
+    // source (valid, but why??). See github issue #199 and bugzil.la/1188982.
+    .map(function (source) {
+      return sourceRoot && util.isAbsolute(sourceRoot) && util.isAbsolute(source)
+        ? util.relative(sourceRoot, source)
+        : source;
+    });
+
+  // Pass `true` below to allow duplicate names and sources. While source maps
+  // are intended to be compressed and deduplicated, the TypeScript compiler
+  // sometimes generates source maps with duplicates in them. See Github issue
+  // #72 and bugzil.la/889492.
+  this._names = ArraySet.fromArray(names.map(String), true);
+  this._sources = ArraySet.fromArray(sources, true);
+
+  this._absoluteSources = this._sources.toArray().map(function (s) {
+    return util.computeSourceURL(sourceRoot, s, aSourceMapURL);
+  });
+
+  this.sourceRoot = sourceRoot;
+  this.sourcesContent = sourcesContent;
+  this._mappings = mappings;
+  this._sourceMapURL = aSourceMapURL;
+  this.file = file;
+
+  this._computedColumnSpans = false;
+  this._mappingsPtr = 0;
+  this._wasm = null;
+
+  return wasm().then(wasm => {
+    this._wasm = wasm;
+    return this;
+  });
+}
+
+BasicSourceMapConsumer.prototype = Object.create(SourceMapConsumer.prototype);
+BasicSourceMapConsumer.prototype.consumer = SourceMapConsumer;
+
+/**
+ * Utility function to find the index of a source.  Returns -1 if not
+ * found.
+ */
+BasicSourceMapConsumer.prototype._findSourceIndex = function(aSource) {
+  var relativeSource = aSource;
+  if (this.sourceRoot != null) {
+    relativeSource = util.relative(this.sourceRoot, relativeSource);
+  }
+
+  if (this._sources.has(relativeSource)) {
+    return this._sources.indexOf(relativeSource);
+  }
+
+  // Maybe aSource is an absolute URL as returned by |sources|.  In
+  // this case we can't simply undo the transform.
+  var i;
+  for (i = 0; i < this._absoluteSources.length; ++i) {
+    if (this._absoluteSources[i] == aSource) {
+      return i;
+    }
+  }
+
+  return -1;
+};
+
+/**
+ * Create a BasicSourceMapConsumer from a SourceMapGenerator.
+ *
+ * @param SourceMapGenerator aSourceMap
+ *        The source map that will be consumed.
+ * @param String aSourceMapURL
+ *        The URL at which the source map can be found (optional)
+ * @returns BasicSourceMapConsumer
+ */
+BasicSourceMapConsumer.fromSourceMap =
+  function SourceMapConsumer_fromSourceMap(aSourceMap, aSourceMapURL) {
+    return new BasicSourceMapConsumer(aSourceMap.toString());
+  };
+
+/**
+ * The version of the source mapping spec that we are consuming.
+ */
+BasicSourceMapConsumer.prototype._version = 3;
+
+/**
+ * The list of original sources.
+ */
+Object.defineProperty(BasicSourceMapConsumer.prototype, 'sources', {
+  get: function () {
+    return this._absoluteSources.slice();
+  }
+});
+
+BasicSourceMapConsumer.prototype._getMappingsPtr = function () {
+  if (this._mappingsPtr === 0) {
+    this._parseMappings(this._mappings, this.sourceRoot);
+  }
+
+  return this._mappingsPtr;
+};
+
+/**
+ * Parse the mappings in a string in to a data structure which we can easily
+ * query (the ordered arrays in the `this.__generatedMappings` and
+ * `this.__originalMappings` properties).
+ */
+BasicSourceMapConsumer.prototype._parseMappings =
+  function BasicSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
+    const size = aStr.length;
+
+    const mappingsBufPtr = this._wasm.exports.allocate_mappings(size);
+    const mappingsBuf = new Uint8Array(this._wasm.exports.memory.buffer, mappingsBufPtr, size);
+    for (var i = 0; i < size; i++) {
+      mappingsBuf[i] = aStr.charCodeAt(i);
+    }
+
+    const mappingsPtr = this._wasm.exports.parse_mappings(mappingsBufPtr);
+
+    if (!mappingsPtr) {
+      const error = this._wasm.exports.get_last_error();
+      let msg = `Error parsing mappings (code ${error}): `;
+
+      // XXX: keep these error codes in sync with `fitzgen/source-map-mappings`.
+      switch (error) {
+        case 1:
+          msg += "the mappings contained a negative line, column, source index, or name index";
+          break;
+        case 2:
+          msg += "the mappings contained a number larger than 2**32";
+          break;
+        case 3:
+          msg += "reached EOF while in the middle of parsing a VLQ";
+          break;
+        case 4:
+          msg += "invalid base 64 character while parsing a VLQ";
+          break
+        default:
+          msg += "unknown error code";
+          break;
+      }
+
+      throw new Error(msg);
+    }
+
+    this._mappingsPtr = mappingsPtr;
+  };
+
+BasicSourceMapConsumer.prototype.eachMapping =
+  function BasicSourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
+    var context = aContext || null;
+    var order = aOrder || SourceMapConsumer.GENERATED_ORDER;
+    var sourceRoot = this.sourceRoot;
+
+    this._wasm.withMappingCallback(
+      mapping => {
+        if (mapping.source !== null) {
+          mapping.source = this._sources.at(mapping.source);
+          mapping.source = util.computeSourceURL(sourceRoot, mapping.source, this._sourceMapURL);
+
+          if (mapping.name !== null) {
+            mapping.name = this._names.at(mapping.name);
+          }
+        }
+
+        aCallback.call(context, mapping);
+      },
+      () => {
+        switch (order) {
+        case SourceMapConsumer.GENERATED_ORDER:
+          this._wasm.exports.by_generated_location(this._getMappingsPtr());
+          break;
+        case SourceMapConsumer.ORIGINAL_ORDER:
+          this._wasm.exports.by_original_location(this._getMappingsPtr());
+          break;
+        default:
+          throw new Error("Unknown order of iteration.");
+        }
+      }
+    );
+  };
+
+BasicSourceMapConsumer.prototype.allGeneratedPositionsFor =
+  function BasicSourceMapConsumer_allGeneratedPositionsFor(aArgs) {
+    var source = util.getArg(aArgs, 'source');
+    var originalLine = util.getArg(aArgs, 'line');
+    var originalColumn = aArgs.column || 0;
+
+    source = this._findSourceIndex(source);
+    if (source < 0) {
+      return [];
+    }
+
+    if (originalLine < 1) {
+      throw new Error("Line numbers must be >= 1");
+    }
+
+    if (originalColumn < 0) {
+      throw new Error("Column numbers must be >= 0");
+    }
+
+    var mappings = [];
+
+    this._wasm.withMappingCallback(
+      m => {
+        let lastColumn = m.lastGeneratedColumn;
+        if (this._computedColumnSpans && lastColumn === null) {
+          lastColumn = Infinity;
+        }
+        mappings.push({
+          line: m.generatedLine,
+          column: m.generatedColumn,
+          lastColumn,
+        });
+      }, () => {
+        this._wasm.exports.all_generated_locations_for(
+          this._getMappingsPtr(),
+          source,
+          originalLine - 1,
+          'column' in aArgs,
+          originalColumn
+        );
+      }
+    );
+
+    return mappings;
+  };
+
+BasicSourceMapConsumer.prototype.destroy =
+  function BasicSourceMapConsumer_destroy() {
+    if (this._mappingsPtr !== 0) {
+      this._wasm.exports.free_mappings(this._mappingsPtr);
+      this._mappingsPtr = 0;
+    }
+  };
+
+/**
+ * Compute the last column for each generated mapping. The last column is
+ * inclusive.
+ */
+BasicSourceMapConsumer.prototype.computeColumnSpans =
+  function SourceMapConsumer_computeColumnSpans() {
+    if (this._computedColumnSpans) {
+      return;
+    }
+
+    this._wasm.exports.compute_column_spans(this._getMappingsPtr());
+    this._computedColumnSpans = true;
+  };
+
+/**
+ * Returns the original source, line, and column information for the generated
+ * source's line and column positions provided. The only argument is an object
+ * with the following properties:
+ *
+ *   - line: The line number in the generated source.  The line number
+ *     is 1-based.
+ *   - column: The column number in the generated source.  The column
+ *     number is 0-based.
+ *   - bias: Either 'SourceMapConsumer.GREATEST_LOWER_BOUND' or
+ *     'SourceMapConsumer.LEAST_UPPER_BOUND'. Specifies whether to return the
+ *     closest element that is smaller than or greater than the one we are
+ *     searching for, respectively, if the exact element cannot be found.
+ *     Defaults to 'SourceMapConsumer.GREATEST_LOWER_BOUND'.
+ *
+ * and an object is returned with the following properties:
+ *
+ *   - source: The original source file, or null.
+ *   - line: The line number in the original source, or null.  The
+ *     line number is 1-based.
+ *   - column: The column number in the original source, or null.  The
+ *     column number is 0-based.
+ *   - name: The original identifier, or null.
+ */
+BasicSourceMapConsumer.prototype.originalPositionFor =
+  function SourceMapConsumer_originalPositionFor(aArgs) {
+    var needle = {
+      generatedLine: util.getArg(aArgs, 'line'),
+      generatedColumn: util.getArg(aArgs, 'column')
+    };
+
+    if (needle.generatedLine < 1) {
+      throw new Error("Line numbers must be >= 1");
+    }
+
+    if (needle.generatedColumn < 0) {
+      throw new Error("Column numbers must be >= 0");
+    }
+
+    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+    if (bias == null) {
+      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+    }
+
+    var mapping;
+    this._wasm.withMappingCallback(m => mapping = m, () => {
+      this._wasm.exports.original_location_for(
+        this._getMappingsPtr(),
+        needle.generatedLine - 1,
+        needle.generatedColumn,
+        bias
+      );
+    });
+
+    if (mapping) {
+      if (mapping.generatedLine === needle.generatedLine) {
+        var source = util.getArg(mapping, 'source', null);
+        if (source !== null) {
+          source = this._sources.at(source);
+          source = util.computeSourceURL(this.sourceRoot, source, this._sourceMapURL);
+        }
+
+        var name = util.getArg(mapping, 'name', null);
+        if (name !== null) {
+          name = this._names.at(name);
+        }
+
+        return {
+          source: source,
+          line: util.getArg(mapping, 'originalLine', null),
+          column: util.getArg(mapping, 'originalColumn', null),
+          name: name
+        };
+      }
+    }
+
+    return {
+      source: null,
+      line: null,
+      column: null,
+      name: null
+    };
+  };
+
+/**
+ * Return true if we have the source content for every source in the source
+ * map, false otherwise.
+ */
+BasicSourceMapConsumer.prototype.hasContentsOfAllSources =
+  function BasicSourceMapConsumer_hasContentsOfAllSources() {
+    if (!this.sourcesContent) {
+      return false;
+    }
+    return this.sourcesContent.length >= this._sources.size() &&
+      !this.sourcesContent.some(function (sc) { return sc == null; });
+  };
+
+/**
+ * Returns the original source content. The only argument is the url of the
+ * original source file. Returns null if no original source content is
+ * available.
+ */
+BasicSourceMapConsumer.prototype.sourceContentFor =
+  function SourceMapConsumer_sourceContentFor(aSource, nullOnMissing) {
+    if (!this.sourcesContent) {
+      return null;
+    }
+
+    var index = this._findSourceIndex(aSource);
+    if (index >= 0) {
+      return this.sourcesContent[index];
+    }
+
+    var relativeSource = aSource;
+    if (this.sourceRoot != null) {
+      relativeSource = util.relative(this.sourceRoot, relativeSource);
+    }
+
+    var url;
+    if (this.sourceRoot != null
+        && (url = util.urlParse(this.sourceRoot))) {
+      // XXX: file:// URIs and absolute paths lead to unexpected behavior for
+      // many users. We can help them out when they expect file:// URIs to
+      // behave like it would if they were running a local HTTP server. See
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=885597.
+      var fileUriAbsPath = relativeSource.replace(/^file:\/\//, "");
+      if (url.scheme == "file"
+          && this._sources.has(fileUriAbsPath)) {
+        return this.sourcesContent[this._sources.indexOf(fileUriAbsPath)]
+      }
+
+      if ((!url.path || url.path == "/")
+          && this._sources.has("/" + relativeSource)) {
+        return this.sourcesContent[this._sources.indexOf("/" + relativeSource)];
+      }
+    }
+
+    // This function is used recursively from
+    // IndexedSourceMapConsumer.prototype.sourceContentFor. In that case, we
+    // don't want to throw if we can't find the source - we just want to
+    // return null, so we provide a flag to exit gracefully.
+    if (nullOnMissing) {
+      return null;
+    }
+    else {
+      throw new Error('"' + relativeSource + '" is not in the SourceMap.');
+    }
+  };
+
+/**
+ * Returns the generated line and column information for the original source,
+ * line, and column positions provided. The only argument is an object with
+ * the following properties:
+ *
+ *   - source: The filename of the original source.
+ *   - line: The line number in the original source.  The line number
+ *     is 1-based.
+ *   - column: The column number in the original source.  The column
+ *     number is 0-based.
+ *   - bias: Either 'SourceMapConsumer.GREATEST_LOWER_BOUND' or
+ *     'SourceMapConsumer.LEAST_UPPER_BOUND'. Specifies whether to return the
+ *     closest element that is smaller than or greater than the one we are
+ *     searching for, respectively, if the exact element cannot be found.
+ *     Defaults to 'SourceMapConsumer.GREATEST_LOWER_BOUND'.
+ *
+ * and an object is returned with the following properties:
+ *
+ *   - line: The line number in the generated source, or null.  The
+ *     line number is 1-based.
+ *   - column: The column number in the generated source, or null.
+ *     The column number is 0-based.
+ */
+BasicSourceMapConsumer.prototype.generatedPositionFor =
+  function SourceMapConsumer_generatedPositionFor(aArgs) {
+    var source = util.getArg(aArgs, 'source');
+    source = this._findSourceIndex(source);
+    if (source < 0) {
+      return {
+        line: null,
+        column: null,
+        lastColumn: null
+      };
+    }
+
+    var needle = {
+      source: source,
+      originalLine: util.getArg(aArgs, 'line'),
+      originalColumn: util.getArg(aArgs, 'column')
+    };
+
+    if (needle.originalLine < 1) {
+      throw new Error("Line numbers must be >= 1");
+    }
+
+    if (needle.originalColumn < 0) {
+      throw new Error("Column numbers must be >= 0");
+    }
+
+    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+    if (bias == null) {
+      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+    }
+
+    var mapping;
+    this._wasm.withMappingCallback(m => mapping = m, () => {
+      this._wasm.exports.generated_location_for(
+        this._getMappingsPtr(),
+        needle.source,
+        needle.originalLine - 1,
+        needle.originalColumn,
+        bias
+      );
+    });
+
+    if (mapping) {
+      if (mapping.source === needle.source) {
+        let lastColumn = mapping.lastGeneratedColumn;
+        if (this._computedColumnSpans && lastColumn === null) {
+          lastColumn = Infinity;
+        }
+        return {
+          line: util.getArg(mapping, 'generatedLine', null),
+          column: util.getArg(mapping, 'generatedColumn', null),
+          lastColumn,
+        };
+      }
+    }
+
+    return {
+      line: null,
+      column: null,
+      lastColumn: null
+    };
+  };
+
+exports.BasicSourceMapConsumer = BasicSourceMapConsumer;
+
+/**
+ * An IndexedSourceMapConsumer instance represents a parsed source map which
+ * we can query for information. It differs from BasicSourceMapConsumer in
+ * that it takes "indexed" source maps (i.e. ones with a "sections" field) as
+ * input.
+ *
+ * The first parameter is a raw source map (either as a JSON string, or already
+ * parsed to an object). According to the spec for indexed source maps, they
+ * have the following attributes:
+ *
+ *   - version: Which version of the source map spec this map is following.
+ *   - file: Optional. The generated file this source map is associated with.
+ *   - sections: A list of section definitions.
+ *
+ * Each value under the "sections" field has two fields:
+ *   - offset: The offset into the original specified at which this section
+ *       begins to apply, defined as an object with a "line" and "column"
+ *       field.
+ *   - map: A source map definition. This source map could also be indexed,
+ *       but doesn't have to be.
+ *
+ * Instead of the "map" field, it's also possible to have a "url" field
+ * specifying a URL to retrieve a source map from, but that's currently
+ * unsupported.
+ *
+ * Here's an example source map, taken from the source map spec[0], but
+ * modified to omit a section which uses the "url" field.
+ *
+ *  {
+ *    version : 3,
+ *    file: "app.js",
+ *    sections: [{
+ *      offset: {line:100, column:10},
+ *      map: {
+ *        version : 3,
+ *        file: "section.js",
+ *        sources: ["foo.js", "bar.js"],
+ *        names: ["src", "maps", "are", "fun"],
+ *        mappings: "AAAA,E;;ABCDE;"
+ *      }
+ *    }],
+ *  }
+ *
+ * The second parameter, if given, is a string whose value is the URL
+ * at which the source map was found.  This URL is used to compute the
+ * sources array.
+ *
+ * [0]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit#heading=h.535es3xeprgt
+ */
+function IndexedSourceMapConsumer(aSourceMap, aSourceMapURL) {
+  var sourceMap = aSourceMap;
+  if (typeof aSourceMap === 'string') {
+    sourceMap = util.parseSourceMapInput(aSourceMap);
+  }
+
+  var version = util.getArg(sourceMap, 'version');
+  var sections = util.getArg(sourceMap, 'sections');
+
+  if (version != this._version) {
+    throw new Error('Unsupported version: ' + version);
+  }
+
+  this._sources = new ArraySet();
+  this._names = new ArraySet();
+
+  var lastOffset = {
+    line: -1,
+    column: 0
+  };
+  return Promise.all(sections.map(s => {
+    if (s.url) {
+      // The url field will require support for asynchronicity.
+      // See https://github.com/mozilla/source-map/issues/16
+      throw new Error('Support for url field in sections not implemented.');
+    }
+    var offset = util.getArg(s, 'offset');
+    var offsetLine = util.getArg(offset, 'line');
+    var offsetColumn = util.getArg(offset, 'column');
+
+    if (offsetLine < lastOffset.line ||
+        (offsetLine === lastOffset.line && offsetColumn < lastOffset.column)) {
+      throw new Error('Section offsets must be ordered and non-overlapping.');
+    }
+    lastOffset = offset;
+
+    const consumer = new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL);
+    return consumer.then(consumer => {
+      return {
+        generatedOffset: {
+          // The offset fields are 0-based, but we use 1-based indices when
+          // encoding/decoding from VLQ.
+          generatedLine: offsetLine + 1,
+          generatedColumn: offsetColumn + 1
+        },
+        consumer: consumer
+      };
+    });
+  })).then(sections => {
+    this._sections = sections;
+    return this;
+  });
+}
+
+IndexedSourceMapConsumer.prototype = Object.create(SourceMapConsumer.prototype);
+IndexedSourceMapConsumer.prototype.constructor = SourceMapConsumer;
+
+// `__generatedMappings` and `__originalMappings` are arrays that hold the
+// parsed mapping coordinates from the source map's "mappings" attribute. They
+// are lazily instantiated, accessed via the `_generatedMappings` and
+// `_originalMappings` getters respectively, and we only parse the mappings
+// and create these arrays once queried for a source location. We jump through
+// these hoops because there can be many thousands of mappings, and parsing
+// them is expensive, so we only want to do it if we must.
+//
+// Each object in the arrays is of the form:
+//
+//     {
+//       generatedLine: The line number in the generated code,
+//       generatedColumn: The column number in the generated code,
+//       source: The path to the original source file that generated this
+//               chunk of code,
+//       originalLine: The line number in the original source that
+//                     corresponds to this chunk of generated code,
+//       originalColumn: The column number in the original source that
+//                       corresponds to this chunk of generated code,
+//       name: The name of the original symbol which generated this chunk of
+//             code.
+//     }
+//
+// All properties except for `generatedLine` and `generatedColumn` can be
+// `null`.
+//
+// `_generatedMappings` is ordered by the generated positions.
+//
+// `_originalMappings` is ordered by the original positions.
+
+IndexedSourceMapConsumer.prototype.__generatedMappings = null;
+Object.defineProperty(IndexedSourceMapConsumer.prototype, '_generatedMappings', {
+  configurable: true,
+  enumerable: true,
+  get: function () {
+    if (!this.__generatedMappings) {
+      this._sortGeneratedMappings();
+    }
+
+    return this.__generatedMappings;
+  }
+});
+
+IndexedSourceMapConsumer.prototype.__originalMappings = null;
+Object.defineProperty(IndexedSourceMapConsumer.prototype, '_originalMappings', {
+  configurable: true,
+  enumerable: true,
+  get: function () {
+    if (!this.__originalMappings) {
+      this._sortOriginalMappings();
+    }
+
+    return this.__originalMappings;
+  }
+});
+
+IndexedSourceMapConsumer.prototype.__generatedMappingsUnsorted = null;
+Object.defineProperty(IndexedSourceMapConsumer.prototype, '_generatedMappingsUnsorted', {
+  configurable: true,
+  enumerable: true,
+  get: function () {
+    if (!this.__generatedMappingsUnsorted) {
+      this._parseMappings(this._mappings, this.sourceRoot);
+    }
+
+    return this.__generatedMappingsUnsorted;
+  }
+});
+
+IndexedSourceMapConsumer.prototype.__originalMappingsUnsorted = null;
+Object.defineProperty(IndexedSourceMapConsumer.prototype, '_originalMappingsUnsorted', {
+  configurable: true,
+  enumerable: true,
+  get: function () {
+    if (!this.__originalMappingsUnsorted) {
+      this._parseMappings(this._mappings, this.sourceRoot);
+    }
+
+    return this.__originalMappingsUnsorted;
+  }
+});
+
+IndexedSourceMapConsumer.prototype._sortGeneratedMappings =
+  function IndexedSourceMapConsumer_sortGeneratedMappings() {
+    const mappings = this._generatedMappingsUnsorted;
+    mappings.sort(util.compareByGeneratedPositionsDeflated);
+    this.__generatedMappings = mappings;
+  };
+
+IndexedSourceMapConsumer.prototype._sortOriginalMappings =
+  function IndexedSourceMapConsumer_sortOriginalMappings() {
+    const mappings = this._originalMappingsUnsorted;
+    mappings.sort(util.compareByOriginalPositions);
+    this.__originalMappings = mappings;
+  };
+
+/**
+ * The version of the source mapping spec that we are consuming.
+ */
+IndexedSourceMapConsumer.prototype._version = 3;
+
+/**
+ * The list of original sources.
+ */
+Object.defineProperty(IndexedSourceMapConsumer.prototype, 'sources', {
+  get: function () {
+    var sources = [];
+    for (var i = 0; i < this._sections.length; i++) {
+      for (var j = 0; j < this._sections[i].consumer.sources.length; j++) {
+        sources.push(this._sections[i].consumer.sources[j]);
+      }
+    }
+    return sources;
+  }
+});
+
+/**
+ * Returns the original source, line, and column information for the generated
+ * source's line and column positions provided. The only argument is an object
+ * with the following properties:
+ *
+ *   - line: The line number in the generated source.  The line number
+ *     is 1-based.
+ *   - column: The column number in the generated source.  The column
+ *     number is 0-based.
+ *
+ * and an object is returned with the following properties:
+ *
+ *   - source: The original source file, or null.
+ *   - line: The line number in the original source, or null.  The
+ *     line number is 1-based.
+ *   - column: The column number in the original source, or null.  The
+ *     column number is 0-based.
+ *   - name: The original identifier, or null.
+ */
+IndexedSourceMapConsumer.prototype.originalPositionFor =
+  function IndexedSourceMapConsumer_originalPositionFor(aArgs) {
+    var needle = {
+      generatedLine: util.getArg(aArgs, 'line'),
+      generatedColumn: util.getArg(aArgs, 'column')
+    };
+
+    // Find the section containing the generated position we're trying to map
+    // to an original position.
+    var sectionIndex = binarySearch.search(needle, this._sections,
+      function(needle, section) {
+        var cmp = needle.generatedLine - section.generatedOffset.generatedLine;
+        if (cmp) {
+          return cmp;
+        }
+
+        return (needle.generatedColumn -
+                section.generatedOffset.generatedColumn);
+      });
+    var section = this._sections[sectionIndex];
+
+    if (!section) {
+      return {
+        source: null,
+        line: null,
+        column: null,
+        name: null
+      };
+    }
+
+    return section.consumer.originalPositionFor({
+      line: needle.generatedLine -
+        (section.generatedOffset.generatedLine - 1),
+      column: needle.generatedColumn -
+        (section.generatedOffset.generatedLine === needle.generatedLine
+         ? section.generatedOffset.generatedColumn - 1
+         : 0),
+      bias: aArgs.bias
+    });
+  };
+
+/**
+ * Return true if we have the source content for every source in the source
+ * map, false otherwise.
+ */
+IndexedSourceMapConsumer.prototype.hasContentsOfAllSources =
+  function IndexedSourceMapConsumer_hasContentsOfAllSources() {
+    return this._sections.every(function (s) {
+      return s.consumer.hasContentsOfAllSources();
+    });
+  };
+
+/**
+ * Returns the original source content. The only argument is the url of the
+ * original source file. Returns null if no original source content is
+ * available.
+ */
+IndexedSourceMapConsumer.prototype.sourceContentFor =
+  function IndexedSourceMapConsumer_sourceContentFor(aSource, nullOnMissing) {
+    for (var i = 0; i < this._sections.length; i++) {
+      var section = this._sections[i];
+
+      var content = section.consumer.sourceContentFor(aSource, true);
+      if (content) {
+        return content;
+      }
+    }
+    if (nullOnMissing) {
+      return null;
+    }
+    else {
+      throw new Error('"' + aSource + '" is not in the SourceMap.');
+    }
+  };
+
+/**
+ * Returns the generated line and column information for the original source,
+ * line, and column positions provided. The only argument is an object with
+ * the following properties:
+ *
+ *   - source: The filename of the original source.
+ *   - line: The line number in the original source.  The line number
+ *     is 1-based.
+ *   - column: The column number in the original source.  The column
+ *     number is 0-based.
+ *
+ * and an object is returned with the following properties:
+ *
+ *   - line: The line number in the generated source, or null.  The
+ *     line number is 1-based.
+ *   - column: The column number in the generated source, or null.
+ *     The column number is 0-based.
+ */
+IndexedSourceMapConsumer.prototype.generatedPositionFor =
+  function IndexedSourceMapConsumer_generatedPositionFor(aArgs) {
+    for (var i = 0; i < this._sections.length; i++) {
+      var section = this._sections[i];
+
+      // Only consider this section if the requested source is in the list of
+      // sources of the consumer.
+      if (section.consumer._findSourceIndex(util.getArg(aArgs, 'source')) === -1) {
+        continue;
+      }
+      var generatedPosition = section.consumer.generatedPositionFor(aArgs);
+      if (generatedPosition) {
+        var ret = {
+          line: generatedPosition.line +
+            (section.generatedOffset.generatedLine - 1),
+          column: generatedPosition.column +
+            (section.generatedOffset.generatedLine === generatedPosition.line
+             ? section.generatedOffset.generatedColumn - 1
+             : 0)
+        };
+        return ret;
+      }
+    }
+
+    return {
+      line: null,
+      column: null
+    };
+  };
+
+/**
+ * Parse the mappings in a string in to a data structure which we can easily
+ * query (the ordered arrays in the `this.__generatedMappings` and
+ * `this.__originalMappings` properties).
+ */
+IndexedSourceMapConsumer.prototype._parseMappings =
+  function IndexedSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
+    const generatedMappings = this.__generatedMappingsUnsorted = [];
+    const originalMappings = this.__originalMappingsUnsorted = [];
+    for (var i = 0; i < this._sections.length; i++) {
+      var section = this._sections[i];
+
+      var sectionMappings = [];
+      section.consumer.eachMapping(m => sectionMappings.push(m));
+
+      for (var j = 0; j < sectionMappings.length; j++) {
+        var mapping = sectionMappings[j];
+
+        var source = util.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
+        this._sources.add(source);
+        source = this._sources.indexOf(source);
+
+        var name = null;
+        if (mapping.name) {
+          this._names.add(mapping.name);
+          name = this._names.indexOf(mapping.name);
+        }
+
+        // The mappings coming from the consumer for the section have
+        // generated positions relative to the start of the section, so we
+        // need to offset them to be relative to the start of the concatenated
+        // generated file.
+        var adjustedMapping = {
+          source: source,
+          generatedLine: mapping.generatedLine +
+            (section.generatedOffset.generatedLine - 1),
+          generatedColumn: mapping.generatedColumn +
+            (section.generatedOffset.generatedLine === mapping.generatedLine
+            ? section.generatedOffset.generatedColumn - 1
+            : 0),
+          originalLine: mapping.originalLine,
+          originalColumn: mapping.originalColumn,
+          name: name
+        };
+
+        generatedMappings.push(adjustedMapping);
+        if (typeof adjustedMapping.originalLine === 'number') {
+          originalMappings.push(adjustedMapping);
+        }
+      }
+    }
+  };
+
+IndexedSourceMapConsumer.prototype.eachMapping =
+  function IndexedSourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
+    var context = aContext || null;
+    var order = aOrder || SourceMapConsumer.GENERATED_ORDER;
+
+    var mappings;
+    switch (order) {
+    case SourceMapConsumer.GENERATED_ORDER:
+      mappings = this._generatedMappings;
+      break;
+    case SourceMapConsumer.ORIGINAL_ORDER:
+      mappings = this._originalMappings;
+      break;
+    default:
+      throw new Error("Unknown order of iteration.");
+    }
+
+    var sourceRoot = this.sourceRoot;
+    mappings.map(function (mapping) {
+      var source = null;
+      if (mapping.source !== null) {
+        source = this._sources.at(mapping.source);
+        source = util.computeSourceURL(sourceRoot, source, this._sourceMapURL);
+      }
+      return {
+        source: source,
+        generatedLine: mapping.generatedLine,
+        generatedColumn: mapping.generatedColumn,
+        originalLine: mapping.originalLine,
+        originalColumn: mapping.originalColumn,
+        name: mapping.name === null ? null : this._names.at(mapping.name)
+      };
+    }, this).forEach(aCallback, context);
+  };
+
+/**
+ * Find the mapping that best matches the hypothetical "needle" mapping that
+ * we are searching for in the given "haystack" of mappings.
+ */
+IndexedSourceMapConsumer.prototype._findMapping =
+  function IndexedSourceMapConsumer_findMapping(aNeedle, aMappings, aLineName,
+                                                aColumnName, aComparator, aBias) {
+    // To return the position we are searching for, we must first find the
+    // mapping for the given position and then return the opposite position it
+    // points to. Because the mappings are sorted, we can use binary search to
+    // find the best mapping.
+
+    if (aNeedle[aLineName] <= 0) {
+      throw new TypeError('Line must be greater than or equal to 1, got '
+                          + aNeedle[aLineName]);
+    }
+    if (aNeedle[aColumnName] < 0) {
+      throw new TypeError('Column must be greater than or equal to 0, got '
+                          + aNeedle[aColumnName]);
+    }
+
+    return binarySearch.search(aNeedle, aMappings, aComparator, aBias);
+  };
+
+IndexedSourceMapConsumer.prototype.allGeneratedPositionsFor =
+  function IndexedSourceMapConsumer_allGeneratedPositionsFor(aArgs) {
+    var line = util.getArg(aArgs, 'line');
+
+    // When there is no exact match, BasicSourceMapConsumer.prototype._findMapping
+    // returns the index of the closest mapping less than the needle. By
+    // setting needle.originalColumn to 0, we thus find the last mapping for
+    // the given line, provided such a mapping exists.
+    var needle = {
+      source: util.getArg(aArgs, 'source'),
+      originalLine: line,
+      originalColumn: util.getArg(aArgs, 'column', 0)
+    };
+
+    needle.source = this._findSourceIndex(needle.source);
+    if (needle.source < 0) {
+      return [];
+    }
+
+    if (needle.originalLine < 1) {
+      throw new Error("Line numbers must be >= 1");
+    }
+
+    if (needle.originalColumn < 0) {
+      throw new Error("Column numbers must be >= 0");
+    }
+
+    var mappings = [];
+
+    var index = this._findMapping(needle,
+                                  this._originalMappings,
+                                  "originalLine",
+                                  "originalColumn",
+                                  util.compareByOriginalPositions,
+                                  binarySearch.LEAST_UPPER_BOUND);
+    if (index >= 0) {
+      var mapping = this._originalMappings[index];
+
+      if (aArgs.column === undefined) {
+        var originalLine = mapping.originalLine;
+
+        // Iterate until either we run out of mappings, or we run into
+        // a mapping for a different line than the one we found. Since
+        // mappings are sorted, this is guaranteed to find all mappings for
+        // the line we found.
+        while (mapping && mapping.originalLine === originalLine) {
+          let lastColumn = mapping.lastGeneratedColumn;
+          if (this._computedColumnSpans && lastColumn === null) {
+            lastColumn = Infinity;
+          }
+          mappings.push({
+            line: util.getArg(mapping, 'generatedLine', null),
+            column: util.getArg(mapping, 'generatedColumn', null),
+            lastColumn,
+          });
+
+          mapping = this._originalMappings[++index];
+        }
+      } else {
+        var originalColumn = mapping.originalColumn;
+
+        // Iterate until either we run out of mappings, or we run into
+        // a mapping for a different line than the one we were searching for.
+        // Since mappings are sorted, this is guaranteed to find all mappings for
+        // the line we are searching for.
+        while (mapping &&
+               mapping.originalLine === line &&
+               mapping.originalColumn == originalColumn) {
+          let lastColumn = mapping.lastGeneratedColumn;
+          if (this._computedColumnSpans && lastColumn === null) {
+            lastColumn = Infinity;
+          }
+          mappings.push({
+            line: util.getArg(mapping, 'generatedLine', null),
+            column: util.getArg(mapping, 'generatedColumn', null),
+            lastColumn,
+          });
+
+          mapping = this._originalMappings[++index];
+        }
+      }
+    }
+
+    return mappings;
+  };
+
+IndexedSourceMapConsumer.prototype.destroy =
+  function IndexedSourceMapConsumer_destroy() {
+    for (var i = 0; i < this._sections.length; i++) {
+      this._sections[i].consumer.destroy();
+    }
+  };
+
+exports.IndexedSourceMapConsumer = IndexedSourceMapConsumer;
+
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* -*- Mode: js; js-indent-level: 2; -*- */
+/*
+ * Copyright 2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+
+var SourceMapGenerator = __webpack_require__(33).SourceMapGenerator;
+var util = __webpack_require__(10);
+
+// Matches a Windows-style `\r\n` newline or a `\n` newline used by all other
+// operating systems these days (capturing the result).
+var REGEX_NEWLINE = /(\r?\n)/;
+
+// Newline character code for charCodeAt() comparisons
+var NEWLINE_CODE = 10;
+
+// Private symbol for identifying `SourceNode`s when multiple versions of
+// the source-map library are loaded. This MUST NOT CHANGE across
+// versions!
+var isSourceNode = "$$$isSourceNode$$$";
+
+/**
+ * SourceNodes provide a way to abstract over interpolating/concatenating
+ * snippets of generated JavaScript source code while maintaining the line and
+ * column information associated with the original source code.
+ *
+ * @param aLine The original line number.
+ * @param aColumn The original column number.
+ * @param aSource The original source's filename.
+ * @param aChunks Optional. An array of strings which are snippets of
+ *        generated JS, or other SourceNodes.
+ * @param aName The original identifier.
+ */
+function SourceNode(aLine, aColumn, aSource, aChunks, aName) {
+  this.children = [];
+  this.sourceContents = {};
+  this.line = aLine == null ? null : aLine;
+  this.column = aColumn == null ? null : aColumn;
+  this.source = aSource == null ? null : aSource;
+  this.name = aName == null ? null : aName;
+  this[isSourceNode] = true;
+  if (aChunks != null) this.add(aChunks);
+}
+
+/**
+ * Creates a SourceNode from generated code and a SourceMapConsumer.
+ *
+ * @param aGeneratedCode The generated code
+ * @param aSourceMapConsumer The SourceMap for the generated code
+ * @param aRelativePath Optional. The path that relative sources in the
+ *        SourceMapConsumer should be relative to.
+ */
+SourceNode.fromStringWithSourceMap =
+  function SourceNode_fromStringWithSourceMap(aGeneratedCode, aSourceMapConsumer, aRelativePath) {
+    // The SourceNode we want to fill with the generated code
+    // and the SourceMap
+    var node = new SourceNode();
+
+    // All even indices of this array are one line of the generated code,
+    // while all odd indices are the newlines between two adjacent lines
+    // (since `REGEX_NEWLINE` captures its match).
+    // Processed fragments are accessed by calling `shiftNextLine`.
+    var remainingLines = aGeneratedCode.split(REGEX_NEWLINE);
+    var remainingLinesIndex = 0;
+    var shiftNextLine = function() {
+      var lineContents = getNextLine();
+      // The last line of a file might not have a newline.
+      var newLine = getNextLine() || "";
+      return lineContents + newLine;
+
+      function getNextLine() {
+        return remainingLinesIndex < remainingLines.length ?
+            remainingLines[remainingLinesIndex++] : undefined;
+      }
+    };
+
+    // We need to remember the position of "remainingLines"
+    var lastGeneratedLine = 1, lastGeneratedColumn = 0;
+
+    // The generate SourceNodes we need a code range.
+    // To extract it current and last mapping is used.
+    // Here we store the last mapping.
+    var lastMapping = null;
+
+    aSourceMapConsumer.eachMapping(function (mapping) {
+      if (lastMapping !== null) {
+        // We add the code from "lastMapping" to "mapping":
+        // First check if there is a new line in between.
+        if (lastGeneratedLine < mapping.generatedLine) {
+          // Associate first line with "lastMapping"
+          addMappingWithCode(lastMapping, shiftNextLine());
+          lastGeneratedLine++;
+          lastGeneratedColumn = 0;
+          // The remaining code is added without mapping
+        } else {
+          // There is no new line in between.
+          // Associate the code between "lastGeneratedColumn" and
+          // "mapping.generatedColumn" with "lastMapping"
+          var nextLine = remainingLines[remainingLinesIndex] || '';
+          var code = nextLine.substr(0, mapping.generatedColumn -
+                                        lastGeneratedColumn);
+          remainingLines[remainingLinesIndex] = nextLine.substr(mapping.generatedColumn -
+                                              lastGeneratedColumn);
+          lastGeneratedColumn = mapping.generatedColumn;
+          addMappingWithCode(lastMapping, code);
+          // No more remaining code, continue
+          lastMapping = mapping;
+          return;
+        }
+      }
+      // We add the generated code until the first mapping
+      // to the SourceNode without any mapping.
+      // Each line is added as separate string.
+      while (lastGeneratedLine < mapping.generatedLine) {
+        node.add(shiftNextLine());
+        lastGeneratedLine++;
+      }
+      if (lastGeneratedColumn < mapping.generatedColumn) {
+        var nextLine = remainingLines[remainingLinesIndex] || '';
+        node.add(nextLine.substr(0, mapping.generatedColumn));
+        remainingLines[remainingLinesIndex] = nextLine.substr(mapping.generatedColumn);
+        lastGeneratedColumn = mapping.generatedColumn;
+      }
+      lastMapping = mapping;
+    }, this);
+    // We have processed all mappings.
+    if (remainingLinesIndex < remainingLines.length) {
+      if (lastMapping) {
+        // Associate the remaining code in the current line with "lastMapping"
+        addMappingWithCode(lastMapping, shiftNextLine());
+      }
+      // and add the remaining lines without any mapping
+      node.add(remainingLines.splice(remainingLinesIndex).join(""));
+    }
+
+    // Copy sourcesContent into SourceNode
+    aSourceMapConsumer.sources.forEach(function (sourceFile) {
+      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
+      if (content != null) {
+        if (aRelativePath != null) {
+          sourceFile = util.join(aRelativePath, sourceFile);
+        }
+        node.setSourceContent(sourceFile, content);
+      }
+    });
+
+    return node;
+
+    function addMappingWithCode(mapping, code) {
+      if (mapping === null || mapping.source === undefined) {
+        node.add(code);
+      } else {
+        var source = aRelativePath
+          ? util.join(aRelativePath, mapping.source)
+          : mapping.source;
+        node.add(new SourceNode(mapping.originalLine,
+                                mapping.originalColumn,
+                                source,
+                                code,
+                                mapping.name));
+      }
+    }
+  };
+
+/**
+ * Add a chunk of generated JS to this source node.
+ *
+ * @param aChunk A string snippet of generated JS code, another instance of
+ *        SourceNode, or an array where each member is one of those things.
+ */
+SourceNode.prototype.add = function SourceNode_add(aChunk) {
+  if (Array.isArray(aChunk)) {
+    aChunk.forEach(function (chunk) {
+      this.add(chunk);
+    }, this);
+  }
+  else if (aChunk[isSourceNode] || typeof aChunk === "string") {
+    if (aChunk) {
+      this.children.push(aChunk);
+    }
+  }
+  else {
+    throw new TypeError(
+      "Expected a SourceNode, string, or an array of SourceNodes and strings. Got " + aChunk
+    );
+  }
+  return this;
+};
+
+/**
+ * Add a chunk of generated JS to the beginning of this source node.
+ *
+ * @param aChunk A string snippet of generated JS code, another instance of
+ *        SourceNode, or an array where each member is one of those things.
+ */
+SourceNode.prototype.prepend = function SourceNode_prepend(aChunk) {
+  if (Array.isArray(aChunk)) {
+    for (var i = aChunk.length-1; i >= 0; i--) {
+      this.prepend(aChunk[i]);
+    }
+  }
+  else if (aChunk[isSourceNode] || typeof aChunk === "string") {
+    this.children.unshift(aChunk);
+  }
+  else {
+    throw new TypeError(
+      "Expected a SourceNode, string, or an array of SourceNodes and strings. Got " + aChunk
+    );
+  }
+  return this;
+};
+
+/**
+ * Walk over the tree of JS snippets in this node and its children. The
+ * walking function is called once for each snippet of JS and is passed that
+ * snippet and the its original associated source's line/column location.
+ *
+ * @param aFn The traversal function.
+ */
+SourceNode.prototype.walk = function SourceNode_walk(aFn) {
+  var chunk;
+  for (var i = 0, len = this.children.length; i < len; i++) {
+    chunk = this.children[i];
+    if (chunk[isSourceNode]) {
+      chunk.walk(aFn);
+    }
+    else {
+      if (chunk !== '') {
+        aFn(chunk, { source: this.source,
+                     line: this.line,
+                     column: this.column,
+                     name: this.name });
+      }
+    }
+  }
+};
+
+/**
+ * Like `String.prototype.join` except for SourceNodes. Inserts `aStr` between
+ * each of `this.children`.
+ *
+ * @param aSep The separator.
+ */
+SourceNode.prototype.join = function SourceNode_join(aSep) {
+  var newChildren;
+  var i;
+  var len = this.children.length;
+  if (len > 0) {
+    newChildren = [];
+    for (i = 0; i < len-1; i++) {
+      newChildren.push(this.children[i]);
+      newChildren.push(aSep);
+    }
+    newChildren.push(this.children[i]);
+    this.children = newChildren;
+  }
+  return this;
+};
+
+/**
+ * Call String.prototype.replace on the very right-most source snippet. Useful
+ * for trimming whitespace from the end of a source node, etc.
+ *
+ * @param aPattern The pattern to replace.
+ * @param aReplacement The thing to replace the pattern with.
+ */
+SourceNode.prototype.replaceRight = function SourceNode_replaceRight(aPattern, aReplacement) {
+  var lastChild = this.children[this.children.length - 1];
+  if (lastChild[isSourceNode]) {
+    lastChild.replaceRight(aPattern, aReplacement);
+  }
+  else if (typeof lastChild === 'string') {
+    this.children[this.children.length - 1] = lastChild.replace(aPattern, aReplacement);
+  }
+  else {
+    this.children.push(''.replace(aPattern, aReplacement));
+  }
+  return this;
+};
+
+/**
+ * Set the source content for a source file. This will be added to the SourceMapGenerator
+ * in the sourcesContent field.
+ *
+ * @param aSourceFile The filename of the source file
+ * @param aSourceContent The content of the source file
+ */
+SourceNode.prototype.setSourceContent =
+  function SourceNode_setSourceContent(aSourceFile, aSourceContent) {
+    this.sourceContents[util.toSetString(aSourceFile)] = aSourceContent;
+  };
+
+/**
+ * Walk over the tree of SourceNodes. The walking function is called for each
+ * source file content and is passed the filename and source content.
+ *
+ * @param aFn The traversal function.
+ */
+SourceNode.prototype.walkSourceContents =
+  function SourceNode_walkSourceContents(aFn) {
+    for (var i = 0, len = this.children.length; i < len; i++) {
+      if (this.children[i][isSourceNode]) {
+        this.children[i].walkSourceContents(aFn);
+      }
+    }
+
+    var sources = Object.keys(this.sourceContents);
+    for (var i = 0, len = sources.length; i < len; i++) {
+      aFn(util.fromSetString(sources[i]), this.sourceContents[sources[i]]);
+    }
+  };
+
+/**
+ * Return the string representation of this source node. Walks over the tree
+ * and concatenates all the various snippets together to one string.
+ */
+SourceNode.prototype.toString = function SourceNode_toString() {
+  var str = "";
+  this.walk(function (chunk) {
+    str += chunk;
+  });
+  return str;
+};
+
+/**
+ * Returns the string representation of this source node along with a source
+ * map.
+ */
+SourceNode.prototype.toStringWithSourceMap = function SourceNode_toStringWithSourceMap(aArgs) {
+  var generated = {
+    code: "",
+    line: 1,
+    column: 0
+  };
+  var map = new SourceMapGenerator(aArgs);
+  var sourceMappingActive = false;
+  var lastOriginalSource = null;
+  var lastOriginalLine = null;
+  var lastOriginalColumn = null;
+  var lastOriginalName = null;
+  this.walk(function (chunk, original) {
+    generated.code += chunk;
+    if (original.source !== null
+        && original.line !== null
+        && original.column !== null) {
+      if(lastOriginalSource !== original.source
+         || lastOriginalLine !== original.line
+         || lastOriginalColumn !== original.column
+         || lastOriginalName !== original.name) {
+        map.addMapping({
+          source: original.source,
+          original: {
+            line: original.line,
+            column: original.column
+          },
+          generated: {
+            line: generated.line,
+            column: generated.column
+          },
+          name: original.name
+        });
+      }
+      lastOriginalSource = original.source;
+      lastOriginalLine = original.line;
+      lastOriginalColumn = original.column;
+      lastOriginalName = original.name;
+      sourceMappingActive = true;
+    } else if (sourceMappingActive) {
+      map.addMapping({
+        generated: {
+          line: generated.line,
+          column: generated.column
+        }
+      });
+      lastOriginalSource = null;
+      sourceMappingActive = false;
+    }
+    for (var idx = 0, length = chunk.length; idx < length; idx++) {
+      if (chunk.charCodeAt(idx) === NEWLINE_CODE) {
+        generated.line++;
+        generated.column = 0;
+        // Mappings end at eol
+        if (idx + 1 === length) {
+          lastOriginalSource = null;
+          sourceMappingActive = false;
+        } else if (sourceMappingActive) {
+          map.addMapping({
+            source: original.source,
+            original: {
+              line: original.line,
+              column: original.column
+            },
+            generated: {
+              line: generated.line,
+              column: generated.column
+            },
+            name: original.name
+          });
+        }
+      } else {
+        generated.column++;
+      }
+    }
+  });
+  this.walkSourceContents(function (sourceFile, sourceContent) {
+    map.setSourceContent(sourceFile, sourceContent);
+  });
+
+  return { code: generated.code, map: map };
+};
+
+exports.SourceNode = SourceNode;
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const readWasm = __webpack_require__(32);
+
+/**
+ * Provide the JIT with a nice shape / hidden class.
+ */
+function Mapping() {
+  this.generatedLine = 0;
+  this.generatedColumn = 0;
+  this.lastGeneratedColumn = null;
+  this.source = null;
+  this.originalLine = null;
+  this.originalColumn = null;
+  this.name = null;
+}
+
+let cachedWasm = null;
+
+module.exports = function wasm() {
+  if (cachedWasm) {
+    return cachedWasm;
+  }
+
+  let currentCallback = null;
+
+  cachedWasm = readWasm().then(buffer => {
+      return WebAssembly.instantiate(buffer, {
+        env: {
+          mapping_callback: function (
+            generatedLine,
+            generatedColumn,
+
+            hasLastGeneratedColumn,
+            lastGeneratedColumn,
+
+            hasOriginal,
+            source,
+            originalLine,
+            originalColumn,
+
+            hasName,
+            name
+          ) {
+            const mapping = new Mapping;
+            // JS uses 1-based line numbers, wasm uses 0-based.
+            mapping.generatedLine = generatedLine + 1;
+            mapping.generatedColumn = generatedColumn;
+
+            if (hasLastGeneratedColumn) {
+              // JS uses inclusive last generated column, wasm uses exclusive.
+              mapping.lastGeneratedColumn = lastGeneratedColumn - 1;
+            }
+
+            if (hasOriginal) {
+              mapping.source = source;
+              // JS uses 1-based line numbers, wasm uses 0-based.
+              mapping.originalLine = originalLine + 1;
+              mapping.originalColumn = originalColumn;
+
+              if (hasName) {
+                mapping.name = name;
+              }
+            }
+
+            currentCallback(mapping);
+          },
+
+          start_all_generated_locations_for: function () { console.time("all_generated_locations_for"); },
+          end_all_generated_locations_for: function () { console.timeEnd("all_generated_locations_for"); },
+
+          start_compute_column_spans: function () { console.time("compute_column_spans"); },
+          end_compute_column_spans: function () { console.timeEnd("compute_column_spans"); },
+
+          start_generated_location_for: function () { console.time("generated_location_for"); },
+          end_generated_location_for: function () { console.timeEnd("generated_location_for"); },
+
+          start_original_location_for: function () { console.time("original_location_for"); },
+          end_original_location_for: function () { console.timeEnd("original_location_for"); },
+
+          start_parse_mappings: function () { console.time("parse_mappings"); },
+          end_parse_mappings: function () { console.timeEnd("parse_mappings"); },
+
+          start_sort_by_generated_location: function () { console.time("sort_by_generated_location"); },
+          end_sort_by_generated_location: function () { console.timeEnd("sort_by_generated_location"); },
+
+          start_sort_by_original_location: function () { console.time("sort_by_original_location"); },
+          end_sort_by_original_location: function () { console.timeEnd("sort_by_original_location"); },
+        }
+      });
+  }).then(wasm => {
+    return {
+      exports: wasm.instance.exports,
+      withMappingCallback: (mappingCallback, f) => {
+        currentCallback = mappingCallback;
+        try {
+          f();
+        } finally {
+          currentCallback = null;
+        }
+      }
+    };
+  }).then(null, e => {
+    cachedWasm = null;
+    throw e;
+  });
+
+  return cachedWasm;
+};
+
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*
+ * Copyright 2009-2011 Mozilla Foundation and contributors
+ * Licensed under the New BSD license. See LICENSE.txt or:
+ * http://opensource.org/licenses/BSD-3-Clause
+ */
+exports.SourceMapGenerator = __webpack_require__(33).SourceMapGenerator;
+exports.SourceMapConsumer = __webpack_require__(117).SourceMapConsumer;
+exports.SourceNode = __webpack_require__(118).SourceNode;
+
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports) {
+
+module.exports = require("art-binary");
+
+/***/ }),
+/* 122 */
 /***/ (function(module, exports) {
 
 module.exports = require("art-object-tree-factory");
 
 /***/ }),
-/* 112 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports = require("caffeine-mc");
 
 /***/ }),
-/* 113 */
+/* 124 */
+/***/ (function(module, exports) {
+
+module.exports = require("fs");
+
+/***/ }),
+/* 125 */
 /***/ (function(module, exports) {
 
 module.exports = require("neptune-namespaces");
+
+/***/ }),
+/* 126 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
 
 /***/ })
 /******/ ]);

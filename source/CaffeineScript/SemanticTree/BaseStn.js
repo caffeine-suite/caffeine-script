@@ -353,7 +353,7 @@ Caf.defMod(module, () => {
             this.prototype.applyParens = applyParens;
             this.prototype.validate = function() {};
             this.prototype.validateAll = function() {
-              let e, cafError;
+              let e;
               try {
                 this.validate();
               } catch (cafError) {
