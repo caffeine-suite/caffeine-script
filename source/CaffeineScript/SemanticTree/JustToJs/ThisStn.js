@@ -13,7 +13,8 @@ Caf.defMod(module, () => {
             return Caf.exists((cafBase = this.children[0])) && cafBase.toJs();
           },
           propName: function() {
-            return this.identifier;
+            let cafTemp;
+            return (cafTemp = this.identifier) != null ? cafTemp : "this";
           }
         });
         this.prototype.toJs = function() {

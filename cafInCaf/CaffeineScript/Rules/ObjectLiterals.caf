@@ -114,7 +114,7 @@ import Extensions
     ]
 
   @rule
-    thisPropName: "/@/ identifier"
+    thisPropName: "/@/ identifier?"
     {} stnFactory: :ThisStn
 
   @rule
@@ -123,7 +123,6 @@ import Extensions
     {}
       stnFactory: "ObjectPropNameStn"
       stnProps: ~>
-        value: @str?.toString()
         isThisProp: true
 
   @rule

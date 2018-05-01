@@ -25,6 +25,7 @@ module.exports = suite: parseTestSuite
       "{}\n a: a":  "({a});"
 
     this:
+      "{@}":  "({this: this});"
       "{@a}": "({a: this.a});"
 
     pathing:

@@ -9,6 +9,7 @@ module.exports = suite:
   stnTypes: ->
     generateSourceMapParseTest "SimpleLiteralStn",      "1"
     generateSourceMapParseTest "StringStn",             ":hi"
+    generateSourceMapParseTest "StringStn",             '"#{hi()}"'
     generateSourceMapParseTest "ReferenceStn",          "a"
     generateSourceMapParseTest "AssignmentStn1",        "a = 1"
     generateSourceMapParseTest "AssignmentStn2",        "a += 1"
@@ -20,7 +21,12 @@ module.exports = suite:
     generateSourceMapParseTest "InterpolatedStringStn", '"#{a}"'
     generateSourceMapParseTest "NewInstanceStn",        'new Foo'
     generateSourceMapParseTest "AccessorStn",           'a.b'
-    generateSourceMapParseTest "AccessorStn",           'a: 1'
+    generateSourceMapParseTest "ObjectStn",             'a: 1'
+    generateSourceMapParseTest "ObjectStn",             '{} a'
+    generateSourceMapParseTest "ObjectStn",             '{} a.b'
+    generateSourceMapParseTest "ObjectStn",             '{a} = b'
+    generateSourceMapParseTest "ObjectStn",             '{a:c} = b'
+    generateSourceMapParseTest "ObjectStn",             'a b'
 
 
   control: ->

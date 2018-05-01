@@ -117,7 +117,7 @@ Caf.defMod(module, () => {
               stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
             });
             this.rule(
-              { thisPropName: "/@/ identifier" },
+              { thisPropName: "/@/ identifier?" },
               { stnFactory: "ThisStn" }
             );
             this.rule(
@@ -125,12 +125,7 @@ Caf.defMod(module, () => {
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
-                  let cafBase;
-                  return {
-                    value:
-                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
-                    isThisProp: true
-                  };
+                  return { isThisProp: true };
                 }
               }
             );
