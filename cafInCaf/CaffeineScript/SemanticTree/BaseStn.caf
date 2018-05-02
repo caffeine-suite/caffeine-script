@@ -178,10 +178,6 @@ class BaseStn extends BaseClass
       expression: t/f
         if true, return JS for an expression
 
-      subExpression: t/f
-        currently this means the result is used
-        in a binary operator
-
       statement: t/f
         true: is used as a statement
 
@@ -200,8 +196,14 @@ class BaseStn extends BaseClass
       noParens: if true, indicates the parent is already going to wrap
         this in parens, so don't add our own.
 
+      # see DestructuringAssignmentStn
       restructuring:
-      restructuringStart: - see DestructuringAssignmentStn
+      restructuringStart:
+
+      # see binary operators
+      subExpression: t/f
+      parentOperatorPrecidence: number
+      isLeftOperand: t/f
 
   toSourceNode: (options) ->
     log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."

@@ -18,6 +18,9 @@ module.exports = suite:
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
     generateSourceMapParseTest "DoStn", "do (a) -> a"
     generateSourceMapParseTest "GlobalIdentifierStn",   "global"
+    generateSourceMapParseTest "ThisStn",               "this"
+    generateSourceMapParseTest "ThisStn",               "@"
+    generateSourceMapParseTest "ThisStn",               "@foo"
     generateSourceMapParseTest "InterpolatedStringStn", '"#{a}"'
     generateSourceMapParseTest "NewInstanceStn",        'new Foo'
     generateSourceMapParseTest "AccessorStn",           'a.b'
@@ -27,10 +30,50 @@ module.exports = suite:
     generateSourceMapParseTest "ObjectStn",             '{a} = b'
     generateSourceMapParseTest "ObjectStn",             '{a:c} = b'
     generateSourceMapParseTest "FunctionInvocationStn", 'a b'
-    generateSourceMapParseTest "FunctionInvocationStn", 'array b'
+    generateSourceMapParseTest "ComprehensionStn", 'array b'
+    generateSourceMapParseTest "ComprehensionStn", 'find a in b when a'
+    generateSourceMapParseTest "ComprehensionStn", 'array b from c'
+    generateSourceMapParseTest "ComprehensionStn", 'array b from c when b'
+    generateSourceMapParseTest "ComprehensionStn", 'array b from c with 1'
+    generateSourceMapParseTest "ComprehensionStn", """
+      find a
+        b
+        c
+      """
+
+    generateSourceMapParseTest "SwitchStn", """
+      switch a
+      when b then c
+      else d
+      """
+
+    generateSourceMapParseTest "SwitchStn", """
+      foo = switch a
+      when b then c
+      else d
+      """
+    # generateSourceMapParseTest "ComprehensionStn", """
+    #   (b, cafK, cafInto) =>
+    #     if b then cafInto.push
+    #     null
+    #   """
+
 
 
   control: ->
+    generateSourceMapParseTest "ControlOperatorStn",
+      """
+      a = if b
+        c
+        d
+      """
+
+    generateSourceMapParseTest "ControlOperatorStn",
+      """
+      a = whilte b
+        c
+      """
+
     generateSourceMapParseTest "ControlOperatorStn",    "a if b"
     generateSourceMapParseTest "ControlOperatorStn",    "a while b"
     generateSourceMapParseTest "ControlOperatorStn",    "a unless b"

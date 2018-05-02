@@ -21,6 +21,12 @@ Caf.defMod(module, () => {
           let id;
           return (id = this.identifier) ? `this.${Caf.toString(id)}` : "this";
         };
+        this.prototype.toSourceNode = function() {
+          let id;
+          return (id = this.identifier)
+            ? this.createSourceNode("this.", id)
+            : this.createSourceNode("this");
+        };
       }
     ));
   })();

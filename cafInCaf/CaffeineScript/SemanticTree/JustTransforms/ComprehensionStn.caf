@@ -133,7 +133,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     whenClauseWrapper = if whenClause
       (actionStn) ->
-        ControlOperatorStn
+        StatementsStn ControlOperatorStn
           operand: "if"
           whenClause
           actionStn
@@ -179,10 +179,10 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           when "each"
             whenClauseWrapper body
 
-          when "find"
+          when "find" then
             if whenClause
               if body
-                BinaryOperatorStn
+                StatementsStn BinaryOperatorStn
                   operator: "&&"
                   whenClause
 
@@ -190,7 +190,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
                     FunctionInvocationStn brkIdentifer
                     body
               else
-                BinaryOperatorStn
+                StatementsStn BinaryOperatorStn
                   operator: "&&"
                   whenClause
 
@@ -202,7 +202,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
               if body
 
                 if body.type == "Statements" && body.children.length > 1
-                  allButLast = StatementsStn body.children.slice 0, body.children.length - 1
+                  allButLast = body.children.slice 0, body.children.length - 1
                   body = peek body.children
 
                 foundTest = if body.type == "Reference"
@@ -227,13 +227,10 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
                       IdentifierStn identifierHandle: baseIdentifierHandle
 
-                if allButLast
-                  StatementsStn allButLast, foundTest
-                else
-                  foundTest
+                StatementsStn allButLast, foundTest
 
               else
-                BinaryOperatorStn
+                StatementsStn BinaryOperatorStn
                   operator: "&&"
                   valueVarDef
 

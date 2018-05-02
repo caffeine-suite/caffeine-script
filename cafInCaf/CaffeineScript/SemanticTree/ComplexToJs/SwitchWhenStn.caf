@@ -11,6 +11,29 @@ class SwitchWhenStn extends &BaseStn
     "#{@_getCasesJs(options)}: #{thenDo.toFunctionBodyJs()};"
 
 
+  toSourceNode: (options)->
+    {falsifyCases, returnAction} = options
+    {whenValue, thenDo} = @labeledChildren
+
+    @createSourceNode
+      if falsifyCases then "case !" else "case "
+      if whenValue.implicitArray
+        @stnArrayToSourceNodes
+          whenValue.children
+          if falsifyCases
+            '): case !('
+          else
+            ': case '
+
+
+      else
+        []
+          whenValue.toSourceNode()
+
+      ": "
+
+      thenDo.toSourceNode {returnAction}
+
   ###########
     PRIVATE
 

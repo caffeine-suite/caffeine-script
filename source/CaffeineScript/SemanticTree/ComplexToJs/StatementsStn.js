@@ -8,14 +8,14 @@ Caf.defMod(module, () => {
       function(StatementsStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
-          let returnAction, generateStatements, expression;
+          let returnAction, generateStatements, expression, out;
           if (options) {
             ({ returnAction, generateStatements, expression } = options);
           }
           generateStatements != null
             ? generateStatements
             : (generateStatements = expression != null ? expression : true);
-          return this.createSourceNode(
+          out = this.createSourceNode(
             expression
               ? (() => {
                   switch (this.children.length) {
@@ -33,6 +33,7 @@ Caf.defMod(module, () => {
                 })()
               : this._getChildrenSourceNodes(returnAction, generateStatements)
           );
+          return out;
         };
         this.prototype.toJs = function(options) {
           return Caf.exists(options) && options.expression
@@ -109,7 +110,7 @@ Caf.defMod(module, () => {
           Caf.each((lines = this.children), (out = []), (c, i, cafInto) => {
             let childExpression;
             if (i > 0) {
-              out.push("; ");
+              out.push(generateStatements ? "; " : ", ");
             }
             cafInto.push(
               returnAction != null && i === lines.length - 1
@@ -127,7 +128,9 @@ Caf.defMod(module, () => {
                     })
             );
           });
-          out.push(";");
+          if (generateStatements) {
+            out.push(";");
+          }
           return out;
         };
       }

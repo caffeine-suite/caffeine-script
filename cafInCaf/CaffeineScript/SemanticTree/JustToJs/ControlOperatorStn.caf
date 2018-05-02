@@ -80,9 +80,9 @@ class ControlOperatorStn extends &BaseStn
     {expression, returnValueIsIgnored, noParens} = options
     {operand} = @
 
-    negate = applyParens = false
+    applyParens = false
 
-    expressionSourceNode =
+    unaryOperator = ""
 
     expressionSourceNode = switch operand
     when :until, :unless
@@ -91,12 +91,7 @@ class ControlOperatorStn extends &BaseStn
       else
         :if
 
-      expressionSourceNode = []
-        "!"
-        @expression.toSourceNode dotBase: true
-
-    else
-      @expression.toSourceNode noParens: true
+      unaryOperator = "!"
 
     parts = if expression
       switch operand
@@ -104,7 +99,8 @@ class ControlOperatorStn extends &BaseStn
         if returnValueIsIgnored
           @doSourceNode
             "while("
-            expressionSourceNode
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true
             ") {"
             @body.toSourceNode()
             "};"
@@ -113,7 +109,8 @@ class ControlOperatorStn extends &BaseStn
           tempVarIdentifier = @scope.uniqueIdentifier
           @doSourceNode
             "let #{tempVarIdentifier}; while("
-            expressionSourceNode
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true
             ") {"
             @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
             "}; return #{tempVarIdentifier};"
@@ -122,9 +119,8 @@ class ControlOperatorStn extends &BaseStn
         applyParens = options.subExpression || options.dotBase
 
         []
-          "("
-          expressionSourceNode
-          ")"
+          unaryOperator
+          @expression.toSourceNode dotBase: true, expression: true
           " ? "
           @body.toSourceNode expression: true
           " : "
@@ -134,7 +130,8 @@ class ControlOperatorStn extends &BaseStn
       []
         operand
         " ("
-        expressionSourceNode
+        unaryOperator
+        @expression.toSourceNode noParens: true, expression: true
         ") {"
         @body.toSourceNode()
         "}"

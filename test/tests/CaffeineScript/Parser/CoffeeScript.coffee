@@ -140,7 +140,7 @@ module.exports = suite:
             go(church);
             break;
           default:
-            go(work)};
+            go(work);};
         '
 
       """
@@ -167,7 +167,7 @@ module.exports = suite:
             case !(score < 90):
               return "B";
             default:
-              return "A"};})();
+              return "A";};})();
       '
 
   existentialOperator: ->

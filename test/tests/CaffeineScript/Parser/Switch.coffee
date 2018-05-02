@@ -25,7 +25,7 @@ module.exports = suite: parseTestSuite
           c
         else
           d
-      """: "switch (a) {case b: c; break; default: d};"
+      """: "switch (a) {case b: c; break; default: d;};"
 
     multiLineWhen:
       """
@@ -52,7 +52,7 @@ module.exports = suite: parseTestSuite
       switch a
       when b then c
       else d
-      """: "switch (a) {case b: c; break; default: d};"
+      """: "switch (a) {case b: c; break; default: d;};"
 
     when:
       block:
@@ -88,7 +88,7 @@ module.exports = suite: parseTestSuite
         else
           e
           f
-        """: "switch (a) {case b: c; d; break; default: e; f};"
+        """: "switch (a) {case b: c; d; break; default: e; f;};"
 
       twoStatementsOneLine:
         """
@@ -114,7 +114,7 @@ module.exports = suite: parseTestSuite
     when a < b then c
     when d then e
     else f
-    """: "switch (false) {case !(a < b): c; break; case !(d): e; break; default: f};"
+    """: "switch (false) {case !(a < b): c; break; case !(d): e; break; default: f;};"
 
   expression:
     basic:
@@ -133,7 +133,7 @@ module.exports = suite: parseTestSuite
       foo = switch a
       when b then c
       else d
-      """: "let foo; foo = (() => {switch (a) {case b: return c; default: return d};})();"
+      """: "let foo; foo = (() => {switch (a) {case b: return c; default: return d;};})();"
 
     when:
       block:
@@ -155,10 +155,10 @@ module.exports = suite: parseTestSuite
     switch a
     when c then d
     else b c
-    """: "switch (a) {case c: d; break; default: b(c)};"
+    """: "switch (a) {case c: d; break; default: b(c);};"
 
     """
     switch a
     when c then d
     else b?.c
-    """: "switch (a) {case c: d; break; default: Caf.exists(b) && b.c};"
+    """: "switch (a) {case c: d; break; default: Caf.exists(b) && b.c;};"

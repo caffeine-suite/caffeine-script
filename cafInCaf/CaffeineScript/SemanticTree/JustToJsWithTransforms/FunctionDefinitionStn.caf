@@ -38,6 +38,9 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
     @arguments = children[0]
     @statements = children[1]
+
+    if @statements
+      throw new Error "statements must be type Statements (is: #{@statements.type})" unless @statements.type == :Statements
     @_updatingArgumentScope = false
 
   @getter
@@ -170,9 +173,11 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props
     {statement} = options if options
+    returnAction = !(isConstructor || returnIgnored)
 
     argsSouceNode = @args?.toSourceNode() ? "()"
-    bodySourceNode = @body?.toSourceNode returnAction: !(isConstructor || returnIgnored)
+    bodySourceNode = @body?.toSourceNode {returnAction}
+
     if bound
       @createSourceNode
         "(" if statement
@@ -193,6 +198,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         bodySourceNode
         "}"
         ")" if statement
+
 
   getBodyJs: ->
     {returnIgnored, isConstructor} = @props

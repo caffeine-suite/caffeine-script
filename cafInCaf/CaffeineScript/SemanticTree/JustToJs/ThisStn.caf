@@ -13,3 +13,12 @@ class ThisStn extends &BaseStn
       "this.#{id}"
     else
       "this"
+
+  toSourceNode: ->
+    if id = @identifier
+      @createSourceNode
+        :this.
+        id
+    else
+      @createSourceNode
+        :this

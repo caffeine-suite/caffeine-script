@@ -10,11 +10,11 @@ class SwitchStn extends &BaseStn
 
     if expression
       cases = array clause in switchWhens with clause.toFunctionBodyJs options
-      cases.push "default: #{switchElse.toFunctionBodyJs()}" if switchElse
+      cases.push "default: #{switchElse.toFunctionBodyJs()};" if switchElse
       "(() => {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
     else
       cases = array clause in switchWhens with clause.toJs options
-      cases.push "default: #{switchElse.toJs()}" if switchElse
+      cases.push "default: #{switchElse.toJs()};" if switchElse
       "switch (#{@getConditionJs()}) {#{cases.join ' break; '}}"
 
   getConditionJs: ->
@@ -23,3 +23,39 @@ class SwitchStn extends &BaseStn
       condition.toJsExpression()
     else
       "false"
+
+  toSourceNode: (options) ->
+    {expression} = options if options
+    {condition, switchWhens, switchElse} = @labeledChildren
+    falsifyCases = !condition
+
+    childOptions = {} falsifyCases, returnAction: expression
+
+    cases = array clause in switchWhens with clause.toSourceNode childOptions
+    if switchElse
+      cases.push []
+        "default: "
+        switchElse.toSourceNode childOptions
+
+    conditionSourceNode =
+      condition?.toSourceNode expression: true
+      ? "false"
+
+    if expression
+
+      @createSourceNode
+        "(() => {"
+        "switch ("
+        conditionSourceNode
+        ") {"
+        arrayBetweenEach cases, ' '
+        "}"
+        ";})()"
+
+    else
+      @createSourceNode
+        "switch ("
+        conditionSourceNode
+        ") {"
+        arrayBetweenEach cases, ' break; '
+        "}"

@@ -165,10 +165,12 @@ Caf.defMod(module, () => {
               }
               whenClauseWrapper = whenClause
                 ? actionStn => {
-                    return ControlOperatorStn(
-                      { operand: "if" },
-                      whenClause,
-                      actionStn
+                    return StatementsStn(
+                      ControlOperatorStn(
+                        { operand: "if" },
+                        whenClause,
+                        actionStn
+                      )
                     );
                   }
                 : actionStn => {
@@ -235,30 +237,32 @@ Caf.defMod(module, () => {
                       case "find":
                         return whenClause
                           ? body
-                            ? BinaryOperatorStn(
-                                { operator: "&&" },
-                                whenClause,
-                                StatementsStn(
-                                  FunctionInvocationStn(brkIdentifer),
-                                  body
+                            ? StatementsStn(
+                                BinaryOperatorStn(
+                                  { operator: "&&" },
+                                  whenClause,
+                                  StatementsStn(
+                                    FunctionInvocationStn(brkIdentifer),
+                                    body
+                                  )
                                 )
                               )
-                            : BinaryOperatorStn(
-                                { operator: "&&" },
-                                whenClause,
-                                StatementsStn(
-                                  FunctionInvocationStn(brkIdentifer),
-                                  valueVarDef
+                            : StatementsStn(
+                                BinaryOperatorStn(
+                                  { operator: "&&" },
+                                  whenClause,
+                                  StatementsStn(
+                                    FunctionInvocationStn(brkIdentifer),
+                                    valueVarDef
+                                  )
                                 )
                               )
                           : body
                             ? (body.type === "Statements" &&
                               body.children.length > 1
-                                ? ((allButLast = StatementsStn(
-                                    body.children.slice(
-                                      0,
-                                      body.children.length - 1
-                                    )
+                                ? ((allButLast = body.children.slice(
+                                    0,
+                                    body.children.length - 1
                                   )),
                                   (body = peek(body.children)))
                                 : undefined,
@@ -289,15 +293,15 @@ Caf.defMod(module, () => {
                                         })
                                       )
                                     )),
-                              allButLast
-                                ? StatementsStn(allButLast, foundTest)
-                                : foundTest)
-                            : BinaryOperatorStn(
-                                { operator: "&&" },
-                                valueVarDef,
-                                StatementsStn(
-                                  FunctionInvocationStn(brkIdentifer),
-                                  valueVarDef
+                              StatementsStn(allButLast, foundTest))
+                            : StatementsStn(
+                                BinaryOperatorStn(
+                                  { operator: "&&" },
+                                  valueVarDef,
+                                  StatementsStn(
+                                    FunctionInvocationStn(brkIdentifer),
+                                    valueVarDef
+                                  )
                                 )
                               );
                     }

@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["compactFlatten", "merge"],
+    ["compactFlatten", "merge", "Error"],
     [global, require("../../StandardImport")],
-    (compactFlatten, merge) => {
+    (compactFlatten, merge, Error) => {
       let StnRegistry, FunctionDefinitionStn;
       return (
         (StnRegistry = require("../../StnRegistry")),
@@ -31,6 +31,15 @@ Caf.defMod(module, () => {
               super(props, children, pretransformedStn);
               this.arguments = children[0];
               this.statements = children[1];
+              if (this.statements) {
+                if (!(this.statements.type === "Statements")) {
+                  throw new Error(
+                    `statements must be type Statements (is: ${Caf.toString(
+                      this.statements.type
+                    )})`
+                  );
+                }
+              }
               this._updatingArgumentScope = false;
             }
           },
@@ -185,6 +194,7 @@ Caf.defMod(module, () => {
                 bound,
                 returnIgnored,
                 statement,
+                returnAction,
                 argsSouceNode,
                 bodySourceNode,
                 cafTemp,
@@ -194,6 +204,7 @@ Caf.defMod(module, () => {
               if (options) {
                 ({ statement } = options);
               }
+              returnAction = !(isConstructor || returnIgnored);
               argsSouceNode =
                 (cafTemp =
                   Caf.exists((cafBase = this.args)) &&
@@ -202,9 +213,7 @@ Caf.defMod(module, () => {
                   : "()";
               bodySourceNode =
                 Caf.exists((cafBase1 = this.body)) &&
-                cafBase1.toSourceNode({
-                  returnAction: !(isConstructor || returnIgnored)
-                });
+                cafBase1.toSourceNode({ returnAction });
               return bound
                 ? this.createSourceNode(
                     statement ? "(" : undefined,

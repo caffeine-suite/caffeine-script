@@ -8,7 +8,7 @@ class StatementsStn extends &BaseStn
     {returnAction, generateStatements, expression} = options if options
     generateStatements ?= expression ? true
 
-    @createSourceNode
+    out = @createSourceNode
       if expression
         switch @children.length
         when 0 then !generateStatements && "undefined"
@@ -20,6 +20,8 @@ class StatementsStn extends &BaseStn
             ")"
       else
         @_getChildrenSourceNodes returnAction, generateStatements
+
+    out
 
   toJs: (options)->
     if options?.expression
@@ -74,7 +76,9 @@ class StatementsStn extends &BaseStn
       else returnAction
 
     array c, i in lines = @children into out = []
-      out.push "; " if i>0
+      if i > 0
+        out.push if generateStatements then "; " else ", "
+
       if returnAction? && i == lines.length - 1
         if !c.jsExpressionUsesReturn
           childExpression = c.toSourceNode expression: true
@@ -89,5 +93,5 @@ class StatementsStn extends &BaseStn
           c.toSourceNode statement: true
         else
           c.toSourceNode expression: true, returnValueIsIgnored: true
-    out.push ";"
+    out.push ";" if generateStatements
     out

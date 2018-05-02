@@ -136,26 +136,22 @@ Caf.defMod(module, () => {
               returnValueIsIgnored,
               noParens,
               operand,
-              negate,
               applyParens,
+              unaryOperator,
               expressionSourceNode,
               parts,
               tempVarIdentifier,
               cafBase;
             ({ expression, returnValueIsIgnored, noParens } = options);
             ({ operand } = this);
-            negate = applyParens = false;
-            expressionSourceNode = expressionSourceNode = (() => {
+            applyParens = false;
+            unaryOperator = "";
+            expressionSourceNode = (() => {
               switch (operand) {
                 case "until":
                 case "unless":
                   operand = operand === "until" ? "while" : "if";
-                  return (expressionSourceNode = [
-                    "!",
-                    this.expression.toSourceNode({ dotBase: true })
-                  ]);
-                default:
-                  return this.expression.toSourceNode({ noParens: true });
+                  return (unaryOperator = "!");
               }
             })();
             parts = expression
@@ -165,7 +161,11 @@ Caf.defMod(module, () => {
                       return returnValueIsIgnored
                         ? this.doSourceNode(
                             "while(",
-                            expressionSourceNode,
+                            unaryOperator,
+                            this.expression.toSourceNode({
+                              noParens: true,
+                              expression: true
+                            }),
                             ") {",
                             this.body.toSourceNode(),
                             "};"
@@ -173,7 +173,11 @@ Caf.defMod(module, () => {
                         : ((tempVarIdentifier = this.scope.uniqueIdentifier),
                           this.doSourceNode(
                             `let ${Caf.toString(tempVarIdentifier)}; while(`,
-                            expressionSourceNode,
+                            unaryOperator,
+                            this.expression.toSourceNode({
+                              noParens: true,
+                              expression: true
+                            }),
                             ") {",
                             this.body.toSourceNode({
                               returnAction: `${Caf.toString(
@@ -185,9 +189,11 @@ Caf.defMod(module, () => {
                     case "if":
                       applyParens = options.subExpression || options.dotBase;
                       return [
-                        "(",
-                        expressionSourceNode,
-                        ")",
+                        unaryOperator,
+                        this.expression.toSourceNode({
+                          dotBase: true,
+                          expression: true
+                        }),
                         " ? ",
                         this.body.toSourceNode({ expression: true }),
                         " : ",
@@ -200,7 +206,11 @@ Caf.defMod(module, () => {
               : [
                   operand,
                   " (",
-                  expressionSourceNode,
+                  unaryOperator,
+                  this.expression.toSourceNode({
+                    noParens: true,
+                    expression: true
+                  }),
                   ") {",
                   this.body.toSourceNode(),
                   "}",
