@@ -26,6 +26,11 @@ Caf.defMod(module, () => {
           this.prototype.toJs = function() {
             return `require('${Caf.toString(this.requireString)}')`;
           };
+          this.prototype.toSourceNode = function() {
+            return this.createSourceNode(
+              `require('${Caf.toString(this.requireString)}')`
+            );
+          };
         }
       ))
     );

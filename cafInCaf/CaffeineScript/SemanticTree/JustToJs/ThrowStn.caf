@@ -4,6 +4,16 @@ class ThrowStn extends &BaseStn
 
   toJs: (options={})->
     if options.expression
-      "(()=>{#{@toJs()};})()"
+      "(() => {#{@toJs()};})()"
     else
       "throw #{@childrenToJs()}"
+
+  toSourceNode: ({expression})->
+    base =
+      "throw "
+      @childrenToSourceNodes()
+
+    @createSourceNode if expression
+      @doSourceNode base, :;
+    else
+      base

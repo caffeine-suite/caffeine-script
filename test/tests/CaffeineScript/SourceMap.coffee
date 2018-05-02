@@ -16,7 +16,12 @@ module.exports = suite:
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
     generateSourceMapParseTest "BinaryOperatorStn",     "a + 1"
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
+    generateSourceMapParseTest "RegExpStn", "/foo/"
+    generateSourceMapParseTest "RegExpStn", "/foo/i"
+    generateSourceMapParseTest "RegExpStn", '/// foo #{bar}'
+    generateSourceMapParseTest "RegExpStn", '///i foo #{bar}'
     generateSourceMapParseTest "DoStn", "do (a) -> a"
+    generateSourceMapParseTest "RequireStn", "&ArtStandardLib"
     generateSourceMapParseTest "GlobalIdentifierStn",   "global"
     generateSourceMapParseTest "ThisStn",               "this"
     generateSourceMapParseTest "ThisStn",               "@"
@@ -24,6 +29,8 @@ module.exports = suite:
     generateSourceMapParseTest "InterpolatedStringStn", '"#{a}"'
     generateSourceMapParseTest "NewInstanceStn",        'new Foo'
     generateSourceMapParseTest "AccessorStn",           'a.b'
+    generateSourceMapParseTest "ThrowStn",             'throw new Error "foo"'
+    generateSourceMapParseTest "ThrowStn",             'a && throw new Error "foo"'
     generateSourceMapParseTest "ObjectStn",             'a: 1'
     generateSourceMapParseTest "ObjectStn",             '{} a'
     generateSourceMapParseTest "ObjectStn",             '{} a.b'

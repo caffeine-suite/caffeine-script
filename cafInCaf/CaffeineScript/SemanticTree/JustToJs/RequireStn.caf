@@ -29,3 +29,7 @@ class RequireStn extends &BaseStn
 
   toJs: ->
     "" require('#{@requireString}')
+
+  toSourceNode: ->
+    @createSourceNode
+      "" require('#{@requireString}')

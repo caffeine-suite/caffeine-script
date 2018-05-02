@@ -35,4 +35,3 @@ module.exports
   TryStn:                        require './TryStn'                       
   UnaryOperatorStn:              require './UnaryOperatorStn'             
   UndefinedStn:                  require './UndefinedStn'                 
-  ValueStn:                      require './ValueStn'                     

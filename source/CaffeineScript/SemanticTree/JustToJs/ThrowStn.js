@@ -8,8 +8,15 @@ Caf.defMod(module, () => {
       function(ThrowStn, classSuper, instanceSuper) {
         this.prototype.toJs = function(options = {}) {
           return options.expression
-            ? `(()=>{${Caf.toString(this.toJs())};})()`
+            ? `(() => {${Caf.toString(this.toJs())};})()`
             : `throw ${Caf.toString(this.childrenToJs())}`;
+        };
+        this.prototype.toSourceNode = function({ expression }) {
+          let base;
+          base = ["throw ", this.childrenToSourceNodes()];
+          return this.createSourceNode(
+            expression ? this.doSourceNode(base, ";") : base
+          );
         };
       }
     ));
