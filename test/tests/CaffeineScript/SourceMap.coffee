@@ -11,6 +11,8 @@ module.exports = suite:
     generateSourceMapParseTest "StringStn",             ":hi"
     generateSourceMapParseTest "StringStn",             '"#{hi()}"'
     generateSourceMapParseTest "ReferenceStn",          "a"
+    generateSourceMapParseTest "ReferenceStn",          "!a"
+    generateSourceMapParseTest "ReferenceStn",          "a + b"
     generateSourceMapParseTest "AssignmentStn1",        "a = 1"
     generateSourceMapParseTest "AssignmentStn2",        "a += 1"
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
@@ -22,6 +24,9 @@ module.exports = suite:
     generateSourceMapParseTest "RegExpStn", '///i foo #{bar}'
     generateSourceMapParseTest "DoStn", "do (a) -> a"
     generateSourceMapParseTest "RequireStn", "&ArtStandardLib"
+    generateSourceMapParseTest "GlobalIdentifierStn",   "undefined"
+    generateSourceMapParseTest "GlobalIdentifierStn",   "null"
+    generateSourceMapParseTest "GlobalIdentifierStn",   "true"
     generateSourceMapParseTest "GlobalIdentifierStn",   "global"
     generateSourceMapParseTest "ThisStn",               "this"
     generateSourceMapParseTest "ThisStn",               "@"
@@ -59,12 +64,22 @@ module.exports = suite:
       when b then c
       else d
       """
-    # generateSourceMapParseTest "ComprehensionStn", """
-    #   (b, cafK, cafInto) =>
-    #     if b then cafInto.push
-    #     null
-    #   """
 
+  classes: ->
+    generateSourceMapParseTest "ClassStn", "class Foo"
+    generateSourceMapParseTest "ClassStn", "class Foo extends Bar"
+    generateSourceMapParseTest "ClassStn", """
+      class Foo extends Baz
+
+        constructor: ->
+          @wow = true
+      """
+
+    generateSourceMapParseTest "ClassStn", """
+      class Foo extends BaseClass
+        @getter
+          foo: -> @_foo
+      """
 
 
   control: ->

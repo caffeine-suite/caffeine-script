@@ -240,15 +240,40 @@ Caf.defMod(module, () => {
                 (Caf.exists(classExtends) && classExtends.toJsExpression()) ||
                   "Object"
               )}`;
-              classBodyJs = `{${Caf.toString(
-                (Caf.exists(classBody) && classBody.toJs()) || ""
-              )}}`;
+              classBodyJs = classBody
+                ? `{${Caf.toString(classBody.toJs())};}`
+                : "{}";
               return body
                 ? out +
                     ` ${Caf.toString(classBodyJs)}, ${Caf.toString(
                       body.toJs()
                     )})`
                 : out + ` ${Caf.toString(classBodyJs)})`;
+            };
+            this.prototype.toSourceNode = function() {
+              let className, classExtends, body, classBody, cafTemp;
+              ({
+                className,
+                classExtends,
+                body,
+                classBody
+              } = this.labeledChildren);
+              return this.createSourceNode(
+                "Caf.defClass(class ",
+                className.toSourceNode(),
+                " extends ",
+                (cafTemp =
+                  Caf.exists(classExtends) &&
+                  classExtends.toSourceNode({ expression: true })) != null
+                  ? cafTemp
+                  : "Object",
+                " {",
+                Caf.exists(classBody) &&
+                  classBody.toSourceNode({ classBody: true }),
+                "}",
+                body ? [", ", body.toSourceNode()] : undefined,
+                ")"
+              );
             };
           }
         ))

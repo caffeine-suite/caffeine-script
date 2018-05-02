@@ -248,6 +248,9 @@ Caf.defMod(module, () => {
                 cafInto.push(c.toSourceNode(options));
               });
             };
+            this.prototype.doSourceNode = function(...body) {
+              return this.createSourceNode("(() => {", body, "})()");
+            };
             null;
             this.prototype.toJs = function(options) {
               return (() => {
@@ -271,9 +274,6 @@ Caf.defMod(module, () => {
                 body = body.toFunctionBodyJs();
               }
               return `(() => {${Caf.toString(body)};})()`;
-            };
-            this.prototype.doSourceNode = function(...body) {
-              return this.createSourceNode("(() => {", body, "})()");
             };
             this.prototype.toFunctionBodyJsArray = function(
               returnAction = true

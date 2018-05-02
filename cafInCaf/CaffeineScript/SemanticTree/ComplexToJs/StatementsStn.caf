@@ -5,7 +5,7 @@ class StatementsStn extends &BaseStn
   needsParens: false
 
   toSourceNode: (options)->
-    {returnAction, generateStatements, expression} = options if options
+    {returnAction, generateStatements, expression, classBody} = options if options
     generateStatements ?= expression ? true
 
     out = @createSourceNode
@@ -19,7 +19,7 @@ class StatementsStn extends &BaseStn
             @_getChildrenSourceNodes null, false
             ")"
       else
-        @_getChildrenSourceNodes returnAction, generateStatements
+        @_getChildrenSourceNodes returnAction, generateStatements, classBody
 
     out
 
@@ -69,7 +69,7 @@ class StatementsStn extends &BaseStn
         else
           c.toJsExpression returnValueIsIgnored: true
 
-  _getChildrenSourceNodes: (returnAction, generateStatements = true)->
+  _getChildrenSourceNodes: (returnAction, generateStatements = true, classBody)->
     returnAction = switch returnAction
       when true then returnAction = :return
       when false then null
@@ -90,7 +90,7 @@ class StatementsStn extends &BaseStn
 
       else
         if generateStatements
-          c.toSourceNode statement: true
+          c.toSourceNode statement: !classBody
         else
           c.toSourceNode expression: true, returnValueIsIgnored: true
     out.push ";" if generateStatements

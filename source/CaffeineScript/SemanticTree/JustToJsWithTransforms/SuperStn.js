@@ -43,7 +43,7 @@ Caf.defMod(module, () => {
             );
           };
           this.prototype.toJs = function() {
-            let args, getSuperInput, klass, superObject, method;
+            let args, method;
             ({ args } = this);
             return this.props.calledInConstructor
               ? ((args = this.props.passArguments
@@ -52,24 +52,56 @@ Caf.defMod(module, () => {
                       cafInto.push(a.toJsExpression());
                     })),
                 `super(${Caf.toString(args.join(", "))})`)
-              : (getSuperInput = (klass = this.findParent("Class"))
-                  ? ((superObject = this.props.classMethod
-                      ? klass.classSuperHandle
-                      : klass.instanceSuperHandle),
-                    (method = this.props.passArguments
-                      ? ((args = "arguments"), "apply")
-                      : ((args = Caf.each(args, [], (a, cafK, cafInto) => {
-                          cafInto.push(a.toJsExpression());
-                        })),
-                        "call")),
-                    `${Caf.toString(superObject)}.${Caf.toString(
-                      this.props.methodName
-                    )}.${Caf.toString(method)}${Caf.toString(
-                      this.applyRequiredParens(["this"].concat(args).join(", "))
-                    )}`)
-                  : (() => {
-                      throw new Error("super not used in class");
-                    })());
+              : ((method = this.props.passArguments
+                  ? ((args = "arguments"), "apply")
+                  : ((args = Caf.each(args, [], (a, cafK, cafInto) => {
+                      cafInto.push(a.toJsExpression());
+                    })),
+                    "call")),
+                `${Caf.toString(this.superObject)}.${Caf.toString(
+                  this.props.methodName
+                )}.${Caf.toString(method)}${Caf.toString(
+                  this.applyRequiredParens(["this"].concat(args).join(", "))
+                )}`);
+          };
+          this.getter({
+            klass: function() {
+              return this.findParent("Class");
+            },
+            superObject: function() {
+              return this.props.classMethod
+                ? this.klass.classSuperHandle
+                : this.klass.instanceSuperHandle;
+            }
+          });
+          this.prototype.validate = function() {
+            return !(this.props.calledInConstructor || this.klass)
+              ? (() => {
+                  throw new Error("'super' must be used in a class definition");
+                })()
+              : undefined;
+          };
+          this.prototype.toSourceNode = function() {
+            let args, passArguments;
+            ({ args } = this);
+            return this.props.calledInConstructor
+              ? ((args = this.props.passArguments
+                  ? "...arguments"
+                  : this.stnArrayToSourceNodes(args, ", ")),
+                this.createSourceNode("super(", args, ")"))
+              : (({ passArguments } = this.props),
+                this.createSourceNode(
+                  this.superObject,
+                  ".",
+                  this.props.methodName,
+                  ".",
+                  passArguments ? "apply" : "call",
+                  "(this, ",
+                  this.props.passArguments
+                    ? "arguments"
+                    : this.stnArrayToSourceNodes(args, ", "),
+                  ")"
+                ));
           };
         }
       ));

@@ -231,6 +231,13 @@ class BaseStn extends BaseClass
         out.push joiner
       c.toSourceNode options
 
+
+  doSourceNode: (body...) ->
+    @createSourceNode
+      "(() => {"
+      body
+      "})()"
+
   null
     # this null is a hack-fix for caf-script's current bug of comments-getting-sucked-up-into
     # immediately proceeding block-strings. see: tests-to-add.txt for details
@@ -274,12 +281,6 @@ class BaseStn extends BaseClass
     body = body.toFunctionBodyJs() unless isString body
 
     "(() => {#{body};})()"
-
-  doSourceNode: (body...) ->
-    @createSourceNode
-      "(() => {"
-      body
-      "})()"
 
   toFunctionBodyJsArray: (returnAction = true)->
     if returnAction

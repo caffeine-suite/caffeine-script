@@ -25,10 +25,17 @@ Caf.defMod(module, () => {
                   return "!==";
                 case "not":
                   return "!";
+                case "?":
+                  return " != null";
                 default:
                   return op;
               }
             })();
+          }
+        });
+        this.getter({
+          tail: function() {
+            return this.props.tail || this.props.operand === "?";
           }
         });
         this.prototype.needsParens = false;
@@ -44,6 +51,16 @@ Caf.defMod(module, () => {
               : `${Caf.toString(this.normalizedOperand)}${Caf.toString(
                   childrenJs
                 )}`;
+        };
+        this.prototype.toSourceNode = function(options) {
+          let childNode, base;
+          childNode = this.children[0].toSourceNode({ dotBase: true });
+          base = this.tail
+            ? [childNode, this.normalizedOperand]
+            : [this.normalizedOperand, childNode];
+          return Caf.exists(options) && options.dotBase
+            ? this.createSourceNode("(", base, ")")
+            : this.createSourceNode(base);
         };
       }
     ));

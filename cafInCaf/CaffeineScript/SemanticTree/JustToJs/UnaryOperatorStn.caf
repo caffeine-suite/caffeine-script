@@ -11,7 +11,11 @@ class UnaryOperatorStn extends &BaseStn
         when "==", "is"   then "==="
         when "!=", "isnt" then "!=="
         when "not" then "!"
+        when "?" then " != null"
         else op
+
+  @getter
+    tail: -> @props.tail || @props.operand == "?"
 
   needsParens: false
   toJs: ->
@@ -22,3 +26,17 @@ class UnaryOperatorStn extends &BaseStn
       "#{childrenJs}#{@normalizedOperand}"
     else
       "#{@normalizedOperand}#{childrenJs}"
+
+  toSourceNode: (options) ->
+    childNode = @children[0].toSourceNode dotBase: true
+
+    base = if @tail
+      childNode, @normalizedOperand
+    else
+      @normalizedOperand, childNode
+
+    if options?.dotBase
+      @createSourceNode "(", base, ")"
+
+    else
+      @createSourceNode base

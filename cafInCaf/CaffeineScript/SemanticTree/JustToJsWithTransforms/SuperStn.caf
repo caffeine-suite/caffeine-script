@@ -35,21 +35,57 @@ class SuperStn extends &BaseStn
       "super(#{args.join ', '})"
 
     else
-      getSuperInput = if klass = @findParent "Class"
-
-        superObject = if @props.classMethod
-          klass.classSuperHandle
-        else
-          klass.instanceSuperHandle
-
-        method = if @props.passArguments
-          args = "arguments"
-          "apply"
-        else
-          args = array a in args with a.toJsExpression()
-          "call"
-
-        "#{superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
-
+      method = if @props.passArguments
+        args = "arguments"
+        "apply"
       else
-        throw new Error "super not used in class"
+        args = array a in args with a.toJsExpression()
+        "call"
+
+      "#{@superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+
+  @getter
+    klass: -> @findParent "Class"
+    superObject: ->
+      if @props.classMethod
+        @klass.classSuperHandle
+      else
+        @klass.instanceSuperHandle
+
+  validate: ->
+    unless @props.calledInConstructor || @klass
+      throw new Error "'super' must be used in a class definition"
+
+  toSourceNode: ->
+    {args} = @
+
+    if @props.calledInConstructor
+      args = if @props.passArguments
+        "...arguments"
+      else
+        @stnArrayToSourceNodes args, ', '
+
+      @createSourceNode
+        "super("
+        args
+        ")"
+
+    else
+      {passArguments} = @props
+      @createSourceNode
+        @superObject
+        "."
+
+        @props.methodName
+        "."
+
+        if passArguments then :apply else :call
+
+        "(this, "
+
+        if @props.passArguments
+          :arguments
+        else
+          @stnArrayToSourceNodes args, ', '
+
+        ")"

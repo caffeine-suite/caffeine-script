@@ -116,9 +116,28 @@ class ClassStn extends &BaseStn
     # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
     out = "Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
 
-    classBodyJs = "{#{classBody?.toJs()||''}}"
+    classBodyJs = if classBody then "{#{classBody.toJs()};}" else "{}"
 
     if body
       out + " #{classBodyJs}, #{body.toJs()})"
     else
       out + " #{classBodyJs})"
+
+  # NOTE: without an 'extends' clause, JavaScript extends Function, not Object, which is just WRONG
+  # AND that makes 'super' illegal if you aren't extending anything.
+  # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
+  toSourceNode: ->
+    {className, classExtends, body, classBody} = @labeledChildren
+
+    @createSourceNode
+      "Caf.defClass(class "
+      className.toSourceNode()
+      " extends "
+      classExtends?.toSourceNode(expression: true) ? :Object
+
+      " {"
+      classBody?.toSourceNode classBody: true
+      "}"
+
+      ", " body.toSourceNode() if body
+      ")"

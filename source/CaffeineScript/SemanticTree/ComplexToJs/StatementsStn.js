@@ -8,9 +8,14 @@ Caf.defMod(module, () => {
       function(StatementsStn, classSuper, instanceSuper) {
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
-          let returnAction, generateStatements, expression, out;
+          let returnAction, generateStatements, expression, classBody, out;
           if (options) {
-            ({ returnAction, generateStatements, expression } = options);
+            ({
+              returnAction,
+              generateStatements,
+              expression,
+              classBody
+            } = options);
           }
           generateStatements != null
             ? generateStatements
@@ -31,7 +36,11 @@ Caf.defMod(module, () => {
                       ];
                   }
                 })()
-              : this._getChildrenSourceNodes(returnAction, generateStatements)
+              : this._getChildrenSourceNodes(
+                  returnAction,
+                  generateStatements,
+                  classBody
+                )
           );
           return out;
         };
@@ -94,7 +103,8 @@ Caf.defMod(module, () => {
         };
         this.prototype._getChildrenSourceNodes = function(
           returnAction,
-          generateStatements = true
+          generateStatements = true,
+          classBody
         ) {
           let lines, out;
           returnAction = (() => {
@@ -121,7 +131,7 @@ Caf.defMod(module, () => {
                       : childExpression)
                   : c.toJs({ generateReturnStatement: true })
                 : generateStatements
-                  ? c.toSourceNode({ statement: true })
+                  ? c.toSourceNode({ statement: !classBody })
                   : c.toSourceNode({
                       expression: true,
                       returnValueIsIgnored: true
