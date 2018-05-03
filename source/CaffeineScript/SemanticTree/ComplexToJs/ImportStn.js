@@ -71,6 +71,58 @@ Caf.defMod(module, () => {
                   : `(() => {${Caf.toString(bodyJs)};})()`)
               : "undefined";
           };
+          this.getter({
+            parentImport: function() {
+              return this.findParent(/^Import$/);
+            }
+          });
+          this.prototype.toSourceNode = function(options = {}) {
+            let importFromCaptureIdentifier,
+              p,
+              importBody,
+              importFromList,
+              identifiersToImport,
+              bodySourceNodes,
+              importsSourceNodes;
+            importFromCaptureIdentifier = null;
+            if ((p = this.parentImport)) {
+              ({ importFromCaptureIdentifier } = p);
+              true;
+            }
+            ({ importBody } = this.labeledChildren);
+            importFromList = arrayWithoutLast(this.children);
+            return importBody
+              ? ((identifiersToImport = Object.keys(
+                  importBody.generateImportMap()
+                )),
+                (bodySourceNodes = [
+                  importBody.getAutoLets(),
+                  importBody.toSourceNode({ returnAction: true })
+                ]),
+                identifiersToImport.length > 0
+                  ? ((importsSourceNodes = compactFlatten([
+                      importFromCaptureIdentifier || "global",
+                      ", ",
+                      this.stnArrayToSourceNodes(importFromList, ", ")
+                    ])),
+                    this.createSourceNode(
+                      'Caf.importInvoke(["',
+                      identifiersToImport.join('", "'),
+                      '"], ',
+                      this._importFromCaptureIdentifier
+                        ? [this._importFromCaptureIdentifier, " = "]
+                        : undefined,
+                      "[",
+                      importsSourceNodes,
+                      "], (",
+                      identifiersToImport.join(", "),
+                      ") => {",
+                      bodySourceNodes,
+                      "})"
+                    ))
+                  : this.createSourceNode(this.doSourceNode(bodySourceNodes)))
+              : "undefined";
+          };
         }
       ));
     }

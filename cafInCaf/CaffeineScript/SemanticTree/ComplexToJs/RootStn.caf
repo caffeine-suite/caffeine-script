@@ -31,10 +31,10 @@ class RootStn extends &ScopeStnMixin &BaseStn
           Caf.defMod(module, () => {
 
         "let #{lets.join ', '}; " if lets.length > 0
-        @statementsSourceNodes
+        @statements.toSourceNode returnAction: true
 
         """
-          };});
+          });
     else
       []
         if present autoLets = @getAutoLets()

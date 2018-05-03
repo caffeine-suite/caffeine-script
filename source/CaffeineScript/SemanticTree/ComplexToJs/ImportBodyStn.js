@@ -14,6 +14,9 @@ Caf.defMod(module, () => {
           this.prototype.toJs = function(options) {
             return this.children[0].toJs(options);
           };
+          this.prototype.toSourceNode = function(options) {
+            return this.children[0].toSourceNode(options);
+          };
         }
       ))
     );

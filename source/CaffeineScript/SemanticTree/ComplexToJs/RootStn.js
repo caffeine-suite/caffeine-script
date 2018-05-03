@@ -50,8 +50,8 @@ Caf.defMod(module, () => {
                         lets.length > 0
                           ? `let ${Caf.toString(lets.join(", "))}; `
                           : undefined,
-                        this.statementsSourceNodes,
-                        "};});"
+                        this.statements.toSourceNode({ returnAction: true }),
+                        "});"
                       ])
                     : [
                         present((autoLets = this.getAutoLets()))

@@ -6,6 +6,15 @@ module.exports = suite:
 
     generateSourceMapParseTest "two statements", "1;2;"
 
+  modules: ->
+    generateSourceMapParseTest "SimpleLiteralStn",      "1", compileModule: true
+    generateSourceMapParseTest "ImportStn",
+      """
+      import &ArtStandardLib
+      foo
+      """
+      compileModule: true
+
   stnTypes: ->
     generateSourceMapParseTest "SimpleLiteralStn",      "1"
     generateSourceMapParseTest "StringStn",             ":hi"

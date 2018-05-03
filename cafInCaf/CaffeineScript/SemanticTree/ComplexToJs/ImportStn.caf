@@ -60,3 +60,52 @@ class ImportStn extends &BaseStn
         "" (() => {#{bodyJs};})()
     else
       "undefined"
+
+  @getter
+    parentImport: ->
+      @findParent /^Import$/
+
+  toSourceNode: (options = {})->
+    importFromCaptureIdentifier = null
+    if p = @parentImport
+      {importFromCaptureIdentifier} = p
+      true
+
+    {importBody} = @labeledChildren
+    importFromList = arrayWithoutLast @children
+
+    if importBody
+      identifiersToImport = Object.keys importBody.generateImportMap()
+
+      # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
+      bodySourceNodes =
+        []
+          importBody.getAutoLets()
+          importBody.toSourceNode returnAction: true
+
+      if identifiersToImport.length > 0
+
+        importsSourceNodes = compactFlatten []
+          importFromCaptureIdentifier || :global
+          ", "
+          @stnArrayToSourceNodes importFromList, ", "
+
+        @createSourceNode
+          "" Caf.importInvoke(["
+          identifiersToImport.join '", "'
+          '"], '
+          if @_importFromCaptureIdentifier then
+            [] @_importFromCaptureIdentifier, " = "
+          "" [
+          importsSourceNodes
+          "" ], (
+          identifiersToImport.join ', '
+          "" ) => {
+          bodySourceNodes
+          "" })
+
+      else
+        @createSourceNode
+          @doSourceNode bodySourceNodes
+    else
+      "undefined"
