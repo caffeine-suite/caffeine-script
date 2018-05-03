@@ -227,9 +227,9 @@ Caf.defMod(module, () => {
                       : ((a = []),
                         objectKeyCount(props) > 0 ? a.push(props) : undefined,
                         a.concat(
-                          Caf.each(this.children, [], (c, cafK, cafInto) => {
-                            cafInto.push(c.inspectedObjects);
-                          })
+                          Caf.each(this.children, [], (c, cafK, cafInto) =>
+                            cafInto.push(c.inspectedObjects)
+                          )
                         ))
                 };
               },
@@ -251,9 +251,9 @@ Caf.defMod(module, () => {
               ({ classModuleState, hotReloadEnabled } = options);
               classSuper.postCreateConcreteClass.apply(this, arguments);
               return __webpack_require__(4).register(
-                createObjectTreeFactory({ class: this }, (props, children) => {
-                  return this.newInstance(props, children);
-                })
+                createObjectTreeFactory({ class: this }, (props, children) =>
+                  this.newInstance(props, children)
+                )
               );
             };
             this.prototype.findParent = function(stnTypePattern) {
@@ -274,20 +274,23 @@ Caf.defMod(module, () => {
               stnTypeStopPattern,
               _foundList = []
             ) {
-              Caf.each(this.children, undefined, child => {
-                if (stnTypePattern.test(child.type)) {
-                  _foundList.push(child);
-                } else {
-                  if (
-                    !(
-                      Caf.exists(stnTypeStopPattern) &&
-                      stnTypeStopPattern.test(child.type)
-                    )
-                  ) {
-                    child.find(stnTypePattern, stnTypeStopPattern, _foundList);
-                  }
-                }
-              });
+              Caf.each(
+                this.children,
+                undefined,
+                child =>
+                  stnTypePattern.test(child.type)
+                    ? _foundList.push(child)
+                    : !(
+                        Caf.exists(stnTypeStopPattern) &&
+                        stnTypeStopPattern.test(child.type)
+                      )
+                      ? child.find(
+                          stnTypePattern,
+                          stnTypeStopPattern,
+                          _foundList
+                        )
+                      : undefined
+              );
               return _foundList.length === 0 ? null : _foundList;
             };
             sourceNodeLineColumnScratch = {};
@@ -370,9 +373,9 @@ Caf.defMod(module, () => {
               })();
             };
             this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs(options));
-              }).join(joiner);
+              return Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toJs(options))
+              ).join(joiner);
             };
             this.prototype.doJs = function(args, body) {
               if (args) {
@@ -435,9 +438,9 @@ Caf.defMod(module, () => {
             this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
               if (!this.parseTreeNode) {
                 this.parseTreeNode = parseTreeNode;
-                Caf.each(this.children, undefined, child => {
-                  child.setDefaultParseTreeNode(parseTreeNode);
-                });
+                Caf.each(this.children, undefined, child =>
+                  child.setDefaultParseTreeNode(parseTreeNode)
+                );
               }
               return this;
             };
@@ -475,16 +478,14 @@ Caf.defMod(module, () => {
                   info: e.info
                 });
               }
-              Caf.each(this.children, undefined, child => {
-                child.validateAll();
-              });
+              Caf.each(this.children, undefined, child => child.validateAll());
               return this;
             };
             this.prototype.updateScope = function(scope) {
               this.scope = scope;
-              return Caf.each(this.children, undefined, child => {
-                child.updateScope(this.scope);
-              });
+              return Caf.each(this.children, undefined, child =>
+                child.updateScope(this.scope)
+              );
             };
           }
         ))
@@ -615,14 +616,8 @@ Caf.defMod(module, () => {
       let legalUnquotedPropName;
       return {
         deescapeSpaces: function(string) {
-          return Caf.each(
-            string.split(/((?:\\\\)+)/),
-            [],
-            (str, i, cafInto) => {
-              cafInto.push(
-                Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
-              );
-            }
+          return Caf.each(string.split(/((?:\\\\)+)/), [], (str, i, cafInto) =>
+            cafInto.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str)
           ).join("");
         },
         escapeNewLines: function(string) {
@@ -640,11 +635,11 @@ Caf.defMod(module, () => {
           split = charsToEscape.match(/\\/)
             ? [string]
             : string.split(/((?:\\.)+)/);
-          return Caf.each(split, [], (str, i, cafInto) => {
+          return Caf.each(split, [], (str, i, cafInto) =>
             cafInto.push(
               Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
-            );
-          }).join("");
+            )
+          ).join("");
         },
         legalUnquotedPropName: (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),
         escapePropName: function(rawPropName) {
@@ -842,9 +837,8 @@ Caf.defMod(module, () => {
                   ? Caf.each(
                       this._uniqueIdentifierHandles,
                       undefined,
-                      uniqueIdentifierHandle => {
-                        uniqueIdentifierHandle.identifier;
-                      }
+                      uniqueIdentifierHandle =>
+                        uniqueIdentifierHandle.identifier
                     )
                   : undefined;
               };
@@ -864,11 +858,10 @@ Caf.defMod(module, () => {
                   ? ((identifiers = Caf.each(
                       identifiers,
                       [],
-                      (identifier, cafK, cafInto) => {
-                        if (identifier.match(/=/)) {
-                          cafInto.push(identifier);
-                        }
-                      }
+                      (identifier, cafK, cafInto) =>
+                        identifier.match(/=/)
+                          ? cafInto.push(identifier)
+                          : undefined
                     )),
                     identifiers.length > 0
                       ? `${Caf.toString(identifiers.join("; "))}`
@@ -879,9 +872,9 @@ Caf.defMod(module, () => {
                 this.scope = scope;
                 this.bindAllUniqueIdentifiersRequested();
                 this.scope.addChildScope(this);
-                Caf.each(this.getChildrenToUpdateScope(), undefined, child => {
-                  child.updateScope(this);
-                });
+                Caf.each(this.getChildrenToUpdateScope(), undefined, child =>
+                  child.updateScope(this)
+                );
                 return (this._scopeUpdated = true);
               };
               this.prototype.generateImportMap = function(
@@ -897,20 +890,22 @@ Caf.defMod(module, () => {
                 Caf.each(
                   this._identifiersUsed,
                   map,
-                  (v, identifier, cafInto) => {
-                    if (!assignedInThisOrParentScope[identifier]) {
-                      cafInto[identifier] = v;
-                    }
-                  }
+                  (v, identifier, cafInto) =>
+                    !assignedInThisOrParentScope[identifier]
+                      ? (cafInto[identifier] = v)
+                      : undefined
                 );
-                Caf.each(this._childScopes, undefined, childScope => {
-                  if (!childScope.isImports) {
-                    childScope.generateImportMap(
-                      map,
-                      assignedInThisOrParentScope
-                    );
-                  }
-                });
+                Caf.each(
+                  this._childScopes,
+                  undefined,
+                  childScope =>
+                    !childScope.isImports
+                      ? childScope.generateImportMap(
+                          map,
+                          assignedInThisOrParentScope
+                        )
+                      : undefined
+                );
                 return map;
               };
               this.getter({
@@ -935,24 +930,21 @@ Caf.defMod(module, () => {
                   return Caf.each(
                     this.identifiersAssigned,
                     [],
-                    (initializer, identifier, cafInto) => {
-                      if (
-                        !identifiersAssignedInParentScopes ||
-                        !identifiersAssignedInParentScopes[identifier]
-                      ) {
-                        cafInto.push(
-                          isString(initializer)
-                            ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                initializer
-                              )}`
-                            : initializer.toJsExpression != null
+                    (initializer, identifier, cafInto) =>
+                      !identifiersAssignedInParentScopes ||
+                      !identifiersAssignedInParentScopes[identifier]
+                        ? cafInto.push(
+                            isString(initializer)
                               ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                  initializer.toJsExpression()
+                                  initializer
                                 )}`
-                              : identifier
-                        );
-                      }
-                    }
+                              : initializer.toJsExpression != null
+                                ? `${Caf.toString(identifier)} = ${Caf.toString(
+                                    initializer.toJsExpression()
+                                  )}`
+                                : identifier
+                          )
+                        : undefined
                   );
                 },
                 identifiersActiveInScope: function() {
@@ -973,23 +965,25 @@ Caf.defMod(module, () => {
                 identifiersUsedInThisScopeButNotAssigned: function() {
                   let assigned;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  return Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
-                    if (!assigned[k]) {
-                      cafInto[k] = true;
-                    }
-                  });
+                  return Caf.each(
+                    this.identifiersUsed,
+                    {},
+                    (v, k, cafInto) =>
+                      !assigned[k] ? (cafInto[k] = true) : undefined
+                  );
                 },
                 identifiersUsedButNotAssigned: function() {
                   let assigned, ret;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  ret = Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
-                    if (!assigned[k]) {
-                      cafInto[k] = true;
-                    }
-                  });
-                  Caf.each(this._childScopes, undefined, childScope => {
-                    mergeInto(ret, childScope.identifiersUsedButNotAssigned);
-                  });
+                  ret = Caf.each(
+                    this.identifiersUsed,
+                    {},
+                    (v, k, cafInto) =>
+                      !assigned[k] ? (cafInto[k] = true) : undefined
+                  );
+                  Caf.each(this._childScopes, undefined, childScope =>
+                    mergeInto(ret, childScope.identifiersUsedButNotAssigned)
+                  );
                   return (this._identifiersUsedButNotAssigned = ret);
                 },
                 identifiersAssignedInThisOrParentScopes: function() {
@@ -1624,9 +1618,9 @@ Caf.defMod(module, () => {
                 if (!done) {
                   ({ key, isFunctionInvocation } = accessor);
                   if (isArray(key)) {
-                    key = Caf.each(key, [], (kk, cafK, cafInto) => {
-                      cafInto.push(kk.transform());
-                    });
+                    key = Caf.each(key, [], (kk, cafK, cafInto) =>
+                      cafInto.push(kk.transform())
+                    );
                   } else {
                     key = key.transform();
                   }
@@ -1791,11 +1785,14 @@ Caf.defMod(module, () => {
               ));
             };
             this.prototype.getMatchStns = function() {
-              return Caf.each(this.matches, [], (m, cafK, cafInto) => {
-                if ((m = Caf.isF(m.getStn) && m.getStn())) {
-                  cafInto.push(m);
-                }
-              });
+              return Caf.each(
+                this.matches,
+                [],
+                (m, cafK, cafInto) =>
+                  (m = Caf.isF(m.getStn) && m.getStn())
+                    ? cafInto.push(m)
+                    : undefined
+              );
             };
             this.prototype.getStnFactory = function() {
               return StnRegistry.get(this.stnFactory);
@@ -1808,11 +1805,8 @@ Caf.defMod(module, () => {
                 : Caf.each(
                     this.nonStnExtensionMatches,
                     [],
-                    (m, cafK, cafInto) => {
-                      if ((m = m.getStn(left))) {
-                        cafInto.push(m);
-                      }
-                    }
+                    (m, cafK, cafInto) =>
+                      (m = m.getStn(left)) ? cafInto.push(m) : undefined
                   );
             };
             this.getter({
@@ -1825,18 +1819,20 @@ Caf.defMod(module, () => {
                 );
               },
               stnExtensionMatches: function() {
-                return Caf.each(this.presentMatches, [], (m, cafK, cafInto) => {
-                  if (m.getStn && m.isStnExtension) {
-                    cafInto.push(m);
-                  }
-                });
+                return Caf.each(
+                  this.presentMatches,
+                  [],
+                  (m, cafK, cafInto) =>
+                    m.getStn && m.isStnExtension ? cafInto.push(m) : undefined
+                );
               },
               nonStnExtensionMatches: function() {
-                return Caf.each(this.presentMatches, [], (m, cafK, cafInto) => {
-                  if (m.getStn && !m.isStnExtension) {
-                    cafInto.push(m);
-                  }
-                });
+                return Caf.each(
+                  this.presentMatches,
+                  [],
+                  (m, cafK, cafInto) =>
+                    m.getStn && !m.isStnExtension ? cafInto.push(m) : undefined
+                );
               }
             });
             this.prototype.getStn = function(left) {
@@ -1851,9 +1847,11 @@ Caf.defMod(module, () => {
                   )
                 : ((x = this.getStnChildren(left)),
                   x.length === 1 ? x[0] : x.length === 0 ? left : x);
-              Caf.each(this.stnExtensionMatches, undefined, extension => {
-                stn = extension.getStn(stn);
-              });
+              Caf.each(
+                this.stnExtensionMatches,
+                undefined,
+                extension => (stn = extension.getStn(stn))
+              );
               if (Caf.exists(stn) && stn.props) {
                 currentStnLabel = stn.props.label;
                 if (!currentStnLabel || this.label) {
@@ -1962,9 +1960,11 @@ Caf.defMod(module, () => {
             (v, i, cafInto) => {
               let leftAssociativityByPrecidence, operators;
               [leftAssociativityByPrecidence, ...operators] = v;
-              Caf.each(operators, undefined, op => {
-                this.opsToPrecidence[op] = i;
-              });
+              Caf.each(
+                operators,
+                undefined,
+                op => (this.opsToPrecidence[op] = i)
+              );
               cafInto.push(leftAssociativityByPrecidence === "left");
             }
           );
@@ -2075,12 +2075,9 @@ Caf.defMod(module, () => {
             }
             return p;
           };
-          this.getPrecidenceLevelIsLeftAssociative = p => {
-            return this.leftAssociativityByPrecidence[p];
-          };
-          this.operatorIsInfixJs = operator => {
-            return !this.operatorMap[operator];
-          };
+          this.getPrecidenceLevelIsLeftAssociative = p =>
+            this.leftAssociativityByPrecidence[p];
+          this.operatorIsInfixJs = operator => !this.operatorMap[operator];
           this.resolveOperatorPrecidence = (
             operators,
             operands,
@@ -2108,16 +2105,17 @@ Caf.defMod(module, () => {
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;
-              Caf.each(operators, undefined, (op, i) => {
-                if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
-                  firstOccurance = lastOccurance = i;
-                  lowestPrecidence = p;
-                } else {
-                  if (lowestPrecidence === p) {
-                    lastOccurance = i;
-                  }
-                }
-              });
+              Caf.each(
+                operators,
+                undefined,
+                (op, i) =>
+                  lowestPrecidence > (p = this.getOpPrecidence(op))
+                    ? ((firstOccurance = lastOccurance = i),
+                      (lowestPrecidence = p))
+                    : lowestPrecidence === p
+                      ? (lastOccurance = i)
+                      : undefined
+              );
               opIndexToResolve = this.getPrecidenceLevelIsLeftAssociative(p)
                 ? firstOccurance
                 : lastOccurance;
@@ -2212,13 +2210,11 @@ Caf.defMod(module, () => {
         class CaffeineScriptParser extends Parser {},
         function(CaffeineScriptParser, classSuper, instanceSuper) {
           this.nodeBaseClass = __webpack_require__(13);
-          Caf.each(__webpack_require__(23).modules, undefined, mod => {
-            if (isFunction(mod)) {
-              mod.call(this);
-            } else {
-              this.rule(mod);
-            }
-          });
+          Caf.each(
+            __webpack_require__(23).modules,
+            undefined,
+            mod => (isFunction(mod) ? mod.call(this) : this.rule(mod))
+          );
           this.prototype.parse = function(source, options) {
             return instanceSuper.parse.call(
               this,
@@ -2246,9 +2242,7 @@ Caf.defMod(module, () => {
   words = __webpack_require__(7).w(
     "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
   );
-  return Caf.each(words, (out = {}), word => {
-    out[word] = true;
-  });
+  return Caf.each(words, (out = {}), word => (out[word] = true));
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
@@ -2280,13 +2274,10 @@ Caf.defMod(module, () => {
           mixedIndentationRegexp = /(^|\n)( +\t|\t+ )/;
           tabIndentationRegexp = /(^|\n)\t/;
           spaceIndentationRegexp = /(^|\n) /;
-          this.hasMixedIndentation = source => {
-            return (
-              mixedIndentationRegexp.test(source) ||
-              (tabIndentationRegexp.test(source) &&
-                spaceIndentationRegexp.test(source))
-            );
-          };
+          this.hasMixedIndentation = source =>
+            mixedIndentationRegexp.test(source) ||
+            (tabIndentationRegexp.test(source) &&
+              spaceIndentationRegexp.test(source));
           this.normalizeIndentation = source => {
             let e;
             if (this.hasMixedIndentation(source)) {
@@ -2416,9 +2407,8 @@ Caf.defMod(module, () => {
                 lines.join("\n"))
               : source;
           };
-          this.preprocess = source => {
-            return this.normalizeComments(this.normalizeIndentation(source));
-          };
+          this.preprocess = source =>
+            this.normalizeComments(this.normalizeIndentation(source));
         }
       ));
     }
@@ -2487,9 +2477,9 @@ Caf.defMod(module, () => {
                 identifiersToImport.length > 0
                   ? ((importsJs = compactFlatten([
                       importFromCaptureIdentifier || "global",
-                      Caf.each(importFromList, [], (c, cafK, cafInto) => {
-                        cafInto.push(c.toJsExpression());
-                      })
+                      Caf.each(importFromList, [], (c, cafK, cafInto) =>
+                        cafInto.push(c.toJsExpression())
+                      )
                     ])),
                     `Caf.importInvoke(["${Caf.toString(
                       identifiersToImport.join('", "')
@@ -2945,7 +2935,7 @@ __webpack_require__(112);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.3"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.4"}
 
 /***/ }),
 /* 30 */
@@ -4266,8 +4256,8 @@ Caf.defMod(module, () => {
             { throwExpression: "throw _ expressionWithoutBinOps" },
             { stnFactory: "ThrowStn" }
           );
-          oneLessBlockSubparser = rule => {
-            return function(parentNode) {
+          oneLessBlockSubparser = rule =>
+            function(parentNode) {
               let nextOffset,
                 source,
                 offset,
@@ -4300,7 +4290,6 @@ Caf.defMod(module, () => {
                   }))
                 : undefined;
             };
-          };
           return this.rule({
             expressionWithOneLessBlock: {
               parse: oneLessBlockSubparser("implicitArrayOrExpression")
@@ -4554,11 +4543,10 @@ Caf.defMod(module, () => {
                   children = Caf.each(
                     this.getMatchStns(),
                     [],
-                    (m, cafK, cafInto) => {
+                    (m, cafK, cafInto) =>
                       cafInto.push(
                         m instanceof ObjectStn.class ? m.children : m
-                      );
-                    }
+                      )
                   );
                   return ObjectStn(children);
                 }
@@ -4705,27 +4693,24 @@ Caf.defMod(module, () => {
               Caf.each(
                 this.binaryOperatorAndExpressions,
                 [],
-                (opAndExp, cafK, cafInto) => {
-                  cafInto.push(getNormalizedOperator(opAndExp.binaryOperator));
-                }
+                (opAndExp, cafK, cafInto) =>
+                  cafInto.push(getNormalizedOperator(opAndExp.binaryOperator))
               ),
               compactFlatten([
                 left,
                 Caf.each(
                   this.binaryOperatorAndExpressions,
                   [],
-                  (opAndExp, cafK, cafInto) => {
-                    cafInto.push(opAndExp.rValue.getStn());
-                  }
+                  (opAndExp, cafK, cafInto) =>
+                    cafInto.push(opAndExp.rValue.getStn())
                 )
               ]),
-              (operandA, operandB, operator) => {
-                return BinaryOperatorStn(
+              (operandA, operandB, operator) =>
+                BinaryOperatorStn(
                   { parseTreeNode: this, operator },
                   operandA,
                   operandB
-                );
-              }
+                )
             );
           }
         },
@@ -4760,21 +4745,23 @@ Caf.defMod(module, () => {
           getStn: function() {
             let stn;
             stn = this.expressionWithoutBinOps.getStn();
-            Caf.each(this.unaryTailOperators || [], undefined, operand => {
-              stn = UnaryOperatorStn(
-                { operand: operand.toString().trim(), tail: true },
-                stn
-              );
-            });
+            Caf.each(
+              this.unaryTailOperators || [],
+              undefined,
+              operand =>
+                (stn = UnaryOperatorStn(
+                  { operand: operand.toString().trim(), tail: true },
+                  stn
+                ))
+            );
             Caf.each(
               (this.unaryOperator_s || []).slice().reverse(),
               undefined,
-              operand => {
-                stn = UnaryOperatorStn(
+              operand =>
+                (stn = UnaryOperatorStn(
                   { operand: operand.toString().trim() },
                   stn
-                );
-              }
+                ))
             );
             return stn;
           }
@@ -4965,13 +4952,12 @@ Caf.defMod(module, () => {
               Caf.each(
                 this.tailControlOperatorComplexExpressions,
                 undefined,
-                tco => {
-                  stn = ControlOperatorStn(
+                tco =>
+                  (stn = ControlOperatorStn(
                     { operand: tco.tailControlOperator.toString().trim() },
                     tco.implicitArrayOrExpression.getStn(),
                     stn
-                  );
-                }
+                  ))
               );
               return stn;
             }
@@ -5636,11 +5622,10 @@ Caf.defMod(module, () => {
                     ? ((identifiersToImport = Caf.each(
                         this.generateImportMap(),
                         [],
-                        (v, k, cafInto) => {
+                        (v, k, cafInto) =>
                           cafInto.push(
                             `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                          );
-                        }
+                          )
                       )),
                       (lets = compactFlatten([
                         identifiersToImport,
@@ -5673,11 +5658,8 @@ Caf.defMod(module, () => {
               identifiersToImport = Caf.each(
                 this.generateImportMap(),
                 [],
-                (v, k, cafInto) => {
-                  cafInto.push(
-                    `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                  );
-                }
+                (v, k, cafInto) =>
+                  cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`)
               );
               statementsJs = this.statements.toFunctionBodyJs();
               lets = compactFlatten([
@@ -5848,9 +5830,9 @@ Caf.defMod(module, () => {
           ({ falsifyCases } = options);
           ({ whenValue } = this.labeledChildren);
           cases = whenValue.implicitArray
-            ? Caf.each(whenValue.children, [], (m, cafK, cafInto) => {
-                cafInto.push(m.toJsExpression());
-              })
+            ? Caf.each(whenValue.children, [], (m, cafK, cafInto) =>
+                cafInto.push(m.toJsExpression())
+              )
             : [whenValue.toJsExpression()];
           return falsifyCases
             ? `case !(${Caf.toString(cases.join("): case !("))})`
@@ -6001,9 +5983,9 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function(options) {
           let out;
           out = `[${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) => {
-              cafInto.push(c.toJsExpression());
-            }).join(", ")
+            Caf.each(this.children, [], (c, cafK, cafInto) =>
+              cafInto.push(c.toJsExpression())
+            ).join(", ")
           )}]`;
           return Caf.exists(options) && options.dotBase
             ? `(${Caf.toString(out)})`
@@ -6689,11 +6671,12 @@ Caf.defMod(module, () => {
       function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
         this.getter({
           argumentNameList: function() {
-            return Caf.each(this.children, [], (c, cafK, cafInto) => {
-              if (c.argumentName) {
-                cafInto.push(c.argumentName);
-              }
-            });
+            return Caf.each(
+              this.children,
+              [],
+              (c, cafK, cafInto) =>
+                c.argumentName ? cafInto.push(c.argumentName) : undefined
+            );
           }
         });
         this.prototype.toSourceNode = function(options) {
@@ -6709,9 +6692,9 @@ Caf.defMod(module, () => {
         };
         this.prototype.toJs = function() {
           return `(${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) => {
-              cafInto.push(c.toJs());
-            }).join(", ")
+            Caf.each(this.children, [], (c, cafK, cafInto) =>
+              cafInto.push(c.toJs())
+            ).join(", ")
           )})`;
         };
       }
@@ -6821,14 +6804,17 @@ Caf.defMod(module, () => {
         class InterpolatedStringStn extends __webpack_require__(2) {},
         function(InterpolatedStringStn, classSuper, instanceSuper) {
           this.prototype.compactNewLines = function(compactLeft, compactRight) {
-            return Caf.each(this.children, undefined, (child, i) => {
-              if (child.type === "String") {
-                child.compactNewLines(
-                  compactLeft && i === 0,
-                  compactRight && i === this.children.length - 1
-                );
-              }
-            });
+            return Caf.each(
+              this.children,
+              undefined,
+              (child, i) =>
+                child.type === "String"
+                  ? child.compactNewLines(
+                      compactLeft && i === 0,
+                      compactRight && i === this.children.length - 1
+                    )
+                  : undefined
+            );
           };
           this.prototype.trimLeft = function() {
             let cafBase;
@@ -6847,17 +6833,17 @@ Caf.defMod(module, () => {
           this.prototype.toSourceNode = function() {
             return this.createSourceNode(
               "`",
-              Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toInterpolatedJsStringPart());
-              }),
+              Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toInterpolatedJsStringPart())
+              ),
               "`"
             );
           };
           this.prototype.toJs = function() {
             return `\`${Caf.toString(
-              Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toInterpolatedJsStringPart());
-              }).join("")
+              Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toInterpolatedJsStringPart())
+              ).join("")
             )}\``;
           };
         }
@@ -7227,9 +7213,9 @@ Caf.defMod(module, () => {
           this.prototype.toJs = function(options) {
             let out;
             out = `{${Caf.toString(
-              Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs());
-              }).join(", ")
+              Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toJs())
+              ).join(", ")
             )}}`;
             return (Caf.exists(options) && options.dotBase) ||
               (Caf.exists(options) && options.statement)
@@ -7276,9 +7262,9 @@ Caf.defMod(module, () => {
             return listOfObjectLiterals.length === 1
               ? new this(props, children)
               : new StnRegistry.ArrayStn(
-                  Caf.each(listOfObjectLiterals, [], (c, cafK, cafInto) => {
-                    cafInto.push(new this(props, c));
-                  })
+                  Caf.each(listOfObjectLiterals, [], (c, cafK, cafInto) =>
+                    cafInto.push(new this(props, c))
+                  )
                 );
           };
         }
@@ -7619,9 +7605,9 @@ Caf.defMod(module, () => {
             falsifyCases = !condition;
             options = { falsifyCases };
             return expression
-              ? ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) => {
-                  cafInto.push(clause.toFunctionBodyJs(options));
-                })),
+              ? ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
+                  cafInto.push(clause.toFunctionBodyJs(options))
+                )),
                 switchElse
                   ? cases.push(
                       `default: ${Caf.toString(switchElse.toFunctionBodyJs())};`
@@ -7630,9 +7616,9 @@ Caf.defMod(module, () => {
                 `(() => {switch (${Caf.toString(
                   this.getConditionJs()
                 )}) {${Caf.toString(cases.join(" "))}};})()`)
-              : ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) => {
-                  cafInto.push(clause.toJs(options));
-                })),
+              : ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
+                  cafInto.push(clause.toJs(options))
+                )),
                 switchElse
                   ? cases.push(`default: ${Caf.toString(switchElse.toJs())};`)
                   : undefined,
@@ -7661,9 +7647,9 @@ Caf.defMod(module, () => {
             ({ condition, switchWhens, switchElse } = this.labeledChildren);
             falsifyCases = !condition;
             childOptions = { falsifyCases, returnAction: expression };
-            cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) => {
-              cafInto.push(clause.toSourceNode(childOptions));
-            });
+            cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
+              cafInto.push(clause.toSourceNode(childOptions))
+            );
             if (switchElse) {
               cases.push(["default: ", switchElse.toSourceNode(childOptions)]);
             }
@@ -8139,27 +8125,28 @@ Caf.defMod(module, () => {
               return Caf.each(
                 Caf.exists((cafBase = this.body)) && cafBase.children,
                 undefined,
-                stn => {
-                  if (stn.type === "Object") {
-                    Caf.each(stn.children, undefined, objectPropValueStn => {
-                      let propNameStn, propValueStn;
-                      [propNameStn, propValueStn] = objectPropValueStn.children;
-                      if (
-                        propNameStn.type === "ObjectPropName" &&
-                        propNameStn.toJs() === "constructor"
-                      ) {
-                        propValueStn.props.isConstructor = true;
-                        Caf.each(
-                          propValueStn.find(/Super/),
-                          undefined,
-                          superCallChild => {
-                            superCallChild.props.calledInConstructor = true;
-                          }
-                        );
-                      }
-                    });
-                  }
-                }
+                stn =>
+                  stn.type === "Object"
+                    ? Caf.each(stn.children, undefined, objectPropValueStn => {
+                        let propNameStn, propValueStn;
+                        [
+                          propNameStn,
+                          propValueStn
+                        ] = objectPropValueStn.children;
+                        if (
+                          propNameStn.type === "ObjectPropName" &&
+                          propNameStn.toJs() === "constructor"
+                        ) {
+                          propValueStn.props.isConstructor = true;
+                          Caf.each(
+                            propValueStn.find(/Super/),
+                            undefined,
+                            superCallChild =>
+                              (superCallChild.props.calledInConstructor = true)
+                          );
+                        }
+                      })
+                    : undefined
               );
             };
             this.prototype.postTransform = function() {
@@ -8221,7 +8208,7 @@ Caf.defMod(module, () => {
                     (statementsToCount = Caf.each(
                       body.children,
                       [],
-                      (stn, cafK, cafInto) => {
+                      (stn, cafK, cafInto) =>
                         cafInto.push(
                           stn.type === "Object"
                             ? Caf.each(
@@ -8289,8 +8276,7 @@ Caf.defMod(module, () => {
                                 }
                               )
                             : stn
-                        );
-                      }
+                        )
                     ))
                   )
                 );
@@ -8301,9 +8287,8 @@ Caf.defMod(module, () => {
                   Caf.each(
                     constructorStn.find(/Super/),
                     undefined,
-                    superCallChild => {
-                      superCallChild.props.calledInConstructor = true;
-                    }
+                    superCallChild =>
+                      (superCallChild.props.calledInConstructor = true)
                   );
                   classBody = StatementsStn(
                     { label: "classBody" },
@@ -8475,9 +8460,8 @@ Caf.defMod(module, () => {
                 ? (Caf.each(
                     this.arguments.argumentNameList,
                     {},
-                    (name, cafK, cafInto) => {
-                      cafInto[cafK] = this.addArgumentName(name);
-                    }
+                    (name, cafK, cafInto) =>
+                      (cafInto[cafK] = this.addArgumentName(name))
                   ),
                   (this._updatingArgumentScope = true),
                   this.arguments.updateScope(this),
@@ -8546,14 +8530,15 @@ Caf.defMod(module, () => {
               return compactFlatten(
                 isConstructor
                   ? ((lastSuperContainingStatementIndex = null),
-                    Caf.each(statementStns, undefined, (v, i) => {
-                      if (
+                    Caf.each(
+                      statementStns,
+                      undefined,
+                      (v, i) =>
                         v.type === "Super" ||
                         v.find(/Super/, /FunctionDefinition|Class/)
-                      ) {
-                        lastSuperContainingStatementIndex = i;
-                      }
-                    }),
+                          ? (lastSuperContainingStatementIndex = i)
+                          : undefined
+                    ),
                     lastSuperContainingStatementIndex != null &&
                     lastSuperContainingStatementIndex >= 0
                       ? preBodyStatements
@@ -8783,9 +8768,9 @@ Caf.defMod(module, () => {
               }
               return `${Caf.toString(valueJs)}${Caf.toString(
                 this.applyRequiredParens(
-                  Caf.each(this.argStns, [], (a, cafK, cafInto) => {
-                    cafInto.push(a.toJsExpression());
-                  }).join(", ")
+                  Caf.each(this.argStns, [], (a, cafK, cafInto) =>
+                    cafInto.push(a.toJsExpression())
+                  ).join(", ")
                 )
               )}`;
             };
@@ -8927,15 +8912,15 @@ Caf.defMod(module, () => {
             return this.props.calledInConstructor
               ? ((args = this.props.passArguments
                   ? ["...arguments"]
-                  : Caf.each(args, [], (a, cafK, cafInto) => {
-                      cafInto.push(a.toJsExpression());
-                    })),
+                  : Caf.each(args, [], (a, cafK, cafInto) =>
+                      cafInto.push(a.toJsExpression())
+                    )),
                 `super(${Caf.toString(args.join(", "))})`)
               : ((method = this.props.passArguments
                   ? ((args = "arguments"), "apply")
-                  : ((args = Caf.each(args, [], (a, cafK, cafInto) => {
-                      cafInto.push(a.toJsExpression());
-                    })),
+                  : ((args = Caf.each(args, [], (a, cafK, cafInto) =>
+                      cafInto.push(a.toJsExpression())
+                    )),
                     "call")),
                 `${Caf.toString(this.superObject)}.${Caf.toString(
                   this.props.methodName
@@ -9214,18 +9199,15 @@ Caf.defMod(module, () => {
                         : ((bodyStatementsExceptLast = null), valueVarDef))
                     : (bodyWithDefault = body || valueVarDef),
                   (whenClauseWrapper = whenClause
-                    ? actionStn => {
-                        return StatementsStn(
+                    ? actionStn =>
+                        StatementsStn(
                           ControlOperatorStn(
                             { operand: "if" },
                             whenClause,
                             actionStn
                           )
-                        );
-                      }
-                    : actionStn => {
-                        return actionStn;
-                      }),
+                        )
+                    : actionStn => actionStn),
                   FunctionInvocationStn(
                     IdentifierStn({
                       identifier: `Caf.${Caf.toString(
