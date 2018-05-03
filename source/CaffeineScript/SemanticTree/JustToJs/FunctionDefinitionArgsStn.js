@@ -8,11 +8,12 @@ Caf.defMod(module, () => {
       function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
         this.getter({
           argumentNameList: function() {
-            return Caf.each(this.children, [], (c, cafK, cafInto) => {
-              if (c.argumentName) {
-                cafInto.push(c.argumentName);
-              }
-            });
+            return Caf.each(
+              this.children,
+              [],
+              (c, cafK, cafInto) =>
+                c.argumentName ? cafInto.push(c.argumentName) : undefined
+            );
           }
         });
         this.prototype.toSourceNode = function(options) {
@@ -28,9 +29,9 @@ Caf.defMod(module, () => {
         };
         this.prototype.toJs = function() {
           return `(${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) => {
-              cafInto.push(c.toJs());
-            }).join(", ")
+            Caf.each(this.children, [], (c, cafK, cafInto) =>
+              cafInto.push(c.toJs())
+            ).join(", ")
           )})`;
         };
       }

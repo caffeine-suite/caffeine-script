@@ -76,9 +76,11 @@ Caf.defMod(module, () => {
             (v, i, cafInto) => {
               let leftAssociativityByPrecidence, operators;
               [leftAssociativityByPrecidence, ...operators] = v;
-              Caf.each(operators, undefined, op => {
-                this.opsToPrecidence[op] = i;
-              });
+              Caf.each(
+                operators,
+                undefined,
+                op => (this.opsToPrecidence[op] = i)
+              );
               cafInto.push(leftAssociativityByPrecidence === "left");
             }
           );
@@ -189,12 +191,9 @@ Caf.defMod(module, () => {
             }
             return p;
           };
-          this.getPrecidenceLevelIsLeftAssociative = p => {
-            return this.leftAssociativityByPrecidence[p];
-          };
-          this.operatorIsInfixJs = operator => {
-            return !this.operatorMap[operator];
-          };
+          this.getPrecidenceLevelIsLeftAssociative = p =>
+            this.leftAssociativityByPrecidence[p];
+          this.operatorIsInfixJs = operator => !this.operatorMap[operator];
           this.resolveOperatorPrecidence = (
             operators,
             operands,
@@ -222,16 +221,17 @@ Caf.defMod(module, () => {
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;
-              Caf.each(operators, undefined, (op, i) => {
-                if (lowestPrecidence > (p = this.getOpPrecidence(op))) {
-                  firstOccurance = lastOccurance = i;
-                  lowestPrecidence = p;
-                } else {
-                  if (lowestPrecidence === p) {
-                    lastOccurance = i;
-                  }
-                }
-              });
+              Caf.each(
+                operators,
+                undefined,
+                (op, i) =>
+                  lowestPrecidence > (p = this.getOpPrecidence(op))
+                    ? ((firstOccurance = lastOccurance = i),
+                      (lowestPrecidence = p))
+                    : lowestPrecidence === p
+                      ? (lastOccurance = i)
+                      : undefined
+              );
               opIndexToResolve = this.getPrecidenceLevelIsLeftAssociative(p)
                 ? firstOccurance
                 : lastOccurance;

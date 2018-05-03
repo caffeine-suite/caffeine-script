@@ -53,9 +53,9 @@ Caf.defMod(module, () => {
                 identifiersToImport.length > 0
                   ? ((importsJs = compactFlatten([
                       importFromCaptureIdentifier || "global",
-                      Caf.each(importFromList, [], (c, cafK, cafInto) => {
-                        cafInto.push(c.toJsExpression());
-                      })
+                      Caf.each(importFromList, [], (c, cafK, cafInto) =>
+                        cafInto.push(c.toJsExpression())
+                      )
                     ])),
                     `Caf.importInvoke(["${Caf.toString(
                       identifiersToImport.join('", "')

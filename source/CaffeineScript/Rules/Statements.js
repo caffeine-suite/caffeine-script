@@ -33,13 +33,12 @@ Caf.defMod(module, () => {
               Caf.each(
                 this.tailControlOperatorComplexExpressions,
                 undefined,
-                tco => {
-                  stn = ControlOperatorStn(
+                tco =>
+                  (stn = ControlOperatorStn(
                     { operand: tco.tailControlOperator.toString().trim() },
                     tco.implicitArrayOrExpression.getStn(),
                     stn
-                  );
-                }
+                  ))
               );
               return stn;
             }

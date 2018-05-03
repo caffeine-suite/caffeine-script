@@ -71,9 +71,9 @@ Caf.defMod(module, () => {
               }
               return `${Caf.toString(valueJs)}${Caf.toString(
                 this.applyRequiredParens(
-                  Caf.each(this.argStns, [], (a, cafK, cafInto) => {
-                    cafInto.push(a.toJsExpression());
-                  }).join(", ")
+                  Caf.each(this.argStns, [], (a, cafK, cafInto) =>
+                    cafInto.push(a.toJsExpression())
+                  ).join(", ")
                 )
               )}`;
             };

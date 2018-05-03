@@ -175,9 +175,8 @@ Caf.defMod(module, () => {
                   ? Caf.each(
                       this._uniqueIdentifierHandles,
                       undefined,
-                      uniqueIdentifierHandle => {
-                        uniqueIdentifierHandle.identifier;
-                      }
+                      uniqueIdentifierHandle =>
+                        uniqueIdentifierHandle.identifier
                     )
                   : undefined;
               };
@@ -197,11 +196,10 @@ Caf.defMod(module, () => {
                   ? ((identifiers = Caf.each(
                       identifiers,
                       [],
-                      (identifier, cafK, cafInto) => {
-                        if (identifier.match(/=/)) {
-                          cafInto.push(identifier);
-                        }
-                      }
+                      (identifier, cafK, cafInto) =>
+                        identifier.match(/=/)
+                          ? cafInto.push(identifier)
+                          : undefined
                     )),
                     identifiers.length > 0
                       ? `${Caf.toString(identifiers.join("; "))}`
@@ -212,9 +210,9 @@ Caf.defMod(module, () => {
                 this.scope = scope;
                 this.bindAllUniqueIdentifiersRequested();
                 this.scope.addChildScope(this);
-                Caf.each(this.getChildrenToUpdateScope(), undefined, child => {
-                  child.updateScope(this);
-                });
+                Caf.each(this.getChildrenToUpdateScope(), undefined, child =>
+                  child.updateScope(this)
+                );
                 return (this._scopeUpdated = true);
               };
               this.prototype.generateImportMap = function(
@@ -230,20 +228,22 @@ Caf.defMod(module, () => {
                 Caf.each(
                   this._identifiersUsed,
                   map,
-                  (v, identifier, cafInto) => {
-                    if (!assignedInThisOrParentScope[identifier]) {
-                      cafInto[identifier] = v;
-                    }
-                  }
+                  (v, identifier, cafInto) =>
+                    !assignedInThisOrParentScope[identifier]
+                      ? (cafInto[identifier] = v)
+                      : undefined
                 );
-                Caf.each(this._childScopes, undefined, childScope => {
-                  if (!childScope.isImports) {
-                    childScope.generateImportMap(
-                      map,
-                      assignedInThisOrParentScope
-                    );
-                  }
-                });
+                Caf.each(
+                  this._childScopes,
+                  undefined,
+                  childScope =>
+                    !childScope.isImports
+                      ? childScope.generateImportMap(
+                          map,
+                          assignedInThisOrParentScope
+                        )
+                      : undefined
+                );
                 return map;
               };
               this.getter({
@@ -268,24 +268,21 @@ Caf.defMod(module, () => {
                   return Caf.each(
                     this.identifiersAssigned,
                     [],
-                    (initializer, identifier, cafInto) => {
-                      if (
-                        !identifiersAssignedInParentScopes ||
-                        !identifiersAssignedInParentScopes[identifier]
-                      ) {
-                        cafInto.push(
-                          isString(initializer)
-                            ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                initializer
-                              )}`
-                            : initializer.toJsExpression != null
+                    (initializer, identifier, cafInto) =>
+                      !identifiersAssignedInParentScopes ||
+                      !identifiersAssignedInParentScopes[identifier]
+                        ? cafInto.push(
+                            isString(initializer)
                               ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                  initializer.toJsExpression()
+                                  initializer
                                 )}`
-                              : identifier
-                        );
-                      }
-                    }
+                              : initializer.toJsExpression != null
+                                ? `${Caf.toString(identifier)} = ${Caf.toString(
+                                    initializer.toJsExpression()
+                                  )}`
+                                : identifier
+                          )
+                        : undefined
                   );
                 },
                 identifiersActiveInScope: function() {
@@ -306,23 +303,25 @@ Caf.defMod(module, () => {
                 identifiersUsedInThisScopeButNotAssigned: function() {
                   let assigned;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  return Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
-                    if (!assigned[k]) {
-                      cafInto[k] = true;
-                    }
-                  });
+                  return Caf.each(
+                    this.identifiersUsed,
+                    {},
+                    (v, k, cafInto) =>
+                      !assigned[k] ? (cafInto[k] = true) : undefined
+                  );
                 },
                 identifiersUsedButNotAssigned: function() {
                   let assigned, ret;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  ret = Caf.each(this.identifiersUsed, {}, (v, k, cafInto) => {
-                    if (!assigned[k]) {
-                      cafInto[k] = true;
-                    }
-                  });
-                  Caf.each(this._childScopes, undefined, childScope => {
-                    mergeInto(ret, childScope.identifiersUsedButNotAssigned);
-                  });
+                  ret = Caf.each(
+                    this.identifiersUsed,
+                    {},
+                    (v, k, cafInto) =>
+                      !assigned[k] ? (cafInto[k] = true) : undefined
+                  );
+                  Caf.each(this._childScopes, undefined, childScope =>
+                    mergeInto(ret, childScope.identifiersUsedButNotAssigned)
+                  );
                   return (this._identifiersUsedButNotAssigned = ret);
                 },
                 identifiersAssignedInThisOrParentScopes: function() {

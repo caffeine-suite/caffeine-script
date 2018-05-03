@@ -48,15 +48,15 @@ Caf.defMod(module, () => {
             return this.props.calledInConstructor
               ? ((args = this.props.passArguments
                   ? ["...arguments"]
-                  : Caf.each(args, [], (a, cafK, cafInto) => {
-                      cafInto.push(a.toJsExpression());
-                    })),
+                  : Caf.each(args, [], (a, cafK, cafInto) =>
+                      cafInto.push(a.toJsExpression())
+                    )),
                 `super(${Caf.toString(args.join(", "))})`)
               : ((method = this.props.passArguments
                   ? ((args = "arguments"), "apply")
-                  : ((args = Caf.each(args, [], (a, cafK, cafInto) => {
-                      cafInto.push(a.toJsExpression());
-                    })),
+                  : ((args = Caf.each(args, [], (a, cafK, cafInto) =>
+                      cafInto.push(a.toJsExpression())
+                    )),
                     "call")),
                 `${Caf.toString(this.superObject)}.${Caf.toString(
                   this.props.methodName

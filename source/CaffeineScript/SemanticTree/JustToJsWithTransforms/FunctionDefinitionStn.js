@@ -75,9 +75,8 @@ Caf.defMod(module, () => {
                 ? (Caf.each(
                     this.arguments.argumentNameList,
                     {},
-                    (name, cafK, cafInto) => {
-                      cafInto[cafK] = this.addArgumentName(name);
-                    }
+                    (name, cafK, cafInto) =>
+                      (cafInto[cafK] = this.addArgumentName(name))
                   ),
                   (this._updatingArgumentScope = true),
                   this.arguments.updateScope(this),
@@ -146,14 +145,15 @@ Caf.defMod(module, () => {
               return compactFlatten(
                 isConstructor
                   ? ((lastSuperContainingStatementIndex = null),
-                    Caf.each(statementStns, undefined, (v, i) => {
-                      if (
+                    Caf.each(
+                      statementStns,
+                      undefined,
+                      (v, i) =>
                         v.type === "Super" ||
                         v.find(/Super/, /FunctionDefinition|Class/)
-                      ) {
-                        lastSuperContainingStatementIndex = i;
-                      }
-                    }),
+                          ? (lastSuperContainingStatementIndex = i)
+                          : undefined
+                    ),
                     lastSuperContainingStatementIndex != null &&
                     lastSuperContainingStatementIndex >= 0
                       ? preBodyStatements

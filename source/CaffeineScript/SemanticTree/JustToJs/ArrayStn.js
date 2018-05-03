@@ -34,9 +34,9 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function(options) {
           let out;
           out = `[${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) => {
-              cafInto.push(c.toJsExpression());
-            }).join(", ")
+            Caf.each(this.children, [], (c, cafK, cafInto) =>
+              cafInto.push(c.toJsExpression())
+            ).join(", ")
           )}]`;
           return Caf.exists(options) && options.dotBase
             ? `(${Caf.toString(out)})`

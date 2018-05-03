@@ -59,8 +59,8 @@ Caf.defMod(module, () => {
             { throwExpression: "throw _ expressionWithoutBinOps" },
             { stnFactory: "ThrowStn" }
           );
-          oneLessBlockSubparser = rule => {
-            return function(parentNode) {
+          oneLessBlockSubparser = rule =>
+            function(parentNode) {
               let nextOffset,
                 source,
                 offset,
@@ -93,7 +93,6 @@ Caf.defMod(module, () => {
                   }))
                 : undefined;
             };
-          };
           return this.rule({
             expressionWithOneLessBlock: {
               parse: oneLessBlockSubparser("implicitArrayOrExpression")

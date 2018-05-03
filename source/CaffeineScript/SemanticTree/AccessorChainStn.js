@@ -49,9 +49,9 @@ Caf.defMod(module, () => {
                 if (!done) {
                   ({ key, isFunctionInvocation } = accessor);
                   if (isArray(key)) {
-                    key = Caf.each(key, [], (kk, cafK, cafInto) => {
-                      cafInto.push(kk.transform());
-                    });
+                    key = Caf.each(key, [], (kk, cafK, cafInto) =>
+                      cafInto.push(kk.transform())
+                    );
                   } else {
                     key = key.transform();
                   }

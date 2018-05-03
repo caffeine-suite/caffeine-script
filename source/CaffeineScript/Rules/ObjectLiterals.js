@@ -53,11 +53,10 @@ Caf.defMod(module, () => {
                   children = Caf.each(
                     this.getMatchStns(),
                     [],
-                    (m, cafK, cafInto) => {
+                    (m, cafK, cafInto) =>
                       cafInto.push(
                         m instanceof ObjectStn.class ? m.children : m
-                      );
-                    }
+                      )
                   );
                   return ObjectStn(children);
                 }

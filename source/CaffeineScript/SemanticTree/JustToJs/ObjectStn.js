@@ -12,9 +12,9 @@ Caf.defMod(module, () => {
           this.prototype.toJs = function(options) {
             let out;
             out = `{${Caf.toString(
-              Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs());
-              }).join(", ")
+              Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toJs())
+              ).join(", ")
             )}}`;
             return (Caf.exists(options) && options.dotBase) ||
               (Caf.exists(options) && options.statement)
@@ -61,9 +61,9 @@ Caf.defMod(module, () => {
             return listOfObjectLiterals.length === 1
               ? new this(props, children)
               : new StnRegistry.ArrayStn(
-                  Caf.each(listOfObjectLiterals, [], (c, cafK, cafInto) => {
-                    cafInto.push(new this(props, c));
-                  })
+                  Caf.each(listOfObjectLiterals, [], (c, cafK, cafInto) =>
+                    cafInto.push(new this(props, c))
+                  )
                 );
           };
         }

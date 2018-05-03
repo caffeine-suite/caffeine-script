@@ -119,9 +119,9 @@ Caf.defMod(module, () => {
                       : ((a = []),
                         objectKeyCount(props) > 0 ? a.push(props) : undefined,
                         a.concat(
-                          Caf.each(this.children, [], (c, cafK, cafInto) => {
-                            cafInto.push(c.inspectedObjects);
-                          })
+                          Caf.each(this.children, [], (c, cafK, cafInto) =>
+                            cafInto.push(c.inspectedObjects)
+                          )
                         ))
                 };
               },
@@ -143,9 +143,9 @@ Caf.defMod(module, () => {
               ({ classModuleState, hotReloadEnabled } = options);
               classSuper.postCreateConcreteClass.apply(this, arguments);
               return require("../StnRegistry").register(
-                createObjectTreeFactory({ class: this }, (props, children) => {
-                  return this.newInstance(props, children);
-                })
+                createObjectTreeFactory({ class: this }, (props, children) =>
+                  this.newInstance(props, children)
+                )
               );
             };
             this.prototype.findParent = function(stnTypePattern) {
@@ -166,20 +166,23 @@ Caf.defMod(module, () => {
               stnTypeStopPattern,
               _foundList = []
             ) {
-              Caf.each(this.children, undefined, child => {
-                if (stnTypePattern.test(child.type)) {
-                  _foundList.push(child);
-                } else {
-                  if (
-                    !(
-                      Caf.exists(stnTypeStopPattern) &&
-                      stnTypeStopPattern.test(child.type)
-                    )
-                  ) {
-                    child.find(stnTypePattern, stnTypeStopPattern, _foundList);
-                  }
-                }
-              });
+              Caf.each(
+                this.children,
+                undefined,
+                child =>
+                  stnTypePattern.test(child.type)
+                    ? _foundList.push(child)
+                    : !(
+                        Caf.exists(stnTypeStopPattern) &&
+                        stnTypeStopPattern.test(child.type)
+                      )
+                      ? child.find(
+                          stnTypePattern,
+                          stnTypeStopPattern,
+                          _foundList
+                        )
+                      : undefined
+              );
               return _foundList.length === 0 ? null : _foundList;
             };
             sourceNodeLineColumnScratch = {};
@@ -262,9 +265,9 @@ Caf.defMod(module, () => {
               })();
             };
             this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.each(this.children, [], (c, cafK, cafInto) => {
-                cafInto.push(c.toJs(options));
-              }).join(joiner);
+              return Caf.each(this.children, [], (c, cafK, cafInto) =>
+                cafInto.push(c.toJs(options))
+              ).join(joiner);
             };
             this.prototype.doJs = function(args, body) {
               if (args) {
@@ -327,9 +330,9 @@ Caf.defMod(module, () => {
             this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
               if (!this.parseTreeNode) {
                 this.parseTreeNode = parseTreeNode;
-                Caf.each(this.children, undefined, child => {
-                  child.setDefaultParseTreeNode(parseTreeNode);
-                });
+                Caf.each(this.children, undefined, child =>
+                  child.setDefaultParseTreeNode(parseTreeNode)
+                );
               }
               return this;
             };
@@ -367,16 +370,14 @@ Caf.defMod(module, () => {
                   info: e.info
                 });
               }
-              Caf.each(this.children, undefined, child => {
-                child.validateAll();
-              });
+              Caf.each(this.children, undefined, child => child.validateAll());
               return this;
             };
             this.prototype.updateScope = function(scope) {
               this.scope = scope;
-              return Caf.each(this.children, undefined, child => {
-                child.updateScope(this.scope);
-              });
+              return Caf.each(this.children, undefined, child =>
+                child.updateScope(this.scope)
+              );
             };
           }
         ))

@@ -15,13 +15,11 @@ Caf.defMod(module, () => {
         class CaffeineScriptParser extends Parser {},
         function(CaffeineScriptParser, classSuper, instanceSuper) {
           this.nodeBaseClass = require("./CafParseNodeBaseClass");
-          Caf.each(require("./Rules").modules, undefined, mod => {
-            if (isFunction(mod)) {
-              mod.call(this);
-            } else {
-              this.rule(mod);
-            }
-          });
+          Caf.each(
+            require("./Rules").modules,
+            undefined,
+            mod => (isFunction(mod) ? mod.call(this) : this.rule(mod))
+          );
           this.prototype.parse = function(source, options) {
             return instanceSuper.parse.call(
               this,

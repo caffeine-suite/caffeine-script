@@ -179,18 +179,15 @@ Caf.defMod(module, () => {
                         : ((bodyStatementsExceptLast = null), valueVarDef))
                     : (bodyWithDefault = body || valueVarDef),
                   (whenClauseWrapper = whenClause
-                    ? actionStn => {
-                        return StatementsStn(
+                    ? actionStn =>
+                        StatementsStn(
                           ControlOperatorStn(
                             { operand: "if" },
                             whenClause,
                             actionStn
                           )
-                        );
-                      }
-                    : actionStn => {
-                        return actionStn;
-                      }),
+                        )
+                    : actionStn => actionStn),
                   FunctionInvocationStn(
                     IdentifierStn({
                       identifier: `Caf.${Caf.toString(

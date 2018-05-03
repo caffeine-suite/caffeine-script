@@ -39,27 +39,24 @@ Caf.defMod(module, () => {
               Caf.each(
                 this.binaryOperatorAndExpressions,
                 [],
-                (opAndExp, cafK, cafInto) => {
-                  cafInto.push(getNormalizedOperator(opAndExp.binaryOperator));
-                }
+                (opAndExp, cafK, cafInto) =>
+                  cafInto.push(getNormalizedOperator(opAndExp.binaryOperator))
               ),
               compactFlatten([
                 left,
                 Caf.each(
                   this.binaryOperatorAndExpressions,
                   [],
-                  (opAndExp, cafK, cafInto) => {
-                    cafInto.push(opAndExp.rValue.getStn());
-                  }
+                  (opAndExp, cafK, cafInto) =>
+                    cafInto.push(opAndExp.rValue.getStn())
                 )
               ]),
-              (operandA, operandB, operator) => {
-                return BinaryOperatorStn(
+              (operandA, operandB, operator) =>
+                BinaryOperatorStn(
                   { parseTreeNode: this, operator },
                   operandA,
                   operandB
-                );
-              }
+                )
             );
           }
         },
@@ -94,21 +91,23 @@ Caf.defMod(module, () => {
           getStn: function() {
             let stn;
             stn = this.expressionWithoutBinOps.getStn();
-            Caf.each(this.unaryTailOperators || [], undefined, operand => {
-              stn = UnaryOperatorStn(
-                { operand: operand.toString().trim(), tail: true },
-                stn
-              );
-            });
+            Caf.each(
+              this.unaryTailOperators || [],
+              undefined,
+              operand =>
+                (stn = UnaryOperatorStn(
+                  { operand: operand.toString().trim(), tail: true },
+                  stn
+                ))
+            );
             Caf.each(
               (this.unaryOperator_s || []).slice().reverse(),
               undefined,
-              operand => {
-                stn = UnaryOperatorStn(
+              operand =>
+                (stn = UnaryOperatorStn(
                   { operand: operand.toString().trim() },
                   stn
-                );
-              }
+                ))
             );
             return stn;
           }

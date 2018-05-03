@@ -30,27 +30,28 @@ Caf.defMod(module, () => {
               return Caf.each(
                 Caf.exists((cafBase = this.body)) && cafBase.children,
                 undefined,
-                stn => {
-                  if (stn.type === "Object") {
-                    Caf.each(stn.children, undefined, objectPropValueStn => {
-                      let propNameStn, propValueStn;
-                      [propNameStn, propValueStn] = objectPropValueStn.children;
-                      if (
-                        propNameStn.type === "ObjectPropName" &&
-                        propNameStn.toJs() === "constructor"
-                      ) {
-                        propValueStn.props.isConstructor = true;
-                        Caf.each(
-                          propValueStn.find(/Super/),
-                          undefined,
-                          superCallChild => {
-                            superCallChild.props.calledInConstructor = true;
-                          }
-                        );
-                      }
-                    });
-                  }
-                }
+                stn =>
+                  stn.type === "Object"
+                    ? Caf.each(stn.children, undefined, objectPropValueStn => {
+                        let propNameStn, propValueStn;
+                        [
+                          propNameStn,
+                          propValueStn
+                        ] = objectPropValueStn.children;
+                        if (
+                          propNameStn.type === "ObjectPropName" &&
+                          propNameStn.toJs() === "constructor"
+                        ) {
+                          propValueStn.props.isConstructor = true;
+                          Caf.each(
+                            propValueStn.find(/Super/),
+                            undefined,
+                            superCallChild =>
+                              (superCallChild.props.calledInConstructor = true)
+                          );
+                        }
+                      })
+                    : undefined
               );
             };
             this.prototype.postTransform = function() {
@@ -112,7 +113,7 @@ Caf.defMod(module, () => {
                     (statementsToCount = Caf.each(
                       body.children,
                       [],
-                      (stn, cafK, cafInto) => {
+                      (stn, cafK, cafInto) =>
                         cafInto.push(
                           stn.type === "Object"
                             ? Caf.each(
@@ -180,8 +181,7 @@ Caf.defMod(module, () => {
                                 }
                               )
                             : stn
-                        );
-                      }
+                        )
                     ))
                   )
                 );
@@ -192,9 +192,8 @@ Caf.defMod(module, () => {
                   Caf.each(
                     constructorStn.find(/Super/),
                     undefined,
-                    superCallChild => {
-                      superCallChild.props.calledInConstructor = true;
-                    }
+                    superCallChild =>
+                      (superCallChild.props.calledInConstructor = true)
                   );
                   classBody = StatementsStn(
                     { label: "classBody" },

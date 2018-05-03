@@ -20,13 +20,10 @@ Caf.defMod(module, () => {
           mixedIndentationRegexp = /(^|\n)( +\t|\t+ )/;
           tabIndentationRegexp = /(^|\n)\t/;
           spaceIndentationRegexp = /(^|\n) /;
-          this.hasMixedIndentation = source => {
-            return (
-              mixedIndentationRegexp.test(source) ||
-              (tabIndentationRegexp.test(source) &&
-                spaceIndentationRegexp.test(source))
-            );
-          };
+          this.hasMixedIndentation = source =>
+            mixedIndentationRegexp.test(source) ||
+            (tabIndentationRegexp.test(source) &&
+              spaceIndentationRegexp.test(source));
           this.normalizeIndentation = source => {
             let e;
             if (this.hasMixedIndentation(source)) {
@@ -156,9 +153,8 @@ Caf.defMod(module, () => {
                 lines.join("\n"))
               : source;
           };
-          this.preprocess = source => {
-            return this.normalizeComments(this.normalizeIndentation(source));
-          };
+          this.preprocess = source =>
+            this.normalizeComments(this.normalizeIndentation(source));
         }
       ));
     }

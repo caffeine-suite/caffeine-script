@@ -35,11 +35,10 @@ Caf.defMod(module, () => {
                     ? ((identifiersToImport = Caf.each(
                         this.generateImportMap(),
                         [],
-                        (v, k, cafInto) => {
+                        (v, k, cafInto) =>
                           cafInto.push(
                             `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                          );
-                        }
+                          )
                       )),
                       (lets = compactFlatten([
                         identifiersToImport,
@@ -72,11 +71,8 @@ Caf.defMod(module, () => {
               identifiersToImport = Caf.each(
                 this.generateImportMap(),
                 [],
-                (v, k, cafInto) => {
-                  cafInto.push(
-                    `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                  );
-                }
+                (v, k, cafInto) =>
+                  cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`)
               );
               statementsJs = this.statements.toFunctionBodyJs();
               lets = compactFlatten([
