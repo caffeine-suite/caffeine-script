@@ -187,6 +187,18 @@ Caf.defMod(module, () => {
               autoLetsForSouceNode: function() {
                 let lets;
                 return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+              },
+              bound: function() {
+                return this.props.bound;
+              },
+              simpleBound: function() {
+                let cafBase;
+                return (
+                  this.bound &&
+                  !this.getAutoLets() &&
+                  (Caf.exists((cafBase = this.statementStns)) &&
+                    cafBase.length) === 1
+                );
               }
             });
             this.prototype.toSourceNode = function(options) {
@@ -195,7 +207,7 @@ Caf.defMod(module, () => {
                 returnIgnored,
                 statement,
                 returnAction,
-                argsSouceNode,
+                argsSourceNode,
                 bodySourceNode,
                 cafTemp,
                 cafBase,
@@ -205,29 +217,38 @@ Caf.defMod(module, () => {
                 ({ statement } = options);
               }
               returnAction = !(isConstructor || returnIgnored);
-              argsSouceNode =
+              argsSourceNode =
                 (cafTemp =
                   Caf.exists((cafBase = this.args)) &&
                   cafBase.toSourceNode()) != null
                   ? cafTemp
                   : "()";
-              bodySourceNode =
-                Caf.exists((cafBase1 = this.body)) &&
-                cafBase1.toSourceNode({ returnAction });
+              bodySourceNode = this.simpleBound
+                ? this.body.children[0].toSourceNode({ expression: true })
+                : Caf.exists((cafBase1 = this.body)) &&
+                  cafBase1.toSourceNode({ returnAction });
               return bound
-                ? this.createSourceNode(
-                    statement ? "(" : undefined,
-                    argsSouceNode,
-                    " => {",
-                    this.autoLetsForSouceNode,
-                    bodySourceNode,
-                    "}",
-                    statement ? ")" : undefined
-                  )
+                ? this.simpleBound
+                  ? this.createSourceNode(
+                      statement ? "(" : undefined,
+                      argsSourceNode,
+                      " => ",
+                      bodySourceNode,
+                      statement ? ")" : undefined
+                    )
+                  : this.createSourceNode(
+                      statement ? "(" : undefined,
+                      argsSourceNode,
+                      " => {",
+                      this.autoLetsForSouceNode,
+                      bodySourceNode,
+                      "}",
+                      statement ? ")" : undefined
+                    )
                 : this.createSourceNode(
                     statement ? "(" : undefined,
                     isConstructor ? "constructor" : "function",
-                    argsSouceNode,
+                    argsSourceNode,
                     " {",
                     this.autoLetsForSouceNode,
                     bodySourceNode,
@@ -262,9 +283,13 @@ Caf.defMod(module, () => {
               let isConstructor, bound;
               ({ isConstructor, bound } = this.props);
               return bound
-                ? `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
-                    this.getBodyJs()
-                  )}}`
+                ? this.simpleBound
+                  ? `${Caf.toString(this.getArgsJs())} => ${Caf.toString(
+                      this.statementStns[0].toJsExpression()
+                    )}`
+                  : `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
+                      this.getBodyJs()
+                    )}}`
                 : `${Caf.toString(
                     isConstructor ? "constructor" : "function"
                   )}${Caf.toString(this.getArgsJs())} {${Caf.toString(

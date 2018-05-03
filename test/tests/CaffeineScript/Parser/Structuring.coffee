@@ -57,6 +57,6 @@ module.exports = suite: parseTestSuite
       """
       {}
         (array v from a when a > 10).length
-      """: "({length: Caf.each(a, [], (v, cafK, cafInto) => {if (a > 10) {cafInto.push(v);};}).length});"
+      """: "({length: Caf.each(a, [], (v, cafK, cafInto) => (a > 10) ? cafInto.push(v) : undefined).length});"
 
       "{abc.def 123}": "({def: abc.def(123)});"

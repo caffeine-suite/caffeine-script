@@ -169,30 +169,43 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     autoLetsForSouceNode: ->
       if lets = @getAutoLets()
         lets + "; "
+    bound: -> @props.bound
+    simpleBound: -> @bound && !@getAutoLets() && @statementStns?.length == 1
 
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props
     {statement} = options if options
     returnAction = !(isConstructor || returnIgnored)
 
-    argsSouceNode = @args?.toSourceNode() ? "()"
-    bodySourceNode = @body?.toSourceNode {returnAction}
+    argsSourceNode = @args?.toSourceNode() ? "()"
+    bodySourceNode = if @simpleBound
+      @body.children[0].toSourceNode expression: true
+    else
+      @body?.toSourceNode {returnAction}
 
     if bound
-      @createSourceNode
-        "(" if statement
-        argsSouceNode
-        " => {"
-        @autoLetsForSouceNode
-        bodySourceNode
-        "}"
-        ")" if statement
+      if @simpleBound
+        @createSourceNode
+          "(" if statement
+          argsSourceNode
+          " => "
+          bodySourceNode
+          ")" if statement
+      else
+        @createSourceNode
+          "(" if statement
+          argsSourceNode
+          " => {"
+          @autoLetsForSouceNode
+          bodySourceNode
+          "}"
+          ")" if statement
 
     else
       @createSourceNode
         "(" if statement
         if isConstructor then "constructor" else "function"
-        argsSouceNode
+        argsSourceNode
         " {"
         @autoLetsForSouceNode
         bodySourceNode
@@ -218,6 +231,9 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     {isConstructor, bound} = @props
 
     if bound
-      "#{@getArgsJs()} => {#{@getBodyJs()}}"
+      if @simpleBound
+        "#{@getArgsJs()} => #{@statementStns[0].toJsExpression()}"
+      else
+        "#{@getArgsJs()} => {#{@getBodyJs()}}"
     else
       "#{if isConstructor then "constructor" else "function"}#{@getArgsJs()} {#{@getBodyJs()}}"

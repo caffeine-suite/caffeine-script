@@ -60,7 +60,11 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   validate: ->
     valueClauseChildren = {}
-    each valueClause in @labeledChildren.valueClauses
+    {valueClauses, variableDefinition} = @labeledChildren
+    if variableDefinition?.children.length > 2
+      throw new Error "Can define at most two loop variables (value followed optionally by key). You defined: #{variableDefinition.parseTreeNode?.toString()}."
+
+    each valueClause in valueClauses
       {type} = valueClause
       throw new Error "no more than one '#{type}' clause allowed" if valueClauseChildren[type]
       valueClauseChildren[type] = true
@@ -77,7 +81,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         when :when then whenClause = value
 
     outputType = outputType?.props.token
-    iterationFunction = outputType.slice 0,1
+
 
     {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn,
     FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn,
@@ -118,123 +122,157 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       (useExtendedEach || !basicEach) &&               FunctionDefinitionArgStn intoIdentifer = IdentifierStn identifierHandle: new UniqueIdentifierHandle "into" false
       useExtendedEach &&                               FunctionDefinitionArgStn brkIdentifer  = IdentifierStn identifierHandle: new UniqueIdentifierHandle "brk"  false
 
-    if outputType == "object" || outputType == "array"
-      lastBodyStatement = if body
-        if body.className == "StatementsStn"
-          bodyStatementsExceptLast = arrayWithAllButLast body.children
-          peek body.children
-        else
-          body
-      else
-        bodyStatementsExceptLast = null
-        valueVarDef
-    else
-      bodyWithDefault = body || valueVarDef
-
-    whenClauseWrapper = if whenClause
-      (actionStn) ->
-        StatementsStn ControlOperatorStn
-          operand: "if"
-          whenClause
-          actionStn
-
-    else
-      (actionStn) -> actionStn
-
-    FunctionInvocationStn
-      IdentifierStn identifier: "Caf.#{if useExtendedEach then 'extendedEach' else 'each'}"
-      iterable
-      intoChild || switch outputType
-      when "object" then ObjectStn()
-      when "array" then ArrayStn()
-      when "each" then SimpleLiteralStn value: "undefined"
-      when "find" then SimpleLiteralStn value: "undefined"
-      when "reduce" then null
-      else throw new Error "not supported yet: #{outputType}"
-
-      FunctionDefinitionStn
-        bound: true
-        returnIgnored: outputType != "find"
+    if false # outputType == "each"
+      @generateEach {}
         variableDefinition
+        valueVarDef
+        keyVarDef
+        whenClause
+        intoChild
 
-        switch outputType
-          when "object"
-            whenClauseWrapper StatementsStn
-              bodyStatementsExceptLast
-              AssignmentStn
-                AccessorStn
-                  intoIdentifer
-                  keyVarDef
-                lastBodyStatement
+    else
 
-          when "array"
-            whenClauseWrapper StatementsStn
-              bodyStatementsExceptLast
-              FunctionInvocationStn
-                AccessorStn
-                  intoIdentifer
-                  IdentifierStn identifier: "push"
-                lastBodyStatement
+      if outputType == "object" || outputType == "array"
+        lastBodyStatement = if body
+          if body.className == "StatementsStn"
+            bodyStatementsExceptLast = arrayWithAllButLast body.children
+            peek body.children
+          else
+            body
+        else
+          bodyStatementsExceptLast = null
+          valueVarDef
+      else
+        bodyWithDefault = body || valueVarDef
 
-          when "each"
-            whenClauseWrapper body
+      whenClauseWrapper = if whenClause
+        (actionStn) ->
+          StatementsStn ControlOperatorStn
+            operand: "if"
+            whenClause
+            actionStn
 
-          when "find" then
-            if whenClause
-              if body
-                StatementsStn BinaryOperatorStn
-                  operator: "&&"
-                  whenClause
+      else
+        (actionStn) -> actionStn
 
-                  StatementsStn
-                    FunctionInvocationStn brkIdentifer
-                    body
-              else
-                StatementsStn BinaryOperatorStn
-                  operator: "&&"
-                  whenClause
+      FunctionInvocationStn
+        IdentifierStn identifier: "Caf.#{if useExtendedEach then 'extendedEach' else 'each'}"
+        iterable
+        intoChild || switch outputType
+        when "object" then ObjectStn()
+        when "array"  then ArrayStn()
+        when "each"   then SimpleLiteralStn value: "undefined"
+        when "find"   then SimpleLiteralStn value: "undefined"
+        when "reduce" then null
+        else throw new Error "not supported yet: #{outputType}"
 
-                  StatementsStn
-                    FunctionInvocationStn brkIdentifer
+        FunctionDefinitionStn
+          bound: true
+          returnIgnored: outputType != "find"
+          variableDefinition
 
-                    valueVarDef
-            else
-              if body
+          switch outputType
+            when "object"
+              whenClauseWrapper StatementsStn
+                bodyStatementsExceptLast
+                AssignmentStn
+                  AccessorStn
+                    intoIdentifer
+                    keyVarDef
+                  lastBodyStatement
 
-                if body.type == "Statements" && body.children.length > 1
-                  allButLast = body.children.slice 0, body.children.length - 1
-                  body = peek body.children
+            when "array"
+              whenClauseWrapper StatementsStn
+                bodyStatementsExceptLast
+                FunctionInvocationStn
+                  AccessorStn
+                    intoIdentifer
+                    IdentifierStn identifier: "push"
+                  lastBodyStatement
 
-                foundTest = if body.type == "Reference"
-                  BinaryOperatorStn
+            when "each"
+              whenClauseWrapper body
+
+            when "find" then
+              if whenClause
+                if body
+                  StatementsStn BinaryOperatorStn
                     operator: "&&"
-                    body
+                    whenClause
 
                     StatementsStn
                       FunctionInvocationStn brkIdentifer
                       body
+                else
+                  StatementsStn BinaryOperatorStn
+                    operator: "&&"
+                    whenClause
+
+                    StatementsStn
+                      FunctionInvocationStn brkIdentifer
+
+                      valueVarDef
+              else
+                if body
+
+                  if body.type == "Statements" && body.children.length > 1
+                    allButLast = body.children.slice 0, body.children.length - 1
+                    body = peek body.children
+
+                  foundTest = if body.type == "Reference"
+                    BinaryOperatorStn
+                      operator: "&&"
+                      body
+
+                      StatementsStn
+                        FunctionInvocationStn brkIdentifer
+                        body
+
+                  else
+                    BinaryOperatorStn
+                      operator: "&&"
+
+                      AssignmentStn
+                        IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
+                        body
+
+                      StatementsStn
+                        FunctionInvocationStn brkIdentifer
+
+                        IdentifierStn identifierHandle: baseIdentifierHandle
+
+                  StatementsStn allButLast, foundTest
 
                 else
-                  BinaryOperatorStn
+                  StatementsStn BinaryOperatorStn
                     operator: "&&"
-
-                    AssignmentStn
-                      IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
-                      body
+                    valueVarDef
 
                     StatementsStn
                       FunctionInvocationStn brkIdentifer
 
-                      IdentifierStn identifierHandle: baseIdentifierHandle
+                      valueVarDef
 
-                StatementsStn allButLast, foundTest
+  # Caf.each2(source, into, withClause = returnFirst, whenClause = returnTrue)
+  generateEach: ({variableDefinition, valueVarDef, keyVarDef, whenClause, intoChild})->
+    {FunctionInvocationStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
+    {body: withClause, iterable} = @labeledChildren
 
-              else
-                StatementsStn BinaryOperatorStn
-                  operator: "&&"
-                  valueVarDef
+    FunctionInvocationStn
+      IdentifierStn identifier: :Caf.each2
 
-                  StatementsStn
-                    FunctionInvocationStn brkIdentifer
+      # source
+      iterable
 
-                    valueVarDef
+      # into
+      intoChild ? if withClause || whenClause then SimpleLiteralStn value: "null"
+
+      withClause && FunctionDefinitionStn
+        bound: true
+        variableDefinition
+        withClause
+
+      whenClause && FunctionDefinitionStn
+        bound: true
+        variableDefinition
+        whenClause
