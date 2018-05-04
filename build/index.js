@@ -2906,7 +2906,7 @@ __webpack_require__(112);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.7"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.55.0"}
 
 /***/ }),
 /* 30 */
@@ -3947,12 +3947,12 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
+        comprehensionValueClauseType: /(from|in|into|returning|when|with|with-key|to|by|til|do)\b(?!-)/
       });
       this.rule(
         {
           comprehensionOutputType: /(object|array|reduce|each|find)\b/,
-          comprehensionIterationType: /(from|in)\b/
+          comprehensionIterationType: /(from|in|to|til)\b/
         },
         { stnFactory: "SemanticTokenStn" }
       );
@@ -3978,13 +3978,13 @@ Caf.defMod(module, () => {
       this.rule({
         optionalArg: "_comma_ !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
-        comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
+        unlabeledFromClause: "keywordLabeledStatementsWithOneLessBlock",
         comprehensionBody: "block"
       });
       return this.rule(
         {
           comprehension:
-            "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable valueClause:comprehensionValueClause* body:comprehensionBody?"
+            "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterable:unlabeledFromClause? valueClause:comprehensionValueClause* body:comprehensionBody?"
         },
         { stnFactory: "ComprehensionStn" }
       );
@@ -5192,7 +5192,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|try|catch|throw|and|or|not|for|return|break|of|yes|on|no|off|typeof|extract|reduce|inject|promise|await|to|by|short|skip|til|mixin)\b(?![-])/,
+      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|throw|and|or|not|for|return|break|of|yes|on|no|off|typeof|extract|reduce|inject|promise|await|short|skip|mixin)\b(?![-])/,
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {
@@ -8920,9 +8920,9 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "lowerCamelCase", "StnRegistry"],
+    ["Error", "lowerCamelCase", "StnRegistry", "Object", "String"],
     [global, __webpack_require__(3)],
-    (Error, lowerCamelCase, StnRegistry) => {
+    (Error, lowerCamelCase, StnRegistry, Object, String) => {
       let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
       return (
         (SemanticTree = __webpack_require__(4)),
@@ -8934,11 +8934,14 @@ Caf.defMod(module, () => {
           function(ComprehensionStn, classSuper, instanceSuper) {
             let clauseAliases;
             this.prototype.validate = function() {
-              let valueClauseChildren,
-                valueClauses,
+              let valueClauses,
                 variableDefinition,
+                comprehensionType,
+                toClause,
+                byClause,
+                tilClause,
+                fromClause,
                 cafBase;
-              valueClauseChildren = {};
               ({ valueClauses, variableDefinition } = this.labeledChildren);
               if (
                 (Caf.exists(variableDefinition) &&
@@ -8951,55 +8954,180 @@ Caf.defMod(module, () => {
                   )}.`
                 );
               }
-              return Caf.each2(valueClauses, valueClause => {
-                let type;
-                ({ type } = valueClause);
-                if (valueClauseChildren[type]) {
-                  throw new Error(
-                    `no more than one '${Caf.toString(type)}' clause allowed`
-                  );
-                }
-                return (valueClauseChildren[type] = true);
-              });
+              ({ comprehensionType } = this);
+              ({
+                toClause,
+                byClause,
+                tilClause,
+                fromClause
+              } = this.labeledClauses);
+              if (
+                (toClause || byClause || tilClause) &&
+                comprehensionType !== "array"
+              ) {
+                throw new Error(
+                  `'to', 'by' and 'til' clauses not supported for '${Caf.toString(
+                    comprehensionType
+                  )}' comprehensions`
+                );
+              }
+              if (!(fromClause || toClause || tilClause)) {
+                throw new Error("'from', 'to' or 'til' clause require");
+              }
+              if (toClause && tilClause) {
+                throw new Error("only one 'to' or 'til' clause allowed");
+              }
+              return byClause && !(tilClause || toClause)
+                ? (() => {
+                    throw new Error(
+                      "'to' or 'til' clause required to use 'by'"
+                    );
+                  })()
+                : undefined;
             };
             clauseAliases = { returning: "into", in: "from", do: "with" };
+            this.getter({
+              comprehensionType: function() {
+                return this.labeledChildren.outputType.props.token;
+              },
+              labeledClauses: function() {
+                let iterable, body, labeledClauses, cafTemp, cafTemp1;
+                ({ iterable, body } = this.labeledChildren);
+                labeledClauses = {};
+                Caf.each2(
+                  this.labeledChildren.valueClauses,
+                  ({ type, value }) => {
+                    let name, cafTemp;
+                    type =
+                      (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                    name = lowerCamelCase(type + "Clause");
+                    if (labeledClauses[name]) {
+                      throw new Error(
+                        `no more than one '${Caf.toString(
+                          type
+                        )}' clause allowed`
+                      );
+                    }
+                    return (labeledClauses[name] = value);
+                  }
+                );
+                (cafTemp = labeledClauses.fromClause) != null
+                  ? cafTemp
+                  : (labeledClauses.fromClause = iterable);
+                (cafTemp1 = labeledClauses.withClause) != null
+                  ? cafTemp1
+                  : (labeledClauses.withClause = body);
+                return labeledClauses;
+              }
+            });
             this.prototype.postTransform = function() {
-              let outputType, body, labeledClauses, cafTemp;
+              let labeledClauses, comprehensionType;
               this.initLabeledChildren();
-              ({ outputType, body } = this.labeledChildren);
-              labeledClauses = {};
-              Caf.each2(
-                this.labeledChildren.valueClauses,
-                ({ type, value }) => {
-                  let cafTemp;
-                  type =
-                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
-                  return (labeledClauses[
-                    lowerCamelCase(type + "Clause")
-                  ] = value);
-                }
-              );
-              (cafTemp = labeledClauses.withClause) != null
-                ? cafTemp
-                : (labeledClauses.withClause = body);
-              return (() => {
-                switch (
-                  (outputType =
-                    Caf.exists(outputType) && outputType.props.token)
-                ) {
-                  case "each":
-                  case "array":
-                  case "object":
-                    return this.generateArrayOrEach(
-                      outputType === "each" ? "each2" : outputType,
-                      labeledClauses
-                    );
-                  case "find":
-                    return this.generateFind(labeledClauses);
-                }
-              })();
+              ({ labeledClauses, comprehensionType } = this);
+              return labeledClauses.toClause || labeledClauses.tilClause
+                ? this.generateArrayRange(labeledClauses)
+                : (() => {
+                    switch (comprehensionType) {
+                      case "each":
+                      case "array":
+                      case "object":
+                        return this.generateArrayOrEach(
+                          comprehensionType === "each"
+                            ? "each2"
+                            : comprehensionType,
+                          labeledClauses
+                        );
+                      case "find":
+                        return this.generateFind(labeledClauses);
+                    }
+                  })();
             };
-            this.prototype.generateFind = function({ withClause, whenClause }) {
+            this.prototype.resolveStnParams = function(...params) {
+              let SimpleLiteralStn,
+                FunctionDefinitionStn,
+                variableDefinition,
+                lastNonNulIndex,
+                Null;
+              ({ SimpleLiteralStn, FunctionDefinitionStn } = StnRegistry);
+              ({ variableDefinition } = this.labeledChildren);
+              lastNonNulIndex = 0;
+              params = Caf.array(params, (p, i) => {
+                let f;
+                p = (() => {
+                  switch (false) {
+                    case !Caf.is(p, Object):
+                      ({ f } = p);
+                      return f
+                        ? FunctionDefinitionStn(
+                            { bound: true },
+                            variableDefinition,
+                            f
+                          )
+                        : undefined;
+                    case !Caf.is(p, String):
+                      return SimpleLiteralStn({ value: p });
+                    default:
+                      return p;
+                  }
+                })();
+                if (p != null) {
+                  lastNonNulIndex = i;
+                }
+                return p;
+              });
+              Null = null;
+              params = params.slice(0, lastNonNulIndex + 1);
+              return Caf.array(
+                params,
+                p =>
+                  p != null
+                    ? p
+                    : Null != null
+                      ? Null
+                      : (Null = SimpleLiteralStn({ value: "null" }))
+              );
+            };
+            this.prototype.generateArrayRange = function({
+              withClause,
+              whenClause,
+              toClause,
+              tilClause,
+              byClause,
+              fromClause,
+              intoClause
+            }) {
+              let FunctionInvocationStn,
+                IdentifierStn,
+                FunctionDefinitionStn,
+                SimpleLiteralStn;
+              ({
+                FunctionInvocationStn,
+                IdentifierStn,
+                FunctionDefinitionStn,
+                SimpleLiteralStn
+              } = StnRegistry);
+              if (tilClause) {
+                toClause = tilClause;
+                tilClause = "true";
+              }
+              return FunctionInvocationStn(
+                IdentifierStn({ identifier: "Caf.arrayRange" }),
+                this.resolveStnParams(
+                  fromClause != null ? fromClause : "0",
+                  toClause,
+                  { f: withClause },
+                  { f: whenClause },
+                  byClause,
+                  tilClause,
+                  intoClause
+                )
+              );
+            };
+            this.prototype.generateFind = function({
+              fromClause,
+              withClause,
+              whenClause
+            }) {
               let iterable,
                 variableDefinition,
                 FunctionInvocationStn,
@@ -9015,37 +9143,23 @@ Caf.defMod(module, () => {
               } = StnRegistry);
               return FunctionInvocationStn(
                 IdentifierStn({ identifier: "Caf.find" }),
-                iterable,
-                withClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withClause
-                    )
-                  : whenClause
-                    ? SimpleLiteralStn({ value: "null" })
-                    : undefined,
-                whenClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      whenClause
-                    )
-                  : undefined
+                this.resolveStnParams(
+                  fromClause,
+                  { f: withClause },
+                  { f: whenClause }
+                )
               );
             };
             this.prototype.generateArrayOrEach = function(
               method,
-              { intoClause, withClause, whenClause, withKeyClause }
+              { fromClause, intoClause, withClause, whenClause, withKeyClause }
             ) {
               let FunctionInvocationStn,
                 StatementsStn,
                 IdentifierStn,
                 SimpleLiteralStn,
                 FunctionDefinitionStn,
-                iterable,
                 variableDefinition,
-                Null,
                 cafBase;
               ({
                 FunctionInvocationStn,
@@ -9054,7 +9168,7 @@ Caf.defMod(module, () => {
                 SimpleLiteralStn,
                 FunctionDefinitionStn
               } = StnRegistry);
-              ({ iterable, variableDefinition } = this.labeledChildren);
+              ({ variableDefinition } = this.labeledChildren);
               if (
                 (Caf.exists(variableDefinition) &&
                   (Caf.exists((cafBase = variableDefinition.children)) &&
@@ -9067,40 +9181,15 @@ Caf.defMod(module, () => {
                       variableDefinition.children[0]
                     ));
               }
-              Null = SimpleLiteralStn({ value: "null" });
               return FunctionInvocationStn(
                 IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
-                iterable,
-                withClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withClause
-                    )
-                  : whenClause || withKeyClause || intoClause
-                    ? Null
-                    : undefined,
-                whenClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      whenClause
-                    )
-                  : withKeyClause || intoClause
-                    ? Null
-                    : undefined,
-                intoClause != null
-                  ? intoClause
-                  : withKeyClause
-                    ? Null
-                    : undefined,
-                withKeyClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withKeyClause
-                    )
-                  : undefined
+                this.resolveStnParams(
+                  fromClause,
+                  { f: withClause },
+                  { f: whenClause },
+                  intoClause,
+                  { f: withKeyClause }
+                )
               );
             };
           }
