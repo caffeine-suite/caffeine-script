@@ -23,12 +23,14 @@ Caf.defMod(module, () => {
               ));
             };
             this.prototype.getMatchStns = function() {
+              let stn;
+              stn = null;
               return Caf.each(
                 this.matches,
                 [],
                 (m, cafK, cafInto) =>
-                  (m = Caf.isF(m.getStn) && m.getStn())
-                    ? cafInto.push(m)
+                  (stn = Caf.isF(m.getStn) && m.getStn())
+                    ? cafInto.push(stn)
                     : undefined
               );
             };
@@ -36,16 +38,18 @@ Caf.defMod(module, () => {
               return StnRegistry.get(this.stnFactory);
             };
             this.prototype.getStnChildren = function(left) {
+              let stn;
               return this.stnChildren
                 ? isFunction(this.stnChildren)
                   ? this.stnChildren()
                   : this.stnChildren
-                : Caf.each(
+                : ((stn = null),
+                  Caf.each(
                     this.nonStnExtensionMatches,
                     [],
                     (m, cafK, cafInto) =>
-                      (m = m.getStn(left)) ? cafInto.push(m) : undefined
-                  );
+                      (stn = m.getStn(left)) ? cafInto.push(stn) : undefined
+                  ));
             };
             this.getter({
               isStnExtension: function() {

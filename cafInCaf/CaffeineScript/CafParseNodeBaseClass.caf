@@ -20,7 +20,8 @@ class CafParseNodeBaseClass extends Nodes.Node
     class NodeSubclass extends @
 
   getMatchStns: ->
-    array m from @matches when m = m.getStn?()
+    stn = null
+    array m from @matches when stn = m.getStn?() with stn
 
   getStnFactory: ->
     StnRegistry.get @stnFactory
@@ -32,7 +33,8 @@ class CafParseNodeBaseClass extends Nodes.Node
       else
         @stnChildren
     else
-      array m in @nonStnExtensionMatches when m = m.getStn left
+      stn = null
+      array m in @nonStnExtensionMatches when stn = m.getStn left with stn
 
   @getter
     isStnExtension:         -> @stnExtension || @presentMatches[0]?.isStnExtension
