@@ -1,8 +1,54 @@
+### 0.55
+
+NEW Comprehnsions Features
+
+1. `with-key` clause: When `object` is the output, you can specify a separate `with-key` clause to choose what key each value should be written to.
+2. range-comprehensions specified by using `array` as the output type and adding a `to` or `til` clause. There is also an optional `by` clause, and the `from` clause is now optional when to/til are present. The default value for `from` is 0. The default value for `by` is either 1 if to/til is > from, otherwise it's -1.
+
+Examples:
+
+```coffeescript
+#### 1.
+object v from [1,2,3] with-key "a#{v}"
+# out: a1: 1, a2: 2, a3: 3
+
+#### 2.
+array to 5                     # [] 0 1 2 3 4 5
+array to 5 by 2                # [] 0 2 4
+array til 5                    # [] 0 1 2 3 4
+array to 5 with 1              # [] 1 1 1 1 1 1
+array a to 5 when a %% 2 == 0  # [] 0 2 4
+array from 2 to 5              # [] 2 3 4 5
+```
+
+
+SEMANTIC CHANGE in Comprehensions
+
+1. The default key-value when iterating FROM an array TO an object is the VALUE, not the INDEX
+2. Assigning to the value-parameter in the when-block no longer affects the default with-block
+
+Examples:
+
+```coffeescript
+#### 1.
+object [1,2,3] with true
+# out: 1: true, 2: true, 3: true
+
+#### 2.
+array v from myList when v = v.myMethod()
+# is NOW the same as this:
+array v from myList when v.myMethod()
+
+# it WAS, the same as this:
+# array v from myList when v.myMethod() with v.myMethod()
+# except it only called myMethod once.
+```
+
 ### 0.54
 
 NEW structuring options:
 
-```
+```coffeescript
 {@}         # {} this: @
 {foo 123}   # {} foo: foo 123
 {foo = 123} # {} foo: foo = 123
