@@ -33,7 +33,7 @@ Caf.defMod(module, () => {
                   )}.`
                 );
               }
-              return Caf.each(valueClauses, undefined, valueClause => {
+              return Caf.each2(valueClauses, valueClause => {
                 let type;
                 ({ type } = valueClause);
                 if (valueClauseChildren[type]) {
@@ -41,7 +41,7 @@ Caf.defMod(module, () => {
                     `no more than one '${Caf.toString(type)}' clause allowed`
                   );
                 }
-                valueClauseChildren[type] = true;
+                return (valueClauseChildren[type] = true);
               });
             };
             clauseAliases = { returning: "into", in: "from", do: "with" };
@@ -50,14 +50,15 @@ Caf.defMod(module, () => {
               this.initLabeledChildren();
               ({ outputType, body } = this.labeledChildren);
               labeledClauses = {};
-              Caf.each(
+              Caf.each2(
                 this.labeledChildren.valueClauses,
-                undefined,
                 ({ type, value }) => {
                   let cafTemp;
                   type =
                     (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
-                  labeledClauses[lowerCamelCase(type + "Clause")] = value;
+                  return (labeledClauses[
+                    lowerCamelCase(type + "Clause")
+                  ] = value);
                 }
               );
               (cafTemp = labeledClauses.withClause) != null

@@ -23,10 +23,10 @@ Caf.defMod(module, () => {
           dotBase = Caf.exists(options) && options.dotBase;
           return this.createSourceNode(
             dotBase ? "([" : "[",
-            Caf.each(this.children, [], (c, i, cafInto) => {
+            Caf.array(this.children, (c, i) => {
               let sn;
               sn = c.toSourceNode();
-              cafInto.push(i > 0 ? [", ", sn] : sn);
+              return i > 0 ? [", ", sn] : sn;
             }),
             dotBase ? "])" : "]"
           );
@@ -34,9 +34,7 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function(options) {
           let out;
           out = `[${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) =>
-              cafInto.push(c.toJsExpression())
-            ).join(", ")
+            Caf.array(this.children, c => c.toJsExpression()).join(", ")
           )}]`;
           return Caf.exists(options) && options.dotBase
             ? `(${Caf.toString(out)})`

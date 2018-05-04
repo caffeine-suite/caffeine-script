@@ -81,24 +81,22 @@ Caf.defMod(module, () => {
                 return returnAction;
             }
           })();
-          return Caf.each((lines = this.children), [], (c, i, cafInto) => {
+          return Caf.array((lines = this.children), (c, i) => {
             let statement;
-            cafInto.push(
-              returnAction != null && i === lines.length - 1
-                ? !c.jsExpressionUsesReturn
-                  ? returnAction.length > 0
-                    ? `${Caf.toString(returnAction)} ${Caf.toString(
-                        c.toJsExpression()
-                      )}`
-                    : c.toJsExpression()
-                  : c.toJs({ generateReturnStatement: true })
-                : generateStatements
-                  ? ((statement = c.toJs({ statement: true })),
-                    statement.match(/^function/)
-                      ? this.applyRequiredParens(statement)
-                      : statement)
-                  : c.toJsExpression({ returnValueIsIgnored: true })
-            );
+            return returnAction != null && i === lines.length - 1
+              ? !c.jsExpressionUsesReturn
+                ? returnAction.length > 0
+                  ? `${Caf.toString(returnAction)} ${Caf.toString(
+                      c.toJsExpression()
+                    )}`
+                  : c.toJsExpression()
+                : c.toJs({ generateReturnStatement: true })
+              : generateStatements
+                ? ((statement = c.toJs({ statement: true })),
+                  statement.match(/^function/)
+                    ? this.applyRequiredParens(statement)
+                    : statement)
+                : c.toJsExpression({ returnValueIsIgnored: true });
           });
         };
         this.prototype._getChildrenSourceNodes = function(
@@ -117,13 +115,14 @@ Caf.defMod(module, () => {
                 return returnAction;
             }
           })();
-          Caf.each((lines = this.children), (out = []), (c, i, cafInto) => {
-            let childExpression;
-            if (i > 0) {
-              out.push(generateStatements ? "; " : ", ");
-            }
-            cafInto.push(
-              returnAction != null && i === lines.length - 1
+          Caf.array(
+            (lines = this.children),
+            (c, i) => {
+              let childExpression;
+              if (i > 0) {
+                out.push(generateStatements ? "; " : ", ");
+              }
+              return returnAction != null && i === lines.length - 1
                 ? !c.jsExpressionUsesReturn
                   ? ((childExpression = c.toSourceNode({ expression: true })),
                     returnAction.length > 0
@@ -135,9 +134,11 @@ Caf.defMod(module, () => {
                   : c.toSourceNode({
                       expression: true,
                       returnValueIsIgnored: true
-                    })
-            );
-          });
+                    });
+            },
+            null,
+            (out = [])
+          );
           if (generateStatements) {
             out.push(";");
           }

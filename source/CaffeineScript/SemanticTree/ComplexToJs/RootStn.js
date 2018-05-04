@@ -32,13 +32,10 @@ Caf.defMod(module, () => {
                 options.bare
                   ? [this.getBareInitializers(), this.statementsSourceNodes]
                   : options.module
-                    ? ((identifiersToImport = Caf.each(
+                    ? ((identifiersToImport = Caf.array(
                         this.generateImportMap(),
-                        [],
-                        (v, k, cafInto) =>
-                          cafInto.push(
-                            `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                          )
+                        (v, k) =>
+                          `${Caf.toString(k)} = global.${Caf.toString(k)}`
                       )),
                       (lets = compactFlatten([
                         identifiersToImport,
@@ -68,11 +65,9 @@ Caf.defMod(module, () => {
             this.prototype.toJsModule = function() {
               let identifiersToImport, statementsJs, lets, statements;
               this.rootUpdateScope();
-              identifiersToImport = Caf.each(
+              identifiersToImport = Caf.array(
                 this.generateImportMap(),
-                [],
-                (v, k, cafInto) =>
-                  cafInto.push(`${Caf.toString(k)} = global.${Caf.toString(k)}`)
+                (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
               );
               statementsJs = this.statements.toFunctionBodyJs();
               lets = compactFlatten([

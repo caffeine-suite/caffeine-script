@@ -110,40 +110,36 @@ Caf.defMod(module, () => {
                 (blockCommentIndentLevel = 0),
                 (lastCommentLineStartIndex = -1),
                 (inBlockComment = false),
-                Caf.each((lines = source.split("\n")), undefined, (line, i) => {
-                  let indentLevel, commentOnlyLine;
-                  if (nonBlankLineRegexp.test(line)) {
+                Caf.each2(
+                  (lines = source.split("\n")),
+                  (line, i) => {
+                    let indentLevel, commentOnlyLine;
                     indentLevel = getIndentLevel(line);
                     if (indentLevel <= blockCommentIndentLevel) {
                       inBlockComment = false;
                     }
-                    if (!inBlockComment) {
-                      if (
-                        (commentOnlyLine = lineWithOnlyCommentRegexp.test(line))
-                      ) {
-                        if (!(lastCommentLineStartIndex >= 0)) {
-                          lastCommentLineStartIndex = i;
-                        }
-                        if (
+                    return !inBlockComment
+                      ? (commentOnlyLine = lineWithOnlyCommentRegexp.test(line))
+                        ? (!(lastCommentLineStartIndex >= 0)
+                            ? (lastCommentLineStartIndex = i)
+                            : undefined,
                           (inBlockComment = blockCommentStartRegexp.test(line))
-                        ) {
-                          blockCommentIndentLevel = indentLevel;
-                        }
-                      } else {
-                        if (lastCommentLineStartIndex >= 0) {
-                          fixCommentLines(
-                            lines,
-                            max(indentLevel, previousIndentLevel),
-                            lastCommentLineStartIndex,
-                            i
-                          );
-                          lastCommentLineStartIndex = -1;
-                        }
-                        previousIndentLevel = indentLevel;
-                      }
-                    }
-                  }
-                }),
+                            ? (blockCommentIndentLevel = indentLevel)
+                            : undefined)
+                        : (lastCommentLineStartIndex >= 0
+                            ? (fixCommentLines(
+                                lines,
+                                max(indentLevel, previousIndentLevel),
+                                lastCommentLineStartIndex,
+                                i
+                              ),
+                              (lastCommentLineStartIndex = -1))
+                            : undefined,
+                          (previousIndentLevel = indentLevel))
+                      : undefined;
+                  },
+                  (line, i) => nonBlankLineRegexp.test(line)
+                ),
                 fixCommentLines(
                   lines,
                   previousIndentLevel,

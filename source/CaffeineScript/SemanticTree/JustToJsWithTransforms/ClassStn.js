@@ -27,31 +27,23 @@ Caf.defMod(module, () => {
             });
             this.prototype.decorate = function() {
               let cafBase;
-              return Caf.each(
+              return Caf.each2(
                 Caf.exists((cafBase = this.body)) && cafBase.children,
-                undefined,
                 stn =>
-                  stn.type === "Object"
-                    ? Caf.each(stn.children, undefined, objectPropValueStn => {
-                        let propNameStn, propValueStn;
-                        [
-                          propNameStn,
-                          propValueStn
-                        ] = objectPropValueStn.children;
-                        if (
-                          propNameStn.type === "ObjectPropName" &&
-                          propNameStn.toJs() === "constructor"
-                        ) {
-                          propValueStn.props.isConstructor = true;
-                          Caf.each(
-                            propValueStn.find(/Super/),
-                            undefined,
-                            superCallChild =>
-                              (superCallChild.props.calledInConstructor = true)
-                          );
-                        }
-                      })
-                    : undefined
+                  Caf.each2(stn.children, objectPropValueStn => {
+                    let propNameStn, propValueStn;
+                    [propNameStn, propValueStn] = objectPropValueStn.children;
+                    return propNameStn.type === "ObjectPropName" &&
+                      propNameStn.toJs() === "constructor"
+                      ? ((propValueStn.props.isConstructor = true),
+                        Caf.each2(
+                          propValueStn.find(/Super/),
+                          superCallChild =>
+                            (superCallChild.props.calledInConstructor = true)
+                        ))
+                      : undefined;
+                  }),
+                stn => stn.type === "Object"
               );
             };
             this.prototype.postTransform = function() {
@@ -110,78 +102,68 @@ Caf.defMod(module, () => {
                     )
                   ),
                   StatementsStn(
-                    (statementsToCount = Caf.each(
+                    (statementsToCount = Caf.array(
                       body.children,
-                      [],
-                      (stn, cafK, cafInto) =>
-                        cafInto.push(
-                          stn.type === "Object"
-                            ? Caf.each(
-                                stn.children,
-                                [],
-                                (objectPropValueStn, cafK, cafInto) => {
-                                  let propNameStn,
-                                    propValueStn,
-                                    assignToStn,
-                                    propName,
-                                    isThisProp;
-                                  [
-                                    propNameStn,
-                                    propValueStn
-                                  ] = objectPropValueStn.children;
-                                  assignToStn = (() => {
-                                    switch (propNameStn.type) {
-                                      case "ObjectPropName":
-                                        ({
-                                          propName,
-                                          isThisProp
-                                        } = propNameStn);
-                                        return isThisProp
-                                          ? ThisStn(
+                      stn =>
+                        stn.type === "Object"
+                          ? Caf.array(stn.children, objectPropValueStn => {
+                              let propNameStn,
+                                propValueStn,
+                                assignToStn,
+                                propName,
+                                isThisProp;
+                              [
+                                propNameStn,
+                                propValueStn
+                              ] = objectPropValueStn.children;
+                              assignToStn = (() => {
+                                switch (propNameStn.type) {
+                                  case "ObjectPropName":
+                                    ({ propName, isThisProp } = propNameStn);
+                                    return isThisProp
+                                      ? ThisStn(
+                                          IdentifierStn({
+                                            identifier: propName
+                                          })
+                                        )
+                                      : propName === "constructor"
+                                        ? ((constructorStn = propValueStn),
+                                          null)
+                                        : AccessorStn(
+                                            ThisStn(
                                               IdentifierStn({
-                                                identifier: propName
+                                                identifier: "prototype"
                                               })
-                                            )
-                                          : propName === "constructor"
-                                            ? ((constructorStn = propValueStn),
-                                              null)
-                                            : AccessorStn(
-                                                ThisStn(
-                                                  IdentifierStn({
-                                                    identifier: "prototype"
-                                                  })
-                                                ),
-                                                IdentifierStn({
-                                                  identifier: propName
-                                                })
-                                              );
-                                      case "ObjectLiteralAccessor":
-                                        return AccessorStn(
-                                          ThisStn(
+                                            ),
                                             IdentifierStn({
-                                              identifier: "prototype"
+                                              identifier: propName
                                             })
-                                          ),
-                                          propNameStn.children
-                                        );
-                                      default:
-                                        return (() => {
-                                          throw new Error(
-                                            `unknown object property name Stn type: ${Caf.toString(
-                                              propNameStn.type
-                                            )}`
                                           );
-                                        })();
-                                    }
-                                  })();
-                                  cafInto.push(
-                                    assignToStn &&
-                                      AssignmentStn(assignToStn, propValueStn)
-                                  );
+                                  case "ObjectLiteralAccessor":
+                                    return AccessorStn(
+                                      ThisStn(
+                                        IdentifierStn({
+                                          identifier: "prototype"
+                                        })
+                                      ),
+                                      propNameStn.children
+                                    );
+                                  default:
+                                    return (() => {
+                                      throw new Error(
+                                        `unknown object property name Stn type: ${Caf.toString(
+                                          propNameStn.type
+                                        )}`
+                                      );
+                                    })();
                                 }
-                              )
-                            : stn
-                        )
+                              })();
+                              return (
+                                assignToStn &&
+                                AssignmentStn(assignToStn, propValueStn)
+                              );
+                            })
+                          : stn
                     ))
                   )
                 );
@@ -189,9 +171,8 @@ Caf.defMod(module, () => {
                 if (constructorStn) {
                   statementCount -= 1;
                   constructorStn.props.isConstructor = true;
-                  Caf.each(
+                  Caf.each2(
                     constructorStn.find(/Super/),
-                    undefined,
                     superCallChild =>
                       (superCallChild.props.calledInConstructor = true)
                   );

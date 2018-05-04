@@ -30,9 +30,8 @@ Caf.defMod(module, () => {
             getStn: function() {
               let stn;
               stn = this.implicitArrayOrExpression.getStn();
-              Caf.each(
+              Caf.each2(
                 this.tailControlOperatorComplexExpressions,
-                undefined,
                 tco =>
                   (stn = ControlOperatorStn(
                     { operand: tco.tailControlOperator.toString().trim() },

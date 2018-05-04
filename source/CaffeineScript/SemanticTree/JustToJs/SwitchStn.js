@@ -23,8 +23,8 @@ Caf.defMod(module, () => {
             falsifyCases = !condition;
             options = { falsifyCases };
             return expression
-              ? ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
-                  cafInto.push(clause.toFunctionBodyJs(options))
+              ? ((cases = Caf.array(switchWhens, clause =>
+                  clause.toFunctionBodyJs(options)
                 )),
                 switchElse
                   ? cases.push(
@@ -34,8 +34,8 @@ Caf.defMod(module, () => {
                 `(() => {switch (${Caf.toString(
                   this.getConditionJs()
                 )}) {${Caf.toString(cases.join(" "))}};})()`)
-              : ((cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
-                  cafInto.push(clause.toJs(options))
+              : ((cases = Caf.array(switchWhens, clause =>
+                  clause.toJs(options)
                 )),
                 switchElse
                   ? cases.push(`default: ${Caf.toString(switchElse.toJs())};`)
@@ -65,8 +65,8 @@ Caf.defMod(module, () => {
             ({ condition, switchWhens, switchElse } = this.labeledChildren);
             falsifyCases = !condition;
             childOptions = { falsifyCases, returnAction: expression };
-            cases = Caf.each(switchWhens, [], (clause, cafK, cafInto) =>
-              cafInto.push(clause.toSourceNode(childOptions))
+            cases = Caf.array(switchWhens, clause =>
+              clause.toSourceNode(childOptions)
             );
             if (switchElse) {
               cases.push(["default: ", switchElse.toSourceNode(childOptions)]);

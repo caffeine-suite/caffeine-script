@@ -8,30 +8,27 @@ Caf.defMod(module, () => {
       function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
         this.getter({
           argumentNameList: function() {
-            return Caf.each(
+            return Caf.array(
               this.children,
-              [],
-              (c, cafK, cafInto) =>
-                c.argumentName ? cafInto.push(c.argumentName) : undefined
+              c => c.argumentName,
+              c => c.argumentName
             );
           }
         });
         this.prototype.toSourceNode = function(options) {
           return this.createSourceNode(
             "(",
-            Caf.each(this.children, [], (c, i, cafInto) => {
+            Caf.array(this.children, (c, i) => {
               let sn;
               sn = c.toSourceNode();
-              cafInto.push(i > 0 ? [", ", sn] : sn);
+              return i > 0 ? [", ", sn] : sn;
             }),
             ")"
           );
         };
         this.prototype.toJs = function() {
           return `(${Caf.toString(
-            Caf.each(this.children, [], (c, cafK, cafInto) =>
-              cafInto.push(c.toJs())
-            ).join(", ")
+            Caf.array(this.children, c => c.toJs()).join(", ")
           )})`;
         };
       }

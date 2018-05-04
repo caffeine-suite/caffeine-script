@@ -44,48 +44,46 @@ Caf.defMod(module, () => {
             ) {
               let done;
               done = false;
-              Caf.each(accessorChain, undefined, (accessor, i) => {
-                let key, isFunctionInvocation, reset;
-                if (!done) {
+              Caf.each2(
+                accessorChain,
+                (accessor, i) => {
+                  let key, isFunctionInvocation, reset;
                   ({ key, isFunctionInvocation } = accessor);
                   if (isArray(key)) {
-                    key = Caf.each(key, [], (kk, cafK, cafInto) =>
-                      cafInto.push(kk.transform())
-                    );
+                    key = Caf.array(key, kk => kk.transform());
                   } else {
                     key = key.transform();
                   }
-                  if (accessor.existanceTest) {
-                    reset = accessorChain.slice(i);
-                    done = true;
-                    value = this._createExistanceAccessorStn(
-                      value,
-                      isFunctionInvocation,
-                      checkedValueStn => {
-                        let access;
-                        access = this._createPostTransformedAccessorStn(
-                          checkedValueStn,
-                          key,
-                          accessor
-                        );
-                        access.props.existanceTest = false;
-                        return i < accessorChain.length - 1
-                          ? this._transformAccessorChainR(
-                              access,
-                              accessorChain.slice(i + 1)
-                            )
-                          : access;
-                      }
-                    );
-                  } else {
-                    value = this._createPostTransformedAccessorStn(
-                      value,
-                      key,
-                      accessor
-                    );
-                  }
-                }
-              });
+                  return accessor.existanceTest
+                    ? ((reset = accessorChain.slice(i)),
+                      (done = true),
+                      (value = this._createExistanceAccessorStn(
+                        value,
+                        isFunctionInvocation,
+                        checkedValueStn => {
+                          let access;
+                          access = this._createPostTransformedAccessorStn(
+                            checkedValueStn,
+                            key,
+                            accessor
+                          );
+                          access.props.existanceTest = false;
+                          return i < accessorChain.length - 1
+                            ? this._transformAccessorChainR(
+                                access,
+                                accessorChain.slice(i + 1)
+                              )
+                            : access;
+                        }
+                      )))
+                    : (value = this._createPostTransformedAccessorStn(
+                        value,
+                        key,
+                        accessor
+                      ));
+                },
+                (accessor, i) => !done
+              );
               return value;
             };
             this.prototype._createPostTransformedAccessorStn = function(

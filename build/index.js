@@ -1785,12 +1785,14 @@ Caf.defMod(module, () => {
               ));
             };
             this.prototype.getMatchStns = function() {
+              let stn;
+              stn = null;
               return Caf.each(
                 this.matches,
                 [],
                 (m, cafK, cafInto) =>
-                  (m = Caf.isF(m.getStn) && m.getStn())
-                    ? cafInto.push(m)
+                  (stn = Caf.isF(m.getStn) && m.getStn())
+                    ? cafInto.push(stn)
                     : undefined
               );
             };
@@ -1798,16 +1800,18 @@ Caf.defMod(module, () => {
               return StnRegistry.get(this.stnFactory);
             };
             this.prototype.getStnChildren = function(left) {
+              let stn;
               return this.stnChildren
                 ? isFunction(this.stnChildren)
                   ? this.stnChildren()
                   : this.stnChildren
-                : Caf.each(
+                : ((stn = null),
+                  Caf.each(
                     this.nonStnExtensionMatches,
                     [],
                     (m, cafK, cafInto) =>
-                      (m = m.getStn(left)) ? cafInto.push(m) : undefined
-                  );
+                      (stn = m.getStn(left)) ? cafInto.push(stn) : undefined
+                  ));
             };
             this.getter({
               isStnExtension: function() {
@@ -2935,7 +2939,7 @@ __webpack_require__(112);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.4"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.54.6"}
 
 /***/ }),
 /* 30 */
@@ -3976,7 +3980,7 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(into|returning|when)\b/
+        comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
       });
       this.rule(
         {
@@ -4008,8 +4012,7 @@ Caf.defMod(module, () => {
         optionalArg: "_comma_ !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
         comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
-        comprehensionWith: "_? withOrDo _? lineOfStatementsOrBlock",
-        comprehensionBody: ["block", "comprehensionWith"]
+        comprehensionBody: "block"
       });
       return this.rule(
         {
@@ -5235,7 +5238,7 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|try|catch|throw|and|or|not|for|return|break|of|yes|on|no|off|typeof|extract|reduce|inject|promise|await|to|by|short|skip|mixin)\b/,
+      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|try|catch|throw|and|or|not|for|return|break|of|yes|on|no|off|typeof|extract|reduce|inject|promise|await|to|by|short|skip|til|mixin)\b(?![-])/,
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {
@@ -5494,6 +5497,9 @@ Caf.defMod(module, () => {
         this.getter({
           argumentName: function() {
             return this.target.name;
+          },
+          isSimpleIdentifier: function() {
+            return this.target.type === "Identifier";
           }
         });
         this.prototype.toSourceNode = function() {
@@ -7210,6 +7216,11 @@ Caf.defMod(module, () => {
         class ObjectStn extends __webpack_require__(2) {},
         function(ObjectStn, classSuper, instanceSuper) {
           let splitObjectsAtSameProps;
+          this.getter({
+            isEmptyObjectLiteral: function() {
+              return !this.children || this.children.length === 0;
+            }
+          });
           this.prototype.toJs = function(options) {
             let out;
             out = `{${Caf.toString(
@@ -8577,12 +8588,13 @@ Caf.defMod(module, () => {
                 return this.props.bound;
               },
               simpleBound: function() {
-                let cafBase;
+                let statementStns;
+                ({ statementStns } = this);
                 return (
                   this.bound &&
                   !this.getAutoLets() &&
-                  (Caf.exists((cafBase = this.statementStns)) &&
-                    cafBase.length) === 1
+                  (Caf.exists(statementStns) && statementStns.length) === 1 &&
+                  !statementStns[0].isEmptyObjectLiteral
                 );
               }
             });
@@ -9022,9 +9034,9 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "arrayWithAllButLast", "peek", "StnRegistry"],
+    ["Error", "lowerCamelCase", "StnRegistry"],
     [global, __webpack_require__(3)],
-    (Error, arrayWithAllButLast, peek, StnRegistry) => {
+    (Error, lowerCamelCase, StnRegistry) => {
       let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
       return (
         (SemanticTree = __webpack_require__(4)),
@@ -9034,6 +9046,7 @@ Caf.defMod(module, () => {
             __webpack_require__(2)
           ) {},
           function(ComprehensionStn, classSuper, instanceSuper) {
+            let clauseAliases;
             this.prototype.validate = function() {
               let valueClauseChildren,
                 valueClauses,
@@ -9063,324 +9076,144 @@ Caf.defMod(module, () => {
                 valueClauseChildren[type] = true;
               });
             };
+            clauseAliases = { returning: "into", in: "from", do: "with" };
             this.prototype.postTransform = function() {
-              let outputType,
-                variableDefinition,
-                body,
-                iterable,
-                intoChild,
-                whenClause,
-                AccessorStn,
-                ArrayStn,
-                AssignmentStn,
-                BinaryOperatorStn,
-                ControlOperatorStn,
-                FunctionDefinitionArgsStn,
-                FunctionDefinitionArgStn,
-                FunctionDefinitionStn,
-                FunctionInvocationStn,
-                IdentifierStn,
-                ObjectStn,
-                SimpleLiteralStn,
-                StatementsStn,
-                useExtendedEach,
-                basicEach,
-                valueVarDef,
-                keyVarDef,
-                intoIdentifer,
-                brkIdentifer,
-                lastBodyStatement,
-                bodyStatementsExceptLast,
-                bodyWithDefault,
-                whenClauseWrapper,
-                allButLast,
-                foundTest,
-                baseIdentifierHandle;
+              let outputType, body, labeledClauses, cafTemp;
               this.initLabeledChildren();
-              ({
-                outputType,
-                variableDefinition,
-                body,
-                iterable
-              } = this.labeledChildren);
-              intoChild = whenClause = null;
+              ({ outputType, body } = this.labeledChildren);
+              labeledClauses = {};
               Caf.each(
                 this.labeledChildren.valueClauses,
                 undefined,
-                valueClause => {
-                  let type, value;
-                  ({ type, value } = valueClause);
-                  switch (type) {
-                    case "into":
-                    case "returning":
-                      intoChild = value;
-                      break;
-                    case "when":
-                      whenClause = value;
-                  }
+                ({ type, value }) => {
+                  let cafTemp;
+                  type =
+                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                  labeledClauses[lowerCamelCase(type + "Clause")] = value;
                 }
               );
-              outputType = Caf.exists(outputType) && outputType.props.token;
-              ({
-                AccessorStn,
-                ArrayStn,
-                AssignmentStn,
-                BinaryOperatorStn,
-                ControlOperatorStn,
-                FunctionDefinitionArgsStn,
-                FunctionDefinitionArgStn,
-                FunctionDefinitionStn,
-                FunctionInvocationStn,
-                IdentifierStn,
-                ObjectStn,
-                SimpleLiteralStn,
-                StatementsStn
-              } = SemanticTree);
-              useExtendedEach = (() => {
-                switch (outputType) {
+              (cafTemp = labeledClauses.withClause) != null
+                ? cafTemp
+                : (labeledClauses.withClause = body);
+              return (() => {
+                switch (
+                  (outputType =
+                    Caf.exists(outputType) && outputType.props.token)
+                ) {
+                  case "each":
+                  case "array":
+                  case "object":
+                    return this.generateArrayOrEach(
+                      outputType === "each" ? "each2" : outputType,
+                      labeledClauses
+                    );
                   case "find":
-                    return true;
-                  default:
-                    return false;
+                    return this.generateFind(labeledClauses);
                 }
               })();
-              basicEach = outputType === "each";
-              variableDefinition = FunctionDefinitionArgsStn(
-                (valueVarDef =
-                  (Caf.exists(variableDefinition) &&
-                    variableDefinition.children[0]) ||
-                  (!basicEach &&
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifierHandle: new UniqueIdentifierHandle("v", false)
-                      })
-                    ))),
-                (keyVarDef =
-                  (Caf.exists(variableDefinition) &&
-                    variableDefinition.children[1]) ||
-                  (!basicEach &&
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifierHandle: new UniqueIdentifierHandle("k", false)
-                      })
-                    ))),
-                (useExtendedEach || !basicEach) &&
-                  FunctionDefinitionArgStn(
-                    (intoIdentifer = IdentifierStn({
-                      identifierHandle: new UniqueIdentifierHandle(
-                        "into",
-                        false
-                      )
-                    }))
-                  ),
-                useExtendedEach &&
-                  FunctionDefinitionArgStn(
-                    (brkIdentifer = IdentifierStn({
-                      identifierHandle: new UniqueIdentifierHandle("brk", false)
-                    }))
-                  )
-              );
-              return false
-                ? this.generateEach({
-                    variableDefinition,
-                    valueVarDef,
-                    keyVarDef,
-                    whenClause,
-                    intoChild
-                  })
-                : (outputType === "object" || outputType === "array"
-                    ? (lastBodyStatement = body
-                        ? body.className === "StatementsStn"
-                          ? ((bodyStatementsExceptLast = arrayWithAllButLast(
-                              body.children
-                            )),
-                            peek(body.children))
-                          : body
-                        : ((bodyStatementsExceptLast = null), valueVarDef))
-                    : (bodyWithDefault = body || valueVarDef),
-                  (whenClauseWrapper = whenClause
-                    ? actionStn =>
-                        StatementsStn(
-                          ControlOperatorStn(
-                            { operand: "if" },
-                            whenClause,
-                            actionStn
-                          )
-                        )
-                    : actionStn => actionStn),
-                  FunctionInvocationStn(
-                    IdentifierStn({
-                      identifier: `Caf.${Caf.toString(
-                        useExtendedEach ? "extendedEach" : "each"
-                      )}`
-                    }),
-                    iterable,
-                    intoChild ||
-                      (() => {
-                        switch (outputType) {
-                          case "object":
-                            return ObjectStn();
-                          case "array":
-                            return ArrayStn();
-                          case "each":
-                            return SimpleLiteralStn({ value: "undefined" });
-                          case "find":
-                            return SimpleLiteralStn({ value: "undefined" });
-                          case "reduce":
-                            return null;
-                          default:
-                            return (() => {
-                              throw new Error(
-                                `not supported yet: ${Caf.toString(outputType)}`
-                              );
-                            })();
-                        }
-                      })(),
-                    FunctionDefinitionStn(
-                      { bound: true, returnIgnored: outputType !== "find" },
-                      variableDefinition,
-                      (() => {
-                        switch (outputType) {
-                          case "object":
-                            return whenClauseWrapper(
-                              StatementsStn(
-                                bodyStatementsExceptLast,
-                                AssignmentStn(
-                                  AccessorStn(intoIdentifer, keyVarDef),
-                                  lastBodyStatement
-                                )
-                              )
-                            );
-                          case "array":
-                            return whenClauseWrapper(
-                              StatementsStn(
-                                bodyStatementsExceptLast,
-                                FunctionInvocationStn(
-                                  AccessorStn(
-                                    intoIdentifer,
-                                    IdentifierStn({ identifier: "push" })
-                                  ),
-                                  lastBodyStatement
-                                )
-                              )
-                            );
-                          case "each":
-                            return whenClauseWrapper(body);
-                          case "find":
-                            return whenClause
-                              ? body
-                                ? StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      whenClause,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        body
-                                      )
-                                    )
-                                  )
-                                : StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      whenClause,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        valueVarDef
-                                      )
-                                    )
-                                  )
-                              : body
-                                ? (body.type === "Statements" &&
-                                  body.children.length > 1
-                                    ? ((allButLast = body.children.slice(
-                                        0,
-                                        body.children.length - 1
-                                      )),
-                                      (body = peek(body.children)))
-                                    : undefined,
-                                  (foundTest =
-                                    body.type === "Reference"
-                                      ? BinaryOperatorStn(
-                                          { operator: "&&" },
-                                          body,
-                                          StatementsStn(
-                                            FunctionInvocationStn(brkIdentifer),
-                                            body
-                                          )
-                                        )
-                                      : BinaryOperatorStn(
-                                          { operator: "&&" },
-                                          AssignmentStn(
-                                            IdentifierStn({
-                                              identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
-                                                "_ret"
-                                              ))
-                                            }),
-                                            body
-                                          ),
-                                          StatementsStn(
-                                            FunctionInvocationStn(brkIdentifer),
-                                            IdentifierStn({
-                                              identifierHandle: baseIdentifierHandle
-                                            })
-                                          )
-                                        )),
-                                  StatementsStn(allButLast, foundTest))
-                                : StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      valueVarDef,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        valueVarDef
-                                      )
-                                    )
-                                  );
-                        }
-                      })()
-                    )
-                  ));
             };
-            this.prototype.generateEach = function({
-              variableDefinition,
-              valueVarDef,
-              keyVarDef,
-              whenClause,
-              intoChild
-            }) {
+            this.prototype.generateFind = function({ withClause, whenClause }) {
+              let iterable,
+                variableDefinition,
+                FunctionInvocationStn,
+                IdentifierStn,
+                FunctionDefinitionStn,
+                SimpleLiteralStn;
+              ({ iterable, variableDefinition } = this.labeledChildren);
+              ({
+                FunctionInvocationStn,
+                IdentifierStn,
+                FunctionDefinitionStn,
+                SimpleLiteralStn
+              } = StnRegistry);
+              return FunctionInvocationStn(
+                IdentifierStn({ identifier: "Caf.find" }),
+                iterable,
+                withClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      withClause
+                    )
+                  : whenClause
+                    ? SimpleLiteralStn({ value: "null" })
+                    : undefined,
+                whenClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      whenClause
+                    )
+                  : undefined
+              );
+            };
+            this.prototype.generateArrayOrEach = function(
+              method,
+              { intoClause, withClause, whenClause, withKeyClause }
+            ) {
               let FunctionInvocationStn,
+                StatementsStn,
                 IdentifierStn,
                 SimpleLiteralStn,
                 FunctionDefinitionStn,
-                withClause,
-                iterable;
+                iterable,
+                variableDefinition,
+                Null,
+                cafBase;
               ({
                 FunctionInvocationStn,
+                StatementsStn,
                 IdentifierStn,
                 SimpleLiteralStn,
                 FunctionDefinitionStn
               } = StnRegistry);
-              ({ body: withClause, iterable } = this.labeledChildren);
+              ({ iterable, variableDefinition } = this.labeledChildren);
+              if (
+                (Caf.exists(variableDefinition) &&
+                  (Caf.exists((cafBase = variableDefinition.children)) &&
+                    cafBase.length)) > 0 &&
+                !variableDefinition.children[0].isSimpleIdentifier
+              ) {
+                withClause != null
+                  ? withClause
+                  : (withClause = StatementsStn(
+                      variableDefinition.children[0]
+                    ));
+              }
+              Null = SimpleLiteralStn({ value: "null" });
               return FunctionInvocationStn(
-                IdentifierStn({ identifier: "Caf.each2" }),
+                IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
                 iterable,
-                intoChild != null
-                  ? intoChild
-                  : withClause || whenClause
-                    ? SimpleLiteralStn({ value: "null" })
+                withClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      withClause
+                    )
+                  : whenClause || withKeyClause || intoClause
+                    ? Null
                     : undefined,
-                withClause &&
-                  FunctionDefinitionStn(
-                    { bound: true },
-                    variableDefinition,
-                    withClause
-                  ),
-                whenClause &&
-                  FunctionDefinitionStn(
-                    { bound: true },
-                    variableDefinition,
-                    whenClause
-                  )
+                whenClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      whenClause
+                    )
+                  : withKeyClause || intoClause
+                    ? Null
+                    : undefined,
+                intoClause != null
+                  ? intoClause
+                  : withKeyClause
+                    ? Null
+                    : undefined,
+                withKeyClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      withKeyClause
+                    )
+                  : undefined
               );
             };
           }

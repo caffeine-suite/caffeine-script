@@ -65,17 +65,17 @@ Caf.defMod(module, () => {
             });
             this.prototype.initLabeledChildren = function() {
               this.labeledChildren = this.children && {};
-              return Caf.each(this.children, undefined, child => {
+              return Caf.each2(this.children, child => {
                 let label, pluralLabel, cafBase;
                 child.parent = this;
                 ({ label, pluralLabel } = child);
                 this.labeledChildren[label] = child;
-                if (pluralLabel) {
-                  (
-                    (cafBase = this.labeledChildren)[pluralLabel] ||
-                    (cafBase[pluralLabel] = [])
-                  ).push(child);
-                }
+                return pluralLabel
+                  ? (
+                      (cafBase = this.labeledChildren)[pluralLabel] ||
+                      (cafBase[pluralLabel] = [])
+                    ).push(child)
+                  : undefined;
               });
             };
             this.prototype.getInspectedProps = function() {
@@ -119,9 +119,7 @@ Caf.defMod(module, () => {
                       : ((a = []),
                         objectKeyCount(props) > 0 ? a.push(props) : undefined,
                         a.concat(
-                          Caf.each(this.children, [], (c, cafK, cafInto) =>
-                            cafInto.push(c.inspectedObjects)
-                          )
+                          Caf.array(this.children, c => c.inspectedObjects)
                         ))
                 };
               },
@@ -166,9 +164,8 @@ Caf.defMod(module, () => {
               stnTypeStopPattern,
               _foundList = []
             ) {
-              Caf.each(
+              Caf.each2(
                 this.children,
-                undefined,
                 child =>
                   stnTypePattern.test(child.type)
                     ? _foundList.push(child)
@@ -244,12 +241,17 @@ Caf.defMod(module, () => {
               options
             ) {
               let out;
-              return Caf.each(stnArray, (out = []), (c, i, cafInto) => {
-                if (joiner != null && i > 0) {
-                  out.push(joiner);
-                }
-                cafInto.push(c.toSourceNode(options));
-              });
+              return Caf.array(
+                stnArray,
+                (c, i) => {
+                  if (joiner != null && i > 0) {
+                    out.push(joiner);
+                  }
+                  return c.toSourceNode(options);
+                },
+                null,
+                (out = [])
+              );
             };
             this.prototype.doSourceNode = function(...body) {
               return this.createSourceNode("(() => {", body, "})()");
@@ -265,9 +267,9 @@ Caf.defMod(module, () => {
               })();
             };
             this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.each(this.children, [], (c, cafK, cafInto) =>
-                cafInto.push(c.toJs(options))
-              ).join(joiner);
+              return Caf.array(this.children, c => c.toJs(options)).join(
+                joiner
+              );
             };
             this.prototype.doJs = function(args, body) {
               if (args) {
@@ -297,13 +299,13 @@ Caf.defMod(module, () => {
             this.prototype.transformChildren = function() {
               let ret;
               ret = null;
-              Caf.each(this.children, undefined, (child, i) => {
+              Caf.each2(this.children, (child, i) => {
                 let newChild;
-                if (child !== (newChild = child.transform())) {
-                  ret != null ? ret : (ret = this.children.slice());
-                  newChild.props.label = child.label;
-                  ret[i] = newChild;
-                }
+                return child !== (newChild = child.transform())
+                  ? (ret != null ? ret : (ret = this.children.slice()),
+                    (newChild.props.label = child.label),
+                    (ret[i] = newChild))
+                  : undefined;
               });
               return ret || this.children;
             };
@@ -330,7 +332,7 @@ Caf.defMod(module, () => {
             this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
               if (!this.parseTreeNode) {
                 this.parseTreeNode = parseTreeNode;
-                Caf.each(this.children, undefined, child =>
+                Caf.each2(this.children, child =>
                   child.setDefaultParseTreeNode(parseTreeNode)
                 );
               }
@@ -370,12 +372,12 @@ Caf.defMod(module, () => {
                   info: e.info
                 });
               }
-              Caf.each(this.children, undefined, child => child.validateAll());
+              Caf.each2(this.children, child => child.validateAll());
               return this;
             };
             this.prototype.updateScope = function(scope) {
               this.scope = scope;
-              return Caf.each(this.children, undefined, child =>
+              return Caf.each2(this.children, child =>
                 child.updateScope(this.scope)
               );
             };

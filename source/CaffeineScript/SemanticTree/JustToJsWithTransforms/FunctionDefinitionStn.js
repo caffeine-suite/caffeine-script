@@ -72,11 +72,8 @@ Caf.defMod(module, () => {
             this.prototype.updateScope = function() {
               instanceSuper.updateScope.apply(this, arguments);
               return this.arguments
-                ? (Caf.each(
-                    this.arguments.argumentNameList,
-                    {},
-                    (name, cafK, cafInto) =>
-                      (cafInto[cafK] = this.addArgumentName(name))
+                ? (Caf.object(this.arguments.argumentNameList, name =>
+                    this.addArgumentName(name)
                   ),
                   (this._updatingArgumentScope = true),
                   this.arguments.updateScope(this),
@@ -133,26 +130,24 @@ Caf.defMod(module, () => {
               ({ isConstructor } = this.props);
               ({ statementStns } = this);
               preBodyStatements = null;
-              Caf.each(this.argumentStns, undefined, arg => {
+              Caf.each2(this.argumentStns, arg => {
                 let stn;
-                if ((stn = arg.generatePreBodyStatementStn())) {
-                  (preBodyStatements != null
-                    ? preBodyStatements
-                    : (preBodyStatements = [])
-                  ).push(stn);
-                }
+                return (stn = arg.generatePreBodyStatementStn())
+                  ? (preBodyStatements != null
+                      ? preBodyStatements
+                      : (preBodyStatements = [])
+                    ).push(stn)
+                  : undefined;
               });
               return compactFlatten(
                 isConstructor
                   ? ((lastSuperContainingStatementIndex = null),
-                    Caf.each(
+                    Caf.each2(
                       statementStns,
-                      undefined,
+                      (v, i) => (lastSuperContainingStatementIndex = i),
                       (v, i) =>
                         v.type === "Super" ||
                         v.find(/Super/, /FunctionDefinition|Class/)
-                          ? (lastSuperContainingStatementIndex = i)
-                          : undefined
                     ),
                     lastSuperContainingStatementIndex != null &&
                     lastSuperContainingStatementIndex >= 0

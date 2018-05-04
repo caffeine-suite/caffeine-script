@@ -172,9 +172,8 @@ Caf.defMod(module, () => {
               };
               this.prototype.bindAllUniqueIdentifiersRequested = function() {
                 return this._uniqueIdentifierHandles
-                  ? Caf.each(
+                  ? Caf.each2(
                       this._uniqueIdentifierHandles,
-                      undefined,
                       uniqueIdentifierHandle =>
                         uniqueIdentifierHandle.identifier
                     )
@@ -193,13 +192,8 @@ Caf.defMod(module, () => {
                 this.bindAllUniqueIdentifiersRequested();
                 return this._identifiersAssigned &&
                   (identifiers = this.requiredIdentifierLets).length > 0
-                  ? ((identifiers = Caf.each(
-                      identifiers,
-                      [],
-                      (identifier, cafK, cafInto) =>
-                        identifier.match(/=/)
-                          ? cafInto.push(identifier)
-                          : undefined
+                  ? ((identifiers = Caf.array(identifiers, null, identifier =>
+                      identifier.match(/=/)
                     )),
                     identifiers.length > 0
                       ? `${Caf.toString(identifiers.join("; "))}`
@@ -210,7 +204,7 @@ Caf.defMod(module, () => {
                 this.scope = scope;
                 this.bindAllUniqueIdentifiersRequested();
                 this.scope.addChildScope(this);
-                Caf.each(this.getChildrenToUpdateScope(), undefined, child =>
+                Caf.each2(this.getChildrenToUpdateScope(), child =>
                   child.updateScope(this)
                 );
                 return (this._scopeUpdated = true);
@@ -225,24 +219,20 @@ Caf.defMod(module, () => {
                   this._identifiersAssigned,
                   this._argumentNames
                 );
-                Caf.each(
+                Caf.object(
                   this._identifiersUsed,
-                  map,
-                  (v, identifier, cafInto) =>
-                    !assignedInThisOrParentScope[identifier]
-                      ? (cafInto[identifier] = v)
-                      : undefined
+                  null,
+                  (v, identifier) => !assignedInThisOrParentScope[identifier],
+                  map
                 );
-                Caf.each(
+                Caf.each2(
                   this._childScopes,
-                  undefined,
                   childScope =>
-                    !childScope.isImports
-                      ? childScope.generateImportMap(
-                          map,
-                          assignedInThisOrParentScope
-                        )
-                      : undefined
+                    childScope.generateImportMap(
+                      map,
+                      assignedInThisOrParentScope
+                    ),
+                  childScope => !childScope.isImports
                 );
                 return map;
               };
@@ -265,24 +255,21 @@ Caf.defMod(module, () => {
                 requiredIdentifierLets: function() {
                   let identifiersAssignedInParentScopes;
                   ({ identifiersAssignedInParentScopes } = this);
-                  return Caf.each(
+                  return Caf.array(
                     this.identifiersAssigned,
-                    [],
-                    (initializer, identifier, cafInto) =>
+                    (initializer, identifier) =>
+                      isString(initializer)
+                        ? `${Caf.toString(identifier)} = ${Caf.toString(
+                            initializer
+                          )}`
+                        : initializer.toJsExpression != null
+                          ? `${Caf.toString(identifier)} = ${Caf.toString(
+                              initializer.toJsExpression()
+                            )}`
+                          : identifier,
+                    (initializer, identifier) =>
                       !identifiersAssignedInParentScopes ||
                       !identifiersAssignedInParentScopes[identifier]
-                        ? cafInto.push(
-                            isString(initializer)
-                              ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                  initializer
-                                )}`
-                              : initializer.toJsExpression != null
-                                ? `${Caf.toString(identifier)} = ${Caf.toString(
-                                    initializer.toJsExpression()
-                                  )}`
-                                : identifier
-                          )
-                        : undefined
                   );
                 },
                 identifiersActiveInScope: function() {
@@ -303,23 +290,21 @@ Caf.defMod(module, () => {
                 identifiersUsedInThisScopeButNotAssigned: function() {
                   let assigned;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  return Caf.each(
+                  return Caf.object(
                     this.identifiersUsed,
-                    {},
-                    (v, k, cafInto) =>
-                      !assigned[k] ? (cafInto[k] = true) : undefined
+                    (v, k) => true,
+                    (v, k) => !assigned[k]
                   );
                 },
                 identifiersUsedButNotAssigned: function() {
                   let assigned, ret;
                   assigned = this.identifiersAssignedInThisOrParentScopes;
-                  ret = Caf.each(
+                  ret = Caf.object(
                     this.identifiersUsed,
-                    {},
-                    (v, k, cafInto) =>
-                      !assigned[k] ? (cafInto[k] = true) : undefined
+                    (v, k) => true,
+                    (v, k) => !assigned[k]
                   );
-                  Caf.each(this._childScopes, undefined, childScope =>
+                  Caf.each2(this._childScopes, childScope =>
                     mergeInto(ret, childScope.identifiersUsedButNotAssigned)
                   );
                   return (this._identifiersUsedButNotAssigned = ret);

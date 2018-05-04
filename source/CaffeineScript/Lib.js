@@ -8,8 +8,9 @@ Caf.defMod(module, () => {
       let legalUnquotedPropName;
       return {
         deescapeSpaces: function(string) {
-          return Caf.each(string.split(/((?:\\\\)+)/), [], (str, i, cafInto) =>
-            cafInto.push(Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str)
+          return Caf.array(
+            string.split(/((?:\\\\)+)/),
+            (str, i) => (Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str)
           ).join("");
         },
         escapeNewLines: function(string) {
@@ -27,10 +28,10 @@ Caf.defMod(module, () => {
           split = charsToEscape.match(/\\/)
             ? [string]
             : string.split(/((?:\\.)+)/);
-          return Caf.each(split, [], (str, i, cafInto) =>
-            cafInto.push(
+          return Caf.array(
+            split,
+            (str, i) =>
               Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
-            )
           ).join("");
         },
         legalUnquotedPropName: (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),

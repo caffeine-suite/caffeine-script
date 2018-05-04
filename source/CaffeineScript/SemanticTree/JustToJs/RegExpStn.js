@@ -14,28 +14,19 @@ Caf.defMod(module, () => {
             ({ value, modifiers } = this.props);
             str =
               (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
-                ? ((hasInterpolation = Caf.extendedEach(
+                ? ((hasInterpolation = Caf.find(
                     this.children,
-                    undefined,
-                    (child, cafK, cafInto, cafBrk) => {
-                      let cafRet;
-                      return (
-                        (cafRet = !isString(child.props.value)) &&
-                        (cafBrk(), cafRet)
-                      );
-                    }
+                    child => !isString(child.props.value)
                   )),
-                  Caf.each(this.children, [], (child, cafK, cafInto) => {
+                  Caf.array(this.children, child => {
                     let v;
-                    cafInto.push(
-                      isString((v = child.props.value))
-                        ? hasInterpolation
-                          ? v.replace(/([`$\\])/g, "\\$1")
-                          : v
-                        : `\${Caf.toString(${Caf.toString(
-                            child.toJsExpression()
-                          )})}`
-                    );
+                    return isString((v = child.props.value))
+                      ? hasInterpolation
+                        ? v.replace(/([`$\\])/g, "\\$1")
+                        : v
+                      : `\${Caf.toString(${Caf.toString(
+                          child.toJsExpression()
+                        )})}`;
                   }).join(""))
                 : value != null
                   ? value
@@ -55,26 +46,17 @@ Caf.defMod(module, () => {
             ({ value, modifiers } = this.props);
             childrenNodes =
               (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
-                ? ((hasInterpolation = Caf.extendedEach(
+                ? ((hasInterpolation = Caf.find(
                     this.children,
-                    undefined,
-                    (child, cafK, cafInto, cafBrk) => {
-                      let cafRet;
-                      return (
-                        (cafRet = !isString(child.props.value)) &&
-                        (cafBrk(), cafRet)
-                      );
-                    }
+                    child => !isString(child.props.value)
                   )),
-                  Caf.each(this.children, [], (child, cafK, cafInto) => {
+                  Caf.array(this.children, child => {
                     let v;
-                    cafInto.push(
-                      isString((v = child.props.value))
-                        ? hasInterpolation
-                          ? v.replace(/([`$\\])/g, "\\$1")
-                          : v
-                        : ["${Caf.toString(", child.toJsExpression(), ")}"]
-                    );
+                    return isString((v = child.props.value))
+                      ? hasInterpolation
+                        ? v.replace(/([`$\\])/g, "\\$1")
+                        : v
+                      : ["${Caf.toString(", child.toJsExpression(), ")}"];
                   }))
                 : value;
             return childrenNodes.length === 0
