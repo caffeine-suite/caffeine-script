@@ -9,6 +9,11 @@ Caf.defMod(module, () => {
         class ObjectStn extends require("../BaseStn") {},
         function(ObjectStn, classSuper, instanceSuper) {
           let splitObjectsAtSameProps;
+          this.getter({
+            isEmptyObjectLiteral: function() {
+              return !this.children || this.children.length === 0;
+            }
+          });
           this.prototype.toJs = function(options) {
             let out;
             out = `{${Caf.toString(

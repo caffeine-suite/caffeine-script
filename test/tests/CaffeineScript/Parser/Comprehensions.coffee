@@ -7,49 +7,50 @@
 module.exports = suite: parseTestSuite
 
   iterationTypes:
-    "array b":        "Caf.each(b, [], (cafV, cafK, cafInto) => cafInto.push(cafV));"
-    "object b":       "Caf.each(b, {}, (cafV, cafK, cafInto) => cafInto[cafK] = cafV);"
-    "each b":         "Caf.each(b, undefined, () => {});"
-    "find b":         "Caf.extendedEach(b, undefined, (cafV, cafK, cafInto, cafBrk) => cafV && (cafBrk(), cafV));"
+    "array b":        "Caf.array(b);"
+    "object b":       "Caf.object(b);"
+    "each b":         "Caf.each2(b);"
+    "find b":         "Caf.extendedEach(b, null, (cafV, cafK, cafInto, cafBrk) => cafV && (cafBrk(), cafV));"
 
   each:
-    "each v in b":          "Caf.each(b, undefined, (v) => {});"
-    "each v, k in b":       "Caf.each(b, undefined, (v, k) => {});"
-    "each v in b with v()": "Caf.each(b, undefined, (v) => v());"
+    "each v in b":          "Caf.each2(b);"
+    "each v, k in b":       "Caf.each2(b);"
+    "each v in b with v()": "Caf.each2(b, (v) => v());"
+    "each v in b when v()": "Caf.each2(b, null, (v) => v());"
 
   multipleArgs:
     """
     object myV, myK from mySource
       myV
-    """: "Caf.each(mySource, {}, (myV, myK, cafInto) => cafInto[myK] = myV);"
+    """: "Caf.object(mySource, (myV, myK) => myV);"
 
     """
     direction = array v, i in precidence
       i
-    """: "let direction; direction = Caf.each(precidence, [], (v, i, cafInto) => cafInto.push(i));"
+    """: "let direction; direction = Caf.array(precidence, (v, i) => i);"
 
   syntaxVariants:
     implicitWith:
-      "object b":         a = "Caf.each(b, {}, (cafV, cafK, cafInto) => cafInto[cafK] = cafV);"
+      "object b":         a = "Caf.object(b);"
       "object from b":    a
-      "object v from b":  "Caf.each(b, {}, (v, cafK, cafInto) => cafInto[cafK] = v);"
+      "object v from b":  a
 
     with:
-      "object v from mySource\n  v":    a = "Caf.each(mySource, {}, (v, cafK, cafInto) => cafInto[cafK] = v);"
+      "object v from mySource\n  v":    a = "Caf.object(mySource, (v) => v);"
       "object v from mySource with v":  a
 
-      "object mySource\n true":         a = "Caf.each(mySource, {}, (cafV, cafK, cafInto) => cafInto[cafK] = true);"
+      "object mySource\n true":         a = "Caf.object(mySource, () => true);"
       "object mySource with true":      a
 
 
     when:
-      "object a from b when a":        a = "Caf.each(b, {}, (a, cafK, cafInto) => a ? cafInto[cafK] = a : undefined);"
-      "object a from b when a with a": a
+      "object a from b when a":        "Caf.object(b, null, (a) => a);"
+      "object a from b when a with a": "Caf.object(b, (a) => a, (a) => a);"
 
       """
       object a from b when a
         c
-      """: a = "Caf.each(b, {}, (a, cafK, cafInto) => a ? cafInto[cafK] = c : undefined);"
+      """: a = "Caf.object(b, (a) => c, (a) => a);"
 
       """
       object a from b when
@@ -57,7 +58,7 @@ module.exports = suite: parseTestSuite
         c
       """: a
 
-      "object a from b when b;a with c":      a = "Caf.each(b, {}, (a, cafK, cafInto) => (b, a) ? cafInto[cafK] = c : undefined);"
+      "object a from b when b;a with c": a = "Caf.object(b, (a) => c, (a) => {b; return a;});"
 
       """
       object a from b when
@@ -72,8 +73,7 @@ module.exports = suite: parseTestSuite
       foo
       v
     """: "
-      Caf.each(a, [], (v, cafK, cafInto) =>
-      {foo; cafInto.push(v);});"
+      Caf.array(a, (v) => {foo; return v;});"
 
     """
     array v in a
@@ -81,8 +81,7 @@ module.exports = suite: parseTestSuite
       bar
       v
     """:"
-      Caf.each(a, [], (v, cafK, cafInto) =>
-      {foo; bar; cafInto.push(v);});
+      Caf.array(a, (v) => {foo; bar; return v;});
       "
 
     """
@@ -90,7 +89,7 @@ module.exports = suite: parseTestSuite
       b
       c
     """: "
-      Caf.extendedEach(a, undefined,
+      Caf.extendedEach(a, null,
       (cafV, cafK, cafInto, cafBrk) =>
       {b; return c && (cafBrk(), c);});"
 
@@ -98,10 +97,7 @@ module.exports = suite: parseTestSuite
     """
     array a
       array b
-    """: "
-      Caf.each(a, [],
-      (cafV, cafK, cafInto) => cafInto.push(Caf.each(b, [],
-      (cafV, cafK, cafInto) => cafInto.push(cafV))));"
+    """: "Caf.array(a, () => Caf.array(b));"
 
   scope:
     enclosingScope:
@@ -110,76 +106,84 @@ module.exports = suite: parseTestSuite
         """
         a = 10
         object a from b with a
-        """: "let a; a = 10; Caf.each(b, {}, (a, cafK, cafInto) => cafInto[cafK] = a);"
+        """: "let a; a = 10; Caf.object(b, (a) => a);"
 
     assigningToLoopVariables:
       "in when using default with":
 
         """
         object a from b when a = a.foo
-        """: "Caf.each(b, {}, (a, cafK, cafInto) => (a = a.foo) ? cafInto[cafK] = a : undefined);"
+        """: "Caf.object(b, null, (a) => a = a.foo);"
 
       "in when using explicit with":
 
         """
         object a from b when a = a.foo with a + 1
-        """: "Caf.each(b, {}, (a, cafK, cafInto) => (a = a.foo) ? cafInto[cafK] = a + 1 : undefined);"
+        """: "Caf.object(b, (a) => a + 1, (a) => a = a.foo);"
 
     definingNewVariables:
       "in with":
         """
         object a from b with foo = a
-        """: "Caf.each(b, {}, (a, cafK, cafInto) => {let foo; cafInto[cafK] = foo = a;});"
+        """: "Caf.object(b, (a) => {let foo; return foo = a;});"
 
       "in when":
         """
         object a from b when foo = a
-        """: "Caf.each(b, {}, (a, cafK, cafInto) => {let foo; if (foo = a) {cafInto[cafK] = a;};});"
+        """: "Caf.object(b, null, (a) => {let foo; return foo = a;});"
 
+      ###
+      NOTE - I don't love it, but this is the right answer if we hae
+      the when-clause and the with-clause in separate functions.
+      Any variable 'declared' in either must get reset with each loop iteration.
+      Even creating a wrapping scope for the comprehension wouldn't solve this.
+
+      So, all clauses are simply separate, isolated scopes. They don't share scope.
+      ###
       "in both":
         """
         object a from b when foo = a with foo = foo + 1
-        """: "Caf.each(b, {}, (a, cafK, cafInto) => {let foo; if (foo = a) {cafInto[cafK] = foo = foo + 1;};});"
+        """: "Caf.object(b, (a) => {let foo; return foo = foo + 1;}, (a) => {let foo; return foo = a;});"
 
     usingExternalVariables:
       "in with":
         """
         foo = 1
         object a from b with foo = a
-        """: "let foo; foo = 1; Caf.each(b, {}, (a, cafK, cafInto) => cafInto[cafK] = foo = a);"
+        """: "let foo; foo = 1; Caf.object(b, (a) => foo = a);"
 
       "in when":
         """
         foo = 1
         object a from b when foo = a
-        """: "let foo; foo = 1; Caf.each(b, {}, (a, cafK, cafInto) => (foo = a) ? cafInto[cafK] = a : undefined);"
+        """: "let foo; foo = 1; Caf.object(b, null, (a) => foo = a);"
 
       "in both":
         """
         foo = 1
         object a from b when foo = a with foo = foo + 1
-        """: "let foo; foo = 1; Caf.each(b, {}, (a, cafK, cafInto) => (foo = a) ? cafInto[cafK] = foo = foo + 1 : undefined);"
+        """: "let foo; foo = 1; Caf.object(b, (a) => foo = foo + 1, (a) => foo = a);"
 
   into:
-    "object a into b": "Caf.each(a, b, (cafV, cafK, cafInto) => cafInto[cafK] = cafV);"
+    "object a into b": "Caf.object(a, null, null, b);"
 
   find:
-    "find a from b when a > 10": "Caf.extendedEach(b, undefined, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
-    "find a from b with a > 10": "Caf.extendedEach(b, undefined, (a, cafK, cafInto, cafBrk) => {let cafRet; return (cafRet = a > 10) && (cafBrk(), cafRet);});"
-    "find a from b when a > 10 with 123": "Caf.extendedEach(b, undefined, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), 123));"
+    "find a from b when a > 10": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
+    "find a from b with a > 10": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => {let cafRet; return (cafRet = a > 10) && (cafBrk(), cafRet);});"
+    "find a from b when a > 10 with 123": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), 123));"
 
   alternativeKeywords:
     returning:
-      "each a in b into      out = [1] with pushUnique out, a": a = "let out; Caf.each(b, out = [1], (a) => pushUnique(out, a));"
+      "each a in b into      out = [1] with pushUnique out, a": a = "let out; Caf.each2(b, (a) => pushUnique(out, a), null, out = [1]);"
       "each a in b returning out = [1] with pushUnique out, a": a
     in:
-      "find a from b when a > 10":  a = "Caf.extendedEach(b, undefined, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
+      "find a from b when a > 10":  a = "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
       "find a in   b when a > 10":  a
     do:
-      "object a from b with a + 1": a = "Caf.each(b, {}, (a, cafK, cafInto) => cafInto[cafK] = a + 1);"
+      "object a from b with a + 1": a = "Caf.object(b, (a) => a + 1);"
       "object a from b do   a + 1": a
 
-  expression: "c = array b": "let c; c = Caf.each(b, [], (cafV, cafK, cafInto) => cafInto.push(cafV));"
+  expression: "c = array b": "let c; c = Caf.array(b);"
 
   ###
   # TODO
@@ -203,29 +207,29 @@ module.exports = suite: parseTestSuite
     """
     object obj
       # an intended comment
-    """: "Caf.each(obj, {}, (cafV, cafK, cafInto) => cafInto[cafK] = cafV);"
+    """: "Caf.object(obj);"
 
     """
     object obj
-    """: "Caf.each(obj, {}, (cafV, cafK, cafInto) => cafInto[cafK] = cafV);"
+    """: "Caf.object(obj);"
 
     """
     each v from
         a: 1
       v + 2
-    """: "Caf.each({a: 1}, undefined, (v) => v + 2);"
+    """: "Caf.each2({a: 1}, (v) => v + 2);"
 
     """
     array v from a into
       [1]
-    """: "Caf.each(a, [1], (v, cafK, cafInto) => cafInto.push(v));"
+    """: "Caf.array(a, null, null, [1]);"
 
     """
     find foo
       if bar
         baz
     """: "
-      Caf.extendedEach(foo, undefined,
+      Caf.extendedEach(foo, null,
       (cafV, cafK, cafInto, cafBrk) =>
       {let cafRet;
       return (cafRet = bar ? baz : undefined)
@@ -236,45 +240,45 @@ module.exports = suite: parseTestSuite
     each mod
       if bar
         foo
-    """: "Caf.each(mod, undefined, () => bar ? foo : undefined);"
+    """: "Caf.each2(mod, () => bar ? foo : undefined);"
 
   parameterNameRegressions:
 
-    "object k from b":    "Caf.each(b, {}, (k, cafK, cafInto) => cafInto[cafK] = k);"
-    "object cafK from b": "Caf.each(b, {}, (cafK, cafK1, cafInto) => cafInto[cafK1] = cafK);"
+    "object k from b":    "Caf.object(b);"
+    "object cafK from b": "Caf.object(b);"
     """
     cafK = 123
     object v from b with cafK * v
-    """: "let cafK; cafK = 123; Caf.each(b, {}, (v, cafK1, cafInto) => cafInto[cafK1] = cafK * v);"
-    "array cafV":         "Caf.each(cafV, [], (cafV, cafK, cafInto) => cafInto.push(cafV));"
+    """: "let cafK; cafK = 123; Caf.object(b, (v) => cafK * v);"
+    "array cafV":         "Caf.array(cafV);"
 
     "object a from cafK with a * cafK.length":
-      "Caf.each(cafK, {}, (a, cafK1, cafInto) => cafInto[cafK1] = a * cafK.length);"
+      "Caf.object(cafK, (a) => a * cafK.length);"
 
-    "object k, v from b": "Caf.each(b, {}, (k, v, cafInto) => cafInto[v] = k);"
-    "object v, k from b": "Caf.each(b, {}, (v, k, cafInto) => cafInto[k] = v);"
+    "object k, v from b": "Caf.object(b);"
+    "object v, k from b": "Caf.object(b);"
 
     """
     object v, k
       b
-    """:"Caf.each([v, k], {}, (cafV, cafK, cafInto) => cafInto[cafK] = b);"
+    """:"Caf.object([v, k], () => b);"
 
     """
     object a
       b
-    """:"Caf.each(a, {}, (cafV, cafK, cafInto) => cafInto[cafK] = b);"
+    """:"Caf.object(a, () => b);"
 
     """
     object a from
         b
         c
       d
-    """:"Caf.each((b, c), {}, (a, cafK, cafInto) => cafInto[cafK] = d);"
+    """:"Caf.object((b, c), (a) => d);"
 
   multiStatementWith:
     """
     array v from a with foo(); v
-    """: multiStatementWithReturnsCorrectly = "Caf.each(a, [], (v, cafK, cafInto) => {foo(); cafInto.push(v);});"
+    """: multiStatementWithReturnsCorrectly = "Caf.array(a, (v) => {foo(); return v;});"
 
     """
     array v from a
@@ -284,15 +288,15 @@ module.exports = suite: parseTestSuite
 
   newComprehensionValidations:
     ok:
-      "array v":                "Caf.each(v, [], (cafV, cafK, cafInto) => cafInto.push(cafV));"
-      "array v from a":         "Caf.each(a, [], (v, cafK, cafInto) => cafInto.push(v));"
-      "array v from a into b":  "Caf.each(a, b, (v, cafK, cafInto) => cafInto.push(v));"
-      "array v when a into b": whenIntoOrderDoesntMatter = "Caf.each(v, b, (cafV, cafK, cafInto) => a ? cafInto.push(cafV) : undefined);"
+      "array v":                "Caf.array(v);"
+      "array v from a":         "Caf.array(a);"
+      "array v from a into b":  "Caf.array(a, null, null, b);"
+      "array v when a into b": whenIntoOrderDoesntMatter = "Caf.array(v, null, () => a, b);"
       "array v into b when a": whenIntoOrderDoesntMatter
 
     failures:
       "array v into b into a": null
 
   destructuring:
-    "array {id} from users":         "Caf.each(users, [], ({id}, cafK, cafInto) => cafInto.push({id}));"
-    "array {id} from users with id": "Caf.each(users, [], ({id}, cafK, cafInto) => cafInto.push(id));"
+    "array {id} from users":         "Caf.array(users, ({id}) => {id});"
+    "array {id} from users with id": "Caf.array(users, ({id}) => id);"

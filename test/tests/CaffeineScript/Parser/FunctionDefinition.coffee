@@ -41,6 +41,9 @@ module.exports = suite: parseTestSuite
       "=>\n  321\n  456"   : "() => {321; return 456;};"
       "=>\n  321\n\n  456" : "() => {321; return 456;};"
 
+    regression:
+      "=> {}"               : "() => {return {};};"
+
   splatsRest:
     "(a...) =>":      "(...a) => {};"
     "(b, a...) =>":   "(b, ...a) => {};"

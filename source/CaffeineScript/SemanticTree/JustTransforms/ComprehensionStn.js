@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "arrayWithAllButLast", "peek", "StnRegistry"],
+    ["Error", "arrayWithAllButLast", "peek", "lowerCamelCase", "StnRegistry"],
     [global, require("../../StandardImport")],
-    (Error, arrayWithAllButLast, peek, StnRegistry) => {
+    (Error, arrayWithAllButLast, peek, lowerCamelCase, StnRegistry) => {
       let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
       return (
         (SemanticTree = require("../../StnRegistry")),
@@ -14,6 +14,7 @@ Caf.defMod(module, () => {
             require("../BaseStn")
           ) {},
           function(ComprehensionStn, classSuper, instanceSuper) {
+            let clauseAliases;
             this.prototype.validate = function() {
               let valueClauseChildren,
                 valueClauses,
@@ -43,6 +44,7 @@ Caf.defMod(module, () => {
                 valueClauseChildren[type] = true;
               });
             };
+            clauseAliases = { returning: "into", in: "from", do: "with" };
             this.prototype.postTransform = function() {
               let outputType,
                 variableDefinition,
@@ -50,6 +52,7 @@ Caf.defMod(module, () => {
                 iterable,
                 intoChild,
                 whenClause,
+                labeledClauses,
                 AccessorStn,
                 ArrayStn,
                 AssignmentStn,
@@ -84,15 +87,18 @@ Caf.defMod(module, () => {
                 iterable
               } = this.labeledChildren);
               intoChild = whenClause = null;
+              labeledClauses = {};
               Caf.each(
                 this.labeledChildren.valueClauses,
                 undefined,
                 valueClause => {
-                  let type, value;
+                  let type, value, cafTemp;
                   ({ type, value } = valueClause);
+                  type =
+                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                  labeledClauses[lowerCamelCase(type + "Clause")] = value;
                   switch (type) {
                     case "into":
-                    case "returning":
                       intoChild = value;
                       break;
                     case "when":
@@ -124,243 +130,296 @@ Caf.defMod(module, () => {
                     return false;
                 }
               })();
-              basicEach = outputType === "each";
-              variableDefinition = FunctionDefinitionArgsStn(
-                (valueVarDef =
-                  (Caf.exists(variableDefinition) &&
-                    variableDefinition.children[0]) ||
-                  (!basicEach &&
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifierHandle: new UniqueIdentifierHandle("v", false)
-                      })
-                    ))),
-                (keyVarDef =
-                  (Caf.exists(variableDefinition) &&
-                    variableDefinition.children[1]) ||
-                  (!basicEach &&
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifierHandle: new UniqueIdentifierHandle("k", false)
-                      })
-                    ))),
-                (useExtendedEach || !basicEach) &&
-                  FunctionDefinitionArgStn(
-                    (intoIdentifer = IdentifierStn({
-                      identifierHandle: new UniqueIdentifierHandle(
-                        "into",
-                        false
-                      )
-                    }))
-                  ),
-                useExtendedEach &&
-                  FunctionDefinitionArgStn(
-                    (brkIdentifer = IdentifierStn({
-                      identifierHandle: new UniqueIdentifierHandle("brk", false)
-                    }))
-                  )
-              );
-              return false
-                ? this.generateEach({
-                    variableDefinition,
-                    valueVarDef,
-                    keyVarDef,
-                    whenClause,
-                    intoChild
-                  })
-                : (outputType === "object" || outputType === "array"
-                    ? (lastBodyStatement = body
+              return (() => {
+                switch (outputType) {
+                  case "each":
+                  case "array":
+                  case "object":
+                    return this.generateArrayOrEach({
+                      method: outputType === "each" ? "each2" : outputType,
+                      labeledClauses
+                    });
+                  default:
+                    basicEach = outputType === "each";
+                    variableDefinition = FunctionDefinitionArgsStn(
+                      (valueVarDef =
+                        (Caf.exists(variableDefinition) &&
+                          variableDefinition.children[0]) ||
+                        (!basicEach &&
+                          FunctionDefinitionArgStn(
+                            IdentifierStn({
+                              identifierHandle: new UniqueIdentifierHandle(
+                                "v",
+                                false
+                              )
+                            })
+                          ))),
+                      (keyVarDef =
+                        (Caf.exists(variableDefinition) &&
+                          variableDefinition.children[1]) ||
+                        (!basicEach &&
+                          FunctionDefinitionArgStn(
+                            IdentifierStn({
+                              identifierHandle: new UniqueIdentifierHandle(
+                                "k",
+                                false
+                              )
+                            })
+                          ))),
+                      (useExtendedEach || !basicEach) &&
+                        FunctionDefinitionArgStn(
+                          (intoIdentifer = IdentifierStn({
+                            identifierHandle: new UniqueIdentifierHandle(
+                              "into",
+                              false
+                            )
+                          }))
+                        ),
+                      useExtendedEach &&
+                        FunctionDefinitionArgStn(
+                          (brkIdentifer = IdentifierStn({
+                            identifierHandle: new UniqueIdentifierHandle(
+                              "brk",
+                              false
+                            )
+                          }))
+                        )
+                    );
+                    if (outputType === "object" || outputType === "array") {
+                      lastBodyStatement = body
                         ? body.className === "StatementsStn"
                           ? ((bodyStatementsExceptLast = arrayWithAllButLast(
                               body.children
                             )),
                             peek(body.children))
                           : body
-                        : ((bodyStatementsExceptLast = null), valueVarDef))
-                    : (bodyWithDefault = body || valueVarDef),
-                  (whenClauseWrapper = whenClause
-                    ? actionStn =>
-                        StatementsStn(
-                          ControlOperatorStn(
-                            { operand: "if" },
-                            whenClause,
-                            actionStn
+                        : ((bodyStatementsExceptLast = null), valueVarDef);
+                    } else {
+                      bodyWithDefault = body || valueVarDef;
+                    }
+                    whenClauseWrapper = whenClause
+                      ? actionStn =>
+                          StatementsStn(
+                            ControlOperatorStn(
+                              { operand: "if" },
+                              whenClause,
+                              actionStn
+                            )
                           )
-                        )
-                    : actionStn => actionStn),
-                  FunctionInvocationStn(
-                    IdentifierStn({
-                      identifier: `Caf.${Caf.toString(
-                        useExtendedEach ? "extendedEach" : "each"
-                      )}`
-                    }),
-                    iterable,
-                    intoChild ||
-                      (() => {
-                        switch (outputType) {
-                          case "object":
-                            return ObjectStn();
-                          case "array":
-                            return ArrayStn();
-                          case "each":
-                            return SimpleLiteralStn({ value: "undefined" });
-                          case "find":
-                            return SimpleLiteralStn({ value: "undefined" });
-                          case "reduce":
-                            return null;
-                          default:
-                            return (() => {
-                              throw new Error(
-                                `not supported yet: ${Caf.toString(outputType)}`
+                      : actionStn => actionStn;
+                    return FunctionInvocationStn(
+                      IdentifierStn({
+                        identifier: `Caf.${Caf.toString(
+                          useExtendedEach ? "extendedEach" : "each"
+                        )}`
+                      }),
+                      iterable,
+                      intoChild ||
+                        (() => {
+                          switch (outputType) {
+                            case "object":
+                              return ObjectStn();
+                            case "array":
+                              return ArrayStn();
+                            case "each":
+                              return SimpleLiteralStn({ value: "null" });
+                            case "find":
+                              return SimpleLiteralStn({ value: "null" });
+                            case "reduce":
+                              return null;
+                            default:
+                              return (() => {
+                                throw new Error(
+                                  `not supported yet: ${Caf.toString(
+                                    outputType
+                                  )}`
+                                );
+                              })();
+                          }
+                        })(),
+                      FunctionDefinitionStn(
+                        { bound: true, returnIgnored: outputType !== "find" },
+                        variableDefinition,
+                        (() => {
+                          switch (outputType) {
+                            case "object":
+                              return whenClauseWrapper(
+                                StatementsStn(
+                                  bodyStatementsExceptLast,
+                                  AssignmentStn(
+                                    AccessorStn(intoIdentifer, keyVarDef),
+                                    lastBodyStatement
+                                  )
+                                )
                               );
-                            })();
-                        }
-                      })(),
-                    FunctionDefinitionStn(
-                      { bound: true, returnIgnored: outputType !== "find" },
-                      variableDefinition,
-                      (() => {
-                        switch (outputType) {
-                          case "object":
-                            return whenClauseWrapper(
-                              StatementsStn(
-                                bodyStatementsExceptLast,
-                                AssignmentStn(
-                                  AccessorStn(intoIdentifer, keyVarDef),
-                                  lastBodyStatement
-                                )
-                              )
-                            );
-                          case "array":
-                            return whenClauseWrapper(
-                              StatementsStn(
-                                bodyStatementsExceptLast,
-                                FunctionInvocationStn(
-                                  AccessorStn(
-                                    intoIdentifer,
-                                    IdentifierStn({ identifier: "push" })
-                                  ),
-                                  lastBodyStatement
-                                )
-                              )
-                            );
-                          case "each":
-                            return whenClauseWrapper(body);
-                          case "find":
-                            return whenClause
-                              ? body
-                                ? StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      whenClause,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        body
-                                      )
-                                    )
+                            case "array":
+                              return whenClauseWrapper(
+                                StatementsStn(
+                                  bodyStatementsExceptLast,
+                                  FunctionInvocationStn(
+                                    AccessorStn(
+                                      intoIdentifer,
+                                      IdentifierStn({ identifier: "push" })
+                                    ),
+                                    lastBodyStatement
                                   )
-                                : StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      whenClause,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        valueVarDef
-                                      )
-                                    )
-                                  )
-                              : body
-                                ? (body.type === "Statements" &&
-                                  body.children.length > 1
-                                    ? ((allButLast = body.children.slice(
-                                        0,
-                                        body.children.length - 1
-                                      )),
-                                      (body = peek(body.children)))
-                                    : undefined,
-                                  (foundTest =
-                                    body.type === "Reference"
-                                      ? BinaryOperatorStn(
-                                          { operator: "&&" },
-                                          body,
-                                          StatementsStn(
-                                            FunctionInvocationStn(brkIdentifer),
-                                            body
-                                          )
+                                )
+                              );
+                            case "each":
+                              return whenClauseWrapper(body);
+                            case "find":
+                              return whenClause
+                                ? body
+                                  ? StatementsStn(
+                                      BinaryOperatorStn(
+                                        { operator: "&&" },
+                                        whenClause,
+                                        StatementsStn(
+                                          FunctionInvocationStn(brkIdentifer),
+                                          body
                                         )
-                                      : BinaryOperatorStn(
-                                          { operator: "&&" },
-                                          AssignmentStn(
-                                            IdentifierStn({
-                                              identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
-                                                "_ret"
-                                              ))
-                                            }),
-                                            body
-                                          ),
-                                          StatementsStn(
-                                            FunctionInvocationStn(brkIdentifer),
-                                            IdentifierStn({
-                                              identifierHandle: baseIdentifierHandle
-                                            })
-                                          )
-                                        )),
-                                  StatementsStn(allButLast, foundTest))
-                                : StatementsStn(
-                                    BinaryOperatorStn(
-                                      { operator: "&&" },
-                                      valueVarDef,
-                                      StatementsStn(
-                                        FunctionInvocationStn(brkIdentifer),
-                                        valueVarDef
                                       )
                                     )
-                                  );
-                        }
-                      })()
-                    )
-                  ));
+                                  : StatementsStn(
+                                      BinaryOperatorStn(
+                                        { operator: "&&" },
+                                        whenClause,
+                                        StatementsStn(
+                                          FunctionInvocationStn(brkIdentifer),
+                                          valueVarDef
+                                        )
+                                      )
+                                    )
+                                : body
+                                  ? (body.type === "Statements" &&
+                                    body.children.length > 1
+                                      ? ((allButLast = body.children.slice(
+                                          0,
+                                          body.children.length - 1
+                                        )),
+                                        (body = peek(body.children)))
+                                      : undefined,
+                                    (foundTest =
+                                      body.type === "Reference"
+                                        ? BinaryOperatorStn(
+                                            { operator: "&&" },
+                                            body,
+                                            StatementsStn(
+                                              FunctionInvocationStn(
+                                                brkIdentifer
+                                              ),
+                                              body
+                                            )
+                                          )
+                                        : BinaryOperatorStn(
+                                            { operator: "&&" },
+                                            AssignmentStn(
+                                              IdentifierStn({
+                                                identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                                                  "_ret"
+                                                ))
+                                              }),
+                                              body
+                                            ),
+                                            StatementsStn(
+                                              FunctionInvocationStn(
+                                                brkIdentifer
+                                              ),
+                                              IdentifierStn({
+                                                identifierHandle: baseIdentifierHandle
+                                              })
+                                            )
+                                          )),
+                                    StatementsStn(allButLast, foundTest))
+                                  : StatementsStn(
+                                      BinaryOperatorStn(
+                                        { operator: "&&" },
+                                        valueVarDef,
+                                        StatementsStn(
+                                          FunctionInvocationStn(brkIdentifer),
+                                          valueVarDef
+                                        )
+                                      )
+                                    );
+                          }
+                        })()
+                      )
+                    );
+                }
+              })();
             };
-            this.prototype.generateEach = function({
-              variableDefinition,
-              valueVarDef,
-              keyVarDef,
-              whenClause,
-              intoChild
+            this.prototype.generateArrayOrEach = function({
+              method,
+              labeledClauses: { intoClause, whenClause, withKeyClause }
             }) {
               let FunctionInvocationStn,
+                StatementsStn,
                 IdentifierStn,
                 SimpleLiteralStn,
                 FunctionDefinitionStn,
                 withClause,
-                iterable;
+                iterable,
+                variableDefinition,
+                Null,
+                cafBase;
               ({
                 FunctionInvocationStn,
+                StatementsStn,
                 IdentifierStn,
                 SimpleLiteralStn,
                 FunctionDefinitionStn
               } = StnRegistry);
-              ({ body: withClause, iterable } = this.labeledChildren);
-              return FunctionInvocationStn(
-                IdentifierStn({ identifier: "Caf.each2" }),
+              ({
+                body: withClause,
                 iterable,
-                intoChild != null
-                  ? intoChild
-                  : withClause || whenClause
-                    ? SimpleLiteralStn({ value: "null" })
+                variableDefinition
+              } = this.labeledChildren);
+              if (
+                (Caf.exists(variableDefinition) &&
+                  (Caf.exists((cafBase = variableDefinition.children)) &&
+                    cafBase.length)) > 0 &&
+                !variableDefinition.children[0].isSimpleIdentifier
+              ) {
+                withClause != null
+                  ? withClause
+                  : (withClause = StatementsStn(
+                      variableDefinition.children[0]
+                    ));
+              }
+              Null = SimpleLiteralStn({ value: "null" });
+              return FunctionInvocationStn(
+                IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
+                iterable,
+                withClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      withClause
+                    )
+                  : whenClause || withKeyClause || intoClause
+                    ? Null
                     : undefined,
-                withClause &&
-                  FunctionDefinitionStn(
-                    { bound: true },
-                    variableDefinition,
-                    withClause
-                  ),
-                whenClause &&
-                  FunctionDefinitionStn(
-                    { bound: true },
-                    variableDefinition,
-                    whenClause
-                  )
+                whenClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      whenClause
+                    )
+                  : withKeyClause || intoClause
+                    ? Null
+                    : undefined,
+                intoClause != null
+                  ? intoClause
+                  : withKeyClause
+                    ? Null
+                    : undefined,
+                withKeyClause
+                  ? FunctionDefinitionStn(
+                      { bound: true },
+                      variableDefinition,
+                      withKeyClause
+                    )
+                  : undefined
               );
             };
           }

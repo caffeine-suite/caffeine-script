@@ -192,12 +192,13 @@ Caf.defMod(module, () => {
                 return this.props.bound;
               },
               simpleBound: function() {
-                let cafBase;
+                let statementStns;
+                ({ statementStns } = this);
                 return (
                   this.bound &&
                   !this.getAutoLets() &&
-                  (Caf.exists((cafBase = this.statementStns)) &&
-                    cafBase.length) === 1
+                  (Caf.exists(statementStns) && statementStns.length) === 1 &&
+                  !statementStns[0].isEmptyObjectLiteral
                 );
               }
             });

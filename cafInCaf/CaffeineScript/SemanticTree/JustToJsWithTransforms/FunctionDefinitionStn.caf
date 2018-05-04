@@ -170,7 +170,12 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
       if lets = @getAutoLets()
         lets + "; "
     bound: -> @props.bound
-    simpleBound: -> @bound && !@getAutoLets() && @statementStns?.length == 1
+    simpleBound: ->
+      {statementStns} = @
+      @bound
+      && !@getAutoLets()
+      && statementStns?.length == 1
+      && !statementStns[0].isEmptyObjectLiteral
 
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props

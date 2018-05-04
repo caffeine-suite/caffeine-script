@@ -69,15 +69,24 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       throw new Error "no more than one '#{type}' clause allowed" if valueClauseChildren[type]
       valueClauseChildren[type] = true
 
+  clauseAliases =
+    returning:  :into
+    in:         :from
+    do:         :with
+
   postTransform: ->
     @initLabeledChildren()
     {outputType, variableDefinition, body, iterable} = @labeledChildren
 
     intoChild = whenClause = null
+    labeledClauses = {}
     each valueClause in @labeledChildren.valueClauses
       {type, value} = valueClause
+      type = clauseAliases[type] ? type
+      labeledClauses[lowerCamelCase type + :Clause] = value
+
       switch type
-        when :into, :returning then intoChild = value
+        when :into then intoChild = value
         when :when then whenClause = value
 
     outputType = outputType?.props.token
@@ -114,23 +123,21 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       when "find" then true
       else false
 
-    basicEach = outputType == "each"
-
-    variableDefinition = FunctionDefinitionArgsStn
-      valueVarDef = variableDefinition?.children[0] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "v"    false
-      keyVarDef   = variableDefinition?.children[1] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "k"    false
-      (useExtendedEach || !basicEach) &&               FunctionDefinitionArgStn intoIdentifer = IdentifierStn identifierHandle: new UniqueIdentifierHandle "into" false
-      useExtendedEach &&                               FunctionDefinitionArgStn brkIdentifer  = IdentifierStn identifierHandle: new UniqueIdentifierHandle "brk"  false
-
-    if false # outputType == "each"
-      @generateEach {}
-        variableDefinition
-        valueVarDef
-        keyVarDef
-        whenClause
-        intoChild
+    switch outputType
+    when :each, :array, :object
+      @generateArrayOrEach {}
+        method: if outputType == :each then :each2 else outputType
+        labeledClauses
 
     else
+
+      basicEach = outputType == "each"
+
+      variableDefinition = FunctionDefinitionArgsStn
+        valueVarDef = variableDefinition?.children[0] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "v"    false
+        keyVarDef   = variableDefinition?.children[1] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "k"    false
+        (useExtendedEach || !basicEach) &&               FunctionDefinitionArgStn intoIdentifer = IdentifierStn identifierHandle: new UniqueIdentifierHandle "into" false
+        useExtendedEach &&                               FunctionDefinitionArgStn brkIdentifer  = IdentifierStn identifierHandle: new UniqueIdentifierHandle "brk"  false
 
       if outputType == "object" || outputType == "array"
         lastBodyStatement = if body
@@ -161,8 +168,8 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         intoChild || switch outputType
         when "object" then ObjectStn()
         when "array"  then ArrayStn()
-        when "each"   then SimpleLiteralStn value: "undefined"
-        when "find"   then SimpleLiteralStn value: "undefined"
+        when "each"   then SimpleLiteralStn value: "null"
+        when "find"   then SimpleLiteralStn value: "null"
         when "reduce" then null
         else throw new Error "not supported yet: #{outputType}"
 
@@ -253,26 +260,46 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
                       valueVarDef
 
-  # Caf.each2(source, into, withClause = returnFirst, whenClause = returnTrue)
-  generateEach: ({variableDefinition, valueVarDef, keyVarDef, whenClause, intoChild})->
-    {FunctionInvocationStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
-    {body: withClause, iterable} = @labeledChildren
+
+  # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
+  # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
+  # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
+  generateArrayOrEach: ({method, labeledClauses:{intoClause, whenClause, withKeyClause}})->
+    {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
+    {body: withClause, iterable, variableDefinition} = @labeledChildren
+
+    if variableDefinition?.children?.length > 0 && !variableDefinition.children[0].isSimpleIdentifier
+      withClause ?= StatementsStn variableDefinition.children[0]
+
+    Null = SimpleLiteralStn value: :null
 
     FunctionInvocationStn
-      IdentifierStn identifier: :Caf.each2
+      IdentifierStn identifier: "" Caf.#{method}
 
       # source
       iterable
 
-      # into
-      intoChild ? if withClause || whenClause then SimpleLiteralStn value: "null"
+      if withClause
+        FunctionDefinitionStn
+          bound: true
+          variableDefinition
+          withClause
+      else if whenClause || withKeyClause || intoClause
+        Null
 
-      withClause && FunctionDefinitionStn
-        bound: true
-        variableDefinition
-        withClause
+      if whenClause
+        FunctionDefinitionStn
+          bound: true
+          variableDefinition
+          whenClause
+      else if withKeyClause || intoClause
+        Null
 
-      whenClause && FunctionDefinitionStn
-        bound: true
-        variableDefinition
-        whenClause
+      intoClause ? if withKeyClause then Null
+
+      if withKeyClause
+        FunctionDefinitionStn
+          bound: true
+          variableDefinition
+          withKeyClause
+

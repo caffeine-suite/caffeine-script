@@ -18,6 +18,9 @@ Caf.defMod(module, () => {
         this.getter({
           argumentName: function() {
             return this.target.name;
+          },
+          isSimpleIdentifier: function() {
+            return this.target.type === "Identifier";
           }
         });
         this.prototype.toSourceNode = function() {
