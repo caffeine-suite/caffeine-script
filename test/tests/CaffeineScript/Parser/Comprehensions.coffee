@@ -10,7 +10,10 @@ module.exports = suite: parseTestSuite
     "array b":        "Caf.array(b);"
     "object b":       "Caf.object(b);"
     "each b":         "Caf.each2(b);"
-    "find b":         "Caf.extendedEach(b, null, (cafV, cafK, cafInto, cafBrk) => cafV && (cafBrk(), cafV));"
+    "find b":         "Caf.find(b);"
+
+  object:
+    "object v, k in b with-key k + k": "Caf.object(b, null, null, null, (v, k) => k + k);"
 
   each:
     "each v in b":          "Caf.each2(b);"
@@ -89,9 +92,7 @@ module.exports = suite: parseTestSuite
       b
       c
     """: "
-      Caf.extendedEach(a, null,
-      (cafV, cafK, cafInto, cafBrk) =>
-      {b; return c && (cafBrk(), c);});"
+      Caf.find(a, () => {b; return c;});"
 
   nested:
     """
@@ -168,16 +169,16 @@ module.exports = suite: parseTestSuite
     "object a into b": "Caf.object(a, null, null, b);"
 
   find:
-    "find a from b when a > 10": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
-    "find a from b with a > 10": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => {let cafRet; return (cafRet = a > 10) && (cafBrk(), cafRet);});"
-    "find a from b when a > 10 with 123": "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), 123));"
+    "find a from b when a > 10": "Caf.find(b, null, (a) => a > 10);"
+    "find a from b with a > 10": "Caf.find(b, (a) => a > 10);"
+    "find a from b when a > 10 with 123": "Caf.find(b, (a) => 123, (a) => a > 10);"
 
   alternativeKeywords:
     returning:
       "each a in b into      out = [1] with pushUnique out, a": a = "let out; Caf.each2(b, (a) => pushUnique(out, a), null, out = [1]);"
       "each a in b returning out = [1] with pushUnique out, a": a
     in:
-      "find a from b when a > 10":  a = "Caf.extendedEach(b, null, (a, cafK, cafInto, cafBrk) => a > 10 && (cafBrk(), a));"
+      "find a from b when a > 10":  a = "Caf.find(b, null, (a) => a > 10);"
       "find a in   b when a > 10":  a
     do:
       "object a from b with a + 1": a = "Caf.object(b, (a) => a + 1);"
@@ -229,11 +230,7 @@ module.exports = suite: parseTestSuite
       if bar
         baz
     """: "
-      Caf.extendedEach(foo, null,
-      (cafV, cafK, cafInto, cafBrk) =>
-      {let cafRet;
-      return (cafRet = bar ? baz : undefined)
-      && (cafBrk(), cafRet);});"
+      Caf.find(foo, () => bar ? baz : undefined);"
 
 
     """

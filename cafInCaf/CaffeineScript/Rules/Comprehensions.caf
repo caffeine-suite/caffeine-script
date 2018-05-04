@@ -3,7 +3,7 @@ import &StandardImport
 ->
   @rule
     withOrDo: /(with|do)\b/
-    comprehensionValueClauseType: /(into|returning|when)\b/
+    comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
 
   @rule
     comprehensionOutputType:      /(object|array|reduce|each|find)\b/
@@ -36,8 +36,8 @@ import &StandardImport
 
     comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
     comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock"
-    comprehensionWith: '_? withOrDo _? lineOfStatementsOrBlock'
-    comprehensionBody: :block :comprehensionWith
+    # comprehensionWith: '_? withOrDo _? lineOfStatementsOrBlock'
+    comprehensionBody: :block # :comprehensionWith
 
   @rule
     comprehension: "

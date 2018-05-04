@@ -76,197 +76,56 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   postTransform: ->
     @initLabeledChildren()
-    {outputType, variableDefinition, body, iterable} = @labeledChildren
+    {outputType, body} = @labeledChildren
 
-    intoChild = whenClause = null
     labeledClauses = {}
-    each valueClause in @labeledChildren.valueClauses
-      {type, value} = valueClause
+    each {type, value} in @labeledChildren.valueClauses
       type = clauseAliases[type] ? type
       labeledClauses[lowerCamelCase type + :Clause] = value
 
-      switch type
-        when :into then intoChild = value
-        when :when then whenClause = value
+    labeledClauses.withClause ?= body
 
-    outputType = outputType?.props.token
-
-
-    {AccessorStn, ArrayStn, AssignmentStn, BinaryOperatorStn, ControlOperatorStn,
-    FunctionDefinitionArgsStn, FunctionDefinitionArgStn, FunctionDefinitionStn,
-    FunctionInvocationStn, IdentifierStn, ObjectStn, SimpleLiteralStn, StatementsStn} = SemanticTree
-    # variableDefinition ||= FunctionDefinitionArgsStn FunctionDefinitionArgStn IdentifierStn identifier: "v"
-
-
-    ###
-      EXAMPLES:
-        # IN
-        find v from o with v > 10
-
-        # PSEUDO-OUT
-        Caf.ee o, null, (v, k, out, brk) ->
-          brk v if v > 10
-
-        # IN
-        object o
-
-        # OUT
-        Caf.e(o, {}, function(v, k, into) {
-          return into[k] = v;
-        });
-
-    # These should actually be
-    #  a) extracted from variableDefinition...
-    #  b) and if not present, unused var-names generated
-
-    useExtendedEach = switch outputType
-      when "find" then true
-      else false
-
-    switch outputType
+    switch outputType = outputType?.props.token
     when :each, :array, :object
-      @generateArrayOrEach {}
-        method: if outputType == :each then :each2 else outputType
+      @generateArrayOrEach
+        if outputType == :each then :each2 else outputType
         labeledClauses
 
-    else
+    when :find
+      @generateFind
+        labeledClauses
 
-      basicEach = outputType == "each"
+  generateFind: ({withClause, whenClause})->
+    {iterable, variableDefinition} = @labeledChildren
+    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
 
-      variableDefinition = FunctionDefinitionArgsStn
-        valueVarDef = variableDefinition?.children[0] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "v"    false
-        keyVarDef   = variableDefinition?.children[1] || !basicEach && FunctionDefinitionArgStn   IdentifierStn identifierHandle: new UniqueIdentifierHandle "k"    false
-        (useExtendedEach || !basicEach) &&               FunctionDefinitionArgStn intoIdentifer = IdentifierStn identifierHandle: new UniqueIdentifierHandle "into" false
-        useExtendedEach &&                               FunctionDefinitionArgStn brkIdentifer  = IdentifierStn identifierHandle: new UniqueIdentifierHandle "brk"  false
+    FunctionInvocationStn
+      IdentifierStn identifier: "" Caf.find
 
-      if outputType == "object" || outputType == "array"
-        lastBodyStatement = if body
-          if body.className == "StatementsStn"
-            bodyStatementsExceptLast = arrayWithAllButLast body.children
-            peek body.children
-          else
-            body
-        else
-          bodyStatementsExceptLast = null
-          valueVarDef
-      else
-        bodyWithDefault = body || valueVarDef
+      # source
+      iterable
 
-      whenClauseWrapper = if whenClause
-        (actionStn) ->
-          StatementsStn ControlOperatorStn
-            operand: "if"
-            whenClause
-            actionStn
-
-      else
-        (actionStn) -> actionStn
-
-      FunctionInvocationStn
-        IdentifierStn identifier: "Caf.#{if useExtendedEach then 'extendedEach' else 'each'}"
-        iterable
-        intoChild || switch outputType
-        when "object" then ObjectStn()
-        when "array"  then ArrayStn()
-        when "each"   then SimpleLiteralStn value: "null"
-        when "find"   then SimpleLiteralStn value: "null"
-        when "reduce" then null
-        else throw new Error "not supported yet: #{outputType}"
-
+      if withClause
         FunctionDefinitionStn
           bound: true
-          returnIgnored: outputType != "find"
           variableDefinition
+          withClause
 
-          switch outputType
-            when "object"
-              whenClauseWrapper StatementsStn
-                bodyStatementsExceptLast
-                AssignmentStn
-                  AccessorStn
-                    intoIdentifer
-                    keyVarDef
-                  lastBodyStatement
+      else if whenClause
+        SimpleLiteralStn value: :null
 
-            when "array"
-              whenClauseWrapper StatementsStn
-                bodyStatementsExceptLast
-                FunctionInvocationStn
-                  AccessorStn
-                    intoIdentifer
-                    IdentifierStn identifier: "push"
-                  lastBodyStatement
-
-            when "each"
-              whenClauseWrapper body
-
-            when "find" then
-              if whenClause
-                if body
-                  StatementsStn BinaryOperatorStn
-                    operator: "&&"
-                    whenClause
-
-                    StatementsStn
-                      FunctionInvocationStn brkIdentifer
-                      body
-                else
-                  StatementsStn BinaryOperatorStn
-                    operator: "&&"
-                    whenClause
-
-                    StatementsStn
-                      FunctionInvocationStn brkIdentifer
-
-                      valueVarDef
-              else
-                if body
-
-                  if body.type == "Statements" && body.children.length > 1
-                    allButLast = body.children.slice 0, body.children.length - 1
-                    body = peek body.children
-
-                  foundTest = if body.type == "Reference"
-                    BinaryOperatorStn
-                      operator: "&&"
-                      body
-
-                      StatementsStn
-                        FunctionInvocationStn brkIdentifer
-                        body
-
-                  else
-                    BinaryOperatorStn
-                      operator: "&&"
-
-                      AssignmentStn
-                        IdentifierStn identifierHandle: baseIdentifierHandle = new UniqueIdentifierHandle "_ret"
-                        body
-
-                      StatementsStn
-                        FunctionInvocationStn brkIdentifer
-
-                        IdentifierStn identifierHandle: baseIdentifierHandle
-
-                  StatementsStn allButLast, foundTest
-
-                else
-                  StatementsStn BinaryOperatorStn
-                    operator: "&&"
-                    valueVarDef
-
-                    StatementsStn
-                      FunctionInvocationStn brkIdentifer
-
-                      valueVarDef
-
+      if whenClause
+        FunctionDefinitionStn
+          bound: true
+          variableDefinition
+          whenClause
 
   # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
   # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
   # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
-  generateArrayOrEach: ({method, labeledClauses:{intoClause, whenClause, withKeyClause}})->
+  generateArrayOrEach: (method, {intoClause, withClause, whenClause, withKeyClause})->
     {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
-    {body: withClause, iterable, variableDefinition} = @labeledChildren
+    {iterable, variableDefinition} = @labeledChildren
 
     if variableDefinition?.children?.length > 0 && !variableDefinition.children[0].isSimpleIdentifier
       withClause ?= StatementsStn variableDefinition.children[0]

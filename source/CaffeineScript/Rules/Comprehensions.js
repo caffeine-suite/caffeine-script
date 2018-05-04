@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(into|returning|when)\b/
+        comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
       });
       this.rule(
         {
@@ -37,8 +37,7 @@ Caf.defMod(module, () => {
         optionalArg: "_comma_ !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
         comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
-        comprehensionWith: "_? withOrDo _? lineOfStatementsOrBlock",
-        comprehensionBody: ["block", "comprehensionWith"]
+        comprehensionBody: "block"
       });
       return this.rule(
         {
