@@ -161,19 +161,6 @@ module.exports =
     else
       object map, (v) -> parseTestSuite options, v
 
-  semanticTest: semanticTest = (a, b) ->
-    map = if b
-      {compileModule} = options = a
-      b
-    else
-      a
-
-    options =
-      compileModule: compileModule
-      parseOptions: merge options, verbose: true
-
-    object map, (expectedJs, source) -> generateParseTest expectedJs, source, options
-
   semanticTestSuite: semanticTestSuite = (a, b) ->
     map = if b
       options = a
@@ -194,14 +181,14 @@ module.exports =
       ->
         object map, (jsControl, cafSource) ->
           niceTest name = "#{cafSource} >> #{jsControl || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
-            {js} = out = compileAndReportErrors cafSource, {name}
+            {js} = compileAndReportErrors cafSource, {name}
             cafOutput = eval """
               let Caf = require(\'caffeine-script-runtime\');
               #{js}
               """
             controlOutput = eval jsControl
             unless eq controlOutput, cafOutput
-              assert.eq controlOutput, cafOutput, out
+              assert.eq controlOutput, cafOutput, {js}
 
     else
       object map, (v) -> semanticTestSuite options, v

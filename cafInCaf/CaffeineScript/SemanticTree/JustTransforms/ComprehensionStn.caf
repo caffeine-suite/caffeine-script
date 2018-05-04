@@ -6,40 +6,10 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   ###
-    TODO
-    capture-loop-variables (CLV):
-      Some circumstances require capturing the loop variables:
-
-      - when-block assigns to any of the loop variables
-        (and the with-block reads the one or more of those assigned variables)
-        (or there is no with-block and the when-block assigns to the value-loop-variable)
-        Basically, I think the first pass is: when-block-assigns-to-any-loop-variable.
-
-      - there is already a same-named variable in the enclosing scope as one of the loop variables
-
-      If we detect we should capture-loop-variables, we need to:
-
-      - declare that we assign to the loop variables. This will create the correct lets, taking into
-        account if any of the loop variables matches an enclosing-scope-variable.
-
-      - capture all loop variables in the when-block, if present, otherwise in the with-block.
-        If the when-block is present, then the with-block's arguments become empty - it just uses
-        the captured values.
-
-        - generate an unused variable name for each loop variable, perferrably similar to each, then:
-        - (_value, _key, _into, _whenResult) => {value = _value; key = _key; into = _into; whenResult = _whenResult}
-        - but only for the loop-variables declared.
-
-      - Explicitly create the default with-block if only the when-block is present so that it can
-        use the captured value-variable rather than the one passed to it by the iteration function.
-        This covers the special case of the when-block assigning to the value-variable.
-
     TODO explicit iterationTypes:
       ExampleA: object v from-array a
       ExampleB: object v from-object a
       ExampleC: object v from-iter a
-
-      I really need to test if that has any practical performance gain.
 
       UPDATE 2018-5-4:
         Currently, chrome is full-speed with closureless functions,
@@ -58,22 +28,8 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         All of which means, elliminating function creation is still a big
         win.
 
-      It would dramatically increase the size of the iteration library
-      to take into account all those sub-options.
+      My plan is to actually make inline loops for explicit from-type iteration.
 
-      Not sure it's worth it.
-
-      My intention is to provide the standard javascript 'while' loop for performance - and
-      for the ability to use returns and breaks. The only change is while returns a value,
-        probably the value returned from the last execution of the body or undefined.
-
-      If we do explicit iterationTypes, my intention is the lib names be:
-
-      oFromA
-      oFromO
-      oFromI
-
-      and so on for o, a, f, r, e >> 3x the functions
 
   validate: ->
     {valueClauses, variableDefinition} = @labeledChildren
@@ -122,17 +78,16 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   postTransform: ->
     @initLabeledChildren()
-    {outputType} = @labeledChildren
 
-    {labeledClauses} = @
+    {labeledClauses, comprehensionType} = @
 
     if labeledClauses.toClause || labeledClauses.tilClause
       @generateArrayRange labeledClauses
     else
-      switch outputType = @comprehensionType
+      switch comprehensionType
       when :each, :array, :object
         @generateArrayOrEach
-          if outputType == :each then :each2 else outputType
+          if comprehensionType == :each then :each2 else comprehensionType
           labeledClauses
 
       when :find
@@ -166,6 +121,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     array p in params
       p ? Null ?= SimpleLiteralStn value: :null
 
+  # Caf.arrayRange(fromValue, toValue, withClause = returnFirst, whenClause = returnTrue, byValue, til, into = []) ->
   generateArrayRange: ({withClause, whenClause, toClause, tilClause, byClause, fromClause, intoClause})->
     {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
 
@@ -185,6 +141,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         tilClause
         intoClause
 
+  # Caf.find(source, withClause, whenClause) ->
   generateFind: ({fromClause, withClause, whenClause})->
     {iterable, variableDefinition} = @labeledChildren
     {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
@@ -192,22 +149,10 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     FunctionInvocationStn
       IdentifierStn identifier: "" Caf.find
 
-      fromClause
-
-      if withClause
-        FunctionDefinitionStn
-          bound: true
-          variableDefinition
-          withClause
-
-      else if whenClause
-        SimpleLiteralStn value: :null
-
-      if whenClause
-        FunctionDefinitionStn
-          bound: true
-          variableDefinition
-          whenClause
+      @resolveStnParams
+        fromClause
+        {} f: withClause
+        {} f: whenClause
 
   # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
   # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
@@ -216,37 +161,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
     {variableDefinition} = @labeledChildren
 
+    # if the value-variable is defined, it's a destructuring set the special default withClause
+    # Example: array {a}        # default: with {a}
+    # Example: array extract a  # default: with a     - extract not impleneted as-of this writing
     if variableDefinition?.children?.length > 0 && !variableDefinition.children[0].isSimpleIdentifier
       withClause ?= StatementsStn variableDefinition.children[0]
-
-    Null = SimpleLiteralStn value: :null
 
     FunctionInvocationStn
       IdentifierStn identifier: "" Caf.#{method}
 
-      fromClause
-
-      if withClause
-        FunctionDefinitionStn
-          bound: true
-          variableDefinition
-          withClause
-      else if whenClause || withKeyClause || intoClause
-        Null
-
-      if whenClause
-        FunctionDefinitionStn
-          bound: true
-          variableDefinition
-          whenClause
-      else if withKeyClause || intoClause
-        Null
-
-      intoClause ? if withKeyClause then Null
-
-      if withKeyClause
-        FunctionDefinitionStn
-          bound: true
-          variableDefinition
-          withKeyClause
-
+      @resolveStnParams
+        fromClause
+        {} f: withClause
+        {} f: whenClause
+        intoClause
+        {} f: withKeyClause

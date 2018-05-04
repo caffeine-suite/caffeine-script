@@ -103,19 +103,20 @@ Caf.defMod(module, () => {
               }
             });
             this.prototype.postTransform = function() {
-              let outputType, labeledClauses;
+              let labeledClauses, comprehensionType;
               this.initLabeledChildren();
-              ({ outputType } = this.labeledChildren);
-              ({ labeledClauses } = this);
+              ({ labeledClauses, comprehensionType } = this);
               return labeledClauses.toClause || labeledClauses.tilClause
                 ? this.generateArrayRange(labeledClauses)
                 : (() => {
-                    switch ((outputType = this.comprehensionType)) {
+                    switch (comprehensionType) {
                       case "each":
                       case "array":
                       case "object":
                         return this.generateArrayOrEach(
-                          outputType === "each" ? "each2" : outputType,
+                          comprehensionType === "each"
+                            ? "each2"
+                            : comprehensionType,
                           labeledClauses
                         );
                       case "find":
@@ -224,23 +225,11 @@ Caf.defMod(module, () => {
               } = StnRegistry);
               return FunctionInvocationStn(
                 IdentifierStn({ identifier: "Caf.find" }),
-                fromClause,
-                withClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withClause
-                    )
-                  : whenClause
-                    ? SimpleLiteralStn({ value: "null" })
-                    : undefined,
-                whenClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      whenClause
-                    )
-                  : undefined
+                this.resolveStnParams(
+                  fromClause,
+                  { f: withClause },
+                  { f: whenClause }
+                )
               );
             };
             this.prototype.generateArrayOrEach = function(
@@ -253,7 +242,6 @@ Caf.defMod(module, () => {
                 SimpleLiteralStn,
                 FunctionDefinitionStn,
                 variableDefinition,
-                Null,
                 cafBase;
               ({
                 FunctionInvocationStn,
@@ -275,40 +263,15 @@ Caf.defMod(module, () => {
                       variableDefinition.children[0]
                     ));
               }
-              Null = SimpleLiteralStn({ value: "null" });
               return FunctionInvocationStn(
                 IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
-                fromClause,
-                withClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withClause
-                    )
-                  : whenClause || withKeyClause || intoClause
-                    ? Null
-                    : undefined,
-                whenClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      whenClause
-                    )
-                  : withKeyClause || intoClause
-                    ? Null
-                    : undefined,
-                intoClause != null
-                  ? intoClause
-                  : withKeyClause
-                    ? Null
-                    : undefined,
-                withKeyClause
-                  ? FunctionDefinitionStn(
-                      { bound: true },
-                      variableDefinition,
-                      withKeyClause
-                    )
-                  : undefined
+                this.resolveStnParams(
+                  fromClause,
+                  { f: withClause },
+                  { f: whenClause },
+                  intoClause,
+                  { f: withKeyClause }
+                )
               );
             };
           }
