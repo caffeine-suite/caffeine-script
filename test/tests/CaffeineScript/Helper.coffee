@@ -1,5 +1,5 @@
 {CaffeineScript} = Neptune
-{isNumber, each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
+{isNumber, eq, each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
 {CaffeineScriptParser} = CaffeineScript
 require "colors"
 
@@ -68,6 +68,49 @@ module.exports =
 
       # assert.equal true, !!sourceNode
 
+  compileAndReportErrors: compileAndReportErrors = (source, {name, expectedJs, expectFailure, knownFailing, parseOptions, compileModule}) ->
+    expectedFailure = null
+
+    js = try
+      parseTree = CaffeineScriptParser.parse source, parseOptions
+      semanticTree = parseTree.getStn()
+      transformedSemanticTree = semanticTree.validateAll().transform()
+
+      if compileModule
+        transformedSemanticTree.toJsModule()
+      else
+        transformedSemanticTree.toJs()
+
+    catch error
+      if expectFailure && isNumber error.failureIndex
+        expectedFailure = error
+        error = null
+      else
+        log.error error unless knownFailing
+
+      null
+
+    showInfo = if expectFailure
+      js || !expectedFailure
+
+    else if expectedJs
+      js != expectedJs
+
+    if showInfo && !knownFailing
+      log "\nFAIL: #{name}".red
+      transformedSemanticTree = "no change" if transformedSemanticTree == semanticTree
+      log info: {js, expectedJs, parseTree, semanticTree, transformedSemanticTree}
+      log "\n"
+
+    throw error if error
+
+    if expectFailure
+      assert.eq js, null
+    else if expectedJs
+      assert.eq js, expectedJs
+
+    {js, expectedJs, parseTree, semanticTree, transformedSemanticTree}
+
   generateParseTest: generateParseTest = (expectedJs, source, options) ->
     {compileModule, parseOptions} = options if options
 
@@ -81,44 +124,8 @@ module.exports =
     expectFailure = !expectedJs?
 
     testFunction name = "#{source} >> #{expectedJs || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
-      expectedFailure = null
 
-      js = try
-        parseTree = CaffeineScriptParser.parse source, parseOptions
-        semanticTree = parseTree.getStn()
-        transformedSemanticTree = semanticTree.validateAll().transform()
-
-        if compileModule
-          transformedSemanticTree.toJsModule()
-        else
-          transformedSemanticTree.toJs()
-
-      catch error
-        if expectFailure && isNumber error.failureIndex
-          expectedFailure = error
-          error = null
-        else
-          log.error error unless knownFailing
-
-        null
-
-      showInfo = if expectFailure
-        js || !expectedFailure
-      else
-        js != expectedJs
-
-      if showInfo && !knownFailing
-        log "\nFAIL: #{name}".red
-        transformedSemanticTree = "no change" if transformedSemanticTree == semanticTree
-        log info: {js, expectedJs, parseTree, semanticTree, transformedSemanticTree}
-        log "\n"
-
-      throw error if error
-
-      if expectFailure
-        assert.eq js, null
-      else
-        assert.eq js, expectedJs
+      compileAndReportErrors source, {name, expectedJs, expectFailure, knownFailing, parseOptions, compileModule}
 
   parseTests: parseTests = (a, b) ->
     map = if b
@@ -154,6 +161,50 @@ module.exports =
     else
       object map, (v) -> parseTestSuite options, v
 
+  semanticTest: semanticTest = (a, b) ->
+    map = if b
+      {compileModule} = options = a
+      b
+    else
+      a
+
+    options =
+      compileModule: compileModule
+      parseOptions: merge options, verbose: true
+
+    object map, (expectedJs, source) -> generateParseTest expectedJs, source, options
+
+  semanticTestSuite: semanticTestSuite = (a, b) ->
+    map = if b
+      options = a
+      b
+    else
+      options = {}
+      a
+
+    hasTestValues = hasOther = false
+    for k, v of map
+      if !v? || v?.knownFailing || isString v
+        hasTestValues = true
+      else
+        hasOther = true
+
+    throw new Error "either pass all null/string/{knownFailing:string} or all sub-suites as objects withouth knownFailing fields!" if hasTestValues && hasOther
+    if hasTestValues
+      ->
+        object map, (jsControl, cafSource) ->
+          niceTest name = "#{cafSource} >> #{jsControl || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+            {js} = out = compileAndReportErrors cafSource, {name}
+            cafOutput = eval """
+              let Caf = require(\'caffeine-script-runtime\');
+              #{js}
+              """
+            controlOutput = eval jsControl
+            unless eq controlOutput, cafOutput
+              assert.eq controlOutput, cafOutput, out
+
+    else
+      object map, (v) -> semanticTestSuite options, v
 
   applyModuleWrapper: (body) ->
     """

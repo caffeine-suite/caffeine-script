@@ -12,3 +12,4 @@ module.exports
   SourceMap:      require './SourceMap'     
 require './Parser'
 require './Preprocessors'
+require './Semantics'
