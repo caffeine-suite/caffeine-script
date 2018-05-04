@@ -3,11 +3,11 @@ import &StandardImport
 ->
   @rule
     withOrDo: /(with|do)\b/
-    comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
+    comprehensionValueClauseType: /(from|in|into|returning|when|with|with-key|to|by|til|do)\b(?!-)/
 
   @rule
     comprehensionOutputType:      /(object|array|reduce|each|find)\b/
-    comprehensionIterationType:   /(from|in)\b/
+    comprehensionIterationType:   /(from|in|to|til)\b/
     {} stnFactory: :SemanticTokenStn
 
   @rule
@@ -35,7 +35,7 @@ import &StandardImport
     optionalArg: "_comma_ !withOrDo argDef"
 
     comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
-    comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock"
+    unlabeledFromClause: "keywordLabeledStatementsWithOneLessBlock"
     # comprehensionWith: '_? withOrDo _? lineOfStatementsOrBlock'
     comprehensionBody: :block # :comprehensionWith
 
@@ -43,9 +43,9 @@ import &StandardImport
     comprehension: "
       outputType:comprehensionOutputType _
       variableDefinition:comprehensionVariableDef_?
-      iterationType:comprehensionIterationTypeClause_?
 
-      iterable:comprehensionIterable
+      iterable:unlabeledFromClause?
+
       valueClause:comprehensionValueClause*
       body:comprehensionBody?
       "

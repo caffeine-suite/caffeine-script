@@ -21,6 +21,15 @@ module.exports = suite: parseTestSuite
     "each v in b with v()": "Caf.each2(b, (v) => v());"
     "each v in b when v()": "Caf.each2(b, null, (v) => v());"
 
+  range:
+    "array to 10":                    "Caf.arrayRange(0, 10);"
+    "array a to 10":                  "Caf.arrayRange(0, 10);"
+    "array to 10 by 2":               "Caf.arrayRange(0, 10, null, null, 2);"
+    "array til 10":                   "Caf.arrayRange(0, 10, null, null, null, true);"
+    "array to 10 with 1":             "Caf.arrayRange(0, 10, () => 1);"
+    "array a to 10 when a %% 2 == 0": "Caf.arrayRange(0, 10, null, (a) => Caf.mod(a, 2) === 0);"
+    "array from 2 to 10":             "Caf.arrayRange(2, 10);"
+
   multipleArgs:
     """
     object myV, myK from mySource

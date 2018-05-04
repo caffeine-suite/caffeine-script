@@ -78,6 +78,7 @@
         | with | do
         | into | returning
         | with-key
+        | to | by | til
 
         ### Error Handling
 
@@ -106,7 +107,7 @@
         | extract
         | reduce | inject
         | promise | await
-        | to | by | short | skip | til
+        | short | skip
         | mixin
 
         )

@@ -5,12 +5,12 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(into|returning|when|with|with-key|do)\b(?!-)/
+        comprehensionValueClauseType: /(from|in|into|returning|when|with|with-key|to|by|til|do)\b(?!-)/
       });
       this.rule(
         {
           comprehensionOutputType: /(object|array|reduce|each|find)\b/,
-          comprehensionIterationType: /(from|in)\b/
+          comprehensionIterationType: /(from|in|to|til)\b/
         },
         { stnFactory: "SemanticTokenStn" }
       );
@@ -36,13 +36,13 @@ Caf.defMod(module, () => {
       this.rule({
         optionalArg: "_comma_ !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
-        comprehensionIterable: "keywordLabeledStatementsWithOneLessBlock",
+        unlabeledFromClause: "keywordLabeledStatementsWithOneLessBlock",
         comprehensionBody: "block"
       });
       return this.rule(
         {
           comprehension:
-            "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterationType:comprehensionIterationTypeClause_? iterable:comprehensionIterable valueClause:comprehensionValueClause* body:comprehensionBody?"
+            "outputType:comprehensionOutputType _ variableDefinition:comprehensionVariableDef_? iterable:unlabeledFromClause? valueClause:comprehensionValueClause* body:comprehensionBody?"
         },
         { stnFactory: "ComprehensionStn" }
       );

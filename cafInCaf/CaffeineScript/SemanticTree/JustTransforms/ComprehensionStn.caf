@@ -35,11 +35,28 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         This covers the special case of the when-block assigning to the value-variable.
 
     TODO explicit iterationTypes:
-      ExampleA: object v from array a
-      ExampleB: object v from object a
-      ExampleC: object v from iter a
+      ExampleA: object v from-array a
+      ExampleB: object v from-object a
+      ExampleC: object v from-iter a
 
       I really need to test if that has any practical performance gain.
+
+      UPDATE 2018-5-4:
+        Currently, chrome is full-speed with closureless functions,
+        but if there is a closure, even if there is no escape, there is a 7x
+        speed penaltiy: https://jsbench.me/1nj5v4npva
+
+        Safari is much worse - it's a 30x difference between using
+        an existing function vs a newly created one, no matter
+        the structure of the funciton.
+
+        FireFox: no-closure is fast, but w-closure is 60x slower!
+
+        However, all three ARE full-speed with an external function vs
+        inlining.
+
+        All of which means, elliminating function creation is still a big
+        win.
 
       It would dramatically increase the size of the iteration library
       to take into account all those sub-options.
@@ -59,51 +76,123 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       and so on for o, a, f, r, e >> 3x the functions
 
   validate: ->
-    valueClauseChildren = {}
     {valueClauses, variableDefinition} = @labeledChildren
     if variableDefinition?.children.length > 2
       throw new Error "Can define at most two loop variables (value followed optionally by key). You defined: #{variableDefinition.parseTreeNode?.toString()}."
 
-    each valueClause in valueClauses
-      {type} = valueClause
-      throw new Error "no more than one '#{type}' clause allowed" if valueClauseChildren[type]
-      valueClauseChildren[type] = true
+    {comprehensionType} = @
+
+    {toClause, byClause, tilClause, fromClause} = @labeledClauses
+
+    if (toClause || byClause || tilClause) && comprehensionType != :array
+      throw new Error "" 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions
+
+    unless fromClause || toClause || tilClause
+      throw new Error "" 'from', 'to' or 'til' clause require
+
+    if toClause && tilClause
+      throw new Error "" only one 'to' or 'til' clause allowed
+
+    if byClause && !(tilClause || toClause)
+      throw new Error "" 'to' or 'til' clause required to use 'by'
 
   clauseAliases =
     returning:  :into
     in:         :from
     do:         :with
 
+  @getter
+    comprehensionType: -> @labeledChildren.outputType.props.token
+
+    labeledClauses: ->
+      {iterable, body} = @labeledChildren
+      labeledClauses = {}
+
+      each {type, value} in @labeledChildren.valueClauses
+        type = clauseAliases[type] ? type
+        name = lowerCamelCase type + :Clause
+        if labeledClauses[name]
+          throw new Error "" no more than one '#{type}' clause allowed
+        labeledClauses[name] = value
+
+      labeledClauses.fromClause ?= iterable
+      labeledClauses.withClause ?= body
+
+      labeledClauses
+
   postTransform: ->
     @initLabeledChildren()
-    {outputType, body} = @labeledChildren
+    {outputType} = @labeledChildren
 
-    labeledClauses = {}
-    each {type, value} in @labeledChildren.valueClauses
-      type = clauseAliases[type] ? type
-      labeledClauses[lowerCamelCase type + :Clause] = value
+    {labeledClauses} = @
 
-    labeledClauses.withClause ?= body
+    if labeledClauses.toClause || labeledClauses.tilClause
+      @generateArrayRange labeledClauses
+    else
+      switch outputType = @comprehensionType
+      when :each, :array, :object
+        @generateArrayOrEach
+          if outputType == :each then :each2 else outputType
+          labeledClauses
 
-    switch outputType = outputType?.props.token
-    when :each, :array, :object
-      @generateArrayOrEach
-        if outputType == :each then :each2 else outputType
-        labeledClauses
+      when :find
+        @generateFind
+          labeledClauses
 
-    when :find
-      @generateFind
-        labeledClauses
+  resolveStnParams: (params...) ->
+    {SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
+    {variableDefinition} = @labeledChildren
 
-  generateFind: ({withClause, whenClause})->
+    lastNonNulIndex = 0
+    params = array p, i in params
+      p = switch
+      when p is Object
+        {f} = p
+        if f
+          FunctionDefinitionStn
+            bound: true
+            variableDefinition
+            f
+      when p is String
+        SimpleLiteralStn value: p
+
+      else p
+
+      lastNonNulIndex = i if p?
+      p
+
+    Null = null
+    params = params.slice 0, lastNonNulIndex + 1
+    array p in params
+      p ? Null ?= SimpleLiteralStn value: :null
+
+  generateArrayRange: ({withClause, whenClause, toClause, tilClause, byClause, fromClause, intoClause})->
+    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
+
+    if tilClause
+      toClause = tilClause
+      tilClause = :true
+
+    FunctionInvocationStn
+      IdentifierStn identifier: "" Caf.arrayRange
+
+      @resolveStnParams
+        fromClause ? "0"
+        toClause
+        {} f: withClause
+        {} f: whenClause
+        byClause
+        tilClause
+        intoClause
+
+  generateFind: ({fromClause, withClause, whenClause})->
     {iterable, variableDefinition} = @labeledChildren
     {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
 
     FunctionInvocationStn
       IdentifierStn identifier: "" Caf.find
 
-      # source
-      iterable
+      fromClause
 
       if withClause
         FunctionDefinitionStn
@@ -123,9 +212,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
   # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
   # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
   # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
-  generateArrayOrEach: (method, {intoClause, withClause, whenClause, withKeyClause})->
+  generateArrayOrEach: (method, {fromClause, intoClause, withClause, whenClause, withKeyClause})->
     {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
-    {iterable, variableDefinition} = @labeledChildren
+    {variableDefinition} = @labeledChildren
 
     if variableDefinition?.children?.length > 0 && !variableDefinition.children[0].isSimpleIdentifier
       withClause ?= StatementsStn variableDefinition.children[0]
@@ -135,8 +224,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     FunctionInvocationStn
       IdentifierStn identifier: "" Caf.#{method}
 
-      # source
-      iterable
+      fromClause
 
       if withClause
         FunctionDefinitionStn

@@ -2,7 +2,7 @@
 
 {semanticTestSuite} = require '../Helper'
 
-module.exports = log suite: semanticTestSuite
+module.exports = suite: semanticTestSuite
   array:
     "array [1,2,3]": "[1,2,3]"
     "array a in [1,2,3] with a * 2": "[2,4,6]"
