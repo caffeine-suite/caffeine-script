@@ -136,371 +136,356 @@ Caf.defMod(module, () => {
       merge
     ) => {
       let createObjectTreeFactory, SourceNode, binary, BaseStn;
-      return (
-        ({ createObjectTreeFactory } = __webpack_require__(122)),
-        ({ SourceNode } = __webpack_require__(120)),
-        ({ binary } = __webpack_require__(121)),
-        (BaseStn = Caf.defClass(
-          class BaseStn extends BaseClass {
-            constructor(props, children = [], pretransformedStn) {
-              let cafTemp, cafBase;
-              super(...arguments);
-              this.children = children;
-              this.pretransformedStn = pretransformedStn;
-              this.parseTreeNode =
-                (cafTemp =
-                  Caf.exists((cafBase = this.pretransformedStn)) &&
-                  cafBase.parseTreeNode) != null
-                  ? cafTemp
-                  : props.parseTreeNode;
-              this.pretransformedStn || (this.pretransformedStn = this);
-              this.props = objectWithout(props, "parseTreeNode");
-              this.initLabeledChildren();
-            }
-          },
-          function(BaseStn, classSuper, instanceSuper) {
-            let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
-            this.abstractClass();
-            this.setter("parseTreeNode");
-            this.getter({
-              parseTreeNode: function() {
-                let cafTemp, cafBase;
-                return (cafTemp = this._parseTreeNode) != null
-                  ? cafTemp
-                  : Caf.exists((cafBase = this.parent)) &&
-                      cafBase.parseTreeNode;
-              }
-            });
-            this.prototype.initLabeledChildren = function() {
-              this.labeledChildren = this.children && {};
-              return Caf.each2(this.children, child => {
-                let label, pluralLabel, cafBase;
-                child.parent = this;
-                ({ label, pluralLabel } = child);
-                this.labeledChildren[label] = child;
-                return pluralLabel
-                  ? (
-                      (cafBase = this.labeledChildren)[pluralLabel] ||
-                      (cafBase[pluralLabel] = [])
-                    ).push(child)
-                  : undefined;
-              });
-            };
-            this.prototype.getInspectedProps = function() {
-              return objectWithout(this.props, "label", "pluralLabel");
-            };
-            this.getter({
-              sourceOffset: function() {
-                return this.parseTreeNode.offset;
-              },
-              parser: function() {
-                return this.parseTreeNode.parser.rootParser;
-              },
-              sourceFile: function() {
-                return this.parser.sourceFile;
-              },
-              label: function() {
-                return this.props.label;
-              },
-              pluralLabel: function() {
-                return this.props.pluralLabel;
-              },
-              root: function() {
-                let cafTemp, cafBase;
-                return (cafTemp =
-                  Caf.exists((cafBase = this.parent)) && cafBase.root) != null
-                  ? cafTemp
-                  : this;
-              },
-              inspectedObjects: function() {
-                let label, props, name, a;
-                ({ label } = this);
-                props = this.getInspectedProps();
-                name = this.class.getName();
-                if (label) {
-                  name = `${Caf.toString(label)}.${Caf.toString(name)}`;
-                }
-                return {
-                  [`${Caf.toString(name)}`]:
-                    this.children.length === 0
-                      ? toInspectedObjects(props)
-                      : ((a = []),
-                        objectKeyCount(props) > 0 ? a.push(props) : undefined,
-                        a.concat(
-                          Caf.array(this.children, c => c.inspectedObjects)
-                        ))
-                };
-              },
-              type: function() {
-                return this.class.type;
-              }
-            });
-            this.postCreate = function() {
-              let s;
-              s = this.getName().split(/Stn$/);
-              this.type = s[0];
-              return classSuper.postCreate.apply(this, arguments);
-            };
-            this.newInstance = function(props, children) {
-              return new this(props, children);
-            };
-            this.postCreateConcreteClass = function(options) {
-              let classModuleState, hotReloadEnabled;
-              ({ classModuleState, hotReloadEnabled } = options);
-              classSuper.postCreateConcreteClass.apply(this, arguments);
-              return __webpack_require__(4).register(
-                createObjectTreeFactory({ class: this }, (props, children) =>
-                  this.newInstance(props, children)
-                )
-              );
-            };
-            this.prototype.findParent = function(stnTypePattern) {
-              let parent, found;
-              ({ parent } = this);
-              found = null;
-              while (parent && !found) {
-                if (parent.type.match(stnTypePattern)) {
-                  found = parent;
-                } else {
-                  ({ parent } = parent);
-                }
-              }
-              return found;
-            };
-            this.prototype.find = function(
-              stnTypePattern,
-              stnTypeStopPattern,
-              _foundList = []
-            ) {
-              Caf.each2(
-                this.children,
-                child =>
-                  stnTypePattern.test(child.type)
-                    ? _foundList.push(child)
-                    : !(
-                        Caf.exists(stnTypeStopPattern) &&
-                        stnTypeStopPattern.test(child.type)
-                      )
-                      ? child.find(
-                          stnTypePattern,
-                          stnTypeStopPattern,
-                          _foundList
-                        )
-                      : undefined
-              );
-              return _foundList.length === 0 ? null : _foundList;
-            };
-            sourceNodeLineColumnScratch = {};
-            this.getter({
-              sourceFile: function() {
-                let cafTemp, cafBase;
-                return (cafTemp =
-                  Caf.exists((cafBase = this.parseTreeNode)) &&
-                  cafBase.sourceFile) != null
-                  ? cafTemp
-                  : "caffeine-script";
-              },
-              newSourceNode: function() {
-                let line, column;
-                ({ line, column } = this.parseTreeNode.getSourceLineColumn(
-                  sourceNodeLineColumnScratch
-                ));
-                return new SourceNode(
-                  line + 1,
-                  column,
-                  this.parseTreeNode.sourceFile
-                );
-              }
-            });
-            this.prototype.createSourceNode = function(...args) {
-              return this.newSourceNode.add(compactFlatten(args));
-            };
-            this.prototype.toSourceNode = function(options) {
-              log.warn(
-                `WARNING: toSourceNode not overridden in ${Caf.toString(
-                  this.class.name
-                )}. Falling back to old toJs().`
-              );
-              return this.createSourceNode(this.toJs(options));
-            };
-            this.prototype.toJsUsingSourceNode = function(options = {}) {
-              let inlineMap, sourceMap, sourceFile, sourceNode, code, map;
-              ({
-                inlineMap,
-                sourceMap,
-                sourceFile = this.sourceFile
-              } = options);
-              sourceNode = this.toSourceNode(options);
-              return inlineMap || sourceMap
-                ? (({ code, map } = sourceNode.toStringWithSourceMap({
-                    file: sourceFile
-                  })),
-                  inlineMap
-                    ? {
-                        js: `${Caf.toString(
-                          code
-                        )}\n//# sourceMappingURL=${Caf.toString(
-                          binary(JSON.stringify(map.toString())).toDataUri(
-                            "application/json",
-                            true
-                          )
-                        )}\n//# sourceURL=${Caf.toString(sourceFile)}`
-                      }
-                    : { js: code, sourceMap: map })
-                : { js: sourceNode.toString() };
-            };
-            this.prototype.childrenToSourceNodes = function(joiner, options) {
-              return this.stnArrayToSourceNodes(this.children, joiner, options);
-            };
-            this.prototype.stnArrayToSourceNodes = function(
-              stnArray,
-              joiner,
-              options
-            ) {
-              let out;
-              return Caf.array(
-                stnArray,
-                (c, i) => {
-                  if (joiner != null && i > 0) {
-                    out.push(joiner);
-                  }
-                  return c.toSourceNode(options);
-                },
-                null,
-                (out = [])
-              );
-            };
-            this.prototype.doSourceNode = function(...body) {
-              return this.createSourceNode("(() => {", body, "})()");
-            };
-            null;
-            this.prototype.toJs = function(options) {
-              return (() => {
-                throw new Error(
-                  `must override one of the toJs* functions: ${Caf.toString(
-                    this.className
-                  )}`
-                );
-              })();
-            };
-            this.prototype.childrenToJs = function(joiner = "", options) {
-              return Caf.array(this.children, c => c.toJs(options)).join(
-                joiner
-              );
-            };
-            this.prototype.doJs = function(args, body) {
-              if (args) {
-                throw "TODO";
-              }
-              if (!isString(body)) {
-                body = body.toFunctionBodyJs();
-              }
-              return `(() => {${Caf.toString(body)};})()`;
-            };
-            this.prototype.toFunctionBodyJsArray = function(
-              returnAction = true
-            ) {
-              return returnAction
-                ? [`return ${Caf.toString(this.toJsExpression())}`]
-                : [this.toJs()];
-            };
-            this.prototype.toFunctionBodyJs = function(returnAction = true) {
-              return this.toFunctionBodyJsArray(returnAction).join("");
-            };
-            this.prototype.toJsExpression = function(options) {
-              return this.toJs(merge(options, { expression: true }));
-            };
-            this.prototype.toInterpolatedJsStringPart = function() {
-              return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
-            };
-            this.prototype.transformChildren = function() {
-              let ret;
-              ret = null;
-              Caf.each2(this.children, (child, i) => {
-                let newChild;
-                return child !== (newChild = child.transform())
-                  ? (ret != null ? ret : (ret = this.children.slice()),
-                    (newChild.props.label = child.label),
-                    (ret[i] = newChild))
-                  : undefined;
-              });
-              return ret || this.children;
-            };
-            this.prototype.postTransform = function() {
-              return this;
-            };
-            this.prototype.decorate = function() {};
-            this.prototype.newTransformedInstance = function(
-              newProps,
-              newChildren
-            ) {
-              return new this.class(newProps, newChildren, this);
-            };
-            this.prototype.transform = function() {
-              let newChildren;
-              this.decorate();
-              return (this.children !== (newChildren = this.transformChildren())
-                ? this.newTransformedInstance(this.props, newChildren)
-                : this
-              )
-                .postTransform()
-                .setDefaultParseTreeNode(this.parseTreeNode);
-            };
-            this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
-              if (!this.parseTreeNode) {
-                this.parseTreeNode = parseTreeNode;
-                Caf.each2(this.children, child =>
-                  child.setDefaultParseTreeNode(parseTreeNode)
-                );
-              }
-              return this;
-            };
-            this.prototype.needsParens = true;
-            this.prototype.needsParensAsStatement = false;
-            this.prototype.getNeedsParens = function() {
-              return this.needsParens;
-            };
-            this.prototype.getNeedsParensAsStatement = function() {
-              return this.needsParensAsStatement;
-            };
-            this.applyRequiredParens = applyRequiredParens = function(expr) {
-              return `(${Caf.toString(expr)})`;
-            };
-            this.prototype.applyRequiredParens = applyRequiredParens;
-            this.applyParens = applyParens = function(expr) {
-              return expr.match(
-                /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
-              )
-                ? expr
-                : `(${Caf.toString(expr)})`;
-            };
-            this.prototype.applyParens = applyParens;
-            this.prototype.validate = function() {};
-            this.prototype.validateAll = function() {
-              let e;
-              try {
-                this.validate();
-              } catch (cafError) {
-                e = cafError;
-                throw this.parseTreeNode.parser.generateCompileError({
-                  failureIndex: this.sourceOffset,
-                  errorType: "Validation",
-                  message: e.message,
-                  info: e.info
-                });
-              }
-              Caf.each2(this.children, child => child.validateAll());
-              return this;
-            };
-            this.prototype.updateScope = function(scope) {
-              this.scope = scope;
-              return Caf.each2(this.children, child =>
-                child.updateScope(this.scope)
-              );
-            };
+      ({ createObjectTreeFactory } = __webpack_require__(122));
+      ({ SourceNode } = __webpack_require__(120));
+      ({ binary } = __webpack_require__(121));
+      return (BaseStn = Caf.defClass(
+        class BaseStn extends BaseClass {
+          constructor(props, children = [], pretransformedStn) {
+            let cafTemp, cafBase;
+            super(...arguments);
+            this.children = children;
+            this.pretransformedStn = pretransformedStn;
+            this.parseTreeNode =
+              (cafTemp =
+                Caf.exists((cafBase = this.pretransformedStn)) &&
+                cafBase.parseTreeNode) != null
+                ? cafTemp
+                : props.parseTreeNode;
+            this.pretransformedStn || (this.pretransformedStn = this);
+            this.props = objectWithout(props, "parseTreeNode");
+            this.initLabeledChildren();
           }
-        ))
-      );
+        },
+        function(BaseStn, classSuper, instanceSuper) {
+          let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
+          this.abstractClass();
+          this.setter("parseTreeNode");
+          this.getter({
+            parseTreeNode: function() {
+              let cafTemp, cafBase;
+              return (cafTemp = this._parseTreeNode) != null
+                ? cafTemp
+                : Caf.exists((cafBase = this.parent)) && cafBase.parseTreeNode;
+            }
+          });
+          this.prototype.initLabeledChildren = function() {
+            this.labeledChildren = this.children && {};
+            return Caf.each2(this.children, child => {
+              let label, pluralLabel, cafBase;
+              child.parent = this;
+              ({ label, pluralLabel } = child);
+              this.labeledChildren[label] = child;
+              return pluralLabel
+                ? (
+                    (cafBase = this.labeledChildren)[pluralLabel] ||
+                    (cafBase[pluralLabel] = [])
+                  ).push(child)
+                : undefined;
+            });
+          };
+          this.prototype.getInspectedProps = function() {
+            return objectWithout(this.props, "label", "pluralLabel");
+          };
+          this.getter({
+            sourceOffset: function() {
+              return this.parseTreeNode.offset;
+            },
+            parser: function() {
+              return this.parseTreeNode.parser.rootParser;
+            },
+            sourceFile: function() {
+              return this.parser.sourceFile;
+            },
+            label: function() {
+              return this.props.label;
+            },
+            pluralLabel: function() {
+              return this.props.pluralLabel;
+            },
+            root: function() {
+              let cafTemp, cafBase;
+              return (cafTemp =
+                Caf.exists((cafBase = this.parent)) && cafBase.root) != null
+                ? cafTemp
+                : this;
+            },
+            inspectedObjects: function() {
+              let label, props, name, a;
+              ({ label } = this);
+              props = this.getInspectedProps();
+              name = this.class.getName();
+              if (label) {
+                name = `${Caf.toString(label)}.${Caf.toString(name)}`;
+              }
+              return {
+                [`${Caf.toString(name)}`]:
+                  this.children.length === 0
+                    ? toInspectedObjects(props)
+                    : ((a = []),
+                      objectKeyCount(props) > 0 ? a.push(props) : undefined,
+                      a.concat(
+                        Caf.array(this.children, c => c.inspectedObjects)
+                      ))
+              };
+            },
+            type: function() {
+              return this.class.type;
+            }
+          });
+          this.postCreate = function() {
+            let s;
+            s = this.getName().split(/Stn$/);
+            this.type = s[0];
+            return classSuper.postCreate.apply(this, arguments);
+          };
+          this.newInstance = function(props, children) {
+            return new this(props, children);
+          };
+          this.postCreateConcreteClass = function(options) {
+            let classModuleState, hotReloadEnabled;
+            ({ classModuleState, hotReloadEnabled } = options);
+            classSuper.postCreateConcreteClass.apply(this, arguments);
+            return __webpack_require__(4).register(
+              createObjectTreeFactory({ class: this }, (props, children) =>
+                this.newInstance(props, children)
+              )
+            );
+          };
+          this.prototype.findParent = function(stnTypePattern) {
+            let parent, found;
+            ({ parent } = this);
+            found = null;
+            while (parent && !found) {
+              if (parent.type.match(stnTypePattern)) {
+                found = parent;
+              } else {
+                ({ parent } = parent);
+              }
+            }
+            return found;
+          };
+          this.prototype.find = function(
+            stnTypePattern,
+            stnTypeStopPattern,
+            _foundList = []
+          ) {
+            Caf.each2(
+              this.children,
+              child =>
+                stnTypePattern.test(child.type)
+                  ? _foundList.push(child)
+                  : !(
+                      Caf.exists(stnTypeStopPattern) &&
+                      stnTypeStopPattern.test(child.type)
+                    )
+                    ? child.find(stnTypePattern, stnTypeStopPattern, _foundList)
+                    : undefined
+            );
+            return _foundList.length === 0 ? null : _foundList;
+          };
+          sourceNodeLineColumnScratch = {};
+          this.getter({
+            sourceFile: function() {
+              let cafTemp, cafBase;
+              return (cafTemp =
+                Caf.exists((cafBase = this.parseTreeNode)) &&
+                cafBase.sourceFile) != null
+                ? cafTemp
+                : "caffeine-script";
+            },
+            newSourceNode: function() {
+              let line, column;
+              ({ line, column } = this.parseTreeNode.getSourceLineColumn(
+                sourceNodeLineColumnScratch
+              ));
+              return new SourceNode(
+                line + 1,
+                column,
+                this.parseTreeNode.sourceFile
+              );
+            }
+          });
+          this.prototype.createSourceNode = function(...args) {
+            return this.newSourceNode.add(compactFlatten(args));
+          };
+          this.prototype.toSourceNode = function(options) {
+            log.warn(
+              `WARNING: toSourceNode not overridden in ${Caf.toString(
+                this.class.name
+              )}. Falling back to old toJs().`
+            );
+            return this.createSourceNode(this.toJs(options));
+          };
+          this.prototype.toJsUsingSourceNode = function(options = {}) {
+            let inlineMap, sourceMap, sourceFile, sourceNode, code, map;
+            ({ inlineMap, sourceMap, sourceFile = this.sourceFile } = options);
+            sourceNode = this.toSourceNode(options);
+            return inlineMap || sourceMap
+              ? (({ code, map } = sourceNode.toStringWithSourceMap({
+                  file: sourceFile
+                })),
+                inlineMap
+                  ? {
+                      js: `${Caf.toString(
+                        code
+                      )}\n//# sourceMappingURL=${Caf.toString(
+                        binary(JSON.stringify(map.toString())).toDataUri(
+                          "application/json",
+                          true
+                        )
+                      )}\n//# sourceURL=${Caf.toString(sourceFile)}`
+                    }
+                  : { js: code, sourceMap: map })
+              : { js: sourceNode.toString() };
+          };
+          this.prototype.childrenToSourceNodes = function(joiner, options) {
+            return this.stnArrayToSourceNodes(this.children, joiner, options);
+          };
+          this.prototype.stnArrayToSourceNodes = function(
+            stnArray,
+            joiner,
+            options
+          ) {
+            let out;
+            return Caf.array(
+              stnArray,
+              (c, i) => {
+                if (joiner != null && i > 0) {
+                  out.push(joiner);
+                }
+                return c.toSourceNode(options);
+              },
+              null,
+              (out = [])
+            );
+          };
+          this.prototype.doSourceNode = function(...body) {
+            return this.createSourceNode("(() => {", body, "})()");
+          };
+          null;
+          this.prototype.toJs = function(options) {
+            return (() => {
+              throw new Error(
+                `must override one of the toJs* functions: ${Caf.toString(
+                  this.className
+                )}`
+              );
+            })();
+          };
+          this.prototype.childrenToJs = function(joiner = "", options) {
+            return Caf.array(this.children, c => c.toJs(options)).join(joiner);
+          };
+          this.prototype.doJs = function(args, body) {
+            if (args) {
+              throw "TODO";
+            }
+            if (!isString(body)) {
+              body = body.toFunctionBodyJs();
+            }
+            return `(() => {${Caf.toString(body)};})()`;
+          };
+          this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
+            return returnAction
+              ? [`return ${Caf.toString(this.toJsExpression())}`]
+              : [this.toJs()];
+          };
+          this.prototype.toFunctionBodyJs = function(returnAction = true) {
+            return this.toFunctionBodyJsArray(returnAction).join("");
+          };
+          this.prototype.toJsExpression = function(options) {
+            return this.toJs(merge(options, { expression: true }));
+          };
+          this.prototype.toInterpolatedJsStringPart = function() {
+            return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
+          };
+          this.prototype.transformChildren = function() {
+            let ret;
+            ret = null;
+            Caf.each2(this.children, (child, i) => {
+              let newChild;
+              return child !== (newChild = child.transform())
+                ? (ret != null ? ret : (ret = this.children.slice()),
+                  (newChild.props.label = child.label),
+                  (ret[i] = newChild))
+                : undefined;
+            });
+            return ret || this.children;
+          };
+          this.prototype.postTransform = function() {
+            return this;
+          };
+          this.prototype.decorate = function() {};
+          this.prototype.newTransformedInstance = function(
+            newProps,
+            newChildren
+          ) {
+            return new this.class(newProps, newChildren, this);
+          };
+          this.prototype.transform = function() {
+            let newChildren;
+            this.decorate();
+            return (this.children !== (newChildren = this.transformChildren())
+              ? this.newTransformedInstance(this.props, newChildren)
+              : this
+            )
+              .postTransform()
+              .setDefaultParseTreeNode(this.parseTreeNode);
+          };
+          this.prototype.setDefaultParseTreeNode = function(parseTreeNode) {
+            if (!this.parseTreeNode) {
+              this.parseTreeNode = parseTreeNode;
+              Caf.each2(this.children, child =>
+                child.setDefaultParseTreeNode(parseTreeNode)
+              );
+            }
+            return this;
+          };
+          this.prototype.needsParens = true;
+          this.prototype.needsParensAsStatement = false;
+          this.prototype.getNeedsParens = function() {
+            return this.needsParens;
+          };
+          this.prototype.getNeedsParensAsStatement = function() {
+            return this.needsParensAsStatement;
+          };
+          this.applyRequiredParens = applyRequiredParens = function(expr) {
+            return `(${Caf.toString(expr)})`;
+          };
+          this.prototype.applyRequiredParens = applyRequiredParens;
+          this.applyParens = applyParens = function(expr) {
+            return expr.match(
+              /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
+            )
+              ? expr
+              : `(${Caf.toString(expr)})`;
+          };
+          this.prototype.applyParens = applyParens;
+          this.prototype.validate = function() {};
+          this.prototype.validateAll = function() {
+            let e;
+            try {
+              this.validate();
+            } catch (cafError) {
+              e = cafError;
+              throw this.parseTreeNode.parser.generateCompileError({
+                failureIndex: this.sourceOffset,
+                errorType: "Validation",
+                message: e.message,
+                info: e.info
+              });
+            }
+            Caf.each2(this.children, child => child.validateAll());
+            return this;
+          };
+          this.prototype.updateScope = function(scope) {
+            this.scope = scope;
+            return Caf.each2(this.children, child =>
+              child.updateScope(this.scope)
+            );
+          };
+        }
+      ));
     }
   );
 });
@@ -680,330 +665,322 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (lowerCamelCase, merge, Error, log, isString, mergeInto) => {
       let UniqueIdentifierHandle;
-      return (
-        (UniqueIdentifierHandle = __webpack_require__(12)),
-        function(toExtend) {
-          let ScopeStnMixin;
-          return (ScopeStnMixin = Caf.defClass(
-            class ScopeStnMixin extends toExtend {
-              constructor() {
-                super(...arguments);
-                this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
-                this._scopeUpdated = false;
+      UniqueIdentifierHandle = __webpack_require__(12);
+      return function(toExtend) {
+        let ScopeStnMixin;
+        return (ScopeStnMixin = Caf.defClass(
+          class ScopeStnMixin extends toExtend {
+            constructor() {
+              super(...arguments);
+              this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
+              this._scopeUpdated = false;
+            }
+          },
+          function(ScopeStnMixin, classSuper, instanceSuper) {
+            let normalizePerferredName;
+            this.abstractClass();
+            this.normalizePerferredName = normalizePerferredName = function(
+              preferredName = "temp"
+            ) {
+              return lowerCamelCase(
+                preferredName.match(/^caf/i)
+                  ? preferredName
+                  : `caf ${Caf.toString(preferredName)}`
+              );
+            };
+            this.getter({
+              childScopes: function() {
+                return this._childScopes || (this._childScopes = []);
+              },
+              argumentNames: function() {
+                return this._argumentNames || (this._argumentNames = {});
+              },
+              identifiersUsed: function() {
+                return this._identifiersUsed || (this._identifiersUsed = {});
+              },
+              identifiersAssigned: function() {
+                return (
+                  this._identifiersAssigned || (this._identifiersAssigned = {})
+                );
+              },
+              identifiersInScope: function() {
+                return (
+                  this._identifiersInScope || (this._identifiersInScope = {})
+                );
               }
-            },
-            function(ScopeStnMixin, classSuper, instanceSuper) {
-              let normalizePerferredName;
-              this.abstractClass();
-              this.normalizePerferredName = normalizePerferredName = function(
-                preferredName = "temp"
-              ) {
-                return lowerCamelCase(
-                  preferredName.match(/^caf/i)
+            });
+            this.prototype.getInspectedProps = function() {
+              return merge(
+                instanceSuper.getInspectedProps.apply(this, arguments),
+                {
+                  scope: merge({
+                    argumentNames: this.argumentNames,
+                    identifiersUsed: this.identifiersUsed,
+                    identifiersAssigned: this.identifiersAssigned,
+                    identifiersInScope: this.identifiersInScope
+                  })
+                }
+              );
+            };
+            this.prototype.addArgumentName = function(identifier) {
+              this.identifiersInScope[identifier] = true;
+              return (this.argumentNames[identifier] = true);
+            };
+            this.prototype.addIdentifierUsed = function(identifier) {
+              if (this._boundUniqueIdentifiers) {
+                throw new Error(
+                  "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
+                );
+              }
+              this.identifiersInScope[identifier] = true;
+              return (this.identifiersUsed[identifier] = true);
+            };
+            this.prototype.addIdentifierAssigned = function(
+              identifier,
+              initializer
+            ) {
+              return identifier
+                ? (this._boundUniqueIdentifiers
+                    ? (() => {
+                        throw new Error(
+                          "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                        );
+                      })()
+                    : undefined,
+                  (this.identifiersInScope[identifier] = true),
+                  (this.identifiersAssigned[identifier] = initializer || true))
+                : undefined;
+            };
+            this.getter({
+              uniqueIdentifier: function(preferredName) {
+                preferredName = normalizePerferredName(preferredName);
+                return this.getUniqueIdentifierHandle(preferredName).identifier;
+              },
+              uniqueIdentifierHandle: function(preferredName, addToLets) {
+                preferredName = normalizePerferredName(preferredName);
+                return this.addUniqueIdentifierHandle(
+                  new UniqueIdentifierHandle(preferredName, addToLets)
+                );
+              }
+            });
+            this.prototype.addUniqueIdentifierHandle = function(uih) {
+              return !uih.scope
+                ? ((uih.scope = this),
+                  this.uniqueIdentifierHandles.push(uih),
+                  uih)
+                : undefined;
+            };
+            this.prototype.bindUniqueIdentifier = function(
+              preferredName,
+              uniqueIdentifierHandle,
+              addToLets = true
+            ) {
+              let identifier;
+              preferredName = normalizePerferredName(preferredName);
+              identifier = this.getAvailableIdentifierName(preferredName);
+              this.boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle;
+              this.identifiersInScope[identifier] = true;
+              if (addToLets) {
+                this.identifiersAssigned[identifier] = true;
+              }
+              return identifier;
+            };
+            this.prototype.getAvailableIdentifierName = function(
+              preferredName
+            ) {
+              let identifiersActiveInScope, count, name;
+              preferredName = normalizePerferredName(preferredName);
+              return !this._scopeUpdated
+                ? log.error({
+                    ScopeStnMixin: {
+                      getAvailableIdentifierName: [
+                        `cannot be called before updateScope completes: ${Caf.toString(
+                          this.className
+                        )}`,
+                        new Error()
+                      ]
+                    }
+                  })
+                : (({ identifiersActiveInScope } = this),
+                  !identifiersActiveInScope[preferredName]
                     ? preferredName
-                    : `caf ${Caf.toString(preferredName)}`
+                    : ((count = 0),
+                      (() => {
+                        while (
+                          identifiersActiveInScope[
+                            (name = `${Caf.toString(
+                              preferredName
+                            )}${Caf.toString((count += 1))}`)
+                          ]
+                        ) {
+                          name;
+                        }
+                      })(),
+                      name));
+            };
+            this.prototype.addChildScope = function(child) {
+              return !(child === this)
+                ? this.childScopes.push(child)
+                : undefined;
+            };
+            this.prototype.bindAllUniqueIdentifiersRequested = function() {
+              return this._uniqueIdentifierHandles
+                ? Caf.each2(
+                    this._uniqueIdentifierHandles,
+                    uniqueIdentifierHandle => uniqueIdentifierHandle.identifier
+                  )
+                : undefined;
+            };
+            this.prototype.getAutoLets = function() {
+              let identifiers;
+              this.bindAllUniqueIdentifiersRequested();
+              return this._identifiersAssigned &&
+                (identifiers = this.requiredIdentifierLets).length > 0
+                ? `let ${Caf.toString(identifiers.join(", "))}`
+                : undefined;
+            };
+            this.prototype.getBareInitializers = function() {
+              let identifiers;
+              this.bindAllUniqueIdentifiersRequested();
+              return this._identifiersAssigned &&
+                (identifiers = this.requiredIdentifierLets).length > 0
+                ? ((identifiers = Caf.array(identifiers, null, identifier =>
+                    identifier.match(/=/)
+                  )),
+                  identifiers.length > 0
+                    ? `${Caf.toString(identifiers.join("; "))}`
+                    : undefined)
+                : undefined;
+            };
+            this.prototype.updateScope = function(scope) {
+              this.scope = scope;
+              this.bindAllUniqueIdentifiersRequested();
+              this.scope.addChildScope(this);
+              Caf.each2(this.getChildrenToUpdateScope(), child =>
+                child.updateScope(this)
+              );
+              return (this._scopeUpdated = true);
+            };
+            this.prototype.generateImportMap = function(
+              map = {},
+              assignedInParentScope = this.identifiersAssignedInParentScopes
+            ) {
+              let assignedInThisOrParentScope;
+              assignedInThisOrParentScope = merge(
+                assignedInParentScope,
+                this._identifiersAssigned,
+                this._argumentNames
+              );
+              Caf.object(
+                this._identifiersUsed,
+                null,
+                (v, identifier) => !assignedInThisOrParentScope[identifier],
+                map
+              );
+              Caf.each2(
+                this._childScopes,
+                childScope =>
+                  childScope.generateImportMap(
+                    map,
+                    assignedInThisOrParentScope
+                  ),
+                childScope => !childScope.isImports
+              );
+              return map;
+            };
+            this.getter({
+              childrenToUpdateScope: function() {
+                return this.children;
+              },
+              uniqueIdentifierHandles: function() {
+                return (
+                  this._uniqueIdentifierHandles ||
+                  (this._uniqueIdentifierHandles = [])
                 );
-              };
-              this.getter({
-                childScopes: function() {
-                  return this._childScopes || (this._childScopes = []);
-                },
-                argumentNames: function() {
-                  return this._argumentNames || (this._argumentNames = {});
-                },
-                identifiersUsed: function() {
-                  return this._identifiersUsed || (this._identifiersUsed = {});
-                },
-                identifiersAssigned: function() {
-                  return (
-                    this._identifiersAssigned ||
-                    (this._identifiersAssigned = {})
-                  );
-                },
-                identifiersInScope: function() {
-                  return (
-                    this._identifiersInScope || (this._identifiersInScope = {})
-                  );
-                }
-              });
-              this.prototype.getInspectedProps = function() {
-                return merge(
-                  instanceSuper.getInspectedProps.apply(this, arguments),
-                  {
-                    scope: merge({
-                      argumentNames: this.argumentNames,
-                      identifiersUsed: this.identifiersUsed,
-                      identifiersAssigned: this.identifiersAssigned,
-                      identifiersInScope: this.identifiersInScope
-                    })
+              },
+              boundUniqueIdentifiers: function() {
+                return (
+                  this._boundUniqueIdentifiers ||
+                  (this._boundUniqueIdentifiers = {})
+                );
+              },
+              requiredIdentifierLets: function() {
+                let identifiersAssignedInParentScopes;
+                ({ identifiersAssignedInParentScopes } = this);
+                return Caf.array(
+                  this.identifiersAssigned,
+                  (initializer, identifier) =>
+                    isString(initializer)
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer
+                        )}`
+                      : initializer.toJsExpression != null
+                        ? `${Caf.toString(identifier)} = ${Caf.toString(
+                            initializer.toJsExpression()
+                          )}`
+                        : identifier,
+                  (initializer, identifier) =>
+                    !identifiersAssignedInParentScopes ||
+                    !identifiersAssignedInParentScopes[identifier]
+                );
+              },
+              identifiersActiveInScope: function() {
+                let out, scope, notDone;
+                out = merge(this._identifiersInScope);
+                ({ scope } = this);
+                notDone = true;
+                while (scope && notDone) {
+                  mergeInto(out, scope.identifiersAssigned);
+                  if (scope === scope.scope) {
+                    notDone = false;
+                  } else {
+                    ({ scope } = scope);
                   }
+                }
+                return out;
+              },
+              identifiersUsedInThisScopeButNotAssigned: function() {
+                let assigned;
+                assigned = this.identifiersAssignedInThisOrParentScopes;
+                return Caf.object(
+                  this.identifiersUsed,
+                  (v, k) => true,
+                  (v, k) => !assigned[k]
                 );
-              };
-              this.prototype.addArgumentName = function(identifier) {
-                this.identifiersInScope[identifier] = true;
-                return (this.argumentNames[identifier] = true);
-              };
-              this.prototype.addIdentifierUsed = function(identifier) {
-                if (this._boundUniqueIdentifiers) {
-                  throw new Error(
-                    "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
-                  );
-                }
-                this.identifiersInScope[identifier] = true;
-                return (this.identifiersUsed[identifier] = true);
-              };
-              this.prototype.addIdentifierAssigned = function(
-                identifier,
-                initializer
-              ) {
-                return identifier
-                  ? (this._boundUniqueIdentifiers
-                      ? (() => {
-                          throw new Error(
-                            "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                          );
-                        })()
-                      : undefined,
-                    (this.identifiersInScope[identifier] = true),
-                    (this.identifiersAssigned[identifier] =
-                      initializer || true))
-                  : undefined;
-              };
-              this.getter({
-                uniqueIdentifier: function(preferredName) {
-                  preferredName = normalizePerferredName(preferredName);
-                  return this.getUniqueIdentifierHandle(preferredName)
-                    .identifier;
-                },
-                uniqueIdentifierHandle: function(preferredName, addToLets) {
-                  preferredName = normalizePerferredName(preferredName);
-                  return this.addUniqueIdentifierHandle(
-                    new UniqueIdentifierHandle(preferredName, addToLets)
-                  );
-                }
-              });
-              this.prototype.addUniqueIdentifierHandle = function(uih) {
-                return !uih.scope
-                  ? ((uih.scope = this),
-                    this.uniqueIdentifierHandles.push(uih),
-                    uih)
-                  : undefined;
-              };
-              this.prototype.bindUniqueIdentifier = function(
-                preferredName,
-                uniqueIdentifierHandle,
-                addToLets = true
-              ) {
-                let identifier;
-                preferredName = normalizePerferredName(preferredName);
-                identifier = this.getAvailableIdentifierName(preferredName);
-                this.boundUniqueIdentifiers[
-                  identifier
-                ] = uniqueIdentifierHandle;
-                this.identifiersInScope[identifier] = true;
-                if (addToLets) {
-                  this.identifiersAssigned[identifier] = true;
-                }
-                return identifier;
-              };
-              this.prototype.getAvailableIdentifierName = function(
-                preferredName
-              ) {
-                let identifiersActiveInScope, count, name;
-                preferredName = normalizePerferredName(preferredName);
-                return !this._scopeUpdated
-                  ? log.error({
-                      ScopeStnMixin: {
-                        getAvailableIdentifierName: [
-                          `cannot be called before updateScope completes: ${Caf.toString(
-                            this.className
-                          )}`,
-                          new Error()
-                        ]
-                      }
-                    })
-                  : (({ identifiersActiveInScope } = this),
-                    !identifiersActiveInScope[preferredName]
-                      ? preferredName
-                      : ((count = 0),
-                        (() => {
-                          while (
-                            identifiersActiveInScope[
-                              (name = `${Caf.toString(
-                                preferredName
-                              )}${Caf.toString((count += 1))}`)
-                            ]
-                          ) {
-                            name;
-                          }
-                        })(),
-                        name));
-              };
-              this.prototype.addChildScope = function(child) {
-                return !(child === this)
-                  ? this.childScopes.push(child)
-                  : undefined;
-              };
-              this.prototype.bindAllUniqueIdentifiersRequested = function() {
-                return this._uniqueIdentifierHandles
-                  ? Caf.each2(
-                      this._uniqueIdentifierHandles,
-                      uniqueIdentifierHandle =>
-                        uniqueIdentifierHandle.identifier
+              },
+              identifiersUsedButNotAssigned: function() {
+                let assigned, ret;
+                assigned = this.identifiersAssignedInThisOrParentScopes;
+                ret = Caf.object(
+                  this.identifiersUsed,
+                  (v, k) => true,
+                  (v, k) => !assigned[k]
+                );
+                Caf.each2(this._childScopes, childScope =>
+                  mergeInto(ret, childScope.identifiersUsedButNotAssigned)
+                );
+                return (this._identifiersUsedButNotAssigned = ret);
+              },
+              identifiersAssignedInThisOrParentScopes: function() {
+                return merge(
+                  this._argumentNames,
+                  this._identifiersAssigned,
+                  this.identifiersAssignedInParentScopes
+                );
+              },
+              identifiersAssignedInParentScopes: function() {
+                return this.scope && this.scope !== this
+                  ? merge(
+                      this.scope.identifiersAssignedInParentScopes,
+                      this.scope._identifiersAssigned,
+                      this._argumentNames
                     )
                   : undefined;
-              };
-              this.prototype.getAutoLets = function() {
-                let identifiers;
-                this.bindAllUniqueIdentifiersRequested();
-                return this._identifiersAssigned &&
-                  (identifiers = this.requiredIdentifierLets).length > 0
-                  ? `let ${Caf.toString(identifiers.join(", "))}`
-                  : undefined;
-              };
-              this.prototype.getBareInitializers = function() {
-                let identifiers;
-                this.bindAllUniqueIdentifiersRequested();
-                return this._identifiersAssigned &&
-                  (identifiers = this.requiredIdentifierLets).length > 0
-                  ? ((identifiers = Caf.array(identifiers, null, identifier =>
-                      identifier.match(/=/)
-                    )),
-                    identifiers.length > 0
-                      ? `${Caf.toString(identifiers.join("; "))}`
-                      : undefined)
-                  : undefined;
-              };
-              this.prototype.updateScope = function(scope) {
-                this.scope = scope;
-                this.bindAllUniqueIdentifiersRequested();
-                this.scope.addChildScope(this);
-                Caf.each2(this.getChildrenToUpdateScope(), child =>
-                  child.updateScope(this)
-                );
-                return (this._scopeUpdated = true);
-              };
-              this.prototype.generateImportMap = function(
-                map = {},
-                assignedInParentScope = this.identifiersAssignedInParentScopes
-              ) {
-                let assignedInThisOrParentScope;
-                assignedInThisOrParentScope = merge(
-                  assignedInParentScope,
-                  this._identifiersAssigned,
-                  this._argumentNames
-                );
-                Caf.object(
-                  this._identifiersUsed,
-                  null,
-                  (v, identifier) => !assignedInThisOrParentScope[identifier],
-                  map
-                );
-                Caf.each2(
-                  this._childScopes,
-                  childScope =>
-                    childScope.generateImportMap(
-                      map,
-                      assignedInThisOrParentScope
-                    ),
-                  childScope => !childScope.isImports
-                );
-                return map;
-              };
-              this.getter({
-                childrenToUpdateScope: function() {
-                  return this.children;
-                },
-                uniqueIdentifierHandles: function() {
-                  return (
-                    this._uniqueIdentifierHandles ||
-                    (this._uniqueIdentifierHandles = [])
-                  );
-                },
-                boundUniqueIdentifiers: function() {
-                  return (
-                    this._boundUniqueIdentifiers ||
-                    (this._boundUniqueIdentifiers = {})
-                  );
-                },
-                requiredIdentifierLets: function() {
-                  let identifiersAssignedInParentScopes;
-                  ({ identifiersAssignedInParentScopes } = this);
-                  return Caf.array(
-                    this.identifiersAssigned,
-                    (initializer, identifier) =>
-                      isString(initializer)
-                        ? `${Caf.toString(identifier)} = ${Caf.toString(
-                            initializer
-                          )}`
-                        : initializer.toJsExpression != null
-                          ? `${Caf.toString(identifier)} = ${Caf.toString(
-                              initializer.toJsExpression()
-                            )}`
-                          : identifier,
-                    (initializer, identifier) =>
-                      !identifiersAssignedInParentScopes ||
-                      !identifiersAssignedInParentScopes[identifier]
-                  );
-                },
-                identifiersActiveInScope: function() {
-                  let out, scope, notDone;
-                  out = merge(this._identifiersInScope);
-                  ({ scope } = this);
-                  notDone = true;
-                  while (scope && notDone) {
-                    mergeInto(out, scope.identifiersAssigned);
-                    if (scope === scope.scope) {
-                      notDone = false;
-                    } else {
-                      ({ scope } = scope);
-                    }
-                  }
-                  return out;
-                },
-                identifiersUsedInThisScopeButNotAssigned: function() {
-                  let assigned;
-                  assigned = this.identifiersAssignedInThisOrParentScopes;
-                  return Caf.object(
-                    this.identifiersUsed,
-                    (v, k) => true,
-                    (v, k) => !assigned[k]
-                  );
-                },
-                identifiersUsedButNotAssigned: function() {
-                  let assigned, ret;
-                  assigned = this.identifiersAssignedInThisOrParentScopes;
-                  ret = Caf.object(
-                    this.identifiersUsed,
-                    (v, k) => true,
-                    (v, k) => !assigned[k]
-                  );
-                  Caf.each2(this._childScopes, childScope =>
-                    mergeInto(ret, childScope.identifiersUsedButNotAssigned)
-                  );
-                  return (this._identifiersUsedButNotAssigned = ret);
-                },
-                identifiersAssignedInThisOrParentScopes: function() {
-                  return merge(
-                    this._argumentNames,
-                    this._identifiersAssigned,
-                    this.identifiersAssignedInParentScopes
-                  );
-                },
-                identifiersAssignedInParentScopes: function() {
-                  return this.scope && this.scope !== this
-                    ? merge(
-                        this.scope.identifiersAssignedInParentScopes,
-                        this.scope._identifiersAssigned,
-                        this._argumentNames
-                      )
-                    : undefined;
-                }
-              });
-            }
-          ));
-        }
-      );
+              }
+            });
+          }
+        ));
+      };
     }
   );
 });
@@ -1572,123 +1549,121 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (mergeInto, isArray, compactFlatten) => {
       let StnRegistry, AccessorChainStn;
-      return (
-        (StnRegistry = __webpack_require__(4)),
-        (AccessorChainStn = Caf.defClass(
-          class AccessorChainStn extends __webpack_require__(22) {},
-          function(AccessorChainStn, classSuper, instanceSuper) {
-            this.abstractClass();
-            this.prototype.transform = function() {
-              return this.transformAccessorChain().setDefaultParseTreeNode(
-                this.parseTreeNode
-              );
-            };
-            this.prototype.transformAccessorChain = function() {
-              let accessorChain, out;
-              accessorChain = this.getLeftAccessorChain();
-              out = this._transformAccessorChainR(
-                accessorChain[0].value.transform(),
-                accessorChain
-              );
-              mergeInto(out.props, this.props, out.props);
-              return out;
-            };
-            this.prototype.getLeftAccessorChain = function() {
-              let current, accessorChain, accessor;
-              current = this;
-              accessorChain = [];
-              while (current && current instanceof AccessorChainStn) {
-                accessor = current;
-                current = current.value;
-                accessorChain.push(accessor);
-              }
-              return accessorChain.reverse();
-            };
-            this.prototype._transformAccessorChainR = function(
-              value,
+      StnRegistry = __webpack_require__(4);
+      return (AccessorChainStn = Caf.defClass(
+        class AccessorChainStn extends __webpack_require__(22) {},
+        function(AccessorChainStn, classSuper, instanceSuper) {
+          this.abstractClass();
+          this.prototype.transform = function() {
+            return this.transformAccessorChain().setDefaultParseTreeNode(
+              this.parseTreeNode
+            );
+          };
+          this.prototype.transformAccessorChain = function() {
+            let accessorChain, out;
+            accessorChain = this.getLeftAccessorChain();
+            out = this._transformAccessorChainR(
+              accessorChain[0].value.transform(),
               accessorChain
-            ) {
-              let done;
-              done = false;
-              Caf.each2(
-                accessorChain,
-                (accessor, i) => {
-                  let key, isFunctionInvocation, reset;
-                  ({ key, isFunctionInvocation } = accessor);
-                  if (isArray(key)) {
-                    key = Caf.array(key, kk => kk.transform());
-                  } else {
-                    key = key.transform();
-                  }
-                  return accessor.existanceTest
-                    ? ((reset = accessorChain.slice(i)),
-                      (done = true),
-                      (value = this._createExistanceAccessorStn(
-                        value,
-                        isFunctionInvocation,
-                        checkedValueStn => {
-                          let access;
-                          access = this._createPostTransformedAccessorStn(
-                            checkedValueStn,
-                            key,
-                            accessor
-                          );
-                          access.props.existanceTest = false;
-                          return i < accessorChain.length - 1
-                            ? this._transformAccessorChainR(
-                                access,
-                                accessorChain.slice(i + 1)
-                              )
-                            : access;
-                        }
-                      )))
-                    : (value = this._createPostTransformedAccessorStn(
-                        value,
-                        key,
-                        accessor
-                      ));
-                },
-                (accessor, i) => !done
-              );
-              return value;
-            };
-            this.prototype._createPostTransformedAccessorStn = function(
-              value,
-              key,
-              oldStn
-            ) {
-              return oldStn
-                .newTransformedInstance(
-                  oldStn.props,
-                  compactFlatten([value, key]),
-                  oldStn
-                )
-                .postTransform();
-            };
-            this.prototype._createExistanceAccessorStn = function(
-              value,
-              forFunctionInvocation,
-              createRightStn
-            ) {
-              let res, value1, value2;
-              res = forFunctionInvocation
-                ? this.getValueWithBaseCapture(value)
-                : this.getValueWithCapture(value);
-              ({ value1, value2 } = res);
-              return StnRegistry.BinaryOperatorStn(
-                { operator: "&&" },
-                StnRegistry.FunctionInvocationStn(
-                  StnRegistry.IdentifierStn({
-                    identifier: forFunctionInvocation ? "Caf.isF" : "Caf.exists"
-                  }),
-                  value1
-                ),
-                createRightStn(value2)
-              );
-            };
-          }
-        ))
-      );
+            );
+            mergeInto(out.props, this.props, out.props);
+            return out;
+          };
+          this.prototype.getLeftAccessorChain = function() {
+            let current, accessorChain, accessor;
+            current = this;
+            accessorChain = [];
+            while (current && current instanceof AccessorChainStn) {
+              accessor = current;
+              current = current.value;
+              accessorChain.push(accessor);
+            }
+            return accessorChain.reverse();
+          };
+          this.prototype._transformAccessorChainR = function(
+            value,
+            accessorChain
+          ) {
+            let done;
+            done = false;
+            Caf.each2(
+              accessorChain,
+              (accessor, i) => {
+                let key, isFunctionInvocation, reset;
+                ({ key, isFunctionInvocation } = accessor);
+                if (isArray(key)) {
+                  key = Caf.array(key, kk => kk.transform());
+                } else {
+                  key = key.transform();
+                }
+                return accessor.existanceTest
+                  ? ((reset = accessorChain.slice(i)),
+                    (done = true),
+                    (value = this._createExistanceAccessorStn(
+                      value,
+                      isFunctionInvocation,
+                      checkedValueStn => {
+                        let access;
+                        access = this._createPostTransformedAccessorStn(
+                          checkedValueStn,
+                          key,
+                          accessor
+                        );
+                        access.props.existanceTest = false;
+                        return i < accessorChain.length - 1
+                          ? this._transformAccessorChainR(
+                              access,
+                              accessorChain.slice(i + 1)
+                            )
+                          : access;
+                      }
+                    )))
+                  : (value = this._createPostTransformedAccessorStn(
+                      value,
+                      key,
+                      accessor
+                    ));
+              },
+              (accessor, i) => !done
+            );
+            return value;
+          };
+          this.prototype._createPostTransformedAccessorStn = function(
+            value,
+            key,
+            oldStn
+          ) {
+            return oldStn
+              .newTransformedInstance(
+                oldStn.props,
+                compactFlatten([value, key]),
+                oldStn
+              )
+              .postTransform();
+          };
+          this.prototype._createExistanceAccessorStn = function(
+            value,
+            forFunctionInvocation,
+            createRightStn
+          ) {
+            let res, value1, value2;
+            res = forFunctionInvocation
+              ? this.getValueWithBaseCapture(value)
+              : this.getValueWithCapture(value);
+            ({ value1, value2 } = res);
+            return StnRegistry.BinaryOperatorStn(
+              { operator: "&&" },
+              StnRegistry.FunctionInvocationStn(
+                StnRegistry.IdentifierStn({
+                  identifier: forFunctionInvocation ? "Caf.isF" : "Caf.exists"
+                }),
+                value1
+              ),
+              createRightStn(value2)
+            );
+          };
+        }
+      ));
     }
   );
 });
@@ -1768,101 +1743,97 @@ Caf.defMod(module, () => {
     ],
     (Nodes, isFunction, RootStn) => {
       let StnRegistry, CafParseNodeBaseClass;
-      return (
-        (StnRegistry = __webpack_require__(4)),
-        (CafParseNodeBaseClass = Caf.defClass(
-          class CafParseNodeBaseClass extends Nodes.Node {},
-          function(CafParseNodeBaseClass, classSuper, instanceSuper) {
-            this._createSubclassBase = function() {
-              let NodeSubclass;
-              return (NodeSubclass = Caf.defClass(
-                class NodeSubclass extends this {}
-              ));
-            };
-            this.prototype.getMatchStns = function() {
-              let stn;
-              stn = null;
+      StnRegistry = __webpack_require__(4);
+      return (CafParseNodeBaseClass = Caf.defClass(
+        class CafParseNodeBaseClass extends Nodes.Node {},
+        function(CafParseNodeBaseClass, classSuper, instanceSuper) {
+          this._createSubclassBase = function() {
+            let NodeSubclass;
+            return (NodeSubclass = Caf.defClass(
+              class NodeSubclass extends this {}
+            ));
+          };
+          this.prototype.getMatchStns = function() {
+            let stn;
+            stn = null;
+            return Caf.array(
+              this.matches,
+              m => stn,
+              m => (stn = Caf.isF(m.getStn) && m.getStn())
+            );
+          };
+          this.prototype.getStnFactory = function() {
+            return StnRegistry.get(this.stnFactory);
+          };
+          this.prototype.getStnChildren = function(left) {
+            let stn;
+            return this.stnChildren
+              ? isFunction(this.stnChildren)
+                ? this.stnChildren()
+                : this.stnChildren
+              : ((stn = null),
+                Caf.array(
+                  this.nonStnExtensionMatches,
+                  m => stn,
+                  m => (stn = m.getStn(left))
+                ));
+          };
+          this.getter({
+            isStnExtension: function() {
+              let cafBase;
+              return (
+                this.stnExtension ||
+                (Caf.exists((cafBase = this.presentMatches[0])) &&
+                  cafBase.isStnExtension)
+              );
+            },
+            stnExtensionMatches: function() {
               return Caf.array(
-                this.matches,
-                m => stn,
-                m => (stn = Caf.isF(m.getStn) && m.getStn())
+                this.presentMatches,
+                null,
+                m => m.getStn && m.isStnExtension
               );
-            };
-            this.prototype.getStnFactory = function() {
-              return StnRegistry.get(this.stnFactory);
-            };
-            this.prototype.getStnChildren = function(left) {
-              let stn;
-              return this.stnChildren
-                ? isFunction(this.stnChildren)
-                  ? this.stnChildren()
-                  : this.stnChildren
-                : ((stn = null),
-                  Caf.array(
-                    this.nonStnExtensionMatches,
-                    m => stn,
-                    m => (stn = m.getStn(left))
-                  ));
-            };
-            this.getter({
-              isStnExtension: function() {
-                let cafBase;
-                return (
-                  this.stnExtension ||
-                  (Caf.exists((cafBase = this.presentMatches[0])) &&
-                    cafBase.isStnExtension)
-                );
-              },
-              stnExtensionMatches: function() {
-                return Caf.array(
-                  this.presentMatches,
-                  null,
-                  m => m.getStn && m.isStnExtension
-                );
-              },
-              nonStnExtensionMatches: function() {
-                return Caf.array(
-                  this.presentMatches,
-                  null,
-                  m => m.getStn && !m.isStnExtension
-                );
-              }
-            });
-            this.prototype.getStn = function(left) {
-              let stn, factory, x, currentStnLabel;
-              stn = (factory = this.getStnFactory())
-                ? factory(
-                    { parseTreeNode: this },
-                    (Caf.isF(this.stnProps) && this.stnProps()) ||
-                      this.stnProps,
-                    left,
-                    this.getStnChildren()
-                  )
-                : ((x = this.getStnChildren(left)),
-                  x.length === 1 ? x[0] : x.length === 0 ? left : x);
-              Caf.each2(
-                this.stnExtensionMatches,
-                extension => (stn = extension.getStn(stn))
+            },
+            nonStnExtensionMatches: function() {
+              return Caf.array(
+                this.presentMatches,
+                null,
+                m => m.getStn && !m.isStnExtension
               );
-              if (Caf.exists(stn) && stn.props) {
-                currentStnLabel = stn.props.label;
-                if (!currentStnLabel || this.label) {
-                  stn.props.label = this.label || this.ruleName;
-                  stn.props.pluralLabel =
-                    this.pluralLabel || this.pluralRuleName;
-                }
+            }
+          });
+          this.prototype.getStn = function(left) {
+            let stn, factory, x, currentStnLabel;
+            stn = (factory = this.getStnFactory())
+              ? factory(
+                  { parseTreeNode: this },
+                  (Caf.isF(this.stnProps) && this.stnProps()) || this.stnProps,
+                  left,
+                  this.getStnChildren()
+                )
+              : ((x = this.getStnChildren(left)),
+                x.length === 1 ? x[0] : x.length === 0 ? left : x);
+            Caf.each2(
+              this.stnExtensionMatches,
+              extension => (stn = extension.getStn(stn))
+            );
+            if (Caf.exists(stn) && stn.props) {
+              currentStnLabel = stn.props.label;
+              if (!currentStnLabel || this.label) {
+                stn.props.label = this.label || this.ruleName;
+                stn.props.pluralLabel = this.pluralLabel || this.pluralRuleName;
               }
-              return this.isRoot ? RootStn(stn, { parseTreeNode: this }) : stn;
-            };
-            this.prototype.getTransformedSemanticTree = function() {
-              return this.getStn().transform();
-            };
-            this.prototype.toJs = function() {
-              return this.getTransformedSemanticTree().toJs();
-            };
-          }
-        ))
-      );
+            }
+            return this.isRoot ? RootStn(stn, { parseTreeNode: this }) : stn;
+          };
+          this.prototype.getTransformedSemanticTree = function() {
+            return this.getStn().transform();
+          };
+          this.prototype.toJs = function() {
+            return this.getTransformedSemanticTree().toJs();
+          };
+        }
+      ));
     }
   );
 });
@@ -2715,71 +2686,63 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let UniqueIdentifierHandle, StnRegistry, ValueBaseCaptureStn;
-    return (
-      (UniqueIdentifierHandle = __webpack_require__(12)),
-      (StnRegistry = __webpack_require__(4)),
-      (ValueBaseCaptureStn = Caf.defClass(
-        class ValueBaseCaptureStn extends __webpack_require__(2) {},
-        function(ValueBaseCaptureStn, classSuper, instanceSuper) {
-          this.abstractClass();
-          this.prototype.getValueWithBaseCapture = function(accessorStn) {
-            let AssignmentStn,
-              ReferenceStn,
-              IdentifierStn,
-              value,
-              key,
-              baseIdentifierHandle;
-            return accessorStn.isAccessor &&
-              !accessorStn.children[0].isReference
-              ? (({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
-                ({ value, key } = accessorStn),
-                {
-                  value1: new accessorStn.class(accessorStn.props, [
-                    AssignmentStn(
-                      IdentifierStn({
-                        identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
-                          "base"
-                        ))
-                      }),
-                      value
-                    ),
-                    key
-                  ]),
-                  value2: new accessorStn.class(accessorStn.props, [
-                    ReferenceStn({ identifierHandle: baseIdentifierHandle }),
-                    key
-                  ])
-                })
-              : accessorStn.isAccessor || accessorStn.type === "This"
-                ? { value1: accessorStn, value2: accessorStn }
-                : this.getValueWithCapture(accessorStn);
-          };
-          this.prototype.getValueWithCapture = function(accessorStn) {
-            let AssignmentStn,
-              ReferenceStn,
-              IdentifierStn,
-              baseIdentifierHandle;
-            return accessorStn.type === "Identifier" ||
-              accessorStn.type === "Reference"
-              ? { value1: accessorStn, value2: accessorStn }
-              : (({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
-                {
-                  value1: AssignmentStn(
+    UniqueIdentifierHandle = __webpack_require__(12);
+    StnRegistry = __webpack_require__(4);
+    return (ValueBaseCaptureStn = Caf.defClass(
+      class ValueBaseCaptureStn extends __webpack_require__(2) {},
+      function(ValueBaseCaptureStn, classSuper, instanceSuper) {
+        this.abstractClass();
+        this.prototype.getValueWithBaseCapture = function(accessorStn) {
+          let AssignmentStn,
+            ReferenceStn,
+            IdentifierStn,
+            value,
+            key,
+            baseIdentifierHandle;
+          return accessorStn.isAccessor && !accessorStn.children[0].isReference
+            ? (({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
+              ({ value, key } = accessorStn),
+              {
+                value1: new accessorStn.class(accessorStn.props, [
+                  AssignmentStn(
                     IdentifierStn({
                       identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
                         "base"
                       ))
                     }),
-                    accessorStn
+                    value
                   ),
-                  value2: ReferenceStn({
-                    identifierHandle: baseIdentifierHandle
-                  })
-                });
-          };
-        }
-      ))
-    );
+                  key
+                ]),
+                value2: new accessorStn.class(accessorStn.props, [
+                  ReferenceStn({ identifierHandle: baseIdentifierHandle }),
+                  key
+                ])
+              })
+            : accessorStn.isAccessor || accessorStn.type === "This"
+              ? { value1: accessorStn, value2: accessorStn }
+              : this.getValueWithCapture(accessorStn);
+        };
+        this.prototype.getValueWithCapture = function(accessorStn) {
+          let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;
+          return accessorStn.type === "Identifier" ||
+            accessorStn.type === "Reference"
+            ? { value1: accessorStn, value2: accessorStn }
+            : (({ AssignmentStn, ReferenceStn, IdentifierStn } = StnRegistry),
+              {
+                value1: AssignmentStn(
+                  IdentifierStn({
+                    identifierHandle: (baseIdentifierHandle = new UniqueIdentifierHandle(
+                      "base"
+                    ))
+                  }),
+                  accessorStn
+                ),
+                value2: ReferenceStn({ identifierHandle: baseIdentifierHandle })
+              });
+        };
+      }
+    ));
   })();
 });
 
@@ -2928,7 +2891,7 @@ __webpack_require__(113);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.56.0"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.56.1"}
 
 /***/ }),
 /* 30 */
@@ -3693,74 +3656,67 @@ Caf.defMod(module, () => {
     ["log", "mergeInto"],
     [global, __webpack_require__(7)],
     (log, mergeInto) => {
-      return (
-        __webpack_require__(28),
-        {
-          version: __webpack_require__(29).version,
-          compile: function(source, options = {}) {
-            let bare,
-              inlineMap,
-              sourceMap,
-              sourceFile,
-              transformedStn,
-              stn,
-              parseTree,
-              e,
-              cafTemp;
-            return (() => {
-              try {
-                ({ bare, inlineMap, sourceMap, sourceFile } = options);
-                transformedStn = (stn = (parseTree = __webpack_require__(17).parse(
-                  source,
-                  options
-                )).getStn())
-                  .validateAll()
-                  .transform();
-                return {
-                  compiled: transformedStn.toJsUsingSourceNode({
-                    module: !bare,
-                    inlineMap,
-                    sourceMap,
-                    sourceFile
-                  })
-                };
-              } catch (cafError) {
-                e = cafError;
-                if (
-                  !(
-                    e.location != null ||
-                    e.sourceFile != null ||
-                    e.message.match(/parse|expect/i)
-                  )
-                ) {
-                  log.error({
-                    CaffeineScriptBETA: {
-                      message:
-                        "Uh-oh! There was an internal error compiling your file. We'd love to fix it. Could you submit an issue with a copy of the code that won't compile?\n\nSubmit issues here: https://github.com/caffeine-suite/caffeine-script/issues\n\nSorry for the inconvenience. Thank you so much for trying CaffeineScript!",
-                      options,
-                      parseTree,
-                      stn,
-                      transformedStn
-                    }
-                  });
-                }
-                if (options.debug) {
-                  (cafTemp = e.info) != null ? cafTemp : (e.info = {});
-                  mergeInto(e.info, {
+      __webpack_require__(28);
+      return {
+        version: __webpack_require__(29).version,
+        compile: function(source, options = {}) {
+          let bare,
+            inlineMap,
+            sourceMap,
+            sourceFile,
+            transformedStn,
+            stn,
+            parseTree,
+            e,
+            cafTemp;
+          return (() => {
+            try {
+              ({ bare, inlineMap, sourceMap, sourceFile } = options);
+              transformedStn = (stn = (parseTree = __webpack_require__(17).parse(
+                source,
+                options
+              )).getStn())
+                .validateAll()
+                .transform();
+              return {
+                compiled: transformedStn.toJsUsingSourceNode({
+                  module: !bare,
+                  inlineMap,
+                  sourceMap,
+                  sourceFile
+                })
+              };
+            } catch (cafError) {
+              e = cafError;
+              if (
+                !(
+                  e.location != null ||
+                  e.sourceFile != null ||
+                  e.message.match(/parse|expect/i)
+                )
+              ) {
+                log.error({
+                  CaffeineScriptBETA: {
+                    message:
+                      "Uh-oh! There was an internal error compiling your file. We'd love to fix it. Could you submit an issue with a copy of the code that won't compile?\n\nSubmit issues here: https://github.com/caffeine-suite/caffeine-script/issues\n\nSorry for the inconvenience. Thank you so much for trying CaffeineScript!",
                     options,
                     parseTree,
                     stn,
                     transformedStn
-                  });
-                }
-                return (() => {
-                  throw e;
-                })();
+                  }
+                });
               }
-            })();
-          }
+              if (options.debug) {
+                (cafTemp = e.info) != null ? cafTemp : (e.info = {});
+                mergeInto(e.info, { options, parseTree, stn, transformedStn });
+              }
+              return (() => {
+                throw e;
+              })();
+            }
+          })();
         }
-      );
+      };
     }
   );
 });
@@ -4210,102 +4166,100 @@ Caf.defMod(module, () => {
     ],
     Extensions => {
       let matchBlock, upToButNotEol;
-      return (
-        ({ matchBlock } = Extensions.IndentBlocks),
-        (upToButNotEol = /[^\n]*/y),
-        function() {
-          let oneLessBlockSubparser;
-          this.rule({
-            lineStartExpression: "multilineImplicitObject",
-            implicitArrayOrExpression: ["implicitArray", "expression"],
-            expression: [
-              "binOpExpression",
-              "unaryOpExpression",
-              "expressionWithoutBinOps"
-            ],
-            expressionWithoutBinOps: [
-              "incDecUnaryExpression",
-              "controlStatement",
-              "comprehension",
-              "classDefinition",
-              "destructuringAssignment",
-              "structuredLiteral",
-              "throwExpression",
-              "functionDefinition",
-              "value"
-            ],
-            structuredLiteral: ["object", "array"]
-          });
-          this.rule({
-            incDecUnaryExpression: [
-              "prefix:/\\+\\+|--/ assignableValue",
-              "assignableValue postfix:/\\+\\+|--/",
-              {
-                stnFactory: "UnaryOperatorStn",
-                stnProps: function() {
-                  let cafBase;
-                  return {
-                    operand: (this.prefix || this.postfix).toString(),
-                    tail: !!(
-                      Caf.exists((cafBase = this.postfix)) && cafBase.toString()
-                    )
-                  };
-                }
+      ({ matchBlock } = Extensions.IndentBlocks);
+      upToButNotEol = /[^\n]*/y;
+      return function() {
+        let oneLessBlockSubparser;
+        this.rule({
+          lineStartExpression: "multilineImplicitObject",
+          implicitArrayOrExpression: ["implicitArray", "expression"],
+          expression: [
+            "binOpExpression",
+            "unaryOpExpression",
+            "expressionWithoutBinOps"
+          ],
+          expressionWithoutBinOps: [
+            "incDecUnaryExpression",
+            "controlStatement",
+            "comprehension",
+            "classDefinition",
+            "destructuringAssignment",
+            "structuredLiteral",
+            "throwExpression",
+            "functionDefinition",
+            "value"
+          ],
+          structuredLiteral: ["object", "array"]
+        });
+        this.rule({
+          incDecUnaryExpression: [
+            "prefix:/\\+\\+|--/ assignableValue",
+            "assignableValue postfix:/\\+\\+|--/",
+            {
+              stnFactory: "UnaryOperatorStn",
+              stnProps: function() {
+                let cafBase;
+                return {
+                  operand: (this.prefix || this.postfix).toString(),
+                  tail: !!(
+                    Caf.exists((cafBase = this.postfix)) && cafBase.toString()
+                  )
+                };
               }
-            ]
-          });
-          this.rule(
-            { throwExpression: "throw _ expressionWithoutBinOps" },
-            { stnFactory: "ThrowStn" }
-          );
-          oneLessBlockSubparser = rule =>
-            function(parentNode) {
-              let nextOffset,
-                source,
-                offset,
-                originalOffset,
-                match,
-                m,
-                endOffset,
-                matchLength,
-                expressionSource;
-              ({ nextOffset, source } = parentNode);
-              offset = nextOffset;
-              originalOffset = offset;
-              upToButNotEol.lastIndex = offset;
-              return (match = upToButNotEol.exec(source))
-                ? (([m] = match),
-                  (endOffset = offset += m.length),
-                  (() => {
-                    while ((match = matchBlock(source, offset))) {
-                      endOffset = offset;
-                      ({ matchLength } = match);
-                      offset += matchLength;
-                    }
-                  })(),
-                  (expressionSource = source.slice(originalOffset, endOffset)),
-                  parentNode.subparse(expressionSource, {
-                    allowPartialMatch: true,
-                    rule,
-                    originalOffset,
-                    originalMatchLength: endOffset - originalOffset
-                  }))
-                : undefined;
-            };
-          return this.rule({
-            expressionWithOneLessBlock: {
-              parse: oneLessBlockSubparser("implicitArrayOrExpression")
-            },
-            lineOfStatementsWithOneLessBlock: {
-              parse: oneLessBlockSubparser("lineOfStatementsOrBlock")
-            },
-            keywordLabeledStatementsWithOneLessBlock: [
-              "lineOfStatementsWithOneLessBlock",
-              "statementBlock"
-            ]
-          });
-        }
-      );
+            }
+          ]
+        });
+        this.rule(
+          { throwExpression: "throw _ expressionWithoutBinOps" },
+          { stnFactory: "ThrowStn" }
+        );
+        oneLessBlockSubparser = rule =>
+          function(parentNode) {
+            let nextOffset,
+              source,
+              offset,
+              originalOffset,
+              match,
+              m,
+              endOffset,
+              matchLength,
+              expressionSource;
+            ({ nextOffset, source } = parentNode);
+            offset = nextOffset;
+            originalOffset = offset;
+            upToButNotEol.lastIndex = offset;
+            return (match = upToButNotEol.exec(source))
+              ? (([m] = match),
+                (endOffset = offset += m.length),
+                (() => {
+                  while ((match = matchBlock(source, offset))) {
+                    endOffset = offset;
+                    ({ matchLength } = match);
+                    offset += matchLength;
+                  }
+                })(),
+                (expressionSource = source.slice(originalOffset, endOffset)),
+                parentNode.subparse(expressionSource, {
+                  allowPartialMatch: true,
+                  rule,
+                  originalOffset,
+                  originalMatchLength: endOffset - originalOffset
+                }))
+              : undefined;
+          };
+        return this.rule({
+          expressionWithOneLessBlock: {
+            parse: oneLessBlockSubparser("implicitArrayOrExpression")
+          },
+          lineOfStatementsWithOneLessBlock: {
+            parse: oneLessBlockSubparser("lineOfStatementsOrBlock")
+          },
+          keywordLabeledStatementsWithOneLessBlock: [
+            "lineOfStatementsWithOneLessBlock",
+            "statementBlock"
+          ]
+        });
+      };
     }
   );
 });
@@ -5007,158 +4961,148 @@ Caf.defMod(module, () => {
     ],
     (Extensions, StringStn, InterpolatedStringStn) => {
       let wordStringChar, blockStringStartChar;
-      return (
-        (wordStringChar = /[^\n\s,)\]\}]/),
-        (blockStringStartChar = /( |\n|[^.\n\s,)\]\}])/),
-        function() {
-          this.rule({
-            doubleQuote: /"/,
-            singleQuote: /'/,
-            interpolationStart: /\#\{/,
-            interpolationEnd: /\}/,
-            dqStringMiddle: /([^"\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
-            sqStringMiddle: /([^'\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
-            blockStringMiddle: /([^\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/
-          });
-          this.rule({
-            stringLiteral: [
-              {
-                pattern: `/""/ tripple:/"/? &/${Caf.toString(
-                  blockStringStartChar.source
-                )}/ stringBlock`,
-                getStn: function() {
-                  let ret;
-                  ret = this.stringBlock.getStn();
-                  if (!this.tripple) {
-                    Caf.isF(ret.compactNewLines) && ret.compactNewLines();
-                    Caf.isF(ret.trimLeft) && ret.trimLeft();
-                  }
-                  Caf.isF(ret.trimRight) && ret.trimRight();
-                  return ret;
-                }
-              },
-              {
-                pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock",
-                getStn: function() {
-                  let ret;
-                  ret = StringStn({
-                    parseTreeNode: this,
-                    value: this.unparsedBlock.toString()
-                  });
-                  if (!this.tripple) {
-                    ret.compactNewLines();
-                  }
-                  return ret;
-                }
-              },
-              {
-                pattern: RegExp(
-                  `:(?!:)${Caf.toString(wordStringChar.source)}+`
-                ),
-                getStn: function() {
-                  return StringStn({
-                    parseTreeNode: this,
-                    value: this.toString().slice(1)
-                  });
-                }
-              },
-              {
-                pattern: /#[$\w\u007f-\uffff]+/,
-                getStn: function() {
-                  return StringStn({
-                    parseTreeNode: this,
-                    value: this.toString()
-                  });
-                }
-              },
-              {
-                pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
-                getStn: function() {
-                  return StringStn({
-                    parseTreeNode: this,
-                    value: this.toString()
-                  });
-                }
-              }
-            ],
-            stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock(
-              { rule: "stringBlockBody" }
-            )
-          });
-          this.rule(
+      wordStringChar = /[^\n\s,)\]\}]/;
+      blockStringStartChar = /( |\n|[^.\n\s,)\]\}])/;
+      return function() {
+        this.rule({
+          doubleQuote: /"/,
+          singleQuote: /'/,
+          interpolationStart: /\#\{/,
+          interpolationEnd: /\}/,
+          dqStringMiddle: /([^"\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+          sqStringMiddle: /([^'\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/,
+          blockStringMiddle: /([^\\#]|\u[0-9a-f]{4}|\u\{[0-9a-f]+\}|\x[0-9a-f]{2}|\\(?:[1-7][0-7]{0,2}|[0-7]{2,3})|\\.|\#(?!\{))*/
+        });
+        this.rule({
+          stringLiteral: [
             {
-              stringLiteral: [
-                "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
-                "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
-              ],
-              stringBlockBody:
-                "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
-            },
-            {
-              getStnChildren: function(appendTo = []) {
-                let cafBase;
-                if (this.mid.matchLength > 0) {
-                  appendTo.push(
-                    StringStn({
-                      parseTreeNode: this,
-                      value: this.mid.toString()
-                    })
-                  );
-                }
-                Caf.exists((cafBase = this.interpolation)) &&
-                  cafBase.getStnChildren(appendTo);
-                return appendTo;
-              },
+              pattern: `/""/ tripple:/"/? &/${Caf.toString(
+                blockStringStartChar.source
+              )}/ stringBlock`,
               getStn: function() {
                 let ret;
-                ret = this.interpolation
-                  ? InterpolatedStringStn(this.getStnChildren())
-                  : StringStn({
-                      parseTreeNode: this,
-                      value: this.mid.toString()
-                    });
-                if (this.bracketStart) {
-                  ret.compactNewLines(true, true);
+                ret = this.stringBlock.getStn();
+                if (!this.tripple) {
+                  Caf.isF(ret.compactNewLines) && ret.compactNewLines();
+                  Caf.isF(ret.trimLeft) && ret.trimLeft();
+                }
+                Caf.isF(ret.trimRight) && ret.trimRight();
+                return ret;
+              }
+            },
+            {
+              pattern: "/''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock",
+              getStn: function() {
+                let ret;
+                ret = StringStn({
+                  parseTreeNode: this,
+                  value: this.unparsedBlock.toString()
+                });
+                if (!this.tripple) {
+                  ret.compactNewLines();
                 }
                 return ret;
               }
-            }
-          );
-          this.rule({
-            interpolation: [
-              "interpolationStart expression interpolationEnd",
-              "interpolationStart expression:requiredValue _end? interpolationEnd"
-            ]
-          });
-          return this.rule(
-            {
-              dqStringInterpolation:
-                "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
-              sqStringInterpolation:
-                "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
-              blockStringInterpolation:
-                "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
             },
             {
-              getStnChildren: function(appendTo = []) {
-                let cafBase;
-                appendTo.push(this.interpolation.expression.getStn());
-                if (this.mid.matchLength > 0) {
-                  appendTo.push(
-                    StringStn({
-                      parseTreeNode: this,
-                      value: this.mid.toString()
-                    })
-                  );
-                }
-                Caf.exists((cafBase = this.interpolationContinues)) &&
-                  cafBase.getStnChildren(appendTo);
-                return appendTo;
+              pattern: RegExp(`:(?!:)${Caf.toString(wordStringChar.source)}+`),
+              getStn: function() {
+                return StringStn({
+                  parseTreeNode: this,
+                  value: this.toString().slice(1)
+                });
+              }
+            },
+            {
+              pattern: /#[$\w\u007f-\uffff]+/,
+              getStn: function() {
+                return StringStn({
+                  parseTreeNode: this,
+                  value: this.toString()
+                });
+              }
+            },
+            {
+              pattern: /[-+]?(?!00)[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?[$\w\u007f-\uffff]+/,
+              getStn: function() {
+                return StringStn({
+                  parseTreeNode: this,
+                  value: this.toString()
+                });
               }
             }
-          );
-        }
-      );
+          ],
+          stringBlock: Extensions.IndentBlocks.getPropsToSubparseToEolAndBlock({
+            rule: "stringBlockBody"
+          })
+        });
+        this.rule(
+          {
+            stringLiteral: [
+              "bracketStart:doubleQuote mid:dqStringMiddle interpolation:dqStringInterpolation? doubleQuote",
+              "bracketStart:singleQuote mid:sqStringMiddle interpolation:sqStringInterpolation? singleQuote"
+            ],
+            stringBlockBody:
+              "/ *\n/? mid:blockStringMiddle interpolation:blockStringInterpolation?"
+          },
+          {
+            getStnChildren: function(appendTo = []) {
+              let cafBase;
+              if (this.mid.matchLength > 0) {
+                appendTo.push(
+                  StringStn({ parseTreeNode: this, value: this.mid.toString() })
+                );
+              }
+              Caf.exists((cafBase = this.interpolation)) &&
+                cafBase.getStnChildren(appendTo);
+              return appendTo;
+            },
+            getStn: function() {
+              let ret;
+              ret = this.interpolation
+                ? InterpolatedStringStn(this.getStnChildren())
+                : StringStn({
+                    parseTreeNode: this,
+                    value: this.mid.toString()
+                  });
+              if (this.bracketStart) {
+                ret.compactNewLines(true, true);
+              }
+              return ret;
+            }
+          }
+        );
+        this.rule({
+          interpolation: [
+            "interpolationStart expression interpolationEnd",
+            "interpolationStart expression:requiredValue _end? interpolationEnd"
+          ]
+        });
+        return this.rule(
+          {
+            dqStringInterpolation:
+              "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?",
+            sqStringInterpolation:
+              "interpolation mid:sqStringMiddle interpolationContinues:sqStringInterpolation?",
+            blockStringInterpolation:
+              "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
+          },
+          {
+            getStnChildren: function(appendTo = []) {
+              let cafBase;
+              appendTo.push(this.interpolation.expression.getStn());
+              if (this.mid.matchLength > 0) {
+                appendTo.push(
+                  StringStn({ parseTreeNode: this, value: this.mid.toString() })
+                );
+              }
+              Caf.exists((cafBase = this.interpolationContinues)) &&
+                cafBase.getStnChildren(appendTo);
+              return appendTo;
+            }
+          }
+        );
+      };
     }
   );
 });
@@ -5178,28 +5122,26 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (upperCamelCase, Error) => {
       let StnRegistry;
-      return (
-        (StnRegistry = __webpack_require__(4)),
-        {
-          tagMacro: {
-            pattern: "/</ identifier />/ actualToEolAndBlock",
-            getStnFactory: function() {
-              let factoryName, factory;
-              factoryName = upperCamelCase(this.identifier.text);
-              factory =
-                StnRegistry[factoryName] || StnRegistry[factoryName + "Stn"];
-              if (!factory) {
-                throw new Error(
-                  `TagMacro: cannot find factory for: ${Caf.toString(
-                    this.identifier.text
-                  )}`
-                );
-              }
-              return factory;
+      StnRegistry = __webpack_require__(4);
+      return {
+        tagMacro: {
+          pattern: "/</ identifier />/ actualToEolAndBlock",
+          getStnFactory: function() {
+            let factoryName, factory;
+            factoryName = upperCamelCase(this.identifier.text);
+            factory =
+              StnRegistry[factoryName] || StnRegistry[factoryName + "Stn"];
+            if (!factory) {
+              throw new Error(
+                `TagMacro: cannot find factory for: ${Caf.toString(
+                  this.identifier.text
+                )}`
+              );
             }
+            return factory;
           }
         }
-      );
+      };
     }
   );
 });
@@ -5555,23 +5497,21 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let ImportStn, ImportBodyStn;
-    return (
-      (ImportStn = __webpack_require__(20)),
-      (ImportBodyStn = Caf.defClass(
-        class ImportBodyStn extends __webpack_require__(9)(
-          __webpack_require__(2)
-        ) {},
-        function(ImportBodyStn, classSuper, instanceSuper) {
-          this.prototype.isImports = true;
-          this.prototype.toJs = function(options) {
-            return this.children[0].toJs(options);
-          };
-          this.prototype.toSourceNode = function(options) {
-            return this.children[0].toSourceNode(options);
-          };
-        }
-      ))
-    );
+    ImportStn = __webpack_require__(20);
+    return (ImportBodyStn = Caf.defClass(
+      class ImportBodyStn extends __webpack_require__(9)(
+        __webpack_require__(2)
+      ) {},
+      function(ImportBodyStn, classSuper, instanceSuper) {
+        this.prototype.isImports = true;
+        this.prototype.toJs = function(options) {
+          return this.children[0].toJs(options);
+        };
+        this.prototype.toSourceNode = function(options) {
+          return this.children[0].toSourceNode(options);
+        };
+      }
+    ));
   })();
 });
 
@@ -5590,116 +5530,112 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (compactFlatten, present) => {
       let StatementsStn, RootStn;
-      return (
-        (StatementsStn = __webpack_require__(21)),
-        (RootStn = Caf.defClass(
-          class RootStn extends __webpack_require__(9)(
-            __webpack_require__(2)
-          ) {
-            constructor(props, children) {
-              super(...arguments);
-              this._scopeHasBeenUpdated = false;
-              this.statements = children[0];
-            }
-          },
-          function(RootStn, classSuper, instanceSuper) {
-            this.prototype.isImports = true;
-            this.getter({
-              statementsSourceNodes: function() {
-                return this.statements.toSourceNode();
-              }
-            });
-            this.prototype.toSourceNode = function(options = {}) {
-              let identifiersToImport,
-                statementsSourceNode,
-                lets,
-                statementsSourceNodes,
-                autoLets;
-              this.rootUpdateScope();
-              return this.createSourceNode(
-                options.bare
-                  ? [this.getBareInitializers(), this.statementsSourceNodes]
-                  : options.module
-                    ? ((identifiersToImport = Caf.array(
-                        this.generateImportMap(),
-                        (v, k) =>
-                          `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                      )),
-                      (statementsSourceNode = this.statements.toSourceNode({
-                        returnAction: true
-                      })),
-                      (lets = compactFlatten([
-                        identifiersToImport,
-                        this.requiredIdentifierLets
-                      ])),
-                      [
-                        "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
-                        lets.length > 0
-                          ? `let ${Caf.toString(lets.join(", "))}; `
-                          : undefined,
-                        statementsSourceNode,
-                        "});"
-                      ])
-                    : (({ statementsSourceNodes } = this),
-                      [
-                        present((autoLets = this.getAutoLets()))
-                          ? [autoLets, "; "]
-                          : undefined,
-                        statementsSourceNodes
-                      ])
-              );
-            };
-            this.prototype.rootUpdateScope = function() {
-              return !this._scopeHasBeenUpdated
-                ? ((this._scopeHasBeenUpdated = true), this.updateScope(this))
-                : undefined;
-            };
-            this.prototype.toJsModule = function() {
-              let identifiersToImport, statementsJs, lets, statements;
-              this.rootUpdateScope();
-              identifiersToImport = Caf.array(
-                this.generateImportMap(),
-                (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
-              );
-              statementsJs = this.statements.toFunctionBodyJs();
-              lets = compactFlatten([
-                identifiersToImport,
-                this.requiredIdentifierLets
-              ]);
-              statements = compactFlatten([
-                lets.length > 0
-                  ? `let ${Caf.toString(lets.join(", "))}`
-                  : undefined,
-                statementsJs
-              ]);
-              return `"use strict"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
-                statements.join("; ")
-              )};});`;
-            };
-            this.prototype.toJs = function() {
-              let statements;
-              this.rootUpdateScope();
-              statements = this.statements.toJs();
-              return (
-                compactFlatten([this.getAutoLets(), statements]).join("; ") +
-                ";"
-              );
-            };
-            this.prototype.toBareJs = function() {
-              let statements;
-              this.rootUpdateScope();
-              statements = this.statements.toJs();
-              return (
-                compactFlatten([
-                  "Caf = global.Caf || require('caffeine-script-runtime')",
-                  this.getBareInitializers(),
-                  statements
-                ]).join(";\n") + ";"
-              );
-            };
+      StatementsStn = __webpack_require__(21);
+      return (RootStn = Caf.defClass(
+        class RootStn extends __webpack_require__(9)(
+          __webpack_require__(2)
+        ) {
+          constructor(props, children) {
+            super(...arguments);
+            this._scopeHasBeenUpdated = false;
+            this.statements = children[0];
           }
-        ))
-      );
+        },
+        function(RootStn, classSuper, instanceSuper) {
+          this.prototype.isImports = true;
+          this.getter({
+            statementsSourceNodes: function() {
+              return this.statements.toSourceNode();
+            }
+          });
+          this.prototype.toSourceNode = function(options = {}) {
+            let identifiersToImport,
+              statementsSourceNode,
+              lets,
+              statementsSourceNodes,
+              autoLets;
+            this.rootUpdateScope();
+            return this.createSourceNode(
+              options.bare
+                ? [this.getBareInitializers(), this.statementsSourceNodes]
+                : options.module
+                  ? ((identifiersToImport = Caf.array(
+                      this.generateImportMap(),
+                      (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                    )),
+                    (statementsSourceNode = this.statements.toSourceNode({
+                      returnAction: true
+                    })),
+                    (lets = compactFlatten([
+                      identifiersToImport,
+                      this.requiredIdentifierLets
+                    ])),
+                    [
+                      "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                      lets.length > 0
+                        ? `let ${Caf.toString(lets.join(", "))}; `
+                        : undefined,
+                      statementsSourceNode,
+                      "});"
+                    ])
+                  : (({ statementsSourceNodes } = this),
+                    [
+                      present((autoLets = this.getAutoLets()))
+                        ? [autoLets, "; "]
+                        : undefined,
+                      statementsSourceNodes
+                    ])
+            );
+          };
+          this.prototype.rootUpdateScope = function() {
+            return !this._scopeHasBeenUpdated
+              ? ((this._scopeHasBeenUpdated = true), this.updateScope(this))
+              : undefined;
+          };
+          this.prototype.toJsModule = function() {
+            let identifiersToImport, statementsJs, lets, statements;
+            this.rootUpdateScope();
+            identifiersToImport = Caf.array(
+              this.generateImportMap(),
+              (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
+            );
+            statementsJs = this.statements.toFunctionBodyJs();
+            lets = compactFlatten([
+              identifiersToImport,
+              this.requiredIdentifierLets
+            ]);
+            statements = compactFlatten([
+              lets.length > 0
+                ? `let ${Caf.toString(lets.join(", "))}`
+                : undefined,
+              statementsJs
+            ]);
+            return `"use strict"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
+              statements.join("; ")
+            )};});`;
+          };
+          this.prototype.toJs = function() {
+            let statements;
+            this.rootUpdateScope();
+            statements = this.statements.toJs();
+            return (
+              compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
+            );
+          };
+          this.prototype.toBareJs = function() {
+            let statements;
+            this.rootUpdateScope();
+            statements = this.statements.toJs();
+            return (
+              compactFlatten([
+                "Caf = global.Caf || require('caffeine-script-runtime')",
+                this.getBareInitializers(),
+                statements
+              ]).join(";\n") + ";"
+            );
+          };
+        }
+      ));
     }
   );
 });
@@ -7248,73 +7184,71 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let StnRegistry, ObjectStn;
-    return (
-      (StnRegistry = __webpack_require__(4)),
-      (ObjectStn = Caf.defClass(
-        class ObjectStn extends __webpack_require__(2) {},
-        function(ObjectStn, classSuper, instanceSuper) {
-          let splitObjectsAtSameProps;
-          this.getter({
-            isEmptyObjectLiteral: function() {
-              return !this.children || this.children.length === 0;
-            }
-          });
-          this.prototype.toJs = function(options) {
-            let out;
-            out = `{${Caf.toString(
-              Caf.array(this.children, c => c.toJs()).join(", ")
-            )}}`;
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.statement)
-              ? `(${Caf.toString(out)})`
-              : out;
-          };
-          this.prototype.toSourceNode = function(options) {
-            let base;
-            base = [
-              "{",
-              this.childrenToSourceNodes(", ", { expression: true }),
-              "}"
-            ];
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.statement)
-              ? this.createSourceNode("(", base, ")")
-              : this.createSourceNode(base);
-          };
-          splitObjectsAtSameProps = function(children) {
-            let currentDefined, listOfObjectLiterals, currentOrder;
-            currentDefined = {};
-            listOfObjectLiterals = [(currentOrder = [])];
-            Caf.each2(children, child => {
-              let found, value;
-              if ((found = child.find(/ObjectPropNameStn/))) {
-                [
-                  {
-                    props: { value }
-                  }
-                ] = found;
-                if (currentDefined[value]) {
-                  currentDefined = {};
-                  listOfObjectLiterals.push((currentOrder = []));
+    StnRegistry = __webpack_require__(4);
+    return (ObjectStn = Caf.defClass(
+      class ObjectStn extends __webpack_require__(2) {},
+      function(ObjectStn, classSuper, instanceSuper) {
+        let splitObjectsAtSameProps;
+        this.getter({
+          isEmptyObjectLiteral: function() {
+            return !this.children || this.children.length === 0;
+          }
+        });
+        this.prototype.toJs = function(options) {
+          let out;
+          out = `{${Caf.toString(
+            Caf.array(this.children, c => c.toJs()).join(", ")
+          )}}`;
+          return (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.statement)
+            ? `(${Caf.toString(out)})`
+            : out;
+        };
+        this.prototype.toSourceNode = function(options) {
+          let base;
+          base = [
+            "{",
+            this.childrenToSourceNodes(", ", { expression: true }),
+            "}"
+          ];
+          return (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.statement)
+            ? this.createSourceNode("(", base, ")")
+            : this.createSourceNode(base);
+        };
+        splitObjectsAtSameProps = function(children) {
+          let currentDefined, listOfObjectLiterals, currentOrder;
+          currentDefined = {};
+          listOfObjectLiterals = [(currentOrder = [])];
+          Caf.each2(children, child => {
+            let found, value;
+            if ((found = child.find(/ObjectPropNameStn/))) {
+              [
+                {
+                  props: { value }
                 }
-                currentDefined[value] = true;
+              ] = found;
+              if (currentDefined[value]) {
+                currentDefined = {};
+                listOfObjectLiterals.push((currentOrder = []));
               }
-              return currentOrder.push(child);
-            });
-            return listOfObjectLiterals;
-          };
-          this.newInstance = function(props, children) {
-            let listOfObjectLiterals;
-            listOfObjectLiterals = splitObjectsAtSameProps(children);
-            return listOfObjectLiterals.length === 1
-              ? new this(props, children)
-              : new StnRegistry.ArrayStn(
-                  Caf.array(listOfObjectLiterals, c => new this(props, c))
-                );
-          };
-        }
-      ))
-    );
+              currentDefined[value] = true;
+            }
+            return currentOrder.push(child);
+          });
+          return listOfObjectLiterals;
+        };
+        this.newInstance = function(props, children) {
+          let listOfObjectLiterals;
+          listOfObjectLiterals = splitObjectsAtSameProps(children);
+          return listOfObjectLiterals.length === 1
+            ? new this(props, children)
+            : new StnRegistry.ArrayStn(
+                Caf.array(listOfObjectLiterals, c => new this(props, c))
+              );
+        };
+      }
+    ));
   })();
 });
 
@@ -7480,37 +7414,35 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let findModuleSync, RequireStn;
-    return (
-      ({ findModuleSync } = __webpack_require__(123)),
-      (RequireStn = Caf.defClass(
-        class RequireStn extends __webpack_require__(2) {},
-        function(RequireStn, classSuper, instanceSuper) {
-          this.getter({
-            rawRequireString: function() {
-              return this.props.require;
-            },
-            propName: function() {
-              return this.rawRequireString;
-            },
-            requireString: function() {
-              return findModuleSync(this.rawRequireString, this.parser.options)
-                .requireString;
-            }
-          });
-          this.prototype.validate = function() {
-            return this.requireString;
-          };
-          this.prototype.toJs = function() {
-            return `require('${Caf.toString(this.requireString)}')`;
-          };
-          this.prototype.toSourceNode = function() {
-            return this.createSourceNode(
-              `require('${Caf.toString(this.requireString)}')`
-            );
-          };
-        }
-      ))
-    );
+    ({ findModuleSync } = __webpack_require__(123));
+    return (RequireStn = Caf.defClass(
+      class RequireStn extends __webpack_require__(2) {},
+      function(RequireStn, classSuper, instanceSuper) {
+        this.getter({
+          rawRequireString: function() {
+            return this.props.require;
+          },
+          propName: function() {
+            return this.rawRequireString;
+          },
+          requireString: function() {
+            return findModuleSync(this.rawRequireString, this.parser.options)
+              .requireString;
+          }
+        });
+        this.prototype.validate = function() {
+          return this.requireString;
+        };
+        this.prototype.toJs = function() {
+          return `require('${Caf.toString(this.requireString)}')`;
+        };
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode(
+            `require('${Caf.toString(this.requireString)}')`
+          );
+        };
+      }
+    ));
   })();
 });
 
@@ -8031,97 +7963,93 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let SemanticTree, supportedOperatorsRegExp, AssignmentStn;
-    return (
-      (SemanticTree = __webpack_require__(4)),
-      (supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/),
-      (AssignmentStn = Caf.defClass(
-        class AssignmentStn extends __webpack_require__(11) {
-          constructor(props, children) {
-            super(...arguments);
-            this.operator = props.operator || "";
-            this.lValue = children[0];
-            this.rValue = children[1];
-          }
-        },
-        function(AssignmentStn, classSuper, instanceSuper) {
-          this.getter({
-            value: function() {
-              return this.lValue;
-            },
-            key: function() {
-              return this.rValue;
-            },
-            propName: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
-            }
-          });
-          this.prototype.updateScope = function(scope) {
-            let cafBase;
-            this.scope = scope;
-            this.scope.addIdentifierAssigned(
-              Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
-            );
-            return instanceSuper.updateScope.apply(this, arguments);
-          };
-          this.prototype.postTransform = function() {
-            let value1, value2;
-            return !supportedOperatorsRegExp.test(this.operator)
-              ? (({ value1, value2 } = this.getValueWithBaseCapture(
-                  this.lValue
-                )),
-                SemanticTree.BinaryOperatorStn(
-                  { operator: this.operator },
-                  value1,
-                  SemanticTree.AssignmentStn(
-                    { parseTreeNode: this.parseTreeNode },
-                    value2,
-                    this.rValue
-                  )
-                ))
-              : this;
-          };
-          this.prototype.toSourceNode = function(options) {
-            let out;
-            out = supportedOperatorsRegExp.test(this.operator)
-              ? [
-                  this.lValue.toSourceNode(),
-                  ` ${Caf.toString(this.operator)}= `,
-                  this.rValue.toSourceNode({ expression: true })
-                ]
-              : [
-                  this.lValue.toSourceNode({ expression: true }),
-                  ` ${Caf.toString(this.operator)} `,
-                  this.lValue.toSourceNode(),
-                  " = ",
-                  this.rValue.toSourceNode({ expression: true })
-                ];
-            return this.createSourceNode(
-              (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.subExpression)
-                ? ["(", out, ")"]
-                : out
-            );
-          };
-          this.prototype.toJs = function(options) {
-            let out;
-            out = supportedOperatorsRegExp.test(this.operator)
-              ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
-                  this.operator
-                )}= ${Caf.toString(this.rValue.toJsExpression())}`
-              : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
-                  this.operator
-                )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
-                  this.rValue.toJsExpression()
-                )}`;
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.subExpression)
-              ? `(${Caf.toString(out)})`
-              : out;
-          };
+    SemanticTree = __webpack_require__(4);
+    supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/;
+    return (AssignmentStn = Caf.defClass(
+      class AssignmentStn extends __webpack_require__(11) {
+        constructor(props, children) {
+          super(...arguments);
+          this.operator = props.operator || "";
+          this.lValue = children[0];
+          this.rValue = children[1];
         }
-      ))
-    );
+      },
+      function(AssignmentStn, classSuper, instanceSuper) {
+        this.getter({
+          value: function() {
+            return this.lValue;
+          },
+          key: function() {
+            return this.rValue;
+          },
+          propName: function() {
+            let cafBase;
+            return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
+          }
+        });
+        this.prototype.updateScope = function(scope) {
+          let cafBase;
+          this.scope = scope;
+          this.scope.addIdentifierAssigned(
+            Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
+          );
+          return instanceSuper.updateScope.apply(this, arguments);
+        };
+        this.prototype.postTransform = function() {
+          let value1, value2;
+          return !supportedOperatorsRegExp.test(this.operator)
+            ? (({ value1, value2 } = this.getValueWithBaseCapture(this.lValue)),
+              SemanticTree.BinaryOperatorStn(
+                { operator: this.operator },
+                value1,
+                SemanticTree.AssignmentStn(
+                  { parseTreeNode: this.parseTreeNode },
+                  value2,
+                  this.rValue
+                )
+              ))
+            : this;
+        };
+        this.prototype.toSourceNode = function(options) {
+          let out;
+          out = supportedOperatorsRegExp.test(this.operator)
+            ? [
+                this.lValue.toSourceNode(),
+                ` ${Caf.toString(this.operator)}= `,
+                this.rValue.toSourceNode({ expression: true })
+              ]
+            : [
+                this.lValue.toSourceNode({ expression: true }),
+                ` ${Caf.toString(this.operator)} `,
+                this.lValue.toSourceNode(),
+                " = ",
+                this.rValue.toSourceNode({ expression: true })
+              ];
+          return this.createSourceNode(
+            (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.subExpression)
+              ? ["(", out, ")"]
+              : out
+          );
+        };
+        this.prototype.toJs = function(options) {
+          let out;
+          out = supportedOperatorsRegExp.test(this.operator)
+            ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
+                this.operator
+              )}= ${Caf.toString(this.rValue.toJsExpression())}`
+            : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
+                this.operator
+              )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
+                this.rValue.toJsExpression()
+              )}`;
+          return (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.subExpression)
+            ? `(${Caf.toString(out)})`
+            : out;
+        };
+      }
+    ));
   })();
 });
 
@@ -8140,258 +8068,249 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (compactFlatten, merge, Error) => {
       let SemanticTree, ClassStn;
-      return (
-        (SemanticTree = __webpack_require__(4)),
-        (ClassStn = Caf.defClass(
-          class ClassStn extends __webpack_require__(2) {},
-          function(ClassStn, classSuper, instanceSuper) {
-            this.getter({
-              className: function() {
-                return this.props.className;
-              },
-              classSuperHandle: function() {
-                return this.props.classSuperHandle;
-              },
-              instanceSuperHandle: function() {
-                return this.props.instanceSuperHandle;
-              },
-              body: function() {
-                return this.labeledChildren.body;
-              }
-            });
-            this.prototype.decorate = function() {
-              let cafBase;
-              return Caf.each2(
-                Caf.exists((cafBase = this.body)) && cafBase.children,
-                stn =>
-                  Caf.each2(stn.children, objectPropValueStn => {
-                    let propNameStn, propValueStn;
-                    [propNameStn, propValueStn] = objectPropValueStn.children;
-                    return propNameStn.type === "ObjectPropName" &&
-                      propNameStn.toJs() === "constructor"
-                      ? ((propValueStn.props.isConstructor = true),
-                        Caf.each2(
-                          propValueStn.find(/Super/),
-                          superCallChild =>
-                            (superCallChild.props.calledInConstructor = true)
-                        ))
-                      : undefined;
-                  }),
-                stn => stn.type === "Object"
-              );
-            };
-            this.prototype.postTransform = function() {
-              let classNameStn,
-                classExtends,
-                body,
-                FunctionDefinitionArgsStn,
-                StatementsStn,
-                FunctionDefinitionStn,
-                IdentifierStn,
-                FunctionDefinitionArgStn,
-                AssignmentStn,
-                AccessorStn,
-                ThisStn,
-                className,
-                constructorStn,
-                classSuperHandle,
-                instanceSuperHandle,
-                statementsToCount,
-                statementCount,
-                classBody,
-                children;
-              ({
-                className: classNameStn,
-                classExtends,
-                body
-              } = this.labeledChildren);
-              ({
-                FunctionDefinitionArgsStn,
-                StatementsStn,
-                FunctionDefinitionStn,
-                IdentifierStn,
-                FunctionDefinitionArgStn,
-                AssignmentStn,
-                AccessorStn,
-                ThisStn
-              } = SemanticTree);
-              className = classNameStn.toJs();
-              if (body) {
-                constructorStn = null;
-                body = FunctionDefinitionStn(
-                  { label: "body", returnIgnored: true },
-                  FunctionDefinitionArgsStn(
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({ identifier: className })
-                    ),
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifier: (classSuperHandle = "classSuper")
-                      })
-                    ),
-                    FunctionDefinitionArgStn(
-                      IdentifierStn({
-                        identifier: (instanceSuperHandle = "instanceSuper")
-                      })
-                    )
+      SemanticTree = __webpack_require__(4);
+      return (ClassStn = Caf.defClass(
+        class ClassStn extends __webpack_require__(2) {},
+        function(ClassStn, classSuper, instanceSuper) {
+          this.getter({
+            className: function() {
+              return this.props.className;
+            },
+            classSuperHandle: function() {
+              return this.props.classSuperHandle;
+            },
+            instanceSuperHandle: function() {
+              return this.props.instanceSuperHandle;
+            },
+            body: function() {
+              return this.labeledChildren.body;
+            }
+          });
+          this.prototype.decorate = function() {
+            let cafBase;
+            return Caf.each2(
+              Caf.exists((cafBase = this.body)) && cafBase.children,
+              stn =>
+                Caf.each2(stn.children, objectPropValueStn => {
+                  let propNameStn, propValueStn;
+                  [propNameStn, propValueStn] = objectPropValueStn.children;
+                  return propNameStn.type === "ObjectPropName" &&
+                    propNameStn.toJs() === "constructor"
+                    ? ((propValueStn.props.isConstructor = true),
+                      Caf.each2(
+                        propValueStn.find(/Super/),
+                        superCallChild =>
+                          (superCallChild.props.calledInConstructor = true)
+                      ))
+                    : undefined;
+                }),
+              stn => stn.type === "Object"
+            );
+          };
+          this.prototype.postTransform = function() {
+            let classNameStn,
+              classExtends,
+              body,
+              FunctionDefinitionArgsStn,
+              StatementsStn,
+              FunctionDefinitionStn,
+              IdentifierStn,
+              FunctionDefinitionArgStn,
+              AssignmentStn,
+              AccessorStn,
+              ThisStn,
+              className,
+              constructorStn,
+              classSuperHandle,
+              instanceSuperHandle,
+              statementsToCount,
+              statementCount,
+              classBody,
+              children;
+            ({
+              className: classNameStn,
+              classExtends,
+              body
+            } = this.labeledChildren);
+            ({
+              FunctionDefinitionArgsStn,
+              StatementsStn,
+              FunctionDefinitionStn,
+              IdentifierStn,
+              FunctionDefinitionArgStn,
+              AssignmentStn,
+              AccessorStn,
+              ThisStn
+            } = SemanticTree);
+            className = classNameStn.toJs();
+            if (body) {
+              constructorStn = null;
+              body = FunctionDefinitionStn(
+                { label: "body", returnIgnored: true },
+                FunctionDefinitionArgsStn(
+                  FunctionDefinitionArgStn(
+                    IdentifierStn({ identifier: className })
                   ),
-                  StatementsStn(
-                    (statementsToCount = Caf.array(
-                      body.children,
-                      stn =>
-                        stn.type === "Object"
-                          ? Caf.array(stn.children, objectPropValueStn => {
-                              let propNameStn,
-                                propValueStn,
-                                assignToStn,
-                                propName,
-                                isThisProp;
-                              [
-                                propNameStn,
-                                propValueStn
-                              ] = objectPropValueStn.children;
-                              assignToStn = (() => {
-                                switch (propNameStn.type) {
-                                  case "ObjectPropName":
-                                    ({ propName, isThisProp } = propNameStn);
-                                    return isThisProp
-                                      ? ThisStn(
+                  FunctionDefinitionArgStn(
+                    IdentifierStn({
+                      identifier: (classSuperHandle = "classSuper")
+                    })
+                  ),
+                  FunctionDefinitionArgStn(
+                    IdentifierStn({
+                      identifier: (instanceSuperHandle = "instanceSuper")
+                    })
+                  )
+                ),
+                StatementsStn(
+                  (statementsToCount = Caf.array(
+                    body.children,
+                    stn =>
+                      stn.type === "Object"
+                        ? Caf.array(stn.children, objectPropValueStn => {
+                            let propNameStn,
+                              propValueStn,
+                              assignToStn,
+                              propName,
+                              isThisProp;
+                            [
+                              propNameStn,
+                              propValueStn
+                            ] = objectPropValueStn.children;
+                            assignToStn = (() => {
+                              switch (propNameStn.type) {
+                                case "ObjectPropName":
+                                  ({ propName, isThisProp } = propNameStn);
+                                  return isThisProp
+                                    ? ThisStn(
+                                        IdentifierStn({ identifier: propName })
+                                      )
+                                    : propName === "constructor"
+                                      ? ((constructorStn = propValueStn), null)
+                                      : AccessorStn(
+                                          ThisStn(
+                                            IdentifierStn({
+                                              identifier: "prototype"
+                                            })
+                                          ),
                                           IdentifierStn({
                                             identifier: propName
                                           })
-                                        )
-                                      : propName === "constructor"
-                                        ? ((constructorStn = propValueStn),
-                                          null)
-                                        : AccessorStn(
-                                            ThisStn(
-                                              IdentifierStn({
-                                                identifier: "prototype"
-                                              })
-                                            ),
-                                            IdentifierStn({
-                                              identifier: propName
-                                            })
-                                          );
-                                  case "ObjectLiteralAccessor":
-                                    return AccessorStn(
-                                      ThisStn(
-                                        IdentifierStn({
-                                          identifier: "prototype"
-                                        })
-                                      ),
-                                      propNameStn.children
+                                        );
+                                case "ObjectLiteralAccessor":
+                                  return AccessorStn(
+                                    ThisStn(
+                                      IdentifierStn({ identifier: "prototype" })
+                                    ),
+                                    propNameStn.children
+                                  );
+                                default:
+                                  return (() => {
+                                    throw new Error(
+                                      `unknown object property name Stn type: ${Caf.toString(
+                                        propNameStn.type
+                                      )}`
                                     );
-                                  default:
-                                    return (() => {
-                                      throw new Error(
-                                        `unknown object property name Stn type: ${Caf.toString(
-                                          propNameStn.type
-                                        )}`
-                                      );
-                                    })();
-                                }
-                              })();
-                              return (
-                                assignToStn &&
-                                AssignmentStn(assignToStn, propValueStn)
-                              );
-                            })
-                          : stn
-                    ))
-                  )
-                );
-                statementCount = statementsToCount.length;
-                if (constructorStn) {
-                  statementCount -= 1;
-                  constructorStn.props.isConstructor = true;
-                  Caf.each2(
-                    constructorStn.find(/Super/),
-                    superCallChild =>
-                      (superCallChild.props.calledInConstructor = true)
-                  );
-                  classBody = StatementsStn(
-                    { label: "classBody" },
-                    constructorStn
-                  );
-                }
-                if (statementsToCount <= 0) {
-                  body = null;
-                }
-                children = compactFlatten([
-                  classNameStn,
-                  classExtends,
-                  body,
-                  classBody
-                ]);
-              } else {
-                children = this.children;
-              }
-              return new AssignmentStn(
-                new IdentifierStn({ identifier: className }),
-                new ClassStn(
-                  merge(this.props, {
-                    className,
-                    classSuperHandle,
-                    instanceSuperHandle
-                  }),
-                  children
+                                  })();
+                              }
+                            })();
+                            return (
+                              assignToStn &&
+                              AssignmentStn(assignToStn, propValueStn)
+                            );
+                          })
+                        : stn
+                  ))
                 )
               );
-            };
-            this.prototype.toJs = function() {
-              let className, classExtends, body, classBody, out, classBodyJs;
-              ({
-                className,
+              statementCount = statementsToCount.length;
+              if (constructorStn) {
+                statementCount -= 1;
+                constructorStn.props.isConstructor = true;
+                Caf.each2(
+                  constructorStn.find(/Super/),
+                  superCallChild =>
+                    (superCallChild.props.calledInConstructor = true)
+                );
+                classBody = StatementsStn(
+                  { label: "classBody" },
+                  constructorStn
+                );
+              }
+              if (statementsToCount <= 0) {
+                body = null;
+              }
+              children = compactFlatten([
+                classNameStn,
                 classExtends,
                 body,
                 classBody
-              } = this.labeledChildren);
-              className = className.toJs();
-              out = `Caf.defClass(class ${Caf.toString(
-                className
-              )} extends ${Caf.toString(
-                (Caf.exists(classExtends) && classExtends.toJsExpression()) ||
-                  "Object"
-              )}`;
-              classBodyJs = classBody
-                ? `{${Caf.toString(classBody.toJs())};}`
-                : "{}";
-              return body
-                ? out +
-                    ` ${Caf.toString(classBodyJs)}, ${Caf.toString(
-                      body.toJs()
-                    )})`
-                : out + ` ${Caf.toString(classBodyJs)})`;
-            };
-            this.prototype.toSourceNode = function() {
-              let className, classExtends, body, classBody, cafTemp;
-              ({
-                className,
-                classExtends,
-                body,
-                classBody
-              } = this.labeledChildren);
-              return this.createSourceNode(
-                "Caf.defClass(class ",
-                className.toSourceNode(),
-                " extends ",
-                (cafTemp =
-                  Caf.exists(classExtends) &&
-                  classExtends.toSourceNode({ expression: true })) != null
-                  ? cafTemp
-                  : "Object",
-                " {",
-                Caf.exists(classBody) &&
-                  classBody.toSourceNode({ classBody: true }),
-                "}",
-                body ? [", ", body.toSourceNode()] : undefined,
-                ")"
-              );
-            };
-          }
-        ))
-      );
+              ]);
+            } else {
+              children = this.children;
+            }
+            return new AssignmentStn(
+              new IdentifierStn({ identifier: className }),
+              new ClassStn(
+                merge(this.props, {
+                  className,
+                  classSuperHandle,
+                  instanceSuperHandle
+                }),
+                children
+              )
+            );
+          };
+          this.prototype.toJs = function() {
+            let className, classExtends, body, classBody, out, classBodyJs;
+            ({
+              className,
+              classExtends,
+              body,
+              classBody
+            } = this.labeledChildren);
+            className = className.toJs();
+            out = `Caf.defClass(class ${Caf.toString(
+              className
+            )} extends ${Caf.toString(
+              (Caf.exists(classExtends) && classExtends.toJsExpression()) ||
+                "Object"
+            )}`;
+            classBodyJs = classBody
+              ? `{${Caf.toString(classBody.toJs())};}`
+              : "{}";
+            return body
+              ? out +
+                  ` ${Caf.toString(classBodyJs)}, ${Caf.toString(body.toJs())})`
+              : out + ` ${Caf.toString(classBodyJs)})`;
+          };
+          this.prototype.toSourceNode = function() {
+            let className, classExtends, body, classBody, cafTemp;
+            ({
+              className,
+              classExtends,
+              body,
+              classBody
+            } = this.labeledChildren);
+            return this.createSourceNode(
+              "Caf.defClass(class ",
+              className.toSourceNode(),
+              " extends ",
+              (cafTemp =
+                Caf.exists(classExtends) &&
+                classExtends.toSourceNode({ expression: true })) != null
+                ? cafTemp
+                : "Object",
+              " {",
+              Caf.exists(classBody) &&
+                classBody.toSourceNode({ classBody: true }),
+              "}",
+              body ? [", ", body.toSourceNode()] : undefined,
+              ")"
+            );
+          };
+        }
+      ));
     }
   );
 });
@@ -8411,291 +8330,283 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (compactFlatten, merge, Error) => {
       let StnRegistry, FunctionDefinitionStn;
-      return (
-        (StnRegistry = __webpack_require__(4)),
-        (FunctionDefinitionStn = Caf.defClass(
-          class FunctionDefinitionStn extends __webpack_require__(9)(
-            __webpack_require__(2)
-          ) {
-            constructor(props, children, pretransformedStn) {
-              let onlyChild;
-              if (children.length === 1) {
-                [onlyChild] = children;
-                if (
-                  !(
-                    onlyChild instanceof
-                    StnRegistry.FunctionDefinitionArgsStn.class
-                  )
-                ) {
-                  children = [
-                    StnRegistry.FunctionDefinitionArgsStn(),
-                    children[0]
-                  ];
-                }
+      StnRegistry = __webpack_require__(4);
+      return (FunctionDefinitionStn = Caf.defClass(
+        class FunctionDefinitionStn extends __webpack_require__(9)(
+          __webpack_require__(2)
+        ) {
+          constructor(props, children, pretransformedStn) {
+            let onlyChild;
+            if (children.length === 1) {
+              [onlyChild] = children;
+              if (
+                !(
+                  onlyChild instanceof
+                  StnRegistry.FunctionDefinitionArgsStn.class
+                )
+              ) {
+                children = [
+                  StnRegistry.FunctionDefinitionArgsStn(),
+                  children[0]
+                ];
               }
-              super(props, children, pretransformedStn);
-              this.arguments = children[0];
-              this.statements = children[1];
-              if (this.statements) {
-                if (!(this.statements.type === "Statements")) {
-                  throw new Error(
-                    `statements must be type Statements (is: ${Caf.toString(
-                      this.statements.type
-                    )})`
-                  );
-                }
-              }
-              this._updatingArgumentScope = false;
             }
-          },
-          function(FunctionDefinitionStn, classSuper, instanceSuper) {
-            this.getter({
-              needsParens: function() {
-                return false;
-              },
-              needsParensAsStatement: function() {
-                return !this.props.bound;
-              },
-              childrenToUpdateScope: function() {
-                return compactFlatten([this.statements]);
-              },
-              body: function() {
-                return this.children[1];
-              },
-              args: function() {
-                return this.children[0];
-              },
-              statementStns: function() {
-                let cafBase;
-                return Caf.exists((cafBase = this.body)) && cafBase.children;
-              },
-              argumentStns: function() {
-                let cafBase;
-                return Caf.exists((cafBase = this.args)) && cafBase.children;
+            super(props, children, pretransformedStn);
+            this.arguments = children[0];
+            this.statements = children[1];
+            if (this.statements) {
+              if (!(this.statements.type === "Statements")) {
+                throw new Error(
+                  `statements must be type Statements (is: ${Caf.toString(
+                    this.statements.type
+                  )})`
+                );
               }
-            });
-            this.prototype.updateScope = function() {
-              instanceSuper.updateScope.apply(this, arguments);
-              return this.arguments
-                ? (Caf.object(this.arguments.argumentNameList, name =>
-                    this.addArgumentName(name)
-                  ),
-                  (this._updatingArgumentScope = true),
-                  this.arguments.updateScope(this),
-                  (this._updatingArgumentScope = false))
-                : undefined;
-            };
-            this.prototype.addIdentifierAssigned = function(identifier) {
-              return this._updatingArgumentScope
-                ? this.addArgumentName(identifier)
-                : instanceSuper.addIdentifierAssigned.apply(this, arguments);
-            };
-            this.prototype.postTransform = function() {
-              let foundParent, newStatementStns, StatementsStn, cafBase;
-              if (this.props.bound === "auto") {
-                this.props.bound = (foundParent = this.pretransformedStn.findParent(
-                  /Class|FunctionDefinition/
+            }
+            this._updatingArgumentScope = false;
+          }
+        },
+        function(FunctionDefinitionStn, classSuper, instanceSuper) {
+          this.getter({
+            needsParens: function() {
+              return false;
+            },
+            needsParensAsStatement: function() {
+              return !this.props.bound;
+            },
+            childrenToUpdateScope: function() {
+              return compactFlatten([this.statements]);
+            },
+            body: function() {
+              return this.children[1];
+            },
+            args: function() {
+              return this.children[0];
+            },
+            statementStns: function() {
+              let cafBase;
+              return Caf.exists((cafBase = this.body)) && cafBase.children;
+            },
+            argumentStns: function() {
+              let cafBase;
+              return Caf.exists((cafBase = this.args)) && cafBase.children;
+            }
+          });
+          this.prototype.updateScope = function() {
+            instanceSuper.updateScope.apply(this, arguments);
+            return this.arguments
+              ? (Caf.object(this.arguments.argumentNameList, name =>
+                  this.addArgumentName(name)
+                ),
+                (this._updatingArgumentScope = true),
+                this.arguments.updateScope(this),
+                (this._updatingArgumentScope = false))
+              : undefined;
+          };
+          this.prototype.addIdentifierAssigned = function(identifier) {
+            return this._updatingArgumentScope
+              ? this.addArgumentName(identifier)
+              : instanceSuper.addIdentifierAssigned.apply(this, arguments);
+          };
+          this.prototype.postTransform = function() {
+            let foundParent, newStatementStns, StatementsStn, cafBase;
+            if (this.props.bound === "auto") {
+              this.props.bound = (foundParent = this.pretransformedStn.findParent(
+                /Class|FunctionDefinition/
+              ))
+                ? foundParent.type === "Class"
+                  ? false
+                  : true
+                : false;
+            }
+            return this.statementStns !==
+              (newStatementStns = this.getPostTransformStatementStns())
+              ? (({
+                  FunctionDefinitionStn,
+                  StatementsStn
+                } = __webpack_require__(4)),
+                FunctionDefinitionStn(
+                  (Caf.exists((cafBase = this.body)) &&
+                    cafBase.children.length) > 0
+                    ? this.props
+                    : merge(this.props, { returnIgnored: true }),
+                  this.children[0],
+                  StatementsStn(newStatementStns)
                 ))
-                  ? foundParent.type === "Class"
-                    ? false
-                    : true
-                  : false;
-              }
-              return this.statementStns !==
-                (newStatementStns = this.getPostTransformStatementStns())
-                ? (({
-                    FunctionDefinitionStn,
-                    StatementsStn
-                  } = __webpack_require__(4)),
-                  FunctionDefinitionStn(
-                    (Caf.exists((cafBase = this.body)) &&
-                      cafBase.children.length) > 0
-                      ? this.props
-                      : merge(this.props, { returnIgnored: true }),
-                    this.children[0],
-                    StatementsStn(newStatementStns)
-                  ))
-                : instanceSuper.postTransform.apply(this, arguments);
-            };
-            this.prototype.getPostTransformStatementStns = function() {
-              let SuperStn,
-                ArraySpreadElementStn,
-                ReferenceStn,
-                IdentifierStn,
-                isConstructor,
-                statementStns,
-                preBodyStatements,
-                lastSuperContainingStatementIndex;
-              ({
-                SuperStn,
-                ArraySpreadElementStn,
-                ReferenceStn,
-                IdentifierStn
-              } = __webpack_require__(4));
-              ({ isConstructor } = this.props);
-              ({ statementStns } = this);
-              preBodyStatements = null;
-              Caf.each2(this.argumentStns, arg => {
-                let stn;
-                return (stn = arg.generatePreBodyStatementStn())
-                  ? (preBodyStatements != null
-                      ? preBodyStatements
-                      : (preBodyStatements = [])
-                    ).push(stn)
-                  : undefined;
-              });
-              return compactFlatten(
-                isConstructor
-                  ? ((lastSuperContainingStatementIndex = null),
-                    Caf.each2(
-                      statementStns,
-                      (v, i) => (lastSuperContainingStatementIndex = i),
-                      (v, i) =>
-                        v.type === "Super" ||
-                        v.find(/Super/, /FunctionDefinition|Class/)
-                    ),
-                    lastSuperContainingStatementIndex != null &&
-                    lastSuperContainingStatementIndex >= 0
-                      ? preBodyStatements
-                        ? [
-                            statementStns.slice(
-                              0,
-                              lastSuperContainingStatementIndex + 1
-                            ),
-                            preBodyStatements,
-                            statementStns.slice(
-                              lastSuperContainingStatementIndex + 1,
-                              statementStns.length
-                            )
-                          ]
-                        : statementStns
-                      : [
-                          SuperStn(
-                            ArraySpreadElementStn(
-                              IdentifierStn({ identifier: "arguments" })
-                            )
+              : instanceSuper.postTransform.apply(this, arguments);
+          };
+          this.prototype.getPostTransformStatementStns = function() {
+            let SuperStn,
+              ArraySpreadElementStn,
+              ReferenceStn,
+              IdentifierStn,
+              isConstructor,
+              statementStns,
+              preBodyStatements,
+              lastSuperContainingStatementIndex;
+            ({
+              SuperStn,
+              ArraySpreadElementStn,
+              ReferenceStn,
+              IdentifierStn
+            } = __webpack_require__(4));
+            ({ isConstructor } = this.props);
+            ({ statementStns } = this);
+            preBodyStatements = null;
+            Caf.each2(this.argumentStns, arg => {
+              let stn;
+              return (stn = arg.generatePreBodyStatementStn())
+                ? (preBodyStatements != null
+                    ? preBodyStatements
+                    : (preBodyStatements = [])
+                  ).push(stn)
+                : undefined;
+            });
+            return compactFlatten(
+              isConstructor
+                ? ((lastSuperContainingStatementIndex = null),
+                  Caf.each2(
+                    statementStns,
+                    (v, i) => (lastSuperContainingStatementIndex = i),
+                    (v, i) =>
+                      v.type === "Super" ||
+                      v.find(/Super/, /FunctionDefinition|Class/)
+                  ),
+                  lastSuperContainingStatementIndex != null &&
+                  lastSuperContainingStatementIndex >= 0
+                    ? preBodyStatements
+                      ? [
+                          statementStns.slice(
+                            0,
+                            lastSuperContainingStatementIndex + 1
                           ),
                           preBodyStatements,
-                          statementStns
-                        ])
-                  : preBodyStatements
-                    ? [preBodyStatements, statementStns]
-                    : statementStns
+                          statementStns.slice(
+                            lastSuperContainingStatementIndex + 1,
+                            statementStns.length
+                          )
+                        ]
+                      : statementStns
+                    : [
+                        SuperStn(
+                          ArraySpreadElementStn(
+                            IdentifierStn({ identifier: "arguments" })
+                          )
+                        ),
+                        preBodyStatements,
+                        statementStns
+                      ])
+                : preBodyStatements
+                  ? [preBodyStatements, statementStns]
+                  : statementStns
+            );
+          };
+          this.getter({
+            autoLetsForSourceNode: function() {
+              let lets;
+              return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+            },
+            bound: function() {
+              return this.props.bound;
+            },
+            simpleBound: function() {
+              let statementStns;
+              ({ statementStns } = this);
+              return (
+                this.bound &&
+                !this.getAutoLets() &&
+                (Caf.exists(statementStns) && statementStns.length) === 1 &&
+                statementStns[0].type !== "Object"
               );
-            };
-            this.getter({
-              autoLetsForSourceNode: function() {
-                let lets;
-                return (lets = this.getAutoLets()) ? lets + "; " : undefined;
-              },
-              bound: function() {
-                return this.props.bound;
-              },
-              simpleBound: function() {
-                let statementStns;
-                ({ statementStns } = this);
-                return (
-                  this.bound &&
-                  !this.getAutoLets() &&
-                  (Caf.exists(statementStns) && statementStns.length) === 1 &&
-                  statementStns[0].type !== "Object"
-                );
-              }
-            });
-            this.prototype.toSourceNode = function(options) {
-              let isConstructor,
-                bound,
-                returnIgnored,
-                statement,
-                returnAction,
-                argsSourceNode,
-                bodySourceNode,
-                cafTemp,
-                cafBase,
-                cafBase1;
-              ({ isConstructor, bound, returnIgnored } = this.props);
-              if (options) {
-                ({ statement } = options);
-              }
-              returnAction = !(isConstructor || returnIgnored);
-              argsSourceNode =
-                (cafTemp =
-                  Caf.exists((cafBase = this.args)) &&
-                  cafBase.toSourceNode()) != null
-                  ? cafTemp
-                  : "()";
-              bodySourceNode = this.simpleBound
-                ? this.body.children[0].toSourceNode({ expression: true })
-                : Caf.exists((cafBase1 = this.body)) &&
-                  cafBase1.toSourceNode({ returnAction });
-              return bound
-                ? this.simpleBound
-                  ? this.createSourceNode(
-                      argsSourceNode,
-                      " => ",
-                      bodySourceNode
-                    )
-                  : this.createSourceNode(
-                      argsSourceNode,
-                      " => {",
-                      this.autoLetsForSourceNode,
-                      bodySourceNode,
-                      "}"
-                    )
-                : this.createSourceNode(
-                    statement ? "(" : undefined,
-                    isConstructor ? "constructor" : "function",
-                    argsSourceNode,
-                    " {",
-                    this.autoLetsForSourceNode,
-                    bodySourceNode,
-                    "}",
-                    statement ? ")" : undefined
-                  );
-            };
-            this.prototype.getBodyJs = function() {
-              let returnIgnored, isConstructor, statements, lets, cafBase;
-              ({ returnIgnored, isConstructor } = this.props);
-              statements =
-                Caf.exists((cafBase = this.body)) &&
-                cafBase.toFunctionBodyJsArray(
-                  !(isConstructor || returnIgnored)
-                );
-              if ((lets = this.getAutoLets())) {
-                statements = compactFlatten([lets, statements]);
-              }
-              return (Caf.exists(statements) && statements.length) > 0
-                ? `${Caf.toString(statements.join("; "))};`
-                : "";
-            };
-            this.prototype.getArgsJs = function() {
-              let cafTemp, cafBase;
-              return (cafTemp =
-                Caf.exists((cafBase = this.children[0])) && cafBase.toJs()) !=
-                null
+            }
+          });
+          this.prototype.toSourceNode = function(options) {
+            let isConstructor,
+              bound,
+              returnIgnored,
+              statement,
+              returnAction,
+              argsSourceNode,
+              bodySourceNode,
+              cafTemp,
+              cafBase,
+              cafBase1;
+            ({ isConstructor, bound, returnIgnored } = this.props);
+            if (options) {
+              ({ statement } = options);
+            }
+            returnAction = !(isConstructor || returnIgnored);
+            argsSourceNode =
+              (cafTemp =
+                Caf.exists((cafBase = this.args)) && cafBase.toSourceNode()) !=
+              null
                 ? cafTemp
                 : "()";
-            };
-            this.prototype.toJs = function() {
-              let isConstructor, bound;
-              ({ isConstructor, bound } = this.props);
-              return bound
-                ? this.simpleBound
-                  ? `${Caf.toString(this.getArgsJs())} => ${Caf.toString(
-                      this.statementStns[0].toJsExpression()
-                    )}`
-                  : `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
-                      this.getBodyJs()
-                    )}}`
-                : `${Caf.toString(
-                    isConstructor ? "constructor" : "function"
-                  )}${Caf.toString(this.getArgsJs())} {${Caf.toString(
+            bodySourceNode = this.simpleBound
+              ? this.body.children[0].toSourceNode({ expression: true })
+              : Caf.exists((cafBase1 = this.body)) &&
+                cafBase1.toSourceNode({ returnAction });
+            return bound
+              ? this.simpleBound
+                ? this.createSourceNode(argsSourceNode, " => ", bodySourceNode)
+                : this.createSourceNode(
+                    argsSourceNode,
+                    " => {",
+                    this.autoLetsForSourceNode,
+                    bodySourceNode,
+                    "}"
+                  )
+              : this.createSourceNode(
+                  statement ? "(" : undefined,
+                  isConstructor ? "constructor" : "function",
+                  argsSourceNode,
+                  " {",
+                  this.autoLetsForSourceNode,
+                  bodySourceNode,
+                  "}",
+                  statement ? ")" : undefined
+                );
+          };
+          this.prototype.getBodyJs = function() {
+            let returnIgnored, isConstructor, statements, lets, cafBase;
+            ({ returnIgnored, isConstructor } = this.props);
+            statements =
+              Caf.exists((cafBase = this.body)) &&
+              cafBase.toFunctionBodyJsArray(!(isConstructor || returnIgnored));
+            if ((lets = this.getAutoLets())) {
+              statements = compactFlatten([lets, statements]);
+            }
+            return (Caf.exists(statements) && statements.length) > 0
+              ? `${Caf.toString(statements.join("; "))};`
+              : "";
+          };
+          this.prototype.getArgsJs = function() {
+            let cafTemp, cafBase;
+            return (cafTemp =
+              Caf.exists((cafBase = this.children[0])) && cafBase.toJs()) !=
+              null
+              ? cafTemp
+              : "()";
+          };
+          this.prototype.toJs = function() {
+            let isConstructor, bound;
+            ({ isConstructor, bound } = this.props);
+            return bound
+              ? this.simpleBound
+                ? `${Caf.toString(this.getArgsJs())} => ${Caf.toString(
+                    this.statementStns[0].toJsExpression()
+                  )}`
+                : `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
                     this.getBodyJs()
-                  )}}`;
-            };
-          }
-        ))
-      );
+                  )}}`
+              : `${Caf.toString(
+                  isConstructor ? "constructor" : "function"
+                )}${Caf.toString(this.getArgsJs())} {${Caf.toString(
+                  this.getBodyJs()
+                )}}`;
+          };
+        }
+      ));
     }
   );
 });
@@ -8715,109 +8626,107 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     Error => {
       let SemanticTree, FunctionInvocationStn;
-      return (
-        (SemanticTree = __webpack_require__(15)),
-        (FunctionInvocationStn = Caf.defClass(
-          class FunctionInvocationStn extends __webpack_require__(11) {
-            constructor(props, children) {
-              let functionValue, argStns, cafBase, cafBase1, cafBase2;
-              super(...arguments);
-              [functionValue, ...argStns] = children;
-              this.key = this.argStns = argStns;
-              this.value = this.functionValue = functionValue;
-              if (
-                this.argStns.length === 1 &&
-                this.argStns[0].props.implicitArray
-              ) {
-                this.argStns = this.argStns[0].children;
-              }
-              if (
-                (Caf.exists((cafBase = this.parseTreeNode)) &&
-                  cafBase.conditional) ||
-                (Caf.exists((cafBase1 = this.parseTreeNode)) &&
-                  cafBase1.existanceTest)
-              ) {
-                (cafBase2 = this.props).existanceTest ||
-                  (cafBase2.existanceTest = true);
+      SemanticTree = __webpack_require__(15);
+      return (FunctionInvocationStn = Caf.defClass(
+        class FunctionInvocationStn extends __webpack_require__(11) {
+          constructor(props, children) {
+            let functionValue, argStns, cafBase, cafBase1, cafBase2;
+            super(...arguments);
+            [functionValue, ...argStns] = children;
+            this.key = this.argStns = argStns;
+            this.value = this.functionValue = functionValue;
+            if (
+              this.argStns.length === 1 &&
+              this.argStns[0].props.implicitArray
+            ) {
+              this.argStns = this.argStns[0].children;
+            }
+            if (
+              (Caf.exists((cafBase = this.parseTreeNode)) &&
+                cafBase.conditional) ||
+              (Caf.exists((cafBase1 = this.parseTreeNode)) &&
+                cafBase1.existanceTest)
+            ) {
+              (cafBase2 = this.props).existanceTest ||
+                (cafBase2.existanceTest = true);
+            }
+          }
+        },
+        function(FunctionInvocationStn, classSuper, instanceSuper) {
+          this.prototype.needsParens = false;
+          this.getter({
+            existanceTest: function() {
+              return this.props.existanceTest;
+            },
+            isFunctionInvocation: function() {
+              return true;
+            },
+            propName: function() {
+              let cafBase;
+              return (
+                Caf.exists((cafBase = this.functionValue)) && cafBase.propName
+              );
+            }
+          });
+          this.prototype.toJs = function(options) {
+            let newObjectFunctionInvocation, valueJs;
+            if (options) {
+              ({ newObjectFunctionInvocation } = options);
+            }
+            if (this.existanceTest) {
+              throw new Error("can't be existanceTest here");
+            }
+            valueJs = this.functionValue.toJsExpression();
+            if (newObjectFunctionInvocation) {
+              switch (this.functionValue.type) {
+                case "Reference":
+                case "GlobalIdentifier":
+                case "This":
+                  null;
+                  break;
+                default:
+                  valueJs = `(${Caf.toString(valueJs)})`;
               }
             }
-          },
-          function(FunctionInvocationStn, classSuper, instanceSuper) {
-            this.prototype.needsParens = false;
-            this.getter({
-              existanceTest: function() {
-                return this.props.existanceTest;
-              },
-              isFunctionInvocation: function() {
-                return true;
-              },
-              propName: function() {
-                let cafBase;
-                return (
-                  Caf.exists((cafBase = this.functionValue)) && cafBase.propName
-                );
+            return `${Caf.toString(valueJs)}${Caf.toString(
+              this.applyRequiredParens(
+                Caf.array(this.argStns, a => a.toJsExpression()).join(", ")
+              )
+            )}`;
+          };
+          this.prototype.toSourceNode = function(options) {
+            let newObjectFunctionInvocation, noParens, valueSourceNode;
+            if (options) {
+              ({ newObjectFunctionInvocation, noParens } = options);
+            }
+            if (this.existanceTest) {
+              throw new Error("internal error: can't be existanceTest here");
+            }
+            valueSourceNode = this.functionValue.toSourceNode();
+            if (newObjectFunctionInvocation) {
+              switch (this.functionValue.type) {
+                case "Reference":
+                case "GlobalIdentifier":
+                case "This":
+                  null;
+                  break;
+                default:
+                  if (!noParens) {
+                    valueSourceNode = ["(", valueSourceNode, ")"];
+                  }
               }
-            });
-            this.prototype.toJs = function(options) {
-              let newObjectFunctionInvocation, valueJs;
-              if (options) {
-                ({ newObjectFunctionInvocation } = options);
-              }
-              if (this.existanceTest) {
-                throw new Error("can't be existanceTest here");
-              }
-              valueJs = this.functionValue.toJsExpression();
-              if (newObjectFunctionInvocation) {
-                switch (this.functionValue.type) {
-                  case "Reference":
-                  case "GlobalIdentifier":
-                  case "This":
-                    null;
-                    break;
-                  default:
-                    valueJs = `(${Caf.toString(valueJs)})`;
-                }
-              }
-              return `${Caf.toString(valueJs)}${Caf.toString(
-                this.applyRequiredParens(
-                  Caf.array(this.argStns, a => a.toJsExpression()).join(", ")
-                )
-              )}`;
-            };
-            this.prototype.toSourceNode = function(options) {
-              let newObjectFunctionInvocation, noParens, valueSourceNode;
-              if (options) {
-                ({ newObjectFunctionInvocation, noParens } = options);
-              }
-              if (this.existanceTest) {
-                throw new Error("internal error: can't be existanceTest here");
-              }
-              valueSourceNode = this.functionValue.toSourceNode();
-              if (newObjectFunctionInvocation) {
-                switch (this.functionValue.type) {
-                  case "Reference":
-                  case "GlobalIdentifier":
-                  case "This":
-                    null;
-                    break;
-                  default:
-                    if (!noParens) {
-                      valueSourceNode = ["(", valueSourceNode, ")"];
-                    }
-                }
-              }
-              return this.createSourceNode(
-                valueSourceNode,
-                "(",
-                this.stnArrayToSourceNodes(this.argStns, ", ", {
-                  expression: true
-                }),
-                ")"
-              );
-            };
-          }
-        ))
-      );
+            }
+            return this.createSourceNode(
+              valueSourceNode,
+              "(",
+              this.stnArrayToSourceNodes(this.argStns, ", ", {
+                expression: true
+              }),
+              ")"
+            );
+          };
+        }
+      ));
     }
   );
 });
@@ -8993,29 +8902,27 @@ let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
   return (() => {
     let SemanticTree, CaptureStn;
-    return (
-      (SemanticTree = __webpack_require__(4)),
-      (CaptureStn = Caf.defClass(
-        class CaptureStn extends __webpack_require__(2) {},
-        function(CaptureStn, classSuper, instanceSuper) {
-          this.prototype.postTransform = function() {
-            return SemanticTree.ObjectStn(
-              this.props,
-              SemanticTree.ObjectPropValueStn(
-                SemanticTree.ObjectPropNameStn({ value: "source" }),
-                SemanticTree.StringStn({
-                  value: this.children[1].parseTreeNode.text
-                })
-              ),
-              SemanticTree.ObjectPropValueStn(
-                SemanticTree.ObjectPropNameStn({ value: "value" }),
-                this.children[1]
-              )
-            );
-          };
-        }
-      ))
-    );
+    SemanticTree = __webpack_require__(4);
+    return (CaptureStn = Caf.defClass(
+      class CaptureStn extends __webpack_require__(2) {},
+      function(CaptureStn, classSuper, instanceSuper) {
+        this.prototype.postTransform = function() {
+          return SemanticTree.ObjectStn(
+            this.props,
+            SemanticTree.ObjectPropValueStn(
+              SemanticTree.ObjectPropNameStn({ value: "source" }),
+              SemanticTree.StringStn({
+                value: this.children[1].parseTreeNode.text
+              })
+            ),
+            SemanticTree.ObjectPropValueStn(
+              SemanticTree.ObjectPropNameStn({ value: "value" }),
+              this.children[1]
+            )
+          );
+        };
+      }
+    ));
   })();
 });
 
@@ -9034,277 +8941,269 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(3)],
     (Error, lowerCamelCase, StnRegistry, Object, String) => {
       let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
-      return (
-        (SemanticTree = __webpack_require__(4)),
-        (UniqueIdentifierHandle = __webpack_require__(12)),
-        (ComprehensionStn = Caf.defClass(
-          class ComprehensionStn extends __webpack_require__(9)(
-            __webpack_require__(2)
-          ) {},
-          function(ComprehensionStn, classSuper, instanceSuper) {
-            let clauseAliases;
-            this.prototype.validate = function() {
-              let valueClauses,
-                variableDefinition,
-                comprehensionType,
-                toClause,
-                byClause,
-                tilClause,
-                fromClause,
-                cafBase;
-              ({ valueClauses, variableDefinition } = this.labeledChildren);
-              if (
-                (Caf.exists(variableDefinition) &&
-                  variableDefinition.children.length) > 2
-              ) {
-                throw new Error(
-                  `Can define at most two loop variables (value followed optionally by key). You defined: ${Caf.toString(
-                    Caf.exists((cafBase = variableDefinition.parseTreeNode)) &&
-                      cafBase.toString()
-                  )}.`
-                );
-              }
-              ({ comprehensionType } = this);
-              ({
-                toClause,
-                byClause,
-                tilClause,
-                fromClause
-              } = this.labeledClauses);
-              if (
-                (toClause || byClause || tilClause) &&
-                comprehensionType !== "array"
-              ) {
-                throw new Error(
-                  `'to', 'by' and 'til' clauses not supported for '${Caf.toString(
-                    comprehensionType
-                  )}' comprehensions`
-                );
-              }
-              if (!(fromClause || toClause || tilClause)) {
-                throw new Error("'from', 'to' or 'til' clause require");
-              }
-              if (toClause && tilClause) {
-                throw new Error("only one 'to' or 'til' clause allowed");
-              }
-              return byClause && !(tilClause || toClause)
-                ? (() => {
+      SemanticTree = __webpack_require__(4);
+      UniqueIdentifierHandle = __webpack_require__(12);
+      return (ComprehensionStn = Caf.defClass(
+        class ComprehensionStn extends __webpack_require__(9)(
+          __webpack_require__(2)
+        ) {},
+        function(ComprehensionStn, classSuper, instanceSuper) {
+          let clauseAliases;
+          this.prototype.validate = function() {
+            let valueClauses,
+              variableDefinition,
+              comprehensionType,
+              toClause,
+              byClause,
+              tilClause,
+              fromClause,
+              cafBase;
+            ({ valueClauses, variableDefinition } = this.labeledChildren);
+            if (
+              (Caf.exists(variableDefinition) &&
+                variableDefinition.children.length) > 2
+            ) {
+              throw new Error(
+                `Can define at most two loop variables (value followed optionally by key). You defined: ${Caf.toString(
+                  Caf.exists((cafBase = variableDefinition.parseTreeNode)) &&
+                    cafBase.toString()
+                )}.`
+              );
+            }
+            ({ comprehensionType } = this);
+            ({
+              toClause,
+              byClause,
+              tilClause,
+              fromClause
+            } = this.labeledClauses);
+            if (
+              (toClause || byClause || tilClause) &&
+              comprehensionType !== "array"
+            ) {
+              throw new Error(
+                `'to', 'by' and 'til' clauses not supported for '${Caf.toString(
+                  comprehensionType
+                )}' comprehensions`
+              );
+            }
+            if (!(fromClause || toClause || tilClause)) {
+              throw new Error("'from', 'to' or 'til' clause require");
+            }
+            if (toClause && tilClause) {
+              throw new Error("only one 'to' or 'til' clause allowed");
+            }
+            return byClause && !(tilClause || toClause)
+              ? (() => {
+                  throw new Error("'to' or 'til' clause required to use 'by'");
+                })()
+              : undefined;
+          };
+          clauseAliases = { returning: "into", in: "from", do: "with" };
+          this.getter({
+            comprehensionType: function() {
+              return this.labeledChildren.outputType.props.token;
+            },
+            labeledClauses: function() {
+              let iterable, body, labeledClauses, cafTemp, cafTemp1;
+              ({ iterable, body } = this.labeledChildren);
+              labeledClauses = {};
+              Caf.each2(
+                this.labeledChildren.valueClauses,
+                ({ type, value }) => {
+                  let name, cafTemp;
+                  type =
+                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                  name = lowerCamelCase(type + "Clause");
+                  if (labeledClauses[name]) {
                     throw new Error(
-                      "'to' or 'til' clause required to use 'by'"
+                      `no more than one '${Caf.toString(type)}' clause allowed`
                     );
-                  })()
-                : undefined;
-            };
-            clauseAliases = { returning: "into", in: "from", do: "with" };
-            this.getter({
-              comprehensionType: function() {
-                return this.labeledChildren.outputType.props.token;
-              },
-              labeledClauses: function() {
-                let iterable, body, labeledClauses, cafTemp, cafTemp1;
-                ({ iterable, body } = this.labeledChildren);
-                labeledClauses = {};
-                Caf.each2(
-                  this.labeledChildren.valueClauses,
-                  ({ type, value }) => {
-                    let name, cafTemp;
-                    type =
-                      (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
-                    name = lowerCamelCase(type + "Clause");
-                    if (labeledClauses[name]) {
-                      throw new Error(
-                        `no more than one '${Caf.toString(
-                          type
-                        )}' clause allowed`
-                      );
-                    }
-                    return (labeledClauses[name] = value);
                   }
-                );
-                (cafTemp = labeledClauses.fromClause) != null
-                  ? cafTemp
-                  : (labeledClauses.fromClause = iterable);
-                (cafTemp1 = labeledClauses.withClause) != null
-                  ? cafTemp1
-                  : (labeledClauses.withClause = body);
-                return labeledClauses;
-              }
-            });
-            this.prototype.postTransform = function() {
-              let labeledClauses, comprehensionType;
-              this.initLabeledChildren();
-              ({ labeledClauses, comprehensionType } = this);
-              return labeledClauses.toClause || labeledClauses.tilClause
-                ? this.generateArrayRange(labeledClauses)
-                : (() => {
-                    switch (comprehensionType) {
-                      case "each":
-                      case "array":
-                      case "object":
-                        return this.generateArrayOrEach(
-                          comprehensionType === "each"
-                            ? "each2"
-                            : comprehensionType,
-                          labeledClauses
-                        );
-                      case "find":
-                        return this.generateFind(labeledClauses);
-                    }
-                  })();
-            };
-            this.prototype.resolveStnParams = function(...params) {
-              let SimpleLiteralStn,
-                FunctionDefinitionStn,
-                variableDefinition,
-                lastNonNulIndex,
-                Null;
-              ({ SimpleLiteralStn, FunctionDefinitionStn } = StnRegistry);
-              ({ variableDefinition } = this.labeledChildren);
-              lastNonNulIndex = 0;
-              params = Caf.array(params, (p, i) => {
-                let f;
-                p = (() => {
-                  switch (false) {
-                    case !Caf.is(p, Object):
-                      ({ f } = p);
-                      return f
-                        ? FunctionDefinitionStn(
-                            { bound: true },
-                            variableDefinition,
-                            f
-                          )
-                        : undefined;
-                    case !Caf.is(p, String):
-                      return SimpleLiteralStn({ value: p });
-                    default:
-                      return p;
+                  return (labeledClauses[name] = value);
+                }
+              );
+              (cafTemp = labeledClauses.fromClause) != null
+                ? cafTemp
+                : (labeledClauses.fromClause = iterable);
+              (cafTemp1 = labeledClauses.withClause) != null
+                ? cafTemp1
+                : (labeledClauses.withClause = body);
+              return labeledClauses;
+            }
+          });
+          this.prototype.postTransform = function() {
+            let labeledClauses, comprehensionType;
+            this.initLabeledChildren();
+            ({ labeledClauses, comprehensionType } = this);
+            return labeledClauses.toClause || labeledClauses.tilClause
+              ? this.generateArrayRange(labeledClauses)
+              : (() => {
+                  switch (comprehensionType) {
+                    case "each":
+                    case "array":
+                    case "object":
+                      return this.generateArrayOrEach(
+                        comprehensionType === "each"
+                          ? "each2"
+                          : comprehensionType,
+                        labeledClauses
+                      );
+                    case "find":
+                      return this.generateFind(labeledClauses);
                   }
                 })();
-                if (p != null) {
-                  lastNonNulIndex = i;
+          };
+          this.prototype.resolveStnParams = function(...params) {
+            let SimpleLiteralStn,
+              FunctionDefinitionStn,
+              variableDefinition,
+              lastNonNulIndex,
+              Null;
+            ({ SimpleLiteralStn, FunctionDefinitionStn } = StnRegistry);
+            ({ variableDefinition } = this.labeledChildren);
+            lastNonNulIndex = 0;
+            params = Caf.array(params, (p, i) => {
+              let f;
+              p = (() => {
+                switch (false) {
+                  case !Caf.is(p, Object):
+                    ({ f } = p);
+                    return f
+                      ? FunctionDefinitionStn(
+                          { bound: true },
+                          variableDefinition,
+                          f
+                        )
+                      : undefined;
+                  case !Caf.is(p, String):
+                    return SimpleLiteralStn({ value: p });
+                  default:
+                    return p;
                 }
-                return p;
-              });
-              Null = null;
-              params = params.slice(0, lastNonNulIndex + 1);
-              return Caf.array(
-                params,
-                p =>
-                  p != null
-                    ? p
-                    : Null != null
-                      ? Null
-                      : (Null = SimpleLiteralStn({ value: "null" }))
-              );
-            };
-            this.prototype.generateArrayRange = function({
-              withClause,
-              whenClause,
-              toClause,
-              tilClause,
-              byClause,
-              fromClause,
-              intoClause
-            }) {
-              let FunctionInvocationStn,
-                IdentifierStn,
-                FunctionDefinitionStn,
-                SimpleLiteralStn;
-              ({
-                FunctionInvocationStn,
-                IdentifierStn,
-                FunctionDefinitionStn,
-                SimpleLiteralStn
-              } = StnRegistry);
-              if (tilClause) {
-                toClause = tilClause;
-                tilClause = "true";
+              })();
+              if (p != null) {
+                lastNonNulIndex = i;
               }
-              return FunctionInvocationStn(
-                IdentifierStn({ identifier: "Caf.arrayRange" }),
-                this.resolveStnParams(
-                  fromClause != null ? fromClause : "0",
-                  toClause,
-                  { f: withClause },
-                  { f: whenClause },
-                  byClause,
-                  tilClause,
-                  intoClause
-                )
-              );
-            };
-            this.prototype.generateFind = function({
-              fromClause,
-              withClause,
-              whenClause
-            }) {
-              let iterable,
-                variableDefinition,
-                FunctionInvocationStn,
-                IdentifierStn,
-                FunctionDefinitionStn,
-                SimpleLiteralStn;
-              ({ iterable, variableDefinition } = this.labeledChildren);
-              ({
-                FunctionInvocationStn,
-                IdentifierStn,
-                FunctionDefinitionStn,
-                SimpleLiteralStn
-              } = StnRegistry);
-              return FunctionInvocationStn(
-                IdentifierStn({ identifier: "Caf.find" }),
-                this.resolveStnParams(
-                  fromClause,
-                  { f: withClause },
-                  { f: whenClause }
-                )
-              );
-            };
-            this.prototype.generateArrayOrEach = function(
-              method,
-              { fromClause, intoClause, withClause, whenClause, withKeyClause }
+              return p;
+            });
+            Null = null;
+            params = params.slice(0, lastNonNulIndex + 1);
+            return Caf.array(
+              params,
+              p =>
+                p != null
+                  ? p
+                  : Null != null
+                    ? Null
+                    : (Null = SimpleLiteralStn({ value: "null" }))
+            );
+          };
+          this.prototype.generateArrayRange = function({
+            withClause,
+            whenClause,
+            toClause,
+            tilClause,
+            byClause,
+            fromClause,
+            intoClause
+          }) {
+            let FunctionInvocationStn,
+              IdentifierStn,
+              FunctionDefinitionStn,
+              SimpleLiteralStn;
+            ({
+              FunctionInvocationStn,
+              IdentifierStn,
+              FunctionDefinitionStn,
+              SimpleLiteralStn
+            } = StnRegistry);
+            if (tilClause) {
+              toClause = tilClause;
+              tilClause = "true";
+            }
+            return FunctionInvocationStn(
+              IdentifierStn({ identifier: "Caf.arrayRange" }),
+              this.resolveStnParams(
+                fromClause != null ? fromClause : "0",
+                toClause,
+                { f: withClause },
+                { f: whenClause },
+                byClause,
+                tilClause,
+                intoClause
+              )
+            );
+          };
+          this.prototype.generateFind = function({
+            fromClause,
+            withClause,
+            whenClause
+          }) {
+            let iterable,
+              variableDefinition,
+              FunctionInvocationStn,
+              IdentifierStn,
+              FunctionDefinitionStn,
+              SimpleLiteralStn;
+            ({ iterable, variableDefinition } = this.labeledChildren);
+            ({
+              FunctionInvocationStn,
+              IdentifierStn,
+              FunctionDefinitionStn,
+              SimpleLiteralStn
+            } = StnRegistry);
+            return FunctionInvocationStn(
+              IdentifierStn({ identifier: "Caf.find" }),
+              this.resolveStnParams(
+                fromClause,
+                { f: withClause },
+                { f: whenClause }
+              )
+            );
+          };
+          this.prototype.generateArrayOrEach = function(
+            method,
+            { fromClause, intoClause, withClause, whenClause, withKeyClause }
+          ) {
+            let FunctionInvocationStn,
+              StatementsStn,
+              IdentifierStn,
+              SimpleLiteralStn,
+              FunctionDefinitionStn,
+              variableDefinition,
+              cafBase;
+            ({
+              FunctionInvocationStn,
+              StatementsStn,
+              IdentifierStn,
+              SimpleLiteralStn,
+              FunctionDefinitionStn
+            } = StnRegistry);
+            ({ variableDefinition } = this.labeledChildren);
+            if (
+              (Caf.exists(variableDefinition) &&
+                (Caf.exists((cafBase = variableDefinition.children)) &&
+                  cafBase.length)) > 0 &&
+              !variableDefinition.children[0].isSimpleIdentifier
             ) {
-              let FunctionInvocationStn,
-                StatementsStn,
-                IdentifierStn,
-                SimpleLiteralStn,
-                FunctionDefinitionStn,
-                variableDefinition,
-                cafBase;
-              ({
-                FunctionInvocationStn,
-                StatementsStn,
-                IdentifierStn,
-                SimpleLiteralStn,
-                FunctionDefinitionStn
-              } = StnRegistry);
-              ({ variableDefinition } = this.labeledChildren);
-              if (
-                (Caf.exists(variableDefinition) &&
-                  (Caf.exists((cafBase = variableDefinition.children)) &&
-                    cafBase.length)) > 0 &&
-                !variableDefinition.children[0].isSimpleIdentifier
-              ) {
-                withClause != null
-                  ? withClause
-                  : (withClause = StatementsStn(
-                      variableDefinition.children[0]
-                    ));
-              }
-              return FunctionInvocationStn(
-                IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
-                this.resolveStnParams(
-                  fromClause,
-                  { f: withClause },
-                  { f: whenClause },
-                  intoClause,
-                  { f: withKeyClause }
-                )
-              );
-            };
-          }
-        ))
-      );
+              withClause != null
+                ? withClause
+                : (withClause = StatementsStn(variableDefinition.children[0]));
+            }
+            return FunctionInvocationStn(
+              IdentifierStn({ identifier: `Caf.${Caf.toString(method)}` }),
+              this.resolveStnParams(
+                fromClause,
+                { f: withClause },
+                { f: whenClause },
+                intoClause,
+                { f: withKeyClause }
+              )
+            );
+          };
+        }
+      ));
     }
   );
 });
