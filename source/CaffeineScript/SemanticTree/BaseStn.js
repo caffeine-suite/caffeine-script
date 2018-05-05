@@ -216,24 +216,26 @@ Caf.defMod(module, () => {
               return this.createSourceNode(this.toJs(options));
             };
             this.prototype.toJsUsingSourceNode = function(options = {}) {
-              return this.toSourceNode(options).toString();
-            };
-            this.prototype.toJsWithInlineSourceMap = function(options = {}) {
-              let code, map;
-              ({ code, map } = this.toSourceNode(options).toStringWithSourceMap(
-                { file: Caf.exists(options) && options.outputFile }
-              ));
-              if (options.verbose) {
-                log({ sourceMap: map.toString(), sourceFile: this.sourceFile });
-              }
-              return `${Caf.toString(
-                code
-              )}\n//# sourceMappingURL=${Caf.toString(
-                binary(JSON.stringify(map.toString())).toDataUri(
-                  "application/json",
-                  true
-                )
-              )}\n//# sourceURL=${Caf.toString(this.sourceFile)}`;
+              let inlineMap, sourceMap, filename, sourceNode, code, map;
+              ({ inlineMap, sourceMap, filename = this.sourceFile } = options);
+              sourceNode = this.toSourceNode(options);
+              return inlineMap || sourceMap
+                ? (({ code, map } = sourceNode.toStringWithSourceMap({
+                    file: filename
+                  })),
+                  inlineMap
+                    ? {
+                        js: `${Caf.toString(
+                          code
+                        )}\n//# sourceMappingURL=${Caf.toString(
+                          binary(JSON.stringify(map.toString())).toDataUri(
+                            "application/json",
+                            true
+                          )
+                        )}\n//# sourceURL=${Caf.toString(filename)}`
+                      }
+                    : { js: code, sourceMap: map })
+                : { js: sourceNode.toString() };
             };
             this.prototype.childrenToSourceNodes = function(joiner, options) {
               return this.stnArrayToSourceNodes(this.children, joiner, options);

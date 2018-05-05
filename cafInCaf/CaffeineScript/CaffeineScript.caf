@@ -5,14 +5,44 @@ import &ArtStandardLib
 version: require('../../package.json').version
 
 ###
-  source: source-code string
-  options:
-    debug:   if there is an error, return max details in error.info
+  IN:
+    source: source-code string
 
-    options is also passed to the parser
+    options:
+      debug:      t/f
+        if there is an error, return max details in error.info
+
+      sourceMap:  t/f
+        Generate source map. Changes OUTput, see below
+
+      inlineMap:  t/f
+        output the source map as a base64-encoded string in a comment at the bottom.
+
+      filename:   (string)
+        the filename to use for the source map. It can include a path (relative or absolute).
+
+      bare:       t/f
+        If set, don't generate module-specific code.
+
+      NOTE: options is also passed to the parser
+
+  OUT:
+    compiled:
+      js: (string)
+        js-code
+        if options.inlineMap, sourceMap is appended
+
+      sourceMap:
+        set if options.sourceMap
+
+    All sourceMaps are v3. See:
+      https://www.npmjs.com/package/source-map
+      https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 
 compile: (source, options = {}) ->
   try
+    {bare, inlineMap, sourceMap, filename} = options
+
     transformedStn =
       stn =
         parseTree = &CaffeineScriptParser.parse source, options
@@ -20,11 +50,12 @@ compile: (source, options = {}) ->
       .validateAll()
       .transform()
 
-    compiled: js:
-      if options.bare
-        transformedStn.toBareJs()
-      else
-        transformedStn.toJsModule()
+    compiled:
+      transformedStn.toJsUsingSourceNode  {}
+        module:     !bare
+        inlineMap
+        sourceMap
+        filename
 
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i
@@ -36,6 +67,7 @@ compile: (source, options = {}) ->
             Submit issues here: https://github.com/caffeine-suite/caffeine-script/issues
 
             Sorry for the inconvenience. Thank you so much for trying CaffeineScript!
+
         options
         parseTree
         stn

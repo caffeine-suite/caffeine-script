@@ -10,9 +10,18 @@ Caf.defMod(module, () => {
         {
           version: require("../../package.json").version,
           compile: function(source, options = {}) {
-            let transformedStn, stn, parseTree, e, cafTemp;
+            let bare,
+              inlineMap,
+              sourceMap,
+              filename,
+              transformedStn,
+              stn,
+              parseTree,
+              e,
+              cafTemp;
             return (() => {
               try {
+                ({ bare, inlineMap, sourceMap, filename } = options);
                 transformedStn = (stn = (parseTree = require("./CaffeineScriptParser").parse(
                   source,
                   options
@@ -20,11 +29,12 @@ Caf.defMod(module, () => {
                   .validateAll()
                   .transform();
                 return {
-                  compiled: {
-                    js: options.bare
-                      ? transformedStn.toBareJs()
-                      : transformedStn.toJsModule()
-                  }
+                  compiled: transformedStn.toJsUsingSourceNode({
+                    module: !bare,
+                    inlineMap,
+                    sourceMap,
+                    filename
+                  })
                 };
               } catch (cafError) {
                 e = cafError;

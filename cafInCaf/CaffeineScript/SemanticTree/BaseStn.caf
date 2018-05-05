@@ -209,22 +209,40 @@ class BaseStn extends BaseClass
     log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
     @createSourceNode @toJs options
 
+  ##
+    options:
+      module:     t/f - generate module-rapper code or not
+      inlineMap:  t/f - return js with inline source-Map at the end
+      sourceMap:  t/f - return {} js, sourceMap
+      filename:   override parser.sourceFile (for inlineMap generation)
+
+    OUT:
+      js:         string
+      sourceMap:  string
+
   toJsUsingSourceNode: (options = {}) ->
-    @toSourceNode options
-    .toString()
+    {inlineMap, sourceMap, filename = @sourceFile} = options
+    sourceNode = @toSourceNode options
 
-  toJsWithInlineSourceMap: (options = {}) ->
-    {code, map} =
-      @toSourceNode options
-      .toStringWithSourceMap file: options?.outputFile
+    if inlineMap || sourceMap
+      {code, map} =
+        sourceNode
+        .toStringWithSourceMap file: filename
 
-    if options.verbose
-      log {sourceMap:map.toString(),@sourceFile}
+      if inlineMap
+        js:
+          """
+            #{code}
+            //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json, true}
+            //# sourceURL=#{filename}
 
-    """
-      #{code}
-      //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json, true}
-      //# sourceURL=#{@sourceFile}
+      else
+        {}
+          js:         code
+          sourceMap:  map
+
+    else
+      js: sourceNode.toString()
 
   childrenToSourceNodes: (joiner, options)->
     @stnArrayToSourceNodes @children, joiner, options
