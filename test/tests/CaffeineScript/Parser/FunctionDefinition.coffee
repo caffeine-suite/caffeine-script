@@ -31,6 +31,7 @@ module.exports = suite: parseTestSuite
   bound:
     simple1:
       "=> 321"             : "() => 321;"
+      "=> a: 1"             : "() => {return {a: 1};};"
     simple2:
       "(foo) => 321"       : "(foo) => 321;"
       "(foo, bar) => 321"  : "(foo, bar) => 321;"

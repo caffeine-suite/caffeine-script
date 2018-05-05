@@ -221,20 +221,20 @@ class BaseStn extends BaseClass
       sourceMap:  string
 
   toJsUsingSourceNode: (options = {}) ->
-    {inlineMap, sourceMap, filename = @sourceFile} = options
+    {inlineMap, sourceMap, sourceFile = @sourceFile} = options
     sourceNode = @toSourceNode options
 
     if inlineMap || sourceMap
       {code, map} =
         sourceNode
-        .toStringWithSourceMap file: filename
+        .toStringWithSourceMap file: sourceFile
 
       if inlineMap
         js:
           """
             #{code}
             //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json, true}
-            //# sourceURL=#{filename}
+            //# sourceURL=#{sourceFile}
 
       else
         {}

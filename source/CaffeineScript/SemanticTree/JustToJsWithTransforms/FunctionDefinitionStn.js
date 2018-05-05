@@ -193,7 +193,7 @@ Caf.defMod(module, () => {
                   this.bound &&
                   !this.getAutoLets() &&
                   (Caf.exists(statementStns) && statementStns.length) === 1 &&
-                  !statementStns[0].isEmptyObjectLiteral
+                  statementStns[0].type !== "Object"
                 );
               }
             });

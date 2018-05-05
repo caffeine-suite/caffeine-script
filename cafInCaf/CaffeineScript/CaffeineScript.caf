@@ -18,8 +18,13 @@ version: require('../../package.json').version
       inlineMap:  t/f
         output the source map as a base64-encoded string in a comment at the bottom.
 
-      filename:   (string)
-        the filename to use for the source map. It can include a path (relative or absolute).
+      sourceFile:   (string)
+        source file-name
+        (used by &requires and sourceMap generation)
+
+      sourceRoot:   (string)
+        source file project's root folder
+        (used by &requires)
 
       bare:       t/f
         If set, don't generate module-specific code.
@@ -41,7 +46,7 @@ version: require('../../package.json').version
 
 compile: (source, options = {}) ->
   try
-    {bare, inlineMap, sourceMap, filename} = options
+    {bare, inlineMap, sourceMap, sourceFile} = options
 
     transformedStn =
       stn =
@@ -55,7 +60,7 @@ compile: (source, options = {}) ->
         module:     !bare
         inlineMap
         sourceMap
-        filename
+        sourceFile
 
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i

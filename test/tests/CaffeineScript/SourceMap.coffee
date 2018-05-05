@@ -193,6 +193,8 @@ module.exports = suite:
         a
       """
 
+    generateSourceMapParseTest "FunctionDefinitionStn", "=> foo: 1"
+
   # generateSourceMapParseTest "every SourceTreeNodeType", """
   #   1
   #   :hi

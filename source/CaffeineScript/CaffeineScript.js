@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
             let bare,
               inlineMap,
               sourceMap,
-              filename,
+              sourceFile,
               transformedStn,
               stn,
               parseTree,
@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
               cafTemp;
             return (() => {
               try {
-                ({ bare, inlineMap, sourceMap, filename } = options);
+                ({ bare, inlineMap, sourceMap, sourceFile } = options);
                 transformedStn = (stn = (parseTree = require("./CaffeineScriptParser").parse(
                   source,
                   options
@@ -33,7 +33,7 @@ Caf.defMod(module, () => {
                     module: !bare,
                     inlineMap,
                     sourceMap,
-                    filename
+                    sourceFile
                   })
                 };
               } catch (cafError) {

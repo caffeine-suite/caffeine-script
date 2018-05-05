@@ -216,12 +216,16 @@ Caf.defMod(module, () => {
               return this.createSourceNode(this.toJs(options));
             };
             this.prototype.toJsUsingSourceNode = function(options = {}) {
-              let inlineMap, sourceMap, filename, sourceNode, code, map;
-              ({ inlineMap, sourceMap, filename = this.sourceFile } = options);
+              let inlineMap, sourceMap, sourceFile, sourceNode, code, map;
+              ({
+                inlineMap,
+                sourceMap,
+                sourceFile = this.sourceFile
+              } = options);
               sourceNode = this.toSourceNode(options);
               return inlineMap || sourceMap
                 ? (({ code, map } = sourceNode.toStringWithSourceMap({
-                    file: filename
+                    file: sourceFile
                   })),
                   inlineMap
                     ? {
@@ -232,7 +236,7 @@ Caf.defMod(module, () => {
                             "application/json",
                             true
                           )
-                        )}\n//# sourceURL=${Caf.toString(filename)}`
+                        )}\n//# sourceURL=${Caf.toString(sourceFile)}`
                       }
                     : { js: code, sourceMap: map })
                 : { js: sourceNode.toString() };
