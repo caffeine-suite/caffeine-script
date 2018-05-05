@@ -57,7 +57,7 @@ class ObjectPropValueStn extends &BaseStn
 
   toSourceNode: ->
     {valueChild, propName} = @
-    base = valueChild.toSourceNode()
+    base = valueChild.toSourceNode expression: true
     propName = propName.toSourceNode() unless isString propName
 
     if @canBeUsedInES6Structuring

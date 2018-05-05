@@ -33,6 +33,7 @@ Caf.defMod(module, () => {
               importBody,
               importFromList,
               identifiersToImport,
+              bodyMain,
               bodyJs,
               importsJs;
             importFromCaptureIdentifier = null;
@@ -46,9 +47,10 @@ Caf.defMod(module, () => {
               ? ((identifiersToImport = Object.keys(
                   importBody.generateImportMap()
                 )),
+                (bodyMain = importBody.toJs({ returnAction: true })),
                 (bodyJs = compactFlatten([
                   importBody.getAutoLets(),
-                  importBody.toFunctionBodyJs(true)
+                  bodyMain
                 ]).join("; ")),
                 identifiersToImport.length > 0
                   ? ((importsJs = compactFlatten([
@@ -80,7 +82,9 @@ Caf.defMod(module, () => {
               importBody,
               importFromList,
               identifiersToImport,
+              bodyMainNodes,
               bodySourceNodes,
+              lets,
               importsSourceNodes;
             importFromCaptureIdentifier = null;
             if ((p = this.parentImport)) {
@@ -93,9 +97,12 @@ Caf.defMod(module, () => {
               ? ((identifiersToImport = Object.keys(
                   importBody.generateImportMap()
                 )),
+                (bodyMainNodes = importBody.toSourceNode({
+                  returnAction: true
+                })),
                 (bodySourceNodes = [
-                  importBody.getAutoLets(),
-                  importBody.toSourceNode({ returnAction: true })
+                  (lets = importBody.getAutoLets()) ? lets + "; " : undefined,
+                  bodyMainNodes
                 ]),
                 identifiersToImport.length > 0
                   ? ((importsSourceNodes = compactFlatten([

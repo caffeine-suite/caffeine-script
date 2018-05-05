@@ -79,7 +79,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     """:
       applyModuleWrapper '
       let a = global.a, cafParentImports; return
-      Caf.importInvoke(["b"], cafParentImports = [global, a], (b) => {return
+      Caf.importInvoke(["b"], cafParentImports = [global, a], (b) => {let cafParentImports1; return
       Caf.importInvoke(["c"], cafParentImports1 = [cafParentImports, b], (c) => {return
       Caf.importInvoke(["foo"], [cafParentImports1, c], (foo) => {return foo();});});});
       '

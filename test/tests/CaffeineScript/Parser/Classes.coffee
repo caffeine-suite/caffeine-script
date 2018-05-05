@@ -128,10 +128,12 @@ module.exports = suite: parseTestSuite
       """
       class Foo extends Bar
         a-b: 1
+        @a-b: 2
+        @foo: 3
       """: "let Foo; Foo =
         Caf.defClass(class Foo extends Bar {},
         function(Foo, classSuper, instanceSuper)
-          {this.prototype[\"a-b\"] = 1;});"
+          {this.prototype[\"a-b\"] = 1; this[\"a-b\"] = 2; this.foo = 3;});"
 
       """
       class Foo extends Bar

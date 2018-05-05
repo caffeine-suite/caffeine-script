@@ -179,7 +179,7 @@ Caf.defMod(module, () => {
               );
             };
             this.getter({
-              autoLetsForSouceNode: function() {
+              autoLetsForSourceNode: function() {
                 let lets;
                 return (lets = this.getAutoLets()) ? lets + "; " : undefined;
               },
@@ -226,27 +226,23 @@ Caf.defMod(module, () => {
               return bound
                 ? this.simpleBound
                   ? this.createSourceNode(
-                      statement ? "(" : undefined,
                       argsSourceNode,
                       " => ",
-                      bodySourceNode,
-                      statement ? ")" : undefined
+                      bodySourceNode
                     )
                   : this.createSourceNode(
-                      statement ? "(" : undefined,
                       argsSourceNode,
                       " => {",
-                      this.autoLetsForSouceNode,
+                      this.autoLetsForSourceNode,
                       bodySourceNode,
-                      "}",
-                      statement ? ")" : undefined
+                      "}"
                     )
                 : this.createSourceNode(
                     statement ? "(" : undefined,
                     isConstructor ? "constructor" : "function",
                     argsSourceNode,
                     " {",
-                    this.autoLetsForSouceNode,
+                    this.autoLetsForSourceNode,
                     bodySourceNode,
                     "}",
                     statement ? ")" : undefined

@@ -114,8 +114,10 @@ import Extensions
     ]
 
   @rule
-    thisPropName: "/@/ identifier?"
-    {} stnFactory: :ThisStn
+    thisPropName: "/@/ unquotedString?"
+    {}
+      stnFactory: :ThisStn
+      stnProps: ~> identifier: @unquotedString.toString()
 
   @rule
     propName:

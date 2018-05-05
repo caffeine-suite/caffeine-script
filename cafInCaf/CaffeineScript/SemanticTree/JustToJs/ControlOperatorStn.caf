@@ -21,6 +21,10 @@ class ControlOperatorStn extends &BaseStn
 
     @validate()
 
+  @getter
+    whileReturnTempVar: ->
+      @_whileReturnTempVar ?= @scope.uniqueIdentifier
+
   validate: ->
     switch @operand
     when "while", "until"
@@ -51,17 +55,17 @@ class ControlOperatorStn extends &BaseStn
           {#{@body.toFunctionBodyJs false};};})()
           "
         else
-          tempVarIdentifier = @scope.uniqueIdentifier
+          tempVarIdentifier = @whileReturnTempVar
           "
           (() => {while
           #{@applyRequiredParens jsExpression}
           {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
-          return #{tempVarIdentifier}})()
+          return #{tempVarIdentifier};})()
           "
       else
         out =
           "
-          #{@applyParens jsExpression} ?
+          #{@expression.toJsExpression dotBase: true} ?
           #{@body.toJsExpression()} :
           #{@elseBody?.toJsExpression() || 'undefined'}
           "
@@ -84,7 +88,7 @@ class ControlOperatorStn extends &BaseStn
 
     unaryOperator = ""
 
-    expressionSourceNode = switch operand
+    switch operand
     when :until, :unless
       operand = if operand == :until
         :while
@@ -98,19 +102,19 @@ class ControlOperatorStn extends &BaseStn
       when :while
         if returnValueIsIgnored
           @doSourceNode
-            "while("
+            "while ("
             unaryOperator
-            @expression.toSourceNode noParens: true, expression: true
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
             ") {"
             @body.toSourceNode()
             "};"
 
         else
-          tempVarIdentifier = @scope.uniqueIdentifier
+          tempVarIdentifier = @whileReturnTempVar
           @doSourceNode
-            "let #{tempVarIdentifier}; while("
+            "while ("
             unaryOperator
-            @expression.toSourceNode noParens: true, expression: true
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
             ") {"
             @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
             "}; return #{tempVarIdentifier};"
@@ -131,7 +135,7 @@ class ControlOperatorStn extends &BaseStn
         operand
         " ("
         unaryOperator
-        @expression.toSourceNode noParens: true, expression: true
+        @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
         ") {"
         @body.toSourceNode()
         "}"

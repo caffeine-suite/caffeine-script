@@ -29,9 +29,10 @@ Caf.defMod(module, () => {
             whenValue.implicitArray
               ? this.stnArrayToSourceNodes(
                   whenValue.children,
-                  falsifyCases ? "): case !(" : ": case "
+                  falsifyCases ? ": case !" : ": case ",
+                  { dotBase: falsifyCases }
                 )
-              : [whenValue.toSourceNode()],
+              : [whenValue.toSourceNode({ dotBase: falsifyCases })],
             ": ",
             thenDo.toSourceNode({ returnAction })
           );
@@ -41,10 +42,12 @@ Caf.defMod(module, () => {
           ({ falsifyCases } = options);
           ({ whenValue } = this.labeledChildren);
           cases = whenValue.implicitArray
-            ? Caf.array(whenValue.children, m => m.toJsExpression())
-            : [whenValue.toJsExpression()];
+            ? Caf.array(whenValue.children, m =>
+                m.toJsExpression({ dotBase: falsifyCases })
+              )
+            : [whenValue.toJsExpression({ dotBase: falsifyCases })];
           return falsifyCases
-            ? `case !(${Caf.toString(cases.join("): case !("))})`
+            ? `case !${Caf.toString(cases.join(": case !"))}`
             : `case ${Caf.toString(cases.join(": case "))}`;
         };
       }

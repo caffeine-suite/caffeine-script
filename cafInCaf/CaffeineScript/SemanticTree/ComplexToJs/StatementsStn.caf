@@ -24,7 +24,8 @@ class StatementsStn extends &BaseStn
     out
 
   toJs: (options)->
-    if options?.expression
+    {expression, returnAction} = options if options
+    if expression
       switch @children.length
       when 0 then "undefined"
       when 1 then @children[0].toJsExpression()
@@ -33,7 +34,7 @@ class StatementsStn extends &BaseStn
           @_getChildrenStatementsJsArray "", false
           .join ", "
     else
-      @_getChildrenStatementsJsArray().join "; "
+      @_getChildrenStatementsJsArray(returnAction).join "; "
 
   toFunctionBodyJs: (returnAction = true)->
     @toFunctionBodyJsArray returnAction
@@ -79,7 +80,7 @@ class StatementsStn extends &BaseStn
       if i > 0
         out.push if generateStatements then "; " else ", "
 
-      if returnAction? && i == lines.length - 1
+      a = if returnAction? && i == lines.length - 1
         if !c.jsExpressionUsesReturn
           childExpression = c.toSourceNode expression: true
           if returnAction.length > 0
@@ -92,6 +93,7 @@ class StatementsStn extends &BaseStn
         if generateStatements
           c.toSourceNode statement: !classBody
         else
-          c.toSourceNode expression: true, returnValueIsIgnored: true
+          c.toSourceNode expression: true, returnValueIsIgnored: i < lines.length - 1
+      a
     out.push ";" if generateStatements
     out

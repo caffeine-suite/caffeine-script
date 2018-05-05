@@ -10,7 +10,7 @@ class ObjectPropNameStn extends &BaseStn
     isThisProp: -> @props.isThisProp
 
     simpleName: ->
-      [nameStn] = @children
+      nameStn = peek @children
       if nameStn
         nameStn.propName
       else

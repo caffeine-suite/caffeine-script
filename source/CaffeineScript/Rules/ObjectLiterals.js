@@ -112,8 +112,13 @@ Caf.defMod(module, () => {
               stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
             });
             this.rule(
-              { thisPropName: "/@/ identifier?" },
-              { stnFactory: "ThisStn" }
+              { thisPropName: "/@/ unquotedString?" },
+              {
+                stnFactory: "ThisStn",
+                stnProps: function() {
+                  return { identifier: this.unquotedString.toString() };
+                }
+              }
             );
             this.rule(
               { propName: "!/then\\s/ str:thisPropName &_colon_" },

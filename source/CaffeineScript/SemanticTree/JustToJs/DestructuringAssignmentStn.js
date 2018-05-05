@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
           }
           ({ structure, value } = this.labeledChildren);
           if (returnValueIsIgnored) {
-            expression = false;
+            expression = null;
           }
           return this.createSourceNode(
             !noParens ? "(" : undefined,
@@ -32,7 +32,7 @@ Caf.defMod(module, () => {
           }
           ({ structure, value } = this.labeledChildren);
           if (returnValueIsIgnored) {
-            expression = false;
+            expression = null;
           }
           return expression
             ? `(${Caf.toString(structure.toJs())} = ${Caf.toString(

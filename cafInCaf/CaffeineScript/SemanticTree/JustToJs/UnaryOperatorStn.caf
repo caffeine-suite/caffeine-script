@@ -6,13 +6,15 @@ class UnaryOperatorStn extends &BaseStn
     normalizedOperand: ->
       switch op = @props.operand
         when "delete" then "delete "
-        when "and" then "&&"
-        when "or"  then "||"
-        when "==", "is"   then "==="
-        when "!=", "isnt" then "!=="
+        # when "and" then "&&"
+        # when "or"  then "||"
+        # when "==", "is"   then "==="
+        # when "!=", "isnt" then "!=="
         when "not" then "!"
         when "?" then " != null"
         else op
+
+    isJsNativeUnaryOperand: -> /^(not|[-!~])$/.test @props.operand
 
   @getter
     tail: -> @props.tail || @props.operand == "?"
@@ -28,14 +30,17 @@ class UnaryOperatorStn extends &BaseStn
       "#{@normalizedOperand}#{childrenJs}"
 
   toSourceNode: (options) ->
-    childNode = @children[0].toSourceNode dotBase: true
+    {dotBase, forUnaryOpeartor} = options if options
+
+    childNode = @children[0].toSourceNode dotBase: true forUnaryOpeartor: true
 
     base = if @tail
       childNode, @normalizedOperand
     else
       @normalizedOperand, childNode
 
-    if options?.dotBase
+    if dotBase &&
+        !forUnaryOpeartor or !@isJsNativeUnaryOperand
       @createSourceNode "(", base, ")"
 
     else

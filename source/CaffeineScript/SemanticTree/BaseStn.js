@@ -215,6 +215,9 @@ Caf.defMod(module, () => {
               );
               return this.createSourceNode(this.toJs(options));
             };
+            this.prototype.toJsUsingSourceNode = function(options = {}) {
+              return this.toSourceNode(options).toString();
+            };
             this.prototype.toJsWithInlineSourceMap = function(options = {}) {
               let code, map;
               ({ code, map } = this.toSourceNode(options).toStringWithSourceMap(

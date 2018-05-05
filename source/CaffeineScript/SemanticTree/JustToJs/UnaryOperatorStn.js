@@ -13,16 +13,6 @@ Caf.defMod(module, () => {
               switch ((op = this.props.operand)) {
                 case "delete":
                   return "delete ";
-                case "and":
-                  return "&&";
-                case "or":
-                  return "||";
-                case "==":
-                case "is":
-                  return "===";
-                case "!=":
-                case "isnt":
-                  return "!==";
                 case "not":
                   return "!";
                 case "?":
@@ -31,6 +21,9 @@ Caf.defMod(module, () => {
                   return op;
               }
             })();
+          },
+          isJsNativeUnaryOperand: function() {
+            return /^(not|[-!~])$/.test(this.props.operand);
           }
         });
         this.getter({
@@ -53,12 +46,18 @@ Caf.defMod(module, () => {
                 )}`;
         };
         this.prototype.toSourceNode = function(options) {
-          let childNode, base;
-          childNode = this.children[0].toSourceNode({ dotBase: true });
+          let dotBase, forUnaryOpeartor, childNode, base;
+          if (options) {
+            ({ dotBase, forUnaryOpeartor } = options);
+          }
+          childNode = this.children[0].toSourceNode({
+            dotBase: true,
+            forUnaryOpeartor: true
+          });
           base = this.tail
             ? [childNode, this.normalizedOperand]
             : [this.normalizedOperand, childNode];
-          return Caf.exists(options) && options.dotBase
+          return dotBase && (!forUnaryOpeartor || !this.isJsNativeUnaryOperand)
             ? this.createSourceNode("(", base, ")")
             : this.createSourceNode(base);
         };

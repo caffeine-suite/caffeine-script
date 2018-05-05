@@ -114,7 +114,7 @@ module.exports = suite: parseTestSuite
     when a < b then c
     when d then e
     else f
-    """: "switch (false) {case !(a < b): c; break; case !(d): e; break; default: f;};"
+    """: "switch (false) {case !(a < b): c; break; case !d: e; break; default: f;};"
 
   expression:
     basic:

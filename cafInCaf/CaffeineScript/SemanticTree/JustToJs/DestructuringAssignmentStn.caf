@@ -6,7 +6,7 @@ class DestructuringAssignmentStn extends &BaseStn
   toSourceNode: (options) ->
     {expression, returnValueIsIgnored, noParens} = options if options
     {structure, value} = @labeledChildren
-    expression = false if returnValueIsIgnored
+    expression = null if returnValueIsIgnored
 
     @createSourceNode
       "(" unless noParens
@@ -21,7 +21,7 @@ class DestructuringAssignmentStn extends &BaseStn
     {expression, returnValueIsIgnored} = options if options
     {structure, value} = @labeledChildren
 
-    expression = false if returnValueIsIgnored
+    expression = null if returnValueIsIgnored
 
     if expression
       "(#{structure.toJs()} = #{value.toJsExpression()}, #{structure.toJs restructuringStart: true})"

@@ -49,7 +49,7 @@ class RegExpStn extends &BaseStn
     else
       value
 
-    if childrenNodes.length == 0
+    if !childrenNodes || childrenNodes.length == 0
       @createSourceNode "/(?:)/"
     else if hasInterpolation
       @createSourceNode

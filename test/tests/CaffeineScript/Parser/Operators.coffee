@@ -97,7 +97,7 @@ module.exports = suite: parseTestSuite
       "not true": "!true;"
 
       "delete a.b": "delete a.b;"
-      "deletea.b": "deletea.b;"
+      "deletea.b": "deletea.b;" # not delete, but legal none-the-less
 
       "nottrue": "nottrue;"
 

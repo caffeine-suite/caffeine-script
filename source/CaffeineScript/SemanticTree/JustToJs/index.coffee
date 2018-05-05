@@ -20,6 +20,7 @@ module.exports
   LabeledDestructuringTargetStn: require './LabeledDestructuringTargetStn'
   LetStn:                        require './LetStn'                       
   NewInstanceStn:                require './NewInstanceStn'               
+  NumberLiteralStn:              require './NumberLiteralStn'             
   ObjectDestructuringStn:        require './ObjectDestructuringStn'       
   ObjectPropNameStn:             require './ObjectPropNameStn'            
   ObjectPropValueStn:            require './ObjectPropValueStn'           

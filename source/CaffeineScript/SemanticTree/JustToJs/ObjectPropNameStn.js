@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["identifierRegexp", "escapePropName"],
+    ["identifierRegexp", "peek", "escapePropName"],
     [global, require("../../StandardImport")],
-    (identifierRegexp, escapePropName) => {
+    (identifierRegexp, peek, escapePropName) => {
       let ObjectPropNameStn;
       return (ObjectPropNameStn = Caf.defClass(
         class ObjectPropNameStn extends require("../BaseStn") {},
@@ -21,7 +21,7 @@ Caf.defMod(module, () => {
             },
             simpleName: function() {
               let nameStn;
-              [nameStn] = this.children;
+              nameStn = peek(this.children);
               return nameStn
                 ? nameStn.propName
                 : escapePropName(this.props.value);

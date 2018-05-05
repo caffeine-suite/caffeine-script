@@ -50,7 +50,7 @@ module.exports = suite: parseTestSuite {
     foo
     """: "
       Caf.importInvoke([\"foo\"], [global, require('art-standard-lib')],
-      (foo) => {return (require('caffeine-eight'), foo);});
+      (foo) => {require('caffeine-eight'); return foo;});
       "
 
     """

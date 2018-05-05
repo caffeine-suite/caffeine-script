@@ -67,16 +67,20 @@ module.exports = suite: parseTestSuite
 
   expressions:
     """
+    a = {d} = e
+    """: "let a, d; a = ({d} = e, {d});"
+
+    """
     a = if b
       c
       {d} = e
     """: "let a, d; a = b ? (c, ({d} = e, {d})) : undefined;"
 
-    # """
-    # a =
-    #   c
-    #   {d} = e
-    # """: "let a, d; a = [c, ({d} = e, {d})];"
+    """
+    a =
+      c
+      {d} = e
+    """: "let a, d; a = [c, ({d} = e, {d})];"
 
   statements:
     """

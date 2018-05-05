@@ -37,11 +37,14 @@ class ImportStn extends &BaseStn
     if importBody
       identifiersToImport = Object.keys importBody.generateImportMap()
 
+      # call before getAutoLets in case children need to define additional lets
+      bodyMain = importBody.toJs returnAction: true
+
       # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
       bodyJs =
         compactFlatten []
           importBody.getAutoLets()
-          importBody.toFunctionBodyJs true
+          bodyMain
         .join '; '
 
       if identifiersToImport.length > 0
@@ -77,11 +80,15 @@ class ImportStn extends &BaseStn
     if importBody
       identifiersToImport = Object.keys importBody.generateImportMap()
 
+      # needs to before getAutoLets - WhileStn may need to define a let
+      bodyMainNodes = importBody.toSourceNode returnAction: true
+
       # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
       bodySourceNodes =
         []
-          importBody.getAutoLets()
-          importBody.toSourceNode returnAction: true
+          lets + "; " if lets = importBody.getAutoLets()
+
+          bodyMainNodes
 
       if identifiersToImport.length > 0
 

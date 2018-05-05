@@ -22,6 +22,11 @@ class RootStn extends &ScopeStnMixin &BaseStn
         @statementsSourceNodes
     else if options.module
       identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
+
+      # before lets
+      statementsSourceNode = @statements.toSourceNode returnAction: true
+
+      # why isn't this "getAutoLets" like everywhere else?
       lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
 
       []
@@ -31,15 +36,19 @@ class RootStn extends &ScopeStnMixin &BaseStn
           Caf.defMod(module, () => {
 
         "let #{lets.join ', '}; " if lets.length > 0
-        @statements.toSourceNode returnAction: true
+
+        statementsSourceNode
 
         """
           });
     else
+      # do before getAutoLets - WhileStn may need a temp var, but it won't know
+      # until we call toSourceNode
+      {statementsSourceNodes} = @
       []
         if present autoLets = @getAutoLets()
           [] autoLets, "; "
-        @statementsSourceNodes
+        statementsSourceNodes
 
   rootUpdateScope: ->
     unless @_scopeHasBeenUpdated

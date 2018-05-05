@@ -166,7 +166,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     super...
 
   @getter
-    autoLetsForSouceNode: ->
+    autoLetsForSourceNode: ->
       if lets = @getAutoLets()
         lets + "; "
     bound: -> @props.bound
@@ -191,20 +191,16 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     if bound
       if @simpleBound
         @createSourceNode
-          "(" if statement
           argsSourceNode
           " => "
           bodySourceNode
-          ")" if statement
       else
         @createSourceNode
-          "(" if statement
           argsSourceNode
           " => {"
-          @autoLetsForSouceNode
+          @autoLetsForSourceNode
           bodySourceNode
           "}"
-          ")" if statement
 
     else
       @createSourceNode
@@ -212,7 +208,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         if isConstructor then "constructor" else "function"
         argsSourceNode
         " {"
-        @autoLetsForSouceNode
+        @autoLetsForSourceNode
         bodySourceNode
         "}"
         ")" if statement

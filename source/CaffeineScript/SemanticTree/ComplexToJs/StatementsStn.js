@@ -45,7 +45,11 @@ Caf.defMod(module, () => {
           return out;
         };
         this.prototype.toJs = function(options) {
-          return Caf.exists(options) && options.expression
+          let expression, returnAction;
+          if (options) {
+            ({ expression, returnAction } = options);
+          }
+          return expression
             ? (() => {
                 switch (this.children.length) {
                   case 0:
@@ -58,7 +62,7 @@ Caf.defMod(module, () => {
                     );
                 }
               })()
-            : this._getChildrenStatementsJsArray().join("; ");
+            : this._getChildrenStatementsJsArray(returnAction).join("; ");
         };
         this.prototype.toFunctionBodyJs = function(returnAction = true) {
           return this.toFunctionBodyJsArray(returnAction).join("; ");
@@ -118,23 +122,25 @@ Caf.defMod(module, () => {
           Caf.array(
             (lines = this.children),
             (c, i) => {
-              let childExpression;
+              let a, childExpression;
               if (i > 0) {
                 out.push(generateStatements ? "; " : ", ");
               }
-              return returnAction != null && i === lines.length - 1
-                ? !c.jsExpressionUsesReturn
-                  ? ((childExpression = c.toSourceNode({ expression: true })),
-                    returnAction.length > 0
-                      ? [returnAction, " ", childExpression]
-                      : childExpression)
-                  : c.toJs({ generateReturnStatement: true })
-                : generateStatements
-                  ? c.toSourceNode({ statement: !classBody })
-                  : c.toSourceNode({
-                      expression: true,
-                      returnValueIsIgnored: true
-                    });
+              a =
+                returnAction != null && i === lines.length - 1
+                  ? !c.jsExpressionUsesReturn
+                    ? ((childExpression = c.toSourceNode({ expression: true })),
+                      returnAction.length > 0
+                        ? [returnAction, " ", childExpression]
+                        : childExpression)
+                    : c.toJs({ generateReturnStatement: true })
+                  : generateStatements
+                    ? c.toSourceNode({ statement: !classBody })
+                    : c.toSourceNode({
+                        expression: true,
+                        returnValueIsIgnored: i < lines.length - 1
+                      });
+              return a;
             },
             null,
             (out = [])

@@ -5,20 +5,33 @@ class ThisStn extends &BaseStn
   needsParens: false
 
   @getter
-    identifier: -> @children[0]?.toJs()
+    identifier: ->
+      if id = @props.identifier
+        if identifierRegexp.test id
+          id
+        else
+          escapeJavascriptString id
+      else
+        peek(@children)?.toJs()
+
     propName: -> @identifier ? "this"
+    isIdentifier: -> identifierRegexp.test @identifier
 
   toJs: ->
     if id = @identifier
-      "this.#{id}"
+      if identifierRegexp.test id
+        "this.#{id}"
+      else
+        "this[#{id}]"
     else
       "this"
 
   toSourceNode: ->
     if id = @identifier
-      @createSourceNode
-        :this.
-        id
+      if identifierRegexp.test id
+        @createSourceNode :this. id
+      else
+        @createSourceNode :this[ id, "]"
     else
       @createSourceNode
         :this

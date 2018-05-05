@@ -92,10 +92,12 @@ Caf.defMod(module, () => {
                   this.props.methodName,
                   ".",
                   passArguments ? "apply" : "call",
-                  "(this, ",
+                  "(this",
                   this.props.passArguments
-                    ? "arguments"
-                    : this.stnArrayToSourceNodes(args, ", "),
+                    ? [", ", "arguments"]
+                    : args.length > 0
+                      ? [", ", this.stnArrayToSourceNodes(args, ", ")]
+                      : undefined,
                   ")"
                 ));
           };

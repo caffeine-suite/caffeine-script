@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
             dotBase ? "([" : "[",
             Caf.array(this.children, (c, i) => {
               let sn;
-              sn = c.toSourceNode();
+              sn = c.toSourceNode({ expression: true });
               return i > 0 ? [", ", sn] : sn;
             }),
             dotBase ? "])" : "]"

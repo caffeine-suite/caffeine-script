@@ -29,6 +29,6 @@ import &StandardImport
         (?!\.[0-9])
 
     {}
-      stnFactory: :SimpleLiteralStn
+      stnFactory: :NumberLiteralStn
       stnProps: ~>
         value: @toString().replace /^0+(\d)/, "$1"

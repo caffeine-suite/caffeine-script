@@ -4,7 +4,7 @@ class IdentifierStn extends &BaseStn
 
   @getter
     name: -> @props.identifier
-    isIdentifier: -> true
+    isIdentifier: -> identifierRegexp.test @identifier
     propName: -> @identifier
 
     identifier: -> (@props.identifierHandle || @props).identifier

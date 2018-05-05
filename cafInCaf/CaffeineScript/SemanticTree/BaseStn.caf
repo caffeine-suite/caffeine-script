@@ -209,6 +209,10 @@ class BaseStn extends BaseClass
     log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
     @createSourceNode @toJs options
 
+  toJsUsingSourceNode: (options = {}) ->
+    @toSourceNode options
+    .toString()
+
   toJsWithInlineSourceMap: (options = {}) ->
     {code, map} =
       @toSourceNode options

@@ -29,6 +29,14 @@ Caf.defMod(module, () => {
           }
         },
         function(ControlOperatorStn, classSuper, instanceSuper) {
+          this.getter({
+            whileReturnTempVar: function() {
+              let cafTemp;
+              return (cafTemp = this._whileReturnTempVar) != null
+                ? cafTemp
+                : (this._whileReturnTempVar = this.scope.uniqueIdentifier);
+            }
+          });
           this.prototype.validate = function() {
             return (() => {
               switch (this.operand) {
@@ -100,16 +108,16 @@ Caf.defMod(module, () => {
                     )} {${Caf.toString(
                       this.body.toFunctionBodyJs(false)
                     )};};})()`
-                  : ((tempVarIdentifier = this.scope.uniqueIdentifier),
+                  : ((tempVarIdentifier = this.whileReturnTempVar),
                     `(() => {while ${Caf.toString(
                       this.applyRequiredParens(jsExpression)
                     )} {${Caf.toString(
                       this.body.toFunctionBodyJs(
                         `${Caf.toString(tempVarIdentifier)} =`
                       )
-                    )};}; return ${Caf.toString(tempVarIdentifier)}})()`)
+                    )};}; return ${Caf.toString(tempVarIdentifier)};})()`)
                 : ((out = `${Caf.toString(
-                    this.applyParens(jsExpression)
+                    this.expression.toJsExpression({ dotBase: true })
                   )} ? ${Caf.toString(
                     this.body.toJsExpression()
                   )} : ${Caf.toString(
@@ -138,7 +146,6 @@ Caf.defMod(module, () => {
               operand,
               applyParens,
               unaryOperator,
-              expressionSourceNode,
               parts,
               tempVarIdentifier,
               cafBase;
@@ -146,37 +153,37 @@ Caf.defMod(module, () => {
             ({ operand } = this);
             applyParens = false;
             unaryOperator = "";
-            expressionSourceNode = (() => {
-              switch (operand) {
-                case "until":
-                case "unless":
-                  operand = operand === "until" ? "while" : "if";
-                  return (unaryOperator = "!");
-              }
-            })();
+            switch (operand) {
+              case "until":
+              case "unless":
+                operand = operand === "until" ? "while" : "if";
+                unaryOperator = "!";
+            }
             parts = expression
               ? (() => {
                   switch (operand) {
                     case "while":
                       return returnValueIsIgnored
                         ? this.doSourceNode(
-                            "while(",
+                            "while (",
                             unaryOperator,
                             this.expression.toSourceNode({
                               noParens: true,
-                              expression: true
+                              expression: true,
+                              dotBase: !!unaryOperator
                             }),
                             ") {",
                             this.body.toSourceNode(),
                             "};"
                           )
-                        : ((tempVarIdentifier = this.scope.uniqueIdentifier),
+                        : ((tempVarIdentifier = this.whileReturnTempVar),
                           this.doSourceNode(
-                            `let ${Caf.toString(tempVarIdentifier)}; while(`,
+                            "while (",
                             unaryOperator,
                             this.expression.toSourceNode({
                               noParens: true,
-                              expression: true
+                              expression: true,
+                              dotBase: !!unaryOperator
                             }),
                             ") {",
                             this.body.toSourceNode({
@@ -209,7 +216,8 @@ Caf.defMod(module, () => {
                   unaryOperator,
                   this.expression.toSourceNode({
                     noParens: true,
-                    expression: true
+                    expression: true,
+                    dotBase: !!unaryOperator
                   }),
                   ") {",
                   this.body.toSourceNode(),

@@ -213,7 +213,7 @@ module.exports = suite: parseTestSuite
     a = while foo
       1
       2
-    """: "let a, cafTemp; a = (() => {while (foo) {1; cafTemp = 2;}; return cafTemp})();"
+    """: "let a, cafTemp; a = (() => {while (foo) {1; cafTemp = 2;}; return cafTemp;})();"
 
     """
     a = if true

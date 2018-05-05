@@ -16,7 +16,7 @@ class ArrayStn extends &BaseStn
     @createSourceNode
       if dotBase then "([" else "["
       array c, i in @children
-        sn = c.toSourceNode()
+        sn = c.toSourceNode expression: true
         if i > 0
           []
             ", "

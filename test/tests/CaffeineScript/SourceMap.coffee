@@ -8,14 +8,30 @@ module.exports = suite:
 
   modules: ->
     generateSourceMapParseTest "SimpleLiteralStn",      "1", compileModule: true
+    # generateSourceMapParseTest "ImportStn",
+    #   """
+    #   import &ArtStandardLib
+    #   foo
+    #   """
+    #   compileModule: true
+
     generateSourceMapParseTest "ImportStn",
       """
       import &ArtStandardLib
       foo
+      bar
       """
       compileModule: true
 
+    # generateSourceMapParseTest "ImportStn",
+    #   """
+    #   import Foo
+    #   a = global
+    #   """
+    #   compileModule: true
+
   stnTypes: ->
+    generateSourceMapParseTest "SimpleLiteralStn",      "!true"
     generateSourceMapParseTest "SimpleLiteralStn",      "1"
     generateSourceMapParseTest "StringStn",             ":hi"
     generateSourceMapParseTest "StringStn",             '"#{hi()}"'
@@ -36,6 +52,7 @@ module.exports = suite:
     generateSourceMapParseTest "GlobalIdentifierStn",   "undefined"
     generateSourceMapParseTest "GlobalIdentifierStn",   "null"
     generateSourceMapParseTest "GlobalIdentifierStn",   "true"
+    generateSourceMapParseTest "GlobalIdentifierStn",   "true.a"
     generateSourceMapParseTest "GlobalIdentifierStn",   "global"
     generateSourceMapParseTest "ThisStn",               "this"
     generateSourceMapParseTest "ThisStn",               "@"
@@ -101,11 +118,19 @@ module.exports = suite:
 
     generateSourceMapParseTest "ControlOperatorStn",
       """
-      a = whilte b
+      a = if true
+        c
+        d
+      """
+
+    generateSourceMapParseTest "ControlOperatorStn",
+      """
+      a = while b
         c
       """
 
     generateSourceMapParseTest "ControlOperatorStn",    "a if b"
+
     generateSourceMapParseTest "ControlOperatorStn",    "a while b"
     generateSourceMapParseTest "ControlOperatorStn",    "a unless b"
     generateSourceMapParseTest "ControlOperatorStn",    "a until b"
@@ -172,3 +197,51 @@ module.exports = suite:
   #   1
   #   :hi
   #   """
+
+  regressions: ->
+    generateSourceMapParseTest "ControlOperatorStn", "foo() unless answer == false"
+    generateSourceMapParseTest "SwitchStn", "!(source < 60)"
+    generateSourceMapParseTest "SwitchStn", """
+      switch
+      when score < 60 then 'F'
+      """
+
+    generateSourceMapParseTest "SwitchStn", """
+      switch foo
+      when "bar" then 'F'
+      """
+
+    generateSourceMapParseTest "SwitchStn", """
+      switch
+      when score < 60, score > 100 then 'F'
+      """
+
+    generateSourceMapParseTest "SwitchStn", """
+      switch
+      when foo, bar then 'F'
+      """
+
+    generateSourceMapParseTest "ClassStn", """
+      class Foo
+        @a-b: 1
+      """
+
+    generateSourceMapParseTest "AccessorStn", """
+      @prototype["@a-b"] = 1
+      """
+
+
+    generateSourceMapParseTest "ObjectStn", """
+      foo: if bar then a: 1
+      bar: 999
+      """
+
+    generateSourceMapParseTest "ObjectStn", """
+      bar: 999
+      foo: if bar then a: 1
+      """
+
+    generateSourceMapParseTest "ArrayStn", """
+      []
+        b if c
+      """

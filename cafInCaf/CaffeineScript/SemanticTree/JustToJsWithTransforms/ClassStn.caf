@@ -59,6 +59,7 @@ class ClassStn extends &BaseStn
                 assignToStn = switch propNameStn.type
                   when :ObjectPropName
                     {propName, isThisProp} = propNameStn
+
                     if isThisProp
                       ThisStn IdentifierStn identifier: propName
 

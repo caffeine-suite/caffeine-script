@@ -81,11 +81,15 @@ class SuperStn extends &BaseStn
 
         if passArguments then :apply else :call
 
-        "(this, "
+        "(this"
 
         if @props.passArguments
-          :arguments
-        else
-          @stnArrayToSourceNodes args, ', '
+          []
+            ", "
+            :arguments
+        else if args.length > 0
+          []
+            ", "
+            @stnArrayToSourceNodes args, ', '
 
         ")"

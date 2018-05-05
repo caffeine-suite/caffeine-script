@@ -59,7 +59,7 @@ Caf.defMod(module, () => {
                       : ["${Caf.toString(", child.toJsExpression(), ")}"];
                   }))
                 : value;
-            return childrenNodes.length === 0
+            return !childrenNodes || childrenNodes.length === 0
               ? this.createSourceNode("/(?:)/")
               : hasInterpolation
                 ? this.createSourceNode(

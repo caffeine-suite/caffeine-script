@@ -1,15 +1,16 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let SimpleLiteralStn;
-  return (SimpleLiteralStn = Caf.defClass(
-    class SimpleLiteralStn extends require("../BaseStn") {},
-    function(SimpleLiteralStn, classSuper, instanceSuper) {
-      this.prototype.needsParens = false;
+  let NumberLiteralStn;
+  return (NumberLiteralStn = Caf.defClass(
+    class NumberLiteralStn extends require("../BaseStn") {},
+    function(NumberLiteralStn, classSuper, instanceSuper) {
       this.prototype.toSourceNode = function(options) {
         let value;
         ({ value } = this.props);
-        return this.createSourceNode(value);
+        return this.createSourceNode(
+          Caf.exists(options) && options.dotBase ? ["(", value, ")"] : value
+        );
       };
       this.getter({
         propName: function() {
@@ -22,7 +23,9 @@ Caf.defMod(module, () => {
       this.prototype.toJs = function(options) {
         let value;
         ({ value } = this.props);
-        return value;
+        return Caf.exists(options) && options.dotBase
+          ? `(${Caf.toString(value)})`
+          : value;
       };
     }
   ));

@@ -21,14 +21,15 @@ class SwitchWhenStn extends &BaseStn
         @stnArrayToSourceNodes
           whenValue.children
           if falsifyCases
-            '): case !('
+            ': case !'
           else
             ': case '
+          dotBase: falsifyCases
 
 
       else
         []
-          whenValue.toSourceNode()
+          whenValue.toSourceNode dotBase: falsifyCases
 
       ": "
 
@@ -41,11 +42,11 @@ class SwitchWhenStn extends &BaseStn
     {falsifyCases} = options
     {whenValue} = @labeledChildren
     cases = if whenValue.implicitArray
-      array m in whenValue.children with m.toJsExpression()
+      array m in whenValue.children with m.toJsExpression dotBase: falsifyCases
     else
-      [whenValue.toJsExpression()]
+      [whenValue.toJsExpression dotBase: falsifyCases]
 
     if falsifyCases
-      "case !(#{cases.join '): case !('})"
+      "case !#{cases.join ': case !'}"
     else
       "case #{cases.join ': case '}"

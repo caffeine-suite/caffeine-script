@@ -76,10 +76,11 @@ module.exports =
       semanticTree = parseTree.getStn()
       transformedSemanticTree = semanticTree.validateAll().transform()
 
-      if compileModule
-        transformedSemanticTree.toJsModule()
-      else
-        transformedSemanticTree.toJs()
+      transformedSemanticTree.toJsUsingSourceNode module: compileModule
+      # if compileModule
+      #   transformedSemanticTree.toJsModule()
+      # else
+      #   transformedSemanticTree.toJs()
 
     catch error
       if expectFailure && isNumber error.failureIndex

@@ -26,7 +26,11 @@ Caf.defMod(module, () => {
               }
             });
             this.prototype.toSourceNode = function(options = {}) {
-              let identifiersToImport, lets, autoLets;
+              let identifiersToImport,
+                statementsSourceNode,
+                lets,
+                statementsSourceNodes,
+                autoLets;
               this.rootUpdateScope();
               return this.createSourceNode(
                 options.bare
@@ -37,6 +41,9 @@ Caf.defMod(module, () => {
                         (v, k) =>
                           `${Caf.toString(k)} = global.${Caf.toString(k)}`
                       )),
+                      (statementsSourceNode = this.statements.toSourceNode({
+                        returnAction: true
+                      })),
                       (lets = compactFlatten([
                         identifiersToImport,
                         this.requiredIdentifierLets
@@ -46,15 +53,16 @@ Caf.defMod(module, () => {
                         lets.length > 0
                           ? `let ${Caf.toString(lets.join(", "))}; `
                           : undefined,
-                        this.statements.toSourceNode({ returnAction: true }),
+                        statementsSourceNode,
                         "});"
                       ])
-                    : [
+                    : (({ statementsSourceNodes } = this),
+                      [
                         present((autoLets = this.getAutoLets()))
                           ? [autoLets, "; "]
                           : undefined,
-                        this.statementsSourceNodes
-                      ]
+                        statementsSourceNodes
+                      ])
               );
             };
             this.prototype.rootUpdateScope = function() {
