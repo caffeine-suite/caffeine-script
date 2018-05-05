@@ -3,72 +3,70 @@ let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return (() => {
     let StnRegistry, ObjectStn;
-    return (
-      (StnRegistry = require("../../StnRegistry")),
-      (ObjectStn = Caf.defClass(
-        class ObjectStn extends require("../BaseStn") {},
-        function(ObjectStn, classSuper, instanceSuper) {
-          let splitObjectsAtSameProps;
-          this.getter({
-            isEmptyObjectLiteral: function() {
-              return !this.children || this.children.length === 0;
-            }
-          });
-          this.prototype.toJs = function(options) {
-            let out;
-            out = `{${Caf.toString(
-              Caf.array(this.children, c => c.toJs()).join(", ")
-            )}}`;
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.statement)
-              ? `(${Caf.toString(out)})`
-              : out;
-          };
-          this.prototype.toSourceNode = function(options) {
-            let base;
-            base = [
-              "{",
-              this.childrenToSourceNodes(", ", { expression: true }),
-              "}"
-            ];
-            return (Caf.exists(options) && options.dotBase) ||
-              (Caf.exists(options) && options.statement)
-              ? this.createSourceNode("(", base, ")")
-              : this.createSourceNode(base);
-          };
-          splitObjectsAtSameProps = function(children) {
-            let currentDefined, listOfObjectLiterals, currentOrder;
-            currentDefined = {};
-            listOfObjectLiterals = [(currentOrder = [])];
-            Caf.each2(children, child => {
-              let found, value;
-              if ((found = child.find(/ObjectPropNameStn/))) {
-                [
-                  {
-                    props: { value }
-                  }
-                ] = found;
-                if (currentDefined[value]) {
-                  currentDefined = {};
-                  listOfObjectLiterals.push((currentOrder = []));
+    StnRegistry = require("../../StnRegistry");
+    return (ObjectStn = Caf.defClass(
+      class ObjectStn extends require("../BaseStn") {},
+      function(ObjectStn, classSuper, instanceSuper) {
+        let splitObjectsAtSameProps;
+        this.getter({
+          isEmptyObjectLiteral: function() {
+            return !this.children || this.children.length === 0;
+          }
+        });
+        this.prototype.toJs = function(options) {
+          let out;
+          out = `{${Caf.toString(
+            Caf.array(this.children, c => c.toJs()).join(", ")
+          )}}`;
+          return (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.statement)
+            ? `(${Caf.toString(out)})`
+            : out;
+        };
+        this.prototype.toSourceNode = function(options) {
+          let base;
+          base = [
+            "{",
+            this.childrenToSourceNodes(", ", { expression: true }),
+            "}"
+          ];
+          return (Caf.exists(options) && options.dotBase) ||
+            (Caf.exists(options) && options.statement)
+            ? this.createSourceNode("(", base, ")")
+            : this.createSourceNode(base);
+        };
+        splitObjectsAtSameProps = function(children) {
+          let currentDefined, listOfObjectLiterals, currentOrder;
+          currentDefined = {};
+          listOfObjectLiterals = [(currentOrder = [])];
+          Caf.each2(children, child => {
+            let found, value;
+            if ((found = child.find(/ObjectPropNameStn/))) {
+              [
+                {
+                  props: { value }
                 }
-                currentDefined[value] = true;
+              ] = found;
+              if (currentDefined[value]) {
+                currentDefined = {};
+                listOfObjectLiterals.push((currentOrder = []));
               }
-              return currentOrder.push(child);
-            });
-            return listOfObjectLiterals;
-          };
-          this.newInstance = function(props, children) {
-            let listOfObjectLiterals;
-            listOfObjectLiterals = splitObjectsAtSameProps(children);
-            return listOfObjectLiterals.length === 1
-              ? new this(props, children)
-              : new StnRegistry.ArrayStn(
-                  Caf.array(listOfObjectLiterals, c => new this(props, c))
-                );
-          };
-        }
-      ))
-    );
+              currentDefined[value] = true;
+            }
+            return currentOrder.push(child);
+          });
+          return listOfObjectLiterals;
+        };
+        this.newInstance = function(props, children) {
+          let listOfObjectLiterals;
+          listOfObjectLiterals = splitObjectsAtSameProps(children);
+          return listOfObjectLiterals.length === 1
+            ? new this(props, children)
+            : new StnRegistry.ArrayStn(
+                Caf.array(listOfObjectLiterals, c => new this(props, c))
+              );
+        };
+      }
+    ));
   })();
 });
