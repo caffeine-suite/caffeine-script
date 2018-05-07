@@ -81,10 +81,12 @@ Caf.defMod(module, () => {
                 )
               : ((x = this.getStnChildren(left)),
                 x.length === 1 ? x[0] : x.length === 0 ? left : x);
-            Caf.each2(
-              this.stnExtensionMatches,
-              extension => (stn = extension.getStn(stn))
-            );
+            Caf.each2(this.stnExtensionMatches, extension => {
+              let sourceIndex;
+              ({ sourceIndex } = stn);
+              stn = extension.getStn(stn);
+              return (stn.sourceIndex = sourceIndex);
+            });
             if (Caf.exists(stn) && stn.props) {
               currentStnLabel = stn.props.label;
               if (!currentStnLabel || this.label) {
