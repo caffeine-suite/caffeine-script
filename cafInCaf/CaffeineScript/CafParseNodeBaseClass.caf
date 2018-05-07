@@ -54,7 +54,9 @@ class CafParseNodeBaseClass extends Nodes.Node
       if x.length == 1 then x[0] else if x.length == 0 then left else x
 
     each extension in @stnExtensionMatches
+      {sourceIndex} = stn
       stn = extension.getStn stn
+      stn.sourceIndex = sourceIndex
 
     if stn?.props
       currentStnLabel = stn.props.label
