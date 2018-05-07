@@ -30,8 +30,10 @@ class BaseStn extends BaseClass
     @parseTreeNode = @pretransformedStn?.parseTreeNode ? props.parseTreeNode
     # throw new Error "no @parseTreeNode (#{@type})" unless @parseTreeNode
     @pretransformedStn ||= @
-
     @props = objectWithout props, "parseTreeNode"
+
+    @_sourceIndex = @pretransformedStn?.sourceIndex ? @parseTreeNode?.offset
+
     @initLabeledChildren()
 
   @setter "parseTreeNode"
@@ -159,11 +161,20 @@ class BaseStn extends BaseClass
     https://www.npmjs.com/package/source-map
 
   sourceNodeLineColumnScratch = {}
+
+  @property :sourceIndex
+  @getter
+    sourceIndex: ->
+      @_sourceIndex ? @parent?.sourceIndex
+
+    sourceLineColumn: ->
+      @parseTreeNode.parser.getLineColumn @sourceIndex, sourceNodeLineColumnScratch
+
   @getter
     sourceFile: -> @parseTreeNode?.sourceFile ? "caffeine-script"
     newSourceNode: ->
       # both are 0-base
-      {line, column} = @parseTreeNode.getSourceLineColumn sourceNodeLineColumnScratch
+      {line, column} = @sourceLineColumn
 
       new SourceNode
         line + 1  # should be 1-based
@@ -171,7 +182,15 @@ class BaseStn extends BaseClass
         @parseTreeNode.sourceFile
 
   createSourceNode: (args...) ->
-    @newSourceNode.add compactFlatten args
+    children = compactFlatten args
+
+    {line, column} = @sourceLineColumn
+
+    new SourceNode
+      line + 1                          # should be 1-based
+      column                            # should be 0-based
+      @parseTreeNode.sourceFile
+      children
 
   ###
     IN: options:
@@ -239,7 +258,7 @@ class BaseStn extends BaseClass
       else
         {}
           js:         code
-          sourceMap:  map
+          sourceMap:  map.toString()
 
     else
       js: sourceNode.toString()

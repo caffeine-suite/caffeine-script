@@ -40,7 +40,7 @@ Caf.defMod(module, () => {
         });
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
-          return this.toJs(options);
+          return this.createSourceNode(this.propName);
         };
         this.prototype.toJs = function() {
           let cafBase;

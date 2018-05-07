@@ -37,6 +37,13 @@ Caf.defMod(module, () => {
               ? `[${Caf.toString(nameStn.toJs())}]`
               : this.simpleName;
           };
+          this.prototype.toSourceNode = function() {
+            let nameStn;
+            [nameStn] = this.children;
+            return (Caf.exists(nameStn) && nameStn.children.length) > 0
+              ? this.createSourceNode("[", nameStn.toSourceNode(), "]")
+              : this.createSourceNode(this.simpleName);
+          };
         }
       ));
     }

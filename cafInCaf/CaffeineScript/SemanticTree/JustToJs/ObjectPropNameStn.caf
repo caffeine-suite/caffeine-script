@@ -24,3 +24,13 @@ class ObjectPropNameStn extends &BaseStn
       "[#{nameStn.toJs()}]"
     else
       @simpleName
+
+  toSourceNode: ->
+    [nameStn] = @children
+    if nameStn?.children.length > 0
+      @createSourceNode
+        "["
+        nameStn.toSourceNode()
+        "]"
+    else
+      @createSourceNode @simpleName

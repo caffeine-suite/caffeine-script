@@ -69,7 +69,8 @@ Caf.defMod(module, () => {
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
                     this.left.toSourceNode({ expression: true }),
-                    this.right.toSourceNode({ expression: true })
+                    this.right.toSourceNode({ expression: true }),
+                    this.left
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
@@ -86,7 +87,8 @@ Caf.defMod(module, () => {
                       subExpression: true,
                       parentOperatorPrecidence,
                       isLeftOperand: false
-                    })
+                    }),
+                    this.left
                   );
               }
             })();

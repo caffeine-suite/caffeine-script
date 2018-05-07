@@ -1,6 +1,41 @@
+{max, min, log} = require 'art-standard-lib'
 {generateSourceMapParseTest} = require './Helper'
+{CaffeineScript} = Neptune
+{SourceMapConsumer} = require 'source-map'
+{presentSourceLocation, SourceLineColumnMap} = require 'caffeine-eight'
 
 module.exports = suite:
+  validate: ->
+    test "simplest", ->
+
+      source = "foo = bar\nbaz"
+      sourceFile = "myFile.caf"
+      {compiled:{js, sourceMap}} = out = CaffeineScript.compile source,
+        sourceFile: sourceFile
+        sourceMap:  true
+
+      assert.isString js, jsTest:{out}
+      assert.isString sourceMap, sourceMapTest:{out}
+
+      inSlcm = new SourceLineColumnMap source
+      jsSlcm = new SourceLineColumnMap js
+
+      log info: {source, js, sourceMap}
+
+      SourceMapConsumer.with sourceMap,
+        null
+        (consumer) ->
+          # log consumer._sources.toArray()
+          consumer.eachMapping (mapping) ->
+            {generatedLine, generatedColumn, originalLine, originalColumn} = mapping
+            log {}
+            log mapping: {
+              generatedLine, generatedColumn, originalLine, originalColumn
+              source:     presentSourceLocation source,  inSlcm.getIndex originalLine - 1,   originalColumn
+              js:         presentSourceLocation js,      jsSlcm.getIndex generatedLine - 1,  generatedColumn
+            }
+
+
   basics: ->
     generateSourceMapParseTest "simplest", "1"
 
@@ -42,6 +77,7 @@ module.exports = suite:
     generateSourceMapParseTest "AssignmentStn2",        "a += 1"
     generateSourceMapParseTest "AssignmentStn3",        "a ||= 1"
     generateSourceMapParseTest "BinaryOperatorStn",     "a + 1"
+    generateSourceMapParseTest "BinaryOperatorStn",     "a ? b"
     generateSourceMapParseTest "FunctionDefinitionStn", "->"
     generateSourceMapParseTest "RegExpStn", "/foo/"
     generateSourceMapParseTest "RegExpStn", "/foo/i"
@@ -64,6 +100,9 @@ module.exports = suite:
     generateSourceMapParseTest "ThrowStn",             'a && throw new Error "foo"'
     generateSourceMapParseTest "ObjectStn",             'a: 1'
     generateSourceMapParseTest "ObjectStn",             '{} a'
+    generateSourceMapParseTest "ObjectStn",             '[a]: b'
+    generateSourceMapParseTest "ObjectStn",             '"#{a}": b'
+    generateSourceMapParseTest "ObjectStn",             '[a+1]: b'
     generateSourceMapParseTest "ObjectStn",             '{} a.b'
     generateSourceMapParseTest "ObjectStn",             '{a} = b'
     generateSourceMapParseTest "ObjectStn",             '{a:c} = b'
@@ -105,6 +144,13 @@ module.exports = suite:
       class Foo extends BaseClass
         @getter
           foo: -> @_foo
+      """
+
+
+    generateSourceMapParseTest "ClassStn", """
+      class Foo extends BaseClass
+        @foo: 1
+        bar: 1
       """
 
 

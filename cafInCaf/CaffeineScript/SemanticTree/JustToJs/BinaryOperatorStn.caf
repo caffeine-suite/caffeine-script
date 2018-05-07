@@ -35,6 +35,7 @@ class BinaryOperatorStn extends &BaseStn
         @operator
         @left.toSourceNode expression: true
         @right.toSourceNode expression: true
+        @left
 
     else
       parentOperatorPrecidence = getOpPrecidence @operator
@@ -42,6 +43,7 @@ class BinaryOperatorStn extends &BaseStn
         @operator
         @left.toSourceNode  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
         @right.toSourceNode {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
+        @left
 
     @createSourceNode if options && @_needsParens options
       compactFlatten [] "(", out, ")"

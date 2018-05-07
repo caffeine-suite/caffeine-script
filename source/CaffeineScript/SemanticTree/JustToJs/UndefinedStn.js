@@ -10,6 +10,9 @@ Caf.defMod(module, () => {
         this.prototype.toJs = function() {
           return "undefined";
         };
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode("undefined");
+        };
       }
     ));
   })();

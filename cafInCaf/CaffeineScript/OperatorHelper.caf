@@ -57,7 +57,7 @@ class OperatorHelper
     f = OperatorHelper.operatorMap[operand] || infix
     f a, b, operand
 
-  @binaryOperatorToSourceNodeArray: (operand, a, b) ->
+  @binaryOperatorToSourceNodeArray: (operand, a, b, aStn) ->
     switch operand
     when :**    then [] "#{ CoffeeScriptGlobal}.pow(", a, ", ", b, ")"
     when ://    then [] "#{ CoffeeScriptGlobal}.div(", a, ", ", b, ")"
@@ -67,7 +67,8 @@ class OperatorHelper
     when :isnt  then [] "!#{CoffeeScriptGlobal}.is(",  a, ", ", b, ")"
 
     when :?
-      if a.match /^@?[_a-z0-9]+$/i
+      switch aStn.type
+      when :This, :Identifier, :Reference
         [] a, " != null ? ", a, " : ", b
       else
         [] CoffeeScriptGlobal, ".existsOr(", a, ", (() => {return ", b, "})())"

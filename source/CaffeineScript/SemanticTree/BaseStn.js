@@ -34,7 +34,7 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let cafTemp, cafBase;
+            let cafTemp, cafBase, cafTemp1, cafBase1, cafBase2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
@@ -46,6 +46,13 @@ Caf.defMod(module, () => {
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
+            this._sourceIndex =
+              (cafTemp1 =
+                Caf.exists((cafBase1 = this.pretransformedStn)) &&
+                cafBase1.sourceIndex) != null
+                ? cafTemp1
+                : Caf.exists((cafBase2 = this.parseTreeNode)) &&
+                  cafBase2.offset;
             this.initLabeledChildren();
           }
         },
@@ -177,6 +184,21 @@ Caf.defMod(module, () => {
             return _foundList.length === 0 ? null : _foundList;
           };
           sourceNodeLineColumnScratch = {};
+          this.property("sourceIndex");
+          this.getter({
+            sourceIndex: function() {
+              let cafTemp, cafBase;
+              return (cafTemp = this._sourceIndex) != null
+                ? cafTemp
+                : Caf.exists((cafBase = this.parent)) && cafBase.sourceIndex;
+            },
+            sourceLineColumn: function() {
+              return this.parseTreeNode.parser.getLineColumn(
+                this.sourceIndex,
+                sourceNodeLineColumnScratch
+              );
+            }
+          });
           this.getter({
             sourceFile: function() {
               let cafTemp, cafBase;
@@ -188,9 +210,7 @@ Caf.defMod(module, () => {
             },
             newSourceNode: function() {
               let line, column;
-              ({ line, column } = this.parseTreeNode.getSourceLineColumn(
-                sourceNodeLineColumnScratch
-              ));
+              ({ line, column } = this.sourceLineColumn);
               return new SourceNode(
                 line + 1,
                 column,
@@ -199,7 +219,15 @@ Caf.defMod(module, () => {
             }
           });
           this.prototype.createSourceNode = function(...args) {
-            return this.newSourceNode.add(compactFlatten(args));
+            let children, line, column;
+            children = compactFlatten(args);
+            ({ line, column } = this.sourceLineColumn);
+            return new SourceNode(
+              line + 1,
+              column,
+              this.parseTreeNode.sourceFile,
+              children
+            );
           };
           this.prototype.toSourceNode = function(options) {
             log.warn(
@@ -228,7 +256,7 @@ Caf.defMod(module, () => {
                         )
                       )}\n//# sourceURL=${Caf.toString(sourceFile)}`
                     }
-                  : { js: code, sourceMap: map })
+                  : { js: code, sourceMap: map.toString() })
               : { js: sourceNode.toString() };
           };
           this.prototype.childrenToSourceNodes = function(joiner, options) {

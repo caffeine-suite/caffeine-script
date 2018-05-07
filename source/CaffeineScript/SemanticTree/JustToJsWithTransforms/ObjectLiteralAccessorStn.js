@@ -29,6 +29,16 @@ Caf.defMod(module, () => {
             this.key.toJsExpression()
           )}]`;
         };
+        this.prototype.toSourceNode = function() {
+          let cafBase;
+          return this.createSourceNode(
+            Caf.exists((cafBase = this.value)) &&
+              cafBase.toSourceNode({ dotBase: true }),
+            "[",
+            this.key.toSourceNode({ expression: true }),
+            "]"
+          );
+        };
       }
     ));
   })();

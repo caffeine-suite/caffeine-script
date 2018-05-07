@@ -110,7 +110,7 @@ Caf.defMod(module, () => {
             f = OperatorHelper.operatorMap[operand] || infix;
             return f(a, b, operand);
           };
-          this.binaryOperatorToSourceNodeArray = function(operand, a, b) {
+          this.binaryOperatorToSourceNodeArray = function(operand, a, b, aStn) {
             return (() => {
               switch (operand) {
                 case "**":
@@ -162,16 +162,23 @@ Caf.defMod(module, () => {
                     ")"
                   ];
                 case "?":
-                  return a.match(/^@?[_a-z0-9]+$/i)
-                    ? [a, " != null ? ", a, " : ", b]
-                    : [
-                        CoffeeScriptGlobal,
-                        ".existsOr(",
-                        a,
-                        ", (() => {return ",
-                        b,
-                        "})())"
-                      ];
+                  return (() => {
+                    switch (aStn.type) {
+                      case "This":
+                      case "Identifier":
+                      case "Reference":
+                        return [a, " != null ? ", a, " : ", b];
+                      default:
+                        return [
+                          CoffeeScriptGlobal,
+                          ".existsOr(",
+                          a,
+                          ", (() => {return ",
+                          b,
+                          "})())"
+                        ];
+                    }
+                  })();
                 default:
                   return [a, ` ${Caf.toString(operand)} `, b];
               }

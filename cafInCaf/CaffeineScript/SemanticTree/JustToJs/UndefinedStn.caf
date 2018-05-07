@@ -4,3 +4,5 @@ class UndefinedStn extends &BaseStn
 
   needsParens: false
   toJs: -> "undefined"
+
+  toSourceNode: -> @createSourceNode :undefined
