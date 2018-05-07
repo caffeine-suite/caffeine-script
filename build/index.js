@@ -142,7 +142,7 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let cafTemp, cafBase;
+            let cafTemp, cafBase, cafTemp1, cafBase1, cafBase2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
@@ -154,6 +154,13 @@ Caf.defMod(module, () => {
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
+            this._sourceIndex =
+              (cafTemp1 =
+                Caf.exists((cafBase1 = this.pretransformedStn)) &&
+                cafBase1.sourceIndex) != null
+                ? cafTemp1
+                : Caf.exists((cafBase2 = this.parseTreeNode)) &&
+                  cafBase2.offset;
             this.initLabeledChildren();
           }
         },
@@ -285,6 +292,21 @@ Caf.defMod(module, () => {
             return _foundList.length === 0 ? null : _foundList;
           };
           sourceNodeLineColumnScratch = {};
+          this.property("sourceIndex");
+          this.getter({
+            sourceIndex: function() {
+              let cafTemp, cafBase;
+              return (cafTemp = this._sourceIndex) != null
+                ? cafTemp
+                : Caf.exists((cafBase = this.parent)) && cafBase.sourceIndex;
+            },
+            sourceLineColumn: function() {
+              return this.parseTreeNode.parser.getLineColumn(
+                this.sourceIndex,
+                sourceNodeLineColumnScratch
+              );
+            }
+          });
           this.getter({
             sourceFile: function() {
               let cafTemp, cafBase;
@@ -296,9 +318,7 @@ Caf.defMod(module, () => {
             },
             newSourceNode: function() {
               let line, column;
-              ({ line, column } = this.parseTreeNode.getSourceLineColumn(
-                sourceNodeLineColumnScratch
-              ));
+              ({ line, column } = this.sourceLineColumn);
               return new SourceNode(
                 line + 1,
                 column,
@@ -307,7 +327,15 @@ Caf.defMod(module, () => {
             }
           });
           this.prototype.createSourceNode = function(...args) {
-            return this.newSourceNode.add(compactFlatten(args));
+            let children, line, column;
+            children = compactFlatten(args);
+            ({ line, column } = this.sourceLineColumn);
+            return new SourceNode(
+              line + 1,
+              column,
+              this.parseTreeNode.sourceFile,
+              children
+            );
           };
           this.prototype.toSourceNode = function(options) {
             log.warn(
@@ -336,7 +364,7 @@ Caf.defMod(module, () => {
                         )
                       )}\n//# sourceURL=${Caf.toString(sourceFile)}`
                     }
-                  : { js: code, sourceMap: map })
+                  : { js: code, sourceMap: map.toString() })
               : { js: sourceNode.toString() };
           };
           this.prototype.childrenToSourceNodes = function(joiner, options) {
@@ -1813,10 +1841,12 @@ Caf.defMod(module, () => {
                 )
               : ((x = this.getStnChildren(left)),
                 x.length === 1 ? x[0] : x.length === 0 ? left : x);
-            Caf.each2(
-              this.stnExtensionMatches,
-              extension => (stn = extension.getStn(stn))
-            );
+            Caf.each2(this.stnExtensionMatches, extension => {
+              let sourceIndex;
+              ({ sourceIndex } = stn);
+              stn = extension.getStn(stn);
+              return (stn.sourceIndex = sourceIndex);
+            });
             if (Caf.exists(stn) && stn.props) {
               currentStnLabel = stn.props.label;
               if (!currentStnLabel || this.label) {
@@ -1957,7 +1987,7 @@ Caf.defMod(module, () => {
             f = OperatorHelper.operatorMap[operand] || infix;
             return f(a, b, operand);
           };
-          this.binaryOperatorToSourceNodeArray = function(operand, a, b) {
+          this.binaryOperatorToSourceNodeArray = function(operand, a, b, aStn) {
             return (() => {
               switch (operand) {
                 case "**":
@@ -2009,16 +2039,23 @@ Caf.defMod(module, () => {
                     ")"
                   ];
                 case "?":
-                  return a.match(/^@?[_a-z0-9]+$/i)
-                    ? [a, " != null ? ", a, " : ", b]
-                    : [
-                        CoffeeScriptGlobal,
-                        ".existsOr(",
-                        a,
-                        ", (() => {return ",
-                        b,
-                        "})())"
-                      ];
+                  return (() => {
+                    switch (aStn.type) {
+                      case "This":
+                      case "Identifier":
+                      case "Reference":
+                        return [a, " != null ? ", a, " : ", b];
+                      default:
+                        return [
+                          CoffeeScriptGlobal,
+                          ".existsOr(",
+                          a,
+                          ", (() => {return ",
+                          b,
+                          "})())"
+                        ];
+                    }
+                  })();
                 default:
                   return [a, ` ${Caf.toString(operand)} `, b];
               }
@@ -2891,7 +2928,7 @@ __webpack_require__(113);
 /* 29 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.56.1"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.56.2"}
 
 /***/ }),
 /* 30 */
@@ -6009,7 +6046,8 @@ Caf.defMod(module, () => {
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
                     this.left.toSourceNode({ expression: true }),
-                    this.right.toSourceNode({ expression: true })
+                    this.right.toSourceNode({ expression: true }),
+                    this.left
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
@@ -6026,7 +6064,8 @@ Caf.defMod(module, () => {
                       subExpression: true,
                       parentOperatorPrecidence,
                       isLeftOperand: false
-                    })
+                    }),
+                    this.left
                   );
               }
             })();
@@ -7052,6 +7091,13 @@ Caf.defMod(module, () => {
               ? `[${Caf.toString(nameStn.toJs())}]`
               : this.simpleName;
           };
+          this.prototype.toSourceNode = function() {
+            let nameStn;
+            [nameStn] = this.children;
+            return (Caf.exists(nameStn) && nameStn.children.length) > 0
+              ? this.createSourceNode("[", nameStn.toSourceNode(), "]")
+              : this.createSourceNode(this.simpleName);
+          };
         }
       ));
     }
@@ -7301,7 +7347,7 @@ Caf.defMod(module, () => {
         });
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
-          return this.toJs(options);
+          return this.createSourceNode(this.propName);
         };
         this.prototype.toJs = function() {
           let cafBase;
@@ -7879,6 +7925,9 @@ Caf.defMod(module, () => {
         this.prototype.needsParens = false;
         this.prototype.toJs = function() {
           return "undefined";
+        };
+        this.prototype.toSourceNode = function() {
+          return this.createSourceNode("undefined");
         };
       }
     ));
@@ -8768,6 +8817,16 @@ Caf.defMod(module, () => {
           return `${Caf.toString(base || "")}[${Caf.toString(
             this.key.toJsExpression()
           )}]`;
+        };
+        this.prototype.toSourceNode = function() {
+          let cafBase;
+          return this.createSourceNode(
+            Caf.exists((cafBase = this.value)) &&
+              cafBase.toSourceNode({ dotBase: true }),
+            "[",
+            this.key.toSourceNode({ expression: true }),
+            "]"
+          );
         };
       }
     ));
