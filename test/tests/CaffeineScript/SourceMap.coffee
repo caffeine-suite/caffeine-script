@@ -35,6 +35,33 @@ module.exports = suite:
               js:         presentSourceLocation js,      jsSlcm.getIndex generatedLine - 1,  generatedColumn
             }
 
+  modes: ->
+    commonSource = "import &ArtStandardLib;a = upperCamelCase 'foo bar'"
+    test "module", ->
+      assert.eq (CaffeineScript.compile commonSource, module: true),
+        compiled: js:
+          """
+          "use strict"
+          let Caf = require('caffeine-script-runtime');
+          Caf.defMod(module, () => {return Caf.importInvoke(["upperCamelCase"], [global, require('art-standard-lib')], (upperCamelCase) => {let a; return a = upperCamelCase("foo bar");});});
+          """
+
+    test "bare with import", ->
+      assert.eq (CaffeineScript.compile commonSource, bare: true),
+        compiled: js:
+          """
+          Caf = global.Caf || require('caffeine-script-runtime');
+          Caf.importInvoke(["upperCamelCase"], [global, require('art-standard-lib')], (upperCamelCase) => {let a; return a = upperCamelCase("foo bar");});
+          """
+
+    test "bare without import", ->
+      assert.eq (CaffeineScript.compile "a = 10", bare: true),
+        compiled: js:
+          """
+          Caf = global.Caf || require('caffeine-script-runtime');
+          a = 10;
+          """
+
 
   basics: ->
     generateSourceMapParseTest "simplest", "1"

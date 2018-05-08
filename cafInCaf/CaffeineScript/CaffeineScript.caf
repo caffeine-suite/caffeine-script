@@ -58,6 +58,7 @@ compile: (source, options = {}) ->
     compiled:
       transformedStn.toJsUsingSourceNode  {}
         module:     !bare
+        bare
         inlineMap
         sourceMap
         sourceFile

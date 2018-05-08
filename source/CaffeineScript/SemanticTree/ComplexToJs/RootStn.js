@@ -33,7 +33,11 @@ Caf.defMod(module, () => {
             this.rootUpdateScope();
             return this.createSourceNode(
               options.bare
-                ? [this.getBareInitializers(), this.statementsSourceNodes]
+                ? [
+                    "Caf = global.Caf || require('caffeine-script-runtime');\n",
+                    this.getBareInitializers(),
+                    this.statementsSourceNodes
+                  ]
                 : options.module
                   ? ((identifiersToImport = Caf.array(
                       this.generateImportMap(),

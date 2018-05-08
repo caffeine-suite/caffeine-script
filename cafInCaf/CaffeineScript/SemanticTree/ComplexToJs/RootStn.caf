@@ -18,8 +18,10 @@ class RootStn extends &ScopeStnMixin &BaseStn
     @rootUpdateScope()
     @createSourceNode if options.bare
       []
+        "" Caf = global.Caf || require('caffeine-script-runtime');\n
         @getBareInitializers()
         @statementsSourceNodes
+
     else if options.module
       identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
 

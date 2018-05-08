@@ -30,6 +30,7 @@ Caf.defMod(module, () => {
               return {
                 compiled: transformedStn.toJsUsingSourceNode({
                   module: !bare,
+                  bare,
                   inlineMap,
                   sourceMap,
                   sourceFile
