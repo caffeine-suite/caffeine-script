@@ -1,6 +1,7 @@
 {log} = require 'art-standard-lib'
 {
   SourceMapGenerator
+  SourceMapConsumer
 } = Neptune.CaffeineScript.CafSourceMap
 
 source = """
@@ -111,7 +112,7 @@ module.exports = suite:
         mappings: ';;;'
 
   add: ->
-    test "multiple new-lines followed by code", ->
+    test "add once", ->
       sm = new SourceMapGenerator source, sourceFileName
       sm.add 17, "log"
 
@@ -120,4 +121,59 @@ module.exports = suite:
         lastSourceColumn:    0
         lastGeneratedColumn: 0
         nextGeneratedColumn: 3
-        mappings: ';;;9'
+        mappings: 'AACA'
+
+    test "add twice", ->
+      sm = new SourceMapGenerator source, sourceFileName
+      sm.add 17, "lo"
+      sm.add 19, "g"
+
+      assert.eq sm.status,
+        lastSourceLine:      1
+        lastSourceColumn:    2
+        lastGeneratedColumn: 2
+        nextGeneratedColumn: 3
+        mappings:            "AACA,EAAE"
+
+    test "full example", ->
+      sm = new SourceMapGenerator source, sourceFileName
+      sm.add 17, "log"
+      sm.add null, "("
+      sm.add null, "Math.pow("
+      sm.add 21, "10"
+      sm.add null, ", "
+      sm.add 27, "2"
+      sm.add null, "));"
+
+      smc = new SourceMapConsumer sm.sourceMap
+      assert.eq sm.js, "log(Math.pow(10, 2));"
+      assert.eq sm.status,
+        lastSourceLine:      1
+        lastSourceColumn:    10
+        lastGeneratedColumn: 17
+        nextGeneratedColumn: 21
+        mappings:            "AACA,aAAI,IAAM"
+
+      assert.eq smc.decodedMappings, [
+        {
+          generatedLine:   0
+          generatedColumn: 0
+          source:          0
+          sourceLine:      1
+          sourceColumn:    0
+
+        },{
+          generatedLine:   0
+          generatedColumn: 13
+          source:          0
+          sourceLine:      1
+          sourceColumn:    4
+
+        },{
+          generatedLine:   0
+          generatedColumn: 17
+          source:          0
+          sourceLine:      1
+          sourceColumn:    10
+        }
+      ]

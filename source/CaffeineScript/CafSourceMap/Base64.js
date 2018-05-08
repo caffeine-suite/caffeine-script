@@ -12,7 +12,8 @@ Caf.defMod(module, () => {
       toVlqSigned,
       fromVlqSigned,
       encodeVlq,
-      readVlq;
+      readVlq,
+      readVlqSequence;
     return {
       vlqBaseShift: (vlqBaseShift = 5),
       vlqBase: (vlqBase = 1 << vlqBaseShift),
@@ -49,17 +50,37 @@ Caf.defMod(module, () => {
             })(),
             encoded);
       }),
-      readVlq: (readVlq = function(string, index = 0, resultObject = {}) {
-        let number, shiftAmount, read;
+      readVlq: (readVlq = function(string, resultObject = { index: 0 }) {
+        let index, number, shiftAmount, read;
+        ({ index } = resultObject);
         number = 0;
         shiftAmount = 0;
-        while (vlqContinuationBit & (read = charMapToInt[string[index++]])) {
-          number += (read & vlqBaseMask) << shiftAmount;
-          shiftAmount += vlqBaseShift;
+        return charMapToInt[string[index]] != null
+          ? ((() => {
+              while (
+                vlqContinuationBit & (read = charMapToInt[string[index++]])
+              ) {
+                number += (read & vlqBaseMask) << shiftAmount;
+                shiftAmount += vlqBaseShift;
+              }
+            })(),
+            (resultObject.index = index),
+            (resultObject.value = fromVlqSigned(
+              number + (read << shiftAmount)
+            )),
+            resultObject)
+          : undefined;
+      }),
+      readVlqSequence: (readVlqSequence = function(
+        string,
+        resultObject = { index: 0 }
+      ) {
+        let out, result;
+        out = [];
+        while ((result = readVlq(string, resultObject))) {
+          out.push(result.value);
         }
-        resultObject.index = index;
-        resultObject.value = fromVlqSigned(number + (read << shiftAmount));
-        return resultObject;
+        return out;
       })
     };
   })();

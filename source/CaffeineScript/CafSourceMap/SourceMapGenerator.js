@@ -40,6 +40,7 @@ Caf.defMod(module, () => {
             this._js = "";
             this._mappings = "";
             this._lastSourceLine = this._lastSourceColumn = this._lastGeneratedColumn = this._nextGeneratedColumn = 0;
+            this._firstSegment = true;
             this._sourceLineColumnMap = new SourceLineColumnMap(this.source);
           }
         },
@@ -87,25 +88,27 @@ Caf.defMod(module, () => {
           reusableColLine = {};
           this.prototype.addSegment = function(sourceIndex) {
             let line, column, out;
-            ({ line, column } = this._sourceLineColumnMap.getLineColumn(
-              sourceIndex,
-              reusableColLine
-            ));
-            log({ addSegment: { line, column, sourceIndex } });
-            out =
-              encodeVlq(this._nextGeneratedColumn - this._lastGeneratedColumn) +
-              "A" +
-              encodeVlq(line - this._lastSourceLine) +
-              encodeVlq(column - this._lastSourceColumn);
-            this._lastGeneratedColumn = this._nextGeneratedColumn;
-            this._lastSourceLine = line;
-            this._lastSourceColumn = column;
-            if (!this._firstSegment) {
-              this._firstSegment = false;
-            } else {
-              this._mappings += ",";
-            }
-            return (this._mappings += out);
+            return sourceIndex != null
+              ? (({ line, column } = this._sourceLineColumnMap.getLineColumn(
+                  sourceIndex,
+                  reusableColLine
+                )),
+                log({ addSegment: { line, column, sourceIndex } }),
+                (out =
+                  encodeVlq(
+                    this._nextGeneratedColumn - this._lastGeneratedColumn
+                  ) +
+                  "A" +
+                  encodeVlq(line - this._lastSourceLine) +
+                  encodeVlq(column - this._lastSourceColumn)),
+                (this._lastGeneratedColumn = this._nextGeneratedColumn),
+                (this._lastSourceLine = line),
+                (this._lastSourceColumn = column),
+                this._firstSegment
+                  ? (this._firstSegment = false)
+                  : (this._mappings += ","),
+                (this._mappings += out))
+              : undefined;
           };
           this.prototype.advance = function(generatedString) {
             let index, lineAdded, lastStartIndex;

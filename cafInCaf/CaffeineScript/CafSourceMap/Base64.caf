@@ -94,7 +94,7 @@ import &ArtStandardLib
     number = 0
     shiftAmount = 0
 
-    if charMapToInt[string[index]]
+    if charMapToInt[string[index]]?
 
       while vlqContinuationBit & read = charMapToInt[string[index++]]
         number += (read & vlqBaseMask) << shiftAmount

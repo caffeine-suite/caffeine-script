@@ -5,5 +5,6 @@ module.exports = require './namespace'
 module.exports
 .addModules
   Base64:             require './Base64'            
+  SourceMapConsumer:  require './SourceMapConsumer' 
   SourceMapGenerator: require './SourceMapGenerator'
   SourceNode:         require './SourceNode'        

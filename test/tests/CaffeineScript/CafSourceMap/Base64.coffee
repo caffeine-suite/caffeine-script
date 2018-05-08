@@ -5,6 +5,7 @@
   encodeVlq
   intToCharMap
   readVlq
+  readVlqSequence
 } = Neptune.CaffeineScript.CafSourceMap.Base64
 
 module.exports = suite: ->
@@ -22,12 +23,12 @@ module.exports = suite: ->
     assert.eq encodeVlq(16), "gB"
     assert.eq encodeVlq(16), intToCharMap[1<<5] + intToCharMap[1]
 
-  test "readVlq 'gba', 0", ->
+  test "readVlq 'gba', index: 0", ->
     out =
     assert.eq
       value: 16
       index: 2
-      readVlq 'gBa', 0
+      readVlq 'gBa', index: 0
 
   for n in list = [-100, -10, -1, 0, 1, 10, 100, 1000, 10000]
     do (n) ->
@@ -37,14 +38,19 @@ module.exports = suite: ->
         assert.eq n, value
         assert.eq index, encoded.length
 
-  test 'encode many numbers', ->
+  test 'readVlqSequence ...', ->
     encoded = (encodeVlq n for n in list).join ''
-    index = 0
-    decoded = []
-    reusbale = {} # this is optional, but faster
-    while index < encoded.length
-      {index, value} = out = readVlq encoded, index, reusbale
-      assert.same out, reusbale
-      decoded.push value
+
+    decoded = readVlqSequence encoded
+    # index = 0
+    # decoded = []
+    # reusbale = {} # this is optional, but faster
+    # while index < encoded.length
+    #   {index, value} = out = readVlq encoded, index, reusbale
+    #   assert.same out, reusbale
+    #   decoded.push value
 
     assert.eq decoded, list
+
+  test 'readVlqSequence "AACA"', ->
+    assert.eq (readVlqSequence "AACA"),  [0, 0, 1, 0]

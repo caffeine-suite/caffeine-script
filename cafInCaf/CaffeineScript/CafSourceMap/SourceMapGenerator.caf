@@ -47,6 +47,7 @@ class SourceMapGenerator extends BaseClass
     @_lastSourceColumn =
     @_lastGeneratedColumn =
     @_nextGeneratedColumn = 0
+    @_firstSegment = true
 
     @_sourceLineColumnMap = new SourceLineColumnMap @source
 
@@ -57,25 +58,26 @@ class SourceMapGenerator extends BaseClass
 
   reusableColLine = {}
   addSegment: (sourceIndex) ->
-    {line, column} = @_sourceLineColumnMap.getLineColumn sourceIndex, reusableColLine
-    log addSegment: {line, column, sourceIndex}
+    if sourceIndex?
+      {line, column} = @_sourceLineColumnMap.getLineColumn sourceIndex, reusableColLine
+      log addSegment: {line, column, sourceIndex}
 
-    out =
-      encodeVlq @_nextGeneratedColumn - @_lastGeneratedColumn # generated column
-      + :A                                                    # Sources, with only one source, always a VLQ-0
-      + encodeVlq line                - @_lastSourceLine      # source line
-      + encodeVlq column              - @_lastSourceColumn    # source column
+      out =
+        encodeVlq @_nextGeneratedColumn - @_lastGeneratedColumn # generated column
+        + :A                                                    # Sources, with only one source, always a VLQ-0
+        + encodeVlq line                - @_lastSourceLine      # source line
+        + encodeVlq column              - @_lastSourceColumn    # source column
 
-    @_lastGeneratedColumn = @_nextGeneratedColumn
-    @_lastSourceLine      = line
-    @_lastSourceColumn    = column
+      @_lastGeneratedColumn = @_nextGeneratedColumn
+      @_lastSourceLine      = line
+      @_lastSourceColumn    = column
 
-    unless @_firstSegment
-      @_firstSegment = false
-    else
-      @_mappings += ","
+      if @_firstSegment
+        @_firstSegment = false
+      else
+        @_mappings += ","
 
-    @_mappings += out
+      @_mappings += out
 
   advance: (generatedString) ->
     index = -1
