@@ -26,11 +26,15 @@ class SourceMapGenerator extends BaseClass
 
     sourceMap:    -> JSON.stringify @rawSourceMap
     rawSourceMap: ->
-      merge {}
-        version:  3
-        file:     @generatedFileName
-        sources:  [] @sourceFileName
-        @mappings # Example: "" A,AAAB;;ABCDE;
+      merge
+        {}
+          version:  3
+          file:     @generatedFileName
+          @mappings # Example: "" A,AAAB;;ABCDE;
+        if @sourceFileName
+          sources:        [] @sourceFileName
+        else
+          sourceContent:  [] @source
 
         # not currently supported:
         #   sourceRoot:       ""
@@ -48,6 +52,7 @@ class SourceMapGenerator extends BaseClass
     @_lastGeneratedColumn =
     @_nextGeneratedColumn = 0
     @_firstSegment = true
+    @_lastSourceIndex = 0
 
     @_sourceLineColumnMap = new SourceLineColumnMap @source
 
@@ -58,9 +63,10 @@ class SourceMapGenerator extends BaseClass
 
   reusableColLine = {}
   addSegment: (sourceIndex) ->
-    if sourceIndex?
+    if sourceIndex? && sourceIndex != @_lastSourceIndex
+      @_lastSourceIndex = sourceIndex
+
       {line, column} = @_sourceLineColumnMap.getLineColumn sourceIndex, reusableColLine
-      log addSegment: {line, column, sourceIndex}
 
       out =
         encodeVlq @_nextGeneratedColumn - @_lastGeneratedColumn # generated column
@@ -91,19 +97,19 @@ class SourceMapGenerator extends BaseClass
     else
       @_nextGeneratedColumn += generatedString.length
 
-  add: (sourceIndex, output) ->
+  add: (output) ->
     switch
     when output is String
-      @addSegment sourceIndex
       @_js += output
       @advance output
 
     when output?.children
       {sourceIndex, children} = output
-      @add sourceIndex, children
+      @addSegment sourceIndex
+      @add children
 
     when output is Array
-      each child in output
-        @add sourceIndex, output
+      each child in output when child?
+        @add child
 
     @

@@ -48,6 +48,9 @@ all the comprehensions.
 SHOULD COMPILE
 #################################
 -----
+-> arguments.length
+
+-----
   [].slice 0, 100
 
 -----

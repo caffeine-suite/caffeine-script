@@ -31,41 +31,39 @@ Caf.defMod(module, () => {
               statementsSourceNodes,
               autoLets;
             this.rootUpdateScope();
-            return this.createSourceNode(
-              options.bare
-                ? [
-                    "Caf = global.Caf || require('caffeine-script-runtime');\n",
-                    this.getBareInitializers(),
-                    this.statementsSourceNodes
-                  ]
-                : options.module
-                  ? ((identifiersToImport = Caf.array(
-                      this.generateImportMap(),
-                      (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                    )),
-                    (statementsSourceNode = this.statements.toSourceNode({
-                      returnAction: true
-                    })),
-                    (lets = compactFlatten([
-                      identifiersToImport,
-                      this.requiredIdentifierLets
-                    ])),
-                    [
-                      "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
-                      lets.length > 0
-                        ? `let ${Caf.toString(lets.join(", "))}; `
-                        : undefined,
-                      statementsSourceNode,
-                      "});"
-                    ])
-                  : (({ statementsSourceNodes } = this),
-                    [
-                      present((autoLets = this.getAutoLets()))
-                        ? [autoLets, "; "]
-                        : undefined,
-                      statementsSourceNodes
-                    ])
-            );
+            return options.bare
+              ? this.createSourceNode(
+                  "Caf = global.Caf || require('caffeine-script-runtime');\n",
+                  this.getBareInitializers(),
+                  this.statementsSourceNodes
+                )
+              : options.module
+                ? ((identifiersToImport = Caf.array(
+                    this.generateImportMap(),
+                    (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                  )),
+                  (statementsSourceNode = this.statements.toSourceNode({
+                    returnAction: true
+                  })),
+                  (lets = compactFlatten([
+                    identifiersToImport,
+                    this.requiredIdentifierLets
+                  ])),
+                  this.createSourceNode(
+                    "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                    lets.length > 0
+                      ? `let ${Caf.toString(lets.join(", "))}; `
+                      : undefined,
+                    statementsSourceNode,
+                    "});"
+                  ))
+                : (({ statementsSourceNodes } = this),
+                  this.createSourceNode(
+                    present((autoLets = this.getAutoLets()))
+                      ? [autoLets, "; "]
+                      : undefined,
+                    statementsSourceNodes
+                  ));
           };
           this.prototype.rootUpdateScope = function() {
             return !this._scopeHasBeenUpdated

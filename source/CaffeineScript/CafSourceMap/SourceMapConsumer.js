@@ -27,6 +27,18 @@ Caf.defMod(module, () => {
             mappings: function() {
               return this.sourceMap.mappings;
             },
+            sources: function() {
+              return this.sourceMap.sources;
+            },
+            names: function() {
+              return this.sourceMap.names;
+            },
+            inspectedObjects: function() {
+              return {
+                sourceMap: this.sourceMap,
+                decodedMappings: this.decodedMappings
+              };
+            },
             decodedMappings: function() {
               let out, result;
               out = [];

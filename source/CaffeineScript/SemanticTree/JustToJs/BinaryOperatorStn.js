@@ -6,7 +6,6 @@ Caf.defMod(module, () => {
       "operatorIsInfixJs",
       "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
-      "compactFlatten",
       "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
@@ -17,7 +16,6 @@ Caf.defMod(module, () => {
       operatorIsInfixJs,
       binaryOperatorToSourceNodeArray,
       getOpPrecidence,
-      compactFlatten,
       binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
@@ -92,11 +90,9 @@ Caf.defMod(module, () => {
                   );
               }
             })();
-            return this.createSourceNode(
-              options && this._needsParens(options)
-                ? compactFlatten(["(", out, ")"])
-                : out
-            );
+            return options && this._needsParens(options)
+              ? this.createSourceNode("(", out, ")")
+              : this.createSourceNode(out);
           };
           this.prototype.toJs = function(options) {
             let out, identifier, parentOperatorPrecidence;

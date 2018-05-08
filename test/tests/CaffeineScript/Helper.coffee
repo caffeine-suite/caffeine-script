@@ -46,7 +46,7 @@ module.exports =
       # log "HERE5"
       try
         [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
-        assert.equal oldToJs, newJs
+        assert.equal newJs, oldToJs
         assert.match withSourceMapJs, ///
           //\#\ sourceMappingURL=data:application/json;base64,[a-z0-9]+
           ///i

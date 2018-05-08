@@ -2,14 +2,20 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["BaseClass", "SourceMapGenerator", "String", "Array"],
+    [
+      "BaseClass",
+      "toInspectedObjects",
+      "SourceMapGenerator",
+      "String",
+      "Array"
+    ],
     [
       global,
       require("art-standard-lib"),
       require("art-class-system"),
       { SourceMapGenerator: require("./SourceMapGenerator") }
     ],
-    (BaseClass, SourceMapGenerator, String, Array) => {
+    (BaseClass, toInspectedObjects, SourceMapGenerator, String, Array) => {
       let SourceNode;
       return (SourceNode = Caf.defClass(
         class SourceNode extends BaseClass {
@@ -23,14 +29,14 @@ Caf.defMod(module, () => {
           this.property("sourceIndex", "children");
           this.getter({
             inspectedObjects: function() {
-              return { sourceIndex: this.sourceIndex, children: this.children };
+              return {
+                sourceIndex: this.sourceIndex,
+                children: toInspectedObjects(this.children)
+              };
             }
           });
-          this.prototype.generate = function(source) {
-            return new SourceMapGenerator(source).add(
-              this.children,
-              this.sourceIndex
-            );
+          this.prototype.generate = function(source, sourceFileName) {
+            return new SourceMapGenerator(source, sourceFileName).add(this);
           };
           this.prototype.toString = function(source, output = { js: "" }) {
             source != null ? source : (source = this.children);
@@ -39,7 +45,11 @@ Caf.defMod(module, () => {
                 output.js += source;
                 break;
               case !Caf.is(source, Array):
-                Caf.each2(source, child => this.toString(child, output));
+                Caf.each2(
+                  source,
+                  child => this.toString(child, output),
+                  child => child != null
+                );
                 break;
               case !Caf.is(source, SourceNode):
                 source.toString(null, output);

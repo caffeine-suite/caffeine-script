@@ -53,24 +53,22 @@ Caf.defMod(module, () => {
         this.prototype.toSourceNode = function(options) {
           let out;
           out = supportedOperatorsRegExp.test(this.operator)
-            ? [
+            ? this.createSourceNode(
                 this.lValue.toSourceNode(),
                 ` ${Caf.toString(this.operator)}= `,
                 this.rValue.toSourceNode({ expression: true })
-              ]
-            : [
+              )
+            : this.createSourceNode(
                 this.lValue.toSourceNode({ expression: true }),
                 ` ${Caf.toString(this.operator)} `,
                 this.lValue.toSourceNode(),
                 " = ",
                 this.rValue.toSourceNode({ expression: true })
-              ];
-          return this.createSourceNode(
-            (Caf.exists(options) && options.dotBase) ||
+              );
+          return (Caf.exists(options) && options.dotBase) ||
             (Caf.exists(options) && options.subExpression)
-              ? ["(", out, ")"]
-              : out
-          );
+            ? this.createSourceNode("(", out, ")")
+            : out;
         };
         this.prototype.toJs = function(options) {
           let out;

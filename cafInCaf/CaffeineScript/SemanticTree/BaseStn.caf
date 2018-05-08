@@ -1,7 +1,8 @@
 import &StandardImport
 {createObjectTreeFactory} = &ArtObjectTreeFactory
-{SourceNode} = &SourceMap
+{SourceNode} = &CafSourceMap
 {binary} = &ArtBinary
+
 
 ##
   TODO:
@@ -164,33 +165,24 @@ class BaseStn extends BaseClass
 
   @property :sourceIndex
   @getter
-    sourceIndex: ->
-      @_sourceIndex ? @parent?.sourceIndex
+    source: -> @parseTreeNode.parser.source
 
     sourceLineColumn: ->
       @parseTreeNode.parser.getLineColumn @sourceIndex, sourceNodeLineColumnScratch
 
   @getter
     sourceFile: -> @parseTreeNode?.sourceFile ? "caffeine-script"
-    newSourceNode: ->
-      # both are 0-base
-      {line, column} = @sourceLineColumn
+    # newSourceNode: ->
+    #   # both are 0-base
+    #   {line, column} = @sourceLineColumn
 
-      new SourceNode
-        line + 1  # should be 1-based
-        column    # should be 0-based
-        @parseTreeNode.sourceFile
+    #   new SourceNode
+    #     line + 1  # should be 1-based
+    #     column    # should be 0-based
+    #     @parseTreeNode.sourceFile
 
-  createSourceNode: (args...) ->
-    children = compactFlatten args
-
-    {line, column} = @sourceLineColumn
-
-    new SourceNode
-      line + 1                          # should be 1-based
-      column                            # should be 0-based
-      @parseTreeNode.sourceFile
-      children
+  createSourceNode: (children...) ->
+    new SourceNode @sourceIndex, children
 
   ###
     IN: options:
@@ -240,25 +232,25 @@ class BaseStn extends BaseClass
       sourceMap:  string
 
   toJsUsingSourceNode: (options = {}) ->
-    {inlineMap, sourceMap, sourceFile = @sourceFile} = options
+    {inlineMap, source = @source, sourceMap, sourceFile = @sourceFile} = options
     sourceNode = @toSourceNode options
 
     if inlineMap || sourceMap
-      {code, map} =
+      {js, sourceMap} =
         sourceNode
-        .toStringWithSourceMap file: sourceFile
+        .generate source, sourceFile
 
       if inlineMap
         js:
           """
-            #{code}
-            //# sourceMappingURL=#{binary(JSON.stringify map.toString()).toDataUri :application/json, true}
+            #{js}
+            //# sourceMappingURL=#{binary(sourceMap).toDataUri :application/json, true}
             //# sourceURL=#{sourceFile}
 
       else
         {}
-          js:         code
-          sourceMap:  map.toString()
+          js
+          sourceMap
 
     else
       js: sourceNode.toString()

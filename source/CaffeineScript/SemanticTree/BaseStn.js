@@ -7,9 +7,7 @@ Caf.defMod(module, () => {
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
-      "compactFlatten",
       "log",
-      "JSON",
       "Error",
       "isString",
       "merge"
@@ -20,16 +18,14 @@ Caf.defMod(module, () => {
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
-      compactFlatten,
       log,
-      JSON,
       Error,
       isString,
       merge
     ) => {
       let createObjectTreeFactory, SourceNode, binary, BaseStn;
       ({ createObjectTreeFactory } = require("art-object-tree-factory"));
-      ({ SourceNode } = require("source-map"));
+      ({ SourceNode } = require("../CafSourceMap"));
       ({ binary } = require("art-binary"));
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
@@ -186,11 +182,8 @@ Caf.defMod(module, () => {
           sourceNodeLineColumnScratch = {};
           this.property("sourceIndex");
           this.getter({
-            sourceIndex: function() {
-              let cafTemp, cafBase;
-              return (cafTemp = this._sourceIndex) != null
-                ? cafTemp
-                : Caf.exists((cafBase = this.parent)) && cafBase.sourceIndex;
+            source: function() {
+              return this.parseTreeNode.parser.source;
             },
             sourceLineColumn: function() {
               return this.parseTreeNode.parser.getLineColumn(
@@ -207,27 +200,10 @@ Caf.defMod(module, () => {
                 cafBase.sourceFile) != null
                 ? cafTemp
                 : "caffeine-script";
-            },
-            newSourceNode: function() {
-              let line, column;
-              ({ line, column } = this.sourceLineColumn);
-              return new SourceNode(
-                line + 1,
-                column,
-                this.parseTreeNode.sourceFile
-              );
             }
           });
-          this.prototype.createSourceNode = function(...args) {
-            let children, line, column;
-            children = compactFlatten(args);
-            ({ line, column } = this.sourceLineColumn);
-            return new SourceNode(
-              line + 1,
-              column,
-              this.parseTreeNode.sourceFile,
-              children
-            );
+          this.prototype.createSourceNode = function(...children) {
+            return new SourceNode(this.sourceIndex, children);
           };
           this.prototype.toSourceNode = function(options) {
             log.warn(
@@ -238,25 +214,25 @@ Caf.defMod(module, () => {
             return this.createSourceNode(this.toJs(options));
           };
           this.prototype.toJsUsingSourceNode = function(options = {}) {
-            let inlineMap, sourceMap, sourceFile, sourceNode, code, map;
-            ({ inlineMap, sourceMap, sourceFile = this.sourceFile } = options);
+            let inlineMap, source, sourceMap, sourceFile, sourceNode, js;
+            ({
+              inlineMap,
+              source = this.source,
+              sourceMap,
+              sourceFile = this.sourceFile
+            } = options);
             sourceNode = this.toSourceNode(options);
             return inlineMap || sourceMap
-              ? (({ code, map } = sourceNode.toStringWithSourceMap({
-                  file: sourceFile
-                })),
+              ? (({ js, sourceMap } = sourceNode.generate(source, sourceFile)),
                 inlineMap
                   ? {
                       js: `${Caf.toString(
-                        code
+                        js
                       )}\n//# sourceMappingURL=${Caf.toString(
-                        binary(JSON.stringify(map.toString())).toDataUri(
-                          "application/json",
-                          true
-                        )
+                        binary(sourceMap).toDataUri("application/json", true)
                       )}\n//# sourceURL=${Caf.toString(sourceFile)}`
                     }
-                  : { js: code, sourceMap: map.toString() })
+                  : { js, sourceMap })
               : { js: sourceNode.toString() };
           };
           this.prototype.childrenToSourceNodes = function(joiner, options) {

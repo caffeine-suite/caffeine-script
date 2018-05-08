@@ -1,6 +1,7 @@
 {log} = require 'art-standard-lib'
 {
   SourceMapGenerator
+  SourceNode
   SourceMapConsumer
 } = Neptune.CaffeineScript.CafSourceMap
 
@@ -43,11 +44,11 @@ module.exports = suite:
 
     test "addSegment", ->
       sm = new SourceMapGenerator source, sourceFileName
-      sm.addSegment 0
+      sm.addSegment 1
       assert.eq sm.rawSourceMap,
         version: 3
         sources: ["test.caf"]
-        mappings: "AAAA"
+        mappings: "AAAC"
 
   advance: ->
     test "one char", ->
@@ -114,7 +115,7 @@ module.exports = suite:
   add: ->
     test "add once", ->
       sm = new SourceMapGenerator source, sourceFileName
-      sm.add 17, "log"
+      sm.add new SourceNode 17, "log"
 
       assert.eq sm.status,
         lastSourceLine:      1
@@ -125,8 +126,8 @@ module.exports = suite:
 
     test "add twice", ->
       sm = new SourceMapGenerator source, sourceFileName
-      sm.add 17, "lo"
-      sm.add 19, "g"
+      sm.add new SourceNode 17, "lo"
+      sm.add new SourceNode 19, "g"
 
       assert.eq sm.status,
         lastSourceLine:      1
@@ -137,13 +138,13 @@ module.exports = suite:
 
     test "full example", ->
       sm = new SourceMapGenerator source, sourceFileName
-      sm.add 17, "log"
-      sm.add null, "("
-      sm.add null, "Math.pow("
-      sm.add 21, "10"
-      sm.add null, ", "
-      sm.add 27, "2"
-      sm.add null, "));"
+      sm.add new SourceNode 17, "log"
+      sm.add new SourceNode null, "("
+      sm.add new SourceNode null, "Math.pow("
+      sm.add new SourceNode 21, "10"
+      sm.add new SourceNode null, ", "
+      sm.add new SourceNode 27, "2"
+      sm.add new SourceNode null, "));"
 
       smc = new SourceMapConsumer sm.sourceMap
       assert.eq sm.js, "log(Math.pow(10, 2));"

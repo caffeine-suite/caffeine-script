@@ -36,26 +36,27 @@ class AssignmentStn extends &AccessorChainStn
 
   toSourceNode: (options) ->
     out = if supportedOperatorsRegExp.test @operator
-      []
+      @createSourceNode
         @lValue.toSourceNode()
         " #{@operator}= "
         @rValue.toSourceNode expression:true
 
     else
-      []
+      @createSourceNode
         @lValue.toSourceNode expression:true
         " #{@operator} "
         @lValue.toSourceNode()
         " = "
         @rValue.toSourceNode expression:true
 
-    @createSourceNode
-      if options?.dotBase || options?.subExpression
-        []
-          "("
-          out
-          ")"
-      else out
+
+    if options?.dotBase || options?.subExpression
+      @createSourceNode
+        "("
+        out
+        ")"
+    else
+      out
 
   toJs: (options) ->
     out = if supportedOperatorsRegExp.test @operator

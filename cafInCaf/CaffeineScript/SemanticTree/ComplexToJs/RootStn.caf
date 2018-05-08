@@ -16,8 +16,8 @@ class RootStn extends &ScopeStnMixin &BaseStn
 
   toSourceNode: (options = {})->
     @rootUpdateScope()
-    @createSourceNode if options.bare
-      []
+    if options.bare
+      @createSourceNode
         "" Caf = global.Caf || require('caffeine-script-runtime');\n
         @getBareInitializers()
         @statementsSourceNodes
@@ -31,7 +31,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
       # why isn't this "getAutoLets" like everywhere else?
       lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
 
-      []
+      @createSourceNode
         """
           "use strict"
           let Caf = require('caffeine-script-runtime');
@@ -47,7 +47,7 @@ class RootStn extends &ScopeStnMixin &BaseStn
       # do before getAutoLets - WhileStn may need a temp var, but it won't know
       # until we call toSourceNode
       {statementsSourceNodes} = @
-      []
+      @createSourceNode
         if present autoLets = @getAutoLets()
           [] autoLets, "; "
         statementsSourceNodes

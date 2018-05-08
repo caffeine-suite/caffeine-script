@@ -1,7 +1,7 @@
 {max, min, log} = require 'art-standard-lib'
 {generateSourceMapParseTest} = require './Helper'
 {CaffeineScript} = Neptune
-{SourceMapConsumer} = require 'source-map'
+{SourceMapConsumer} = Neptune.CaffeineScript.CafSourceMap
 {presentSourceLocation, SourceLineColumnMap} = require 'caffeine-eight'
 
 module.exports = suite:
@@ -17,23 +17,13 @@ module.exports = suite:
       assert.isString js, jsTest:{out}
       assert.isString sourceMap, sourceMapTest:{out}
 
-      inSlcm = new SourceLineColumnMap source
-      jsSlcm = new SourceLineColumnMap js
+      smc = new SourceMapConsumer sourceMap
+      log {source, js, smc}
 
-      log info: {source, js, sourceMap}
-
-      SourceMapConsumer.with sourceMap,
-        null
-        (consumer) ->
-          # log consumer._sources.toArray()
-          consumer.eachMapping (mapping) ->
-            {generatedLine, generatedColumn, originalLine, originalColumn} = mapping
-            log {}
-            log mapping: {
-              generatedLine, generatedColumn, originalLine, originalColumn
-              source:     presentSourceLocation source,  inSlcm.getIndex originalLine - 1,   originalColumn
-              js:         presentSourceLocation js,      jsSlcm.getIndex generatedLine - 1,  generatedColumn
-            }
+      assert.eq smc.decodedMappings, [
+        {generatedLine: 2, generatedColumn: 77, source: 0, sourceLine: 0, sourceColumn: 6}
+        {generatedLine: 2, generatedColumn: 89, source: 0, sourceLine: 1, sourceColumn: 0}
+      ]
 
   modes: ->
     commonSource = "import &ArtStandardLib;a = upperCamelCase 'foo bar'"

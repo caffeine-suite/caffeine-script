@@ -45,10 +45,10 @@ class BinaryOperatorStn extends &BaseStn
         @right.toSourceNode {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
         @left
 
-    @createSourceNode if options && @_needsParens options
-      compactFlatten [] "(", out, ")"
+    if options && @_needsParens options
+      @createSourceNode  "(", out, ")"
     else
-      out
+      @createSourceNode out
 
   toJs: (options)->
     out = if @operator == "?" && @uniqueIdentifierHandle

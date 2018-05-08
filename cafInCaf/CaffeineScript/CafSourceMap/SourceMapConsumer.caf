@@ -10,6 +10,10 @@ class SourceMapConsumer extends BaseClass
 
   @getter
     mappings: -> @sourceMap.mappings
+    sources:  -> @sourceMap.sources
+    names:    -> @sourceMap.names
+    inspectedObjects: ->
+      {} @sourceMap, @decodedMappings
     decodedMappings: ->
       out = []
       while result = @readMapping @mappings, result

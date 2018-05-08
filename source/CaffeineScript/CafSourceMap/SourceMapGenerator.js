@@ -6,7 +6,6 @@ Caf.defMod(module, () => {
       "BaseClass",
       "JSON",
       "merge",
-      "log",
       "encodeVlq",
       "String",
       "Array",
@@ -19,16 +18,7 @@ Caf.defMod(module, () => {
       require("caffeine-eight"),
       require("./Base64")
     ],
-    (
-      BaseClass,
-      JSON,
-      merge,
-      log,
-      encodeVlq,
-      String,
-      Array,
-      SourceLineColumnMap
-    ) => {
+    (BaseClass, JSON, merge, encodeVlq, String, Array, SourceLineColumnMap) => {
       let SourceMapGenerator;
       return (SourceMapGenerator = Caf.defClass(
         class SourceMapGenerator extends BaseClass {
@@ -41,6 +31,7 @@ Caf.defMod(module, () => {
             this._mappings = "";
             this._lastSourceLine = this._lastSourceColumn = this._lastGeneratedColumn = this._nextGeneratedColumn = 0;
             this._firstSegment = true;
+            this._lastSourceIndex = 0;
             this._sourceLineColumnMap = new SourceLineColumnMap(this.source);
           }
         },
@@ -68,12 +59,16 @@ Caf.defMod(module, () => {
                 return JSON.stringify(this.rawSourceMap);
               },
               rawSourceMap: function() {
-                return merge({
-                  version: 3,
-                  file: this.generatedFileName,
-                  sources: [this.sourceFileName],
-                  mappings: this.mappings
-                });
+                return merge(
+                  {
+                    version: 3,
+                    file: this.generatedFileName,
+                    mappings: this.mappings
+                  },
+                  this.sourceFileName
+                    ? { sources: [this.sourceFileName] }
+                    : { sourceContent: [this.source] }
+                );
               },
               inspectedObjects: function() {
                 return this.rawSourceMap;
@@ -88,12 +83,12 @@ Caf.defMod(module, () => {
           reusableColLine = {};
           this.prototype.addSegment = function(sourceIndex) {
             let line, column, out;
-            return sourceIndex != null
-              ? (({ line, column } = this._sourceLineColumnMap.getLineColumn(
+            return sourceIndex != null && sourceIndex !== this._lastSourceIndex
+              ? ((this._lastSourceIndex = sourceIndex),
+                ({ line, column } = this._sourceLineColumnMap.getLineColumn(
                   sourceIndex,
                   reusableColLine
                 )),
-                log({ addSegment: { line, column, sourceIndex } }),
                 (out =
                   encodeVlq(
                     this._nextGeneratedColumn - this._lastGeneratedColumn
@@ -129,20 +124,24 @@ Caf.defMod(module, () => {
                   generatedString.length - lastStartIndex)
               : (this._nextGeneratedColumn += generatedString.length);
           };
-          this.prototype.add = function(sourceIndex, output) {
-            let children;
+          this.prototype.add = function(output) {
+            let sourceIndex, children;
             switch (false) {
               case !Caf.is(output, String):
-                this.addSegment(sourceIndex);
                 this._js += output;
                 this.advance(output);
                 break;
               case !(Caf.exists(output) && output.children):
                 ({ sourceIndex, children } = output);
-                this.add(sourceIndex, children);
+                this.addSegment(sourceIndex);
+                this.add(children);
                 break;
               case !Caf.is(output, Array):
-                Caf.each2(output, child => this.add(sourceIndex, output));
+                Caf.each2(
+                  output,
+                  child => this.add(child),
+                  child => child != null
+                );
             }
             return this;
           };
