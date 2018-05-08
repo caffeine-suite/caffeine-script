@@ -1,0 +1,18 @@
+import &ArtStandardLib,  &ArtClassSystem, {} &SourceMapGenerator
+
+class SourceNode extends BaseClass
+
+  @property :sourceIndex :children
+
+  constructor: (@sourceIndex, @children)->
+
+  generate: (source) ->
+    new SourceMapGenerator source
+    .add @children, @sourceIndex
+
+  toString: (source = @children, output = js: '') ->
+    switch
+    when source is String     then output.js += source
+    when source is Array      then each child in source with @toString child, output
+    when source is SourceNode then source.toString null, output
+    output
