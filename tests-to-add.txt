@@ -31,8 +31,25 @@ Comment Preprocessing has to go:
   the base of the sub-block. I -think- that'll solve it.
 
 #################################
+SEMANTIC TODO
+#################################
+
+---------
+a = 10
+while a > 0
+  b = a
+  a--
+---------
+This should have "let a" outside the while, but should have "let b" inside, like
+all the comprehensions.
+
+
+#################################
 SHOULD COMPILE
 #################################
+-----
+  [].slice 0, 100
+
 -----
   {@getPriority = defaultGetPriority, @array = []} = options
 

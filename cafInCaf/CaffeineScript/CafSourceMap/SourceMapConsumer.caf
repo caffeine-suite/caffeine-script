@@ -1,0 +1,44 @@
+import &ArtStandardLib, &ArtClassSystem, &CaffeineEight, &Base64
+
+# https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
+
+class SourceMapConsumer extends BaseClass
+  constructor: (sourceMap) ->
+    if sourceMap is String
+      sourceMap = JSON.parse sourceMap
+    @sourceMap = sourceMap
+
+  @getter
+    mappings: -> @sourceMap.mappings
+    decodedMappings: ->
+
+
+  readMapping: (mappings, result) ->
+    result ?=
+      index:            0
+      generatedLine:    0
+      generatedColumn:  0
+      sourceLine:       0
+      sourceColumn:     0
+      sourceFileIndex:  0
+      sourceNameIndex:  0
+      mapping:          null
+
+    result.mapping = null
+    if index < mapping.length
+      switch mappings[index]
+      when ";"
+        result.index++
+        result.generatedLine++
+
+      else
+        [genColDelta, srcDelta, srcLineDelta, srcColDelta, nameDelta] = readVlqSequence mappings, result
+        throw new Error "invalid mapping" unless genColDelta
+        m = result.mapping = {}
+        m.generatedColumn = result.generatedColumn  += genColDelta
+        m.sourceFileIndex = result.sourceFileIndex  += srcDelta     if srcDelta?
+        m.sourceLine      = result.sourceLine       += srcLineDelta if srcLineDelta?
+        m.sourceColumn    = result.sourceColumn     += srcColDelta  if srcColDelta?
+        m.sourceNameIndex = result.sourceNameIndex  += nameDelta    if nameDelta?
+
+      result

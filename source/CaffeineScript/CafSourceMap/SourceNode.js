@@ -21,16 +21,19 @@ Caf.defMod(module, () => {
         },
         function(SourceNode, classSuper, instanceSuper) {
           this.property("sourceIndex", "children");
+          this.getter({
+            inspectedObjects: function() {
+              return { sourceIndex: this.sourceIndex, children: this.children };
+            }
+          });
           this.prototype.generate = function(source) {
             return new SourceMapGenerator(source).add(
               this.children,
               this.sourceIndex
             );
           };
-          this.prototype.toString = function(
-            source = this.children,
-            output = { js: "" }
-          ) {
+          this.prototype.toString = function(source, output = { js: "" }) {
+            source != null ? source : (source = this.children);
             switch (false) {
               case !Caf.is(source, String):
                 output.js += source;
@@ -41,7 +44,7 @@ Caf.defMod(module, () => {
               case !Caf.is(source, SourceNode):
                 source.toString(null, output);
             }
-            return output;
+            return output.js;
           };
         }
       ));

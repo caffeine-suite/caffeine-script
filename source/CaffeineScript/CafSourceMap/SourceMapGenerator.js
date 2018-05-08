@@ -6,6 +6,7 @@ Caf.defMod(module, () => {
       "BaseClass",
       "JSON",
       "merge",
+      "log",
       "encodeVlq",
       "String",
       "Array",
@@ -18,7 +19,16 @@ Caf.defMod(module, () => {
       require("caffeine-eight"),
       require("./Base64")
     ],
-    (BaseClass, JSON, merge, encodeVlq, String, Array, SourceLineColumnMap) => {
+    (
+      BaseClass,
+      JSON,
+      merge,
+      log,
+      encodeVlq,
+      String,
+      Array,
+      SourceLineColumnMap
+    ) => {
       let SourceMapGenerator;
       return (SourceMapGenerator = Caf.defClass(
         class SourceMapGenerator extends BaseClass {
@@ -36,21 +46,39 @@ Caf.defMod(module, () => {
         function(SourceMapGenerator, classSuper, instanceSuper) {
           let reusableColLine;
           this.property("source", "sourceFileName", "generatedFileName");
-          this.getter("js", "mappings", {
-            sourceMap: function() {
-              return JSON.stringify(this.rawSourceMap);
-            },
-            rawSourceMap: function() {
-              return merge(
-                {
+          this.getter(
+            "js",
+            "mappings",
+            "lastSourceLine",
+            "lastSourceColumn",
+            "lastGeneratedColumn",
+            "nextGeneratedColumn",
+            {
+              status: function() {
+                return {
+                  lastSourceLine: this.lastSourceLine,
+                  lastSourceColumn: this.lastSourceColumn,
+                  lastGeneratedColumn: this.lastGeneratedColumn,
+                  nextGeneratedColumn: this.nextGeneratedColumn,
+                  mappings: this.mappings
+                };
+              },
+              sourceMap: function() {
+                return JSON.stringify(this.rawSourceMap);
+              },
+              rawSourceMap: function() {
+                return merge({
                   version: 3,
                   file: this.generatedFileName,
-                  sources: [this.sourceFileName]
-                },
-                this.mappings
-              );
+                  sources: [this.sourceFileName],
+                  mappings: this.mappings
+                });
+              },
+              inspectedObjects: function() {
+                return this.rawSourceMap;
+              }
             }
-          });
+          );
           this.prototype.addLine = function() {
             this._mappings += ";";
             this._lastGeneratedColumn = 0;
@@ -63,16 +91,18 @@ Caf.defMod(module, () => {
               sourceIndex,
               reusableColLine
             ));
+            log({ addSegment: { line, column, sourceIndex } });
             out =
               encodeVlq(this._nextGeneratedColumn - this._lastGeneratedColumn) +
               "A" +
               encodeVlq(line - this._lastSourceLine) +
               encodeVlq(column - this._lastSourceColumn);
-            this._lastGeneratedColumn = this._nextGeneratedColum;
+            this._lastGeneratedColumn = this._nextGeneratedColumn;
             this._lastSourceLine = line;
             this._lastSourceColumn = column;
             if (!this._firstSegment) {
               this._firstSegment = false;
+            } else {
               this._mappings += ",";
             }
             return (this._mappings += out);
@@ -96,7 +126,7 @@ Caf.defMod(module, () => {
                   generatedString.length - lastStartIndex)
               : (this._nextGeneratedColumn += generatedString.length);
           };
-          this.prototype.add = function(output, sourceIndex) {
+          this.prototype.add = function(sourceIndex, output) {
             let children;
             switch (false) {
               case !Caf.is(output, String):

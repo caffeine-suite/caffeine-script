@@ -12,9 +12,21 @@ class SourceMapGenerator extends BaseClass
   @getter
     :js
     :mappings
+    :lastSourceLine
+    :lastSourceColumn
+    :lastGeneratedColumn
+    :nextGeneratedColumn
+    status: ->
+      {}
+        @lastSourceLine
+        @lastSourceColumn
+        @lastGeneratedColumn
+        @nextGeneratedColumn
+        @mappings
+
     sourceMap:    -> JSON.stringify @rawSourceMap
     rawSourceMap: ->
-      merge
+      merge {}
         version:  3
         file:     @generatedFileName
         sources:  [] @sourceFileName
@@ -24,6 +36,8 @@ class SourceMapGenerator extends BaseClass
         #   sourceRoot:       ""
         #   sourcesContent":  [] "" ...
         #   names:            :src :maps :are :fun
+
+    inspectedObjects: -> @rawSourceMap
 
   constructor: (@source, @sourceFileName, @generatedFileName) ->
     @_js = ""
@@ -44,6 +58,7 @@ class SourceMapGenerator extends BaseClass
   reusableColLine = {}
   addSegment: (sourceIndex) ->
     {line, column} = @_sourceLineColumnMap.getLineColumn sourceIndex, reusableColLine
+    log addSegment: {line, column, sourceIndex}
 
     out =
       encodeVlq @_nextGeneratedColumn - @_lastGeneratedColumn # generated column
@@ -51,12 +66,13 @@ class SourceMapGenerator extends BaseClass
       + encodeVlq line                - @_lastSourceLine      # source line
       + encodeVlq column              - @_lastSourceColumn    # source column
 
-    @_lastGeneratedColumn = @_nextGeneratedColum
+    @_lastGeneratedColumn = @_nextGeneratedColumn
     @_lastSourceLine      = line
     @_lastSourceColumn    = column
 
     unless @_firstSegment
       @_firstSegment = false
+    else
       @_mappings += ","
 
     @_mappings += out
@@ -73,7 +89,7 @@ class SourceMapGenerator extends BaseClass
     else
       @_nextGeneratedColumn += generatedString.length
 
-  add: (output, sourceIndex) ->
+  add: (sourceIndex, output) ->
     switch
     when output is String
       @addSegment sourceIndex

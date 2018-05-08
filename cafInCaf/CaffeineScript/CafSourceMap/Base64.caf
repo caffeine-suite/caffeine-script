@@ -88,17 +88,27 @@ import &ArtStandardLib
       value:  signed integer, the VLQ value decoded
       index:  the first index after the last byte 'read'
       (note, this object is resultObject with the above fields updated)
-  readVlq = (string, index = 0, resultObject = {}) ->
+  readVlq = (string, resultObject = index: 0) ->
+    {index} = resultObject
+
     number = 0
     shiftAmount = 0
 
-    while vlqContinuationBit & read = charMapToInt[string[index++]]
-      number += (read & vlqBaseMask) << shiftAmount
-      shiftAmount += vlqBaseShift
+    if charMapToInt[string[index]]
 
-    resultObject.index = index
-    resultObject.value = fromVlqSigned
-      number
-      + read << shiftAmount
+      while vlqContinuationBit & read = charMapToInt[string[index++]]
+        number += (read & vlqBaseMask) << shiftAmount
+        shiftAmount += vlqBaseShift
 
-    resultObject
+      resultObject.index = index
+      resultObject.value = fromVlqSigned
+        number
+        + read << shiftAmount
+
+      resultObject
+
+  readVlqSequence = (string, resultObject = index: 0) ->
+    out = []
+    while result = readVlq string, resultObject
+      out.push result.value
+    out
