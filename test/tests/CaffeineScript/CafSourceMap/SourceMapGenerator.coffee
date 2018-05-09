@@ -1,4 +1,4 @@
-{log} = require 'art-standard-lib'
+{log,merge} = require 'art-standard-lib'
 {
   SourceMapGenerator
   SourceNode
@@ -17,37 +17,33 @@ generatedFileName = "test.js"
 
 module.exports = suite:
   basics: ->
-
-    test "new SourceMapGenerator full", ->
-      sm = new SourceMapGenerator source, sourceFileName, generatedFileName
-      assert.eq sm.rawSourceMap,
-        version: 3
-        file: "test.js"
-        sources: ["test.caf"]
-        mappings: ""
+    standard =
+      sourceContent:  [source]
+      names:          []
+      sourceRoot:     ""
+      mappings: ""
+      version: 3
+      sources: ["test.caf"]
 
     test "new SourceMapGenerator limited", ->
       sm = new SourceMapGenerator source, sourceFileName
-      assert.eq sm.rawSourceMap,
-        version: 3
-        sources: ["test.caf"]
-        mappings: ""
+      assert.eq sm.rawSourceMap, standard
 
+    test "new SourceMapGenerator full", ->
+      sm = new SourceMapGenerator source, sourceFileName, generatedFileName
+      assert.eq sm.rawSourceMap, merge standard,
+        file:          "test.js"
 
     test "addLine", ->
       sm = new SourceMapGenerator source, sourceFileName
       sm.addLine()
-      assert.eq sm.rawSourceMap,
-        version: 3
-        sources: ["test.caf"]
+      assert.eq sm.rawSourceMap, merge standard,
         mappings: ";"
 
     test "addSegment", ->
       sm = new SourceMapGenerator source, sourceFileName
       sm.addSegment 1
-      assert.eq sm.rawSourceMap,
-        version: 3
-        sources: ["test.caf"]
+      assert.eq sm.rawSourceMap, merge standard,
         mappings: "AAAC"
 
   advance: ->

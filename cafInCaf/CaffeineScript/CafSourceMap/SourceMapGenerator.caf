@@ -32,13 +32,13 @@ class SourceMapGenerator extends BaseClass
           file:     @generatedFileName
           @mappings # Example: "" A,AAAB;;ABCDE;
         if @sourceFileName
-          sources:        [] @sourceFileName
-        else
-          sourceContent:  [] @source
+          sources:      [] @sourceFileName
+        sourceContent:  [] @source
+        names:          []
+        sourceRoot:     ""
 
         # not currently supported:
         #   sourceRoot:       ""
-        #   sourcesContent":  [] "" ...
         #   names:            :src :maps :are :fun
 
     inspectedObjects: -> @rawSourceMap

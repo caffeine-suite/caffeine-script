@@ -67,7 +67,8 @@ Caf.defMod(module, () => {
                   },
                   this.sourceFileName
                     ? { sources: [this.sourceFileName] }
-                    : { sourceContent: [this.source] }
+                    : undefined,
+                  { sourceContent: [this.source], names: [], sourceRoot: "" }
                 );
               },
               inspectedObjects: function() {
