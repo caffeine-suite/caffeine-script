@@ -207,7 +207,8 @@ module.exports = suite: parseTestSuite
       """: "let foo; (foo = baz.dood(1, 2)).then(function() {return 123;}).catch(function() {return 456;});"
 
 
-  # regressions:
+  regressions: "dataNodes[@selectedKey]": "dataNodes[this.selectedKey];"
+
   #   """
   #   b?.c[0]
   #   """: "Caf.exists(b) && b.c[0];"

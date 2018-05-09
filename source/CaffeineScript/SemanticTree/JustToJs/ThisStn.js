@@ -22,9 +22,6 @@ Caf.defMod(module, () => {
             propName: function() {
               let cafTemp;
               return (cafTemp = this.identifier) != null ? cafTemp : "this";
-            },
-            isIdentifier: function() {
-              return identifierRegexp.test(this.identifier);
             }
           });
           this.prototype.toJs = function() {
