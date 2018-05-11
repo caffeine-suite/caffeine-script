@@ -25,13 +25,14 @@ class ObjectPropValueStn extends &BaseStn
 
     propName: ->
       {propNameChild} = @
-      switch @children.length
-      when 2
-        propNameChild.propName ? propNameChild
+      @props.propName ?=
+        switch @children.length
+        when 2
+          propNameChild.propName ? propNameChild
 
-      when 1
-        propNameChild.propName ?
-          throw new Error "#{propNameChild.type} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers."
+        when 1
+          propNameChild.propName ?
+            throw new Error "#{propNameChild.type} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers."
 
     canBeUsedInES6Structuring: ->
       propName = @propNameChild.propName

@@ -5,6 +5,9 @@
 {parseTestSuite} = require '../Helper'
 
 module.exports = suite: parseTestSuite
+  notSupported:
+    "{a+1}": null
+
   ObjectLiterals:
     bracketed:
       "{a}":    "({a});"
@@ -30,6 +33,7 @@ module.exports = suite: parseTestSuite
 
     pathing:
       "{a.b}": "({b: a.b});"
+      "{a?.b}": "({b: Caf.exists(a) && a.b});"
 
     requires:
       "{&ArtStandardLib}": "({ArtStandardLib: require('art-standard-lib')});"
