@@ -1,3 +1,7 @@
+### 0.57
+
+NEW: Structuring with existance-test-accessors is now allowed. Ex: {a?.b}
+
 ### 0.55
 
 NEW Comprehnsions Features
