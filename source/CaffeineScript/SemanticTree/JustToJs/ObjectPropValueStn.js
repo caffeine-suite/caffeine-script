@@ -38,26 +38,28 @@ Caf.defMod(module, () => {
               );
             },
             propName: function() {
-              let propNameChild, cafTemp, cafTemp1;
+              let propNameChild, cafTemp, cafBase, cafTemp1, cafTemp2;
               ({ propNameChild } = this);
-              return (() => {
-                switch (this.children.length) {
-                  case 2:
-                    return (cafTemp = propNameChild.propName) != null
-                      ? cafTemp
-                      : propNameChild;
-                  case 1:
-                    return (cafTemp1 = propNameChild.propName) != null
-                      ? cafTemp1
-                      : (() => {
-                          throw new Error(
-                            `${Caf.toString(
-                              propNameChild.type
-                            )} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.`
-                          );
-                        })();
-                }
-              })();
+              return (cafTemp = (cafBase = this.props).propName) != null
+                ? cafTemp
+                : (cafBase.propName = (() => {
+                    switch (this.children.length) {
+                      case 2:
+                        return (cafTemp1 = propNameChild.propName) != null
+                          ? cafTemp1
+                          : propNameChild;
+                      case 1:
+                        return (cafTemp2 = propNameChild.propName) != null
+                          ? cafTemp2
+                          : (() => {
+                              throw new Error(
+                                `${Caf.toString(
+                                  propNameChild.type
+                                )} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.`
+                              );
+                            })();
+                    }
+                  })());
             },
             canBeUsedInES6Structuring: function() {
               let propName;
