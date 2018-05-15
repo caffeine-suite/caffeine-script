@@ -138,7 +138,7 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let cafTemp, cafBase, cafTemp1, cafBase1, cafBase2;
+            let e, cafTemp, cafBase, cafTemp1, cafTemp2, cafBase1, cafBase2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
@@ -150,13 +150,23 @@ Caf.defMod(module, () => {
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
-            this._sourceIndex =
-              (cafTemp1 =
-                Caf.exists((cafBase1 = this.pretransformedStn)) &&
-                cafBase1.sourceIndex) != null
+            try {
+              (cafTemp1 = this._sourceIndex) != null
                 ? cafTemp1
-                : Caf.exists((cafBase2 = this.parseTreeNode)) &&
-                  cafBase2.offset;
+                : (this._sourceIndex =
+                    (cafTemp2 =
+                      Caf.exists((cafBase1 = this.pretransformedStn)) &&
+                      cafBase1.sourceIndex) != null
+                      ? cafTemp2
+                      : Caf.exists((cafBase2 = this.parseTreeNode)) &&
+                        cafBase2.absoluteOffset);
+            } catch (cafError) {
+              e = cafError;
+              log({
+                sourceIndexFailure: { parseTreeNode: this.parseTreeNode }
+              });
+              throw e;
+            }
             this.initLabeledChildren();
           }
         },
@@ -322,26 +332,41 @@ Caf.defMod(module, () => {
             return this.createSourceNode(this.toJs(options));
           };
           this.prototype.toJsUsingSourceNode = function(options = {}) {
-            let inlineMap, source, sourceMap, sourceFile, sourceNode, js;
+            let debug,
+              inlineMap,
+              source,
+              sourceMap,
+              sourceFile,
+              sourceNode,
+              out,
+              js;
             ({
+              debug,
               inlineMap,
               source = this.source,
               sourceMap,
               sourceFile = this.sourceFile
             } = options);
             sourceNode = this.toSourceNode(options);
-            return inlineMap || sourceMap
-              ? (({ js, sourceMap } = sourceNode.generate(source, sourceFile)),
-                inlineMap
-                  ? {
-                      js: `${Caf.toString(
+            out =
+              inlineMap || sourceMap
+                ? (({ js, sourceMap } = sourceNode.generate(
+                    source,
+                    sourceFile
+                  )),
+                  inlineMap
+                    ? (js = `${Caf.toString(
                         js
-                      )}\n//# sourceMappingURL=${Caf.toString(
+                      )}\n\n//# sourceMappingURL=${Caf.toString(
                         binary(sourceMap).toDataUri("application/json", true)
-                      )}\n//# sourceURL=${Caf.toString(sourceFile)}`
-                    }
-                  : { js, sourceMap })
-              : { js: sourceNode.toString() };
+                      )}\n//# sourceURL=${Caf.toString(sourceFile)}\n`)
+                    : undefined,
+                  { js, sourceMap })
+                : { js: sourceNode.toString() };
+            if (debug) {
+              out.sourceNode = sourceNode;
+            }
+            return out;
           };
           this.prototype.childrenToSourceNodes = function(joiner, options) {
             return this.stnArrayToSourceNodes(this.children, joiner, options);
@@ -1750,7 +1775,7 @@ Caf.defMod(module, () => {
             this._mappings = "";
             this._lastSourceLine = this._lastSourceColumn = this._lastGeneratedColumn = this._nextGeneratedColumn = 0;
             this._firstSegment = true;
-            this._lastSourceIndex = 0;
+            this._lastSourceIndex = -1;
             this._sourceLineColumnMap = new SourceLineColumnMap(this.source);
           }
         },
@@ -1778,17 +1803,15 @@ Caf.defMod(module, () => {
                 return JSON.stringify(this.rawSourceMap);
               },
               rawSourceMap: function() {
-                return merge(
-                  {
-                    version: 3,
-                    file: this.generatedFileName,
-                    mappings: this.mappings
-                  },
-                  this.sourceFileName
-                    ? { sources: [this.sourceFileName] }
-                    : undefined,
-                  { sourceContent: [this.source], names: [], sourceRoot: "" }
-                );
+                return merge({
+                  version: 3,
+                  file: this.generatedFileName,
+                  sourceRoot: this.sourceFileName && "",
+                  sources: this.sourceFileName && [this.sourceFileName],
+                  sourceContent: [this.source],
+                  names: [],
+                  mappings: this.mappings
+                });
               },
               inspectedObjects: function() {
                 return this.rawSourceMap;
@@ -2653,7 +2676,7 @@ __webpack_require__(114);
 /* 33 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.57.0"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.57.1"}
 
 /***/ }),
 /* 34 */
@@ -2766,6 +2789,7 @@ Caf.defMod(module, () => {
                   switch (mappings[index]) {
                     case ";":
                       result.index++;
+                      result.generatedColumn = 0;
                       return result.generatedLine++;
                     case ",":
                       return result.index++;
@@ -4901,7 +4925,7 @@ Caf.defMod(module, () => {
         class StringStn extends __webpack_require__(2) {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
-            return this.toJs(options);
+            return this.createSourceNode(this.toJs(options));
           };
           this.getter({
             propName: function() {
