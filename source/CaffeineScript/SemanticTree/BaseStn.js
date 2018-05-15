@@ -249,9 +249,9 @@ Caf.defMod(module, () => {
                   inlineMap
                     ? (js = `${Caf.toString(
                         js
-                      )}\n\n//# sourceMappingURL=${Caf.toString(
+                      )}\n//# sourceMappingURL=${Caf.toString(
                         binary(sourceMap).toDataUri("application/json", true)
-                      )}\n//# sourceURL=${Caf.toString(sourceFile)}\n`)
+                      )}\n//# sourceURL=${Caf.toString(sourceFile)}`)
                     : undefined,
                   { js, sourceMap })
                 : { js: sourceNode.toString() };

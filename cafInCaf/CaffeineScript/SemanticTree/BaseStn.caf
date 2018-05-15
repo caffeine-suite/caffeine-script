@@ -250,9 +250,8 @@ class BaseStn extends BaseClass
         js =
           """
             #{js}
-
             //# sourceMappingURL=#{binary(sourceMap).toDataUri :application/json, true}
-            //# sourceURL=#{sourceFile}\n
+            //# sourceURL=#{sourceFile}
 
       {js, sourceMap}
     else
