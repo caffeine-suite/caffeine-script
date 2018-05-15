@@ -2,7 +2,7 @@ import &StandardImport, &Lib
 
 class StringStn extends &BaseStn
 
-  toSourceNode: (options) -> @toJs options
+  toSourceNode: (options) -> @createSourceNode @toJs options
 
   @getter
     propName: -> @toJs()
