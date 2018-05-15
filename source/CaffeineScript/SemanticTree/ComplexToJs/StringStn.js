@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
         class StringStn extends require("../BaseStn") {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
-            return this.toJs(options);
+            return this.createSourceNode(this.toJs(options));
           };
           this.getter({
             propName: function() {
