@@ -71,11 +71,25 @@ SHOULD COMPILE
     a
     b
   = myObject
+-------
+import &StandardImport
+
+authorizedSync = (request) ->
+  !!if Neptune.Art.Config.configName == "Production"
+    request.session.userId in config.curators
+  else
+    present request.session.userId
 
 
 #################################
 SHOULD NOT COMPILE
 #################################
+-----
+a = private: 1
+{private} = a
+console.log private
+
+I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
 -----
   foo (a)->
     .bar

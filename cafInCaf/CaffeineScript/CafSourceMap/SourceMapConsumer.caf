@@ -36,6 +36,7 @@ class SourceMapConsumer extends BaseClass
       switch mappings[index]
       when ";"
         result.index++
+        result.generatedColumn = 0
         result.generatedLine++
 
       when ","

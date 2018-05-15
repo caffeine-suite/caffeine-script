@@ -28,14 +28,14 @@ class SourceMapGenerator extends BaseClass
     rawSourceMap: ->
       merge
         {}
-          version:  3
-          file:     @generatedFileName
+          version:        3
+          file:           @generatedFileName
+          sourceRoot:     @sourceFileName && ""
+          sources:        @sourceFileName && [] @sourceFileName
+          sourceContent:  [] @source
+          names:          []
           @mappings # Example: "" A,AAAB;;ABCDE;
-        if @sourceFileName
-          sources:      [] @sourceFileName
-        sourceContent:  [] @source
-        names:          []
-        sourceRoot:     ""
+
 
         # not currently supported:
         #   sourceRoot:       ""
@@ -52,7 +52,7 @@ class SourceMapGenerator extends BaseClass
     @_lastGeneratedColumn =
     @_nextGeneratedColumn = 0
     @_firstSegment = true
-    @_lastSourceIndex = 0
+    @_lastSourceIndex = -1
 
     @_sourceLineColumnMap = new SourceLineColumnMap @source
 

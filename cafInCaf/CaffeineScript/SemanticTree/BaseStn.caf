@@ -33,7 +33,12 @@ class BaseStn extends BaseClass
     @pretransformedStn ||= @
     @props = objectWithout props, "parseTreeNode"
 
-    @_sourceIndex = @pretransformedStn?.sourceIndex ? @parseTreeNode?.offset
+    try
+      # log "--- #{@parseTreeNode?.offset} --- #{@parseTreeNode}"
+      @_sourceIndex ?= @pretransformedStn?.sourceIndex ? @parseTreeNode?.absoluteOffset
+    catch e
+      log sourceIndexFailure: {@parseTreeNode}
+      throw e
 
     @initLabeledChildren()
 
@@ -182,6 +187,7 @@ class BaseStn extends BaseClass
     #     @parseTreeNode.sourceFile
 
   createSourceNode: (children...) ->
+    # log createSourceNode: {@type, @sourceIndex, offset: @parseTreeNode?.absoluteOffset,children}
     new SourceNode @sourceIndex, children
 
   ###
@@ -232,28 +238,29 @@ class BaseStn extends BaseClass
       sourceMap:  string
 
   toJsUsingSourceNode: (options = {}) ->
-    {inlineMap, source = @source, sourceMap, sourceFile = @sourceFile} = options
+    {debug, inlineMap, source = @source, sourceMap, sourceFile = @sourceFile} = options
     sourceNode = @toSourceNode options
 
-    if inlineMap || sourceMap
+    out = if inlineMap || sourceMap
       {js, sourceMap} =
         sourceNode
         .generate source, sourceFile
 
       if inlineMap
-        js:
+        js =
           """
             #{js}
+
             //# sourceMappingURL=#{binary(sourceMap).toDataUri :application/json, true}
-            //# sourceURL=#{sourceFile}
+            //# sourceURL=#{sourceFile}\n
 
-      else
-        {}
-          js
-          sourceMap
-
+      {js, sourceMap}
     else
       js: sourceNode.toString()
+
+    out.sourceNode = sourceNode if debug
+    out
+
 
   childrenToSourceNodes: (joiner, options)->
     @stnArrayToSourceNodes @children, joiner, options

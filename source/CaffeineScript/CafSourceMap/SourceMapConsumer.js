@@ -80,6 +80,7 @@ Caf.defMod(module, () => {
                   switch (mappings[index]) {
                     case ";":
                       result.index++;
+                      result.generatedColumn = 0;
                       return result.generatedLine++;
                     case ",":
                       return result.index++;

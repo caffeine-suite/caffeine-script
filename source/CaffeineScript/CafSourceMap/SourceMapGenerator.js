@@ -31,7 +31,7 @@ Caf.defMod(module, () => {
             this._mappings = "";
             this._lastSourceLine = this._lastSourceColumn = this._lastGeneratedColumn = this._nextGeneratedColumn = 0;
             this._firstSegment = true;
-            this._lastSourceIndex = 0;
+            this._lastSourceIndex = -1;
             this._sourceLineColumnMap = new SourceLineColumnMap(this.source);
           }
         },
@@ -59,17 +59,15 @@ Caf.defMod(module, () => {
                 return JSON.stringify(this.rawSourceMap);
               },
               rawSourceMap: function() {
-                return merge(
-                  {
-                    version: 3,
-                    file: this.generatedFileName,
-                    mappings: this.mappings
-                  },
-                  this.sourceFileName
-                    ? { sources: [this.sourceFileName] }
-                    : undefined,
-                  { sourceContent: [this.source], names: [], sourceRoot: "" }
-                );
+                return merge({
+                  version: 3,
+                  file: this.generatedFileName,
+                  sourceRoot: this.sourceFileName && "",
+                  sources: this.sourceFileName && [this.sourceFileName],
+                  sourceContent: [this.source],
+                  names: [],
+                  mappings: this.mappings
+                });
               },
               inspectedObjects: function() {
                 return this.rawSourceMap;

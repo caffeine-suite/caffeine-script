@@ -1,8 +1,30 @@
-{max, min, log} = require 'art-standard-lib'
+{object, max, min, log} = require 'art-standard-lib'
 {generateSourceMapParseTest} = require './Helper'
 {CaffeineScript} = Neptune
 {SourceMapConsumer} = Neptune.CaffeineScript.CafSourceMap
 {presentSourceLocation, SourceLineColumnMap} = require 'caffeine-eight'
+SourceMapNpm = require 'source-map'
+
+testSourceMappingUsingExternalNpm = (rawSourceMap, testMappings) ->
+  SourceMapNpm.SourceMapConsumer.with rawSourceMap, null, (consumer) =>
+
+    log
+      rawSourceMap: rawSourceMap
+      sources: consumer.sources
+
+    consumer.eachMapping (m) ->
+      log mapping: m
+
+    object testMappings, ({sourceLine, sourceColumn, generatedLine, generatedColumn}) ->
+      log test: {sourceLine, sourceColumn, generatedLine, generatedColumn}
+
+      log mapped: consumer.originalPositionFor log
+        line:   generatedLine + 1
+        column: generatedColumn
+        # // { source: 'http://example.com/www/js/two.js',
+        # //   line: 2,
+        # //   column: 10,
+        # //   name: 'n' }
 
 module.exports = suite:
   validate: ->
@@ -21,9 +43,60 @@ module.exports = suite:
       log {source, js, smc}
 
       assert.eq smc.decodedMappings, [
+        {generatedLine: 0, generatedColumn: 0, source: 0, sourceLine: 0, sourceColumn: 0}
         {generatedLine: 2, generatedColumn: 77, source: 0, sourceLine: 0, sourceColumn: 6}
         {generatedLine: 2, generatedColumn: 89, source: 0, sourceLine: 1, sourceColumn: 0}
       ]
+
+    test "if", ->
+      source = """
+        1
+      """
+      sourceFile = "myFile.caf"
+
+      {compiled:{js, sourceMap, sourceNode}} = out = CaffeineScript.compile source,
+        sourceFile: sourceFile
+        sourceMap:  true
+        debug: true
+
+      log {sourceNode}
+
+      assert.isString js, jsTest:{out}
+      assert.isString sourceMap, sourceMapTest:{out}
+
+      smc = new SourceMapConsumer sourceMap
+      log {source, js, smc}
+
+    test "complex", ->
+      source = """
+        if true
+          throw new Error "here"
+        console.log :hi
+        """
+      sourceFile = "myFile.caf"
+
+      {compiled:{js, sourceMap, sourceNode}} = out = CaffeineScript.compile source,
+        sourceFile: sourceFile
+        sourceMap:  true
+        debug: true
+
+      log {sourceNode}
+
+      assert.isString js, jsTest:{out}
+      assert.isString sourceMap, sourceMapTest:{out}
+
+      smc = new SourceMapConsumer sourceMap
+      log {source, js, smc}
+
+      testSourceMappingUsingExternalNpm sourceMap,
+        new:
+          generatedLine: 2, generatedColumn: 96, source: 0, sourceLine: 0, sourceColumn: 6
+
+
+      # assert.eq smc.decodedMappings, [
+      #   {generatedLine: 2, generatedColumn: 77, source: 0, sourceLine: 0, sourceColumn: 6}
+      #   {generatedLine: 2, generatedColumn: 89, source: 0, sourceLine: 1, sourceColumn: 0}
+      # ]
 
   modes: ->
     commonSource = "import &ArtStandardLib;a = upperCamelCase 'foo bar'"
@@ -310,3 +383,12 @@ module.exports = suite:
       []
         b if c
       """
+
+  regressions: ->
+    generateSourceMapParseTest "1", """
+        -> 1
+      """
+      # sourceFile = "myFile.caf"
+      # {compiled:{js, sourceMap}} = out = CaffeineScript.compile source,
+      #   sourceFile: sourceFile
+      #   sourceMap:  true

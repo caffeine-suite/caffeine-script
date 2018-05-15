@@ -30,7 +30,7 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let cafTemp, cafBase, cafTemp1, cafBase1, cafBase2;
+            let e, cafTemp, cafBase, cafTemp1, cafTemp2, cafBase1, cafBase2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
@@ -42,13 +42,23 @@ Caf.defMod(module, () => {
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
-            this._sourceIndex =
-              (cafTemp1 =
-                Caf.exists((cafBase1 = this.pretransformedStn)) &&
-                cafBase1.sourceIndex) != null
+            try {
+              (cafTemp1 = this._sourceIndex) != null
                 ? cafTemp1
-                : Caf.exists((cafBase2 = this.parseTreeNode)) &&
-                  cafBase2.offset;
+                : (this._sourceIndex =
+                    (cafTemp2 =
+                      Caf.exists((cafBase1 = this.pretransformedStn)) &&
+                      cafBase1.sourceIndex) != null
+                      ? cafTemp2
+                      : Caf.exists((cafBase2 = this.parseTreeNode)) &&
+                        cafBase2.absoluteOffset);
+            } catch (cafError) {
+              e = cafError;
+              log({
+                sourceIndexFailure: { parseTreeNode: this.parseTreeNode }
+              });
+              throw e;
+            }
             this.initLabeledChildren();
           }
         },
@@ -214,26 +224,41 @@ Caf.defMod(module, () => {
             return this.createSourceNode(this.toJs(options));
           };
           this.prototype.toJsUsingSourceNode = function(options = {}) {
-            let inlineMap, source, sourceMap, sourceFile, sourceNode, js;
+            let debug,
+              inlineMap,
+              source,
+              sourceMap,
+              sourceFile,
+              sourceNode,
+              out,
+              js;
             ({
+              debug,
               inlineMap,
               source = this.source,
               sourceMap,
               sourceFile = this.sourceFile
             } = options);
             sourceNode = this.toSourceNode(options);
-            return inlineMap || sourceMap
-              ? (({ js, sourceMap } = sourceNode.generate(source, sourceFile)),
-                inlineMap
-                  ? {
-                      js: `${Caf.toString(
+            out =
+              inlineMap || sourceMap
+                ? (({ js, sourceMap } = sourceNode.generate(
+                    source,
+                    sourceFile
+                  )),
+                  inlineMap
+                    ? (js = `${Caf.toString(
                         js
-                      )}\n//# sourceMappingURL=${Caf.toString(
+                      )}\n\n//# sourceMappingURL=${Caf.toString(
                         binary(sourceMap).toDataUri("application/json", true)
-                      )}\n//# sourceURL=${Caf.toString(sourceFile)}`
-                    }
-                  : { js, sourceMap })
-              : { js: sourceNode.toString() };
+                      )}\n//# sourceURL=${Caf.toString(sourceFile)}\n`)
+                    : undefined,
+                  { js, sourceMap })
+                : { js: sourceNode.toString() };
+            if (debug) {
+              out.sourceNode = sourceNode;
+            }
+            return out;
           };
           this.prototype.childrenToSourceNodes = function(joiner, options) {
             return this.stnArrayToSourceNodes(this.children, joiner, options);
