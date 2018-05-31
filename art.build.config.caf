@@ -13,6 +13,8 @@ npm:
     art-object-tree-factory:  :*
     art-binary:               :*
 
+    source-map:               :^0.7.2
+
   scripts:
     perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"
     build:  "caf -v -p -C -c cafInCaf -o source"
