@@ -37,6 +37,7 @@ module.exports = suite: parseTestSuite
 
     requires:
       "{&ArtStandardLib}": "({ArtStandardLib: require('art-standard-lib')});"
+      "{&ArtStandardLib/Core}": "({Core: require('art-standard-lib/Core')});"
 
     assignment:
       "{abc = 123}": "let abc; ({abc: abc = 123});"

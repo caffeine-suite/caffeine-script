@@ -19,7 +19,11 @@ class RequireStn extends &BaseStn
 
     rawRequireString: -> @props.require
 
-    propName: -> @rawRequireString
+    propName: ->
+      if /\//.test @rawRequireString
+        peek @rawRequireString.split "/"
+      else
+        @rawRequireString
 
     requireString: ->
       findModuleSync @rawRequireString, @parser.options

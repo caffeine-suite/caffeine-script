@@ -80,6 +80,8 @@ authorizedSync = (request) ->
   else
     present request.session.userId
 
+----------
+foo && (bar) => bar
 
 #################################
 SHOULD NOT COMPILE
