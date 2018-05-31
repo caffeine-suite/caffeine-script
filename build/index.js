@@ -2676,7 +2676,7 @@ __webpack_require__(114);
 /* 33 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.57.2"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-class-system":"*","art-config":"*","art-object-tree-factory":"*","art-standard-lib":"*","art-testbench":"*","bluebird":"^3.5.0","caffeine-eight":"*","caffeine-mc":"*","caffeine-script":"*","caffeine-script-runtime":"*","case-sensitive-paths-webpack-plugin":"^2.1.2","chai":"^4.0.1","coffee-loader":"^0.7.3","coffee-script":"^1.12.6","colors":"^1.2.1","commander":"^2.15.1","css-loader":"^0.28.4","dateformat":"^3.0.3","detect-node":"^2.0.3","fs-extra":"^5.0.0","glob":"^7.1.2","glob-promise":"^3.4.0","json-loader":"^0.5.4","mocha":"^3.4.2","neptune-namespaces":"*","script-loader":"^0.7.0","style-loader":"^0.18.1","webpack":"^2.6.1","webpack-dev-server":"^2.4.5","webpack-merge":"^4.1.0","webpack-node-externals":"^1.6.0"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.57.3"}
 
 /***/ }),
 /* 34 */
@@ -6685,38 +6685,44 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(1);
 Caf.defMod(module, () => {
-  return (() => {
-    let findModuleSync, RequireStn;
-    ({ findModuleSync } = __webpack_require__(117));
-    return (RequireStn = Caf.defClass(
-      class RequireStn extends __webpack_require__(2) {},
-      function(RequireStn, classSuper, instanceSuper) {
-        this.getter({
-          rawRequireString: function() {
-            return this.props.require;
-          },
-          propName: function() {
-            return this.rawRequireString;
-          },
-          requireString: function() {
-            return findModuleSync(this.rawRequireString, this.parser.options)
-              .requireString;
-          }
-        });
-        this.prototype.validate = function() {
-          return this.requireString;
-        };
-        this.prototype.toJs = function() {
-          return `require('${Caf.toString(this.requireString)}')`;
-        };
-        this.prototype.toSourceNode = function() {
-          return this.createSourceNode(
-            `require('${Caf.toString(this.requireString)}')`
-          );
-        };
-      }
-    ));
-  })();
+  return Caf.importInvoke(
+    ["peek"],
+    [global, __webpack_require__(3)],
+    peek => {
+      let findModuleSync, RequireStn;
+      ({ findModuleSync } = __webpack_require__(117));
+      return (RequireStn = Caf.defClass(
+        class RequireStn extends __webpack_require__(2) {},
+        function(RequireStn, classSuper, instanceSuper) {
+          this.getter({
+            rawRequireString: function() {
+              return this.props.require;
+            },
+            propName: function() {
+              return /\//.test(this.rawRequireString)
+                ? peek(this.rawRequireString.split("/"))
+                : this.rawRequireString;
+            },
+            requireString: function() {
+              return findModuleSync(this.rawRequireString, this.parser.options)
+                .requireString;
+            }
+          });
+          this.prototype.validate = function() {
+            return this.requireString;
+          };
+          this.prototype.toJs = function() {
+            return `require('${Caf.toString(this.requireString)}')`;
+          };
+          this.prototype.toSourceNode = function() {
+            return this.createSourceNode(
+              `require('${Caf.toString(this.requireString)}')`
+            );
+          };
+        }
+      ));
+    }
+  );
 });
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)(module)))
