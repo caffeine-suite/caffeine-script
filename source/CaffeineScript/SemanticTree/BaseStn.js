@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
     ) => {
       let createObjectTreeFactory, SourceNode, binary, BaseStn;
       ({ createObjectTreeFactory } = require("art-object-tree-factory"));
-      ({ SourceNode } = require("../CafSourceMap"));
+      ({ SourceNode } = require("caffeine-source-map"));
       ({ binary } = require("art-binary"));
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {

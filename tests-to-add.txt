@@ -47,6 +47,23 @@ all the comprehensions.
 #################################
 SHOULD COMPILE
 #################################
+
+# I think the problem is the trailing comments
+switch subject
+  when :mailbox     then true   # the mailbox is unavailable
+  when :mailSystem  then true   # the mail system is unvailable
+  when :addressing  then true   # the address is bad (i.e. there is no mailbox)
+  when :security    then false  # could just be that the server doesn't like our IP
+  when :network     then false  # by definition, temporary failure, probably should never be a clientFailure
+  when :protocol    then false  # means the server thinks WE broke protocol
+  when :content     then false  # means the server doesn't like our content - since we weren't really sending any, something weird happend
+  else false                    # something weird happened
+
+
+-----
+
+new class FakeSocket
+
 -----
 -> arguments.length
 

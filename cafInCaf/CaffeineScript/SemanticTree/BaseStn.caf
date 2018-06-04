@@ -1,6 +1,6 @@
 import &StandardImport
 {createObjectTreeFactory} = &ArtObjectTreeFactory
-{SourceNode} = &CafSourceMap
+{SourceNode} = &CaffeineSourceMap
 {binary} = &ArtBinary
 
 

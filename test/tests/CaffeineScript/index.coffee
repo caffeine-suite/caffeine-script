@@ -10,7 +10,6 @@ module.exports
   OperatorHelper: require './OperatorHelper'
   ParseFailure:   require './ParseFailure'  
   SourceMap:      require './SourceMap'     
-require './CafSourceMap'
 require './Parser'
 require './Preprocessors'
 require './Semantics'

@@ -1,30 +1,31 @@
 {object, max, min, log} = require 'art-standard-lib'
 {generateSourceMapParseTest} = require './Helper'
 {CaffeineScript} = Neptune
-{SourceMapConsumer} = Neptune.CaffeineScript.CafSourceMap
+{SourceMapConsumer} = require 'caffeine-source-map'
 {presentSourceLocation, SourceLineColumnMap} = require 'caffeine-eight'
 SourceMapNpm = require 'source-map'
 
 testSourceMappingUsingExternalNpm = (rawSourceMap, testMappings) ->
-  SourceMapNpm.SourceMapConsumer.with rawSourceMap, null, (consumer) =>
+  if global.WebAssembly
+    SourceMapNpm.SourceMapConsumer.with rawSourceMap, null, (consumer) =>
 
-    log
-      rawSourceMap: rawSourceMap
-      sources: consumer.sources
+      log
+        rawSourceMap: rawSourceMap
+        sources: consumer.sources
 
-    consumer.eachMapping (m) ->
-      log mapping: m
+      consumer.eachMapping (m) ->
+        log mapping: m
 
-    object testMappings, ({sourceLine, sourceColumn, generatedLine, generatedColumn}) ->
-      log test: {sourceLine, sourceColumn, generatedLine, generatedColumn}
+      object testMappings, ({sourceLine, sourceColumn, generatedLine, generatedColumn}) ->
+        log test: {sourceLine, sourceColumn, generatedLine, generatedColumn}
 
-      log mapped: consumer.originalPositionFor log
-        line:   generatedLine + 1
-        column: generatedColumn
-        # // { source: 'http://example.com/www/js/two.js',
-        # //   line: 2,
-        # //   column: 10,
-        # //   name: 'n' }
+        log mapped: consumer.originalPositionFor log
+          line:   generatedLine + 1
+          column: generatedColumn
+          # // { source: 'http://example.com/www/js/two.js',
+          # //   line: 2,
+          # //   column: 10,
+          # //   name: 'n' }
 
 module.exports = suite:
   validate: ->

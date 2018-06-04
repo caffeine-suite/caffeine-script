@@ -12,6 +12,7 @@ npm:
     caffeine-script-runtime:  :*
     art-object-tree-factory:  :*
     art-binary:               :*
+    caffeine-source-map:      :*
 
     source-map:               :^0.7.2
 

@@ -3,7 +3,6 @@
 
 module.exports = (require '../namespace').addNamespace 'CaffeineScript', class CaffeineScript extends Neptune.PackageNamespace
   @version: require('../../../package.json').version
-require './CafSourceMap/namespace';
 require './Parser/namespace';
 require './Preprocessors/namespace';
 require './Semantics/namespace'

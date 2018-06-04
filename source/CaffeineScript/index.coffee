@@ -13,6 +13,5 @@ module.exports
   Preprocessors:           require './Preprocessors'          
   StandardImport:          require './StandardImport'         
   StnRegistry:             require './StnRegistry'            
-require './CafSourceMap'
 require './Rules'
 require './SemanticTree'
