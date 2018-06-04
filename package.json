@@ -18,6 +18,7 @@
     "caffeine-mc": "*",
     "caffeine-script": "*",
     "caffeine-script-runtime": "*",
+    "caffeine-source-map": "*",
     "case-sensitive-paths-webpack-plugin": "^2.1.2",
     "chai": "^4.0.1",
     "coffee-loader": "^0.7.3",
