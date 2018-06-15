@@ -6,7 +6,8 @@ class StatementsStn extends &BaseStn
 
   toSourceNode: (options)->
     {returnAction, generateStatements, expression, classBody} = options if options
-    generateStatements ?= expression ? true
+    generateStatements ?= !expression
+    # generateStatements ?= expression ? true
 
     out = @createSourceNode
       if expression
@@ -87,11 +88,14 @@ class StatementsStn extends &BaseStn
             [] returnAction, " ", childExpression
           else
             childExpression
-        else c.toJs generateReturnStatement: true
+        else
+          # this path doesn't appear to be used
+          throw new Error "what uses this conditional branch?"
+          c.toSourceNode generateReturnStatement: true
 
       else
         if generateStatements
-          c.toSourceNode statement: !classBody
+          c.toSourceNode statement: !classBody, generateStatements: false
         else
           c.toSourceNode expression: true, returnValueIsIgnored: i < lines.length - 1
       a

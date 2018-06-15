@@ -4,5 +4,7 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  CaptureStn:       require './CaptureStn'      
-  ComprehensionStn: require './ComprehensionStn'
+  CaptureStn:             require './CaptureStn'            
+  ComprehensionStn:       require './ComprehensionStn'      
+  ExtractStn:             require './ExtractStn'            
+  ExtractToIdentifierStn: require './ExtractToIdentifierStn'

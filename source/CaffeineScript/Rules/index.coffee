@@ -14,6 +14,7 @@ module.exports
   ControlStructures:       require './ControlStructures'      
   DestructuringAssignment: require './DestructuringAssignment'
   Expressions:             require './Expressions'            
+  Extract:                 require './Extract'                
   Functions:               require './Functions'              
   KeywordLiterals:         require './KeywordLiterals'        
   Literals:                require './Literals'               

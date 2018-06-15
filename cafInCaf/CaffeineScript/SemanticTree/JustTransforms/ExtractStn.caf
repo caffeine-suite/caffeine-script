@@ -1,0 +1,28 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+##
+  ObjectStn
+    ObjectPropValueStn
+      ObjectPropNameStn
+        value:            "source"
+
+    ObjectPropValueStn
+      ObjectPropNameStn:
+        - value:            "value"
+        - str.IdentiferStn: identifier: "value"
+
+      - propValue.ReferenceStn: - identifier.IdentiferStn: identifier: "foo"
+
+class ExtractStn extends &BaseStn
+
+  postTransform: ->
+    {StatementsStn, AssignmentStn, AccessorStn} = SemanticTree
+    {extractSource, extractActions} = @labeledChildren
+    StatementsStn
+      array child in extractActions
+        AssignmentStn
+          child.assignToIdentifierStn
+          AccessorStn
+            extractSource
+            child.assignToIdentifierStn

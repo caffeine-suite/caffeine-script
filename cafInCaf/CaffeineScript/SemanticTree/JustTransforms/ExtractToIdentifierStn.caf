@@ -1,0 +1,13 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+class ExtractToIdentifierStn extends &BaseStn
+
+  @getter
+    assignToIdentifierStn: -> @children[0]
+
+  updateScope: (@scope) ->
+    log "REALLY HERE"
+    log ExtractToIdentifierStn: {@labeledChidlren}
+    @scope.addIdentifierAssigned @children[0].identifier
+    super

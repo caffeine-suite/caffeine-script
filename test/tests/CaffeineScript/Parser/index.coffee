@@ -13,6 +13,7 @@ module.exports
   Comprehensions:     require './Comprehensions'    
   ControlStructures:  require './ControlStructures' 
   Destructuring:      require './Destructuring'     
+  Extract:            require './Extract'           
   FunctionDefinition: require './FunctionDefinition'
   FunctionInvocation: require './FunctionInvocation'
   Import:             require './Import'            

@@ -26,6 +26,7 @@ upToButNotEol = /[^\n]*/y
       :structuredLiteral
       :throwExpression
       :functionDefinition
+      :extractExpression
       :value
 
     structuredLiteral:

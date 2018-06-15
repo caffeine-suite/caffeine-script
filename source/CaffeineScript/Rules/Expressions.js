@@ -32,6 +32,7 @@ Caf.defMod(module, () => {
             "structuredLiteral",
             "throwExpression",
             "functionDefinition",
+            "extractExpression",
             "value"
           ],
           structuredLiteral: ["object", "array"]
