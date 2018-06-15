@@ -129,3 +129,7 @@ WRONG COMPILE
 #################################
 THIS: -a**2
 SHOULD BE: -(a**2)
+
+----
+if i == cats.length - 1 then Promise.then -> action event, props else {}
+# "action event, props" should be inside the .then funciton
