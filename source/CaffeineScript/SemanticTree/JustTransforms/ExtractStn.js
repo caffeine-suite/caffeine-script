@@ -13,7 +13,8 @@ Caf.defMod(module, () => {
             AccessorStn,
             IdentifierStn,
             extractSource,
-            extractActions;
+            extractActions,
+            complexSource;
           ({
             StatementsStn,
             AssignmentStn,
@@ -26,6 +27,12 @@ Caf.defMod(module, () => {
               ? extractSourceFromParent
               : extractSource;
           return StatementsStn(
+            !(
+              (complexSource = extractSource).type === "Reference" ||
+              extractSource.type === "Identifier"
+            )
+              ? AssignmentStn((extractSource = IdentifierStn()), complexSource)
+              : undefined,
             Caf.array(extractActions, (child, i) => {
               let uniqueIdentifier;
               return Caf.is(child, ExtractStn)

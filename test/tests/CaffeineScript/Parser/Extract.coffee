@@ -12,6 +12,10 @@ module.exports = suite: parseTestSuite
       "a extract b": "let b; b = a.b;"
       "a extract b, c": "let b, c; b = a.b, c = a.c;"
 
+    complexBase:
+      "a.b extract c, d": "let c, d, cafTemp; cafTemp = a.b, c = cafTemp.c, d = cafTemp.d;"
+      # "a + b extract c": "as"
+
     expression:
       "c = a extract b": "let c, b; c = b = a.b;"
       "d = a extract b, c": "let d, b, c; d = (b = a.b, c = a.c);"
@@ -23,6 +27,7 @@ module.exports = suite: parseTestSuite
 
     default:
       "a extract b = c": "let b, cafTemp; b = (undefined !== (cafTemp = a.b)) ? cafTemp : c;"
+      "a extract b = c + d": "let b, cafTemp; b = (undefined !== (cafTemp = a.b)) ? cafTemp : c + d;"
 
     as:
       "a extract b as c": "let c; c = a.b;"

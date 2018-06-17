@@ -20,7 +20,14 @@ class ExtractStn extends &BaseStn
     {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn} = SemanticTree
     {extractSource, extractActions} = @labeledChildren
     extractSource = extractSourceFromParent ? extractSource
+
+
     StatementsStn
+      unless (complexSource = extractSource).type == :Reference || extractSource.type == :Identifier
+        AssignmentStn
+          extractSource = IdentifierStn()
+          complexSource
+
       array child, i in extractActions
         if child is ExtractStn
           []
