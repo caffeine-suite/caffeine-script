@@ -17,8 +17,9 @@ module.exports = suite: parseTestSuite
       "d = a extract b, c": "let d, b, c; d = (b = a.b, c = a.c);"
 
     nested:
-      "a extract b extract c": "let b, c; b = a.b, c = b.c;"
-      "d = a extract b extract c": "let d, b, c; d = (b = a.b, c = b.c);"
+      "a extract b extract c": "let c, cafTemp; cafTemp = a.b, c = cafTemp.c;"
+      "a extract b extract c extract d": "let d, cafTemp, cafTemp1; cafTemp = a.b, (cafTemp1 = cafTemp.c, d = cafTemp1.d);"
+      "d = a extract b extract c": "let d, c, cafTemp; d = (cafTemp = a.b, c = cafTemp.c);"
 
   #   default:
   #     "a extract b = c": "let b; b = (a.b !== undefined ? a.b : c);"

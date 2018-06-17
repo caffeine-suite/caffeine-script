@@ -9,11 +9,16 @@ Caf.defMod(module, () => {
       ],
       extractionTarget: "objectExtractionList",
       objectExtractionList: [
-        "extractAction:extractToIdentifier _comma_ objectExtractionList",
-        "extractAction:extractToIdentifier"
+        "extractAction:extractAction _comma_ objectExtractionList",
+        "extractAction:extractAction"
+      ],
+      extractAction: ["chainExtract", "extractToIdentifier"],
+      chainExtract: [
+        "extractSource:extractToIdentifier _ /extract/ _ extractionTarget",
+        { stnFactory: "ExtractStn" }
       ],
       extractToIdentifier: [
-        "element:identifier",
+        "identifier",
         { stnFactory: "ExtractToIdentifierStn" }
       ]
     };

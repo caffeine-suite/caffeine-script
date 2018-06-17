@@ -60,7 +60,6 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
   @getter
     # call during toJs
     uniqueIdentifier: (preferredName) ->
-      preferredName = normalizePerferredName preferredName
       @getUniqueIdentifierHandle(preferredName).identifier
 
     # call during transform

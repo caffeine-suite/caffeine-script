@@ -16,13 +16,24 @@ SemanticTree = &StnRegistry
 
 class ExtractStn extends &BaseStn
 
-  postTransform: ->
-    {StatementsStn, AssignmentStn, AccessorStn} = SemanticTree
+  transform: (extractSourceFromParent)->
+    {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn} = SemanticTree
     {extractSource, extractActions} = @labeledChildren
+    extractSource = extractSourceFromParent ? extractSource
     StatementsStn
-      array child in extractActions
-        AssignmentStn
-          child.assignToIdentifierStn
-          AccessorStn
-            extractSource
+      array child, i in extractActions
+        if child is ExtractStn
+          []
+            AssignmentStn
+              uniqueIdentifier = IdentifierStn()
+              AccessorStn
+                extractSource
+                child.labeledChildren.extractSource.assignToIdentifierStn
+            child.transform uniqueIdentifier
+
+        else
+          AssignmentStn
             child.assignToIdentifierStn
+            AccessorStn
+              extractSource
+              child.assignToIdentifierStn

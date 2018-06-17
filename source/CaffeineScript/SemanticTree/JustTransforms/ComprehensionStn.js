@@ -5,9 +5,8 @@ Caf.defMod(module, () => {
     ["Error", "lowerCamelCase", "StnRegistry", "Object", "String"],
     [global, require("../../StandardImport")],
     (Error, lowerCamelCase, StnRegistry, Object, String) => {
-      let SemanticTree, UniqueIdentifierHandle, ComprehensionStn;
+      let SemanticTree, ComprehensionStn;
       SemanticTree = require("../../StnRegistry");
-      UniqueIdentifierHandle = require("../UniqueIdentifierHandle");
       return (ComprehensionStn = Caf.defClass(
         class ComprehensionStn extends require("../ScopeStnMixin")(
           require("../BaseStn")

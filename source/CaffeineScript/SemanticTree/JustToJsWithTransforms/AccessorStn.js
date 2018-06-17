@@ -11,12 +11,12 @@ Caf.defMod(module, () => {
           constructor(props, children) {
             super(...arguments);
             if (!(children.length === 2)) {
-              throw new Error("2 children");
+              throw new Error("expecting 2 children");
             }
             this.value = children[0];
             this.key = children[1];
             if (!this.key) {
-              throw new Error("need key");
+              throw new Error("expecting second child to be a key");
             }
           }
         },

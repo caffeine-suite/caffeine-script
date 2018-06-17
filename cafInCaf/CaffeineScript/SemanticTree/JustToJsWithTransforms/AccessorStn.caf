@@ -4,10 +4,10 @@ class AccessorStn extends &AccessorChainStn
 
   constructor: (props, children) ->
     super
-    throw new Error "2 children" unless children.length == 2
+    throw new Error "expecting 2 children" unless children.length == 2
     @value = children[0]
     @key = children[1]
-    throw new Error "need key" unless @key
+    throw new Error "expecting second child to be a key" unless @key
 
   needsParens: false
 

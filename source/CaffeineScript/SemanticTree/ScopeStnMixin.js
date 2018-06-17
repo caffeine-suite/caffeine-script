@@ -94,7 +94,6 @@ Caf.defMod(module, () => {
             };
             this.getter({
               uniqueIdentifier: function(preferredName) {
-                preferredName = normalizePerferredName(preferredName);
                 return this.getUniqueIdentifierHandle(preferredName).identifier;
               },
               uniqueIdentifierHandle: function(preferredName, addToLets) {

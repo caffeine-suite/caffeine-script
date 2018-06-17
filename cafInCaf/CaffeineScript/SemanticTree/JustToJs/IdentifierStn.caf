@@ -2,6 +2,10 @@ import &StandardImport
 
 class IdentifierStn extends &BaseStn
 
+  constructor: ->
+    unless @props.identifier
+      @props.identifierHandle ?= new &UniqueIdentifierHandle @props.preferredIdentifier, @props.addToLets
+
   @getter
     name: -> @props.identifier
     isIdentifier: -> identifierRegexp.test @identifier

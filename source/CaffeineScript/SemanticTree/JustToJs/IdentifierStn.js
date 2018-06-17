@@ -7,7 +7,20 @@ Caf.defMod(module, () => {
     identifierRegexp => {
       let IdentifierStn;
       return (IdentifierStn = Caf.defClass(
-        class IdentifierStn extends require("../BaseStn") {},
+        class IdentifierStn extends require("../BaseStn") {
+          constructor() {
+            let cafTemp, cafBase;
+            super(...arguments);
+            if (!this.props.identifier) {
+              (cafTemp = (cafBase = this.props).identifierHandle) != null
+                ? cafTemp
+                : (cafBase.identifierHandle = new (require("../UniqueIdentifierHandle"))(
+                    this.props.preferredIdentifier,
+                    this.props.addToLets
+                  ));
+            }
+          }
+        },
         function(IdentifierStn, classSuper, instanceSuper) {
           this.getter({
             name: function() {
