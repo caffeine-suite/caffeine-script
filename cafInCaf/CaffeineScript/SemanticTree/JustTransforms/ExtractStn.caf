@@ -26,14 +26,10 @@ class ExtractStn extends &BaseStn
           []
             AssignmentStn
               uniqueIdentifier = IdentifierStn()
-              AccessorStn
-                extractSource
-                child.labeledChildren.extractSource.assignToIdentifierStn
+              child.labeledChildren.extractSource.getTransformedExtractionStns extractSource
             child.transform uniqueIdentifier
 
         else
           AssignmentStn
             child.assignToIdentifierStn
-            AccessorStn
-              extractSource
-              child.assignToIdentifierStn
+            child.getTransformedExtractionStns extractSource

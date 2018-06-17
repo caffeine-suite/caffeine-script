@@ -4,7 +4,7 @@ class BinaryOperatorStn extends &BaseStn
 
   constructor: (props, children) ->
     super
-    @operator = props.operator
+    @operator = props.operator # should be JavaScript operator (== willnot be comverted to ===)
     @left = children[0]
     @right = children[1]
     throw new Error "left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right

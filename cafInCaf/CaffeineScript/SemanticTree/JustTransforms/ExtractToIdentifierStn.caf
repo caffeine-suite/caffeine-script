@@ -5,9 +5,27 @@ class ExtractToIdentifierStn extends &BaseStn
 
   @getter
     assignToIdentifierStn: -> @children[0]
+    extractDefault: -> @labeledChildren.extractDefault
+
+  getTransformedExtractionStns: (extractSource)->
+    {AccessorStn, AssignmentStn, IdentifierStn, BinaryOperatorStn, UndefinedStn, ControlOperatorStn} = SemanticTree
+    if @extractDefault
+      ControlOperatorStn
+        BinaryOperatorStn
+          UndefinedStn()
+          operator: :!==
+          AssignmentStn
+            tempIdentifierStn = IdentifierStn()
+            SemanticTree.AccessorStn
+              extractSource
+              @assignToIdentifierStn
+        tempIdentifierStn
+        @extractDefault.transform()
+    else
+      SemanticTree.AccessorStn
+        extractSource
+        @assignToIdentifierStn
 
   updateScope: (@scope) ->
-    log "REALLY HERE"
-    log ExtractToIdentifierStn: {@labeledChidlren}
     @scope.addIdentifierAssigned @children[0].identifier
     super

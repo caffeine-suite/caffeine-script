@@ -9,17 +9,22 @@ Caf.defMod(module, () => {
       return (ControlOperatorStn = Caf.defClass(
         class ControlOperatorStn extends require("../BaseStn") {
           constructor(props, children) {
+            let cafTemp, cafTemp1;
             super(...arguments);
-            this.operand = props.operand;
-            this.joiner = props.joiner;
+            this.operand = props.operand = "if";
             if (this.labeledChildren.expression) {
               this.expression = this.labeledChildren.expression;
               this.body =
-                this.labeledChildren.body || StnRegistry.UndefinedStn();
+                (cafTemp = this.labeledChildren.body) != null
+                  ? cafTemp
+                  : StnRegistry.UndefinedStn();
               this.elseBody = this.labeledChildren.elseBody;
             } else {
               this.expression = children[0];
-              this.body = children[1] || StnRegistry.UndefinedStn();
+              this.body =
+                (cafTemp1 = children[1]) != null
+                  ? cafTemp1
+                  : StnRegistry.UndefinedStn();
               this.elseBody = children[2];
             }
             if (!(this.body.type === "Statements")) {
@@ -42,15 +47,10 @@ Caf.defMod(module, () => {
               switch (this.operand) {
                 case "while":
                 case "until":
-                  if (this.elseBody) {
-                    throw new Error(
-                      `else not expected after ${Caf.toString(this.operand)}`
-                    );
-                  }
-                  return this.joiner === "then"
+                  return this.elseBody
                     ? (() => {
                         throw new Error(
-                          `then not expected after ${Caf.toString(
+                          `else not expected after ${Caf.toString(
                             this.operand
                           )}`
                         );
@@ -58,13 +58,7 @@ Caf.defMod(module, () => {
                     : undefined;
                 case "if":
                 case "unless":
-                  return this.joiner === "do"
-                    ? (() => {
-                        throw new Error(
-                          `do not expected after ${Caf.toString(this.operand)}`
-                        );
-                      })()
-                    : undefined;
+                  return null;
                 default:
                   return (() => {
                     throw new Error(

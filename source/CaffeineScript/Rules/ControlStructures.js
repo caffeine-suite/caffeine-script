@@ -15,12 +15,7 @@ Caf.defMod(module, () => {
               "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
             ],
             stnProps: function() {
-              let cafBase;
-              return {
-                operand: this.ifUnlessWhileUntil.toString(),
-                joiner:
-                  Caf.exists((cafBase = this.thenDo)) && cafBase.toString()
-              };
+              return { operand: this.ifUnlessWhileUntil.toString() };
             }
           },
           {

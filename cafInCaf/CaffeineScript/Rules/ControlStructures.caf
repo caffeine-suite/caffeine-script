@@ -9,7 +9,6 @@ controlStatement:
       "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
     stnProps: ~>
       operand:    @ifUnlessWhileUntil.toString()
-      joiner:     @thenDo?.toString()
 
   {}
     stnFactory: :TryStn

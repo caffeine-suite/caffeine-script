@@ -17,8 +17,9 @@ Caf.defMod(module, () => {
         "extractSource:extractToIdentifier _ /extract/ _ extractionTarget",
         { stnFactory: "ExtractStn" }
       ],
+      extractDefault: "_? '=' _? expression",
       extractToIdentifier: [
-        "identifier",
+        "identifier extractDefault:extractDefault?",
         { stnFactory: "ExtractToIdentifierStn" }
       ]
     };

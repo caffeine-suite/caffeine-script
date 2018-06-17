@@ -1,31 +1,63 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  return Caf.importInvoke(
-    ["log"],
-    [global, require("../../StandardImport")],
-    log => {
-      let SemanticTree, ExtractToIdentifierStn;
-      SemanticTree = require("../../StnRegistry");
-      return (ExtractToIdentifierStn = Caf.defClass(
-        class ExtractToIdentifierStn extends require("../BaseStn") {},
-        function(ExtractToIdentifierStn, classSuper, instanceSuper) {
-          this.getter({
-            assignToIdentifierStn: function() {
-              return this.children[0];
-            }
-          });
-          this.prototype.updateScope = function(scope) {
-            this.scope = scope;
-            log("REALLY HERE");
-            log({
-              ExtractToIdentifierStn: { labeledChidlren: this.labeledChidlren }
-            });
-            this.scope.addIdentifierAssigned(this.children[0].identifier);
-            return instanceSuper.updateScope.apply(this, arguments);
-          };
-        }
-      ));
-    }
-  );
+  return (() => {
+    let SemanticTree, ExtractToIdentifierStn;
+    SemanticTree = require("../../StnRegistry");
+    return (ExtractToIdentifierStn = Caf.defClass(
+      class ExtractToIdentifierStn extends require("../BaseStn") {},
+      function(ExtractToIdentifierStn, classSuper, instanceSuper) {
+        this.getter({
+          assignToIdentifierStn: function() {
+            return this.children[0];
+          },
+          extractDefault: function() {
+            return this.labeledChildren.extractDefault;
+          }
+        });
+        this.prototype.getTransformedExtractionStns = function(extractSource) {
+          let AccessorStn,
+            AssignmentStn,
+            IdentifierStn,
+            BinaryOperatorStn,
+            UndefinedStn,
+            ControlOperatorStn,
+            tempIdentifierStn;
+          ({
+            AccessorStn,
+            AssignmentStn,
+            IdentifierStn,
+            BinaryOperatorStn,
+            UndefinedStn,
+            ControlOperatorStn
+          } = SemanticTree);
+          return this.extractDefault
+            ? ControlOperatorStn(
+                BinaryOperatorStn(
+                  UndefinedStn(),
+                  { operator: "!==" },
+                  AssignmentStn(
+                    (tempIdentifierStn = IdentifierStn()),
+                    SemanticTree.AccessorStn(
+                      extractSource,
+                      this.assignToIdentifierStn
+                    )
+                  )
+                ),
+                tempIdentifierStn,
+                this.extractDefault.transform()
+              )
+            : SemanticTree.AccessorStn(
+                extractSource,
+                this.assignToIdentifierStn
+              );
+        };
+        this.prototype.updateScope = function(scope) {
+          this.scope = scope;
+          this.scope.addIdentifierAssigned(this.children[0].identifier);
+          return instanceSuper.updateScope.apply(this, arguments);
+        };
+      }
+    ));
+  })();
 });
