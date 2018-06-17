@@ -4,7 +4,8 @@ SemanticTree = &StnRegistry
 class ExtractToIdentifierStn extends &BaseStn
 
   @getter
-    assignToIdentifierStn: -> @children[0]
+    assignToIdentifierStn: -> @labeledChildren.extractAs ? @children[0]
+    assignFromIdentifierStn: -> @children[0]
     extractDefault: -> @labeledChildren.extractDefault
 
   getTransformedExtractionStns: (extractSource)->
@@ -18,13 +19,13 @@ class ExtractToIdentifierStn extends &BaseStn
             tempIdentifierStn = IdentifierStn()
             SemanticTree.AccessorStn
               extractSource
-              @assignToIdentifierStn
+              @assignFromIdentifierStn
         tempIdentifierStn
         @extractDefault.transform()
     else
       SemanticTree.AccessorStn
         extractSource
-        @assignToIdentifierStn
+        @assignFromIdentifierStn
 
   updateScope: (@scope) ->
     @scope.addIdentifierAssigned @children[0].identifier

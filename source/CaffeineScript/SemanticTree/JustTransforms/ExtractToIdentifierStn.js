@@ -9,6 +9,12 @@ Caf.defMod(module, () => {
       function(ExtractToIdentifierStn, classSuper, instanceSuper) {
         this.getter({
           assignToIdentifierStn: function() {
+            let cafTemp;
+            return (cafTemp = this.labeledChildren.extractAs) != null
+              ? cafTemp
+              : this.children[0];
+          },
+          assignFromIdentifierStn: function() {
             return this.children[0];
           },
           extractDefault: function() {
@@ -40,7 +46,7 @@ Caf.defMod(module, () => {
                     (tempIdentifierStn = IdentifierStn()),
                     SemanticTree.AccessorStn(
                       extractSource,
-                      this.assignToIdentifierStn
+                      this.assignFromIdentifierStn
                     )
                   )
                 ),
@@ -49,7 +55,7 @@ Caf.defMod(module, () => {
               )
             : SemanticTree.AccessorStn(
                 extractSource,
-                this.assignToIdentifierStn
+                this.assignFromIdentifierStn
               );
         };
         this.prototype.updateScope = function(scope) {

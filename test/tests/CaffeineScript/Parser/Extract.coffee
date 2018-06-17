@@ -24,8 +24,8 @@ module.exports = suite: parseTestSuite
     default:
       "a extract b = c": "let b, cafTemp; b = (undefined !== (cafTemp = a.b)) ? cafTemp : c;"
 
-  #   as:
-  #     "a extract b as c": "let c; c = a.b;"
+    as:
+      "a extract b as c": "let c; c = a.b;"
 
   #   conditional:
   #     "a extract? b": "let c; (Caf.exists(a) ? b = a.b : undefined)"
