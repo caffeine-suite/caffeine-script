@@ -34,9 +34,23 @@ module.exports = suite: parseTestSuite
 
     conditional:
       "a extract? b": "let b; Caf.exists(a) ? b = a.b : undefined;"
+      "a extract b extract? c": "let c, cafTemp; cafTemp = a.b, Caf.exists(cafTemp) ? c = cafTemp.c : undefined;"
+
+      # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
+      # "a extract? b = 1": "let b, cafTemp; b = (undefined !== cafTemp = Caf.exists(a) ? a.b : undefined) ? cafTemp : 1;"
 
     pathing:
       "a extract b.c": "let c; c = a.b.c;"
+      ###
+      TODO - extract? + pathing - every '.' becomes '?.' - and remember, defaults always apply, no matter which ?. fails.
+      Ex:
+        # THIS:
+        a extract? b.c = 1
+
+        # MEANS:
+        c = a?.b?.c ? 1;
+      ###
+      # "a extract? b.c = 1": "c = a?.b?.c ? 1;"
 
   #   blocks:
   #     """

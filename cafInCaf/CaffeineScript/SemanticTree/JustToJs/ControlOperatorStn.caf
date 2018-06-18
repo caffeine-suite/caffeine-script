@@ -4,7 +4,7 @@ class ControlOperatorStn extends &BaseStn
 
   constructor: (props, children) ->
     super
-    @operand    = props.operand = :if
+    @operand    = props.operand ? :if
     if @labeledChildren.expression
       @expression = @labeledChildren.expression
       @body       = @labeledChildren.body       ? StnRegistry.UndefinedStn()
@@ -60,6 +60,7 @@ class ControlOperatorStn extends &BaseStn
           {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
           return #{tempVarIdentifier};})()
           "
+
       else
         out =
           "

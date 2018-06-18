@@ -9,21 +9,21 @@ Caf.defMod(module, () => {
       return (ControlOperatorStn = Caf.defClass(
         class ControlOperatorStn extends require("../BaseStn") {
           constructor(props, children) {
-            let cafTemp, cafTemp1;
+            let cafTemp, cafTemp1, cafTemp2;
             super(...arguments);
-            this.operand = props.operand = "if";
+            this.operand = (cafTemp = props.operand) != null ? cafTemp : "if";
             if (this.labeledChildren.expression) {
               this.expression = this.labeledChildren.expression;
               this.body =
-                (cafTemp = this.labeledChildren.body) != null
-                  ? cafTemp
+                (cafTemp1 = this.labeledChildren.body) != null
+                  ? cafTemp1
                   : StnRegistry.UndefinedStn();
               this.elseBody = this.labeledChildren.elseBody;
             } else {
               this.expression = children[0];
               this.body =
-                (cafTemp1 = children[1]) != null
-                  ? cafTemp1
+                (cafTemp2 = children[1]) != null
+                  ? cafTemp2
                   : StnRegistry.UndefinedStn();
               this.elseBody = children[2];
             }

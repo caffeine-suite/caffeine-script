@@ -30,6 +30,11 @@ extractAs: "_ 'as' _ identifier"
 
 extractPathExtension:
   "" dot extractPathExtension:identifier
+  # "" conditionalExtract:conditionalExtract? dot extractPathExtension:identifier
+  # getStn: ->
+  #   stn = @extractPathExtension.getStn()
+  #   stn.props.conditional = !!@conditionalExtract
+  #   stn
 
 extractToIdentifier:
   "" bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?
