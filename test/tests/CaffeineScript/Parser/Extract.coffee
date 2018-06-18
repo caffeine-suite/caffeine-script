@@ -32,11 +32,11 @@ module.exports = suite: parseTestSuite
     as:
       "a extract b as c": "let c; c = a.b;"
 
-  #   conditional:
-  #     "a extract? b": "let c; (Caf.exists(a) ? b = a.b : undefined)"
+    conditional:
+      "a extract? b": "let b; Caf.exists(a) ? b = a.b : undefined;"
 
-  #   pathing:
-  #     "a extract b.c": "let c; c = a.b.c;"
+    pathing:
+      "a extract b.c": "let c; c = a.b.c;"
 
   #   blocks:
   #     """

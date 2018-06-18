@@ -17,26 +17,38 @@ SemanticTree = &StnRegistry
 class ExtractStn extends &BaseStn
 
   transform: (extractSourceFromParent)->
-    {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn} = SemanticTree
+    {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn, FunctionInvocationStn, ControlOperatorStn} = SemanticTree
     {extractSource, extractActions} = @labeledChildren
     extractSource = extractSourceFromParent ? extractSource
-
+    {conditional} = @props
 
     StatementsStn
-      unless (complexSource = extractSource).type == :Reference || extractSource.type == :Identifier
+      unless conditional || extractSource.type == :Reference || extractSource.type == :Identifier
+        complexSource = extractSource
         AssignmentStn
           extractSource = IdentifierStn()
           complexSource
 
-      array child, i in extractActions
-        if child is ExtractStn
-          []
-            AssignmentStn
-              uniqueIdentifier = IdentifierStn()
-              child.labeledChildren.extractSource.getTransformedExtractionStns extractSource
-            child.transform uniqueIdentifier
+      if true
+        doExtract = array child, i in extractActions
+          if (extractChild = child) is ExtractStn
+            []
+              AssignmentStn
+                uniqueIdentifier = IdentifierStn()
+                extractChild.labeledChildren.extractSource.getTransformedExtractionStns extractSource
+              extractChild.transform uniqueIdentifier
 
+          else
+            AssignmentStn
+              child.assignToIdentifierStn
+              child.getTransformedExtractionStns extractSource
+
+        if conditional
+          ControlOperatorStn
+            FunctionInvocationStn
+              IdentifierStn identifier: "Caf.exists"
+              extractSource
+
+            doExtract
         else
-          AssignmentStn
-            child.assignToIdentifierStn
-            child.getTransformedExtractionStns extractSource
+          doExtract

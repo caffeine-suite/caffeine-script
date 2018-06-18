@@ -12,44 +12,64 @@ Caf.defMod(module, () => {
             AssignmentStn,
             AccessorStn,
             IdentifierStn,
+            FunctionInvocationStn,
+            ControlOperatorStn,
             extractSource,
             extractActions,
-            complexSource;
+            conditional,
+            complexSource,
+            doExtract;
           ({
             StatementsStn,
             AssignmentStn,
             AccessorStn,
-            IdentifierStn
+            IdentifierStn,
+            FunctionInvocationStn,
+            ControlOperatorStn
           } = SemanticTree);
           ({ extractSource, extractActions } = this.labeledChildren);
           extractSource =
             extractSourceFromParent != null
               ? extractSourceFromParent
               : extractSource;
+          ({ conditional } = this.props);
           return StatementsStn(
             !(
-              (complexSource = extractSource).type === "Reference" ||
+              conditional ||
+              extractSource.type === "Reference" ||
               extractSource.type === "Identifier"
             )
-              ? AssignmentStn((extractSource = IdentifierStn()), complexSource)
+              ? ((complexSource = extractSource),
+                AssignmentStn((extractSource = IdentifierStn()), complexSource))
               : undefined,
-            Caf.array(extractActions, (child, i) => {
-              let uniqueIdentifier;
-              return Caf.is(child, ExtractStn)
-                ? [
-                    AssignmentStn(
-                      (uniqueIdentifier = IdentifierStn()),
-                      child.labeledChildren.extractSource.getTransformedExtractionStns(
+            true
+              ? ((doExtract = Caf.array(extractActions, (child, i) => {
+                  let extractChild, uniqueIdentifier;
+                  return Caf.is((extractChild = child), ExtractStn)
+                    ? [
+                        AssignmentStn(
+                          (uniqueIdentifier = IdentifierStn()),
+                          extractChild.labeledChildren.extractSource.getTransformedExtractionStns(
+                            extractSource
+                          )
+                        ),
+                        extractChild.transform(uniqueIdentifier)
+                      ]
+                    : AssignmentStn(
+                        child.assignToIdentifierStn,
+                        child.getTransformedExtractionStns(extractSource)
+                      );
+                })),
+                conditional
+                  ? ControlOperatorStn(
+                      FunctionInvocationStn(
+                        IdentifierStn({ identifier: "Caf.exists" }),
                         extractSource
-                      )
-                    ),
-                    child.transform(uniqueIdentifier)
-                  ]
-                : AssignmentStn(
-                    child.assignToIdentifierStn,
-                    child.getTransformedExtractionStns(extractSource)
-                  );
-            })
+                      ),
+                      doExtract
+                    )
+                  : doExtract)
+              : undefined
           );
         };
       }

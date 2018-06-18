@@ -1,8 +1,12 @@
 import &StandardImport
 
 extractExpression:
-  "" extractSource:value _ /extract/ _ extractionTarget
+  "" extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget
   stnFactory: :ExtractStn
+  stnProps: -> conditional: !!@conditionalExtract
+
+conditionalExtract:
+  /\?/
 
 extractionTarget:
   :objectExtractionList
@@ -16,13 +20,17 @@ extractAction:
   :extractToIdentifier
 
 chainExtract:
-  "" extractSource:extractToIdentifier _ /extract/ _ extractionTarget
+  "" extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget
   stnFactory: :ExtractStn
+  stnProps: -> conditional: !!@conditionalExtract
 
 extractDefault: "_? '=' _? expression"
 
 extractAs: "_ 'as' _ identifier"
 
+extractPathExtension:
+  "" dot extractPathExtension:identifier
+
 extractToIdentifier:
-  "" identifier extractAs:extractAs? extractDefault:extractDefault?
+  "" bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?
   stnFactory: :ExtractToIdentifierStn

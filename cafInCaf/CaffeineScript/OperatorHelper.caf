@@ -26,7 +26,7 @@ class OperatorHelper
     :left  :+     :-
     :left  :<<    :>>   :>>>
     :left  :<     :<=   :>    :>=   :instanceof :in :is :isnt
-    :left  :===   :!==  :!=   :== # :!= and :== are included only for internal use
+    :left  :===   :!==  :!=   :== # :!== and :== are included only for internal use
     :left  :&
     :left  :^
     :left  :|

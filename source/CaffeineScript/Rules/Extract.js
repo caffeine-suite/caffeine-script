@@ -4,9 +4,15 @@ Caf.defMod(module, () => {
   return (() => {
     return {
       extractExpression: [
-        "extractSource:value _ /extract/ _ extractionTarget",
-        { stnFactory: "ExtractStn" }
+        "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+        {
+          stnFactory: "ExtractStn",
+          stnProps: function() {
+            return { conditional: !!this.conditionalExtract };
+          }
+        }
       ],
+      conditionalExtract: /\?/,
       extractionTarget: "objectExtractionList",
       objectExtractionList: [
         "extractAction:extractAction _comma_ objectExtractionList",
@@ -14,13 +20,19 @@ Caf.defMod(module, () => {
       ],
       extractAction: ["chainExtract", "extractToIdentifier"],
       chainExtract: [
-        "extractSource:extractToIdentifier _ /extract/ _ extractionTarget",
-        { stnFactory: "ExtractStn" }
+        "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+        {
+          stnFactory: "ExtractStn",
+          stnProps: function() {
+            return { conditional: !!this.conditionalExtract };
+          }
+        }
       ],
       extractDefault: "_? '=' _? expression",
       extractAs: "_ 'as' _ identifier",
+      extractPathExtension: "dot extractPathExtension:identifier",
       extractToIdentifier: [
-        "identifier extractAs:extractAs? extractDefault:extractDefault?",
+        "bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?",
         { stnFactory: "ExtractToIdentifierStn" }
       ]
     };
