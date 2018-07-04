@@ -80,13 +80,13 @@ switch subject
 new class FakeSocket
 
 -----
--> arguments.length
+(-> arguments.length)()
 
 -----
   [].slice 0, 100
 
 -----
-  {@getPriority = defaultGetPriority, @array = []} = options
+  {@getPriority} = options
 
 -----
   {
@@ -112,9 +112,6 @@ authorizedSync = (request) ->
   else
     present request.session.userId
 
-----------
-foo && (bar) => bar
-
 #################################
 SHOULD NOT COMPILE
 #################################
@@ -123,17 +120,17 @@ a = private: 1
 {private} = a
 console.log private
 
-I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
+# I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
 -----
-  foo (a)->
-    .bar
+foo (a)->
+  .bar
 
 -----
-  testUpdatesAfterBillsAndAlicesMessages = =>
-    @testCreateBillsMessage()
-    .then @testCreateAlicesMessage
-    .then (message) =>
-      .then @setup
+testUpdatesAfterBillsAndAlicesMessages = =>
+  @testCreateBillsMessage()
+  .then @testCreateAlicesMessage
+  .then (message) =>
+    .then @setup
 
 -----
 App extends FluxComponent
