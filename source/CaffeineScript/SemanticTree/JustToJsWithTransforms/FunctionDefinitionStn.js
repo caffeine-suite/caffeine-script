@@ -201,6 +201,7 @@ Caf.defMod(module, () => {
               bound,
               returnIgnored,
               statement,
+              isOperand,
               returnAction,
               argsSourceNode,
               bodySourceNode,
@@ -209,7 +210,7 @@ Caf.defMod(module, () => {
               cafBase1;
             ({ isConstructor, bound, returnIgnored } = this.props);
             if (options) {
-              ({ statement } = options);
+              ({ statement, isOperand } = options);
             }
             returnAction = !(isConstructor || returnIgnored);
             argsSourceNode =
@@ -224,13 +225,21 @@ Caf.defMod(module, () => {
                 cafBase1.toSourceNode({ returnAction });
             return bound
               ? this.simpleBound
-                ? this.createSourceNode(argsSourceNode, " => ", bodySourceNode)
+                ? this.createSourceNode(
+                    isOperand ? "(" : undefined,
+                    argsSourceNode,
+                    " => ",
+                    bodySourceNode,
+                    isOperand ? ")" : undefined
+                  )
                 : this.createSourceNode(
+                    isOperand ? "(" : undefined,
                     argsSourceNode,
                     " => {",
                     this.autoLetsForSourceNode,
                     bodySourceNode,
-                    "}"
+                    "}",
+                    isOperand ? ")" : undefined
                   )
               : this.createSourceNode(
                   statement ? "(" : undefined,

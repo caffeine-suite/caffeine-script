@@ -6,6 +6,7 @@ Caf.defMod(module, () => {
       "operatorIsInfixJs",
       "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
+      "merge",
       "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
@@ -16,6 +17,7 @@ Caf.defMod(module, () => {
       operatorIsInfixJs,
       binaryOperatorToSourceNodeArray,
       getOpPrecidence,
+      merge,
       binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
@@ -47,7 +49,11 @@ Caf.defMod(module, () => {
             return instanceSuper.updateScope.apply(this, arguments);
           };
           this.prototype.toSourceNode = function(options) {
-            let out, identifier, parentOperatorPrecidence;
+            let commonSubToSourceNodeProps,
+              out,
+              identifier,
+              parentOperatorPrecidence;
+            commonSubToSourceNodeProps = { expression: true, isOperand: true };
             out = (() => {
               switch (false) {
                 case !(this.operator === "?" && this.uniqueIdentifierHandle):
@@ -56,36 +62,38 @@ Caf.defMod(module, () => {
                     "((",
                     identifier,
                     " = ",
-                    this.left.toSourceNode({ expression: true }),
+                    this.left.toSourceNode(commonSubToSourceNodeProps),
                     ") != null ? ",
                     identifier,
                     " : ",
-                    this.right.toSourceNode({ expression: true }),
+                    this.right.toSourceNode(commonSubToSourceNodeProps),
                     ")"
                   ];
                 case !!operatorIsInfixJs(this.operator):
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
-                    this.left.toSourceNode({ expression: true }),
-                    this.right.toSourceNode({ expression: true }),
+                    this.left.toSourceNode(commonSubToSourceNodeProps),
+                    this.right.toSourceNode(commonSubToSourceNodeProps),
                     this.left
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
-                    this.left.toSourceNode({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: true
-                    }),
-                    this.right.toSourceNode({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: false
-                    }),
+                    this.left.toSourceNode(
+                      merge(commonSubToSourceNodeProps, {
+                        subExpression: true,
+                        isLeftOperand: true,
+                        parentOperatorPrecidence
+                      })
+                    ),
+                    this.right.toSourceNode(
+                      merge(commonSubToSourceNodeProps, {
+                        subExpression: true,
+                        isLeftOperand: false,
+                        parentOperatorPrecidence
+                      })
+                    ),
                     this.left
                   );
               }

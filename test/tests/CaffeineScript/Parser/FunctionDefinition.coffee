@@ -44,6 +44,9 @@ module.exports = suite: parseTestSuite
 
     regression:
       "=> {}"               : "() => {return {};};"
+      "a && => {}"          : "a && (() => {return {};});"
+      "(=> {}) && a"        : "(() => {return {};}) && a;"
+
 
   splatsRest:
     "(a...) =>":      "(...a) => {};"

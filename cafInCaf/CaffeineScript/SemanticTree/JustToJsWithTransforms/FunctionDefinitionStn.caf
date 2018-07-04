@@ -179,7 +179,7 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
 
   toSourceNode: (options) ->
     {isConstructor, bound, returnIgnored} = @props
-    {statement} = options if options
+    {statement, isOperand} = options if options
     returnAction = !(isConstructor || returnIgnored)
 
     argsSourceNode = @args?.toSourceNode() ? "()"
@@ -189,18 +189,23 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
       @body?.toSourceNode {returnAction}
 
     if bound
+      # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#Parsing_order
       if @simpleBound
         @createSourceNode
+          "(" if isOperand
           argsSourceNode
           " => "
           bodySourceNode
+          ")" if isOperand
       else
         @createSourceNode
+          "(" if isOperand
           argsSourceNode
           " => {"
           @autoLetsForSourceNode
           bodySourceNode
           "}"
+          ")" if isOperand
 
     else
       @createSourceNode

@@ -15,6 +15,10 @@ class BinaryOperatorStn extends &BaseStn
     super
 
   toSourceNode: (options)->
+    commonSubToSourceNodeProps =
+      expression: true
+      isOperand: true
+
     out = switch
     when @operator == "?" && @uniqueIdentifierHandle
       {identifier} = @uniqueIdentifierHandle
@@ -23,26 +27,26 @@ class BinaryOperatorStn extends &BaseStn
         "(("
         identifier
         " = "
-        @left.toSourceNode expression: true
+        @left.toSourceNode  commonSubToSourceNodeProps
         ") != null ? "
         identifier
         " : "
-        @right.toSourceNode expression: true
+        @right.toSourceNode commonSubToSourceNodeProps
         ")"
 
     when !operatorIsInfixJs @operator
       binaryOperatorToSourceNodeArray
         @operator
-        @left.toSourceNode expression: true
-        @right.toSourceNode expression: true
+        @left.toSourceNode  commonSubToSourceNodeProps
+        @right.toSourceNode commonSubToSourceNodeProps
         @left
 
     else
       parentOperatorPrecidence = getOpPrecidence @operator
       binaryOperatorToSourceNodeArray
         @operator
-        @left.toSourceNode  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
-        @right.toSourceNode {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
+        @left.toSourceNode  merge commonSubToSourceNodeProps, {} subExpression: true isLeftOperand: true  parentOperatorPrecidence
+        @right.toSourceNode merge commonSubToSourceNodeProps, {} subExpression: true isLeftOperand: false parentOperatorPrecidence
         @left
 
     if options && @_needsParens options

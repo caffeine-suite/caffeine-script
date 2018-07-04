@@ -43,6 +43,21 @@ while a > 0
 This should have "let a" outside the while, but should have "let b" inside, like
 all the comprehensions.
 
+---------
+result extract colorInfo extract colorMap
+
+SHOULD extract colorInfo.
+1)
+  > result extract colorInfo, colorInfo extract colorMap
+  is just weird
+2)
+  > (a extract b) ->
+  That sets 'a' even though it is an intermediate value.
+
+However, I'm OK with the following not setting 'b':
+
+> a extract b.c
+
 
 #################################
 SHOULD COMPILE
@@ -133,3 +148,9 @@ SHOULD BE: -(a**2)
 ----
 if i == cats.length - 1 then Promise.then -> action event, props else {}
 # "action event, props" should be inside the .then funciton
+
+----
+
+-01
+
+Should just become: -1 (-01 is illegal in JavaScript)
