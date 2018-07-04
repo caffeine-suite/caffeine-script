@@ -2392,7 +2392,7 @@ __webpack_require__(111);
 /* 28 */
 /***/ (function(module, exports) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.58.1"}
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register","testInBrowser":"webpack-dev-server --progress"},"version":"0.58.2"}
 
 /***/ }),
 /* 29 */
@@ -4771,6 +4771,7 @@ Caf.defMod(module, () => {
       "operatorIsInfixJs",
       "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
+      "merge",
       "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
@@ -4781,6 +4782,7 @@ Caf.defMod(module, () => {
       operatorIsInfixJs,
       binaryOperatorToSourceNodeArray,
       getOpPrecidence,
+      merge,
       binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
@@ -4812,7 +4814,11 @@ Caf.defMod(module, () => {
             return instanceSuper.updateScope.apply(this, arguments);
           };
           this.prototype.toSourceNode = function(options) {
-            let out, identifier, parentOperatorPrecidence;
+            let commonSubToSourceNodeProps,
+              out,
+              identifier,
+              parentOperatorPrecidence;
+            commonSubToSourceNodeProps = { expression: true, isOperand: true };
             out = (() => {
               switch (false) {
                 case !(this.operator === "?" && this.uniqueIdentifierHandle):
@@ -4821,36 +4827,38 @@ Caf.defMod(module, () => {
                     "((",
                     identifier,
                     " = ",
-                    this.left.toSourceNode({ expression: true }),
+                    this.left.toSourceNode(commonSubToSourceNodeProps),
                     ") != null ? ",
                     identifier,
                     " : ",
-                    this.right.toSourceNode({ expression: true }),
+                    this.right.toSourceNode(commonSubToSourceNodeProps),
                     ")"
                   ];
                 case !!operatorIsInfixJs(this.operator):
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
-                    this.left.toSourceNode({ expression: true }),
-                    this.right.toSourceNode({ expression: true }),
+                    this.left.toSourceNode(commonSubToSourceNodeProps),
+                    this.right.toSourceNode(commonSubToSourceNodeProps),
                     this.left
                   );
                 default:
                   parentOperatorPrecidence = getOpPrecidence(this.operator);
                   return binaryOperatorToSourceNodeArray(
                     this.operator,
-                    this.left.toSourceNode({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: true
-                    }),
-                    this.right.toSourceNode({
-                      expression: true,
-                      subExpression: true,
-                      parentOperatorPrecidence,
-                      isLeftOperand: false
-                    }),
+                    this.left.toSourceNode(
+                      merge(commonSubToSourceNodeProps, {
+                        subExpression: true,
+                        isLeftOperand: true,
+                        parentOperatorPrecidence
+                      })
+                    ),
+                    this.right.toSourceNode(
+                      merge(commonSubToSourceNodeProps, {
+                        subExpression: true,
+                        isLeftOperand: false,
+                        parentOperatorPrecidence
+                      })
+                    ),
                     this.left
                   );
               }
@@ -7368,6 +7376,7 @@ Caf.defMod(module, () => {
               bound,
               returnIgnored,
               statement,
+              isOperand,
               returnAction,
               argsSourceNode,
               bodySourceNode,
@@ -7376,7 +7385,7 @@ Caf.defMod(module, () => {
               cafBase1;
             ({ isConstructor, bound, returnIgnored } = this.props);
             if (options) {
-              ({ statement } = options);
+              ({ statement, isOperand } = options);
             }
             returnAction = !(isConstructor || returnIgnored);
             argsSourceNode =
@@ -7391,13 +7400,21 @@ Caf.defMod(module, () => {
                 cafBase1.toSourceNode({ returnAction });
             return bound
               ? this.simpleBound
-                ? this.createSourceNode(argsSourceNode, " => ", bodySourceNode)
+                ? this.createSourceNode(
+                    isOperand ? "(" : undefined,
+                    argsSourceNode,
+                    " => ",
+                    bodySourceNode,
+                    isOperand ? ")" : undefined
+                  )
                 : this.createSourceNode(
+                    isOperand ? "(" : undefined,
                     argsSourceNode,
                     " => {",
                     this.autoLetsForSourceNode,
                     bodySourceNode,
-                    "}"
+                    "}",
+                    isOperand ? ")" : undefined
                   )
               : this.createSourceNode(
                   statement ? "(" : undefined,
