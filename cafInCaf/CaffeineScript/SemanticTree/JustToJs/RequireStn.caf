@@ -35,5 +35,8 @@ class RequireStn extends &BaseStn
     "" require('#{@requireString}')
 
   toSourceNode: ->
+    {requireString} = @
     @createSourceNode
-      "" require('#{@requireString}')
+      "" require('#{requireString}')
+    .withProps
+      moduleDependencies: "#{@rawRequireString}": requireString

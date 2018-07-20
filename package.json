@@ -26,7 +26,7 @@
     "build": "caf -v -p -C -c cafInCaf -o source",
     "perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
     "start": "webpack-dev-server --hot --inline --progress",
-    "test": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register",
+    "test": "nn -s;mocha -u tdd",
     "testInBrowser": "webpack-dev-server --progress"
   },
   "version": "0.58.2"

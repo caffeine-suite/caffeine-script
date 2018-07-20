@@ -258,6 +258,8 @@ class BaseStn extends BaseClass
       js: sourceNode.toString()
 
     out.sourceNode = sourceNode if debug
+    if props = sourceNode.mergedProps
+      out.props = props
     out
 
 

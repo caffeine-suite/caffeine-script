@@ -31,9 +31,15 @@ Caf.defMod(module, () => {
             return `require('${Caf.toString(this.requireString)}')`;
           };
           this.prototype.toSourceNode = function() {
+            let requireString;
+            ({ requireString } = this);
             return this.createSourceNode(
-              `require('${Caf.toString(this.requireString)}')`
-            );
+              `require('${Caf.toString(requireString)}')`
+            ).withProps({
+              moduleDependencies: {
+                [`${Caf.toString(this.rawRequireString)}`]: requireString
+              }
+            });
           };
         }
       ));

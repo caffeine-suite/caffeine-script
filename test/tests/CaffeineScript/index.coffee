@@ -5,6 +5,7 @@ module.exports = require './namespace'
 module.exports
 .addModules
   BaseStn:        require './BaseStn'       
+  Compiler:       require './Compiler'      
   Helper:         require './Helper'        
   Lib:            require './Lib'           
   OperatorHelper: require './OperatorHelper'

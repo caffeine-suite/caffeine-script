@@ -231,7 +231,8 @@ Caf.defMod(module, () => {
               sourceFile,
               sourceNode,
               out,
-              js;
+              js,
+              props;
             ({
               debug,
               inlineMap,
@@ -257,6 +258,9 @@ Caf.defMod(module, () => {
                 : { js: sourceNode.toString() };
             if (debug) {
               out.sourceNode = sourceNode;
+            }
+            if ((props = sourceNode.mergedProps)) {
+              out.props = props;
             }
             return out;
           };
