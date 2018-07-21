@@ -27,15 +27,13 @@ Caf.defMod(module, () => {
               )).getStn())
                 .validateAll()
                 .transform();
-              return {
-                compiled: transformedStn.toJsUsingSourceNode({
-                  module: !bare,
-                  bare,
-                  inlineMap,
-                  sourceMap,
-                  sourceFile
-                })
-              };
+              return transformedStn.toJsUsingSourceNode({
+                module: !bare,
+                bare,
+                inlineMap,
+                sourceMap,
+                sourceFile
+              });
             } catch (cafError) {
               e = cafError;
               if (

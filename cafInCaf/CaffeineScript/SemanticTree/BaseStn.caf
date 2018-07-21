@@ -241,19 +241,23 @@ class BaseStn extends BaseClass
     {debug, inlineMap, source = @source, sourceMap, sourceFile = @sourceFile} = options
     sourceNode = @toSourceNode options
 
-    out = if inlineMap || sourceMap
+    out = compiled: if inlineMap || sourceMap
       {js, sourceMap} =
         sourceNode
         .generate source, sourceFile
 
       if inlineMap
-        js =
+        js:
           """
             #{js}
             //# sourceMappingURL=#{binary(sourceMap).toDataUri :application/json, true}
             //# sourceURL=#{sourceFile}
+      else if sourceMap
+        {js, sourceMap}
 
-      {js, sourceMap}
+      else
+        {js}
+
     else
       js: sourceNode.toString()
 

@@ -39,7 +39,7 @@ module.exports = suite: ->
             Caf.defMod(module, () => {return require('../StandardImport');});
           """
 
-        props: moduleDependencies: "standard-import": "../StandardImport"
+      props: moduleDependencies: "standard-import": "../StandardImport"
 
       compile "&standard-import",
         sourceRoot: sourceRoot
@@ -55,10 +55,10 @@ module.exports = suite: ->
             Caf.defMod(module, () => {({standardImport: require('../StandardImport')}); return require('../../package');});
           """
 
-        props:
-          moduleDependencies:
-            standardImport: "../StandardImport"
-            package: "../../package"
+      props:
+        moduleDependencies:
+          standardImport: "../StandardImport"
+          package: "../../package"
 
       compile "{} &standardImport\n&package",
         sourceRoot: sourceRoot

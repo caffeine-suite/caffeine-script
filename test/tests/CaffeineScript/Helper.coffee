@@ -36,7 +36,7 @@ module.exports =
           transformedSemanticTree.toJsUsingSourceNode
             inlineMap:  true
             module:     compileModule
-          .js
+          .compiled.js
 
       catch error
         log "\nFAIL: #{name}".red
@@ -79,7 +79,7 @@ module.exports =
       transformedSemanticTree = semanticTree.validateAll().transform()
 
       transformedSemanticTree.toJsUsingSourceNode module: compileModule
-      .js
+      .compiled.js
       # if compileModule
       #   transformedSemanticTree.toJsModule()
       # else

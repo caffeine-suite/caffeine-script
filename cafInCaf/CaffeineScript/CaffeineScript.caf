@@ -55,13 +55,12 @@ compile: (source, options = {}) ->
       .validateAll()
       .transform()
 
-    compiled:
-      transformedStn.toJsUsingSourceNode  {}
-        module:     !bare
-        bare
-        inlineMap
-        sourceMap
-        sourceFile
+    transformedStn.toJsUsingSourceNode  {}
+      module:     !bare
+      bare
+      inlineMap
+      sourceMap
+      sourceFile
 
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i

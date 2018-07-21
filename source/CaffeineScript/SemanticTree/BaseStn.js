@@ -241,21 +241,29 @@ Caf.defMod(module, () => {
               sourceFile = this.sourceFile
             } = options);
             sourceNode = this.toSourceNode(options);
-            out =
-              inlineMap || sourceMap
-                ? (({ js, sourceMap } = sourceNode.generate(
-                    source,
-                    sourceFile
-                  )),
-                  inlineMap
-                    ? (js = `${Caf.toString(
-                        js
-                      )}\n//# sourceMappingURL=${Caf.toString(
-                        binary(sourceMap).toDataUri("application/json", true)
-                      )}\n//# sourceURL=${Caf.toString(sourceFile)}`)
-                    : undefined,
-                  { js, sourceMap })
-                : { js: sourceNode.toString() };
+            out = {
+              compiled:
+                inlineMap || sourceMap
+                  ? (({ js, sourceMap } = sourceNode.generate(
+                      source,
+                      sourceFile
+                    )),
+                    inlineMap
+                      ? {
+                          js: `${Caf.toString(
+                            js
+                          )}\n//# sourceMappingURL=${Caf.toString(
+                            binary(sourceMap).toDataUri(
+                              "application/json",
+                              true
+                            )
+                          )}\n//# sourceURL=${Caf.toString(sourceFile)}`
+                        }
+                      : sourceMap
+                        ? { js, sourceMap }
+                        : { js })
+                  : { js: sourceNode.toString() }
+            };
             if (debug) {
               out.sourceNode = sourceNode;
             }
