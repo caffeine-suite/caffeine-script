@@ -33,17 +33,6 @@ Caf.defMod(module, () => {
               return this.key.identifier;
             }
           });
-          this.prototype.toJs = function() {
-            let base, identifierString;
-            base = this.value.toJsExpression({ dotBase: true });
-            return this.key.isIdentifier
-              ? (identifierString = this.key.toJs()).match(/['"`]/)
-                ? `${Caf.toString(base)}[${Caf.toString(identifierString)}]`
-                : `${Caf.toString(base)}.${Caf.toString(identifierString)}`
-              : `${Caf.toString(base)}[${Caf.toString(
-                  this.key.toJsExpression()
-                )}]`;
-          };
           this.prototype.toSourceNode = function() {
             let base;
             base = this.value.toSourceNode({ expression: true, dotBase: true });

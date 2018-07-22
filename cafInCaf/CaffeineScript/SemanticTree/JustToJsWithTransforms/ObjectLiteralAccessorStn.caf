@@ -14,9 +14,9 @@ class ObjectLiteralAccessorStn extends &BaseStn
 
   ###
     @value is only ever not set for object literal computed property names. (object-structuring)
-  toJs: ->
-    base = @value?.toJsExpression dotBase: true
-    "#{base || ""}[#{@key.toJsExpression()}]"
+  # toJs: ->
+  #   base = @value?.toJsExpression dotBase: true
+  #   "#{base || ""}[#{@key.toJsExpression()}]"
 
   toSourceNode: ->
     @createSourceNode

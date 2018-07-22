@@ -48,32 +48,6 @@ Caf.defMod(module, () => {
               );
             }
           });
-          this.prototype.toJs = function(options) {
-            let newObjectFunctionInvocation, valueJs;
-            if (options) {
-              ({ newObjectFunctionInvocation } = options);
-            }
-            if (this.existanceTest) {
-              throw new Error("can't be existanceTest here");
-            }
-            valueJs = this.functionValue.toJsExpression();
-            if (newObjectFunctionInvocation) {
-              switch (this.functionValue.type) {
-                case "Reference":
-                case "GlobalIdentifier":
-                case "This":
-                  null;
-                  break;
-                default:
-                  valueJs = `(${Caf.toString(valueJs)})`;
-              }
-            }
-            return `${Caf.toString(valueJs)}${Caf.toString(
-              this.applyRequiredParens(
-                Caf.array(this.argStns, a => a.toJsExpression()).join(", ")
-              )
-            )}`;
-          };
           this.prototype.toSourceNode = function(options) {
             let newObjectFunctionInvocation, noParens, valueSourceNode;
             if (options) {

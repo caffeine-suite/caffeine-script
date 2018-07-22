@@ -23,19 +23,19 @@ class FunctionInvocationStn extends &AccessorChainStn
     isFunctionInvocation: -> true
     propName: -> @functionValue?.propName
 
-  toJs: (options)->
-    {newObjectFunctionInvocation} = options if options
-    throw new Error "can't be existanceTest here" if @existanceTest
-    valueJs = @functionValue.toJsExpression()
+  # toJs: (options)->
+  #   {newObjectFunctionInvocation} = options if options
+  #   throw new Error "can't be existanceTest here" if @existanceTest
+  #   valueJs = @functionValue.toJsExpression()
 
-    if newObjectFunctionInvocation
-      switch @functionValue.type
-      when :Reference, :GlobalIdentifier, :This
-        null
-      else
-        valueJs = "(#{valueJs})"
+  #   if newObjectFunctionInvocation
+  #     switch @functionValue.type
+  #     when :Reference, :GlobalIdentifier, :This
+  #       null
+  #     else
+  #       valueJs = "(#{valueJs})"
 
-    "#{valueJs}#{@applyRequiredParens (array a in @argStns with a.toJsExpression()).join ', '}"
+  #   "#{valueJs}#{@applyRequiredParens (array a in @argStns with a.toJsExpression()).join ', '}"
 
   toSourceNode: (options)->
     {newObjectFunctionInvocation, noParens} = options if options

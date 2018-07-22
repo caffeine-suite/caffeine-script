@@ -199,29 +199,6 @@ Caf.defMod(module, () => {
               )
             );
           };
-          this.prototype.toJs = function() {
-            let className, classExtends, body, classBody, out, classBodyJs;
-            ({
-              className,
-              classExtends,
-              body,
-              classBody
-            } = this.labeledChildren);
-            className = className.toJs();
-            out = `Caf.defClass(class ${Caf.toString(
-              className
-            )} extends ${Caf.toString(
-              (Caf.exists(classExtends) && classExtends.toJsExpression()) ||
-                "Object"
-            )}`;
-            classBodyJs = classBody
-              ? `{${Caf.toString(classBody.toJs())};}`
-              : "{}";
-            return body
-              ? out +
-                  ` ${Caf.toString(classBodyJs)}, ${Caf.toString(body.toJs())})`
-              : out + ` ${Caf.toString(classBodyJs)})`;
-          };
           this.prototype.toSourceNode = function() {
             let className, classExtends, body, classBody, cafTemp;
             ({

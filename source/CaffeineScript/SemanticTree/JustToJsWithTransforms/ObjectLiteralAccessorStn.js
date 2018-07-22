@@ -20,15 +20,6 @@ Caf.defMod(module, () => {
             return true;
           }
         });
-        this.prototype.toJs = function() {
-          let base, cafBase;
-          base =
-            Caf.exists((cafBase = this.value)) &&
-            cafBase.toJsExpression({ dotBase: true });
-          return `${Caf.toString(base || "")}[${Caf.toString(
-            this.key.toJsExpression()
-          )}]`;
-        };
         this.prototype.toSourceNode = function() {
           let cafBase;
           return this.createSourceNode(

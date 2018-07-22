@@ -70,22 +70,6 @@ Caf.defMod(module, () => {
             ? this.createSourceNode("(", out, ")")
             : out;
         };
-        this.prototype.toJs = function(options) {
-          let out;
-          out = supportedOperatorsRegExp.test(this.operator)
-            ? `${Caf.toString(this.lValue.toJs())} ${Caf.toString(
-                this.operator
-              )}= ${Caf.toString(this.rValue.toJsExpression())}`
-            : `${Caf.toString(this.lValue.toJsExpression())} ${Caf.toString(
-                this.operator
-              )} ${Caf.toString(this.lValue.toJs())} = ${Caf.toString(
-                this.rValue.toJsExpression()
-              )}`;
-          return (Caf.exists(options) && options.dotBase) ||
-            (Caf.exists(options) && options.subExpression)
-            ? `(${Caf.toString(out)})`
-            : out;
-        };
       }
     ));
   })();

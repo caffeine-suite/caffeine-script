@@ -108,21 +108,21 @@ class ClassStn extends &BaseStn
         merge @props, {} className, classSuperHandle, instanceSuperHandle
         children
 
-  toJs: ->
-    {className, classExtends, body, classBody} = @labeledChildren
-    className = className.toJs()
+  # toJs: ->
+  #   {className, classExtends, body, classBody} = @labeledChildren
+  #   className = className.toJs()
 
-    # NOTE: without an 'extends' class, JavaScript extends Funciton, not Object
-    # AND 'super' is illegal
-    # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
-    out = "Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
+  #   # NOTE: without an 'extends' class, JavaScript extends Funciton, not Object
+  #   # AND 'super' is illegal
+  #   # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
+  #   out = "Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
 
-    classBodyJs = if classBody then "{#{classBody.toJs()};}" else "{}"
+  #   classBodyJs = if classBody then "{#{classBody.toJs()};}" else "{}"
 
-    if body
-      out + " #{classBodyJs}, #{body.toJs()})"
-    else
-      out + " #{classBodyJs})"
+  #   if body
+  #     out + " #{classBodyJs}, #{body.toJs()})"
+  #   else
+  #     out + " #{classBodyJs})"
 
   # NOTE: without an 'extends' clause, JavaScript extends Function, not Object, which is just WRONG
   # AND that makes 'super' illegal if you aren't extending anything.

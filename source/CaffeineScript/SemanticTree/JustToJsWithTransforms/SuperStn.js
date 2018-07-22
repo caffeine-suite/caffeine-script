@@ -42,24 +42,6 @@ Caf.defMod(module, () => {
               this.children
             );
           };
-          this.prototype.toJs = function() {
-            let args, method;
-            ({ args } = this);
-            return this.props.calledInConstructor
-              ? ((args = this.props.passArguments
-                  ? ["...arguments"]
-                  : Caf.array(args, a => a.toJsExpression())),
-                `super(${Caf.toString(args.join(", "))})`)
-              : ((method = this.props.passArguments
-                  ? ((args = "arguments"), "apply")
-                  : ((args = Caf.array(args, a => a.toJsExpression())),
-                    "call")),
-                `${Caf.toString(this.superObject)}.${Caf.toString(
-                  this.props.methodName
-                )}.${Caf.toString(method)}${Caf.toString(
-                  this.applyRequiredParens(["this"].concat(args).join(", "))
-                )}`);
-          };
           this.getter({
             klass: function() {
               return this.findParent("Class");

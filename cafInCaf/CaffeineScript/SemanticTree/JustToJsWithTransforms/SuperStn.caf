@@ -23,26 +23,26 @@ class SuperStn extends &BaseStn
 
     new @class merge(@props, {} methodName, classMethod: !!propValue.isThisProp), @children
 
-  toJs: ->
-    {args} = @
+  # toJs: ->
+  #   {args} = @
 
-    if @props.calledInConstructor
-      args = if @props.passArguments
-        ["...arguments"]
-      else
-        array a in args with a.toJsExpression()
+  #   if @props.calledInConstructor
+  #     args = if @props.passArguments
+  #       ["...arguments"]
+  #     else
+  #       array a in args with a.toJsExpression()
 
-      "super(#{args.join ', '})"
+  #     "super(#{args.join ', '})"
 
-    else
-      method = if @props.passArguments
-        args = "arguments"
-        "apply"
-      else
-        args = array a in args with a.toJsExpression()
-        "call"
+  #   else
+  #     method = if @props.passArguments
+  #       args = "arguments"
+  #       "apply"
+  #     else
+  #       args = array a in args with a.toJsExpression()
+  #       "call"
 
-      "#{@superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+  #     "#{@superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
 
   @getter
     klass: -> @findParent "Class"

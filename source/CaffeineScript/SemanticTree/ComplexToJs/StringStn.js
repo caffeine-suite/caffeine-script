@@ -10,31 +10,31 @@ Caf.defMod(module, () => {
         class StringStn extends require("../BaseStn") {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
-            return this.createSourceNode(this.toJs(options));
+            return this.createSourceNode(this.getJsLiteral(options));
           };
           this.getter({
             propName: function() {
-              return this.toJs();
+              return this.jsLiteral;
+            },
+            jsLiteral: function(options) {
+              let base, quotes, singleCount, doubleCount, out;
+              base = deescapeSpaces(this.value);
+              quotes = /"/.test(base)
+                ? "'"
+                : /'/.test(base)
+                  ? ((singleCount = base.split("'").length - 1),
+                    (doubleCount = base.split('"').length - 1),
+                    doubleCount <= singleCount ? '"' : "'")
+                  : '"';
+              out =
+                quotes +
+                escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +
+                quotes;
+              return Caf.exists(options) && options.dotBase
+                ? `(${Caf.toString(out)})`
+                : out;
             }
           });
-          this.prototype.toJs = function(options) {
-            let base, quotes, singleCount, doubleCount, out;
-            base = deescapeSpaces(this.value);
-            quotes = /"/.test(base)
-              ? "'"
-              : /'/.test(base)
-                ? ((singleCount = base.split("'").length - 1),
-                  (doubleCount = base.split('"').length - 1),
-                  doubleCount <= singleCount ? '"' : "'")
-                : '"';
-            out =
-              quotes +
-              escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +
-              quotes;
-            return Caf.exists(options) && options.dotBase
-              ? `(${Caf.toString(out)})`
-              : out;
-          };
           this.prototype.compactNewLines = function(compactLeft, compactRight) {
             if (compactLeft) {
               this.props.value = this.value.replace(/^\ *\n */, "");
