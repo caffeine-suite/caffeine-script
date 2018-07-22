@@ -41,10 +41,7 @@ class RegExpStn extends &BaseStn
           else
             v
         else
-          []
-            "${Caf.toString("
-            child.toSourceNode expression: true
-            ")}"
+          child.toInterpolatedBodySourceNode()
 
     else
       value

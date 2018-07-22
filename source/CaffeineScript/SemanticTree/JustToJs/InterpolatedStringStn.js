@@ -37,7 +37,7 @@ Caf.defMod(module, () => {
           this.prototype.toSourceNode = function() {
             return this.createSourceNode(
               "`",
-              Caf.array(this.children, c => c.toInterpolatedJsStringPart()),
+              Caf.array(this.children, c => c.toInterpolatedBodySourceNode()),
               "`"
             );
           };

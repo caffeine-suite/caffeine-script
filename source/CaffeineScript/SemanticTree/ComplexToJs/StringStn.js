@@ -56,7 +56,7 @@ Caf.defMod(module, () => {
               return this.props.value;
             }
           });
-          this.prototype.toInterpolatedJsStringPart = function() {
+          this.prototype.toInterpolatedBodySourceNode = function() {
             return deescapeSpaces(
               escapeUnescaped(escapeMustEscapes(this.value), "`$\n")
             );

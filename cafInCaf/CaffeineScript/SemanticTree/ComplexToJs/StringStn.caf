@@ -43,7 +43,7 @@ class StringStn extends &BaseStn
   @getter
     value: -> @props.value
 
-  toInterpolatedJsStringPart: ->
+  toInterpolatedBodySourceNode: ->
     deescapeSpaces escapeUnescaped
       escapeMustEscapes @value
       "`$\n"

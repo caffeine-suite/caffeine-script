@@ -17,8 +17,8 @@ class InterpolatedStringStn extends &BaseStn
   toSourceNode: ->
     @createSourceNode
       :`
-      array c in @children with c.toInterpolatedJsStringPart()
+      array c in @children with c.toInterpolatedBodySourceNode()
       :`
 
   # toJs: ->
-  #   "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"
+  #   "`#{(array c in @children with c.toInterpolatedBodySourceNode()).join ''}`"

@@ -7,10 +7,8 @@ Caf.defMod(module, () => {
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
-      "log",
       "Error",
-      "isString",
-      "merge"
+      "log"
     ],
     [global, require("../StandardImport")],
     (
@@ -18,10 +16,8 @@ Caf.defMod(module, () => {
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
-      log,
       Error,
-      isString,
-      merge
+      log
     ) => {
       let createObjectTreeFactory, SourceNode, binary, BaseStn;
       ({ createObjectTreeFactory } = require("art-object-tree-factory"));
@@ -216,12 +212,13 @@ Caf.defMod(module, () => {
             return new SourceNode(this.sourceIndex, children);
           };
           this.prototype.toSourceNode = function(options) {
-            log.warn(
-              `WARNING: toSourceNode not overridden in ${Caf.toString(
-                this.class.name
-              )}. Falling back to old toJs().`
-            );
-            return this.createSourceNode(this.toJs(options));
+            return (() => {
+              throw new Error(
+                `toSourceNode not overridden in ${Caf.toString(
+                  this.class.name
+                )}. Falling back to old toJs().`
+              );
+            })();
           };
           this.prototype.toJsUsingSourceNode = function(options = {}) {
             let debug,
@@ -296,46 +293,14 @@ Caf.defMod(module, () => {
           this.prototype.doSourceNode = function(...body) {
             return this.createSourceNode("(() => {", body, "})()");
           };
-          null;
-          this.prototype.toJs = function(options) {
-            return (() => {
-              throw new Error(
-                `must override one of the toJs* functions: ${Caf.toString(
-                  this.className
-                )}`
-              );
-            })();
-          };
-          this.prototype.childrenToJs = function(joiner = "", options) {
-            return Caf.array(this.children, c => c.toJs(options)).join(joiner);
-          };
-          this.prototype.doJs = function(args, body) {
-            if (args) {
-              throw "TODO";
-            }
-            if (!isString(body)) {
-              body = body.toFunctionBodyJs();
-            }
-            return `(() => {${Caf.toString(body)};})()`;
-          };
-          this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
-            return returnAction
-              ? [`return ${Caf.toString(this.toJsExpression())}`]
-              : [this.toJs()];
-          };
-          this.prototype.toFunctionBodyJs = function(returnAction = true) {
-            return this.toFunctionBodyJsArray(returnAction).join("");
-          };
-          this.prototype.toJsExpression = function(options) {
-            return this.toJs(merge(options, { expression: true }));
-          };
-          this.prototype.toInterpolatedJsStringPart = function() {
+          this.prototype.toInterpolatedBodySourceNode = function() {
             return [
               "${Caf.toString(",
               this.toSourceNode({ expression: true }),
               ")}"
             ];
           };
+          null;
           this.prototype.transformChildren = function() {
             let ret;
             ret = null;

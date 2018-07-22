@@ -223,8 +223,8 @@ class BaseStn extends BaseClass
       isLeftOperand: t/f
 
   toSourceNode: (options) ->
-    log.warn "WARNING: toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
-    @createSourceNode @toJs options
+    throw new Error "toSourceNode not overridden in #{@class.name}. Falling back to old toJs()."
+    # @createSourceNode @toJs options
 
   ##
     options:
@@ -276,12 +276,17 @@ class BaseStn extends BaseClass
         out.push joiner
       c.toSourceNode options
 
-
   doSourceNode: (body...) ->
     @createSourceNode
       "(() => {"
       body
       "})()"
+
+  toInterpolatedBodySourceNode: ->
+    []
+      "${Caf.toString("
+      @toSourceNode expression: true
+      ")}"
 
   null
     # this null is a hack-fix for caf-script's current bug of comments-getting-sucked-up-into
@@ -314,39 +319,34 @@ class BaseStn extends BaseClass
         JavaScript requires they be expressions, but it ignores the return value of all
         but the last one in the list, in this example, "es3".
 
-  toJs: (options) ->
-    throw new Error "must override one of the toJs* functions: #{@className}"
+  # toJs: (options) ->
+  #   throw new Error "must override one of the toJs* functions: #{@className}"
 
-  childrenToJs: (joiner = '', options)->
-    array c in @children with c.toJs options
-    .join joiner
+  # childrenToJs: (joiner = '', options)->
+  #   array c in @children with c.toJs options
+  #   .join joiner
 
-  doJs: (args, body) ->
-    throw "TODO" if args
-    body = body.toFunctionBodyJs() unless isString body
+  # doJs: (args, body) ->
+  #   throw "TODO" if args
+  #   body = body.toFunctionBodyJs() unless isString body
 
-    "(() => {#{body};})()"
+  #   "(() => {#{body};})()"
 
-  toFunctionBodyJsArray: (returnAction = true)->
-    if returnAction
-      ["return #{@toJsExpression()}"]
-    else
-      [@toJs()]
+  # toFunctionBodyJsArray: (returnAction = true)->
+  #   if returnAction
+  #     ["return #{@toJsExpression()}"]
+  #   else
+  #     [@toJs()]
 
-  toFunctionBodyJs: (returnAction = true)->
-    @toFunctionBodyJsArray(returnAction).join ''
+  # toFunctionBodyJs: (returnAction = true)->
+  #   @toFunctionBodyJsArray(returnAction).join ''
 
-  # return JS code that can be used as js-expression (returns a value)
-  # for statements: a; b; return c;
-  toJsExpression: (options)->
-    @toJs merge options, expression: true
+  # # return JS code that can be used as js-expression (returns a value)
+  # # for statements: a; b; return c;
+  # toJsExpression: (options)->
+  #   @toJs merge options, expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
-  toInterpolatedJsStringPart: ->
-    []
-      "${Caf.toString("
-      @toSourceNode expression: true
-      ")}"
 
   ##########################
   ### TRANSFORM
