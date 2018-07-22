@@ -47,39 +47,6 @@ Caf.defMod(module, () => {
             );
             return out;
           };
-          this.prototype._getChildrenStatementsJsArray = function(
-            returnAction,
-            generateStatements = true
-          ) {
-            let lines;
-            returnAction = (() => {
-              switch (returnAction) {
-                case true:
-                  return (returnAction = "return");
-                case false:
-                  return null;
-                default:
-                  return returnAction;
-              }
-            })();
-            return Caf.array((lines = this.children), (c, i) => {
-              let statement;
-              return returnAction != null && i === lines.length - 1
-                ? !c.jsExpressionUsesReturn
-                  ? returnAction.length > 0
-                    ? `${Caf.toString(returnAction)} ${Caf.toString(
-                        c.toJsExpression()
-                      )}`
-                    : c.toJsExpression()
-                  : c.toJs({ generateReturnStatement: true })
-                : generateStatements
-                  ? ((statement = c.toJs({ statement: true })),
-                    statement.match(/^function/)
-                      ? this.applyRequiredParens(statement)
-                      : statement)
-                  : c.toJsExpression({ returnValueIsIgnored: true });
-            });
-          };
           this.prototype._getChildrenSourceNodes = function(
             returnAction,
             generateStatements = true,

@@ -5,5 +5,3 @@ class GlobalIdentifierStn extends &BaseStn
   needsParens: false
 
   toSourceNode: -> @createSourceNode @props.identifier
-
-  # toJs: -> @props.identifier

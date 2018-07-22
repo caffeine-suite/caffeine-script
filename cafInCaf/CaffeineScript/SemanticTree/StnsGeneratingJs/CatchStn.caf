@@ -13,23 +13,6 @@ class CatchStn extends &BaseStn
 
     super
 
-  # toJs: (options = {}) ->
-  #   {expression} = options
-  #   {errorIdentifier, body} = @labeledChildren
-  #   body = body && if expression then body.toFunctionBodyJs() else body.toJs()
-
-  #   errorIdentifierString = @uniqueIdentifierHandle.identifier
-
-  #   if errorIdentifier
-  #     body =
-  #       compactFlatten []
-  #         "#{errorIdentifier.name} = #{errorIdentifierString}"
-  #         body
-  #       .join '; '
-
-  #   body = if body then body + ";" else ''
-  #   "catch (#{errorIdentifierString}) {#{body}}"
-
   toSourceNode: (options = {}) ->
     {expression} = options
     {errorIdentifier, body} = @labeledChildren

@@ -2,15 +2,6 @@ import &StandardImport
 
 class SwitchWhenStn extends &BaseStn
 
-  # toJs: (options)->
-  #   {thenDo} = @labeledChildren
-  #   "#{@_getCasesJs(options)}: #{thenDo.toJs()};"
-
-  # toFunctionBodyJs: (options)->
-  #   {thenDo} = @labeledChildren
-  #   "#{@_getCasesJs(options)}: #{thenDo.toFunctionBodyJs()};"
-
-
   toSourceNode: (options)->
     {falsifyCases, returnAction} = options
     {whenValue, thenDo} = @labeledChildren
@@ -34,19 +25,3 @@ class SwitchWhenStn extends &BaseStn
       ": "
 
       thenDo.toSourceNode {returnAction}
-
-  ###########
-    PRIVATE
-
-  # _getCasesJs: (options)->
-  #   {falsifyCases} = options
-  #   {whenValue} = @labeledChildren
-  #   cases = if whenValue.implicitArray
-  #     array m in whenValue.children with m.toJsExpression dotBase: falsifyCases
-  #   else
-  #     [whenValue.toJsExpression dotBase: falsifyCases]
-
-  #   if falsifyCases
-  #     "case !#{cases.join ': case !'}"
-  #   else
-  #     "case #{cases.join ': case '}"

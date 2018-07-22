@@ -24,9 +24,3 @@ class ArrayStn extends &BaseStn
         else
           sn
       if dotBase then "])" else "]"
-
-  # toJs: (options) ->
-  #   out = "[#{(array c in @children with c.toJsExpression()).join ', '}]"
-  #   if options?.dotBase
-  #     "(#{out})"
-  #   else out

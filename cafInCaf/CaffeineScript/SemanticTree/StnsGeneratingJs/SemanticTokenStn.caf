@@ -8,6 +8,3 @@ class SemanticTokenStn extends &BaseStn
 
   @getter
     token: -> @props.token
-
-  # toJs: ->
-  #   throw new Error "SemanticTokenStn is not intended to output Js directly. Token: #{formattedInspect @props.token}"

@@ -19,6 +19,3 @@ class InterpolatedStringStn extends &BaseStn
       :`
       array c in @children with c.toInterpolatedBodySourceNode()
       :`
-
-  # toJs: ->
-  #   "`#{(array c in @children with c.toInterpolatedBodySourceNode()).join ''}`"

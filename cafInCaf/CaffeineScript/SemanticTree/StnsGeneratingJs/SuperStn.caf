@@ -1,9 +1,6 @@
 import &StandardImport
 
 class SuperStn extends &BaseStn
-  ##
-    props:
-      calledInConstructor: t/f
 
   constructor: (props, @args) ->
     super
@@ -17,32 +14,10 @@ class SuperStn extends &BaseStn
     unless propValue = @pretransformedStn.findParent "ObjectPropValue"
       throw new Error "super must be used inside an object-literal value"
 
-    # log {propValue, propValue.isThisProp, propValue.propName}
     unless isString methodName = propValue.propName
       throw new Error "property name in parent object-literal must be constant, not computed"
 
     new @class merge(@props, {} methodName, classMethod: !!propValue.isThisProp), @children
-
-  # toJs: ->
-  #   {args} = @
-
-  #   if @props.calledInConstructor
-  #     args = if @props.passArguments
-  #       ["...arguments"]
-  #     else
-  #       array a in args with a.toJsExpression()
-
-  #     "super(#{args.join ', '})"
-
-  #   else
-  #     method = if @props.passArguments
-  #       args = "arguments"
-  #       "apply"
-  #     else
-  #       args = array a in args with a.toJsExpression()
-  #       "call"
-
-  #     "#{@superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
 
   @getter
     klass: -> @findParent "Class"

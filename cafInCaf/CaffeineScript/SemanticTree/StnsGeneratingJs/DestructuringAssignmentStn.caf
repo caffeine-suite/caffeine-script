@@ -16,14 +16,3 @@ class DestructuringAssignmentStn extends &BaseStn
       expression && ", "
       expression && structure.toSourceNode restructuringStart: true
       ")" unless noParens
-
-  # toJs: (options)->
-  #   {expression, returnValueIsIgnored} = options if options
-  #   {structure, value} = @labeledChildren
-
-  #   expression = null if returnValueIsIgnored
-
-  #   if expression
-  #     "(#{structure.toJs()} = #{value.toJsExpression()}, #{structure.toJs restructuringStart: true})"
-  #   else
-  #     "(#{structure.toJs()} = #{value.toJsExpression()})"

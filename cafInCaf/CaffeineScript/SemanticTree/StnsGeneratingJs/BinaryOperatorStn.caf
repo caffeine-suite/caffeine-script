@@ -54,33 +54,6 @@ class BinaryOperatorStn extends &BaseStn
     else
       @createSourceNode out
 
-  # toJs: (options)->
-  #   out = if @operator == "?" && @uniqueIdentifierHandle
-  #     {identifier} = @uniqueIdentifierHandle
-  #     "((#{identifier} = #{@left.toJsExpression()}) != null ? #{identifier} : #{@right.toJsExpression()})"
-
-  #   else if !operatorIsInfixJs @operator
-  #     binaryOperatorToJs
-  #       @operator
-  #       @left.toJsExpression()
-  #       @right.toJsExpression()
-
-  #   else
-  #     parentOperatorPrecidence = getOpPrecidence @operator
-  #     binaryOperatorToJs
-  #       @operator
-  #       @left.toJs  {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: true
-  #       @right.toJs {} expression: true subExpression: true parentOperatorPrecidence, isLeftOperand: false
-
-  #   if options
-  #     # {parentOperatorPrecidence, isLeftOperand, dotBase} = options
-  #     if @_needsParens options
-  #       "(#{out})"
-  #     else
-  #       out
-  #   else
-  #     out
-
   ###############
     PRIVATE
 

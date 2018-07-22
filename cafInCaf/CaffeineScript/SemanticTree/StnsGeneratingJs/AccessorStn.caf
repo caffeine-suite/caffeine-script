@@ -16,16 +16,6 @@ class AccessorStn extends &AccessorChainStn
     isAccessor: -> true
     propName: -> @key.identifier
 
-  # toJs: ->
-  #   base = @value.toJsExpression dotBase: true
-  #   if @key.isIdentifier
-  #     if (identifierString = @key.toJs()).match /['"`]/
-  #       "#{base}[#{identifierString}]"
-  #     else
-  #       "#{base}.#{identifierString}"
-  #   else
-  #     "#{base}[#{@key.toJsExpression()}]"
-
   toSourceNode: ->
     base = @value.toSourceNode expression: true dotBase: true
 

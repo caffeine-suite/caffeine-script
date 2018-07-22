@@ -24,52 +24,8 @@ class StatementsStn extends &BaseStn
 
     out
 
-  # toJs: (options)->
-  #   {expression, returnAction} = options if options
-  #   if expression
-  #     switch @children.length
-  #     when 0 then "undefined"
-  #     when 1 then @children[0].toJsExpression()
-  #     else
-  #       @applyRequiredParens
-  #         @_getChildrenStatementsJsArray "", false
-  #         .join ", "
-  #   else
-  #     @_getChildrenStatementsJsArray(returnAction).join "; "
-
-  # toFunctionBodyJs: (returnAction = true)->
-  #   @toFunctionBodyJsArray returnAction
-  #   .join "; "
-
-  # toFunctionBodyJsArray: (returnAction = true)->
-  #   @_getChildrenStatementsJsArray returnAction
-
   ###########
     PRIVATE
-  _getChildrenStatementsJsArray: (returnAction, generateStatements = true)->
-    returnAction = switch returnAction
-    when true then returnAction = :return
-    when false then null
-    else returnAction
-
-    array c, i in lines = @children
-      if returnAction? && i == lines.length - 1
-        if !c.jsExpressionUsesReturn
-          if returnAction.length > 0
-            "#{returnAction} #{c.toJsExpression()}"
-          else
-            c.toJsExpression()
-        else c.toJs generateReturnStatement: true
-
-      else
-        if generateStatements
-          statement = c.toJs statement: true
-          if statement.match /^function/
-            @applyRequiredParens statement
-          else
-            statement
-        else
-          c.toJsExpression returnValueIsIgnored: true
 
   _getChildrenSourceNodes: (returnAction, generateStatements = true, classBody)->
     returnAction = switch returnAction

@@ -3,8 +3,6 @@ import &StandardImport
 
 class ArraySpreadElementStn extends &BaseStn
 
-  # toJs: ->  "...#{@childrenToJs()}"
-
   toSourceNode: ->
     @createSourceNode
       "..."

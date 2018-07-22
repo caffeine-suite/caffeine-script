@@ -1,18 +1,4 @@
-## import &StandardImport
-
-  class ObjectPropValueStn extends &BaseStn
-
-    @getter isObject: true
-
-    toJs: ->
-      [prop, value] = @children
-      "#{prop.toJs()}: #{value.toJsExpression()}"
-
 import &StandardImport
-
-##
-  props:
-    propertyName: string (optional)
 
 class ObjectPropValueStn extends &BaseStn
 
@@ -40,18 +26,6 @@ class ObjectPropValueStn extends &BaseStn
       && identifierRegexp.test propName
       && @valueChild.canBeUsedInES6Structuring
       && @valueChild.propName == propName
-
-  # toJs: ->
-  #   {valueChild, propName} = @
-  #   base = @valueChild.toJsExpression()
-
-  #   unless isString propName
-  #     propName = propName.toJs()
-
-  #   if @canBeUsedInES6Structuring
-  #     base
-  #   else
-  #     "#{propName}: #{base}"
 
   validate: ->
     throw new Error "no prop name" unless present @propName

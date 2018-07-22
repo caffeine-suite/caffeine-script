@@ -57,12 +57,3 @@ class AssignmentStn extends &AccessorChainStn
         ")"
     else
       out
-
-  # toJs: (options) ->
-  #   out = if supportedOperatorsRegExp.test @operator
-  #     "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
-  #   else
-  #     "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
-  #   if options?.dotBase || options?.subExpression
-  #     "(#{out})"
-  #   else out

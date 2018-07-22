@@ -16,11 +16,3 @@ class ArrayDestructuringStn extends &BaseStn
         "["
         base
         "]"
-
-  # toJs: (options)->
-  #   {restructuring, restructuringStart} = options if options
-  #   subOptions = restructuring: true if restructuringStart || restructuring
-  #   if restructuring
-  #     "#{@childrenToJs ', ', subOptions}"
-  #   else
-  #     "[#{@childrenToJs ', ', subOptions}]"

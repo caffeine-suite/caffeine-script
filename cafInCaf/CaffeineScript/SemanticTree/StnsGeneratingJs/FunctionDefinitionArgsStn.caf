@@ -20,6 +20,3 @@ class FunctionDefinitionArgsStn extends &BaseStn
         else sn
 
       ")"
-
-  # toJs: ->
-  #   "(#{(array c in @children with c.toJs()).join(', ')})"

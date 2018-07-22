@@ -25,45 +25,6 @@ class ImportStn extends &BaseStn
     importFromCaptureIdentifier: ->
       @_importFromCaptureIdentifier ||= @nonImportScope.bindUniqueIdentifier "parentImports"
 
-  # toJs: (options = {})->
-  #   importFromCaptureIdentifier = null
-  #   if p = @findParent /^Import$/
-  #     {importFromCaptureIdentifier} = p
-  #     true
-
-  #   {importBody} = @labeledChildren
-  #   importFromList = arrayWithoutLast @children
-
-  #   if importBody
-  #     identifiersToImport = Object.keys importBody.generateImportMap()
-
-  #     # call before getAutoLets in case children need to define additional lets
-  #     bodyMain = importBody.toJs returnAction: true
-
-  #     # needs to be called first since it might cause @_importFromCaptureIdentifier to be set
-  #     bodyJs =
-  #       compactFlatten []
-  #         importBody.getAutoLets()
-  #         bodyMain
-  #       .join '; '
-
-  #     if identifiersToImport.length > 0
-
-
-  #       importsJs = compactFlatten []
-  #         importFromCaptureIdentifier || "global"
-  #         array c in importFromList with c.toJsExpression()
-
-  #       ""
-  #         Caf.importInvoke(["#{identifiersToImport.join '", "'}"],
-  #         #{if @_importFromCaptureIdentifier then "#{@_importFromCaptureIdentifier} = " else ''}[#{importsJs.join ', '}],
-  #         (#{identifiersToImport.join ', '}) => {#{bodyJs};})
-
-  #     else
-  #       "" (() => {#{bodyJs};})()
-  #   else
-  #     "undefined"
-
   @getter
     parentImport: ->
       @findParent /^Import$/

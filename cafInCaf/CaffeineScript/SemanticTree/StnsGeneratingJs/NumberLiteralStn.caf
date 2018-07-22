@@ -15,10 +15,3 @@ class NumberLiteralStn extends &BaseStn
   @getter
     propName: -> @props.value
     canBeUsedInES6Structuring: -> true
-
-  # toJs: (options) ->
-  #   {value} = @props
-  #   if options?.dotBase
-  #     "(#{value})"
-  #   else
-  #     value

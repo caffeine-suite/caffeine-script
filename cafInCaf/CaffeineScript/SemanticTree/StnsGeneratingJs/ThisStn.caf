@@ -15,16 +15,6 @@ class ThisStn extends &BaseStn
         peek(@children)?.identifier
 
     propName: -> @identifier ? "this"
-    # isIdentifier: -> identifierRegexp.test @identifier
-
-  # toJs: ->
-  #   if id = @identifier
-  #     if identifierRegexp.test id
-  #       "this.#{id}"
-  #     else
-  #       "this[#{id}]"
-  #   else
-  #     "this"
 
   toSourceNode: ->
     if id = @identifier

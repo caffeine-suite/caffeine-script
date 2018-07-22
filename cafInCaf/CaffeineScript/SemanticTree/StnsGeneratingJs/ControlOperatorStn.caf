@@ -33,52 +33,6 @@ class ControlOperatorStn extends &BaseStn
     else
       throw new Error "INTERNAL: invalid control-operator: #{formattedInspect @operand}"
 
-  # toJs: (options = {})->
-  #   {expression, returnValueIsIgnored} = options
-  #   jsExpression = @expression.toJsExpression()
-  #   {operand} = @
-
-  #   operand = switch operand
-  #     when "until", "unless"
-  #       jsExpression = "!#{@applyParens jsExpression}"
-  #       if operand == "until" then "while" else "if"
-  #     else operand
-
-  #   if expression
-  #     if operand == "while"
-  #       if returnValueIsIgnored
-  #         "
-  #         (() => {while
-  #         #{@applyRequiredParens jsExpression}
-  #         {#{@body.toFunctionBodyJs false};};})()
-  #         "
-  #       else
-  #         tempVarIdentifier = @whileReturnTempVar
-  #         "
-  #         (() => {while
-  #         #{@applyRequiredParens jsExpression}
-  #         {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
-  #         return #{tempVarIdentifier};})()
-  #         "
-
-  #     else
-  #       out =
-  #         "
-  #         #{@expression.toJsExpression dotBase: true} ?
-  #         #{@body.toJsExpression()} :
-  #         #{@elseBody?.toJsExpression() || 'undefined'}
-  #         "
-  #       if options.subExpression || options.dotBase
-  #         out = "(#{out})"
-  #       else
-  #         out
-  #   else
-  #     "
-  #     #{operand}
-  #     #{@applyRequiredParens jsExpression}
-  #     {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
-  #     "
-
   toSourceNode: (options = {})->
     {expression, returnValueIsIgnored, noParens} = options
     {operand} = @

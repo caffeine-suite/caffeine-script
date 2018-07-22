@@ -26,7 +26,3 @@ class ReferenceStn extends &BaseStn
 
   toSourceNode: (options) ->
     @createSourceNode @propName
-
-  # toJs: ->
-  #   @props.identifierHandle?.identifier
-  #   || @labeledChildren.identifier.toJs()

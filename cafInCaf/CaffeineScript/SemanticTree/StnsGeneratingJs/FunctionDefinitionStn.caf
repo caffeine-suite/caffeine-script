@@ -217,29 +217,3 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
         bodySourceNode
         "}"
         ")" if statement
-
-
-  # getBodyJs: ->
-  #   {returnIgnored, isConstructor} = @props
-  #   statements = @body?.toFunctionBodyJsArray !(isConstructor || returnIgnored)
-
-  #   if lets = @getAutoLets()
-  #     statements = compactFlatten [lets, statements]
-
-  #   if statements?.length > 0
-  #     "#{statements.join '; '};"
-  #   else ""
-
-  # getArgsJs: ->
-  #   @children[0]?.toJs() ? "()"
-
-  # toJs: ->
-  #   {isConstructor, bound} = @props
-
-  #   if bound
-  #     if @simpleBound
-  #       "#{@getArgsJs()} => #{@statementStns[0].toJsExpression()}"
-  #     else
-  #       "#{@getArgsJs()} => {#{@getBodyJs()}}"
-  #   else
-  #     "#{if isConstructor then "constructor" else "function"}#{@getArgsJs()} {#{@getBodyJs()}}"

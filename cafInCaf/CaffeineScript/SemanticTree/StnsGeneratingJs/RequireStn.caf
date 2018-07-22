@@ -8,14 +8,7 @@ import &StandardImport
 
 class RequireStn extends &BaseStn
 
-  # updateScope: (@scope) ->
-  #   @scope.addIdentifierAssigned @identifierAssignedName
-  #   super
-
   @getter
-
-    # # TODO: should be everything after last '/'
-    # identifierAssignedName: -> peek @props.require.split "/"
 
     rawRequireString: -> @props.require
 
@@ -30,9 +23,6 @@ class RequireStn extends &BaseStn
       .requireString
 
   validate: -> @requireString
-
-  # toJs: ->
-  #   "" require('#{@requireString}')
 
   toSourceNode: ->
     {requireString} = @

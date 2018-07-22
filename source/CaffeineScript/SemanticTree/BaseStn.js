@@ -300,7 +300,6 @@ Caf.defMod(module, () => {
               ")}"
             ];
           };
-          null;
           this.prototype.transformChildren = function() {
             let ret;
             ret = null;

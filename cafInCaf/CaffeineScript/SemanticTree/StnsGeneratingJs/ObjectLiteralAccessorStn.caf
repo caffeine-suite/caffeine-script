@@ -12,12 +12,6 @@ class ObjectLiteralAccessorStn extends &BaseStn
     existanceTest: -> @props.existanceTest
     isAccessor: -> true
 
-  ###
-    @value is only ever not set for object literal computed property names. (object-structuring)
-  # toJs: ->
-  #   base = @value?.toJsExpression dotBase: true
-  #   "#{base || ""}[#{@key.toJsExpression()}]"
-
   toSourceNode: ->
     @createSourceNode
       @value?.toSourceNode dotBase: true

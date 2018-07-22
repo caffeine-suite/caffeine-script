@@ -8,18 +8,6 @@ class TryStn extends &BaseStn
       @children[1] = @labeledChildren.optionalCatch ?= StnRegistry.CatchStn()
       .parent = @
 
-  # toJs: (options = {})->
-  #   {expression} = options
-  #   {body, optionalCatch} = @labeledChildren
-  #   body = if expression then body.toFunctionBodyJs() else body.toJs();
-
-  #   base = "try {#{body};} #{optionalCatch.toJs options}"
-
-  #   if expression
-  #     @doJs null, base
-  #   else
-  #     base
-
   toSourceNode: (options = {})->
     {expression} = options
     {body, optionalCatch} = @labeledChildren

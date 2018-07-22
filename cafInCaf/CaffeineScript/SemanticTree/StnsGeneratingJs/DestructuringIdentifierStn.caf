@@ -21,12 +21,3 @@ class DestructuringIdentifierStn extends &BaseStn
         '...' if @props.ellipsis
         identifier.toSourceNode()
         if destructuringDefault then " = #{destructuringDefault.toSourceNode expression: true}"
-
-  # toJs: (options)->
-  #   {restructuring} = options if options
-
-  #   {identifier, destructuringDefault} = @labeledChildren
-  #   if restructuring
-  #     identifier.toJs()
-  #   else
-  #     "#{if @props.ellipsis then '...' else ''}#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"

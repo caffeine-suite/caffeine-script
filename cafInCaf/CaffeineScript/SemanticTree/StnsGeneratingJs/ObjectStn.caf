@@ -7,12 +7,6 @@ class ObjectStn extends &BaseStn
   @getter
     isEmptyObjectLiteral: -> !@children || @children.length == 0
 
-  # toJs: (options) ->
-  #   out = "{#{(array c in @children with c.toJs()).join ', '}}"
-  #   if options?.dotBase || options?.statement
-  #     "(#{out})"
-  #   else out
-
   toSourceNode: (options) ->
     base = []
       "{"
