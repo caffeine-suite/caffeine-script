@@ -21,16 +21,6 @@ Caf.defMod(module, () => {
           }
         },
         function(TryStn, classSuper, instanceSuper) {
-          this.prototype.toJs = function(options = {}) {
-            let expression, body, optionalCatch, base;
-            ({ expression } = options);
-            ({ body, optionalCatch } = this.labeledChildren);
-            body = expression ? body.toFunctionBodyJs() : body.toJs();
-            base = `try {${Caf.toString(body)};} ${Caf.toString(
-              optionalCatch.toJs(options)
-            )}`;
-            return expression ? this.doJs(null, base) : base;
-          };
           this.prototype.toSourceNode = function(options = {}) {
             let expression, body, optionalCatch, base;
             ({ expression } = options);

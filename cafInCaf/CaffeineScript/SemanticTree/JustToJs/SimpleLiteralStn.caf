@@ -11,6 +11,6 @@ class SimpleLiteralStn extends &BaseStn
     propName: -> @props.value
     canBeUsedInES6Structuring: -> true
 
-  toJs: (options) ->
-    {value} = @props
-    value
+  # toJs: (options) ->
+  #   {value} = @props
+  #   value

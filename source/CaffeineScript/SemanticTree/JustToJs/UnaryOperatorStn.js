@@ -32,19 +32,6 @@ Caf.defMod(module, () => {
           }
         });
         this.prototype.needsParens = false;
-        this.prototype.toJs = function() {
-          let childrenJs;
-          childrenJs = this.applyParens(this.children[0].toJsExpression());
-          return this.props.operand === "?"
-            ? `${Caf.toString(childrenJs)} != null`
-            : this.props.tail
-              ? `${Caf.toString(childrenJs)}${Caf.toString(
-                  this.normalizedOperand
-                )}`
-              : `${Caf.toString(this.normalizedOperand)}${Caf.toString(
-                  childrenJs
-                )}`;
-        };
         this.prototype.toSourceNode = function(options) {
           let dotBase, forUnaryOpeartor, childNode, base;
           if (options) {

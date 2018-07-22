@@ -25,14 +25,6 @@ Caf.defMod(module, () => {
               return (cafTemp = this.identifier) != null ? cafTemp : "this";
             }
           });
-          this.prototype.toJs = function() {
-            let id;
-            return (id = this.identifier)
-              ? identifierRegexp.test(id)
-                ? `this.${Caf.toString(id)}`
-                : `this[${Caf.toString(id)}]`
-              : "this";
-          };
           this.prototype.toSourceNode = function() {
             let id;
             return (id = this.identifier)

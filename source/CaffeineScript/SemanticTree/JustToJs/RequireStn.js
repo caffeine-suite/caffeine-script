@@ -27,9 +27,6 @@ Caf.defMod(module, () => {
           this.prototype.validate = function() {
             return this.requireString;
           };
-          this.prototype.toJs = function() {
-            return `require('${Caf.toString(this.requireString)}')`;
-          };
           this.prototype.toSourceNode = function() {
             let requireString;
             ({ requireString } = this);

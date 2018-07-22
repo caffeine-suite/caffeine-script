@@ -17,14 +17,14 @@ class ThisStn extends &BaseStn
     propName: -> @identifier ? "this"
     # isIdentifier: -> identifierRegexp.test @identifier
 
-  toJs: ->
-    if id = @identifier
-      if identifierRegexp.test id
-        "this.#{id}"
-      else
-        "this[#{id}]"
-    else
-      "this"
+  # toJs: ->
+  #   if id = @identifier
+  #     if identifierRegexp.test id
+  #       "this.#{id}"
+  #     else
+  #       "this[#{id}]"
+  #   else
+  #     "this"
 
   toSourceNode: ->
     if id = @identifier

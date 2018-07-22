@@ -2,27 +2,27 @@ import &StandardImport
 
 class SwitchStn extends &BaseStn
 
-  toJs: (options) ->
-    {expression} = options if options
-    {condition, switchWhens, switchElse} = @labeledChildren
-    falsifyCases = !condition
-    options = falsifyCases: falsifyCases
+  # toJs: (options) ->
+  #   {expression} = options if options
+  #   {condition, switchWhens, switchElse} = @labeledChildren
+  #   falsifyCases = !condition
+  #   options = falsifyCases: falsifyCases
 
-    if expression
-      cases = array clause in switchWhens with clause.toFunctionBodyJs options
-      cases.push "default: #{switchElse.toFunctionBodyJs()};" if switchElse
-      "(() => {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
-    else
-      cases = array clause in switchWhens with clause.toJs options
-      cases.push "default: #{switchElse.toJs()};" if switchElse
-      "switch (#{@getConditionJs()}) {#{cases.join ' break; '}}"
+  #   if expression
+  #     cases = array clause in switchWhens with clause.toFunctionBodyJs options
+  #     cases.push "default: #{switchElse.toFunctionBodyJs()};" if switchElse
+  #     "(() => {switch (#{@getConditionJs()}) {#{cases.join ' '}};})()"
+  #   else
+  #     cases = array clause in switchWhens with clause.toJs options
+  #     cases.push "default: #{switchElse.toJs()};" if switchElse
+  #     "switch (#{@getConditionJs()}) {#{cases.join ' break; '}}"
 
-  getConditionJs: ->
-    {condition} = @labeledChildren
-    if condition
-      condition.toJsExpression()
-    else
-      "false"
+  # getConditionJs: ->
+  #   {condition} = @labeledChildren
+  #   if condition
+  #     condition.toJsExpression()
+  #   else
+  #     "false"
 
   toSourceNode: (options) ->
     {expression} = options if options

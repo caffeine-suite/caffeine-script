@@ -31,8 +31,8 @@ class RequireStn extends &BaseStn
 
   validate: -> @requireString
 
-  toJs: ->
-    "" require('#{@requireString}')
+  # toJs: ->
+  #   "" require('#{@requireString}')
 
   toSourceNode: ->
     {requireString} = @

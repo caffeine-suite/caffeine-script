@@ -20,14 +20,14 @@ class UnaryOperatorStn extends &BaseStn
     tail: -> @props.tail || @props.operand == "?"
 
   needsParens: false
-  toJs: ->
-    childrenJs = @applyParens @children[0].toJsExpression()
-    if @props.operand == "?"
-      "#{childrenJs} != null"
-    else if @props.tail
-      "#{childrenJs}#{@normalizedOperand}"
-    else
-      "#{@normalizedOperand}#{childrenJs}"
+  # toJs: ->
+  #   childrenJs = @applyParens @children[0].toJsExpression()
+  #   if @props.operand == "?"
+  #     "#{childrenJs} != null"
+  #   else if @props.tail
+  #     "#{childrenJs}#{@normalizedOperand}"
+  #   else
+  #     "#{@normalizedOperand}#{childrenJs}"
 
   toSourceNode: (options) ->
     {dotBase, forUnaryOpeartor} = options if options
