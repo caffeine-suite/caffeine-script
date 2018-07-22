@@ -2,7 +2,7 @@ import &StandardImport
 
 class ThisStn extends &BaseStn
 
-  needsParens: false
+
 
   @getter
     identifier: ->

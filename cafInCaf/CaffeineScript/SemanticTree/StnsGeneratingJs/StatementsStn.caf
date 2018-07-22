@@ -2,7 +2,7 @@ import &StandardImport, &Lib
 
 class StatementsStn extends &BaseStn
 
-  needsParens: false
+
 
   toSourceNode: (options)->
     {returnAction, generateStatements, expression, classBody} = options if options

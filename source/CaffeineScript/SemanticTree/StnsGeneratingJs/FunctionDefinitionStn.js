@@ -44,12 +44,6 @@ Caf.defMod(module, () => {
         },
         function(FunctionDefinitionStn, classSuper, instanceSuper) {
           this.getter({
-            needsParens: function() {
-              return false;
-            },
-            needsParensAsStatement: function() {
-              return !this.props.bound;
-            },
             childrenToUpdateScope: function() {
               return compactFlatten([this.statements]);
             },

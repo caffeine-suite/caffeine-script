@@ -9,7 +9,7 @@ class AccessorStn extends &AccessorChainStn
     @key = children[1]
     throw new Error "expecting second child to be a key" unless @key
 
-  needsParens: false
+
 
   @getter
     existanceTest: -> @props.existanceTest

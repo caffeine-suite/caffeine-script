@@ -31,7 +31,6 @@ Caf.defMod(module, () => {
             return this.props.tail || this.props.operand === "?";
           }
         });
-        this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
           let dotBase, forUnaryOpeartor, childNode, base;
           if (options) {

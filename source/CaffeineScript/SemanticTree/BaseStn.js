@@ -7,22 +7,31 @@ Caf.defMod(module, () => {
       "objectWithout",
       "toInspectedObjects",
       "objectKeyCount",
+      "createObjectTreeFactory",
+      "SourceNode",
       "Error",
+      "binary",
       "log"
     ],
-    [global, require("../StandardImport")],
+    [
+      global,
+      require("../StandardImport"),
+      require("art-object-tree-factory"),
+      require("caffeine-source-map"),
+      require("art-binary")
+    ],
     (
       BaseClass,
       objectWithout,
       toInspectedObjects,
       objectKeyCount,
+      createObjectTreeFactory,
+      SourceNode,
       Error,
+      binary,
       log
     ) => {
-      let createObjectTreeFactory, SourceNode, binary, BaseStn;
-      ({ createObjectTreeFactory } = require("art-object-tree-factory"));
-      ({ SourceNode } = require("caffeine-source-map"));
-      ({ binary } = require("art-binary"));
+      let BaseStn;
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
@@ -59,7 +68,7 @@ Caf.defMod(module, () => {
           }
         },
         function(BaseStn, classSuper, instanceSuper) {
-          let sourceNodeLineColumnScratch, applyRequiredParens, applyParens;
+          let sourceNodeLineColumnScratch;
           this.abstractClass();
           this.setter("parseTreeNode");
           this.getter({
@@ -342,26 +351,6 @@ Caf.defMod(module, () => {
             }
             return this;
           };
-          this.prototype.needsParens = true;
-          this.prototype.needsParensAsStatement = false;
-          this.prototype.getNeedsParens = function() {
-            return this.needsParens;
-          };
-          this.prototype.getNeedsParensAsStatement = function() {
-            return this.needsParensAsStatement;
-          };
-          this.applyRequiredParens = applyRequiredParens = function(expr) {
-            return `(${Caf.toString(expr)})`;
-          };
-          this.prototype.applyRequiredParens = applyRequiredParens;
-          this.applyParens = applyParens = function(expr) {
-            return expr.match(
-              /^(\([^)]*\)|\[[^\]]*\]|([!~-]*[_a-z0-9.]*)(\([^)]*\))?)$/i
-            )
-              ? expr
-              : `(${Caf.toString(expr)})`;
-          };
-          this.prototype.applyParens = applyParens;
           this.prototype.validate = function() {};
           this.prototype.validateAll = function() {
             let e, ce;

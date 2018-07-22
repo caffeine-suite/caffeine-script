@@ -33,7 +33,6 @@ Caf.defMod(module, () => {
           }
         },
         function(FunctionInvocationStn, classSuper, instanceSuper) {
-          this.prototype.needsParens = false;
           this.getter({
             existanceTest: function() {
               return this.props.existanceTest;

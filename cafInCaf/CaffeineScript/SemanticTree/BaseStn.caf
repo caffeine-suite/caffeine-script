@@ -1,8 +1,4 @@
-import &StandardImport
-{createObjectTreeFactory} = &ArtObjectTreeFactory
-{SourceNode} = &CaffeineSourceMap
-{binary} = &ArtBinary
-
+import &StandardImport, &ArtObjectTreeFactory, &CaffeineSourceMap, &ArtBinary
 
 ##
   TODO:
@@ -12,6 +8,9 @@ import &StandardImport
     - Positional is so fragile.
     - Property values can be children or arrays of children (for unbounded lists, where order matters)
     - It'll be much easier for writing code that generates Stns
+    Cons
+    - this refactor is going to be a bear!
+    - code-gen will be slightly more verbose
 
 class BaseStn extends BaseClass
   ################################################
@@ -60,11 +59,12 @@ class BaseStn extends BaseClass
 
   @getter
     sourceOffset: -> @parseTreeNode.offset
-    parser: -> @parseTreeNode.parser.rootParser
-    sourceFile: -> @parser.sourceFile
-    label: -> @props.label
-    pluralLabel: -> @props.pluralLabel
-    root: -> @parent?.root ? @
+    parser:       -> @parseTreeNode.parser.rootParser
+    sourceFile:   -> @parser.sourceFile
+    label:        -> @props.label
+    pluralLabel:  -> @props.pluralLabel
+    root:         -> @parent?.root ? @
+
     inspectedObjects: ->
       {label} = @
 
@@ -177,14 +177,6 @@ class BaseStn extends BaseClass
 
   @getter
     sourceFile: -> @parseTreeNode?.sourceFile ? "caffeine-script"
-    # newSourceNode: ->
-    #   # both are 0-base
-    #   {line, column} = @sourceLineColumn
-
-    #   new SourceNode
-    #     line + 1  # should be 1-based
-    #     column    # should be 0-based
-    #     @parseTreeNode.sourceFile
 
   createSourceNode: (children...) ->
     # log createSourceNode: {@type, @sourceIndex, offset: @parseTreeNode?.absoluteOffset,children}
@@ -339,12 +331,16 @@ class BaseStn extends BaseClass
   # transform after children have been transformed
   postTransform: -> @
 
-  # called before transforming children
-  # Should ONLY be used to ADD props to this node or its children
-  # Use this if the children need additional information to
-  # properly transform themselves.
-  # Example: ClassStn uses this to notify the constructor funcitonDefinitionStn
-  #   taat it is, indead, a constructor.
+  ##
+    Called before transforming children.
+
+    Should ONLY be used to ADD props to this node or its children.
+
+    Use this if the children need additional information to properly transform themselves.
+
+    Example:
+      ClassStn uses this to notify the constructor funcitonDefinitionStn
+      that it is, indead, a constructor.
   decorate: ->
 
   newTransformedInstance: (newProps, newChildren) ->
@@ -365,36 +361,6 @@ class BaseStn extends BaseClass
       each child in @children
         child.setDefaultParseTreeNode parseTreeNode
     @
-
-  ##########################
-    PARENTHESIS
-  ##########################
-  needsParens: true
-  needsParensAsStatement: false
-
-  getNeedsParens: -> @needsParens
-  getNeedsParensAsStatement: -> @needsParensAsStatement
-
-  @applyRequiredParens: applyRequiredParens = (expr) -> "(#{expr})"
-  applyRequiredParens: applyRequiredParens
-
-  @applyParens: applyParens = (expr) ->
-    if expr.match
-        ///i
-          ^(
-
-          \([^)]*\) |
-
-          \[[^\]]*\] |
-
-          ([!~-]*[_a-z0-9.]*)(\([^)]*\))?
-
-          )$
-      expr
-    else
-      "(#{expr})"
-
-  applyParens: applyParens
 
   ##########################
     VALIDATION

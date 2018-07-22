@@ -14,7 +14,6 @@ Caf.defMod(module, () => {
         }
       },
       function(FunctionDefinitionArgStn, classSuper, instanceSuper) {
-        this.prototype.needsParens = false;
         this.getter({
           argumentName: function() {
             return this.target.name;

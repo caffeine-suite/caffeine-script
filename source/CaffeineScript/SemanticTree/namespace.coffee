@@ -2,5 +2,6 @@
 # file: CaffeineScript/SemanticTree/namespace.coffee
 
 module.exports = (require '../namespace').addNamespace('SemanticTree', class SemanticTree extends Neptune.PackageNamespace)
+require './PlaceholderStns/namespace';
 require './StnsGeneratingJs/namespace';
 require './TransformOnlyStns/namespace'

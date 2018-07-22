@@ -44,8 +44,6 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
     @_updatingArgumentScope = false
 
   @getter
-    needsParens:            -> false
-    needsParensAsStatement: -> !@props.bound
     childrenToUpdateScope:  -> compactFlatten [@statements]
     body:                   -> @children[1]
     args:                   -> @children[0]

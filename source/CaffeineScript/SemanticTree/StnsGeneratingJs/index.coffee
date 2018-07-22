@@ -37,7 +37,6 @@ module.exports
   RegExpStn:                     require './RegExpStn'                    
   RequireStn:                    require './RequireStn'                   
   RootStn:                       require './RootStn'                      
-  SemanticTokenStn:              require './SemanticTokenStn'             
   SimpleLiteralStn:              require './SimpleLiteralStn'             
   StatementsStn:                 require './StatementsStn'                
   StringStn:                     require './StringStn'                    

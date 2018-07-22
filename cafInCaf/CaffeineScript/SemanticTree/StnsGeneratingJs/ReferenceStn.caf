@@ -22,7 +22,7 @@ class ReferenceStn extends &BaseStn
 
     canBeUsedInES6Structuring: -> true
 
-  needsParens: false
+
 
   toSourceNode: (options) ->
     @createSourceNode @propName

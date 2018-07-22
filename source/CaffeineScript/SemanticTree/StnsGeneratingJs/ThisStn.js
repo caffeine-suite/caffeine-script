@@ -9,7 +9,6 @@ Caf.defMod(module, () => {
       return (ThisStn = Caf.defClass(
         class ThisStn extends require("../BaseStn") {},
         function(ThisStn, classSuper, instanceSuper) {
-          this.prototype.needsParens = false;
           this.getter({
             identifier: function() {
               let id, cafBase;

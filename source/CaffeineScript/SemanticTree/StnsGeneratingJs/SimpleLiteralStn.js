@@ -5,7 +5,6 @@ Caf.defMod(module, () => {
   return (SimpleLiteralStn = Caf.defClass(
     class SimpleLiteralStn extends require("../BaseStn") {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {
-      this.prototype.needsParens = false;
       this.prototype.toSourceNode = function(options) {
         let value;
         ({ value } = this.props);

@@ -16,7 +16,7 @@ class FunctionInvocationStn extends &AccessorChainStn
 
     @props.existanceTest ||= true if @parseTreeNode?.conditional || @parseTreeNode?.existanceTest
 
-  needsParens: false
+
 
   @getter
     existanceTest: -> @props.existanceTest

@@ -4,7 +4,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ComprehensionValueClauseStn;
     return (ComprehensionValueClauseStn = Caf.defClass(
-      class ComprehensionValueClauseStn extends require("./BaseStn") {},
+      class ComprehensionValueClauseStn extends require("../BaseStn") {},
       function(ComprehensionValueClauseStn, classSuper, instanceSuper) {
         this.getter({
           type: function() {

@@ -19,7 +19,7 @@ class UnaryOperatorStn extends &BaseStn
   @getter
     tail: -> @props.tail || @props.operand == "?"
 
-  needsParens: false
+
 
   toSourceNode: (options) ->
     {dotBase, forUnaryOpeartor} = options if options

@@ -4,11 +4,11 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  AccessorChainStn:            require './AccessorChainStn'           
-  BaseStn:                     require './BaseStn'                    
-  ComprehensionValueClauseStn: require './ComprehensionValueClauseStn'
-  ScopeStnMixin:               require './ScopeStnMixin'              
-  UniqueIdentifierHandle:      require './UniqueIdentifierHandle'     
-  ValueBaseCaptureStn:         require './ValueBaseCaptureStn'        
+  AccessorChainStn:       require './AccessorChainStn'      
+  BaseStn:                require './BaseStn'               
+  ScopeStnMixin:          require './ScopeStnMixin'         
+  UniqueIdentifierHandle: require './UniqueIdentifierHandle'
+  ValueBaseCaptureStn:    require './ValueBaseCaptureStn'   
+require './PlaceholderStns'
 require './StnsGeneratingJs'
 require './TransformOnlyStns'

@@ -8,7 +8,7 @@ class SuperStn extends &BaseStn
     if @args.length == 1 && @args[0].props.implicitArray
       @args = @args[0].children
 
-  needsParens: false
+
 
   postTransform: ->
     unless propValue = @pretransformedStn.findParent "ObjectPropValue"

@@ -17,7 +17,6 @@ Caf.defMod(module, () => {
           }
         },
         function(SuperStn, classSuper, instanceSuper) {
-          this.prototype.needsParens = false;
           this.prototype.postTransform = function() {
             let propValue, methodName;
             if (

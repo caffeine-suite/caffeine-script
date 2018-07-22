@@ -9,7 +9,6 @@ Caf.defMod(module, () => {
       return (StatementsStn = Caf.defClass(
         class StatementsStn extends require("../BaseStn") {},
         function(StatementsStn, classSuper, instanceSuper) {
-          this.prototype.needsParens = false;
           this.prototype.toSourceNode = function(options) {
             let returnAction, generateStatements, expression, classBody, out;
             if (options) {

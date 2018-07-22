@@ -6,7 +6,6 @@ Caf.defMod(module, () => {
     return (UndefinedStn = Caf.defClass(
       class UndefinedStn extends require("../BaseStn") {},
       function(UndefinedStn, classSuper, instanceSuper) {
-        this.prototype.needsParens = false;
         this.prototype.toSourceNode = function() {
           return this.createSourceNode("undefined");
         };

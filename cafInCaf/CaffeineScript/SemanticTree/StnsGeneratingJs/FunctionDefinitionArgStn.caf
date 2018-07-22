@@ -2,7 +2,7 @@ import &StandardImport
 
 class FunctionDefinitionArgStn extends &BaseStn
 
-  needsParens: false
+
 
   constructor: (props, children) ->
     super

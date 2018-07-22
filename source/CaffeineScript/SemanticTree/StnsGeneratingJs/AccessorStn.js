@@ -21,7 +21,6 @@ Caf.defMod(module, () => {
           }
         },
         function(AccessorStn, classSuper, instanceSuper) {
-          this.prototype.needsParens = false;
           this.getter({
             existanceTest: function() {
               return this.props.existanceTest;

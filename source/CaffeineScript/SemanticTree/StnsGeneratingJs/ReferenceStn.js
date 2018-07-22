@@ -38,7 +38,6 @@ Caf.defMod(module, () => {
             return true;
           }
         });
-        this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
           return this.createSourceNode(this.propName);
         };
