@@ -18,7 +18,6 @@ module.exports
   IdentifierStn:                 require './IdentifierStn'                
   InterpolatedStringStn:         require './InterpolatedStringStn'        
   LabeledDestructuringTargetStn: require './LabeledDestructuringTargetStn'
-  LetStn:                        require './LetStn'                       
   NewInstanceStn:                require './NewInstanceStn'               
   NumberLiteralStn:              require './NumberLiteralStn'             
   ObjectDestructuringStn:        require './ObjectDestructuringStn'       

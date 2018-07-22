@@ -18,12 +18,12 @@ class ObjectPropNameStn extends &BaseStn
 
     propName: -> @simpleName
 
-  toJs: ->
-    [nameStn] = @children
-    if nameStn?.children.length > 0
-      "[#{nameStn.toJs()}]"
-    else
-      @simpleName
+  # toJs: ->
+  #   [nameStn] = @children
+  #   if nameStn?.children.length > 0
+  #     "[#{nameStn.toJs()}]"
+  #   else
+  #     @simpleName
 
   toSourceNode: ->
     [nameStn] = @children

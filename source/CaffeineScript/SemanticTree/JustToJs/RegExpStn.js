@@ -56,7 +56,11 @@ Caf.defMod(module, () => {
                       ? hasInterpolation
                         ? v.replace(/([`$\\])/g, "\\$1")
                         : v
-                      : ["${Caf.toString(", child.toJsExpression(), ")}"];
+                      : [
+                          "${Caf.toString(",
+                          child.toSourceNode({ expression: true }),
+                          ")}"
+                        ];
                   }))
                 : value;
             return !childrenNodes || childrenNodes.length === 0

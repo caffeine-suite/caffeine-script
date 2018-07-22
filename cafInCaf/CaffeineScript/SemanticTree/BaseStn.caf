@@ -342,7 +342,11 @@ class BaseStn extends BaseClass
     @toJs merge options, expression: true
 
   # a string that can be inserted in the middle of an ES6 interpolation string: `...`
-  toInterpolatedJsStringPart: -> "${Caf.toString(#{@toJsExpression()})}"
+  toInterpolatedJsStringPart: ->
+    []
+      "${Caf.toString("
+      @toSourceNode expression: true
+      ")}"
 
   ##########################
   ### TRANSFORM
@@ -461,11 +465,14 @@ class BaseStn extends BaseClass
     try
       @validate()
     catch e
-      throw @parseTreeNode.parser.generateCompileError {}
+      ce = @parseTreeNode.parser.generateCompileError {}
         failureIndex: @sourceOffset
         errorType: "Validation"
         e.message
         e.info
+
+      ce.stack = e.stack
+      throw ce
     each child in @children do child.validateAll()
     @
 

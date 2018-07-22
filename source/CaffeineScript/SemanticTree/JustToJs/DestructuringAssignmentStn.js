@@ -25,25 +25,6 @@ Caf.defMod(module, () => {
             !noParens ? ")" : undefined
           );
         };
-        this.prototype.toJs = function(options) {
-          let expression, returnValueIsIgnored, structure, value;
-          if (options) {
-            ({ expression, returnValueIsIgnored } = options);
-          }
-          ({ structure, value } = this.labeledChildren);
-          if (returnValueIsIgnored) {
-            expression = null;
-          }
-          return expression
-            ? `(${Caf.toString(structure.toJs())} = ${Caf.toString(
-                value.toJsExpression()
-              )}, ${Caf.toString(
-                structure.toJs({ restructuringStart: true })
-              )})`
-            : `(${Caf.toString(structure.toJs())} = ${Caf.toString(
-                value.toJsExpression()
-              )})`;
-        };
       }
     ));
   })();

@@ -26,11 +26,11 @@ module.exports =
         semanticTree            = parseTree.getStn()
         transformedSemanticTree = semanticTree.validateAll().transform()
 
-        oldToJs =
-          if compileModule
-            transformedSemanticTree.toJsModule()
-          else
-            transformedSemanticTree.toJs()
+        # oldToJs =
+        #   if compileModule
+        #     transformedSemanticTree.toJsModule()
+        #   else
+        #     transformedSemanticTree.toJs()
 
         withSourceMapJs =
           transformedSemanticTree.toJsUsingSourceNode
@@ -46,7 +46,7 @@ module.exports =
       # log "HERE5"
       try
         [newJs] = withSourceMapJs.split "\n//# sourceMappingURL"
-        assert.equal newJs, oldToJs
+        # assert.equal newJs, oldToJs
         assert.match withSourceMapJs, ///
           //\#\ sourceMappingURL=data:application/json;base64,[a-z0-9]+
           ///i
@@ -62,7 +62,7 @@ module.exports =
           name
           source
           options
-          oldToJs
+          # oldToJs
           withSourceMapJs
         }
 

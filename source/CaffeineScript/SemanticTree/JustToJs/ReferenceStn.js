@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
           if (this.props.identifierHandle) {
             this.scope.addUniqueIdentifierHandle(this.props.identifierHandle);
           } else {
-            this.scope.addIdentifierUsed(this.toJs());
+            this.scope.addIdentifierUsed(this.propName);
           }
           return instanceSuper.updateScope.apply(this, arguments);
         };
@@ -41,14 +41,6 @@ Caf.defMod(module, () => {
         this.prototype.needsParens = false;
         this.prototype.toSourceNode = function(options) {
           return this.createSourceNode(this.propName);
-        };
-        this.prototype.toJs = function() {
-          let cafBase;
-          return (
-            (Caf.exists((cafBase = this.props.identifierHandle)) &&
-              cafBase.identifier) ||
-            this.labeledChildren.identifier.toJs()
-          );
         };
       }
     ));

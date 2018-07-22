@@ -20,13 +20,6 @@ Caf.defMod(module, () => {
           return true;
         }
       });
-      this.prototype.toJs = function(options) {
-        let value;
-        ({ value } = this.props);
-        return Caf.exists(options) && options.dotBase
-          ? `(${Caf.toString(value)})`
-          : value;
-      };
     }
   ));
 });

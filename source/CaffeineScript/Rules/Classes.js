@@ -8,12 +8,7 @@ Caf.defMod(module, () => {
           "/class/ _ className:identifier classExtends:_extendsClause? _? body:actualBlockEmptyOk?",
         stnFactory: "ClassStn"
       },
-      _extendsClause: {
-        pattern: "_ /extends/ _ expressionWithOneLessBlock",
-        toJs: function() {
-          return this.expressionWithOneLessBlock.toJs();
-        }
-      }
+      _extendsClause: { pattern: "_ /extends/ _ expressionWithOneLessBlock" }
     };
   })();
 });

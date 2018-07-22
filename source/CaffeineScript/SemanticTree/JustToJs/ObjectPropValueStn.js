@@ -7,8 +7,8 @@ Caf.defMod(module, () => {
       "Error",
       "javaScriptReservedWords",
       "identifierRegexp",
-      "isString",
-      "present"
+      "present",
+      "isString"
     ],
     [global, require("../../StandardImport")],
     (
@@ -16,8 +16,8 @@ Caf.defMod(module, () => {
       Error,
       javaScriptReservedWords,
       identifierRegexp,
-      isString,
-      present
+      present,
+      isString
     ) => {
       let ObjectPropValueStn;
       return (ObjectPropValueStn = Caf.defClass(
@@ -72,17 +72,6 @@ Caf.defMod(module, () => {
               );
             }
           });
-          this.prototype.toJs = function() {
-            let valueChild, propName, base;
-            ({ valueChild, propName } = this);
-            base = this.valueChild.toJsExpression();
-            if (!isString(propName)) {
-              propName = propName.toJs();
-            }
-            return this.canBeUsedInES6Structuring
-              ? base
-              : `${Caf.toString(propName)}: ${Caf.toString(base)}`;
-          };
           this.prototype.validate = function() {
             return !present(this.propName)
               ? (() => {

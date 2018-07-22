@@ -41,17 +41,17 @@ class ObjectPropValueStn extends &BaseStn
       && @valueChild.canBeUsedInES6Structuring
       && @valueChild.propName == propName
 
-  toJs: ->
-    {valueChild, propName} = @
-    base = @valueChild.toJsExpression()
+  # toJs: ->
+  #   {valueChild, propName} = @
+  #   base = @valueChild.toJsExpression()
 
-    unless isString propName
-      propName = propName.toJs()
+  #   unless isString propName
+  #     propName = propName.toJs()
 
-    if @canBeUsedInES6Structuring
-      base
-    else
-      "#{propName}: #{base}"
+  #   if @canBeUsedInES6Structuring
+  #     base
+  #   else
+  #     "#{propName}: #{base}"
 
   validate: ->
     throw new Error "no prop name" unless present @propName

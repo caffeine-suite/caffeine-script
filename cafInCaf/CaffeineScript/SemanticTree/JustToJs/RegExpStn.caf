@@ -43,7 +43,7 @@ class RegExpStn extends &BaseStn
         else
           []
             "${Caf.toString("
-            child.toJsExpression()
+            child.toSourceNode expression: true
             ")}"
 
     else

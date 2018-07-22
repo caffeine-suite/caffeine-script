@@ -21,5 +21,5 @@ class FunctionDefinitionArgsStn extends &BaseStn
 
       ")"
 
-  toJs: ->
-    "(#{(array c in @children with c.toJs()).join(', ')})"
+  # toJs: ->
+  #   "(#{(array c in @children with c.toJs()).join(', ')})"

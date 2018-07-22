@@ -14,7 +14,7 @@ class AccessorStn extends &AccessorChainStn
   @getter
     existanceTest: -> @props.existanceTest
     isAccessor: -> true
-    propName: -> @key.toJs()
+    propName: -> @key.identifier
 
   toJs: ->
     base = @value.toJsExpression dotBase: true

@@ -6,7 +6,7 @@ class ReferenceStn extends &BaseStn
     if @props.identifierHandle
       @scope.addUniqueIdentifierHandle @props.identifierHandle
     else
-      @scope.addIdentifierUsed @toJs()
+      @scope.addIdentifierUsed @propName
     super
 
   @getter
@@ -27,6 +27,6 @@ class ReferenceStn extends &BaseStn
   toSourceNode: (options) ->
     @createSourceNode @propName
 
-  toJs: ->
-    @props.identifierHandle?.identifier
-    || @labeledChildren.identifier.toJs()
+  # toJs: ->
+  #   @props.identifierHandle?.identifier
+  #   || @labeledChildren.identifier.toJs()

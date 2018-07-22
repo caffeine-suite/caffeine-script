@@ -17,18 +17,6 @@ Caf.defMod(module, () => {
           base = this.childrenToSourceNodes(", ", subOptions);
           return restructuring ? base : this.createSourceNode("{", base, "}");
         };
-        this.prototype.toJs = function(options) {
-          let restructuring, restructuringStart, subOptions;
-          if (options) {
-            ({ restructuring, restructuringStart } = options);
-          }
-          if (restructuringStart || restructuring) {
-            subOptions = { restructuring: true };
-          }
-          return restructuring
-            ? `${Caf.toString(this.childrenToJs(", ", subOptions))}`
-            : `{${Caf.toString(this.childrenToJs(", ", subOptions))}}`;
-        };
       }
     ));
   })();

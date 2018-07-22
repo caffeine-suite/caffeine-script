@@ -6,4 +6,4 @@ class GlobalIdentifierStn extends &BaseStn
 
   toSourceNode: -> @createSourceNode @props.identifier
 
-  toJs: -> @props.identifier
+  # toJs: -> @props.identifier

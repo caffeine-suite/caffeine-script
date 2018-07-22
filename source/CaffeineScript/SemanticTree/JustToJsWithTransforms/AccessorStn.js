@@ -30,7 +30,7 @@ Caf.defMod(module, () => {
               return true;
             },
             propName: function() {
-              return this.key.toJs();
+              return this.key.identifier;
             }
           });
           this.prototype.toJs = function() {

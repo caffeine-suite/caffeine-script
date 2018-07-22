@@ -20,7 +20,7 @@ class ClassStn extends &BaseStn
     each stn in @body?.children when stn.type == :Object
       each objectPropValueStn in stn.children
         [propNameStn, propValueStn] = objectPropValueStn.children
-        if propNameStn.type == :ObjectPropName && propNameStn.toJs() == :constructor
+        if propNameStn.type == :ObjectPropName && propNameStn.propName == :constructor
           propValueStn.props.isConstructor = true
           each superCallChild in propValueStn.find /Super/
             superCallChild.props.calledInConstructor = true
@@ -36,7 +36,7 @@ class ClassStn extends &BaseStn
     AccessorStn,
     ThisStn} = SemanticTree
 
-    className = classNameStn.toJs()
+    className = classNameStn.identifier
 
     if body
       constructorStn = null

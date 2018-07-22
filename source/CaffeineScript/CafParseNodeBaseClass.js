@@ -99,9 +99,6 @@ Caf.defMod(module, () => {
           this.prototype.getTransformedSemanticTree = function() {
             return this.getStn().transform();
           };
-          this.prototype.toJs = function() {
-            return this.getTransformedSemanticTree().toJs();
-          };
         }
       ));
     }

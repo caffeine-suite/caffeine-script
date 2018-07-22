@@ -72,4 +72,4 @@ class CafParseNodeBaseClass extends Nodes.Node
   getTransformedSemanticTree: ->
     @getStn().transform()
 
-  toJs: -> @getTransformedSemanticTree().toJs()
+  # toJs: -> @getTransformedSemanticTree().toJs()

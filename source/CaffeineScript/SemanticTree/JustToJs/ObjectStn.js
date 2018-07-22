@@ -13,16 +13,6 @@ Caf.defMod(module, () => {
             return !this.children || this.children.length === 0;
           }
         });
-        this.prototype.toJs = function(options) {
-          let out;
-          out = `{${Caf.toString(
-            Caf.array(this.children, c => c.toJs()).join(", ")
-          )}}`;
-          return (Caf.exists(options) && options.dotBase) ||
-            (Caf.exists(options) && options.statement)
-            ? `(${Caf.toString(out)})`
-            : out;
-        };
         this.prototype.toSourceNode = function(options) {
           let base;
           base = [

@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
           this.scope.addIdentifierAssigned(
-            this.labeledChildren.identifier.toJs()
+            this.labeledChildren.identifier.identifier
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
@@ -30,22 +30,6 @@ Caf.defMod(module, () => {
                     )}`
                   : undefined
               );
-        };
-        this.prototype.toJs = function(options) {
-          let restructuring, identifier, destructuringDefault;
-          if (options) {
-            ({ restructuring } = options);
-          }
-          ({ identifier, destructuringDefault } = this.labeledChildren);
-          return restructuring
-            ? identifier.toJs()
-            : `${Caf.toString(this.props.ellipsis ? "..." : "")}${Caf.toString(
-                identifier.toJs()
-              )}${Caf.toString(
-                destructuringDefault
-                  ? ` = ${Caf.toString(destructuringDefault.toJsExpression())}`
-                  : ""
-              )}`;
         };
       }
     ));

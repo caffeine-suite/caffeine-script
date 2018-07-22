@@ -31,15 +31,6 @@ Caf.defMod(module, () => {
             dotBase ? "])" : "]"
           );
         };
-        this.prototype.toJs = function(options) {
-          let out;
-          out = `[${Caf.toString(
-            Caf.array(this.children, c => c.toJsExpression()).join(", ")
-          )}]`;
-          return Caf.exists(options) && options.dotBase
-            ? `(${Caf.toString(out)})`
-            : out;
-        };
       }
     ));
   })();

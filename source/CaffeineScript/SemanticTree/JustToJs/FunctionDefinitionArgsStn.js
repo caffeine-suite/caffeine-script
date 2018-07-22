@@ -26,11 +26,6 @@ Caf.defMod(module, () => {
             ")"
           );
         };
-        this.prototype.toJs = function() {
-          return `(${Caf.toString(
-            Caf.array(this.children, c => c.toJs()).join(", ")
-          )})`;
-        };
       }
     ));
   })();

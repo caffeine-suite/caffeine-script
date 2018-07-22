@@ -7,7 +7,6 @@ Caf.defMod(module, () => {
       "binaryOperatorToSourceNodeArray",
       "getOpPrecidence",
       "merge",
-      "binaryOperatorToJs",
       "getPrecidenceLevelIsLeftAssociative",
       "Error",
       "formattedInspect"
@@ -18,7 +17,6 @@ Caf.defMod(module, () => {
       binaryOperatorToSourceNodeArray,
       getOpPrecidence,
       merge,
-      binaryOperatorToJs,
       getPrecidenceLevelIsLeftAssociative,
       Error,
       formattedInspect
@@ -101,46 +99,6 @@ Caf.defMod(module, () => {
             return options && this._needsParens(options)
               ? this.createSourceNode("(", out, ")")
               : this.createSourceNode(out);
-          };
-          this.prototype.toJs = function(options) {
-            let out, identifier, parentOperatorPrecidence;
-            out =
-              this.operator === "?" && this.uniqueIdentifierHandle
-                ? (({ identifier } = this.uniqueIdentifierHandle),
-                  `((${Caf.toString(identifier)} = ${Caf.toString(
-                    this.left.toJsExpression()
-                  )}) != null ? ${Caf.toString(identifier)} : ${Caf.toString(
-                    this.right.toJsExpression()
-                  )})`)
-                : !operatorIsInfixJs(this.operator)
-                  ? binaryOperatorToJs(
-                      this.operator,
-                      this.left.toJsExpression(),
-                      this.right.toJsExpression()
-                    )
-                  : ((parentOperatorPrecidence = getOpPrecidence(
-                      this.operator
-                    )),
-                    binaryOperatorToJs(
-                      this.operator,
-                      this.left.toJs({
-                        expression: true,
-                        subExpression: true,
-                        parentOperatorPrecidence,
-                        isLeftOperand: true
-                      }),
-                      this.right.toJs({
-                        expression: true,
-                        subExpression: true,
-                        parentOperatorPrecidence,
-                        isLeftOperand: false
-                      })
-                    ));
-            return options
-              ? this._needsParens(options)
-                ? `(${Caf.toString(out)})`
-                : out
-              : out;
           };
           this.prototype._needsParens = function(toJsOptions) {
             let dotBase,

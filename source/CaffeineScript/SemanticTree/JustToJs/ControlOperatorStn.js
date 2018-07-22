@@ -70,69 +70,6 @@ Caf.defMod(module, () => {
               }
             })();
           };
-          this.prototype.toJs = function(options = {}) {
-            let expression,
-              returnValueIsIgnored,
-              jsExpression,
-              operand,
-              tempVarIdentifier,
-              out,
-              cafBase,
-              cafBase1;
-            ({ expression, returnValueIsIgnored } = options);
-            jsExpression = this.expression.toJsExpression();
-            ({ operand } = this);
-            operand = (() => {
-              switch (operand) {
-                case "until":
-                case "unless":
-                  jsExpression = `!${Caf.toString(
-                    this.applyParens(jsExpression)
-                  )}`;
-                  return operand === "until" ? "while" : "if";
-                default:
-                  return operand;
-              }
-            })();
-            return expression
-              ? operand === "while"
-                ? returnValueIsIgnored
-                  ? `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(false)
-                    )};};})()`
-                  : ((tempVarIdentifier = this.whileReturnTempVar),
-                    `(() => {while ${Caf.toString(
-                      this.applyRequiredParens(jsExpression)
-                    )} {${Caf.toString(
-                      this.body.toFunctionBodyJs(
-                        `${Caf.toString(tempVarIdentifier)} =`
-                      )
-                    )};}; return ${Caf.toString(tempVarIdentifier)};})()`)
-                : ((out = `${Caf.toString(
-                    this.expression.toJsExpression({ dotBase: true })
-                  )} ? ${Caf.toString(
-                    this.body.toJsExpression()
-                  )} : ${Caf.toString(
-                    (Caf.exists((cafBase = this.elseBody)) &&
-                      cafBase.toJsExpression()) ||
-                      "undefined"
-                  )}`),
-                  options.subExpression || options.dotBase
-                    ? (out = `(${Caf.toString(out)})`)
-                    : out)
-              : `${Caf.toString(operand)} ${Caf.toString(
-                  this.applyRequiredParens(jsExpression)
-                )} {${Caf.toString(this.body.toJs())};}${Caf.toString(
-                  this.elseBody
-                    ? ` else {${Caf.toString(
-                        Caf.exists((cafBase1 = this.elseBody)) &&
-                          cafBase1.toJs()
-                      )};}`
-                    : ""
-                )}`;
-          };
           this.prototype.toSourceNode = function(options = {}) {
             let expression,
               returnValueIsIgnored,

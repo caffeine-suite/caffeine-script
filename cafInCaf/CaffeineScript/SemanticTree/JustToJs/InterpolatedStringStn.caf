@@ -20,5 +20,5 @@ class InterpolatedStringStn extends &BaseStn
       array c in @children with c.toInterpolatedJsStringPart()
       :`
 
-  toJs: ->
-    "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"
+  # toJs: ->
+  #   "`#{(array c in @children with c.toInterpolatedJsStringPart()).join ''}`"

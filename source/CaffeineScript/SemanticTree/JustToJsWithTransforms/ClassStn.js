@@ -33,7 +33,7 @@ Caf.defMod(module, () => {
                   let propNameStn, propValueStn;
                   [propNameStn, propValueStn] = objectPropValueStn.children;
                   return propNameStn.type === "ObjectPropName" &&
-                    propNameStn.toJs() === "constructor"
+                    propNameStn.propName === "constructor"
                     ? ((propValueStn.props.isConstructor = true),
                       Caf.each2(
                         propValueStn.find(/Super/),
@@ -80,7 +80,7 @@ Caf.defMod(module, () => {
               AccessorStn,
               ThisStn
             } = SemanticTree);
-            className = classNameStn.toJs();
+            className = classNameStn.identifier;
             if (body) {
               constructorStn = null;
               body = FunctionDefinitionStn(

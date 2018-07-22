@@ -12,7 +12,7 @@ class ThisStn extends &BaseStn
         else
           escapeJavascriptString id
       else
-        peek(@children)?.toJs()
+        peek(@children)?.identifier
 
     propName: -> @identifier ? "this"
     # isIdentifier: -> identifierRegexp.test @identifier

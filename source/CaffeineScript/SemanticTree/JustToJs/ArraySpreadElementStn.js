@@ -6,9 +6,6 @@ Caf.defMod(module, () => {
     return (ArraySpreadElementStn = Caf.defClass(
       class ArraySpreadElementStn extends require("../BaseStn") {},
       function(ArraySpreadElementStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function() {
-          return `...${Caf.toString(this.childrenToJs())}`;
-        };
         this.prototype.toSourceNode = function() {
           return this.createSourceNode("...", this.childrenToSourceNodes());
         };

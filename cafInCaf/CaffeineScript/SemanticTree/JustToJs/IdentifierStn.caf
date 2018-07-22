@@ -27,4 +27,4 @@ class IdentifierStn extends &BaseStn
   toSourceNode: ->
     @createSourceNode (@props.identifierHandle || @props).identifier
 
-  toJs: -> (@props.identifierHandle || @props).identifier
+  # toJs: -> (@props.identifierHandle || @props).identifier

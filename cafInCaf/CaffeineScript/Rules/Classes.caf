@@ -6,4 +6,5 @@ classDefinition:
 
 _extendsClause:
   pattern: "_ /extends/ _ expressionWithOneLessBlock"
-  toJs: ~> @expressionWithOneLessBlock.toJs()
+  # getStn: ~> @expressionWithOneLessBlock.getStn()
+  # toJs: ~> @expressionWithOneLessBlock.toJs()

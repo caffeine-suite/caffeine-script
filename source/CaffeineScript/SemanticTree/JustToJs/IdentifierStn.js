@@ -55,9 +55,6 @@ Caf.defMod(module, () => {
               (this.props.identifierHandle || this.props).identifier
             );
           };
-          this.prototype.toJs = function() {
-            return (this.props.identifierHandle || this.props).identifier;
-          };
         }
       ));
     }

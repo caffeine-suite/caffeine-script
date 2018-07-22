@@ -17,7 +17,8 @@ Caf.defMod(module, () => {
                 ? identifierRegexp.test(id)
                   ? id
                   : escapeJavascriptString(id)
-                : Caf.exists((cafBase = peek(this.children))) && cafBase.toJs();
+                : Caf.exists((cafBase = peek(this.children))) &&
+                    cafBase.identifier;
             },
             propName: function() {
               let cafTemp;

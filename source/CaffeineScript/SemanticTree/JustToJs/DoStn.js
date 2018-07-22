@@ -9,13 +9,6 @@ Caf.defMod(module, () => {
       return (DoStn = Caf.defClass(
         class DoStn extends require("../BaseStn") {},
         function(DoStn, classSuper, instanceSuper) {
-          this.prototype.toJs = function() {
-            let functionDefinition;
-            ({ functionDefinition } = this.labeledChildren);
-            return `(${Caf.toString(functionDefinition.toJs())})(${Caf.toString(
-              Object.keys(functionDefinition.argumentNames).join(", ")
-            )})`;
-          };
           this.prototype.toSourceNode = function() {
             let functionDefinition;
             ({ functionDefinition } = this.labeledChildren);

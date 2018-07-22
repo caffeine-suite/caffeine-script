@@ -330,7 +330,11 @@ Caf.defMod(module, () => {
             return this.toJs(merge(options, { expression: true }));
           };
           this.prototype.toInterpolatedJsStringPart = function() {
-            return `\${Caf.toString(${Caf.toString(this.toJsExpression())})}`;
+            return [
+              "${Caf.toString(",
+              this.toSourceNode({ expression: true }),
+              ")}"
+            ];
           };
           this.prototype.transformChildren = function() {
             let ret;
@@ -396,17 +400,19 @@ Caf.defMod(module, () => {
           this.prototype.applyParens = applyParens;
           this.prototype.validate = function() {};
           this.prototype.validateAll = function() {
-            let e;
+            let e, ce;
             try {
               this.validate();
             } catch (cafError) {
               e = cafError;
-              throw this.parseTreeNode.parser.generateCompileError({
+              ce = this.parseTreeNode.parser.generateCompileError({
                 failureIndex: this.sourceOffset,
                 errorType: "Validation",
                 message: e.message,
                 info: e.info
               });
+              ce.stack = e.stack;
+              throw ce;
             }
             Caf.each2(this.children, child => child.validateAll());
             return this;
