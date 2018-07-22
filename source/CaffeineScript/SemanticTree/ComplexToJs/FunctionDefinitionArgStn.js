@@ -59,15 +59,6 @@ Caf.defMod(module, () => {
               )}`
             : undefined;
         };
-        this.prototype.toJs = function() {
-          return `${Caf.toString(this.rest ? "..." : "")}${Caf.toString(
-            this.target.toJs()
-          )}${Caf.toString(
-            this.defaultValue
-              ? ` = ${Caf.toString(this.defaultValue.toJs())}`
-              : ""
-          )}`;
-        };
       }
     ));
   })();

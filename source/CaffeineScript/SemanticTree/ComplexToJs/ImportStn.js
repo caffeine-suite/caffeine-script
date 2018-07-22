@@ -27,50 +27,6 @@ Caf.defMod(module, () => {
               );
             }
           });
-          this.prototype.toJs = function(options = {}) {
-            let importFromCaptureIdentifier,
-              p,
-              importBody,
-              importFromList,
-              identifiersToImport,
-              bodyMain,
-              bodyJs,
-              importsJs;
-            importFromCaptureIdentifier = null;
-            if ((p = this.findParent(/^Import$/))) {
-              ({ importFromCaptureIdentifier } = p);
-              true;
-            }
-            ({ importBody } = this.labeledChildren);
-            importFromList = arrayWithoutLast(this.children);
-            return importBody
-              ? ((identifiersToImport = Object.keys(
-                  importBody.generateImportMap()
-                )),
-                (bodyMain = importBody.toJs({ returnAction: true })),
-                (bodyJs = compactFlatten([
-                  importBody.getAutoLets(),
-                  bodyMain
-                ]).join("; ")),
-                identifiersToImport.length > 0
-                  ? ((importsJs = compactFlatten([
-                      importFromCaptureIdentifier || "global",
-                      Caf.array(importFromList, c => c.toJsExpression())
-                    ])),
-                    `Caf.importInvoke(["${Caf.toString(
-                      identifiersToImport.join('", "')
-                    )}"], ${Caf.toString(
-                      this._importFromCaptureIdentifier
-                        ? `${Caf.toString(
-                            this._importFromCaptureIdentifier
-                          )} = `
-                        : ""
-                    )}[${Caf.toString(importsJs.join(", "))}], (${Caf.toString(
-                      identifiersToImport.join(", ")
-                    )}) => {${Caf.toString(bodyJs)};})`)
-                  : `(() => {${Caf.toString(bodyJs)};})()`)
-              : "undefined";
-          };
           this.getter({
             parentImport: function() {
               return this.findParent(/^Import$/);

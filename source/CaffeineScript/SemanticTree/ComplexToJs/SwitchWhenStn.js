@@ -6,20 +6,6 @@ Caf.defMod(module, () => {
     return (SwitchWhenStn = Caf.defClass(
       class SwitchWhenStn extends require("../BaseStn") {},
       function(SwitchWhenStn, classSuper, instanceSuper) {
-        this.prototype.toJs = function(options) {
-          let thenDo;
-          ({ thenDo } = this.labeledChildren);
-          return `${Caf.toString(this._getCasesJs(options))}: ${Caf.toString(
-            thenDo.toJs()
-          )};`;
-        };
-        this.prototype.toFunctionBodyJs = function(options) {
-          let thenDo;
-          ({ thenDo } = this.labeledChildren);
-          return `${Caf.toString(this._getCasesJs(options))}: ${Caf.toString(
-            thenDo.toFunctionBodyJs()
-          )};`;
-        };
         this.prototype.toSourceNode = function(options) {
           let falsifyCases, returnAction, whenValue, thenDo;
           ({ falsifyCases, returnAction } = options);
@@ -36,19 +22,6 @@ Caf.defMod(module, () => {
             ": ",
             thenDo.toSourceNode({ returnAction })
           );
-        };
-        this.prototype._getCasesJs = function(options) {
-          let falsifyCases, whenValue, cases;
-          ({ falsifyCases } = options);
-          ({ whenValue } = this.labeledChildren);
-          cases = whenValue.implicitArray
-            ? Caf.array(whenValue.children, m =>
-                m.toJsExpression({ dotBase: falsifyCases })
-              )
-            : [whenValue.toJsExpression({ dotBase: falsifyCases })];
-          return falsifyCases
-            ? `case !${Caf.toString(cases.join(": case !"))}`
-            : `case ${Caf.toString(cases.join(": case "))}`;
         };
       }
     ));

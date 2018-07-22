@@ -10,9 +10,6 @@ Caf.defMod(module, () => {
       ) {},
       function(ImportBodyStn, classSuper, instanceSuper) {
         this.prototype.isImports = true;
-        this.prototype.toJs = function(options) {
-          return this.children[0].toJs(options);
-        };
         this.prototype.toSourceNode = function(options) {
           return this.children[0].toSourceNode(options);
         };

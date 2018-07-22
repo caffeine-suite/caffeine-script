@@ -252,44 +252,6 @@ Caf.defMod(module, () => {
                   statement ? ")" : undefined
                 );
           };
-          this.prototype.getBodyJs = function() {
-            let returnIgnored, isConstructor, statements, lets, cafBase;
-            ({ returnIgnored, isConstructor } = this.props);
-            statements =
-              Caf.exists((cafBase = this.body)) &&
-              cafBase.toFunctionBodyJsArray(!(isConstructor || returnIgnored));
-            if ((lets = this.getAutoLets())) {
-              statements = compactFlatten([lets, statements]);
-            }
-            return (Caf.exists(statements) && statements.length) > 0
-              ? `${Caf.toString(statements.join("; "))};`
-              : "";
-          };
-          this.prototype.getArgsJs = function() {
-            let cafTemp, cafBase;
-            return (cafTemp =
-              Caf.exists((cafBase = this.children[0])) && cafBase.toJs()) !=
-              null
-              ? cafTemp
-              : "()";
-          };
-          this.prototype.toJs = function() {
-            let isConstructor, bound;
-            ({ isConstructor, bound } = this.props);
-            return bound
-              ? this.simpleBound
-                ? `${Caf.toString(this.getArgsJs())} => ${Caf.toString(
-                    this.statementStns[0].toJsExpression()
-                  )}`
-                : `${Caf.toString(this.getArgsJs())} => {${Caf.toString(
-                    this.getBodyJs()
-                  )}}`
-              : `${Caf.toString(
-                  isConstructor ? "constructor" : "function"
-                )}${Caf.toString(this.getArgsJs())} {${Caf.toString(
-                  this.getBodyJs()
-                )}}`;
-          };
         }
       ));
     }

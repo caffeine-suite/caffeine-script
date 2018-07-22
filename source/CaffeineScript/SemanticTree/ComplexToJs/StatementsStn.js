@@ -47,32 +47,6 @@ Caf.defMod(module, () => {
             );
             return out;
           };
-          this.prototype.toJs = function(options) {
-            let expression, returnAction;
-            if (options) {
-              ({ expression, returnAction } = options);
-            }
-            return expression
-              ? (() => {
-                  switch (this.children.length) {
-                    case 0:
-                      return "undefined";
-                    case 1:
-                      return this.children[0].toJsExpression();
-                    default:
-                      return this.applyRequiredParens(
-                        this._getChildrenStatementsJsArray("", false).join(", ")
-                      );
-                  }
-                })()
-              : this._getChildrenStatementsJsArray(returnAction).join("; ");
-          };
-          this.prototype.toFunctionBodyJs = function(returnAction = true) {
-            return this.toFunctionBodyJsArray(returnAction).join("; ");
-          };
-          this.prototype.toFunctionBodyJsArray = function(returnAction = true) {
-            return this._getChildrenStatementsJsArray(returnAction);
-          };
           this.prototype._getChildrenStatementsJsArray = function(
             returnAction,
             generateStatements = true

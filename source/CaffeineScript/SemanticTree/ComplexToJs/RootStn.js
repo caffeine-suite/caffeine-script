@@ -70,48 +70,6 @@ Caf.defMod(module, () => {
               ? ((this._scopeHasBeenUpdated = true), this.updateScope(this))
               : undefined;
           };
-          this.prototype.toJsModule = function() {
-            let identifiersToImport, statementsJs, lets, statements;
-            this.rootUpdateScope();
-            identifiersToImport = Caf.array(
-              this.generateImportMap(),
-              (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
-            );
-            statementsJs = this.statements.toFunctionBodyJs();
-            lets = compactFlatten([
-              identifiersToImport,
-              this.requiredIdentifierLets
-            ]);
-            statements = compactFlatten([
-              lets.length > 0
-                ? `let ${Caf.toString(lets.join(", "))}`
-                : undefined,
-              statementsJs
-            ]);
-            return `"use strict"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {${Caf.toString(
-              statements.join("; ")
-            )};});`;
-          };
-          this.prototype.toJs = function() {
-            let statements;
-            this.rootUpdateScope();
-            statements = this.statements.toJs();
-            return (
-              compactFlatten([this.getAutoLets(), statements]).join("; ") + ";"
-            );
-          };
-          this.prototype.toBareJs = function() {
-            let statements;
-            this.rootUpdateScope();
-            statements = this.statements.toJs();
-            return (
-              compactFlatten([
-                "Caf = global.Caf || require('caffeine-script-runtime')",
-                this.getBareInitializers(),
-                statements
-              ]).join(";\n") + ";"
-            );
-          };
         }
       ));
     }

@@ -35,5 +35,5 @@ class FunctionDefinitionArgStn extends &BaseStn
   getFunctionPreBodyStatementsJs: ->
     "this.#{@target.toJs()} = #{@target.toJs()}" if @assignThisProperty
 
-  toJs: ->
-    "#{if @rest then '...' else ''}#{@target.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"
+  # toJs: ->
+  #   "#{if @rest then '...' else ''}#{@target.toJs()}#{if @defaultValue then " = #{@defaultValue.toJs()}" else ""}"

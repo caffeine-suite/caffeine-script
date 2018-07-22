@@ -6,8 +6,8 @@ class ImportBodyStn extends &ScopeStnMixin &BaseStn
 
   isImports: true
 
-  toJs: (options)->
-    @children[0].toJs options
+  # toJs: (options)->
+  #   @children[0].toJs options
 
   toSourceNode: (options)->
     @children[0].toSourceNode options
