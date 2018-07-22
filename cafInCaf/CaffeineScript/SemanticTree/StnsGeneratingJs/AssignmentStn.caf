@@ -1,0 +1,68 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+supportedOperatorsRegExp = /^([-+*\/%^|]|<<|>>|>>>|)$/
+
+class AssignmentStn extends &AccessorChainStn
+  constructor: (props, children) ->
+    super
+    @operator =  props.operator || ""
+    @lValue = children[0]
+    @rValue = children[1]
+
+  # value and key are for compatibility with ValueBaseCaptureStn
+  @getter
+    value:  -> @lValue
+    key:    -> @rValue
+    propName: -> @lValue?.propName
+
+  updateScope: (@scope) ->
+    @scope.addIdentifierAssigned @lValue?.explicitIdentifier
+    super
+
+  postTransform: ->
+    unless supportedOperatorsRegExp.test @operator
+      {value1, value2} = @getValueWithBaseCapture @lValue
+
+      SemanticTree.BinaryOperatorStn
+        {@operator}
+        value1
+        SemanticTree.AssignmentStn
+          {@parseTreeNode}
+          value2
+          @rValue
+    else
+      @
+
+  toSourceNode: (options) ->
+    out = if supportedOperatorsRegExp.test @operator
+      @createSourceNode
+        @lValue.toSourceNode()
+        " #{@operator}= "
+        @rValue.toSourceNode expression:true
+
+    else
+      @createSourceNode
+        @lValue.toSourceNode expression:true
+        " #{@operator} "
+        @lValue.toSourceNode()
+        " = "
+        @rValue.toSourceNode expression:true
+
+
+    if options?.dotBase || options?.subExpression
+      @createSourceNode
+        "("
+        out
+        ")"
+    else
+      out
+
+  # toJs: (options) ->
+  #   out = if supportedOperatorsRegExp.test @operator
+  #     "#{@lValue.toJs()} #{@operator}= #{@rValue.toJsExpression()}"
+  #   else
+  #     "#{@lValue.toJsExpression()} #{@operator} #{@lValue.toJs()} = #{@rValue.toJsExpression()}"
+  #   if options?.dotBase || options?.subExpression
+  #     "(#{out})"
+  #   else out

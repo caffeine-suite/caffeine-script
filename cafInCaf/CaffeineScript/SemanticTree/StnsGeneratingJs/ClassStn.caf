@@ -1,0 +1,144 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+class ClassStn extends &BaseStn
+
+  # updateScope: (@scope) ->
+  #   {className} = @labeledChildren
+  #   @scope.addIdentifierAssigned className.toJs()
+  #   super
+
+  @getter
+    className:            -> @props.className
+    classSuperHandle:     -> @props.classSuperHandle
+    instanceSuperHandle:  -> @props.instanceSuperHandle
+    body:                 -> @labeledChildren.body
+
+  # add isConstructor to the constructor, if found
+  # add calledInConstructor to any Super calls in the constructor
+  decorate: ->
+    each stn in @body?.children when stn.type == :Object
+      each objectPropValueStn in stn.children
+        [propNameStn, propValueStn] = objectPropValueStn.children
+        if propNameStn.type == :ObjectPropName && propNameStn.propName == :constructor
+          propValueStn.props.isConstructor = true
+          each superCallChild in propValueStn.find /Super/
+            superCallChild.props.calledInConstructor = true
+
+  postTransform: ->
+    {className: classNameStn, classExtends, body} = @labeledChildren
+    {FunctionDefinitionArgsStn,
+    StatementsStn,
+    FunctionDefinitionStn,
+    IdentifierStn,
+    FunctionDefinitionArgStn,
+    AssignmentStn,
+    AccessorStn,
+    ThisStn} = SemanticTree
+
+    className = classNameStn.identifier
+
+    if body
+      constructorStn = null
+      body = FunctionDefinitionStn
+        label: "body"
+        returnIgnored: true
+        FunctionDefinitionArgsStn
+          FunctionDefinitionArgStn IdentifierStn identifier: className
+
+          ## TODO: switch to these:
+            FunctionDefinitionArgStn IdentifierStn identifierHandle: classSuperHandle    = new UniqueIdentifierHandle "classSuper"
+            FunctionDefinitionArgStn IdentifierStn identifierHandle: instanceSuperHandle = new UniqueIdentifierHandle "instanceSuper"
+          FunctionDefinitionArgStn IdentifierStn identifier: classSuperHandle    = "classSuper"
+          FunctionDefinitionArgStn IdentifierStn identifier: instanceSuperHandle = "instanceSuper"
+        StatementsStn
+          statementsToCount = array stn in body.children
+            if stn.type == :Object
+              array objectPropValueStn in stn.children
+                [propNameStn, propValueStn] = objectPropValueStn.children
+                assignToStn = switch propNameStn.type
+                  when :ObjectPropName
+                    {propName, isThisProp} = propNameStn
+
+                    if isThisProp
+                      ThisStn IdentifierStn identifier: propName
+
+                    else
+                      if propName == :constructor
+                        constructorStn = propValueStn
+                        null
+
+                      else
+                        AccessorStn
+                          ThisStn IdentifierStn identifier: :prototype
+                          IdentifierStn identifier: propName
+
+                  when :ObjectLiteralAccessor
+                    AccessorStn
+                      ThisStn IdentifierStn identifier: :prototype
+                      propNameStn.children
+
+                  else
+                    throw new Error "unknown object property name Stn type: #{propNameStn.type}"
+
+                assignToStn && AssignmentStn assignToStn, propValueStn
+
+            else
+              stn
+
+      statementCount = statementsToCount.length
+      if constructorStn
+        statementCount -= 1
+        constructorStn.props.isConstructor = true
+        each superCallChild in constructorStn.find /Super/
+          superCallChild.props.calledInConstructor = true
+
+        classBody = StatementsStn
+          label: :classBody
+          constructorStn
+
+      body = null if statementsToCount <= 0
+      children = compactFlatten [classNameStn, classExtends, body, classBody]
+    else
+      children = @children
+
+    new AssignmentStn
+      new IdentifierStn identifier: className
+      new ClassStn
+        merge @props, {} className, classSuperHandle, instanceSuperHandle
+        children
+
+  # toJs: ->
+  #   {className, classExtends, body, classBody} = @labeledChildren
+  #   className = className.toJs()
+
+  #   # NOTE: without an 'extends' class, JavaScript extends Funciton, not Object
+  #   # AND 'super' is illegal
+  #   # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
+  #   out = "Caf.defClass(class #{className} extends #{classExtends?.toJsExpression() || :Object}"
+
+  #   classBodyJs = if classBody then "{#{classBody.toJs()};}" else "{}"
+
+  #   if body
+  #     out + " #{classBodyJs}, #{body.toJs()})"
+  #   else
+  #     out + " #{classBodyJs})"
+
+  # NOTE: without an 'extends' clause, JavaScript extends Function, not Object, which is just WRONG
+  # AND that makes 'super' illegal if you aren't extending anything.
+  # SO: in CaffeineScript, we always extend Object when there is no extends-clause.
+  toSourceNode: ->
+    {className, classExtends, body, classBody} = @labeledChildren
+
+    @createSourceNode
+      "Caf.defClass(class "
+      className.toSourceNode()
+      " extends "
+      classExtends?.toSourceNode(expression: true) ? :Object
+
+      " {"
+      classBody?.toSourceNode classBody: true
+      "}"
+
+      ", " body.toSourceNode() if body
+      ")"

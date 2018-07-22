@@ -1,0 +1,95 @@
+import &StandardImport
+
+class SuperStn extends &BaseStn
+  ##
+    props:
+      calledInConstructor: t/f
+
+  constructor: (props, @args) ->
+    super
+    # collapse implicit arrays into parents
+    if @args.length == 1 && @args[0].props.implicitArray
+      @args = @args[0].children
+
+  needsParens: false
+
+  postTransform: ->
+    unless propValue = @pretransformedStn.findParent "ObjectPropValue"
+      throw new Error "super must be used inside an object-literal value"
+
+    # log {propValue, propValue.isThisProp, propValue.propName}
+    unless isString methodName = propValue.propName
+      throw new Error "property name in parent object-literal must be constant, not computed"
+
+    new @class merge(@props, {} methodName, classMethod: !!propValue.isThisProp), @children
+
+  # toJs: ->
+  #   {args} = @
+
+  #   if @props.calledInConstructor
+  #     args = if @props.passArguments
+  #       ["...arguments"]
+  #     else
+  #       array a in args with a.toJsExpression()
+
+  #     "super(#{args.join ', '})"
+
+  #   else
+  #     method = if @props.passArguments
+  #       args = "arguments"
+  #       "apply"
+  #     else
+  #       args = array a in args with a.toJsExpression()
+  #       "call"
+
+  #     "#{@superObject}.#{@props.methodName}.#{method}#{@applyRequiredParens ['this'].concat(args).join ', '}"
+
+  @getter
+    klass: -> @findParent "Class"
+    superObject: ->
+      if @props.classMethod
+        @klass.classSuperHandle
+      else
+        @klass.instanceSuperHandle
+
+  validate: ->
+    unless @props.calledInConstructor || @klass
+      throw new Error "'super' must be used in a class definition"
+
+  toSourceNode: ->
+    {args} = @
+
+    if @props.calledInConstructor
+      args = if @props.passArguments
+        "...arguments"
+      else
+        @stnArrayToSourceNodes args, ', '
+
+      @createSourceNode
+        "super("
+        args
+        ")"
+
+    else
+      {passArguments} = @props
+      @createSourceNode
+        @superObject
+        "."
+
+        @props.methodName
+        "."
+
+        if passArguments then :apply else :call
+
+        "(this"
+
+        if @props.passArguments
+          []
+            ", "
+            :arguments
+        else if args.length > 0
+          []
+            ", "
+            @stnArrayToSourceNodes args, ', '
+
+        ")"

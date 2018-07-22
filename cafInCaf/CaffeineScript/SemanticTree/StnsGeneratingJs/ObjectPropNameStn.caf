@@ -1,0 +1,36 @@
+import &StandardImport
+
+class ObjectPropNameStn extends &BaseStn
+
+  @getter
+    canBeUsedInES6Structuring: ->
+      if name = @simpleName
+        identifierRegexp.test name
+
+    isThisProp: -> @props.isThisProp
+
+    simpleName: ->
+      nameStn = peek @children
+      if nameStn
+        nameStn.propName
+      else
+        escapePropName @props.value # ? @parseTreeNode.toString()
+
+    propName: -> @simpleName
+
+  # toJs: ->
+  #   [nameStn] = @children
+  #   if nameStn?.children.length > 0
+  #     "[#{nameStn.toJs()}]"
+  #   else
+  #     @simpleName
+
+  toSourceNode: ->
+    [nameStn] = @children
+    if nameStn?.children.length > 0
+      @createSourceNode
+        "["
+        nameStn.toSourceNode()
+        "]"
+    else
+      @createSourceNode @simpleName

@@ -1,0 +1,245 @@
+import &StandardImport
+StnRegistry = &StnRegistry
+
+##
+  Thinking.
+
+  I want a FunctionDefinitionStn which is scopeless.
+  - It doesn't act like a scope for variables which are only assigned within it.
+    - Those variables are letted in the enclosing scope.
+  - If it has args, it calls @scope.addIdentifierAssigned for each using the parent scope.
+  - The generated javascript uses temp variables for each of the args and then at the start
+    of the function, it assigns those args to the actual-named variables bound in the enclosing
+    scope.
+
+  WHY? There are 2 or more places where I am adding new control-structures which don't define scope
+  but are implemented with function-defs in javascript:
+    - iterators (each, array, object, etc...)
+    - promises
+    - do block (?)
+
+class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
+
+  ###
+    IN:
+      props:
+        bound: if true, use () => {} form, else function() {}
+        returnIgnored: if true, no return statement is generated
+        isConstructor: if true
+          - ensure there is a super and put it in the right order
+          - returnIgnored: true is implicit
+
+  constructor: (props, children, pretransformedStn) ->
+    if children.length == 1
+      [onlyChild] = children
+      unless onlyChild instanceof StnRegistry.FunctionDefinitionArgsStn.class
+        children = [StnRegistry.FunctionDefinitionArgsStn(), children[0]]
+    super props, children, pretransformedStn
+
+    @arguments = children[0]
+    @statements = children[1]
+
+    if @statements
+      throw new Error "statements must be type Statements (is: #{@statements.type})" unless @statements.type == :Statements
+    @_updatingArgumentScope = false
+
+  @getter
+    needsParens:            -> false
+    needsParensAsStatement: -> !@props.bound
+    childrenToUpdateScope:  -> compactFlatten [@statements]
+    body:                   -> @children[1]
+    args:                   -> @children[0]
+    statementStns:          -> @body?.children
+    argumentStns:           -> @args?.children
+
+  updateScope: ->
+    super
+    if @arguments
+      object name from @arguments.argumentNameList with @addArgumentName name
+      @_updatingArgumentScope = true
+      @arguments.updateScope @
+      @_updatingArgumentScope = false
+
+  addIdentifierAssigned: (identifier) ->
+    if @_updatingArgumentScope
+      @addArgumentName identifier
+    else
+      super
+
+  postTransform: ->
+    if @props.bound == "auto"
+      @props.bound = if foundParent = @pretransformedStn.findParent /Class|FunctionDefinition/
+        if foundParent.type == "Class"
+          false
+        else
+          true
+      else
+        false
+
+    if @statementStns != newStatementStns = @getPostTransformStatementStns()
+      {FunctionDefinitionStn, StatementsStn} = &StnRegistry
+      FunctionDefinitionStn
+
+        if @body?.children.length > 0
+          @props
+        else
+          merge @props, returnIgnored: true
+
+        @children[0]
+        StatementsStn newStatementStns
+
+    else
+      super
+
+  getPostTransformStatementStns: ->
+    {SuperStn, ArraySpreadElementStn, ReferenceStn, IdentifierStn} = &StnRegistry
+
+    {isConstructor} = @props
+    {statementStns} = @
+
+    preBodyStatements = null
+    each arg in @argumentStns
+      if stn = arg.generatePreBodyStatementStn()
+        preBodyStatements ?= []
+        .push stn
+
+    compactFlatten if isConstructor
+      lastSuperContainingStatementIndex = null
+
+      each v, i in statementStns when
+          v.type == "Super"
+          or v.find /Super/, /FunctionDefinition|Class/
+        lastSuperContainingStatementIndex = i
+
+      if lastSuperContainingStatementIndex? && lastSuperContainingStatementIndex >= 0
+        # have super
+        if preBodyStatements
+          # insert preBodyStatements just after the last super-containting statement
+          []
+            statementStns.slice 0, lastSuperContainingStatementIndex + 1
+            preBodyStatements
+            statementStns.slice lastSuperContainingStatementIndex + 1, statementStns.length
+        else
+          statementStns
+
+      else
+        # no super, insert one first
+        []
+          SuperStn
+            ArraySpreadElementStn
+              IdentifierStn identifier: :arguments
+
+          preBodyStatements
+          statementStns
+
+    else if preBodyStatements
+      # not constructor, but have preBodyStatements
+      []
+        preBodyStatements
+        statementStns
+
+    else
+      # just return statementStns
+      statementStns
+
+  ##
+    NOTES:
+
+    toSourceNode: (options) ->
+
+    Handling super in constructors is the trick. It may not be too hard.
+
+    We have to scan the body-statements and determine the first one
+    that contains a "super" call.
+
+      Specifically, we recurse down the Semantic tree, looking for
+      super, but not recursing into function or class definitions.
+
+    ON! And, super-insertion should be a transform; It shouldn't
+    even be in toJs / toSourceNode.
+
+    What about preBodyStatements?
+
+    Ultimately, they probably should also be part of the transform.
+
+    But we can do this refactor incrementally. except... prebody statements must come after
+    super...
+
+  @getter
+    autoLetsForSourceNode: ->
+      if lets = @getAutoLets()
+        lets + "; "
+    bound: -> @props.bound
+    simpleBound: ->
+      {statementStns} = @
+      @bound
+      && !@getAutoLets()
+      && statementStns?.length == 1
+      && statementStns[0].type != :Object
+
+  toSourceNode: (options) ->
+    {isConstructor, bound, returnIgnored} = @props
+    {statement, isOperand} = options if options
+    returnAction = !(isConstructor || returnIgnored)
+
+    argsSourceNode = @args?.toSourceNode() ? "()"
+    bodySourceNode = if @simpleBound
+      @body.children[0].toSourceNode expression: true
+    else
+      @body?.toSourceNode {returnAction}
+
+    if bound
+      # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#Parsing_order
+      if @simpleBound
+        @createSourceNode
+          "(" if isOperand
+          argsSourceNode
+          " => "
+          bodySourceNode
+          ")" if isOperand
+      else
+        @createSourceNode
+          "(" if isOperand
+          argsSourceNode
+          " => {"
+          @autoLetsForSourceNode
+          bodySourceNode
+          "}"
+          ")" if isOperand
+
+    else
+      @createSourceNode
+        "(" if statement
+        if isConstructor then "constructor" else "function"
+        argsSourceNode
+        " {"
+        @autoLetsForSourceNode
+        bodySourceNode
+        "}"
+        ")" if statement
+
+
+  # getBodyJs: ->
+  #   {returnIgnored, isConstructor} = @props
+  #   statements = @body?.toFunctionBodyJsArray !(isConstructor || returnIgnored)
+
+  #   if lets = @getAutoLets()
+  #     statements = compactFlatten [lets, statements]
+
+  #   if statements?.length > 0
+  #     "#{statements.join '; '};"
+  #   else ""
+
+  # getArgsJs: ->
+  #   @children[0]?.toJs() ? "()"
+
+  # toJs: ->
+  #   {isConstructor, bound} = @props
+
+  #   if bound
+  #     if @simpleBound
+  #       "#{@getArgsJs()} => #{@statementStns[0].toJsExpression()}"
+  #     else
+  #       "#{@getArgsJs()} => {#{@getBodyJs()}}"
+  #   else
+  #     "#{if isConstructor then "constructor" else "function"}#{@getArgsJs()} {#{@getBodyJs()}}"

@@ -1,0 +1,49 @@
+import &StandardImport, &Lib
+
+class StringStn extends &BaseStn
+
+  toSourceNode: (options) -> @createSourceNode @getJsLiteral options
+
+  @getter
+    propName: -> @jsLiteral
+    jsLiteral: (options) ->
+      base = deescapeSpaces @value
+      quotes = if /"/.test base
+        :'
+      else if /'/.test base
+        singleCount = base.split(:').length - 1
+        doubleCount = base.split(:").length - 1
+        if doubleCount <= singleCount
+          :"
+        else
+          :'
+      else
+        :"
+
+      out =
+        quotes
+        + escapeUnescaped
+            base.replace /\n/g, '\\n'
+            quotes
+        + quotes
+
+      if options?.dotBase
+        "(#{out})"
+      else out
+
+  compactNewLines: (compactLeft, compactRight) ->
+    @props.value = @value.replace /^\ *\n */, '' if compactLeft
+    @props.value = @value.replace /\ *\n *$/, '' if compactRight
+    @props.value = @value.replace /(\ *\n *)+/g, " "
+    @
+
+  trimLeft: -> @props.value = @value.trimLeft()
+  trimRight: -> @props.value = @value.trimRight()
+
+  @getter
+    value: -> @props.value
+
+  toInterpolatedBodySourceNode: ->
+    deescapeSpaces escapeUnescaped
+      escapeMustEscapes @value
+      "`$\n"

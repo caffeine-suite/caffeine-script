@@ -1,0 +1,32 @@
+import &StandardImport
+
+class ArrayStn extends &BaseStn
+
+  @getter
+    implicitArray: -> @props.implicitArray
+
+  constructor: (props, children) ->
+    # collapse implicit arrays into parents
+    if children.length == 1 && children[0].props.implicitArray
+      children = children[0].children
+    super props, children
+
+  toSourceNode: (options) ->
+    dotBase = options?.dotBase
+    @createSourceNode
+      if dotBase then "([" else "["
+      array c, i in @children
+        sn = c.toSourceNode expression: true
+        if i > 0
+          []
+            ", "
+            sn
+        else
+          sn
+      if dotBase then "])" else "]"
+
+  # toJs: (options) ->
+  #   out = "[#{(array c in @children with c.toJsExpression()).join ', '}]"
+  #   if options?.dotBase
+  #     "(#{out})"
+  #   else out

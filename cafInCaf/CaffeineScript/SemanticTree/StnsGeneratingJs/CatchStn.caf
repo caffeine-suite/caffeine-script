@@ -1,0 +1,52 @@
+import &StandardImport
+
+class CatchStn extends &BaseStn
+
+  updateScope: (@scope) ->
+    {errorIdentifier, body} = @labeledChildren
+
+    @uniqueIdentifierHandle = @scope.getUniqueIdentifierHandle "error", false
+
+    if errorIdentifier
+      @scope.addIdentifierAssigned errorIdentifier.name
+      @scope.addIdentifierUsed errorIdentifier.name
+
+    super
+
+  # toJs: (options = {}) ->
+  #   {expression} = options
+  #   {errorIdentifier, body} = @labeledChildren
+  #   body = body && if expression then body.toFunctionBodyJs() else body.toJs()
+
+  #   errorIdentifierString = @uniqueIdentifierHandle.identifier
+
+  #   if errorIdentifier
+  #     body =
+  #       compactFlatten []
+  #         "#{errorIdentifier.name} = #{errorIdentifierString}"
+  #         body
+  #       .join '; '
+
+  #   body = if body then body + ";" else ''
+  #   "catch (#{errorIdentifierString}) {#{body}}"
+
+  toSourceNode: (options = {}) ->
+    {expression} = options
+    {errorIdentifier, body} = @labeledChildren
+
+    body = body?.toSourceNode returnAction: !!expression
+
+    errorIdentifierString = @uniqueIdentifierHandle.identifier
+
+    if errorIdentifier
+      body = []
+        "#{errorIdentifier.name} = #{errorIdentifierString};"
+        " " if body
+        body
+
+    @createSourceNode
+      "catch ("
+      errorIdentifierString
+      ") {"
+      body
+      "}"

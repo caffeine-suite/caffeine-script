@@ -1,0 +1,32 @@
+import &StandardImport
+
+class DestructuringIdentifierStn extends &BaseStn
+
+  updateScope: (scope) ->
+    @scope = scope
+    @scope.addIdentifierAssigned @labeledChildren.identifier.identifier
+    super
+
+  # TODO: check that etc is only used on the last element of an array destructure - javascript limitations
+
+  toSourceNode: (options)->
+    {restructuring} = options if options
+
+    {identifier, destructuringDefault} = @labeledChildren
+    if restructuring
+      identifier.toSourceNode()
+
+    else
+      @createSourceNode
+        '...' if @props.ellipsis
+        identifier.toSourceNode()
+        if destructuringDefault then " = #{destructuringDefault.toSourceNode expression: true}"
+
+  # toJs: (options)->
+  #   {restructuring} = options if options
+
+  #   {identifier, destructuringDefault} = @labeledChildren
+  #   if restructuring
+  #     identifier.toJs()
+  #   else
+  #     "#{if @props.ellipsis then '...' else ''}#{identifier.toJs()}#{if destructuringDefault then " = #{destructuringDefault.toJsExpression()}" else ""}"

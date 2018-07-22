@@ -1,0 +1,32 @@
+import &StandardImport
+
+class ReferenceStn extends &BaseStn
+
+  updateScope: (@scope) ->
+    if @props.identifierHandle
+      @scope.addUniqueIdentifierHandle @props.identifierHandle
+    else
+      @scope.addIdentifierUsed @propName
+    super
+
+  @getter
+    isReference: -> true
+
+    propName: ->
+      @props.identifierHandle?.identifier
+      || @labeledChildren.identifier.propName
+
+    # explicitly in the source-code
+    explicitIdentifier: ->
+      @labeledChildren.identifier?.explicitIdentifier
+
+    canBeUsedInES6Structuring: -> true
+
+  needsParens: false
+
+  toSourceNode: (options) ->
+    @createSourceNode @propName
+
+  # toJs: ->
+  #   @props.identifierHandle?.identifier
+  #   || @labeledChildren.identifier.toJs()

@@ -1,0 +1,30 @@
+import &StandardImport
+
+class IdentifierStn extends &BaseStn
+
+  constructor: ->
+    unless @props.identifier
+      @props.identifierHandle ?= new &UniqueIdentifierHandle @props.preferredIdentifier, @props.addToLets
+
+  @getter
+    name: -> @props.identifier
+    isIdentifier: -> identifierRegexp.test @identifier
+    propName: -> @identifier
+
+    identifier: -> (@props.identifierHandle || @props).identifier
+
+    # explicitly in the source-code
+    explicitIdentifier: -> @props.identifier
+    canBeUsedInES6Structuring: -> true
+
+  updateScope: (@scope) ->
+    if @props.identifierHandle
+      @scope.addUniqueIdentifierHandle @props.identifierHandle
+    super
+
+  needsParens: false
+
+  toSourceNode: ->
+    @createSourceNode (@props.identifierHandle || @props).identifier
+
+  # toJs: -> (@props.identifierHandle || @props).identifier

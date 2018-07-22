@@ -1,0 +1,149 @@
+import &StandardImport
+
+class ControlOperatorStn extends &BaseStn
+
+  constructor: (props, children) ->
+    super
+    @operand    = props.operand ? :if
+    if @labeledChildren.expression
+      @expression = @labeledChildren.expression
+      @body       = @labeledChildren.body       ? StnRegistry.UndefinedStn()
+      @elseBody   = @labeledChildren.elseBody
+    else
+      @expression = children[0]
+      @body       = children[1] ? StnRegistry.UndefinedStn()
+      @elseBody   = children[2]
+
+    unless @body.type == "Statements"
+      @body = StnRegistry.StatementsStn @body
+      .parent = @
+
+    @validate()
+
+  @getter
+    whileReturnTempVar: ->
+      @_whileReturnTempVar ?= @scope.uniqueIdentifier
+
+  validate: ->
+    switch @operand
+    when "while", "until"
+      throw new Error "else not expected after #{@operand}" if @elseBody
+    when "if", "unless"
+      null
+    else
+      throw new Error "INTERNAL: invalid control-operator: #{formattedInspect @operand}"
+
+  # toJs: (options = {})->
+  #   {expression, returnValueIsIgnored} = options
+  #   jsExpression = @expression.toJsExpression()
+  #   {operand} = @
+
+  #   operand = switch operand
+  #     when "until", "unless"
+  #       jsExpression = "!#{@applyParens jsExpression}"
+  #       if operand == "until" then "while" else "if"
+  #     else operand
+
+  #   if expression
+  #     if operand == "while"
+  #       if returnValueIsIgnored
+  #         "
+  #         (() => {while
+  #         #{@applyRequiredParens jsExpression}
+  #         {#{@body.toFunctionBodyJs false};};})()
+  #         "
+  #       else
+  #         tempVarIdentifier = @whileReturnTempVar
+  #         "
+  #         (() => {while
+  #         #{@applyRequiredParens jsExpression}
+  #         {#{@body.toFunctionBodyJs "#{tempVarIdentifier} ="};};
+  #         return #{tempVarIdentifier};})()
+  #         "
+
+  #     else
+  #       out =
+  #         "
+  #         #{@expression.toJsExpression dotBase: true} ?
+  #         #{@body.toJsExpression()} :
+  #         #{@elseBody?.toJsExpression() || 'undefined'}
+  #         "
+  #       if options.subExpression || options.dotBase
+  #         out = "(#{out})"
+  #       else
+  #         out
+  #   else
+  #     "
+  #     #{operand}
+  #     #{@applyRequiredParens jsExpression}
+  #     {#{@body.toJs()};}#{if @elseBody then " else {#{@elseBody?.toJs()};}" else ''}
+  #     "
+
+  toSourceNode: (options = {})->
+    {expression, returnValueIsIgnored, noParens} = options
+    {operand} = @
+
+    applyParens = false
+
+    unaryOperator = ""
+
+    switch operand
+    when :until, :unless
+      operand = if operand == :until
+        :while
+      else
+        :if
+
+      unaryOperator = "!"
+
+    parts = if expression
+      switch operand
+      when :while
+        if returnValueIsIgnored
+          @doSourceNode
+            "while ("
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+            ") {"
+            @body.toSourceNode()
+            "};"
+
+        else
+          tempVarIdentifier = @whileReturnTempVar
+          @doSourceNode
+            "while ("
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+            ") {"
+            @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
+            "}; return #{tempVarIdentifier};"
+
+      when :if
+        applyParens = options.subExpression || options.dotBase
+
+        []
+          unaryOperator
+          @expression.toSourceNode dotBase: true, expression: true
+          " ? "
+          @body.toSourceNode expression: true
+          " : "
+          @elseBody?.toSourceNode(expression: true) || 'undefined'
+
+    else
+      []
+        operand
+        " ("
+        unaryOperator
+        @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+        ") {"
+        @body.toSourceNode()
+        "}"
+        if @elseBody then []
+          " else {"
+          @elseBody.toSourceNode()
+          "}"
+
+    @createSourceNode
+      "(" if applyParens && !noParens
+      parts
+      ")" if applyParens && !noParens

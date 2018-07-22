@@ -1,0 +1,26 @@
+import &StandardImport
+
+class ObjectLiteralAccessorStn extends &BaseStn
+
+  constructor: (props, children) ->
+    super
+    @key = children[0]
+
+  needsParens: false
+
+  @getter
+    existanceTest: -> @props.existanceTest
+    isAccessor: -> true
+
+  ###
+    @value is only ever not set for object literal computed property names. (object-structuring)
+  # toJs: ->
+  #   base = @value?.toJsExpression dotBase: true
+  #   "#{base || ""}[#{@key.toJsExpression()}]"
+
+  toSourceNode: ->
+    @createSourceNode
+      @value?.toSourceNode dotBase: true
+      "["
+      @key.toSourceNode expression: true
+      "]"

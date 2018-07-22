@@ -1,0 +1,70 @@
+## import &StandardImport
+
+  class ObjectPropValueStn extends &BaseStn
+
+    @getter isObject: true
+
+    toJs: ->
+      [prop, value] = @children
+      "#{prop.toJs()}: #{value.toJsExpression()}"
+
+import &StandardImport
+
+##
+  props:
+    propertyName: string (optional)
+
+class ObjectPropValueStn extends &BaseStn
+
+  @getter
+    isObject: true
+    propNameChild: -> @children[0]
+    valueChild: -> peek @children
+
+    isThisProp: -> @propNameChild?.isThisProp
+
+    propName: ->
+      {propNameChild} = @
+      @props.propName ?=
+        switch @children.length
+        when 2
+          propNameChild.propName ? propNameChild
+
+        when 1
+          propNameChild.propName ?
+            throw new Error "#{propNameChild.type} not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers."
+
+    canBeUsedInES6Structuring: ->
+      propName = @propNameChild.propName
+      && !javaScriptReservedWords[propName]
+      && identifierRegexp.test propName
+      && @valueChild.canBeUsedInES6Structuring
+      && @valueChild.propName == propName
+
+  # toJs: ->
+  #   {valueChild, propName} = @
+  #   base = @valueChild.toJsExpression()
+
+  #   unless isString propName
+  #     propName = propName.toJs()
+
+  #   if @canBeUsedInES6Structuring
+  #     base
+  #   else
+  #     "#{propName}: #{base}"
+
+  validate: ->
+    throw new Error "no prop name" unless present @propName
+
+  toSourceNode: ->
+    {valueChild, propName} = @
+    base = valueChild.toSourceNode expression: true
+    propName = propName.toSourceNode() unless isString propName
+
+    if @canBeUsedInES6Structuring
+      base
+    else
+      @createSourceNode
+        propName
+        ": "
+        base

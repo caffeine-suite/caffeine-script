@@ -1,0 +1,52 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+class ExtractToIdentifierStn extends &BaseStn
+
+  @getter
+    assignToIdentifierStn: ->
+      @extractAs
+      ? peek @extractPathExtensions
+      ? @bastIdentifier
+
+    extractAs:      -> @labeledChildren.extractAs
+    extractDefault: -> @labeledChildren.extractDefault
+    bastIdentifier: -> @labeledChildren.bastIdentifier
+
+    extractPathExtensions: ->
+      {extractPathExtensions, extractPathExtension} = @labeledChildren
+      extractPathExtensions ? extractPathExtension && [extractPathExtension]
+
+  getSourceValueStn: (extractSource) ->
+    stn = SemanticTree.AccessorStn
+      extractSource
+      @bastIdentifier
+
+    if extensions = @extractPathExtensions
+      each extension in extensions
+        stn = SemanticTree.AccessorStn
+          stn
+          extension
+      stn
+    else
+      stn
+
+  getTransformedExtractionStns: (extractSource)->
+    {AccessorStn, AssignmentStn, IdentifierStn, BinaryOperatorStn, UndefinedStn, ControlOperatorStn} = SemanticTree
+
+    if @extractDefault
+      ControlOperatorStn
+        BinaryOperatorStn
+          UndefinedStn()
+          operator: :!==
+          AssignmentStn
+            tempIdentifierStn = IdentifierStn()
+            @getSourceValueStn extractSource
+        tempIdentifierStn
+        @extractDefault.transform()
+    else
+      @getSourceValueStn extractSource
+
+  updateScope: (@scope) ->
+    @scope.addIdentifierAssigned @children[0].identifier
+    super

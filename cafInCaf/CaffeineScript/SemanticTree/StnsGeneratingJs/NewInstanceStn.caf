@@ -1,0 +1,42 @@
+import &StandardImport
+
+class NewInstanceStn extends &BaseStn
+
+  # toJs: (options) ->
+  #   [child] = @children
+  #   childJs =
+  #     switch child.type
+  #     when :FunctionInvocation, :Reference, :GlobalIdentifier, :This
+  #       child.toJs newObjectFunctionInvocation: true
+  #     else
+  #       "(#{child.toJs()})"
+
+  #   if options?.dotBase
+  #     "(new #{childJs})"
+  #   else
+  #     "new #{childJs}"
+
+  toSourceNode: (options) ->
+    {noParens} = options if options
+    [child] = @children
+
+    childNodes = switch child.type
+      when :FunctionInvocation, :Reference, :GlobalIdentifier, :This
+        child.toSourceNode newObjectFunctionInvocation: true
+      else
+        []
+          "("
+          child.toSourceNode()
+          ")"
+
+    if options?.dotBase
+      @createSourceNode
+        "(" unless noParens
+        "new "
+        childNodes
+        ")" unless noParens
+
+    else
+      @createSourceNode
+        "new "
+        childNodes

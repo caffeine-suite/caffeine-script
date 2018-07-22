@@ -1,0 +1,29 @@
+import &StandardImport
+SemanticTree = &StnRegistry
+
+##
+  ObjectStn
+    ObjectPropValueStn
+      ObjectPropNameStn
+        value:            "source"
+
+    ObjectPropValueStn
+      ObjectPropNameStn:
+        - value:            "value"
+        - str.IdentiferStn: identifier: "value"
+
+      - propValue.ReferenceStn: - identifier.IdentiferStn: identifier: "foo"
+
+class CaptureStn extends &BaseStn
+
+  postTransform: ->
+    # log CaptureStn: parseTreeNode:
+    SemanticTree.ObjectStn
+      @props
+      SemanticTree.ObjectPropValueStn
+        SemanticTree.ObjectPropNameStn value: "source"
+        SemanticTree.StringStn value: @children[1].parseTreeNode.text
+
+      SemanticTree.ObjectPropValueStn
+        SemanticTree.ObjectPropNameStn value: "value"
+        @children[1]

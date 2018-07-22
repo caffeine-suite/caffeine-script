@@ -1,0 +1,93 @@
+import &StandardImport
+
+StatementsStn = &StatementsStn
+
+class RootStn extends &ScopeStnMixin &BaseStn
+  constructor: (props, children) ->
+    super
+    @_scopeHasBeenUpdated = false
+    @statements = children[0]
+
+  isImports: true
+
+  @getter
+    statementsSourceNodes: ->
+      @statements.toSourceNode()
+
+  toSourceNode: (options = {})->
+    @rootUpdateScope()
+    if options.bare
+      @createSourceNode
+        "" Caf = global.Caf || require('caffeine-script-runtime');\n
+        @getBareInitializers()
+        @statementsSourceNodes
+
+    else if options.module
+      identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
+
+      # before lets
+      statementsSourceNode = @statements.toSourceNode returnAction: true
+
+      # why isn't this "getAutoLets" like everywhere else?
+      lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
+
+      @createSourceNode
+        """
+          "use strict"
+          let Caf = require('caffeine-script-runtime');
+          Caf.defMod(module, () => {
+
+        "let #{lets.join ', '}; " if lets.length > 0
+
+        statementsSourceNode
+
+        """
+          });
+    else
+      # do before getAutoLets - WhileStn may need a temp var, but it won't know
+      # until we call toSourceNode
+      {statementsSourceNodes} = @
+      @createSourceNode
+        if present autoLets = @getAutoLets()
+          [] autoLets, "; "
+        statementsSourceNodes
+
+  rootUpdateScope: ->
+    unless @_scopeHasBeenUpdated
+      @_scopeHasBeenUpdated = true
+      @updateScope @
+
+  # toJsModule: ->
+  #   @rootUpdateScope()
+  #   identifiersToImport = array v, k in @generateImportMap() with "#{k} = global.#{k}"
+
+  #   statementsJs = @statements.toFunctionBodyJs()
+
+  #   lets = compactFlatten [] identifiersToImport, @requiredIdentifierLets
+  #   statements = compactFlatten []
+  #     "let #{lets.join ', '}" if lets.length > 0
+  #     statementsJs
+
+  #   """
+  #     "use strict"
+  #     let Caf = require('caffeine-script-runtime');
+  #     Caf.defMod(module, () => {#{statements.join '; '};});
+
+  # toJs: ->
+  #   @rootUpdateScope()
+  #   statements = @statements.toJs()
+  #   compactFlatten []
+  #     @getAutoLets()
+  #     statements
+  #   .join '; '
+  #   + ";"
+
+  # toBareJs: ->
+  #   @rootUpdateScope()
+  #   statements = @statements.toJs()
+  #   compactFlatten []
+  #     "" Caf = global.Caf || require('caffeine-script-runtime')
+  #     @getBareInitializers()
+  #     statements
+  #   .join ';\n'
+  #   + ";"

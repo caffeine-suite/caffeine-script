@@ -1,0 +1,177 @@
+import &StandardImport
+
+SemanticTree = &StnRegistry
+
+class ComprehensionStn extends &ScopeStnMixin &BaseStn
+
+  ###
+    TODO explicit iterationTypes:
+      ExampleA: object v from-array a
+      ExampleB: object v from-object a
+      ExampleC: object v from-iter a
+
+      UPDATE 2018-5-4:
+        Currently, chrome is full-speed with closureless functions,
+        but if there is a closure, even if there is no escape, there is a 7x
+        speed penaltiy: https://jsbench.me/1nj5v4npva
+
+        Safari is much worse - it's a 30x difference between using
+        an existing function vs a newly created one, no matter
+        the structure of the funciton.
+
+        FireFox: no-closure is fast, but w-closure is 60x slower!
+
+        However, all three ARE full-speed with an external function vs
+        inlining.
+
+        All of which means, elliminating function creation is still a big
+        win.
+
+      My plan is to actually make inline loops for explicit from-type iteration.
+
+
+  validate: ->
+    {valueClauses, variableDefinition} = @labeledChildren
+    if variableDefinition?.children.length > 2
+      throw new Error "Can define at most two loop variables (value followed optionally by key). You defined: #{variableDefinition.parseTreeNode?.toString()}."
+
+    {comprehensionType} = @
+
+    {toClause, byClause, tilClause, fromClause} = @labeledClauses
+
+    if (toClause || byClause || tilClause) && comprehensionType != :array
+      throw new Error "" 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions
+
+    unless fromClause || toClause || tilClause
+      throw new Error "" 'from', 'to' or 'til' clause require
+
+    if toClause && tilClause
+      throw new Error "" only one 'to' or 'til' clause allowed
+
+    if byClause && !(tilClause || toClause)
+      throw new Error "" 'to' or 'til' clause required to use 'by'
+
+  clauseAliases =
+    returning:  :into
+    in:         :from
+    do:         :with
+
+  @getter
+    comprehensionType: -> @labeledChildren.outputType.props.token
+
+    labeledClauses: ->
+      {iterable, body} = @labeledChildren
+      labeledClauses = {}
+
+      each {type, value} in @labeledChildren.valueClauses
+        type = clauseAliases[type] ? type
+        name = lowerCamelCase type + :Clause
+        if labeledClauses[name]
+          throw new Error "" no more than one '#{type}' clause allowed
+        labeledClauses[name] = value
+
+      labeledClauses.fromClause ?= iterable
+      labeledClauses.withClause ?= body
+
+      labeledClauses
+
+  postTransform: ->
+    @initLabeledChildren()
+
+    {labeledClauses, comprehensionType} = @
+
+    if labeledClauses.toClause || labeledClauses.tilClause
+      @generateArrayRange labeledClauses
+    else
+      switch comprehensionType
+      when :each, :array, :object
+        @generateArrayOrEach
+          if comprehensionType == :each then :each2 else comprehensionType
+          labeledClauses
+
+      when :find
+        @generateFind
+          labeledClauses
+
+  resolveStnParams: (params...) ->
+    {SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
+    {variableDefinition} = @labeledChildren
+
+    lastNonNulIndex = 0
+    params = array p, i in params
+      p = switch
+      when p is Object
+        {f} = p
+        if f
+          FunctionDefinitionStn
+            bound: true
+            variableDefinition
+            f
+      when p is String
+        SimpleLiteralStn value: p
+
+      else p
+
+      lastNonNulIndex = i if p?
+      p
+
+    Null = null
+    params = params.slice 0, lastNonNulIndex + 1
+    array p in params
+      p ? Null ?= SimpleLiteralStn value: :null
+
+  # Caf.arrayRange(fromValue, toValue, withClause = returnFirst, whenClause = returnTrue, byValue, til, into = []) ->
+  generateArrayRange: ({withClause, whenClause, toClause, tilClause, byClause, fromClause, intoClause})->
+    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
+
+    if tilClause
+      toClause = tilClause
+      tilClause = :true
+
+    FunctionInvocationStn
+      IdentifierStn identifier: "" Caf.arrayRange
+
+      @resolveStnParams
+        fromClause ? "0"
+        toClause
+        {} f: withClause
+        {} f: whenClause
+        byClause
+        tilClause
+        intoClause
+
+  # Caf.find(source, withClause, whenClause) ->
+  generateFind: ({fromClause, withClause, whenClause})->
+    {iterable, variableDefinition} = @labeledChildren
+    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
+
+    FunctionInvocationStn
+      IdentifierStn identifier: "" Caf.find
+
+      @resolveStnParams
+        fromClause
+        {} f: withClause
+        {} f: whenClause
+
+  # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
+  # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
+  # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
+  generateArrayOrEach: (method, {fromClause, intoClause, withClause, whenClause, withKeyClause})->
+    {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
+    {variableDefinition} = @labeledChildren
+
+    # if the value-variable is defined, it's a destructuring set the special default withClause
+    # Example: array {a}        # default: with {a}
+    # Example: array extract a  # default: with a     - extract not impleneted as-of this writing
+    if variableDefinition?.children?.length > 0 && !variableDefinition.children[0].isSimpleIdentifier
+      withClause ?= StatementsStn variableDefinition.children[0]
+
+    FunctionInvocationStn
+      IdentifierStn identifier: "" Caf.#{method}
+
+      @resolveStnParams
+        fromClause
+        {} f: withClause
+        {} f: whenClause
+        intoClause
+        {} f: withKeyClause

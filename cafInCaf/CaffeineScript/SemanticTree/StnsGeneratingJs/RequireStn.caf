@@ -1,0 +1,42 @@
+# WARNING: jsPretty BREAKS the javascript output. The problem is jsPretty removes () around ({a} = b)
+# which breaks NODE v6 (but not chrome or safari).
+# See my NODE issue report: https://github.com/nodejs/node/issues/11480
+
+import &StandardImport
+
+{findModuleSync} = require 'caffeine-mc'
+
+class RequireStn extends &BaseStn
+
+  # updateScope: (@scope) ->
+  #   @scope.addIdentifierAssigned @identifierAssignedName
+  #   super
+
+  @getter
+
+    # # TODO: should be everything after last '/'
+    # identifierAssignedName: -> peek @props.require.split "/"
+
+    rawRequireString: -> @props.require
+
+    propName: ->
+      if /\//.test @rawRequireString
+        peek @rawRequireString.split "/"
+      else
+        @rawRequireString
+
+    requireString: ->
+      findModuleSync @rawRequireString, @parser.options
+      .requireString
+
+  validate: -> @requireString
+
+  # toJs: ->
+  #   "" require('#{@requireString}')
+
+  toSourceNode: ->
+    {requireString} = @
+    @createSourceNode
+      "" require('#{requireString}')
+    .withProps
+      moduleDependencies: "#{@rawRequireString}": requireString
