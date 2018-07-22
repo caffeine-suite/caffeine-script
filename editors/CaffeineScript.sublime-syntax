@@ -62,7 +62,7 @@ contexts:
     # strings in YAML. When using single quoted strings, only single quotes
     # need to be escaped: this is done by using two single quotes next to each
     # other.
-    - match: '\b(super|extract|instanceof|return|break|into|returning|try|catch|promise|resolve|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|in|from|with|do|case|when|import)\b'
+    - match: '\b(super|extract|instanceof|return|break|into|returning|try|catch|promise|resolve|then|and|or|is|isnt|not|if|else|switch|unless|until|throw|new|while|class|extends|array|object|find|each|to|til|by|in|from|with|do|case|when|import)\b'
       scope: keyword.caffeine
 
     - match: '\b(false|true)\b'
