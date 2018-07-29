@@ -46,7 +46,7 @@ version: require('../../package.json').version
 
 compile: (source, options = {}) ->
   try
-    {bare, inlineMap, sourceMap, sourceFile} = options
+    {bare, inlineMap, sourceMap, sourceFile, sourceRoot} = options
 
     transformedStn =
       stn =
@@ -61,6 +61,7 @@ compile: (source, options = {}) ->
       inlineMap
       sourceMap
       sourceFile
+      sourceRoot
 
   catch e
     unless e.location? || e.sourceFile? || e.message.match /parse|expect/i
