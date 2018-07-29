@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.58.6"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -C -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.58.7"};
 
 /***/ }),
 /* 5 */
@@ -914,7 +914,6 @@ Caf.defMod(module, () => {
       "createObjectTreeFactory",
       "SourceNode",
       "Error",
-      "binary",
       "log"
     ],
     [
@@ -932,7 +931,6 @@ Caf.defMod(module, () => {
       createObjectTreeFactory,
       SourceNode,
       Error,
-      binary,
       log
     ) => {
       let BaseStn;
@@ -1138,6 +1136,7 @@ Caf.defMod(module, () => {
               inlineMap,
               source,
               sourceMap,
+              sourceRoot,
               sourceFile,
               sourceNode,
               out,
@@ -1148,30 +1147,19 @@ Caf.defMod(module, () => {
               inlineMap,
               source = this.source,
               sourceMap,
+              sourceRoot,
               sourceFile = this.sourceFile
             } = options);
             sourceNode = this.toSourceNode(options);
             out = {
               compiled:
                 inlineMap || sourceMap
-                  ? (({ js, sourceMap } = sourceNode.generate(
-                      source,
-                      sourceFile
-                    )),
-                    inlineMap
-                      ? {
-                          js: `${Caf.toString(
-                            js
-                          )}\n//# sourceMappingURL=${Caf.toString(
-                            binary(sourceMap).toDataUri(
-                              "application/json",
-                              true
-                            )
-                          )}\n//# sourceURL=${Caf.toString(sourceFile)}`
-                        }
-                      : sourceMap
-                        ? { js, sourceMap }
-                        : { js })
+                  ? (({ js, sourceMap } = sourceNode.generate(source, {
+                      sourceFile,
+                      sourceRoot,
+                      inlineMap
+                    })),
+                    { js, sourceMap })
                   : { js: sourceNode.toString() }
             };
             if (debug) {
