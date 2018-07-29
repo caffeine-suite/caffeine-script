@@ -1,69 +1,83 @@
-#################################
-BIG PROBLEMS
-#################################
+# BIG PROBLEMS
 
 Comment Preprocessing has to go:
 
-  This:
-    """
-      abc
+This:
+
+```coffeescript
+"""
+  abc
+## comment
+```
+Currently compiles to: 
+
+```coffeescript
+"abc\n## comment"
+```
+
+The comment should not be in the string!
+
+OH NOES!
+
+Also,
+
+```coffeescript
+"""
+  abc
     ## comment
+```
 
-  Currently compiles to: "abc\n## comment"
-  The comment should not be in the string.
+Currently compiles to: 
 
-  OH NOES!
+```coffeescript
+"abc\n## comment"
+```
 
-  Also,
-    """
-      abc
-        ## comment
+The comment SHOULD be in the string, but it should have 2 spaces first.
 
-  Currently compiles to: "abc\n## comment"
-  The comment SHOULD be in the string, but it should have 2 spaces first.
+I tried just stripping comments in the preprocessor, but that breaks the
+second example above.
 
-  I tried just stripping comments in the preprocessor, but that breaks the
-  second example above.
+The real solution looks like this: Every block sub-parsed, other than literals
+like string-blocks or comment-blocks themselves, needs something akin to the
+current preprocess step: Any under-indented comments should be up-indented to
+the base of the sub-block. I -think- that'll solve it.
 
-  The real solution looks like this: Every block sub-parsed, other than literals
-  like string-blocks or comment-blocks themselves, needs something akin to the
-  current preprocess step: Any under-indented comments should be up-indented to
-  the base of the sub-block. I -think- that'll solve it.
+# SEMANTIC TODO
 
-#################################
-SEMANTIC TODO
-#################################
-
----------
+```coffeescript
 a = 10
 while a > 0
   b = a
   a--
----------
+```
+
 This should have "let a" outside the while, but should have "let b" inside, like
 all the comprehensions.
 
 ---------
+```
 result extract colorInfo extract colorMap
+```
 
-SHOULD extract colorInfo.
-1)
-  > result extract colorInfo, colorInfo extract colorMap
+SHOULD extract colorInfo. Notes:
+
+1. ```> result extract colorInfo, colorInfo extract colorMap```
   is just weird
-2)
-  > (a extract b) ->
+2. ```> (a extract b) ->```
   That sets 'a' even though it is an intermediate value.
 
 However, I'm OK with the following not setting 'b':
 
+```
 > a extract b.c
+```
 
+# SHOULD COMPILE
 
-#################################
-SHOULD COMPILE
-#################################
+I think the problem is the trailing comments:
 
-# I think the problem is the trailing comments
+```coffeescript
 switch subject
   when :mailbox     then true   # the mailbox is unavailable
   when :mailSystem  then true   # the mail system is unvailable
@@ -73,22 +87,31 @@ switch subject
   when :protocol    then false  # means the server thinks WE broke protocol
   when :content     then false  # means the server doesn't like our content - since we weren't really sending any, something weird happend
   else false                    # something weird happened
+```
 
 
------
+---
 
+```coffeescript
 new class FakeSocket
+```
 
------
+---
+
+```coffeescript
 (-> arguments.length)()
-
------
+```
+---
+```coffeescript
   [].slice 0, 100
+```
+---
 
------
+```coffeescript
   {@getPriority} = options
-
------
+```
+---
+```coffeescript
   {
     a
     b
@@ -103,7 +126,9 @@ new class FakeSocket
     a
     b
   = myObject
--------
+```
+---
+```coffeescript
 import &StandardImport
 
 authorizedSync = (request) ->
@@ -111,43 +136,65 @@ authorizedSync = (request) ->
     request.session.userId in config.curators
   else
     present request.session.userId
+```
 
-#################################
-SHOULD NOT COMPILE
-#################################
------
+# SHOULD NOT COMPILE
+
+```coffeescript
 a = private: 1
 {private} = a
 console.log private
+```
+---
+I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
 
-# I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
------
+```coffeescript
 foo (a)->
   .bar
 
------
 testUpdatesAfterBillsAndAlicesMessages = =>
   @testCreateBillsMessage()
   .then @testCreateAlicesMessage
   .then (message) =>
     .then @setup
 
------
+```
+
+---
+```coffeescript
 App extends FluxComponent
+```
 
 
-#################################
-WRONG COMPILE
-#################################
-THIS: -a**2
-SHOULD BE: -(a**2)
+# WRONG COMPILE
 
-----
+```coffeescript
+# THIS: 
+-a**2
+
+# SHOULD BE: 
+-(a**2)
+```
+---
+```coffeescript
 if i == cats.length - 1 then Promise.then -> action event, props else {}
 # "action event, props" should be inside the .then funciton
-
-----
-
--01
-
+```
+---
 Should just become: -1 (-01 is illegal in JavaScript)
+
+```coffeescript
+-01
+```
+
+
+---
+```coffeescript
+array item in list.sort (a, b) -> b - a when item
+
+# Should NOT be:
+Caf.array(list.sort(function(a, b) {})(b - a), null, item => item);
+
+# Should be:
+Caf.array(list.sort(function(a, b) {return b - a}), null, item => item);
+```

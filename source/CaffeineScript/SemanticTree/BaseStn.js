@@ -10,7 +10,6 @@ Caf.defMod(module, () => {
       "createObjectTreeFactory",
       "SourceNode",
       "Error",
-      "binary",
       "log"
     ],
     [
@@ -28,7 +27,6 @@ Caf.defMod(module, () => {
       createObjectTreeFactory,
       SourceNode,
       Error,
-      binary,
       log
     ) => {
       let BaseStn;
@@ -234,6 +232,7 @@ Caf.defMod(module, () => {
               inlineMap,
               source,
               sourceMap,
+              sourceRoot,
               sourceFile,
               sourceNode,
               out,
@@ -244,30 +243,19 @@ Caf.defMod(module, () => {
               inlineMap,
               source = this.source,
               sourceMap,
+              sourceRoot,
               sourceFile = this.sourceFile
             } = options);
             sourceNode = this.toSourceNode(options);
             out = {
               compiled:
                 inlineMap || sourceMap
-                  ? (({ js, sourceMap } = sourceNode.generate(
-                      source,
-                      sourceFile
-                    )),
-                    inlineMap
-                      ? {
-                          js: `${Caf.toString(
-                            js
-                          )}\n//# sourceMappingURL=${Caf.toString(
-                            binary(sourceMap).toDataUri(
-                              "application/json",
-                              true
-                            )
-                          )}\n//# sourceURL=${Caf.toString(sourceFile)}`
-                        }
-                      : sourceMap
-                        ? { js, sourceMap }
-                        : { js })
+                  ? (({ js, sourceMap } = sourceNode.generate(source, {
+                      sourceFile,
+                      sourceRoot,
+                      inlineMap
+                    })),
+                    { js, sourceMap })
                   : { js: sourceNode.toString() }
             };
             if (debug) {

@@ -230,25 +230,15 @@ class BaseStn extends BaseClass
       sourceMap:  string
 
   toJsUsingSourceNode: (options = {}) ->
-    {debug, inlineMap, source = @source, sourceMap, sourceFile = @sourceFile} = options
+    {debug, inlineMap, source = @source, sourceMap, sourceRoot, sourceFile = @sourceFile} = options
     sourceNode = @toSourceNode options
 
     out = compiled: if inlineMap || sourceMap
       {js, sourceMap} =
         sourceNode
-        .generate source, sourceFile
-
-      if inlineMap
-        js:
-          """
-            #{js}
-            //# sourceMappingURL=#{binary(sourceMap).toDataUri :application/json, true}
-            //# sourceURL=#{sourceFile}
-      else if sourceMap
-        {js, sourceMap}
-
-      else
-        {js}
+        .generate
+          source
+          {} sourceFile, sourceRoot, inlineMap
 
     else
       js: sourceNode.toString()
