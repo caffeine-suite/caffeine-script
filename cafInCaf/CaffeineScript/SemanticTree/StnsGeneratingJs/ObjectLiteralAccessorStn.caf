@@ -6,8 +6,6 @@ class ObjectLiteralAccessorStn extends &BaseStn
     super
     @key = children[0]
 
-
-
   @getter
     existanceTest: -> @props.existanceTest
     isAccessor: -> true

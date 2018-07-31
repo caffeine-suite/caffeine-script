@@ -2,8 +2,6 @@ import &StandardImport
 
 class ThisStn extends &BaseStn
 
-
-
   @getter
     identifier: ->
       if id = @props.identifier

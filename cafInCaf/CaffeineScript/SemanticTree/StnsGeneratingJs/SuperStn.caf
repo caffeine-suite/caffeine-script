@@ -8,8 +8,6 @@ class SuperStn extends &BaseStn
     if @args.length == 1 && @args[0].props.implicitArray
       @args = @args[0].children
 
-
-
   postTransform: ->
     unless propValue = @pretransformedStn.findParent "ObjectPropValue"
       throw new Error "super must be used inside an object-literal value"

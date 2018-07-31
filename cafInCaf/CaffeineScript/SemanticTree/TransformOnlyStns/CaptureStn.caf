@@ -17,7 +17,6 @@ SemanticTree = &StnRegistry
 class CaptureStn extends &BaseStn
 
   postTransform: ->
-    # log CaptureStn: parseTreeNode:
     SemanticTree.ObjectStn
       @props
       SemanticTree.ObjectPropValueStn

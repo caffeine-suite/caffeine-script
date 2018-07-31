@@ -22,7 +22,5 @@ class IdentifierStn extends &BaseStn
       @scope.addUniqueIdentifierHandle @props.identifierHandle
     super
 
-
-
   toSourceNode: ->
     @createSourceNode (@props.identifierHandle || @props).identifier

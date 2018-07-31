@@ -2,8 +2,6 @@ import &StandardImport, &Lib
 
 class StatementsStn extends &BaseStn
 
-
-
   toSourceNode: (options)->
     {returnAction, generateStatements, expression, classBody} = options if options
     generateStatements ?= !expression

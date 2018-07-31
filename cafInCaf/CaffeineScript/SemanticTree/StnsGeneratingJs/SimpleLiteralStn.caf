@@ -1,6 +1,5 @@
 class SimpleLiteralStn extends &BaseStn
 
-
   toSourceNode: (options) ->
     {value} = @props
 

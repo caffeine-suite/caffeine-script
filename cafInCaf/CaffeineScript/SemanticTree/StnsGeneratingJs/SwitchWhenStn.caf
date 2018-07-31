@@ -17,7 +17,6 @@ class SwitchWhenStn extends &BaseStn
             ': case '
           dotBase: falsifyCases
 
-
       else
         []
           whenValue.toSourceNode dotBase: falsifyCases

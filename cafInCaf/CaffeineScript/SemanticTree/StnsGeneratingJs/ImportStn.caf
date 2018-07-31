@@ -13,8 +13,6 @@ import &StandardImport
 
 class ImportStn extends &BaseStn
 
-  # jsExpressionUsesReturn: true
-
   @getter
     nonImportScope: ->
       {scope} = @
@@ -25,9 +23,7 @@ class ImportStn extends &BaseStn
     importFromCaptureIdentifier: ->
       @_importFromCaptureIdentifier ||= @nonImportScope.bindUniqueIdentifier "parentImports"
 
-  @getter
-    parentImport: ->
-      @findParent /^Import$/
+    parentImport: -> @findParent /^Import$/
 
   toSourceNode: (options = {})->
     importFromCaptureIdentifier = null

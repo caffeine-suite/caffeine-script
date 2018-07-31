@@ -25,9 +25,7 @@ Caf.defMod(module, () => {
                   "parentImports"
                 ))
               );
-            }
-          });
-          this.getter({
+            },
             parentImport: function() {
               return this.findParent(/^Import$/);
             }

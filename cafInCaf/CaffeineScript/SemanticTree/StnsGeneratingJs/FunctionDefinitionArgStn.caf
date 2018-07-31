@@ -2,8 +2,6 @@ import &StandardImport
 
 class FunctionDefinitionArgStn extends &BaseStn
 
-
-
   constructor: (props, children) ->
     super
 
