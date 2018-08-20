@@ -23,7 +23,7 @@
     "url": "git@github.com:shanebdavis/caffeine-script.git"
   },
   "scripts": {
-    "build": "caf -v -p -C -c cafInCaf -o source",
+    "build": "caf -v -p -c cafInCaf -o source",
     "perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
     "start": "webpack-dev-server --hot --inline --progress",
     "test": "nn -s;mocha -u tdd",
