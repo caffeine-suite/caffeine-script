@@ -9,7 +9,7 @@ This:
   abc
 ## comment
 ```
-Currently compiles to: 
+Currently compiles to:
 
 ```coffeescript
 "abc\n## comment"
@@ -27,7 +27,7 @@ Also,
     ## comment
 ```
 
-Currently compiles to: 
+Currently compiles to:
 
 ```coffeescript
 "abc\n## comment"
@@ -164,15 +164,20 @@ testUpdatesAfterBillsAndAlicesMessages = =>
 ```coffeescript
 App extends FluxComponent
 ```
+---
+'default' is an illegal variable name in JS
+```coffeescript
+({default, fields}) ->
+```
 
 
 # WRONG COMPILE
 
 ```coffeescript
-# THIS: 
+# THIS:
 -a**2
 
-# SHOULD BE: 
+# SHOULD BE:
 -(a**2)
 ```
 ---
