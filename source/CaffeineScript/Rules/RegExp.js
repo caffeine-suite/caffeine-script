@@ -65,13 +65,7 @@ Caf.defMod(module, () => {
             return { value: this.text === "\\ " ? " " : this.text };
           }
         },
-        multilineRegExpComment: {
-          pattern: "/^|\\n|\\s/ comment",
-          stnFactory: "StringStn",
-          stnProps: function() {
-            return { value: "" };
-          }
-        },
+        multilineRegExpComment: { pattern: "/^|\\n|\\s/ comment" },
         multilineRegExpInterpolation: {
           pattern: "/ */ interpolationStart expression interpolationEnd"
         },

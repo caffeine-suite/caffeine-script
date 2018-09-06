@@ -9,18 +9,28 @@ import &StandardImport
       {} pattern: "/##[^\n]*/ unparsedBlock*"
       {} pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/
 
+    ##
+      Statement-ends are:
+        new-line          "\n"
+        end-of-buffer     ($)
+        semi-column       ";"
+        close-parenthesis ")"
+
+      NOTE:   A close-parenthesis can be considered an 'end'
+      WHY?    It's needed to make this parse: (-> 1)
+              Without it, the "1" wouldn't be a statement.
+      NOTE:   The close-paren is not 'consumed' by this regexp.
+
     _end:
       ///
         (\ * (\n | ;\ * | $) )+
         |
         (\ * (?=\)))
-        # A close-parenthesis can be considered an 'end'
-        # This is makes this parse: (-> 1).
-        # Without it, the "1" wouldn't be a statement.
-        # NOTE: the close-paren is not 'consumed' by this regexp.
 
     lineStartComment: "comment _end" "_end"
     lineEndComment:   "_? comment? _end lineStartComment*"
 
     # commenting this out breacks compiling: LiteralStrings.caf
     {} getPresent: ~> false
+
+    onlyCommentsRemain: "lineEndComment /$/"

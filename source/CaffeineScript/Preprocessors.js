@@ -149,8 +149,7 @@ Caf.defMod(module, () => {
                 lines.join("\n"))
               : source;
           };
-          this.preprocess = source =>
-            this.normalizeComments(this.normalizeIndentation(source));
+          this.preprocess = source => this.normalizeIndentation(source);
         }
       ));
     }

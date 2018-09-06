@@ -106,4 +106,6 @@ class Preprocessors
       source
 
   @preprocess: (source) =>
-    @normalizeComments @normalizeIndentation source
+    # DISABLED - this needs to be applied at the block level
+    # @normalizeComments
+    @normalizeIndentation source

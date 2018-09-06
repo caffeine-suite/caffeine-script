@@ -19,7 +19,8 @@ Caf.defMod(module, () => {
           getPresent: function() {
             return false;
           }
-        }
+        },
+        { onlyCommentsRemain: "lineEndComment /$/" }
       );
     };
   })();

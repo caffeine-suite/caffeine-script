@@ -392,6 +392,11 @@ module.exports = suite: parseTestSuite
             thing.
           ''': '`This\\nthat and the ${Caf.toString(b)}\\nthing.`;'
 
+    regressions:
+      """
+      ""
+        # looks like a comment but its not
+      """: '"# looks like a comment but its not";'
   interpolated:
     basic:
       '"${#{foo}}"':                     '`\\${${Caf.toString(foo)}}`;'
@@ -414,3 +419,4 @@ module.exports = suite: parseTestSuite
         2
       }there"
       """: "`hi${Caf.toString([1, 2])}there`;"
+

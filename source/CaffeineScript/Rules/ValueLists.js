@@ -11,7 +11,7 @@ Caf.defMod(module, () => {
           valueListBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
             rule: "valueListBlockSubParse"
           }),
-          valueListBlockSubParse: "end* listItemStatement*"
+          valueListBlockSubParse: "end* listItemStatement+"
         });
         this.rule({
           simpleValueList: [

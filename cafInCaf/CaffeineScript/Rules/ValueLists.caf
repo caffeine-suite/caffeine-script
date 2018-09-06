@@ -6,7 +6,7 @@ import &StandardImport, &CaffeineEight
 
   @rule
     valueListBlock:         Extensions.IndentBlocks.getPropsToSubparseBlock rule: "valueListBlockSubParse"
-    valueListBlockSubParse: "end* listItemStatement*"
+    valueListBlockSubParse: "end* listItemStatement+"
 
   @rule
     simpleValueList:
