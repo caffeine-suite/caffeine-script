@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.60.0"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.60.1"};
 
 /***/ }),
 /* 5 */
@@ -327,7 +327,7 @@ Caf.defMod(module, () => {
             stn,
             parseTree,
             e,
-            cafTemp;
+            temp;
           return (() => {
             try {
               ({
@@ -351,8 +351,8 @@ Caf.defMod(module, () => {
                 sourceFile,
                 sourceRoot
               });
-            } catch (cafError) {
-              e = cafError;
+            } catch (error) {
+              e = error;
               if (
                 !(
                   e.location != null ||
@@ -372,7 +372,7 @@ Caf.defMod(module, () => {
                 });
               }
               if (options.debug) {
-                (cafTemp = e.info) != null ? cafTemp : (e.info = {});
+                (temp = e.info) != null ? temp : (e.info = {});
                 mergeInto(e.info, { options, parseTree, stn, transformedStn });
               }
               return (() => {
@@ -946,30 +946,30 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let e, cafTemp, cafBase, cafTemp1, cafTemp2, cafBase1, cafBase2;
+            let e, temp, base, temp1, temp2, base1, base2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
             this.parseTreeNode =
-              (cafTemp =
-                Caf.exists((cafBase = this.pretransformedStn)) &&
-                cafBase.parseTreeNode) != null
-                ? cafTemp
+              (temp =
+                Caf.exists((base = this.pretransformedStn)) &&
+                base.parseTreeNode) != null
+                ? temp
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
             try {
-              (cafTemp1 = this._sourceIndex) != null
-                ? cafTemp1
+              (temp1 = this._sourceIndex) != null
+                ? temp1
                 : (this._sourceIndex =
-                    (cafTemp2 =
-                      Caf.exists((cafBase1 = this.pretransformedStn)) &&
-                      cafBase1.sourceIndex) != null
-                      ? cafTemp2
-                      : Caf.exists((cafBase2 = this.parseTreeNode)) &&
-                        cafBase2.absoluteOffset);
-            } catch (cafError) {
-              e = cafError;
+                    (temp2 =
+                      Caf.exists((base1 = this.pretransformedStn)) &&
+                      base1.sourceIndex) != null
+                      ? temp2
+                      : Caf.exists((base2 = this.parseTreeNode)) &&
+                        base2.absoluteOffset);
+            } catch (error) {
+              e = error;
               log({
                 sourceIndexFailure: { parseTreeNode: this.parseTreeNode }
               });
@@ -984,23 +984,23 @@ Caf.defMod(module, () => {
           this.setter("parseTreeNode");
           this.getter({
             parseTreeNode: function() {
-              let cafTemp, cafBase;
-              return (cafTemp = this._parseTreeNode) != null
-                ? cafTemp
-                : Caf.exists((cafBase = this.parent)) && cafBase.parseTreeNode;
+              let temp, base;
+              return (temp = this._parseTreeNode) != null
+                ? temp
+                : Caf.exists((base = this.parent)) && base.parseTreeNode;
             }
           });
           this.prototype.initLabeledChildren = function() {
             this.labeledChildren = this.children && {};
             return Caf.each2(this.children, child => {
-              let label, pluralLabel, cafBase;
+              let label, pluralLabel, base;
               child.parent = this;
               ({ label, pluralLabel } = child);
               this.labeledChildren[label] = child;
               return pluralLabel
                 ? (
-                    (cafBase = this.labeledChildren)[pluralLabel] ||
-                    (cafBase[pluralLabel] = [])
+                    (base = this.labeledChildren)[pluralLabel] ||
+                    (base[pluralLabel] = [])
                   ).push(child)
                 : undefined;
             });
@@ -1025,10 +1025,10 @@ Caf.defMod(module, () => {
               return this.props.pluralLabel;
             },
             root: function() {
-              let cafTemp, cafBase;
-              return (cafTemp =
-                Caf.exists((cafBase = this.parent)) && cafBase.root) != null
-                ? cafTemp
+              let temp, base;
+              return (temp = Caf.exists((base = this.parent)) && base.root) !=
+                null
+                ? temp
                 : this;
             },
             inspectedObjects: function() {
@@ -1120,11 +1120,11 @@ Caf.defMod(module, () => {
           });
           this.getter({
             sourceFile: function() {
-              let cafTemp, cafBase;
-              return (cafTemp =
-                Caf.exists((cafBase = this.parseTreeNode)) &&
-                cafBase.sourceFile) != null
-                ? cafTemp
+              let temp, base;
+              return (temp =
+                Caf.exists((base = this.parseTreeNode)) && base.sourceFile) !=
+                null
+                ? temp
                 : "caffeine-script";
             }
           });
@@ -1257,8 +1257,8 @@ Caf.defMod(module, () => {
             let e, ce;
             try {
               this.validate();
-            } catch (cafError) {
-              e = cafError;
+            } catch (error) {
+              e = error;
               ce = this.parseTreeNode.parser.generateCompileError({
                 failureIndex: this.sourceOffset,
                 errorType: "Validation",
@@ -1403,10 +1403,10 @@ Caf.defMod(module, () => {
     return (SemanticTokenStn = Caf.defClass(
       class SemanticTokenStn extends __webpack_require__(/*! ../BaseStn */ 23) {
         constructor() {
-          let cafBase;
+          let base;
           super(...arguments);
-          (cafBase = this.props).token ||
-            (cafBase.token = this.parseTreeNode.toString());
+          (base = this.props).token ||
+            (base.token = this.parseTreeNode.toString());
         }
       },
       function(SemanticTokenStn, classSuper, instanceSuper) {
@@ -1687,15 +1687,15 @@ Caf.defMod(module, () => {
             return this.rValue;
           },
           propName: function() {
-            let cafBase;
-            return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
+            let base;
+            return Caf.exists((base = this.lValue)) && base.propName;
           }
         });
         this.prototype.updateScope = function(scope) {
-          let cafBase;
+          let base;
           this.scope = scope;
           this.scope.addIdentifierAssigned(
-            Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
+            Caf.exists((base = this.lValue)) && base.explicitIdentifier
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
@@ -2254,9 +2254,9 @@ Caf.defMod(module, () => {
             }
           });
           this.prototype.decorate = function() {
-            let cafBase;
+            let base;
             return Caf.each2(
-              Caf.exists((cafBase = this.body)) && cafBase.children,
+              Caf.exists((base = this.body)) && base.children,
               stn =>
                 Caf.each2(stn.children, objectPropValueStn => {
                   let propNameStn, propValueStn;
@@ -2429,7 +2429,7 @@ Caf.defMod(module, () => {
             );
           };
           this.prototype.toSourceNode = function() {
-            let className, classExtends, body, classBody, cafTemp;
+            let className, classExtends, body, classBody, temp;
             ({
               className,
               classExtends,
@@ -2440,10 +2440,10 @@ Caf.defMod(module, () => {
               "Caf.defClass(class ",
               className.toSourceNode(),
               " extends ",
-              (cafTemp =
+              (temp =
                 Caf.exists(classExtends) &&
                 classExtends.toSourceNode({ expression: true })) != null
-                ? cafTemp
+                ? temp
                 : "Object",
               " {",
               Caf.exists(classBody) &&
@@ -2481,21 +2481,21 @@ Caf.defMod(module, () => {
       return (ControlOperatorStn = Caf.defClass(
         class ControlOperatorStn extends __webpack_require__(/*! ../BaseStn */ 23) {
           constructor(props, children) {
-            let cafTemp, cafTemp1, cafTemp2;
+            let temp, temp1, temp2;
             super(...arguments);
-            this.operand = (cafTemp = props.operand) != null ? cafTemp : "if";
+            this.operand = (temp = props.operand) != null ? temp : "if";
             if (this.labeledChildren.expression) {
               this.expression = this.labeledChildren.expression;
               this.body =
-                (cafTemp1 = this.labeledChildren.body) != null
-                  ? cafTemp1
+                (temp1 = this.labeledChildren.body) != null
+                  ? temp1
                   : StnRegistry.UndefinedStn();
               this.elseBody = this.labeledChildren.elseBody;
             } else {
               this.expression = children[0];
               this.body =
-                (cafTemp2 = children[1]) != null
-                  ? cafTemp2
+                (temp2 = children[1]) != null
+                  ? temp2
                   : StnRegistry.UndefinedStn();
               this.elseBody = children[2];
             }
@@ -2508,9 +2508,9 @@ Caf.defMod(module, () => {
         function(ControlOperatorStn, classSuper, instanceSuper) {
           this.getter({
             whileReturnTempVar: function() {
-              let cafTemp;
-              return (cafTemp = this._whileReturnTempVar) != null
-                ? cafTemp
+              let temp;
+              return (temp = this._whileReturnTempVar) != null
+                ? temp
                 : (this._whileReturnTempVar = this.scope.uniqueIdentifier);
             }
           });
@@ -2551,7 +2551,7 @@ Caf.defMod(module, () => {
               unaryOperator,
               parts,
               tempVarIdentifier,
-              cafBase;
+              base;
             ({ expression, returnValueIsIgnored, noParens } = options);
             ({ operand } = this);
             applyParens = false;
@@ -2607,8 +2607,8 @@ Caf.defMod(module, () => {
                         " ? ",
                         this.body.toSourceNode({ expression: true }),
                         " : ",
-                        (Caf.exists((cafBase = this.elseBody)) &&
-                          cafBase.toSourceNode({ expression: true })) ||
+                        (Caf.exists((base = this.elseBody)) &&
+                          base.toSourceNode({ expression: true })) ||
                           "undefined"
                       ];
                   }
@@ -2959,12 +2959,12 @@ Caf.defMod(module, () => {
               return this.children[0];
             },
             statementStns: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.body)) && cafBase.children;
+              let base;
+              return Caf.exists((base = this.body)) && base.children;
             },
             argumentStns: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.args)) && cafBase.children;
+              let base;
+              return Caf.exists((base = this.args)) && base.children;
             }
           });
           this.prototype.updateScope = function() {
@@ -2984,7 +2984,7 @@ Caf.defMod(module, () => {
               : instanceSuper.addIdentifierAssigned.apply(this, arguments);
           };
           this.prototype.postTransform = function() {
-            let foundParent, newStatementStns, StatementsStn, cafBase;
+            let foundParent, newStatementStns, StatementsStn, base;
             if (this.props.bound === "auto") {
               this.props.bound = (foundParent = this.pretransformedStn.findParent(
                 /Class|FunctionDefinition/
@@ -3001,8 +3001,7 @@ Caf.defMod(module, () => {
                   StatementsStn
                 } = __webpack_require__(/*! ../../StnRegistry */ 19)),
                 FunctionDefinitionStn(
-                  (Caf.exists((cafBase = this.body)) &&
-                    cafBase.children.length) > 0
+                  (Caf.exists((base = this.body)) && base.children.length) > 0
                     ? this.props
                     : merge(this.props, { returnIgnored: true }),
                   this.children[0],
@@ -3104,24 +3103,23 @@ Caf.defMod(module, () => {
               returnAction,
               argsSourceNode,
               bodySourceNode,
-              cafTemp,
-              cafBase,
-              cafBase1;
+              temp,
+              base,
+              base1;
             ({ isConstructor, bound, returnIgnored } = this.props);
             if (options) {
               ({ statement, isOperand } = options);
             }
             returnAction = !(isConstructor || returnIgnored);
             argsSourceNode =
-              (cafTemp =
-                Caf.exists((cafBase = this.args)) && cafBase.toSourceNode()) !=
+              (temp = Caf.exists((base = this.args)) && base.toSourceNode()) !=
               null
-                ? cafTemp
+                ? temp
                 : "()";
             bodySourceNode = this.simpleBound
               ? this.body.children[0].toSourceNode({ expression: true })
-              : Caf.exists((cafBase1 = this.body)) &&
-                cafBase1.toSourceNode({ returnAction });
+              : Caf.exists((base1 = this.body)) &&
+                base1.toSourceNode({ returnAction });
             return bound
               ? this.simpleBound
                 ? this.createSourceNode(
@@ -3514,7 +3512,7 @@ Caf.defMod(module, () => {
       return (FunctionInvocationStn = Caf.defClass(
         class FunctionInvocationStn extends __webpack_require__(/*! ../AccessorChainStn */ 15) {
           constructor(props, children) {
-            let functionValue, argStns, cafBase, cafBase1, cafBase2;
+            let functionValue, argStns, base, base1, base2;
             super(...arguments);
             [functionValue, ...argStns] = children;
             this.key = this.argStns = argStns;
@@ -3526,13 +3524,11 @@ Caf.defMod(module, () => {
               this.argStns = this.argStns[0].children;
             }
             if (
-              (Caf.exists((cafBase = this.parseTreeNode)) &&
-                cafBase.conditional) ||
-              (Caf.exists((cafBase1 = this.parseTreeNode)) &&
-                cafBase1.existanceTest)
+              (Caf.exists((base = this.parseTreeNode)) && base.conditional) ||
+              (Caf.exists((base1 = this.parseTreeNode)) && base1.existanceTest)
             ) {
-              (cafBase2 = this.props).existanceTest ||
-                (cafBase2.existanceTest = true);
+              (base2 = this.props).existanceTest ||
+                (base2.existanceTest = true);
             }
           }
         },
@@ -3545,10 +3541,8 @@ Caf.defMod(module, () => {
               return true;
             },
             propName: function() {
-              let cafBase;
-              return (
-                Caf.exists((cafBase = this.functionValue)) && cafBase.propName
-              );
+              let base;
+              return Caf.exists((base = this.functionValue)) && base.propName;
             }
           });
           this.prototype.toSourceNode = function(options) {
@@ -3637,7 +3631,7 @@ Caf.defMod(module, () => {
       return (IdentifierStn = Caf.defClass(
         class IdentifierStn extends __webpack_require__(/*! ../BaseStn */ 23) {
           constructor(props, children) {
-            let identifier, cafTemp, cafBase;
+            let identifier, temp, base;
             if (Caf.is((identifier = children[0]), String)) {
               props = merge(props, { identifier });
               log({ IdentifierStn: props });
@@ -3645,9 +3639,9 @@ Caf.defMod(module, () => {
             }
             super(props, children);
             if (!this.props.identifier) {
-              (cafTemp = (cafBase = this.props).identifierHandle) != null
-                ? cafTemp
-                : (cafBase.identifierHandle = new (__webpack_require__(/*! ../UniqueIdentifierHandle */ 22))(
+              (temp = (base = this.props).identifierHandle) != null
+                ? temp
+                : (base.identifierHandle = new (__webpack_require__(/*! ../UniqueIdentifierHandle */ 22))(
                     this.props.preferredIdentifier,
                     this.props.addToLets
                   ));
@@ -3883,17 +3877,17 @@ Caf.defMod(module, () => {
             );
           };
           this.prototype.trimLeft = function() {
-            let cafBase;
+            let base;
             return (
-              Caf.exists((cafBase = this.children[0])) &&
-              (Caf.isF(cafBase.trimLeft) && cafBase.trimLeft())
+              Caf.exists((base = this.children[0])) &&
+              (Caf.isF(base.trimLeft) && base.trimLeft())
             );
           };
           this.prototype.trimRight = function() {
-            let cafBase;
+            let base;
             return (
-              Caf.exists((cafBase = peek(this.children))) &&
-              (Caf.isF(cafBase.trimRight) && cafBase.trimRight())
+              Caf.exists((base = peek(this.children))) &&
+              (Caf.isF(base.trimRight) && base.trimRight())
             );
           };
           this.prototype.toSourceNode = function() {
@@ -4129,10 +4123,10 @@ Caf.defMod(module, () => {
           }
         });
         this.prototype.toSourceNode = function() {
-          let cafBase;
+          let base;
           return this.createSourceNode(
-            Caf.exists((cafBase = this.value)) &&
-              cafBase.toSourceNode({ dotBase: true }),
+            Caf.exists((base = this.value)) &&
+              base.toSourceNode({ dotBase: true }),
             "[",
             this.key.toSourceNode({ expression: true }),
             "]"
@@ -4244,25 +4238,23 @@ Caf.defMod(module, () => {
               return peek(this.children);
             },
             isThisProp: function() {
-              let cafBase;
-              return (
-                Caf.exists((cafBase = this.propNameChild)) && cafBase.isThisProp
-              );
+              let base;
+              return Caf.exists((base = this.propNameChild)) && base.isThisProp;
             },
             propName: function() {
-              let propNameChild, cafTemp, cafBase, cafTemp1, cafTemp2;
+              let propNameChild, temp, base, temp1, temp2;
               ({ propNameChild } = this);
-              return (cafTemp = (cafBase = this.props).propName) != null
-                ? cafTemp
-                : (cafBase.propName = (() => {
+              return (temp = (base = this.props).propName) != null
+                ? temp
+                : (base.propName = (() => {
                     switch (this.children.length) {
                       case 2:
-                        return (cafTemp1 = propNameChild.propName) != null
-                          ? cafTemp1
+                        return (temp1 = propNameChild.propName) != null
+                          ? temp1
                           : propNameChild;
                       case 1:
-                        return (cafTemp2 = propNameChild.propName) != null
-                          ? cafTemp2
+                        return (temp2 = propNameChild.propName) != null
+                          ? temp2
                           : (() => {
                               throw new Error(
                                 `${Caf.toString(
@@ -4455,18 +4447,18 @@ Caf.defMod(module, () => {
             return true;
           },
           propName: function() {
-            let cafBase;
+            let base;
             return (
-              (Caf.exists((cafBase = this.props.identifierHandle)) &&
-                cafBase.identifier) ||
+              (Caf.exists((base = this.props.identifierHandle)) &&
+                base.identifier) ||
               this.labeledChildren.identifier.propName
             );
           },
           explicitIdentifier: function() {
-            let cafBase;
+            let base;
             return (
-              Caf.exists((cafBase = this.labeledChildren.identifier)) &&
-              cafBase.explicitIdentifier
+              Caf.exists((base = this.labeledChildren.identifier)) &&
+              base.explicitIdentifier
             );
           },
           canBeUsedInES6Structuring: function() {
@@ -4504,10 +4496,10 @@ Caf.defMod(module, () => {
         class RegExpStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
         function(RegExpStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function() {
-            let value, modifiers, childrenNodes, hasInterpolation, cafBase;
+            let value, modifiers, childrenNodes, hasInterpolation, base;
             ({ value, modifiers } = this.props);
             childrenNodes =
-              (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
+              (Caf.exists((base = this.children)) && base.length) > 0
                 ? ((hasInterpolation = Caf.find(
                     this.children,
                     child => !isString(child.props.value)
@@ -5071,7 +5063,7 @@ Caf.defMod(module, () => {
               childOptions,
               cases,
               conditionSourceNode,
-              cafTemp;
+              temp;
             if (options) {
               ({ expression } = options);
             }
@@ -5085,10 +5077,10 @@ Caf.defMod(module, () => {
               cases.push(["default: ", switchElse.toSourceNode(childOptions)]);
             }
             conditionSourceNode =
-              (cafTemp =
+              (temp =
                 Caf.exists(condition) &&
                 condition.toSourceNode({ expression: true })) != null
-                ? cafTemp
+                ? temp
                 : "false";
             return expression
               ? this.createSourceNode(
@@ -5179,17 +5171,16 @@ Caf.defMod(module, () => {
         function(ThisStn, classSuper, instanceSuper) {
           this.getter({
             identifier: function() {
-              let id, cafBase;
+              let id, base;
               return (id = this.props.identifier)
                 ? identifierRegexp.test(id)
                   ? id
                   : escapeJavascriptString(id)
-                : Caf.exists((cafBase = peek(this.children))) &&
-                    cafBase.identifier;
+                : Caf.exists((base = peek(this.children))) && base.identifier;
             },
             propName: function() {
-              let cafTemp;
-              return (cafTemp = this.identifier) != null ? cafTemp : "this";
+              let temp;
+              return (temp = this.identifier) != null ? temp : "this";
             }
           });
           this.prototype.toSourceNode = function() {
@@ -5259,14 +5250,13 @@ Caf.defMod(module, () => {
       return (TryStn = Caf.defClass(
         class TryStn extends __webpack_require__(/*! ../BaseStn */ 23) {
           constructor() {
-            let cafTemp, cafBase;
+            let temp, base;
             super(...arguments);
             if (!this.labeledChildren.optionalCatch) {
               (this.children[1] =
-                (cafTemp = (cafBase = this.labeledChildren).optionalCatch) !=
-                null
-                  ? cafTemp
-                  : (cafBase.optionalCatch = StnRegistry.CatchStn())).parent = this;
+                (temp = (base = this.labeledChildren).optionalCatch) != null
+                  ? temp
+                  : (base.optionalCatch = StnRegistry.CatchStn())).parent = this;
             }
           }
         },
@@ -5529,7 +5519,7 @@ Caf.defMod(module, () => {
               tilClause,
               fromClause,
               fromArrayClause,
-              cafBase;
+              base;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             if (
               (Caf.exists(variableDefinition) &&
@@ -5537,8 +5527,8 @@ Caf.defMod(module, () => {
             ) {
               throw new Error(
                 `Can define at most two loop variables (value followed optionally by key). You defined: ${Caf.toString(
-                  Caf.exists((cafBase = variableDefinition.parseTreeNode)) &&
-                    cafBase.toString()
+                  Caf.exists((base = variableDefinition.parseTreeNode)) &&
+                    base.toString()
                 )}.`
               );
             }
@@ -5608,15 +5598,14 @@ Caf.defMod(module, () => {
               return this.labeledChildren.outputType.props.token;
             },
             labeledClauses: function() {
-              let iterable, body, labeledClauses, cafTemp, cafTemp1;
+              let iterable, body, labeledClauses, temp, temp1;
               ({ iterable, body } = this.labeledChildren);
               labeledClauses = {};
               Caf.each2(
                 this.labeledChildren.valueClauses,
                 ({ type, value }) => {
-                  let name, cafTemp;
-                  type =
-                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                  let name, temp;
+                  type = (temp = clauseAliases[type]) != null ? temp : type;
                   name = lowerCamelCase(type + "Clause");
                   if (labeledClauses[name]) {
                     throw new Error(
@@ -5627,11 +5616,11 @@ Caf.defMod(module, () => {
                   return (labeledClauses[name] = value);
                 }
               );
-              (cafTemp = labeledClauses.fromClause) != null
-                ? cafTemp
+              (temp = labeledClauses.fromClause) != null
+                ? temp
                 : (labeledClauses.fromClause = iterable);
-              (cafTemp1 = labeledClauses.withClause) != null
-                ? cafTemp1
+              (temp1 = labeledClauses.withClause) != null
+                ? temp1
                 : (labeledClauses.withClause = body);
               return labeledClauses;
             }
@@ -5811,12 +5800,12 @@ Caf.defMod(module, () => {
             method,
             { fromClause, intoClause, withClause, whenClause, withKeyClause }
           ) {
-            let variableDefinition, cafBase;
+            let variableDefinition, base;
             ({ variableDefinition } = this.labeledChildren);
             if (
               (Caf.exists(variableDefinition) &&
-                (Caf.exists((cafBase = variableDefinition.children)) &&
-                  cafBase.length)) > 0 &&
+                (Caf.exists((base = variableDefinition.children)) &&
+                  base.length)) > 0 &&
               !variableDefinition.children[0].isSimpleIdentifier
             ) {
               withClause != null
@@ -5987,12 +5976,12 @@ Caf.defMod(module, () => {
         function(ExtractToIdentifierStn, classSuper, instanceSuper) {
           this.getter({
             assignToIdentifierStn: function() {
-              let cafTemp, cafTemp1;
-              return (cafTemp =
-                (cafTemp1 = this.extractAs) != null
-                  ? cafTemp1
+              let temp, temp1;
+              return (temp =
+                (temp1 = this.extractAs) != null
+                  ? temp1
                   : peek(this.extractPathExtensions)) != null
-                ? cafTemp
+                ? temp
                 : this.bastIdentifier;
             },
             extractAs: function() {
@@ -6172,11 +6161,11 @@ Caf.defMod(module, () => {
           };
           this.getter({
             isStnExtension: function() {
-              let cafBase;
+              let base;
               return (
                 this.stnExtension ||
-                (Caf.exists((cafBase = this.presentMatches[0])) &&
-                  cafBase.isStnExtension)
+                (Caf.exists((base = this.presentMatches[0])) &&
+                  base.isStnExtension)
               );
             },
             stnExtensionMatches: function() {
@@ -6778,12 +6767,10 @@ Caf.defMod(module, () => {
             {
               stnFactory: "UnaryOperatorStn",
               stnProps: function() {
-                let cafBase;
+                let base;
                 return {
                   operand: (this.prefix || this.postfix).toString(),
-                  tail: !!(
-                    Caf.exists((cafBase = this.postfix)) && cafBase.toString()
-                  )
+                  tail: !!(Caf.exists((base = this.postfix)) && base.toString())
                 };
               }
             }
@@ -6960,11 +6947,11 @@ Caf.defMod(module, () => {
           {
             stnFactory: "FunctionDefinitionArgStn",
             stnProps: function() {
-              let cafBase;
+              let base;
               return {
                 rest: !!(
-                  Caf.exists((cafBase = this.argIdentifierExtension)) &&
-                  cafBase.ellipsis
+                  Caf.exists((base = this.argIdentifierExtension)) &&
+                  base.ellipsis
                 ),
                 assignThisProperty: !!this.at
               };
@@ -6987,8 +6974,8 @@ Caf.defMod(module, () => {
               return { existanceTest: !!this.existanceTest };
             },
             stnChildren: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.values)) && cafBase.getStn();
+              let base;
+              return Caf.exists((base = this.values)) && base.getStn();
             }
           }
         ]
@@ -7099,10 +7086,10 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
-  let cafParentImports;
+  let parentImports;
   return Caf.importInvoke(
     ["Extensions"],
-    (cafParentImports = [
+    (parentImports = [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
       __webpack_require__(/*! caffeine-eight */ 90),
@@ -7111,7 +7098,7 @@ Caf.defMod(module, () => {
     Extensions => {
       return Caf.importInvoke(
         ["IndentBlocks", "ObjectStn"],
-        [cafParentImports, Extensions],
+        [parentImports, Extensions],
         (IndentBlocks, ObjectStn) => {
           return function() {
             this.rule({
@@ -7238,10 +7225,9 @@ Caf.defMod(module, () => {
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
-                  let cafBase;
+                  let base;
                   return {
-                    value:
-                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
+                    value: Caf.exists((base = this.str)) && base.toString(),
                     isThisProp: false
                   };
                 }
@@ -7407,19 +7393,19 @@ Caf.defMod(module, () => {
           {
             stnFactory: "RegExpStn",
             stnProps: function() {
-              let cafBase, cafBase1, cafBase2;
+              let base, base1, base2;
               return this.regExpMiddle
                 ? {
                     value: this.regExpMiddle.toString(),
                     modifiers:
-                      Caf.exists((cafBase = this.regExpModifiers)) &&
-                      cafBase.toString()
+                      Caf.exists((base = this.regExpModifiers)) &&
+                      base.toString()
                   }
                 : {
                     modifiers:
-                      Caf.exists((cafBase1 = this.regExpBlockModifiers)) &&
-                      (Caf.exists((cafBase2 = cafBase1.regExpModifiers)) &&
-                        cafBase2.toString())
+                      Caf.exists((base1 = this.regExpBlockModifiers)) &&
+                      (Caf.exists((base2 = base1.regExpModifiers)) &&
+                        base2.toString())
                   };
             }
           }
@@ -7717,14 +7703,14 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let cafBase;
+              let base;
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })
                 );
               }
-              Caf.exists((cafBase = this.interpolation)) &&
-                cafBase.getStnChildren(appendTo);
+              Caf.exists((base = this.interpolation)) &&
+                base.getStnChildren(appendTo);
               return appendTo;
             },
             getStn: function() {
@@ -7759,15 +7745,15 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let cafBase;
+              let base;
               appendTo.push(this.interpolation.expression.getStn());
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })
                 );
               }
-              Caf.exists((cafBase = this.interpolationContinues)) &&
-                cafBase.getStnChildren(appendTo);
+              Caf.exists((base = this.interpolationContinues)) &&
+                base.getStnChildren(appendTo);
               return appendTo;
             }
           }
@@ -8154,7 +8140,7 @@ Caf.defMod(module, () => {
               line,
               lineIndentLevel,
               commentOnlyLine,
-              cafTemp;
+              temp;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
                 (padding = null),
@@ -8192,9 +8178,9 @@ Caf.defMod(module, () => {
                             : line.slice(-indentChange, line.length);
                       }
                     }
-                    cafTemp = i++;
+                    temp = i++;
                   }
-                  return cafTemp;
+                  return temp;
                 })())
               : undefined;
           };
