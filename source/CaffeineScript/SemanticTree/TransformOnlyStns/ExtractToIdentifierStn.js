@@ -2,11 +2,26 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["peek"],
-    [global, require("../../StandardImport")],
-    peek => {
-      let SemanticTree, ExtractToIdentifierStn;
-      SemanticTree = require("../../StnRegistry");
+    [
+      "peek",
+      "AccessorStn",
+      "ControlOperatorStn",
+      "BinaryOperatorStn",
+      "UndefinedStn",
+      "AssignmentStn",
+      "IdentifierStn"
+    ],
+    [global, require("./StandardImport")],
+    (
+      peek,
+      AccessorStn,
+      ControlOperatorStn,
+      BinaryOperatorStn,
+      UndefinedStn,
+      AssignmentStn,
+      IdentifierStn
+    ) => {
+      let ExtractToIdentifierStn;
       return (ExtractToIdentifierStn = Caf.defClass(
         class ExtractToIdentifierStn extends require("../BaseStn") {},
         function(ExtractToIdentifierStn, classSuper, instanceSuper) {
@@ -42,11 +57,11 @@ Caf.defMod(module, () => {
           });
           this.prototype.getSourceValueStn = function(extractSource) {
             let stn, extensions;
-            stn = SemanticTree.AccessorStn(extractSource, this.bastIdentifier);
+            stn = AccessorStn(extractSource, this.bastIdentifier);
             return (extensions = this.extractPathExtensions)
               ? (Caf.each2(
                   extensions,
-                  extension => (stn = SemanticTree.AccessorStn(stn, extension))
+                  extension => (stn = AccessorStn(stn, extension))
                 ),
                 stn)
               : stn;
@@ -54,21 +69,7 @@ Caf.defMod(module, () => {
           this.prototype.getTransformedExtractionStns = function(
             extractSource
           ) {
-            let AccessorStn,
-              AssignmentStn,
-              IdentifierStn,
-              BinaryOperatorStn,
-              UndefinedStn,
-              ControlOperatorStn,
-              tempIdentifierStn;
-            ({
-              AccessorStn,
-              AssignmentStn,
-              IdentifierStn,
-              BinaryOperatorStn,
-              UndefinedStn,
-              ControlOperatorStn
-            } = SemanticTree);
+            let tempIdentifierStn;
             return this.extractDefault
               ? ControlOperatorStn(
                   BinaryOperatorStn(

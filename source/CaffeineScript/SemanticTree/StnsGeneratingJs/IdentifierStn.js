@@ -2,15 +2,20 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["identifierRegexp"],
+    ["identifierRegexp", "String", "merge", "log"],
     [global, require("../../StandardImport")],
-    identifierRegexp => {
+    (identifierRegexp, String, merge, log) => {
       let IdentifierStn;
       return (IdentifierStn = Caf.defClass(
         class IdentifierStn extends require("../BaseStn") {
-          constructor() {
-            let cafTemp, cafBase;
-            super(...arguments);
+          constructor(props, children) {
+            let identifier, cafTemp, cafBase;
+            if (Caf.is((identifier = children[0]), String)) {
+              props = merge(props, { identifier });
+              log({ IdentifierStn: props });
+              children = [];
+            }
+            super(props, children);
             if (!this.props.identifier) {
               (cafTemp = (cafBase = this.props).identifierHandle) != null
                 ? cafTemp

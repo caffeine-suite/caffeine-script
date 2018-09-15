@@ -10,13 +10,19 @@ Caf.defMod(module, () => {
         class StatementsStn extends require("../BaseStn") {},
         function(StatementsStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
-            let returnAction, generateStatements, expression, classBody, out;
+            let returnAction,
+              generateStatements,
+              expression,
+              classBody,
+              parentIsStatements,
+              out;
             if (options) {
               ({
                 returnAction,
                 generateStatements,
                 expression,
-                classBody
+                classBody,
+                parentIsStatements
               } = options);
             }
             generateStatements != null
@@ -41,7 +47,8 @@ Caf.defMod(module, () => {
                 : this._getChildrenSourceNodes(
                     returnAction,
                     generateStatements,
-                    classBody
+                    classBody,
+                    parentIsStatements
                   )
             );
             return out;
@@ -49,7 +56,8 @@ Caf.defMod(module, () => {
           this.prototype._getChildrenSourceNodes = function(
             returnAction,
             generateStatements = true,
-            classBody
+            classBody,
+            parentIsStatements
           ) {
             let lines, out;
             returnAction = (() => {
@@ -85,7 +93,8 @@ Caf.defMod(module, () => {
                     : generateStatements
                       ? c.toSourceNode({
                           statement: !classBody,
-                          generateStatements: false
+                          generateStatements: true,
+                          parentIsStatements: true
                         })
                       : c.toSourceNode({
                           expression: true,
@@ -96,7 +105,7 @@ Caf.defMod(module, () => {
               null,
               (out = [])
             );
-            if (generateStatements) {
+            if (generateStatements && !parentIsStatements) {
               out.push(";");
             }
             return out;

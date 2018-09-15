@@ -27,8 +27,8 @@ Caf.defMod(module, () => {
           constructor(props, children) {
             super(...arguments);
             this.operator = props.operator;
-            this.left = children[0];
-            this.right = children[1];
+            this.left = this.children[0];
+            this.right = this.children[1];
             if (!(this.left && this.right)) {
               throw new Error(
                 `left and right required: ${Caf.toString(

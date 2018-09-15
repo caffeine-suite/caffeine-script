@@ -6,6 +6,7 @@ module.exports
 .addModules
   AccessorChainStn:       require './AccessorChainStn'      
   BaseStn:                require './BaseStn'               
+  BasicStns:              require './BasicStns'             
   ScopeStnMixin:          require './ScopeStnMixin'         
   UniqueIdentifierHandle: require './UniqueIdentifierHandle'
   ValueBaseCaptureStn:    require './ValueBaseCaptureStn'   

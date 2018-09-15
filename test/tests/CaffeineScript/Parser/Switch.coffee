@@ -35,7 +35,7 @@ module.exports = suite: parseTestSuite
           d
       """: "switch (a) {case b: c; d;};"
 
-  cafStyle:
+  cafScriptStyle:
     basic:
       """
       switch a

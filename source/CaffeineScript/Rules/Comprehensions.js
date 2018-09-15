@@ -5,12 +5,12 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(from|in|into|returning|when|with|with-key|to|by|til|do)\b(?!-)/
+        comprehensionValueClauseType: /(from|in|into|returning|when|with|to|by|til|do)(-[a-z]+)*\b/
       });
       this.rule(
         {
           comprehensionOutputType: /(object|array|reduce|each|find)\b/,
-          comprehensionIterationType: /(from|in|to|til)\b/
+          comprehensionIterationType: /(from|in|to|til)(-[a-z]+)*\b/
         },
         { stnFactory: "SemanticTokenStn" }
       );

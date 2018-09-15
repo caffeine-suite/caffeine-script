@@ -30,6 +30,18 @@ module.exports = suite: parseTestSuite
     "array a to 10 when a %% 2 == 0": "Caf.arrayRange(0, 10, null, (a) => Caf.mod(a, 2) === 0);"
     "array from 2 to 10":             "Caf.arrayRange(2, 10);"
 
+  efficiency:
+    fromArray:
+      "array from-array b": "
+        let from, length, i, into, v;
+        from = b || [];
+        length = from.length;
+        i = 0;
+        into = [];
+        while (i < length)
+        {let v = from.i; into.push(v); i++;};
+        into;"
+
   multipleArgs:
     """
     object myV, myK from mySource

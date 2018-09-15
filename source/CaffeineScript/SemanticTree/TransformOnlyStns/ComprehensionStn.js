@@ -2,11 +2,46 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Error", "lowerCamelCase", "StnRegistry", "Object", "String"],
-    [global, require("../../StandardImport")],
-    (Error, lowerCamelCase, StnRegistry, Object, String) => {
-      let SemanticTree, ComprehensionStn;
-      SemanticTree = require("../../StnRegistry");
+    [
+      "Error",
+      "lowerCamelCase",
+      "Object",
+      "FunctionDefinitionStn",
+      "String",
+      "SimpleLiteralStn",
+      "FunctionInvocationStn",
+      "IdentifierStn",
+      "AccessorStn",
+      "StatementsStn",
+      "AssignmentStn",
+      "BinaryOperatorStn",
+      "PureJsStn",
+      "WhileStn",
+      "LetStn",
+      "IfStn",
+      "UnaryOperatorStn"
+    ],
+    [global, require("./StandardImport")],
+    (
+      Error,
+      lowerCamelCase,
+      Object,
+      FunctionDefinitionStn,
+      String,
+      SimpleLiteralStn,
+      FunctionInvocationStn,
+      IdentifierStn,
+      AccessorStn,
+      StatementsStn,
+      AssignmentStn,
+      BinaryOperatorStn,
+      PureJsStn,
+      WhileStn,
+      LetStn,
+      IfStn,
+      UnaryOperatorStn
+    ) => {
+      let ComprehensionStn;
       return (ComprehensionStn = Caf.defClass(
         class ComprehensionStn extends require("../ScopeStnMixin")(
           require("../BaseStn")
@@ -21,6 +56,7 @@ Caf.defMod(module, () => {
               byClause,
               tilClause,
               fromClause,
+              fromArrayClause,
               cafBase;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             if (
@@ -39,27 +75,58 @@ Caf.defMod(module, () => {
               toClause,
               byClause,
               tilClause,
-              fromClause
+              fromClause,
+              fromArrayClause
             } = this.labeledClauses);
             if (
-              (toClause || byClause || tilClause) &&
+              (toClause || byClause || tilClause || fromArrayClause) &&
               comprehensionType !== "array"
             ) {
               throw new Error(
-                `'to', 'by' and 'til' clauses not supported for '${Caf.toString(
+                `'from-array', 'to', 'by' and 'til' clauses not supported for '${Caf.toString(
                   comprehensionType
-                )}' comprehensions`
+                )}' comprehensions (clauses found: ${Caf.toString(
+                  Caf.array(
+                    this.labeledClauses,
+                    clause => clause.clauseType,
+                    clause => clause
+                  ).join(", ")
+                )})`
               );
             }
-            if (!(fromClause || toClause || tilClause)) {
-              throw new Error("'from', 'to' or 'til' clause require");
+            if (!(fromClause || toClause || tilClause || fromArrayClause)) {
+              throw new Error(
+                `'from', 'from-array', 'to' or 'til' clause require (clauses found: ${Caf.toString(
+                  Caf.array(
+                    this.labeledClauses,
+                    clause => clause.clauseType,
+                    clause => clause
+                  ).join(", ")
+                )})`
+              );
             }
             if (toClause && tilClause) {
-              throw new Error("only one 'to' or 'til' clause allowed");
+              throw new Error(
+                `only one 'to' or 'til' clause allowed (clauses found: ${Caf.toString(
+                  Caf.array(
+                    this.labeledClauses,
+                    clause => clause.clauseType,
+                    clause => clause
+                  ).join(", ")
+                )})`
+              );
             }
             return byClause && !(tilClause || toClause)
               ? (() => {
-                  throw new Error("'to' or 'til' clause required to use 'by'");
+                  throw new Error(
+                    `'to' or 'til' clause required to use 'by' (clauses found: ${Caf.toString(
+                      Caf.array(
+                        this.labeledClauses,
+                        clause => clause.clauseType,
+                        clause => clause
+                      ).join(", ")
+                    )})`
+                  );
                 })()
               : undefined;
           };
@@ -84,6 +151,7 @@ Caf.defMod(module, () => {
                       `no more than one '${Caf.toString(type)}' clause allowed`
                     );
                   }
+                  value.clauseType = type;
                   return (labeledClauses[name] = value);
                 }
               );
@@ -100,31 +168,28 @@ Caf.defMod(module, () => {
             let labeledClauses, comprehensionType;
             this.initLabeledChildren();
             ({ labeledClauses, comprehensionType } = this);
-            return labeledClauses.toClause || labeledClauses.tilClause
-              ? this.generateArrayRange(labeledClauses)
-              : (() => {
-                  switch (comprehensionType) {
-                    case "each":
-                    case "array":
-                    case "object":
-                      return this.generateArrayOrEach(
-                        comprehensionType === "each"
-                          ? "each2"
-                          : comprehensionType,
-                        labeledClauses
-                      );
-                    case "find":
-                      return this.generateFind(labeledClauses);
-                  }
-                })();
+            return labeledClauses.fromArrayClause
+              ? this.generateFromArray(labeledClauses)
+              : labeledClauses.toClause || labeledClauses.tilClause
+                ? this.generateArrayRange(labeledClauses)
+                : (() => {
+                    switch (comprehensionType) {
+                      case "each":
+                      case "array":
+                      case "object":
+                        return this.generateArrayOrEach(
+                          comprehensionType === "each"
+                            ? "each2"
+                            : comprehensionType,
+                          labeledClauses
+                        );
+                      case "find":
+                        return this.generateFind(labeledClauses);
+                    }
+                  })();
           };
           this.prototype.resolveStnParams = function(...params) {
-            let SimpleLiteralStn,
-              FunctionDefinitionStn,
-              variableDefinition,
-              lastNonNulIndex,
-              Null;
-            ({ SimpleLiteralStn, FunctionDefinitionStn } = StnRegistry);
+            let variableDefinition, lastNonNulIndex, Null;
             ({ variableDefinition } = this.labeledChildren);
             lastNonNulIndex = 0;
             params = Caf.array(params, (p, i) => {
@@ -172,16 +237,6 @@ Caf.defMod(module, () => {
             fromClause,
             intoClause
           }) {
-            let FunctionInvocationStn,
-              IdentifierStn,
-              FunctionDefinitionStn,
-              SimpleLiteralStn;
-            ({
-              FunctionInvocationStn,
-              IdentifierStn,
-              FunctionDefinitionStn,
-              SimpleLiteralStn
-            } = StnRegistry);
             if (tilClause) {
               toClause = tilClause;
               tilClause = "true";
@@ -199,24 +254,78 @@ Caf.defMod(module, () => {
               )
             );
           };
+          this.prototype.generateFromArray = function({
+            fromArrayClause,
+            intoClause,
+            withClause,
+            whenClause
+          }) {
+            let variableDefinition,
+              fromId,
+              intoId,
+              iId,
+              lengthId,
+              valueId,
+              invokeWithClauseAndPush;
+            ({ variableDefinition } = this.labeledChildren);
+            variableDefinition =
+              Caf.exists(variableDefinition) && variableDefinition.children;
+            fromId = IdentifierStn({ preferredIdentifier: "from" });
+            intoId = IdentifierStn({ preferredIdentifier: "into" });
+            iId = IdentifierStn({ preferredIdentifier: "i" });
+            lengthId = IdentifierStn({ preferredIdentifier: "length" });
+            if (!variableDefinition) {
+              variableDefinition = [
+                IdentifierStn({ preferredIdentifier: "v" })
+              ];
+            }
+            [valueId] = variableDefinition;
+            invokeWithClauseAndPush = FunctionInvocationStn(
+              AccessorStn(intoId, IdentifierStn("push")),
+              withClause != null ? withClause : valueId
+            );
+            return StatementsStn(
+              AssignmentStn(
+                fromId,
+                BinaryOperatorStn(
+                  { operator: "||" },
+                  fromArrayClause,
+                  PureJsStn("[]")
+                )
+              ),
+              AssignmentStn(
+                lengthId,
+                AccessorStn(fromId, IdentifierStn("length"))
+              ),
+              AssignmentStn(iId, PureJsStn("0")),
+              AssignmentStn(
+                intoId,
+                intoClause != null ? intoClause : PureJsStn("[]")
+              ),
+              WhileStn(
+                BinaryOperatorStn({ operator: "<" }, iId, lengthId),
+                StatementsStn(
+                  LetStn(
+                    Caf.array(variableDefinition, (v, i) =>
+                      AssignmentStn(v, i === 0 ? AccessorStn(fromId, iId) : iId)
+                    )
+                  ),
+                  whenClause
+                    ? IfStn(whenClause, invokeWithClauseAndPush)
+                    : invokeWithClauseAndPush,
+                  UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                )
+              ),
+              intoId
+            );
+          };
           this.prototype.generateFind = function({
             fromClause,
             withClause,
             whenClause
           }) {
-            let iterable,
-              variableDefinition,
-              FunctionInvocationStn,
-              IdentifierStn,
-              FunctionDefinitionStn,
-              SimpleLiteralStn;
+            let iterable, variableDefinition;
             ({ iterable, variableDefinition } = this.labeledChildren);
-            ({
-              FunctionInvocationStn,
-              IdentifierStn,
-              FunctionDefinitionStn,
-              SimpleLiteralStn
-            } = StnRegistry);
             return FunctionInvocationStn(
               IdentifierStn({ identifier: "Caf.find" }),
               this.resolveStnParams(
@@ -230,20 +339,7 @@ Caf.defMod(module, () => {
             method,
             { fromClause, intoClause, withClause, whenClause, withKeyClause }
           ) {
-            let FunctionInvocationStn,
-              StatementsStn,
-              IdentifierStn,
-              SimpleLiteralStn,
-              FunctionDefinitionStn,
-              variableDefinition,
-              cafBase;
-            ({
-              FunctionInvocationStn,
-              StatementsStn,
-              IdentifierStn,
-              SimpleLiteralStn,
-              FunctionDefinitionStn
-            } = StnRegistry);
+            let variableDefinition, cafBase;
             ({ variableDefinition } = this.labeledChildren);
             if (
               (Caf.exists(variableDefinition) &&

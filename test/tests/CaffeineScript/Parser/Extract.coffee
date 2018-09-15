@@ -10,10 +10,10 @@ module.exports = suite: parseTestSuite
   object:
     basic:
       "a extract b": "let b; b = a.b;"
-      "a extract b, c": "let b, c; b = a.b, c = a.c;"
+      "a extract b, c": "let b, c; b = a.b; c = a.c;"
 
     complexBase:
-      "a.b extract c, d": "let c, d, cafTemp; cafTemp = a.b, c = cafTemp.c, d = cafTemp.d;"
+      "a.b extract c, d": "let c, d, cafTemp; cafTemp = a.b; c = cafTemp.c; d = cafTemp.d;"
       # "a + b extract c": "as"
 
     expression:
@@ -21,8 +21,8 @@ module.exports = suite: parseTestSuite
       "d = a extract b, c": "let d, b, c; d = (b = a.b, c = a.c);"
 
     nested:
-      "a extract b extract c": "let c, cafTemp; cafTemp = a.b, c = cafTemp.c;"
-      "a extract b extract c extract d": "let d, cafTemp, cafTemp1; cafTemp = a.b, (cafTemp1 = cafTemp.c, d = cafTemp1.d);"
+      "a extract b extract c": "let c, cafTemp; cafTemp = a.b; c = cafTemp.c;"
+      "a extract b extract c extract d": "let d, cafTemp, cafTemp1; cafTemp = a.b; cafTemp1 = cafTemp.c; d = cafTemp1.d;"
       "d = a extract b extract c": "let d, c, cafTemp; d = (cafTemp = a.b, c = cafTemp.c);"
 
     default:
@@ -33,8 +33,8 @@ module.exports = suite: parseTestSuite
       "a extract b as c": "let c; c = a.b;"
 
     conditional:
-      "a extract? b": "let b; Caf.exists(a) ? b = a.b : undefined;"
-      "a extract b extract? c": "let c, cafTemp; cafTemp = a.b, Caf.exists(cafTemp) ? c = cafTemp.c : undefined;"
+      "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
+      "a extract b extract? c": "let c, cafTemp; cafTemp = a.b; if (Caf.exists(cafTemp)) {c = cafTemp.c;};"
 
       # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
       # "a extract? b = 1": "let b, cafTemp; b = (undefined !== cafTemp = Caf.exists(a) ? a.b : undefined) ? cafTemp : 1;"

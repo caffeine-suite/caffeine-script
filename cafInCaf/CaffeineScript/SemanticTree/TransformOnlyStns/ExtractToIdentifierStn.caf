@@ -1,5 +1,4 @@
 import &StandardImport
-SemanticTree = &StnRegistry
 
 class ExtractToIdentifierStn extends &BaseStn
 
@@ -18,13 +17,13 @@ class ExtractToIdentifierStn extends &BaseStn
       extractPathExtensions ? extractPathExtension && [extractPathExtension]
 
   getSourceValueStn: (extractSource) ->
-    stn = SemanticTree.AccessorStn
+    stn = AccessorStn
       extractSource
       @bastIdentifier
 
     if extensions = @extractPathExtensions
       each extension in extensions
-        stn = SemanticTree.AccessorStn
+        stn = AccessorStn
           stn
           extension
       stn
@@ -32,8 +31,6 @@ class ExtractToIdentifierStn extends &BaseStn
       stn
 
   getTransformedExtractionStns: (extractSource)->
-    {AccessorStn, AssignmentStn, IdentifierStn, BinaryOperatorStn, UndefinedStn, ControlOperatorStn} = SemanticTree
-
     if @extractDefault
       ControlOperatorStn
         BinaryOperatorStn

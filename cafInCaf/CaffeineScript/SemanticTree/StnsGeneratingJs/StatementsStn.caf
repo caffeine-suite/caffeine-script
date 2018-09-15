@@ -3,7 +3,7 @@ import &StandardImport, &Lib
 class StatementsStn extends &BaseStn
 
   toSourceNode: (options)->
-    {returnAction, generateStatements, expression, classBody} = options if options
+    {returnAction, generateStatements, expression, classBody, parentIsStatements} = options if options
     generateStatements ?= !expression
     # generateStatements ?= expression ? true
 
@@ -18,14 +18,14 @@ class StatementsStn extends &BaseStn
             @_getChildrenSourceNodes null, false
             ")"
       else
-        @_getChildrenSourceNodes returnAction, generateStatements, classBody
+        @_getChildrenSourceNodes returnAction, generateStatements, classBody, parentIsStatements
 
     out
 
   ###########
     PRIVATE
 
-  _getChildrenSourceNodes: (returnAction, generateStatements = true, classBody)->
+  _getChildrenSourceNodes: (returnAction, generateStatements = true, classBody, parentIsStatements)->
     returnAction = switch returnAction
       when true then returnAction = :return
       when false then null
@@ -49,9 +49,9 @@ class StatementsStn extends &BaseStn
 
       else
         if generateStatements
-          c.toSourceNode statement: !classBody, generateStatements: false
+          c.toSourceNode statement: !classBody, generateStatements: true, parentIsStatements: true
         else
           c.toSourceNode expression: true, returnValueIsIgnored: i < lines.length - 1
       a
-    out.push ";" if generateStatements
+    out.push ";" if generateStatements && !parentIsStatements
     out

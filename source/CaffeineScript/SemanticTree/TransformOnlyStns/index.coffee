@@ -8,3 +8,4 @@ module.exports
   ComprehensionStn:       require './ComprehensionStn'      
   ExtractStn:             require './ExtractStn'            
   ExtractToIdentifierStn: require './ExtractToIdentifierStn'
+  StandardImport:         require './StandardImport'        

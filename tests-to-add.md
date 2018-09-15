@@ -89,7 +89,13 @@ switch subject
   else false                    # something weird happened
 ```
 
-
+---
+```coffeescript
+switch foo
+  when bar
+    123
+  # comment here fails
+```
 ---
 
 ```coffeescript

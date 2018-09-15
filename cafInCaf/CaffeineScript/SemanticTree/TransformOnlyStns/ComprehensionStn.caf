@@ -1,7 +1,5 @@
 import &StandardImport
 
-SemanticTree = &StnRegistry
-
 class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   ###
@@ -37,19 +35,19 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {comprehensionType} = @
 
-    {toClause, byClause, tilClause, fromClause} = @labeledClauses
+    {toClause, byClause, tilClause, fromClause, fromArrayClause} = @labeledClauses
 
-    if (toClause || byClause || tilClause) && comprehensionType != :array
-      throw new Error "" 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions
+    if (toClause || byClause || tilClause || fromArrayClause) && comprehensionType != :array
+      throw new Error "" 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
 
-    unless fromClause || toClause || tilClause
-      throw new Error "" 'from', 'to' or 'til' clause require
+    unless fromClause || toClause || tilClause || fromArrayClause
+      throw new Error "" 'from', 'from-array', 'to' or 'til' clause require (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
 
     if toClause && tilClause
-      throw new Error "" only one 'to' or 'til' clause allowed
+      throw new Error "" only one 'to' or 'til' clause allowed (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
 
     if byClause && !(tilClause || toClause)
-      throw new Error "" 'to' or 'til' clause required to use 'by'
+      throw new Error "" 'to' or 'til' clause required to use 'by' (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
 
   clauseAliases =
     returning:  :into
@@ -68,6 +66,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         name = lowerCamelCase type + :Clause
         if labeledClauses[name]
           throw new Error "" no more than one '#{type}' clause allowed
+        value.clauseType = type
         labeledClauses[name] = value
 
       labeledClauses.fromClause ?= iterable
@@ -80,7 +79,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {labeledClauses, comprehensionType} = @
 
-    if labeledClauses.toClause || labeledClauses.tilClause
+    if labeledClauses.fromArrayClause
+      @generateFromArray labeledClauses
+    else if labeledClauses.toClause || labeledClauses.tilClause
       @generateArrayRange labeledClauses
     else
       switch comprehensionType
@@ -94,7 +95,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           labeledClauses
 
   resolveStnParams: (params...) ->
-    {SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
     {variableDefinition} = @labeledChildren
 
     lastNonNulIndex = 0
@@ -122,7 +122,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   # Caf.arrayRange(fromValue, toValue, withClause = returnFirst, whenClause = returnTrue, byValue, til, into = []) ->
   generateArrayRange: ({withClause, whenClause, toClause, tilClause, byClause, fromClause, intoClause})->
-    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
 
     if tilClause
       toClause = tilClause
@@ -140,10 +139,80 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         tilClause
         intoClause
 
+  generateFromArray: ({fromArrayClause, intoClause, withClause, whenClause})->
+    {variableDefinition} = @labeledChildren
+    variableDefinition = variableDefinition?.children
+    fromId      = IdentifierStn preferredIdentifier: :from
+    intoId      = IdentifierStn preferredIdentifier: :into
+    iId         = IdentifierStn preferredIdentifier: :i
+    lengthId    = IdentifierStn preferredIdentifier: :length
+
+    unless variableDefinition
+      variableDefinition = [] IdentifierStn preferredIdentifier: :v
+
+    [valueId] = variableDefinition
+
+    # log {variableDefinition}
+
+    invokeWithClauseAndPush =
+      FunctionInvocationStn
+        AccessorStn intoId, IdentifierStn "push"
+        withClause ? valueId
+
+    StatementsStn
+      AssignmentStn fromId, BinaryOperatorStn
+        operator: "||"
+        fromArrayClause
+        PureJsStn "[]"
+
+      AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length"
+      AssignmentStn iId, PureJsStn "0"
+      AssignmentStn intoId, intoClause ? PureJsStn "" []
+
+      WhileStn
+        BinaryOperatorStn
+          operator: "<"
+          iId
+          lengthId
+        StatementsStn
+          LetStn
+            array v, i in variableDefinition
+              AssignmentStn
+                v
+                if i == 0 then AccessorStn fromId, iId
+                else iId
+          if whenClause
+            IfStn whenClause, invokeWithClauseAndPush
+          else
+            invokeWithClauseAndPush
+
+          UnaryOperatorStn
+            operand: :++
+            tail: true
+            iId
+      intoId
+
+    # if whenClause
+    #   while _i < length
+    #     let v = fromArray[i]
+    #     let k = _i
+    #     if whenClause v, k
+    #       intoArray.push withClause v, k
+    #     i++
+
+    # else
+    #   while _i < length
+    #     let v = fromArray[i]
+    #     let k = _i
+    #     intoArray.push withClause v, k
+    #     i++
+
+    # intoArray
+
+
   # Caf.find(source, withClause, whenClause) ->
   generateFind: ({fromClause, withClause, whenClause})->
     {iterable, variableDefinition} = @labeledChildren
-    {FunctionInvocationStn, IdentifierStn, FunctionDefinitionStn, SimpleLiteralStn} = StnRegistry
 
     FunctionInvocationStn
       IdentifierStn identifier: "" Caf.find
@@ -157,7 +226,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
   # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
   # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
   generateArrayOrEach: (method, {fromClause, intoClause, withClause, whenClause, withKeyClause})->
-    {FunctionInvocationStn, StatementsStn, IdentifierStn, SimpleLiteralStn, FunctionDefinitionStn} = StnRegistry
     {variableDefinition} = @labeledChildren
 
     # if the value-variable is defined, it's a destructuring set the special default withClause

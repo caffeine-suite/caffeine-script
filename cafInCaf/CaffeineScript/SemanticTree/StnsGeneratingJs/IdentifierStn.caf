@@ -2,7 +2,12 @@ import &StandardImport
 
 class IdentifierStn extends &BaseStn
 
-  constructor: ->
+  constructor: (props, children) ->
+    if (identifier = children[0]) is String
+      props = merge props, {} identifier
+      log IdentifierStn: props
+      children = []
+    super props, children
     unless @props.identifier
       @props.identifierHandle ?= new &UniqueIdentifierHandle @props.preferredIdentifier, @props.addToLets
 

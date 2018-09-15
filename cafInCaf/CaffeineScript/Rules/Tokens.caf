@@ -115,6 +115,9 @@
 
         )
 
+        # dashed-name-extensions to reserved-words are... reserved
+        (-[a-z]+)*
+
         \b
 
         (?![-])
