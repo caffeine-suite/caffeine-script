@@ -104,4 +104,4 @@ module.exports = suite: parseTestSuite
     "a?.b = c = d": "let c; Caf.exists(a) && (a.b = c = d);"
     "a = b?.c = d": "let a; a = Caf.exists(b) && (b.c = d);"
     "a = b = c?.d": "let a, b; a = b = Caf.exists(c) && c.d;"
-    "a()?.b = c":   "let cafBase; Caf.exists(cafBase = a()) && (cafBase.b = c);"
+    "a()?.b = c":   "let base; Caf.exists(base = a()) && (base.b = c);"

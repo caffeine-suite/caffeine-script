@@ -4,11 +4,11 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
 
 (toExtend) -> class ScopeStnMixin extends toExtend
   @abstractClass()
-  @normalizePerferredName: normalizePerferredName = (preferredName = "temp") -> # preferredName
-    lowerCamelCase if preferredName.match /^caf/i
-      preferredName
-    else
-      "caf #{preferredName}"
+  @normalizePerferredName: normalizePerferredName = (preferredName = "temp") -> preferredName
+    # lowerCamelCase if preferredName.match /^caf/i
+    #   preferredName
+    # else
+    #   "caf #{preferredName}"
 
   constructor: ->
     super

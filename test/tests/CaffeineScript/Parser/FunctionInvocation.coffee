@@ -31,7 +31,7 @@ module.exports = suite: parseTestSuite
       "a?(b)+4":  "(Caf.isF(a) && a(b)) + 4;"
 
     baseExtraction:
-      "a.foo.bar?(b)":  "let cafBase; Caf.isF((cafBase = a.foo).bar) && cafBase.bar(b);"
+      "a.foo.bar?(b)":  "let base; Caf.isF((base = a.foo).bar) && base.bar(b);"
 
   block:
     basic:

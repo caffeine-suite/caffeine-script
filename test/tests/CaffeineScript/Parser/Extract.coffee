@@ -13,7 +13,7 @@ module.exports = suite: parseTestSuite
       "a extract b, c": "let b, c; b = a.b; c = a.c;"
 
     complexBase:
-      "a.b extract c, d": "let c, d, cafTemp; cafTemp = a.b; c = cafTemp.c; d = cafTemp.d;"
+      "a.b extract c, d": "let c, d, temp; temp = a.b; c = temp.c; d = temp.d;"
       # "a + b extract c": "as"
 
     expression:
@@ -21,23 +21,23 @@ module.exports = suite: parseTestSuite
       "d = a extract b, c": "let d, b, c; d = (b = a.b, c = a.c);"
 
     nested:
-      "a extract b extract c": "let c, cafTemp; cafTemp = a.b; c = cafTemp.c;"
-      "a extract b extract c extract d": "let d, cafTemp, cafTemp1; cafTemp = a.b; cafTemp1 = cafTemp.c; d = cafTemp1.d;"
-      "d = a extract b extract c": "let d, c, cafTemp; d = (cafTemp = a.b, c = cafTemp.c);"
+      "a extract b extract c": "let c, temp; temp = a.b; c = temp.c;"
+      "a extract b extract c extract d": "let d, temp, temp1; temp = a.b; temp1 = temp.c; d = temp1.d;"
+      "d = a extract b extract c": "let d, c, temp; d = (temp = a.b, c = temp.c);"
 
     default:
-      "a extract b = c": "let b, cafTemp; b = (undefined !== (cafTemp = a.b)) ? cafTemp : c;"
-      "a extract b = c + d": "let b, cafTemp; b = (undefined !== (cafTemp = a.b)) ? cafTemp : c + d;"
+      "a extract b = c": "let b, temp; b = (undefined !== (temp = a.b)) ? temp : c;"
+      "a extract b = c + d": "let b, temp; b = (undefined !== (temp = a.b)) ? temp : c + d;"
 
     as:
       "a extract b as c": "let c; c = a.b;"
 
     conditional:
       "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
-      "a extract b extract? c": "let c, cafTemp; cafTemp = a.b; if (Caf.exists(cafTemp)) {c = cafTemp.c;};"
+      "a extract b extract? c": "let c, temp; temp = a.b; if (Caf.exists(temp)) {c = temp.c;};"
 
       # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
-      # "a extract? b = 1": "let b, cafTemp; b = (undefined !== cafTemp = Caf.exists(a) ? a.b : undefined) ? cafTemp : 1;"
+      # "a extract? b = 1": "let b, temp; b = (undefined !== temp = Caf.exists(a) ? a.b : undefined) ? temp : 1;"
 
     pathing:
       "a extract b.c": "let c; c = a.b.c;"

@@ -183,9 +183,9 @@ module.exports =
     throw new Error "either pass all null/string/{knownFailing:string} or all sub-suites as objects withouth knownFailing fields!" if hasTestValues && hasOther
     if hasTestValues
       ->
-        object map, (jsControl, cafSource) ->
-          niceTest name = "#{cafSource} >> #{jsControl || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
-            {js} = compileAndReportErrors cafSource, {name}
+        object map, (jsControl, cafScriptSource) ->
+          niceTest name = "#{cafScriptSource} >> #{jsControl || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+            {js} = compileAndReportErrors cafScriptSource, {name}
             cafOutput = eval """
               let Caf = require(\'caffeine-script-runtime\');
               #{js}

@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["lowerCamelCase", "merge", "Error", "log", "isString", "mergeInto"],
+    ["merge", "Error", "log", "isString", "mergeInto"],
     [global, require("../StandardImport")],
-    (lowerCamelCase, merge, Error, log, isString, mergeInto) => {
+    (merge, Error, log, isString, mergeInto) => {
       let UniqueIdentifierHandle;
       UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
       return function(toExtend) {
@@ -23,11 +23,7 @@ Caf.defMod(module, () => {
             this.normalizePerferredName = normalizePerferredName = function(
               preferredName = "temp"
             ) {
-              return lowerCamelCase(
-                preferredName.match(/^caf/i)
-                  ? preferredName
-                  : `caf ${Caf.toString(preferredName)}`
-              );
+              return preferredName;
             };
             this.getter({
               childScopes: function() {

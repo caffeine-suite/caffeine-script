@@ -263,15 +263,14 @@ module.exports = suite: parseTestSuite
   parameterNameRegressions:
 
     "object k from b":    "Caf.object(b);"
-    "object cafK from b": "Caf.object(b);"
     """
-    cafK = 123
-    object v from b with cafK * v
-    """: "let cafK; cafK = 123; Caf.object(b, (v) => cafK * v);"
-    "array cafV":         "Caf.array(cafV);"
+    k = 123
+    object v from b with k * v
+    """: "let k; k = 123; Caf.object(b, (v) => k * v);"
+    "array v":         "Caf.array(v);"
 
-    "object a from cafK with a * cafK.length":
-      "Caf.object(cafK, (a) => a * cafK.length);"
+    "object a from k with a * k.length":
+      "Caf.object(k, (a) => a * k.length);"
 
     "object k, v from b": "Caf.object(b);"
     "object v, k from b": "Caf.object(b);"

@@ -33,7 +33,7 @@ module.exports = suite: parseTestSuite
       "1 ^    2":   "1 ^ 2;"
 
       "a ?    b":   "a != null ? a : b;"
-      "a.b ?  b":   "let cafTemp; ((cafTemp = a.b) != null ? cafTemp : b);"
+      "a.b ?  b":   "let temp; ((temp = a.b) != null ? temp : b);"
       "1 and  2":   "1 && 2;"
       "1 or   2":   "1 || 2;"
       "1 != 2":   "1 !== 2;"

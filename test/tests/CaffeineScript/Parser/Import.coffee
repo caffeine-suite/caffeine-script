@@ -41,9 +41,9 @@ module.exports = suite: parseTestSuite {compileModule: true},
     foo()
     """:
       applyModuleWrapper '
-        let a = global.a, cafParentImports;
-        return Caf.importInvoke(["b"], cafParentImports = [global, a], (b) =>
-        {return Caf.importInvoke(["foo"], [cafParentImports, b], (foo) => {return foo();});});
+        let a = global.a, parentImports;
+        return Caf.importInvoke(["b"], parentImports = [global, a], (b) =>
+        {return Caf.importInvoke(["foo"], [parentImports, b], (foo) => {return foo();});});
         '
 
   scopes:
@@ -62,11 +62,11 @@ module.exports = suite: parseTestSuite {compileModule: true},
       import LibB
       fromLibB arg
     """: applyModuleWrapper '
-      let LibA = global.LibA, cafParentImports;
-      return Caf.importInvoke(["LibB"], cafParentImports = [global, LibA],
+      let LibA = global.LibA, parentImports;
+      return Caf.importInvoke(["LibB"], parentImports = [global, LibA],
       (LibB) =>
       {return function(arg)
-      {return Caf.importInvoke(["fromLibB"], [cafParentImports, LibB],
+      {return Caf.importInvoke(["fromLibB"], [parentImports, LibB],
       (fromLibB) => {return fromLibB(arg);});};});
       '
 
@@ -78,10 +78,10 @@ module.exports = suite: parseTestSuite {compileModule: true},
     foo()
     """:
       applyModuleWrapper '
-      let a = global.a, cafParentImports; return
-      Caf.importInvoke(["b"], cafParentImports = [global, a], (b) => {let cafParentImports1; return
-      Caf.importInvoke(["c"], cafParentImports1 = [cafParentImports, b], (c) => {return
-      Caf.importInvoke(["foo"], [cafParentImports1, c], (foo) => {return foo();});});});
+      let a = global.a, parentImports; return
+      Caf.importInvoke(["b"], parentImports = [global, a], (b) => {let parentImports1; return
+      Caf.importInvoke(["c"], parentImports1 = [parentImports, b], (c) => {return
+      Caf.importInvoke(["foo"], [parentImports1, c], (foo) => {return foo();});});});
       '
 
   list:
@@ -115,7 +115,7 @@ module.exports = suite: parseTestSuite {compileModule: true},
     import global
     global.Neptune?.Art
     """: applyModuleWrapper "
-      return (() => {let cafBase; return Caf.exists(cafBase = global.Neptune) && cafBase.Art;})();
+      return (() => {let base; return Caf.exists(base = global.Neptune) && base.Art;})();
       "
 
   bare:
