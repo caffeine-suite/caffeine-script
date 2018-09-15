@@ -57,7 +57,7 @@ Caf.defMod(module, () => {
               tilClause,
               fromClause,
               fromArrayClause,
-              cafBase;
+              base;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             if (
               (Caf.exists(variableDefinition) &&
@@ -65,8 +65,8 @@ Caf.defMod(module, () => {
             ) {
               throw new Error(
                 `Can define at most two loop variables (value followed optionally by key). You defined: ${Caf.toString(
-                  Caf.exists((cafBase = variableDefinition.parseTreeNode)) &&
-                    cafBase.toString()
+                  Caf.exists((base = variableDefinition.parseTreeNode)) &&
+                    base.toString()
                 )}.`
               );
             }
@@ -136,15 +136,14 @@ Caf.defMod(module, () => {
               return this.labeledChildren.outputType.props.token;
             },
             labeledClauses: function() {
-              let iterable, body, labeledClauses, cafTemp, cafTemp1;
+              let iterable, body, labeledClauses, temp, temp1;
               ({ iterable, body } = this.labeledChildren);
               labeledClauses = {};
               Caf.each2(
                 this.labeledChildren.valueClauses,
                 ({ type, value }) => {
-                  let name, cafTemp;
-                  type =
-                    (cafTemp = clauseAliases[type]) != null ? cafTemp : type;
+                  let name, temp;
+                  type = (temp = clauseAliases[type]) != null ? temp : type;
                   name = lowerCamelCase(type + "Clause");
                   if (labeledClauses[name]) {
                     throw new Error(
@@ -155,11 +154,11 @@ Caf.defMod(module, () => {
                   return (labeledClauses[name] = value);
                 }
               );
-              (cafTemp = labeledClauses.fromClause) != null
-                ? cafTemp
+              (temp = labeledClauses.fromClause) != null
+                ? temp
                 : (labeledClauses.fromClause = iterable);
-              (cafTemp1 = labeledClauses.withClause) != null
-                ? cafTemp1
+              (temp1 = labeledClauses.withClause) != null
+                ? temp1
                 : (labeledClauses.withClause = body);
               return labeledClauses;
             }
@@ -339,12 +338,12 @@ Caf.defMod(module, () => {
             method,
             { fromClause, intoClause, withClause, whenClause, withKeyClause }
           ) {
-            let variableDefinition, cafBase;
+            let variableDefinition, base;
             ({ variableDefinition } = this.labeledChildren);
             if (
               (Caf.exists(variableDefinition) &&
-                (Caf.exists((cafBase = variableDefinition.children)) &&
-                  cafBase.length)) > 0 &&
+                (Caf.exists((base = variableDefinition.children)) &&
+                  base.length)) > 0 &&
               !variableDefinition.children[0].isSimpleIdentifier
             ) {
               withClause != null

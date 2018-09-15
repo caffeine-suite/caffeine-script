@@ -20,10 +20,10 @@ Caf.defMod(module, () => {
           }
         });
         this.prototype.toSourceNode = function() {
-          let cafBase;
+          let base;
           return this.createSourceNode(
-            Caf.exists((cafBase = this.value)) &&
-              cafBase.toSourceNode({ dotBase: true }),
+            Caf.exists((base = this.value)) &&
+              base.toSourceNode({ dotBase: true }),
             "[",
             this.key.toSourceNode({ expression: true }),
             "]"

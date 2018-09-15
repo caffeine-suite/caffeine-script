@@ -20,18 +20,18 @@ Caf.defMod(module, () => {
             return true;
           },
           propName: function() {
-            let cafBase;
+            let base;
             return (
-              (Caf.exists((cafBase = this.props.identifierHandle)) &&
-                cafBase.identifier) ||
+              (Caf.exists((base = this.props.identifierHandle)) &&
+                base.identifier) ||
               this.labeledChildren.identifier.propName
             );
           },
           explicitIdentifier: function() {
-            let cafBase;
+            let base;
             return (
-              Caf.exists((cafBase = this.labeledChildren.identifier)) &&
-              cafBase.explicitIdentifier
+              Caf.exists((base = this.labeledChildren.identifier)) &&
+              base.explicitIdentifier
             );
           },
           canBeUsedInES6Structuring: function() {

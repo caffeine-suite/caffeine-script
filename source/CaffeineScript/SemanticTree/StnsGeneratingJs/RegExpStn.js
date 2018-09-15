@@ -10,10 +10,10 @@ Caf.defMod(module, () => {
         class RegExpStn extends require("../BaseStn") {},
         function(RegExpStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function() {
-            let value, modifiers, childrenNodes, hasInterpolation, cafBase;
+            let value, modifiers, childrenNodes, hasInterpolation, base;
             ({ value, modifiers } = this.props);
             childrenNodes =
-              (Caf.exists((cafBase = this.children)) && cafBase.length) > 0
+              (Caf.exists((base = this.children)) && base.length) > 0
                 ? ((hasInterpolation = Caf.find(
                     this.children,
                     child => !isString(child.props.value)

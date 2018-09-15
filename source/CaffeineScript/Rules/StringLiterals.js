@@ -98,14 +98,14 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let cafBase;
+              let base;
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })
                 );
               }
-              Caf.exists((cafBase = this.interpolation)) &&
-                cafBase.getStnChildren(appendTo);
+              Caf.exists((base = this.interpolation)) &&
+                base.getStnChildren(appendTo);
               return appendTo;
             },
             getStn: function() {
@@ -140,15 +140,15 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let cafBase;
+              let base;
               appendTo.push(this.interpolation.expression.getStn());
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })
                 );
               }
-              Caf.exists((cafBase = this.interpolationContinues)) &&
-                cafBase.getStnChildren(appendTo);
+              Caf.exists((base = this.interpolationContinues)) &&
+                base.getStnChildren(appendTo);
               return appendTo;
             }
           }

@@ -32,25 +32,23 @@ Caf.defMod(module, () => {
               return peek(this.children);
             },
             isThisProp: function() {
-              let cafBase;
-              return (
-                Caf.exists((cafBase = this.propNameChild)) && cafBase.isThisProp
-              );
+              let base;
+              return Caf.exists((base = this.propNameChild)) && base.isThisProp;
             },
             propName: function() {
-              let propNameChild, cafTemp, cafBase, cafTemp1, cafTemp2;
+              let propNameChild, temp, base, temp1, temp2;
               ({ propNameChild } = this);
-              return (cafTemp = (cafBase = this.props).propName) != null
-                ? cafTemp
-                : (cafBase.propName = (() => {
+              return (temp = (base = this.props).propName) != null
+                ? temp
+                : (base.propName = (() => {
                     switch (this.children.length) {
                       case 2:
-                        return (cafTemp1 = propNameChild.propName) != null
-                          ? cafTemp1
+                        return (temp1 = propNameChild.propName) != null
+                          ? temp1
                           : propNameChild;
                       case 1:
-                        return (cafTemp2 = propNameChild.propName) != null
-                          ? cafTemp2
+                        return (temp2 = propNameChild.propName) != null
+                          ? temp2
                           : (() => {
                               throw new Error(
                                 `${Caf.toString(

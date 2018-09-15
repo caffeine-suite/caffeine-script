@@ -51,11 +51,11 @@ Caf.defMod(module, () => {
           {
             stnFactory: "FunctionDefinitionArgStn",
             stnProps: function() {
-              let cafBase;
+              let base;
               return {
                 rest: !!(
-                  Caf.exists((cafBase = this.argIdentifierExtension)) &&
-                  cafBase.ellipsis
+                  Caf.exists((base = this.argIdentifierExtension)) &&
+                  base.ellipsis
                 ),
                 assignThisProperty: !!this.at
               };
@@ -78,8 +78,8 @@ Caf.defMod(module, () => {
               return { existanceTest: !!this.existanceTest };
             },
             stnChildren: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.values)) && cafBase.getStn();
+              let base;
+              return Caf.exists((base = this.values)) && base.getStn();
             }
           }
         ]

@@ -33,30 +33,30 @@ Caf.defMod(module, () => {
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
           constructor(props, children = [], pretransformedStn) {
-            let e, cafTemp, cafBase, cafTemp1, cafTemp2, cafBase1, cafBase2;
+            let e, temp, base, temp1, temp2, base1, base2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
             this.parseTreeNode =
-              (cafTemp =
-                Caf.exists((cafBase = this.pretransformedStn)) &&
-                cafBase.parseTreeNode) != null
-                ? cafTemp
+              (temp =
+                Caf.exists((base = this.pretransformedStn)) &&
+                base.parseTreeNode) != null
+                ? temp
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
             this.props = objectWithout(props, "parseTreeNode");
             try {
-              (cafTemp1 = this._sourceIndex) != null
-                ? cafTemp1
+              (temp1 = this._sourceIndex) != null
+                ? temp1
                 : (this._sourceIndex =
-                    (cafTemp2 =
-                      Caf.exists((cafBase1 = this.pretransformedStn)) &&
-                      cafBase1.sourceIndex) != null
-                      ? cafTemp2
-                      : Caf.exists((cafBase2 = this.parseTreeNode)) &&
-                        cafBase2.absoluteOffset);
-            } catch (cafError) {
-              e = cafError;
+                    (temp2 =
+                      Caf.exists((base1 = this.pretransformedStn)) &&
+                      base1.sourceIndex) != null
+                      ? temp2
+                      : Caf.exists((base2 = this.parseTreeNode)) &&
+                        base2.absoluteOffset);
+            } catch (error) {
+              e = error;
               log({
                 sourceIndexFailure: { parseTreeNode: this.parseTreeNode }
               });
@@ -71,23 +71,23 @@ Caf.defMod(module, () => {
           this.setter("parseTreeNode");
           this.getter({
             parseTreeNode: function() {
-              let cafTemp, cafBase;
-              return (cafTemp = this._parseTreeNode) != null
-                ? cafTemp
-                : Caf.exists((cafBase = this.parent)) && cafBase.parseTreeNode;
+              let temp, base;
+              return (temp = this._parseTreeNode) != null
+                ? temp
+                : Caf.exists((base = this.parent)) && base.parseTreeNode;
             }
           });
           this.prototype.initLabeledChildren = function() {
             this.labeledChildren = this.children && {};
             return Caf.each2(this.children, child => {
-              let label, pluralLabel, cafBase;
+              let label, pluralLabel, base;
               child.parent = this;
               ({ label, pluralLabel } = child);
               this.labeledChildren[label] = child;
               return pluralLabel
                 ? (
-                    (cafBase = this.labeledChildren)[pluralLabel] ||
-                    (cafBase[pluralLabel] = [])
+                    (base = this.labeledChildren)[pluralLabel] ||
+                    (base[pluralLabel] = [])
                   ).push(child)
                 : undefined;
             });
@@ -112,10 +112,10 @@ Caf.defMod(module, () => {
               return this.props.pluralLabel;
             },
             root: function() {
-              let cafTemp, cafBase;
-              return (cafTemp =
-                Caf.exists((cafBase = this.parent)) && cafBase.root) != null
-                ? cafTemp
+              let temp, base;
+              return (temp = Caf.exists((base = this.parent)) && base.root) !=
+                null
+                ? temp
                 : this;
             },
             inspectedObjects: function() {
@@ -207,11 +207,11 @@ Caf.defMod(module, () => {
           });
           this.getter({
             sourceFile: function() {
-              let cafTemp, cafBase;
-              return (cafTemp =
-                Caf.exists((cafBase = this.parseTreeNode)) &&
-                cafBase.sourceFile) != null
-                ? cafTemp
+              let temp, base;
+              return (temp =
+                Caf.exists((base = this.parseTreeNode)) && base.sourceFile) !=
+                null
+                ? temp
                 : "caffeine-script";
             }
           });
@@ -344,8 +344,8 @@ Caf.defMod(module, () => {
             let e, ce;
             try {
               this.validate();
-            } catch (cafError) {
-              e = cafError;
+            } catch (error) {
+              e = error;
               ce = this.parseTreeNode.parser.generateCompileError({
                 failureIndex: this.sourceOffset,
                 errorType: "Validation",

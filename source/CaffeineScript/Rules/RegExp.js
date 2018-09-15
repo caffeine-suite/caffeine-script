@@ -18,19 +18,19 @@ Caf.defMod(module, () => {
           {
             stnFactory: "RegExpStn",
             stnProps: function() {
-              let cafBase, cafBase1, cafBase2;
+              let base, base1, base2;
               return this.regExpMiddle
                 ? {
                     value: this.regExpMiddle.toString(),
                     modifiers:
-                      Caf.exists((cafBase = this.regExpModifiers)) &&
-                      cafBase.toString()
+                      Caf.exists((base = this.regExpModifiers)) &&
+                      base.toString()
                   }
                 : {
                     modifiers:
-                      Caf.exists((cafBase1 = this.regExpBlockModifiers)) &&
-                      (Caf.exists((cafBase2 = cafBase1.regExpModifiers)) &&
-                        cafBase2.toString())
+                      Caf.exists((base1 = this.regExpBlockModifiers)) &&
+                      (Caf.exists((base2 = base1.regExpModifiers)) &&
+                        base2.toString())
                   };
             }
           }

@@ -52,7 +52,7 @@ Caf.defMod(module, () => {
               line,
               lineIndentLevel,
               commentOnlyLine,
-              cafTemp;
+              temp;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
                 (padding = null),
@@ -90,9 +90,9 @@ Caf.defMod(module, () => {
                             : line.slice(-indentChange, line.length);
                       }
                     }
-                    cafTemp = i++;
+                    temp = i++;
                   }
-                  return cafTemp;
+                  return temp;
                 })())
               : undefined;
           };

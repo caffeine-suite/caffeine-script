@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
       return (FunctionInvocationStn = Caf.defClass(
         class FunctionInvocationStn extends require("../AccessorChainStn") {
           constructor(props, children) {
-            let functionValue, argStns, cafBase, cafBase1, cafBase2;
+            let functionValue, argStns, base, base1, base2;
             super(...arguments);
             [functionValue, ...argStns] = children;
             this.key = this.argStns = argStns;
@@ -22,13 +22,11 @@ Caf.defMod(module, () => {
               this.argStns = this.argStns[0].children;
             }
             if (
-              (Caf.exists((cafBase = this.parseTreeNode)) &&
-                cafBase.conditional) ||
-              (Caf.exists((cafBase1 = this.parseTreeNode)) &&
-                cafBase1.existanceTest)
+              (Caf.exists((base = this.parseTreeNode)) && base.conditional) ||
+              (Caf.exists((base1 = this.parseTreeNode)) && base1.existanceTest)
             ) {
-              (cafBase2 = this.props).existanceTest ||
-                (cafBase2.existanceTest = true);
+              (base2 = this.props).existanceTest ||
+                (base2.existanceTest = true);
             }
           }
         },
@@ -41,10 +39,8 @@ Caf.defMod(module, () => {
               return true;
             },
             propName: function() {
-              let cafBase;
-              return (
-                Caf.exists((cafBase = this.functionValue)) && cafBase.propName
-              );
+              let base;
+              return Caf.exists((base = this.functionValue)) && base.propName;
             }
           });
           this.prototype.toSourceNode = function(options) {

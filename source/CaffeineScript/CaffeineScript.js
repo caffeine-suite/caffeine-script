@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
             stn,
             parseTree,
             e,
-            cafTemp;
+            temp;
           return (() => {
             try {
               ({
@@ -42,8 +42,8 @@ Caf.defMod(module, () => {
                 sourceFile,
                 sourceRoot
               });
-            } catch (cafError) {
-              e = cafError;
+            } catch (error) {
+              e = error;
               if (
                 !(
                   e.location != null ||
@@ -63,7 +63,7 @@ Caf.defMod(module, () => {
                 });
               }
               if (options.debug) {
-                (cafTemp = e.info) != null ? cafTemp : (e.info = {});
+                (temp = e.info) != null ? temp : (e.info = {});
                 mergeInto(e.info, { options, parseTree, stn, transformedStn });
               }
               return (() => {

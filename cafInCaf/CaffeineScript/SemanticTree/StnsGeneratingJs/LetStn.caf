@@ -1,0 +1,12 @@
+import &StandardImport
+
+class LetStn extends &BaseStn
+
+  toSourceNode: ->
+    @createSourceNode
+      "let "
+      array child, i in @children
+        c = child.toSourceNode()
+        if i > 0
+          [] ", " c
+        else c

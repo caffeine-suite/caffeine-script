@@ -9,21 +9,21 @@ Caf.defMod(module, () => {
       return (ControlOperatorStn = Caf.defClass(
         class ControlOperatorStn extends require("../BaseStn") {
           constructor(props, children) {
-            let cafTemp, cafTemp1, cafTemp2;
+            let temp, temp1, temp2;
             super(...arguments);
-            this.operand = (cafTemp = props.operand) != null ? cafTemp : "if";
+            this.operand = (temp = props.operand) != null ? temp : "if";
             if (this.labeledChildren.expression) {
               this.expression = this.labeledChildren.expression;
               this.body =
-                (cafTemp1 = this.labeledChildren.body) != null
-                  ? cafTemp1
+                (temp1 = this.labeledChildren.body) != null
+                  ? temp1
                   : StnRegistry.UndefinedStn();
               this.elseBody = this.labeledChildren.elseBody;
             } else {
               this.expression = children[0];
               this.body =
-                (cafTemp2 = children[1]) != null
-                  ? cafTemp2
+                (temp2 = children[1]) != null
+                  ? temp2
                   : StnRegistry.UndefinedStn();
               this.elseBody = children[2];
             }
@@ -36,9 +36,9 @@ Caf.defMod(module, () => {
         function(ControlOperatorStn, classSuper, instanceSuper) {
           this.getter({
             whileReturnTempVar: function() {
-              let cafTemp;
-              return (cafTemp = this._whileReturnTempVar) != null
-                ? cafTemp
+              let temp;
+              return (temp = this._whileReturnTempVar) != null
+                ? temp
                 : (this._whileReturnTempVar = this.scope.uniqueIdentifier);
             }
           });
@@ -79,7 +79,7 @@ Caf.defMod(module, () => {
               unaryOperator,
               parts,
               tempVarIdentifier,
-              cafBase;
+              base;
             ({ expression, returnValueIsIgnored, noParens } = options);
             ({ operand } = this);
             applyParens = false;
@@ -135,8 +135,8 @@ Caf.defMod(module, () => {
                         " ? ",
                         this.body.toSourceNode({ expression: true }),
                         " : ",
-                        (Caf.exists((cafBase = this.elseBody)) &&
-                          cafBase.toSourceNode({ expression: true })) ||
+                        (Caf.exists((base = this.elseBody)) &&
+                          base.toSourceNode({ expression: true })) ||
                           "undefined"
                       ];
                   }

@@ -9,14 +9,13 @@ Caf.defMod(module, () => {
       return (TryStn = Caf.defClass(
         class TryStn extends require("../BaseStn") {
           constructor() {
-            let cafTemp, cafBase;
+            let temp, base;
             super(...arguments);
             if (!this.labeledChildren.optionalCatch) {
               (this.children[1] =
-                (cafTemp = (cafBase = this.labeledChildren).optionalCatch) !=
-                null
-                  ? cafTemp
-                  : (cafBase.optionalCatch = StnRegistry.CatchStn())).parent = this;
+                (temp = (base = this.labeledChildren).optionalCatch) != null
+                  ? temp
+                  : (base.optionalCatch = StnRegistry.CatchStn())).parent = this;
             }
           }
         },

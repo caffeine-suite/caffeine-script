@@ -11,17 +11,16 @@ Caf.defMod(module, () => {
         function(ThisStn, classSuper, instanceSuper) {
           this.getter({
             identifier: function() {
-              let id, cafBase;
+              let id, base;
               return (id = this.props.identifier)
                 ? identifierRegexp.test(id)
                   ? id
                   : escapeJavascriptString(id)
-                : Caf.exists((cafBase = peek(this.children))) &&
-                    cafBase.identifier;
+                : Caf.exists((base = peek(this.children))) && base.identifier;
             },
             propName: function() {
-              let cafTemp;
-              return (cafTemp = this.identifier) != null ? cafTemp : "this";
+              let temp;
+              return (temp = this.identifier) != null ? temp : "this";
             }
           });
           this.prototype.toSourceNode = function() {

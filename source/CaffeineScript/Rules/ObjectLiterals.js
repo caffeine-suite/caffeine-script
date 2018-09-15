@@ -1,10 +1,10 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  let cafParentImports;
+  let parentImports;
   return Caf.importInvoke(
     ["Extensions"],
-    (cafParentImports = [
+    (parentImports = [
       global,
       require("../StandardImport"),
       require("caffeine-eight"),
@@ -13,7 +13,7 @@ Caf.defMod(module, () => {
     Extensions => {
       return Caf.importInvoke(
         ["IndentBlocks", "ObjectStn"],
-        [cafParentImports, Extensions],
+        [parentImports, Extensions],
         (IndentBlocks, ObjectStn) => {
           return function() {
             this.rule({
@@ -140,10 +140,9 @@ Caf.defMod(module, () => {
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
-                  let cafBase;
+                  let base;
                   return {
-                    value:
-                      Caf.exists((cafBase = this.str)) && cafBase.toString(),
+                    value: Caf.exists((base = this.str)) && base.toString(),
                     isThisProp: false
                   };
                 }

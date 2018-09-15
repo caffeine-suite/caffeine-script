@@ -23,15 +23,15 @@ Caf.defMod(module, () => {
             return this.rValue;
           },
           propName: function() {
-            let cafBase;
-            return Caf.exists((cafBase = this.lValue)) && cafBase.propName;
+            let base;
+            return Caf.exists((base = this.lValue)) && base.propName;
           }
         });
         this.prototype.updateScope = function(scope) {
-          let cafBase;
+          let base;
           this.scope = scope;
           this.scope.addIdentifierAssigned(
-            Caf.exists((cafBase = this.lValue)) && cafBase.explicitIdentifier
+            Caf.exists((base = this.lValue)) && base.explicitIdentifier
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };

@@ -44,12 +44,10 @@ Caf.defMod(module, () => {
             {
               stnFactory: "UnaryOperatorStn",
               stnProps: function() {
-                let cafBase;
+                let base;
                 return {
                   operand: (this.prefix || this.postfix).toString(),
-                  tail: !!(
-                    Caf.exists((cafBase = this.postfix)) && cafBase.toString()
-                  )
+                  tail: !!(Caf.exists((base = this.postfix)) && base.toString())
                 };
               }
             }

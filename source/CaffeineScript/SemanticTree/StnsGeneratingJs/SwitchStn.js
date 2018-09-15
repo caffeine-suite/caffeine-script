@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
               childOptions,
               cases,
               conditionSourceNode,
-              cafTemp;
+              temp;
             if (options) {
               ({ expression } = options);
             }
@@ -32,10 +32,10 @@ Caf.defMod(module, () => {
               cases.push(["default: ", switchElse.toSourceNode(childOptions)]);
             }
             conditionSourceNode =
-              (cafTemp =
+              (temp =
                 Caf.exists(condition) &&
                 condition.toSourceNode({ expression: true })) != null
-                ? cafTemp
+                ? temp
                 : "false";
             return expression
               ? this.createSourceNode(

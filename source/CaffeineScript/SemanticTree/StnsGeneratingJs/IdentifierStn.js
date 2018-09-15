@@ -9,7 +9,7 @@ Caf.defMod(module, () => {
       return (IdentifierStn = Caf.defClass(
         class IdentifierStn extends require("../BaseStn") {
           constructor(props, children) {
-            let identifier, cafTemp, cafBase;
+            let identifier, temp, base;
             if (Caf.is((identifier = children[0]), String)) {
               props = merge(props, { identifier });
               log({ IdentifierStn: props });
@@ -17,9 +17,9 @@ Caf.defMod(module, () => {
             }
             super(props, children);
             if (!this.props.identifier) {
-              (cafTemp = (cafBase = this.props).identifierHandle) != null
-                ? cafTemp
-                : (cafBase.identifierHandle = new (require("../UniqueIdentifierHandle"))(
+              (temp = (base = this.props).identifierHandle) != null
+                ? temp
+                : (base.identifierHandle = new (require("../UniqueIdentifierHandle"))(
                     this.props.preferredIdentifier,
                     this.props.addToLets
                   ));

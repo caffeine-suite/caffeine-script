@@ -48,11 +48,11 @@ Caf.defMod(module, () => {
           };
           this.getter({
             isStnExtension: function() {
-              let cafBase;
+              let base;
               return (
                 this.stnExtension ||
-                (Caf.exists((cafBase = this.presentMatches[0])) &&
-                  cafBase.isStnExtension)
+                (Caf.exists((base = this.presentMatches[0])) &&
+                  base.isStnExtension)
               );
             },
             stnExtensionMatches: function() {

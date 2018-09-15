@@ -1,0 +1,5 @@
+(test, body) ->
+  &ControlOperatorStn
+    operand: "while"
+    test
+    body

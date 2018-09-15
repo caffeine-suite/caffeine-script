@@ -25,9 +25,9 @@ Caf.defMod(module, () => {
             }
           });
           this.prototype.decorate = function() {
-            let cafBase;
+            let base;
             return Caf.each2(
-              Caf.exists((cafBase = this.body)) && cafBase.children,
+              Caf.exists((base = this.body)) && base.children,
               stn =>
                 Caf.each2(stn.children, objectPropValueStn => {
                   let propNameStn, propValueStn;
@@ -200,7 +200,7 @@ Caf.defMod(module, () => {
             );
           };
           this.prototype.toSourceNode = function() {
-            let className, classExtends, body, classBody, cafTemp;
+            let className, classExtends, body, classBody, temp;
             ({
               className,
               classExtends,
@@ -211,10 +211,10 @@ Caf.defMod(module, () => {
               "Caf.defClass(class ",
               className.toSourceNode(),
               " extends ",
-              (cafTemp =
+              (temp =
                 Caf.exists(classExtends) &&
                 classExtends.toSourceNode({ expression: true })) != null
-                ? cafTemp
+                ? temp
                 : "Object",
               " {",
               Caf.exists(classBody) &&

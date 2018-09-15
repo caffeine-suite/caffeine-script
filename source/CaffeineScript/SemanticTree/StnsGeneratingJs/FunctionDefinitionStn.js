@@ -54,12 +54,12 @@ Caf.defMod(module, () => {
               return this.children[0];
             },
             statementStns: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.body)) && cafBase.children;
+              let base;
+              return Caf.exists((base = this.body)) && base.children;
             },
             argumentStns: function() {
-              let cafBase;
-              return Caf.exists((cafBase = this.args)) && cafBase.children;
+              let base;
+              return Caf.exists((base = this.args)) && base.children;
             }
           });
           this.prototype.updateScope = function() {
@@ -79,7 +79,7 @@ Caf.defMod(module, () => {
               : instanceSuper.addIdentifierAssigned.apply(this, arguments);
           };
           this.prototype.postTransform = function() {
-            let foundParent, newStatementStns, StatementsStn, cafBase;
+            let foundParent, newStatementStns, StatementsStn, base;
             if (this.props.bound === "auto") {
               this.props.bound = (foundParent = this.pretransformedStn.findParent(
                 /Class|FunctionDefinition/
@@ -96,8 +96,7 @@ Caf.defMod(module, () => {
                   StatementsStn
                 } = require("../../StnRegistry")),
                 FunctionDefinitionStn(
-                  (Caf.exists((cafBase = this.body)) &&
-                    cafBase.children.length) > 0
+                  (Caf.exists((base = this.body)) && base.children.length) > 0
                     ? this.props
                     : merge(this.props, { returnIgnored: true }),
                   this.children[0],
@@ -199,24 +198,23 @@ Caf.defMod(module, () => {
               returnAction,
               argsSourceNode,
               bodySourceNode,
-              cafTemp,
-              cafBase,
-              cafBase1;
+              temp,
+              base,
+              base1;
             ({ isConstructor, bound, returnIgnored } = this.props);
             if (options) {
               ({ statement, isOperand } = options);
             }
             returnAction = !(isConstructor || returnIgnored);
             argsSourceNode =
-              (cafTemp =
-                Caf.exists((cafBase = this.args)) && cafBase.toSourceNode()) !=
+              (temp = Caf.exists((base = this.args)) && base.toSourceNode()) !=
               null
-                ? cafTemp
+                ? temp
                 : "()";
             bodySourceNode = this.simpleBound
               ? this.body.children[0].toSourceNode({ expression: true })
-              : Caf.exists((cafBase1 = this.body)) &&
-                cafBase1.toSourceNode({ returnAction });
+              : Caf.exists((base1 = this.body)) &&
+                base1.toSourceNode({ returnAction });
             return bound
               ? this.simpleBound
                 ? this.createSourceNode(

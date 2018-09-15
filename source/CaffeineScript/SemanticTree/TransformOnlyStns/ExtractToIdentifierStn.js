@@ -27,12 +27,12 @@ Caf.defMod(module, () => {
         function(ExtractToIdentifierStn, classSuper, instanceSuper) {
           this.getter({
             assignToIdentifierStn: function() {
-              let cafTemp, cafTemp1;
-              return (cafTemp =
-                (cafTemp1 = this.extractAs) != null
-                  ? cafTemp1
+              let temp, temp1;
+              return (temp =
+                (temp1 = this.extractAs) != null
+                  ? temp1
                   : peek(this.extractPathExtensions)) != null
-                ? cafTemp
+                ? temp
                 : this.bastIdentifier;
             },
             extractAs: function() {

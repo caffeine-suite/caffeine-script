@@ -1,0 +1,6 @@
+(test, body, elseClause) ->
+  &ControlOperatorStn
+    operand: "if"
+    test
+    body
+    elseClause

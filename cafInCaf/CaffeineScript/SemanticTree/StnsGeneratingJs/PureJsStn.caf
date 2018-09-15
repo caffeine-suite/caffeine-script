@@ -1,0 +1,12 @@
+import &StandardImport
+
+class PureJsStn extends &BaseStn
+
+  constructor: (props, children) ->
+    if (js = children[0]) is String
+      props = {} js
+      children = []
+
+    super props, children
+
+  toSourceNode: -> @createSourceNode @props.js
