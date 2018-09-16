@@ -41,7 +41,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     if fromArrayClause
       switch comprehensionType
-        when :array, :object then null
+        when :array, :object, :each then null
         else throw new Error "" Invalid Comprehension: The 'from-array' clause is only compatible with 'array' or 'object' comprehensions #{getComprehensionsFound @labeledClauses}
 
     if withKeyClause && comprehensionType != :object
@@ -164,7 +164,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     withClause ?= valueStn ?= valueId.getValueStn()
 
-    invokeWithClauseAndPush = switch comprehensionType
+    intoClause = AssignmentStn intoId, intoClause ?
+      switch comprehensionType
+      when :object then PureJsStn "{}"
+      when :each then fromId
+      else PureJsStn "[]"
+
+    invokeWithClauseAndPush = if comprehensionType == :each
+      withClause
+
+    else
+
+      switch comprehensionType
       when :array
         FunctionInvocationStn
           AccessorStn intoId, IdentifierStn "push"
@@ -185,7 +196,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length"
       AssignmentStn iId, PureJsStn "0"
-      AssignmentStn intoId, intoClause ? PureJsStn if comprehensionType == :object then "{}" else "[]"
+      intoClause
 
       WhileStn
         BinaryOperatorStn

@@ -16,6 +16,7 @@ Caf.defMod(module, () => {
           }
         },
         function(UniqueIdentifierHandle, classSuper, instanceSuper) {
+          this.property("scope");
           this.getter({
             inspectedObjects: function() {
               return inspectedObjectLiteral(

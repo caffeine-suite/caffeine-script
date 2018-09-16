@@ -32,6 +32,18 @@ module.exports = suite: parseTestSuite
 
   efficiency:
     fromArray:
+      each:
+        basic:
+          "each from-array b": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = from;
+            while (i < length)
+            {let v = from[i]; v; i++;};
+            into;"
+
       array:
         basic:
           "array from-array b": "

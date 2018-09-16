@@ -11,11 +11,11 @@ Caf.defMod(module, () => {
       "SimpleLiteralStn",
       "FunctionInvocationStn",
       "IdentifierStn",
-      "AccessorStn",
       "AssignmentStn",
+      "PureJsStn",
+      "AccessorStn",
       "StatementsStn",
       "BinaryOperatorStn",
-      "PureJsStn",
       "WhileStn",
       "LetStn",
       "IfStn",
@@ -31,11 +31,11 @@ Caf.defMod(module, () => {
       SimpleLiteralStn,
       FunctionInvocationStn,
       IdentifierStn,
-      AccessorStn,
       AssignmentStn,
+      PureJsStn,
+      AccessorStn,
       StatementsStn,
       BinaryOperatorStn,
-      PureJsStn,
       WhileStn,
       LetStn,
       IfStn,
@@ -93,6 +93,7 @@ Caf.defMod(module, () => {
               switch (comprehensionType) {
                 case "array":
                 case "object":
+                case "each":
                   null;
                   break;
                 default:
@@ -306,35 +307,53 @@ Caf.defMod(module, () => {
                   valueStn != null
                     ? valueStn
                     : (valueStn = valueId.getValueStn()));
-            invokeWithClauseAndPush = (() => {
-              switch (comprehensionType) {
-                case "array":
-                  return FunctionInvocationStn(
-                    AccessorStn(intoId, IdentifierStn("push")),
-                    withClause
-                  );
-                case "object":
-                  return AssignmentStn(
-                    AccessorStn(
-                      intoId,
-                      withKeyClause != null
-                        ? withKeyClause
-                        : valueStn != null
-                          ? valueStn
-                          : (valueStn = valueId.getValueStn())
-                    ),
-                    withClause
-                  );
-                default:
-                  return (() => {
-                    throw new Error(
-                      `comprehensionType: ${Caf.toString(
-                        comprehensionType
-                      )} not supported (yet?) with from-array clauses`
-                    );
+            intoClause = AssignmentStn(
+              intoId,
+              intoClause != null
+                ? intoClause
+                : (() => {
+                    switch (comprehensionType) {
+                      case "object":
+                        return PureJsStn("{}");
+                      case "each":
+                        return fromId;
+                      default:
+                        return PureJsStn("[]");
+                    }
+                  })()
+            );
+            invokeWithClauseAndPush =
+              comprehensionType === "each"
+                ? withClause
+                : (() => {
+                    switch (comprehensionType) {
+                      case "array":
+                        return FunctionInvocationStn(
+                          AccessorStn(intoId, IdentifierStn("push")),
+                          withClause
+                        );
+                      case "object":
+                        return AssignmentStn(
+                          AccessorStn(
+                            intoId,
+                            withKeyClause != null
+                              ? withKeyClause
+                              : valueStn != null
+                                ? valueStn
+                                : (valueStn = valueId.getValueStn())
+                          ),
+                          withClause
+                        );
+                      default:
+                        return (() => {
+                          throw new Error(
+                            `comprehensionType: ${Caf.toString(
+                              comprehensionType
+                            )} not supported (yet?) with from-array clauses`
+                          );
+                        })();
+                    }
                   })();
-              }
-            })();
             return StatementsStn(
               AssignmentStn(
                 fromId,
@@ -349,12 +368,7 @@ Caf.defMod(module, () => {
                 AccessorStn(fromId, IdentifierStn("length"))
               ),
               AssignmentStn(iId, PureJsStn("0")),
-              AssignmentStn(
-                intoId,
-                intoClause != null
-                  ? intoClause
-                  : PureJsStn(comprehensionType === "object" ? "{}" : "[]")
-              ),
+              intoClause,
               WhileStn(
                 BinaryOperatorStn({ operator: "<" }, iId, lengthId),
                 StatementsStn(
