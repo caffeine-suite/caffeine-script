@@ -54,6 +54,9 @@ Caf.defMod(module, () => {
             },
             canBeUsedInES6Structuring: function() {
               return true;
+            },
+            valueStn: function() {
+              return require("./ReferenceStn")(this);
             }
           });
           this.prototype.updateScope = function(scope) {

@@ -23,6 +23,8 @@ class IdentifierStn extends &BaseStn
     explicitIdentifier: -> @props.identifier
     canBeUsedInES6Structuring: -> true
 
+    valueStn: -> &ReferenceStn @
+
   updateScope: (@scope) ->
     if @identifierHandle
       @scope.addUniqueIdentifierHandle @identifierHandle

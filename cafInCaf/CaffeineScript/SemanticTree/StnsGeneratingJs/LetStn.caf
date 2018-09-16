@@ -2,6 +2,8 @@ import &StandardImport
 
 class LetStn extends &BaseStn
 
+  updateScope: (@scope) ->
+
   toSourceNode: ->
     @createSourceNode
       "let "

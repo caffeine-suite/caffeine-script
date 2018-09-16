@@ -14,6 +14,7 @@ class FunctionDefinitionArgStn extends &BaseStn
     argumentName: -> @target.name
     isSimpleIdentifier: -> @target.type == :Identifier
     propName: -> @target.name
+    valueStn: -> @target.getValueStn()
 
   toSourceNode: ->
     @createSourceNode

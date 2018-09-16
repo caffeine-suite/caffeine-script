@@ -77,6 +77,52 @@ module.exports = suite: parseTestSuite
             {let myValue = from[i]; if (myValue > 1) {into.push(myValue);}; i++;};
             into;"
 
+        destructuring:
+          object:
+            "array {myProp} from-array b": "
+              let from, length, i, into;
+              from = b || [];
+              length = from.length;
+              i = 0;
+              into = [];
+              while (i < length)
+              {let {myProp} = from[i]; into.push({myProp}); i++;};
+              into;"
+
+          defaults:
+            "array {myProp = 123} from-array b": "
+              let from, length, i, into;
+              from = b || [];
+              length = from.length;
+              i = 0;
+              into = [];
+              while (i < length)
+              {let {myProp = 123} = from[i]; into.push({myProp}); i++;};
+              into;"
+
+          subObject:
+            # "a = b: c": "
+            "array {myProp: {myFoo}} from-array b": "
+              let from, length, i, into;
+              from = b || [];
+              length = from.length;
+              i = 0;
+              into = [];
+              while (i < length)
+              {let {myProp: {myFoo}} = from[i]; into.push({myProp: {myFoo}}); i++;};
+              into;"
+
+          array:
+            "array [myProp] from-array b": "
+              let from, length, i, into;
+              from = b || [];
+              length = from.length;
+              i = 0;
+              into = [];
+              while (i < length)
+              {let [myProp] = from[i]; into.push([myProp]); i++;};
+              into;"
+
       object:
         basic:
           "object from-array b": "

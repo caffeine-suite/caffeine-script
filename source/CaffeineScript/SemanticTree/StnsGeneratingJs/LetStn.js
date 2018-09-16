@@ -6,6 +6,9 @@ Caf.defMod(module, () => {
     return (LetStn = Caf.defClass(
       class LetStn extends require("../BaseStn") {},
       function(LetStn, classSuper, instanceSuper) {
+        this.prototype.updateScope = function(scope) {
+          this.scope = scope;
+        };
         this.prototype.toSourceNode = function() {
           return this.createSourceNode(
             "let ",

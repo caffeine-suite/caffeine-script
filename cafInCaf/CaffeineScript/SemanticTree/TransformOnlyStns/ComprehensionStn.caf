@@ -162,16 +162,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     [valueId] = variableDefinition
 
+    withClause ?= valueStn ?= valueId.getValueStn()
+
     invokeWithClauseAndPush = switch comprehensionType
       when :array
         FunctionInvocationStn
           AccessorStn intoId, IdentifierStn "push"
-          withClause ? valueId
+          withClause
 
       when :object
         AssignmentStn
-          AccessorStn intoId, withKeyClause ? ReferenceStn valueId
-          withClause ? valueId
+          AccessorStn intoId, withKeyClause ? valueStn ?= valueId.getValueStn()
+          withClause
 
       else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
@@ -195,7 +197,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
             array v, i in variableDefinition
               AssignmentStn
                 v
-                if i == 0 then AccessorStn fromId, ReferenceStn iId
+                if i == 0 then AccessorStn fromId, iId.getValueStn()
                 else iId
           if whenClause
             IfStn whenClause, invokeWithClauseAndPush

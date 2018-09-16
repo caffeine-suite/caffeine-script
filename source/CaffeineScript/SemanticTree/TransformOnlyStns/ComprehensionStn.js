@@ -13,7 +13,6 @@ Caf.defMod(module, () => {
       "IdentifierStn",
       "AccessorStn",
       "AssignmentStn",
-      "ReferenceStn",
       "StatementsStn",
       "BinaryOperatorStn",
       "PureJsStn",
@@ -34,7 +33,6 @@ Caf.defMod(module, () => {
       IdentifierStn,
       AccessorStn,
       AssignmentStn,
-      ReferenceStn,
       StatementsStn,
       BinaryOperatorStn,
       PureJsStn,
@@ -287,6 +285,7 @@ Caf.defMod(module, () => {
               iId,
               lengthId,
               valueId,
+              valueStn,
               invokeWithClauseAndPush;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
@@ -301,12 +300,18 @@ Caf.defMod(module, () => {
               ];
             }
             [valueId] = variableDefinition;
+            withClause != null
+              ? withClause
+              : (withClause =
+                  valueStn != null
+                    ? valueStn
+                    : (valueStn = valueId.getValueStn()));
             invokeWithClauseAndPush = (() => {
               switch (comprehensionType) {
                 case "array":
                   return FunctionInvocationStn(
                     AccessorStn(intoId, IdentifierStn("push")),
-                    withClause != null ? withClause : valueId
+                    withClause
                   );
                 case "object":
                   return AssignmentStn(
@@ -314,9 +319,11 @@ Caf.defMod(module, () => {
                       intoId,
                       withKeyClause != null
                         ? withKeyClause
-                        : ReferenceStn(valueId)
+                        : valueStn != null
+                          ? valueStn
+                          : (valueStn = valueId.getValueStn())
                     ),
-                    withClause != null ? withClause : valueId
+                    withClause
                   );
                 default:
                   return (() => {
@@ -355,7 +362,7 @@ Caf.defMod(module, () => {
                     Caf.array(variableDefinition, (v, i) =>
                       AssignmentStn(
                         v,
-                        i === 0 ? AccessorStn(fromId, ReferenceStn(iId)) : iId
+                        i === 0 ? AccessorStn(fromId, iId.getValueStn()) : iId
                       )
                     )
                   ),

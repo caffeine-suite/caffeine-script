@@ -13,6 +13,11 @@ Caf.defMod(module, () => {
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };
+        this.getter({
+          structuringStn: function() {
+            return this.labeledChildren.identifier;
+          }
+        });
         this.prototype.toSourceNode = function(options) {
           let restructuring, identifier, destructuringDefault;
           if (options) {

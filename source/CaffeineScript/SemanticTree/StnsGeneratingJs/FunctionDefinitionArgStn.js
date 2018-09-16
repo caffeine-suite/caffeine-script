@@ -23,6 +23,9 @@ Caf.defMod(module, () => {
           },
           propName: function() {
             return this.target.name;
+          },
+          valueStn: function() {
+            return this.target.getValueStn();
           }
         });
         this.prototype.toSourceNode = function() {

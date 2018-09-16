@@ -7,6 +7,10 @@ class DestructuringIdentifierStn extends &BaseStn
     @scope.addIdentifierAssigned @labeledChildren.identifier.identifier
     super
 
+  @getter
+    structuringStn: ->
+      @labeledChildren.identifier
+
   # TODO: check that etc is only used on the last element of an array destructure - javascript limitations
 
   toSourceNode: (options)->

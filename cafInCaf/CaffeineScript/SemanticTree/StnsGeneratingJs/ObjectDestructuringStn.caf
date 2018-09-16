@@ -2,6 +2,15 @@ import &StandardImport
 
 class ObjectDestructuringStn extends &BaseStn
 
+  @getter
+    valueStn: -> @structuringStn
+
+    # converts to object-structuring Stns
+    structuringStn: ->
+      &ObjectStn
+        array child in @children
+          child.getStructuringStn()
+
   toSourceNode: (options) ->
     {restructuring, restructuringStart} = options if options
     subOptions = restructuring: true if restructuringStart || restructuring

@@ -6,6 +6,16 @@ Caf.defMod(module, () => {
     return (ArrayDestructuringStn = Caf.defClass(
       class ArrayDestructuringStn extends require("../BaseStn") {},
       function(ArrayDestructuringStn, classSuper, instanceSuper) {
+        this.getter({
+          valueStn: function() {
+            return this.structuringStn;
+          },
+          structuringStn: function() {
+            return require("./ArrayStn")(
+              Caf.array(this.children, child => child.getStructuringStn())
+            );
+          }
+        });
         this.prototype.toSourceNode = function(options) {
           let restructuring, restructuringStart, subOptions, base;
           if (options) {
