@@ -29,5 +29,5 @@ class AccessorStn extends &AccessorChainStn
       @createSourceNode
         base
         "["
-        @key.toSourceNode()
+        @key.toSourceNode expression: true
         "]"

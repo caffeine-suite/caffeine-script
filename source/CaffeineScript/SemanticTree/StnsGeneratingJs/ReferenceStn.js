@@ -7,11 +7,16 @@ Caf.defMod(module, () => {
       class ReferenceStn extends require("../BaseStn") {},
       function(ReferenceStn, classSuper, instanceSuper) {
         this.prototype.updateScope = function(scope) {
+          let base;
           this.scope = scope;
           if (this.props.identifierHandle) {
             this.scope.addUniqueIdentifierHandle(this.props.identifierHandle);
           } else {
-            this.scope.addIdentifierUsed(this.propName);
+            if (
+              !(Caf.exists((base = this.identifier)) && base.isUniqueIdentifier)
+            ) {
+              this.scope.addIdentifierUsed(this.propName);
+            }
           }
           return instanceSuper.updateScope.apply(this, arguments);
         };
@@ -19,19 +24,21 @@ Caf.defMod(module, () => {
           isReference: function() {
             return true;
           },
+          identifier: function() {
+            return this.labeledChildren.identifier || this.children[0];
+          },
           propName: function() {
             let base;
             return (
               (Caf.exists((base = this.props.identifierHandle)) &&
                 base.identifier) ||
-              this.labeledChildren.identifier.propName
+              this.identifier.propName
             );
           },
           explicitIdentifier: function() {
             let base;
             return (
-              Caf.exists((base = this.labeledChildren.identifier)) &&
-              base.explicitIdentifier
+              Caf.exists((base = this.identifier)) && base.explicitIdentifier
             );
           },
           canBeUsedInES6Structuring: function() {

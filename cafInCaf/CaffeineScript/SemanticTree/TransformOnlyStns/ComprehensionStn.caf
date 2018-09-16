@@ -27,6 +27,8 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       My plan is to actually make inline loops for explicit from-type iteration.
 
+  getComprehensionsFound = (labeledClauses) ->
+    "" (clauses found: #{(array clause in labeledClauses when clause with clause.clauseType).join ', '})
 
   validate: ->
     {valueClauses, variableDefinition} = @labeledChildren
@@ -35,19 +37,27 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {comprehensionType} = @
 
-    {toClause, byClause, tilClause, fromClause, fromArrayClause} = @labeledClauses
+    {toClause, byClause, tilClause, fromClause, fromArrayClause, withKeyClause} = @labeledClauses
 
-    if (toClause || byClause || tilClause || fromArrayClause) && comprehensionType != :array
-      throw new Error "" 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
+    if fromArrayClause
+      switch comprehensionType
+        when :array, :object then null
+        else throw new Error "" Invalid Comprehension: The 'from-array' clause is only compatible with 'array' or 'object' comprehensions #{getComprehensionsFound @labeledClauses}
+
+    if withKeyClause && comprehensionType != :object
+      throw new Error "" Invalid Comprehension: The 'with-key' clause is only compatbile with 'object' comprehensions #{getComprehensionsFound @labeledClauses}
+
+    if (toClause || byClause || tilClause) && comprehensionType != :array
+      throw new Error "" Invalid Comprehension: 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions #{getComprehensionsFound @labeledClauses}
 
     unless fromClause || toClause || tilClause || fromArrayClause
-      throw new Error "" 'from', 'from-array', 'to' or 'til' clause require (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
+      throw new Error "" Invalid Comprehension: 'from', 'from-array', 'to' or 'til' clause require  #{getComprehensionsFound @labeledClauses}
 
     if toClause && tilClause
-      throw new Error "" only one 'to' or 'til' clause allowed (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
+      throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
 
     if byClause && !(tilClause || toClause)
-      throw new Error "" 'to' or 'til' clause required to use 'by' (clauses found: #{(array clause in @labeledClauses when clause with clause.clauseType).join ', '})
+      throw new Error "" Invalid Comprehension: 'to' or 'til' clauses required when using a 'by' clause.  #{getComprehensionsFound @labeledClauses}
 
   clauseAliases =
     returning:  :into
@@ -80,7 +90,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     {labeledClauses, comprehensionType} = @
 
     if labeledClauses.fromArrayClause
-      @generateFromArray labeledClauses
+      @generateFromArray comprehensionType, labeledClauses
     else if labeledClauses.toClause || labeledClauses.tilClause
       @generateArrayRange labeledClauses
     else
@@ -139,7 +149,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         tilClause
         intoClause
 
-  generateFromArray: ({fromArrayClause, intoClause, withClause, whenClause})->
+  generateFromArray: (comprehensionType, {fromArrayClause, intoClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
     variableDefinition = variableDefinition?.children
     fromId      = IdentifierStn preferredIdentifier: :from
@@ -148,16 +158,22 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     lengthId    = IdentifierStn preferredIdentifier: :length
 
     unless variableDefinition
-      variableDefinition = [] IdentifierStn preferredIdentifier: :v
+      variableDefinition = [] IdentifierStn preferredIdentifier: :v, addToLets: false
 
     [valueId] = variableDefinition
 
-    # log {variableDefinition}
+    invokeWithClauseAndPush = switch comprehensionType
+      when :array
+        FunctionInvocationStn
+          AccessorStn intoId, IdentifierStn "push"
+          withClause ? valueId
 
-    invokeWithClauseAndPush =
-      FunctionInvocationStn
-        AccessorStn intoId, IdentifierStn "push"
-        withClause ? valueId
+      when :object
+        AssignmentStn
+          AccessorStn intoId, withKeyClause ? ReferenceStn valueId
+          withClause ? valueId
+
+      else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
     StatementsStn
       AssignmentStn fromId, BinaryOperatorStn
@@ -167,7 +183,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length"
       AssignmentStn iId, PureJsStn "0"
-      AssignmentStn intoId, intoClause ? PureJsStn "" []
+      AssignmentStn intoId, intoClause ? PureJsStn if comprehensionType == :object then "{}" else "[]"
 
       WhileStn
         BinaryOperatorStn
@@ -179,7 +195,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
             array v, i in variableDefinition
               AssignmentStn
                 v
-                if i == 0 then AccessorStn fromId, iId
+                if i == 0 then AccessorStn fromId, ReferenceStn iId
                 else iId
           if whenClause
             IfStn whenClause, invokeWithClauseAndPush

@@ -32,15 +32,84 @@ module.exports = suite: parseTestSuite
 
   efficiency:
     fromArray:
-      "array from-array b": "
-        let from, length, i, into, v;
-        from = b || [];
-        length = from.length;
-        i = 0;
-        into = [];
-        while (i < length)
-        {let v = from.i; into.push(v); i++;};
-        into;"
+      array:
+        basic:
+          "array from-array b": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = [];
+            while (i < length)
+            {let v = from[i]; into.push(v); i++;};
+            into;"
+
+        with:
+          "array myValue from-array b with myValue + 1": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = [];
+            while (i < length)
+            {let myValue = from[i]; into.push(myValue + 1); i++;};
+            into;"
+
+        into:
+          "array from-array b into [] 1": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = [1];
+            while (i < length)
+            {let v = from[i]; into.push(v); i++;};
+            into;"
+
+        when:
+          "array myValue from-array b when myValue > 1": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = [];
+            while (i < length)
+            {let myValue = from[i]; if (myValue > 1) {into.push(myValue);}; i++;};
+            into;"
+
+      object:
+        basic:
+          "object from-array b": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = {};
+            while (i < length)
+            {let v = from[i]; into[v] = v; i++;};
+            into;"
+
+        customNames:
+          "object myValue, myKey from-array b": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = {};
+            while (i < length)
+            {let myValue = from[i], myKey = i; into[myValue] = myValue; i++;};
+            into;"
+
+        withKey:
+          "object myValue, myKey from-array b with-key myKey + '1'": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = {};
+            while (i < length)
+            {let myValue = from[i], myKey = i; into[myKey + \"1\"] = myValue; i++;};
+            into;"
 
   multipleArgs:
     """

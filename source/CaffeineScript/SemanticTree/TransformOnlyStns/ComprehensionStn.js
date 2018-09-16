@@ -12,8 +12,9 @@ Caf.defMod(module, () => {
       "FunctionInvocationStn",
       "IdentifierStn",
       "AccessorStn",
-      "StatementsStn",
       "AssignmentStn",
+      "ReferenceStn",
+      "StatementsStn",
       "BinaryOperatorStn",
       "PureJsStn",
       "WhileStn",
@@ -32,8 +33,9 @@ Caf.defMod(module, () => {
       FunctionInvocationStn,
       IdentifierStn,
       AccessorStn,
-      StatementsStn,
       AssignmentStn,
+      ReferenceStn,
+      StatementsStn,
       BinaryOperatorStn,
       PureJsStn,
       WhileStn,
@@ -47,7 +49,16 @@ Caf.defMod(module, () => {
           require("../BaseStn")
         ) {},
         function(ComprehensionStn, classSuper, instanceSuper) {
-          let clauseAliases;
+          let getComprehensionsFound, clauseAliases;
+          getComprehensionsFound = function(labeledClauses) {
+            return `(clauses found: ${Caf.toString(
+              Caf.array(
+                labeledClauses,
+                clause => clause.clauseType,
+                clause => clause
+              ).join(", ")
+            )})`;
+          };
           this.prototype.validate = function() {
             let valueClauses,
               variableDefinition,
@@ -57,6 +68,7 @@ Caf.defMod(module, () => {
               tilClause,
               fromClause,
               fromArrayClause,
+              withKeyClause,
               base;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             if (
@@ -76,56 +88,62 @@ Caf.defMod(module, () => {
               byClause,
               tilClause,
               fromClause,
-              fromArrayClause
+              fromArrayClause,
+              withKeyClause
             } = this.labeledClauses);
+            if (fromArrayClause) {
+              switch (comprehensionType) {
+                case "array":
+                case "object":
+                  null;
+                  break;
+                default:
+                  throw new Error(
+                    `Invalid Comprehension: The 'from-array' clause is only compatible with 'array' or 'object' comprehensions ${Caf.toString(
+                      getComprehensionsFound(this.labeledClauses)
+                    )}`
+                  );
+              }
+            }
+            if (withKeyClause && comprehensionType !== "object") {
+              throw new Error(
+                `Invalid Comprehension: The 'with-key' clause is only compatbile with 'object' comprehensions ${Caf.toString(
+                  getComprehensionsFound(this.labeledClauses)
+                )}`
+              );
+            }
             if (
-              (toClause || byClause || tilClause || fromArrayClause) &&
+              (toClause || byClause || tilClause) &&
               comprehensionType !== "array"
             ) {
               throw new Error(
-                `'from-array', 'to', 'by' and 'til' clauses not supported for '${Caf.toString(
+                `Invalid Comprehension: 'from-array', 'to', 'by' and 'til' clauses not supported for '${Caf.toString(
                   comprehensionType
-                )}' comprehensions (clauses found: ${Caf.toString(
-                  Caf.array(
-                    this.labeledClauses,
-                    clause => clause.clauseType,
-                    clause => clause
-                  ).join(", ")
-                )})`
+                )}' comprehensions ${Caf.toString(
+                  getComprehensionsFound(this.labeledClauses)
+                )}`
               );
             }
             if (!(fromClause || toClause || tilClause || fromArrayClause)) {
               throw new Error(
-                `'from', 'from-array', 'to' or 'til' clause require (clauses found: ${Caf.toString(
-                  Caf.array(
-                    this.labeledClauses,
-                    clause => clause.clauseType,
-                    clause => clause
-                  ).join(", ")
-                )})`
+                `Invalid Comprehension: 'from', 'from-array', 'to' or 'til' clause require  ${Caf.toString(
+                  getComprehensionsFound(this.labeledClauses)
+                )}`
               );
             }
             if (toClause && tilClause) {
               throw new Error(
-                `only one 'to' or 'til' clause allowed (clauses found: ${Caf.toString(
-                  Caf.array(
-                    this.labeledClauses,
-                    clause => clause.clauseType,
-                    clause => clause
-                  ).join(", ")
-                )})`
+                `Invalid Comprehension: only one 'to' or 'til' clause allowed  ${Caf.toString(
+                  getComprehensionsFound(this.labeledClauses)
+                )}`
               );
             }
             return byClause && !(tilClause || toClause)
               ? (() => {
                   throw new Error(
-                    `'to' or 'til' clause required to use 'by' (clauses found: ${Caf.toString(
-                      Caf.array(
-                        this.labeledClauses,
-                        clause => clause.clauseType,
-                        clause => clause
-                      ).join(", ")
-                    )})`
+                    `Invalid Comprehension: 'to' or 'til' clauses required when using a 'by' clause.  ${Caf.toString(
+                      getComprehensionsFound(this.labeledClauses)
+                    )}`
                   );
                 })()
               : undefined;
@@ -168,7 +186,7 @@ Caf.defMod(module, () => {
             this.initLabeledChildren();
             ({ labeledClauses, comprehensionType } = this);
             return labeledClauses.fromArrayClause
-              ? this.generateFromArray(labeledClauses)
+              ? this.generateFromArray(comprehensionType, labeledClauses)
               : labeledClauses.toClause || labeledClauses.tilClause
                 ? this.generateArrayRange(labeledClauses)
                 : (() => {
@@ -253,12 +271,16 @@ Caf.defMod(module, () => {
               )
             );
           };
-          this.prototype.generateFromArray = function({
-            fromArrayClause,
-            intoClause,
-            withClause,
-            whenClause
-          }) {
+          this.prototype.generateFromArray = function(
+            comprehensionType,
+            {
+              fromArrayClause,
+              intoClause,
+              withClause,
+              whenClause,
+              withKeyClause
+            }
+          ) {
             let variableDefinition,
               fromId,
               intoId,
@@ -275,14 +297,37 @@ Caf.defMod(module, () => {
             lengthId = IdentifierStn({ preferredIdentifier: "length" });
             if (!variableDefinition) {
               variableDefinition = [
-                IdentifierStn({ preferredIdentifier: "v" })
+                IdentifierStn({ preferredIdentifier: "v", addToLets: false })
               ];
             }
             [valueId] = variableDefinition;
-            invokeWithClauseAndPush = FunctionInvocationStn(
-              AccessorStn(intoId, IdentifierStn("push")),
-              withClause != null ? withClause : valueId
-            );
+            invokeWithClauseAndPush = (() => {
+              switch (comprehensionType) {
+                case "array":
+                  return FunctionInvocationStn(
+                    AccessorStn(intoId, IdentifierStn("push")),
+                    withClause != null ? withClause : valueId
+                  );
+                case "object":
+                  return AssignmentStn(
+                    AccessorStn(
+                      intoId,
+                      withKeyClause != null
+                        ? withKeyClause
+                        : ReferenceStn(valueId)
+                    ),
+                    withClause != null ? withClause : valueId
+                  );
+                default:
+                  return (() => {
+                    throw new Error(
+                      `comprehensionType: ${Caf.toString(
+                        comprehensionType
+                      )} not supported (yet?) with from-array clauses`
+                    );
+                  })();
+              }
+            })();
             return StatementsStn(
               AssignmentStn(
                 fromId,
@@ -299,14 +344,19 @@ Caf.defMod(module, () => {
               AssignmentStn(iId, PureJsStn("0")),
               AssignmentStn(
                 intoId,
-                intoClause != null ? intoClause : PureJsStn("[]")
+                intoClause != null
+                  ? intoClause
+                  : PureJsStn(comprehensionType === "object" ? "{}" : "[]")
               ),
               WhileStn(
                 BinaryOperatorStn({ operator: "<" }, iId, lengthId),
                 StatementsStn(
                   LetStn(
                     Caf.array(variableDefinition, (v, i) =>
-                      AssignmentStn(v, i === 0 ? AccessorStn(fromId, iId) : iId)
+                      AssignmentStn(
+                        v,
+                        i === 0 ? AccessorStn(fromId, ReferenceStn(iId)) : iId
+                      )
                     )
                   ),
                   whenClause

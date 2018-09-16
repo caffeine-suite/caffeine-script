@@ -2,9 +2,13 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["identifierRegexp", "String", "merge", "log"],
-    [global, require("../../StandardImport")],
-    (identifierRegexp, String, merge, log) => {
+    ["identifierRegexp", "UniqueIdentifierHandle", "String", "merge"],
+    [
+      global,
+      require("../../StandardImport"),
+      { UniqueIdentifierHandle: require("../UniqueIdentifierHandle") }
+    ],
+    (identifierRegexp, UniqueIdentifierHandle, String, merge) => {
       let IdentifierStn;
       return (IdentifierStn = Caf.defClass(
         class IdentifierStn extends require("../BaseStn") {
@@ -12,14 +16,13 @@ Caf.defMod(module, () => {
             let identifier, temp, base;
             if (Caf.is((identifier = children[0]), String)) {
               props = merge(props, { identifier });
-              log({ IdentifierStn: props });
               children = [];
             }
             super(props, children);
             if (!this.props.identifier) {
               (temp = (base = this.props).identifierHandle) != null
                 ? temp
-                : (base.identifierHandle = new (require("../UniqueIdentifierHandle"))(
+                : (base.identifierHandle = new UniqueIdentifierHandle(
                     this.props.preferredIdentifier,
                     this.props.addToLets
                   ));
@@ -34,11 +37,17 @@ Caf.defMod(module, () => {
             isIdentifier: function() {
               return identifierRegexp.test(this.identifier);
             },
+            identifierHandle: function() {
+              return this.props.identifierHandle;
+            },
+            isUniqueIdentifier: function() {
+              return Caf.is(this.identifierHandle, UniqueIdentifierHandle);
+            },
             propName: function() {
               return this.identifier;
             },
             identifier: function() {
-              return (this.props.identifierHandle || this.props).identifier;
+              return (this.identifierHandle || this.props).identifier;
             },
             explicitIdentifier: function() {
               return this.props.identifier;
@@ -49,14 +58,14 @@ Caf.defMod(module, () => {
           });
           this.prototype.updateScope = function(scope) {
             this.scope = scope;
-            if (this.props.identifierHandle) {
-              this.scope.addUniqueIdentifierHandle(this.props.identifierHandle);
+            if (this.identifierHandle) {
+              this.scope.addUniqueIdentifierHandle(this.identifierHandle);
             }
             return instanceSuper.updateScope.apply(this, arguments);
           };
           this.prototype.toSourceNode = function() {
             return this.createSourceNode(
-              (this.props.identifierHandle || this.props).identifier
+              (this.identifierHandle || this.props).identifier
             );
           };
         }

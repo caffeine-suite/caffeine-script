@@ -5,20 +5,22 @@ class ReferenceStn extends &BaseStn
   updateScope: (@scope) ->
     if @props.identifierHandle
       @scope.addUniqueIdentifierHandle @props.identifierHandle
-    else
+    else unless @identifier?.isUniqueIdentifier
       @scope.addIdentifierUsed @propName
     super
 
   @getter
     isReference: -> true
+    identifier: ->
+      @labeledChildren.identifier || @children[0]
 
     propName: ->
       @props.identifierHandle?.identifier
-      || @labeledChildren.identifier.propName
+      || @identifier.propName
 
     # explicitly in the source-code
     explicitIdentifier: ->
-      @labeledChildren.identifier?.explicitIdentifier
+      @identifier?.explicitIdentifier
 
     canBeUsedInES6Structuring: -> true
 

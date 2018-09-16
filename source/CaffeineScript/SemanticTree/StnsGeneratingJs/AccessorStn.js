@@ -37,7 +37,12 @@ Caf.defMod(module, () => {
             base = this.value.toSourceNode({ expression: true, dotBase: true });
             return this.key.isIdentifier
               ? this.createSourceNode(base, ".", this.key.toSourceNode())
-              : this.createSourceNode(base, "[", this.key.toSourceNode(), "]");
+              : this.createSourceNode(
+                  base,
+                  "[",
+                  this.key.toSourceNode({ expression: true }),
+                  "]"
+                );
           };
         }
       ));
