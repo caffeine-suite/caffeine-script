@@ -41,7 +41,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     if fromArrayClause
       switch comprehensionType
-        when :array, :object, :each then null
+        when :array, :object, :each, :find then null
         else throw new Error "" Invalid Comprehension: The 'from-array' clause is only compatible with 'array' or 'object' comprehensions #{getComprehensionsFound @labeledClauses}
 
     if withKeyClause && comprehensionType != :object
@@ -162,13 +162,17 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     [valueId] = variableDefinition
 
+    withClauseProvided = !!withClause
+    returnNullIfFalse = false
+
     withClause ?= valueStn ?= valueId.getValueStn()
 
     intoClause = AssignmentStn intoId, intoClause ?
       switch comprehensionType
       when :object then PureJsStn "{}"
       when :each then fromId
-      else PureJsStn "[]"
+      when :array then PureJsStn "[]"
+      else PureJsStn "null"
 
     invokeWithClauseAndPush = if comprehensionType == :each
       withClause
@@ -185,6 +189,24 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         AssignmentStn
           AccessorStn intoId, withKeyClause ? valueStn ?= valueId.getValueStn()
           withClause
+
+      when :find
+        if whenClause || !withClauseProvided
+          whenClause ?= withClause
+          StatementsStn
+            AssignmentStn
+              intoId
+              withClause
+
+            PureJsStn :break
+        else
+          returnNullIfFalse = true
+          IfStn
+            AssignmentStn
+              intoId
+              withClause
+
+            PureJsStn :break
 
       else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
@@ -219,7 +241,14 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
             operand: :++
             tail: true
             iId
-      intoId
+
+      if returnNullIfFalse
+        BinaryOperatorStn
+          operator: :||
+          intoId
+          PureJsStn :null
+      else
+        intoId
 
     # if whenClause
     #   while _i < length

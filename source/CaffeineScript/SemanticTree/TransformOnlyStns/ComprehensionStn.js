@@ -15,10 +15,10 @@ Caf.defMod(module, () => {
       "PureJsStn",
       "AccessorStn",
       "StatementsStn",
+      "IfStn",
       "BinaryOperatorStn",
       "WhileStn",
       "LetStn",
-      "IfStn",
       "UnaryOperatorStn"
     ],
     [global, require("./StandardImport")],
@@ -35,10 +35,10 @@ Caf.defMod(module, () => {
       PureJsStn,
       AccessorStn,
       StatementsStn,
+      IfStn,
       BinaryOperatorStn,
       WhileStn,
       LetStn,
-      IfStn,
       UnaryOperatorStn
     ) => {
       let ComprehensionStn;
@@ -94,6 +94,7 @@ Caf.defMod(module, () => {
                 case "array":
                 case "object":
                 case "each":
+                case "find":
                   null;
                   break;
                 default:
@@ -286,6 +287,8 @@ Caf.defMod(module, () => {
               iId,
               lengthId,
               valueId,
+              withClauseProvided,
+              returnNullIfFalse,
               valueStn,
               invokeWithClauseAndPush;
             ({ variableDefinition } = this.labeledChildren);
@@ -301,6 +304,8 @@ Caf.defMod(module, () => {
               ];
             }
             [valueId] = variableDefinition;
+            withClauseProvided = !!withClause;
+            returnNullIfFalse = false;
             withClause != null
               ? withClause
               : (withClause =
@@ -317,8 +322,10 @@ Caf.defMod(module, () => {
                         return PureJsStn("{}");
                       case "each":
                         return fromId;
-                      default:
+                      case "array":
                         return PureJsStn("[]");
+                      default:
+                        return PureJsStn("null");
                     }
                   })()
             );
@@ -344,6 +351,20 @@ Caf.defMod(module, () => {
                           ),
                           withClause
                         );
+                      case "find":
+                        return whenClause || !withClauseProvided
+                          ? (whenClause != null
+                              ? whenClause
+                              : (whenClause = withClause),
+                            StatementsStn(
+                              AssignmentStn(intoId, withClause),
+                              PureJsStn("break")
+                            ))
+                          : ((returnNullIfFalse = true),
+                            IfStn(
+                              AssignmentStn(intoId, withClause),
+                              PureJsStn("break")
+                            ));
                       default:
                         return (() => {
                           throw new Error(
@@ -386,7 +407,13 @@ Caf.defMod(module, () => {
                   UnaryOperatorStn({ operand: "++", tail: true }, iId)
                 )
               ),
-              intoId
+              returnNullIfFalse
+                ? BinaryOperatorStn(
+                    { operator: "||" },
+                    intoId,
+                    PureJsStn("null")
+                  )
+                : intoId
             );
           };
           this.prototype.generateFind = function({

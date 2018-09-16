@@ -43,6 +43,51 @@ module.exports = suite: parseTestSuite
             while (i < length)
             {let v = from[i]; v; i++;};
             into;"
+      find:
+        basic:
+          "find from-array b": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = null;
+            while (i < length)
+            {let v = from[i]; if (v) {into = v; break;}; i++;};
+            into;"
+
+        withClause:
+          "find myValue from-array b with myValue && 10": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = null;
+            while (i < length)
+            {let myValue = from[i]; if (into = myValue && 10) {break;}; i++;};
+            into || null;"
+
+        whenClause:
+          "find myValue from-array b when myValue < 10": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = null;
+            while (i < length)
+            {let myValue = from[i]; if (myValue < 10) {into = myValue; break;}; i++;};
+            into;"
+
+        withClause:
+          "find myValue from-array b when myValue < 10 with myValue + 7": "
+            let from, length, i, into;
+            from = b || [];
+            length = from.length;
+            i = 0;
+            into = null;
+            while (i < length)
+            {let myValue = from[i]; if (myValue < 10) {into = myValue + 7; break;}; i++;};
+            into;"
+
 
       array:
         basic:
