@@ -316,9 +316,9 @@ Caf.defMod(module, () => {
               withClauseProvided,
               returnNullIfFalse,
               valueStn,
+              keyValueStn,
               invokeWithClauseAndPush,
-              loopStn,
-              keyValueStn;
+              loopStn;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
@@ -339,6 +339,12 @@ Caf.defMod(module, () => {
             withClause != null
               ? withClause
               : (withClause = valueStn = valueId.valueStn);
+            if (fromObjectClause) {
+              keyValueStn != null ? keyValueStn : (keyValueStn = iId.valueStn);
+              withKeyClause != null
+                ? withKeyClause
+                : (withKeyClause = keyValueStn);
+            }
             intoClause = AssignmentStn(
               intoId,
               intoClause != null
@@ -422,7 +428,9 @@ Caf.defMod(module, () => {
                 fromObjectClause
                   ? ForInControlStn(
                       { let: true },
-                      (keyValueStn = iId.valueStn),
+                      keyValueStn != null
+                        ? keyValueStn
+                        : (keyValueStn = iId.valueStn),
                       fromId
                     )
                   : BinaryOperatorStn({ operator: "<" }, iId, lengthId),

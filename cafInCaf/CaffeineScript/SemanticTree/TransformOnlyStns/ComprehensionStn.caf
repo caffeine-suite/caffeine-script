@@ -175,6 +175,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     returnNullIfFalse = false
 
     withClause ?= valueId extract valueStn
+    if fromObjectClause
+      keyValueStn ?= iId.valueStn
+      withKeyClause ?= keyValueStn
 
     intoClause = AssignmentStn intoId, intoClause ?
       switch comprehensionType
@@ -234,7 +237,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         if fromObjectClause
           ForInControlStn
             let: true
-            keyValueStn = iId.valueStn
+            keyValueStn ?= iId.valueStn
             fromId
         else
           BinaryOperatorStn

@@ -33,14 +33,40 @@ module.exports = suite: parseTestSuite
   efficiency:
     fromObject:
       each:
-        basic:
-          "each from-object b": "
-            let from, into, k;
-            from = b || {};
-            into = from;
-            for (let k in from)
-            {let v = from[k]; v;};
-            into;"
+        "each from-object b": "
+          let from, into, k;
+          from = b || {};
+          into = from;
+          for (let k in from)
+          {let v = from[k]; v;};
+          into;"
+
+      find:
+        "find from-object b": "
+          let from, into, k;
+          from = b || {};
+          into = null;
+          for (let k in from)
+          {let v = from[k]; if (v) {into = v; break;};};
+          into;"
+
+      array:
+        "array from-object b": "
+          let from, into, k;
+          from = b || {};
+          into = [];
+          for (let k in from)
+          {let v = from[k]; into.push(v);};
+          into;"
+
+      object:
+        "object from-object b": "
+          let from, into, k;
+          from = b || {};
+          into = {};
+          for (let k in from)
+          {let v = from[k]; into[k] = v;};
+          into;"
 
     fromArray:
       each:
