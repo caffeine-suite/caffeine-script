@@ -16,6 +16,8 @@ module.exports
   DestructuringAssignmentStn:    require './DestructuringAssignmentStn'   
   DestructuringIdentifierStn:    require './DestructuringIdentifierStn'   
   DoStn:                         require './DoStn'                        
+  ForInControlStn:               require './ForInControlStn'              
+  ForStn:                        require './ForStn'                       
   FunctionDefinitionArgsStn:     require './FunctionDefinitionArgsStn'    
   FunctionDefinitionArgStn:      require './FunctionDefinitionArgStn'     
   FunctionDefinitionStn:         require './FunctionDefinitionStn'        

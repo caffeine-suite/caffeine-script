@@ -31,6 +31,17 @@ module.exports = suite: parseTestSuite
     "array from 2 to 10":             "Caf.arrayRange(2, 10);"
 
   efficiency:
+    fromObject:
+      each:
+        basic:
+          "each from-object b": "
+            let from, into, k;
+            from = b || {};
+            into = from;
+            for (let k in from)
+            {let v = from[k]; v;};
+            into;"
+
     fromArray:
       each:
         basic:

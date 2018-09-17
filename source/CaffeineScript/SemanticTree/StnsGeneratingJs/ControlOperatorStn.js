@@ -47,6 +47,7 @@ Caf.defMod(module, () => {
               switch (this.operand) {
                 case "while":
                 case "until":
+                case "for":
                   return this.elseBody
                     ? (() => {
                         throw new Error(
@@ -77,6 +78,7 @@ Caf.defMod(module, () => {
               operand,
               applyParens,
               unaryOperator,
+              jsKeyword,
               parts,
               tempVarIdentifier,
               base;
@@ -84,10 +86,15 @@ Caf.defMod(module, () => {
             ({ operand } = this);
             applyParens = false;
             unaryOperator = "";
+            jsKeyword = operand;
             switch (operand) {
+              case "for":
+                jsKeyword = "for";
+                operand = "while";
+                break;
               case "until":
               case "unless":
-                operand = operand === "until" ? "while" : "if";
+                jsKeyword = operand = operand === "until" ? "while" : "if";
                 unaryOperator = "!";
             }
             parts = expression
@@ -96,7 +103,8 @@ Caf.defMod(module, () => {
                     case "while":
                       return returnValueIsIgnored
                         ? this.doSourceNode(
-                            "while (",
+                            jsKeyword,
+                            " (",
                             unaryOperator,
                             this.expression.toSourceNode({
                               noParens: true,
@@ -109,7 +117,8 @@ Caf.defMod(module, () => {
                           )
                         : ((tempVarIdentifier = this.whileReturnTempVar),
                           this.doSourceNode(
-                            "while (",
+                            jsKeyword,
+                            " (",
                             unaryOperator,
                             this.expression.toSourceNode({
                               noParens: true,
@@ -142,7 +151,7 @@ Caf.defMod(module, () => {
                   }
                 })()
               : [
-                  operand,
+                  jsKeyword,
                   " (",
                   unaryOperator,
                   this.expression.toSourceNode({

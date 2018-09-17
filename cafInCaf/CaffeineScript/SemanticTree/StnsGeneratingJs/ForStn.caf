@@ -1,0 +1,5 @@
+(insideForParens, body) ->
+  &ControlOperatorStn
+    operand: "for"
+    insideForParens
+    body

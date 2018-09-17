@@ -26,7 +26,7 @@ class ControlOperatorStn extends &BaseStn
 
   validate: ->
     switch @operand
-    when "while", "until"
+    when "while", "until", "for"
       throw new Error "else not expected after #{@operand}" if @elseBody
     when "if", "unless"
       null
@@ -41,9 +41,14 @@ class ControlOperatorStn extends &BaseStn
 
     unaryOperator = ""
 
+    jsKeyword = operand
+
     switch operand
+    when :for
+      jsKeyword = :for
+      operand = :while
     when :until, :unless
-      operand = if operand == :until
+      jsKeyword = operand = if operand == :until
         :while
       else
         :if
@@ -55,7 +60,8 @@ class ControlOperatorStn extends &BaseStn
       when :while
         if returnValueIsIgnored
           @doSourceNode
-            "while ("
+            jsKeyword
+            " ("
             unaryOperator
             @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
             ") {"
@@ -65,7 +71,8 @@ class ControlOperatorStn extends &BaseStn
         else
           tempVarIdentifier = @whileReturnTempVar
           @doSourceNode
-            "while ("
+            jsKeyword
+            " ("
             unaryOperator
             @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
             ") {"
@@ -85,7 +92,7 @@ class ControlOperatorStn extends &BaseStn
 
     else
       []
-        operand
+        jsKeyword
         " ("
         unaryOperator
         @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator

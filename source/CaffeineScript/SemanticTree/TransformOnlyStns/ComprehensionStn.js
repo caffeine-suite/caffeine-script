@@ -16,8 +16,10 @@ Caf.defMod(module, () => {
       "AccessorStn",
       "StatementsStn",
       "IfStn",
-      "BinaryOperatorStn",
+      "ForStn",
       "WhileStn",
+      "BinaryOperatorStn",
+      "ForInControlStn",
       "LetStn",
       "UnaryOperatorStn"
     ],
@@ -36,8 +38,10 @@ Caf.defMod(module, () => {
       AccessorStn,
       StatementsStn,
       IfStn,
-      BinaryOperatorStn,
+      ForStn,
       WhileStn,
+      BinaryOperatorStn,
+      ForInControlStn,
       LetStn,
       UnaryOperatorStn
     ) => {
@@ -66,7 +70,9 @@ Caf.defMod(module, () => {
               tilClause,
               fromClause,
               fromArrayClause,
+              fromObjectClause,
               withKeyClause,
+              sourceCounts,
               base;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             if (
@@ -87,6 +93,7 @@ Caf.defMod(module, () => {
               tilClause,
               fromClause,
               fromArrayClause,
+              fromObjectClause,
               withKeyClause
             } = this.labeledClauses);
             if (fromArrayClause) {
@@ -124,9 +131,26 @@ Caf.defMod(module, () => {
                 )}`
               );
             }
-            if (!(fromClause || toClause || tilClause || fromArrayClause)) {
+            sourceCounts = 0;
+            if (fromClause || toClause || tilClause) {
+              sourceCounts++;
+            }
+            if (fromArrayClause) {
+              sourceCounts++;
+            }
+            if (fromObjectClause) {
+              sourceCounts++;
+            }
+            if (!(sourceCounts === 1)) {
               throw new Error(
-                `Invalid Comprehension: 'from', 'from-array', 'to' or 'til' clause require  ${Caf.toString(
+                `Invalid Comprehension: Exactly one 'from/to/til', 'from-array' or 'from-object' clause expected ${Caf.toString(
+                  getComprehensionsFound(this.labeledClauses)
+                )}`
+              );
+            }
+            if (toClause && tilClause) {
+              throw new Error(
+                `Invalid Comprehension: At most one 'to' or 'til' clause expected ${Caf.toString(
                   getComprehensionsFound(this.labeledClauses)
                 )}`
               );
@@ -185,7 +209,8 @@ Caf.defMod(module, () => {
             let labeledClauses, comprehensionType;
             this.initLabeledChildren();
             ({ labeledClauses, comprehensionType } = this);
-            return labeledClauses.fromArrayClause
+            return labeledClauses.fromArrayClause ||
+              !!labeledClauses.fromObjectClause
               ? this.generateFromArray(comprehensionType, labeledClauses)
               : labeledClauses.toClause || labeledClauses.tilClause
                 ? this.generateArrayRange(labeledClauses)
@@ -275,6 +300,7 @@ Caf.defMod(module, () => {
             comprehensionType,
             {
               fromArrayClause,
+              fromObjectClause,
               intoClause,
               withClause,
               whenClause,
@@ -290,13 +316,17 @@ Caf.defMod(module, () => {
               withClauseProvided,
               returnNullIfFalse,
               valueStn,
-              invokeWithClauseAndPush;
+              invokeWithClauseAndPush,
+              loopStn,
+              keyValueStn;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
             fromId = IdentifierStn({ preferredIdentifier: "from" });
             intoId = IdentifierStn({ preferredIdentifier: "into" });
-            iId = IdentifierStn({ preferredIdentifier: "i" });
+            iId = IdentifierStn({
+              preferredIdentifier: fromObjectClause ? "k" : "i"
+            });
             lengthId = IdentifierStn({ preferredIdentifier: "length" });
             if (!variableDefinition) {
               variableDefinition = [
@@ -308,10 +338,7 @@ Caf.defMod(module, () => {
             returnNullIfFalse = false;
             withClause != null
               ? withClause
-              : (withClause =
-                  valueStn != null
-                    ? valueStn
-                    : (valueStn = valueId.getValueStn()));
+              : (withClause = valueStn = valueId.valueStn);
             intoClause = AssignmentStn(
               intoId,
               intoClause != null
@@ -343,11 +370,7 @@ Caf.defMod(module, () => {
                         return AssignmentStn(
                           AccessorStn(
                             intoId,
-                            withKeyClause != null
-                              ? withKeyClause
-                              : valueStn != null
-                                ? valueStn
-                                : (valueStn = valueId.getValueStn())
+                            withKeyClause != null ? withKeyClause : valueStn
                           ),
                           withClause
                         );
@@ -375,36 +398,53 @@ Caf.defMod(module, () => {
                         })();
                     }
                   })();
+            loopStn = fromObjectClause ? ForStn : WhileStn;
             return StatementsStn(
               AssignmentStn(
                 fromId,
                 BinaryOperatorStn(
                   { operator: "||" },
-                  fromArrayClause,
-                  PureJsStn("[]")
+                  fromArrayClause != null ? fromArrayClause : fromObjectClause,
+                  PureJsStn(fromObjectClause ? "{}" : "[]")
                 )
               ),
-              AssignmentStn(
-                lengthId,
-                AccessorStn(fromId, IdentifierStn("length"))
-              ),
-              AssignmentStn(iId, PureJsStn("0")),
+              !fromObjectClause
+                ? AssignmentStn(
+                    lengthId,
+                    AccessorStn(fromId, IdentifierStn("length"))
+                  )
+                : undefined,
+              !fromObjectClause
+                ? AssignmentStn(iId, PureJsStn("0"))
+                : undefined,
               intoClause,
-              WhileStn(
-                BinaryOperatorStn({ operator: "<" }, iId, lengthId),
+              loopStn(
+                fromObjectClause
+                  ? ForInControlStn(
+                      { let: true },
+                      (keyValueStn = iId.valueStn),
+                      fromId
+                    )
+                  : BinaryOperatorStn({ operator: "<" }, iId, lengthId),
                 StatementsStn(
                   LetStn(
-                    Caf.array(variableDefinition, (v, i) =>
-                      AssignmentStn(
-                        v,
-                        i === 0 ? AccessorStn(fromId, iId.getValueStn()) : iId
-                      )
-                    )
+                    fromObjectClause
+                      ? AssignmentStn(valueId, AccessorStn(fromId, keyValueStn))
+                      : Caf.array(variableDefinition, (v, i) =>
+                          AssignmentStn(
+                            v,
+                            i === 0
+                              ? AccessorStn(fromId, iId.getValueStn())
+                              : iId
+                          )
+                        )
                   ),
                   whenClause
                     ? IfStn(whenClause, invokeWithClauseAndPush)
                     : invokeWithClauseAndPush,
-                  UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                  !fromObjectClause
+                    ? UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                    : undefined
                 )
               ),
               returnNullIfFalse

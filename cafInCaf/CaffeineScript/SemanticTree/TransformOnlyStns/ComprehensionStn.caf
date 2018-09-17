@@ -37,7 +37,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {comprehensionType} = @
 
-    {toClause, byClause, tilClause, fromClause, fromArrayClause, withKeyClause} = @labeledClauses
+    {toClause, byClause, tilClause, fromClause, fromArrayClause, fromObjectClause, withKeyClause} = @labeledClauses
 
     if fromArrayClause
       switch comprehensionType
@@ -50,8 +50,15 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     if (toClause || byClause || tilClause) && comprehensionType != :array
       throw new Error "" Invalid Comprehension: 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions #{getComprehensionsFound @labeledClauses}
 
-    unless fromClause || toClause || tilClause || fromArrayClause
-      throw new Error "" Invalid Comprehension: 'from', 'from-array', 'to' or 'til' clause require  #{getComprehensionsFound @labeledClauses}
+    sourceCounts = 0
+    sourceCounts++ if fromClause || toClause || tilClause
+    sourceCounts++ if fromArrayClause
+    sourceCounts++ if fromObjectClause
+    unless sourceCounts == 1
+      throw new Error "" Invalid Comprehension: Exactly one 'from/to/til', 'from-array' or 'from-object' clause expected #{getComprehensionsFound @labeledClauses}
+
+    if toClause && tilClause
+      throw new Error "" Invalid Comprehension: At most one 'to' or 'til' clause expected #{getComprehensionsFound @labeledClauses}
 
     if toClause && tilClause
       throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
@@ -89,7 +96,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {labeledClauses, comprehensionType} = @
 
-    if labeledClauses.fromArrayClause
+    if labeledClauses.fromArrayClause || !!labeledClauses.fromObjectClause
       @generateFromArray comprehensionType, labeledClauses
     else if labeledClauses.toClause || labeledClauses.tilClause
       @generateArrayRange labeledClauses
@@ -149,12 +156,14 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         tilClause
         intoClause
 
-  generateFromArray: (comprehensionType, {fromArrayClause, intoClause, withClause, whenClause, withKeyClause})->
+  generateFromArray: (comprehensionType, {fromArrayClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
     variableDefinition = variableDefinition?.children
     fromId      = IdentifierStn preferredIdentifier: :from
     intoId      = IdentifierStn preferredIdentifier: :into
-    iId         = IdentifierStn preferredIdentifier: :i
+
+
+    iId         = IdentifierStn preferredIdentifier: if fromObjectClause then :k else :i
     lengthId    = IdentifierStn preferredIdentifier: :length
 
     unless variableDefinition
@@ -165,7 +174,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     withClauseProvided = !!withClause
     returnNullIfFalse = false
 
-    withClause ?= valueStn ?= valueId.getValueStn()
+    withClause ?= valueId extract valueStn
 
     intoClause = AssignmentStn intoId, intoClause ?
       switch comprehensionType
@@ -187,7 +196,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       when :object
         AssignmentStn
-          AccessorStn intoId, withKeyClause ? valueStn ?= valueId.getValueStn()
+          AccessorStn intoId, withKeyClause ? valueStn
           withClause
 
       when :find
@@ -210,37 +219,53 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
+    loopStn = if fromObjectClause then ForStn else WhileStn
     StatementsStn
       AssignmentStn fromId, BinaryOperatorStn
         operator: "||"
-        fromArrayClause
-        PureJsStn "[]"
+        fromArrayClause ? fromObjectClause
+        PureJsStn if fromObjectClause then "{}" else "[]"
 
-      AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length"
-      AssignmentStn iId, PureJsStn "0"
+      AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length" unless fromObjectClause
+      AssignmentStn iId, PureJsStn "0" unless fromObjectClause
       intoClause
 
-      WhileStn
-        BinaryOperatorStn
-          operator: "<"
-          iId
-          lengthId
+      loopStn
+        if fromObjectClause
+          ForInControlStn
+            let: true
+            keyValueStn = iId.valueStn
+            fromId
+        else
+          BinaryOperatorStn
+            operator: "<"
+            iId
+            lengthId
         StatementsStn
           LetStn
-            array v, i in variableDefinition
+            if fromObjectClause
               AssignmentStn
-                v
-                if i == 0 then AccessorStn fromId, iId.getValueStn()
-                else iId
+                valueId
+                AccessorStn
+                  fromId
+                  keyValueStn
+            else
+              array v, i in variableDefinition
+                AssignmentStn
+                  v
+                  if i == 0 then AccessorStn fromId, iId.getValueStn()
+                  else iId
+
           if whenClause
             IfStn whenClause, invokeWithClauseAndPush
           else
             invokeWithClauseAndPush
 
-          UnaryOperatorStn
-            operand: :++
-            tail: true
-            iId
+          unless fromObjectClause
+            UnaryOperatorStn
+              operand: :++
+              tail: true
+              iId
 
       if returnNullIfFalse
         BinaryOperatorStn
@@ -249,23 +274,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           PureJsStn :null
       else
         intoId
-
-    # if whenClause
-    #   while _i < length
-    #     let v = fromArray[i]
-    #     let k = _i
-    #     if whenClause v, k
-    #       intoArray.push withClause v, k
-    #     i++
-
-    # else
-    #   while _i < length
-    #     let v = fromArray[i]
-    #     let k = _i
-    #     intoArray.push withClause v, k
-    #     i++
-
-    # intoArray
 
 
   # Caf.find(source, withClause, whenClause) ->
