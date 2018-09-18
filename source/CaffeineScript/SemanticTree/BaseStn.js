@@ -70,6 +70,9 @@ Caf.defMod(module, () => {
           this.abstractClass();
           this.setter("parseTreeNode");
           this.getter({
+            compileTimeValue: function() {
+              return undefined;
+            },
             parseTreeNode: function() {
               let temp, base;
               return (temp = this._parseTreeNode) != null
@@ -358,10 +361,10 @@ Caf.defMod(module, () => {
             Caf.each2(this.children, child => child.validateAll());
             return this;
           };
-          this.prototype.updateScope = function(scope) {
+          this.prototype.updateScope = function(scope, options) {
             this.scope = scope;
             return Caf.each2(this.children, child =>
-              child.updateScope(this.scope)
+              child.updateScope(this.scope, options)
             );
           };
         }

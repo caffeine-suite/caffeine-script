@@ -66,7 +66,7 @@ Caf.defMod(module, () => {
             instanceSuper.updateScope.apply(this, arguments);
             return this.arguments
               ? (Caf.object(this.arguments.argumentNameList, name =>
-                  this.addArgumentName(name)
+                  this.addExplicitlyDeclared(name)
                 ),
                 (this._updatingArgumentScope = true),
                 this.arguments.updateScope(this),
@@ -75,7 +75,7 @@ Caf.defMod(module, () => {
           };
           this.prototype.addIdentifierAssigned = function(identifier) {
             return this._updatingArgumentScope
-              ? this.addArgumentName(identifier)
+              ? this.addExplicitlyDeclared(identifier)
               : instanceSuper.addIdentifierAssigned.apply(this, arguments);
           };
           this.prototype.postTransform = function() {

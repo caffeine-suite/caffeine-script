@@ -53,14 +53,14 @@ class FunctionDefinitionStn extends &ScopeStnMixin &BaseStn
   updateScope: ->
     super
     if @arguments
-      object name from @arguments.argumentNameList with @addArgumentName name
+      object name from @arguments.argumentNameList with @addExplicitlyDeclared name
       @_updatingArgumentScope = true
       @arguments.updateScope @
       @_updatingArgumentScope = false
 
   addIdentifierAssigned: (identifier) ->
     if @_updatingArgumentScope
-      @addArgumentName identifier
+      @addExplicitlyDeclared identifier
     else
       super
 

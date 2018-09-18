@@ -42,7 +42,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
         @identifiersInScope
 
 
-  addArgumentName: (identifier) ->
+  addExplicitlyDeclared: addExplicitlyDeclared = (identifier) ->
     @identifiersInScope[identifier] = true
     @argumentNames[identifier] = true
 
@@ -51,11 +51,14 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     @identifiersInScope[identifier] = true
     @identifiersUsed[identifier] = true
 
-  addIdentifierAssigned: (identifier, initializer)->
+  addIdentifierAssigned: (identifier, initializer, insideLet)->
     if identifier
-      throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
-      @identifiersInScope[identifier] = true
-      @identifiersAssigned[identifier] = initializer || true
+      if insideLet
+        @addExplicitlyDeclared identifier
+      else
+        throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
+        @identifiersInScope[identifier] = true
+        @identifiersAssigned[identifier] = initializer || true
 
   @getter
     # call during toJs

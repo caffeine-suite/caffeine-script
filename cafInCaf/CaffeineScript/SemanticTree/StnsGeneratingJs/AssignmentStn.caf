@@ -9,6 +9,7 @@ class AssignmentStn extends &AccessorChainStn
     @operator =  props.operator || ""
     @lValue = children[0]
     @rValue = children[1]
+    throw new Error "AssignmentStn: expected lValue and rValue: #{formattedInspect {@operator, @lValue, @rValue}}" unless @lValue && @rValue
 
   # value and key are for compatibility with ValueBaseCaptureStn
   @getter
@@ -16,8 +17,8 @@ class AssignmentStn extends &AccessorChainStn
     key:    -> @rValue
     propName: -> @lValue?.propName
 
-  updateScope: (@scope) ->
-    @scope.addIdentifierAssigned @lValue?.explicitIdentifier
+  updateScope: (@scope, options) ->
+    @scope.addIdentifierAssigned @lValue?.explicitIdentifier, undefined, options?.insideLet
     super
 
   postTransform: ->

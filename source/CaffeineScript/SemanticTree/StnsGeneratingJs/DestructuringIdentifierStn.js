@@ -6,10 +6,12 @@ Caf.defMod(module, () => {
     return (DestructuringIdentifierStn = Caf.defClass(
       class DestructuringIdentifierStn extends require("../BaseStn") {},
       function(DestructuringIdentifierStn, classSuper, instanceSuper) {
-        this.prototype.updateScope = function(scope) {
+        this.prototype.updateScope = function(scope, options) {
           this.scope = scope;
           this.scope.addIdentifierAssigned(
-            this.labeledChildren.identifier.identifier
+            this.labeledChildren.identifier.identifier,
+            undefined,
+            Caf.exists(options) && options.insideLet
           );
           return instanceSuper.updateScope.apply(this, arguments);
         };

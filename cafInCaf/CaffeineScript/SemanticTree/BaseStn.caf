@@ -43,6 +43,7 @@ class BaseStn extends BaseClass
 
   @setter "parseTreeNode"
   @getter
+    compileTimeValue: -> undefined
     parseTreeNode: -> @_parseTreeNode ? @parent?.parseTreeNode
 
   initLabeledChildren: ->
@@ -375,5 +376,5 @@ class BaseStn extends BaseClass
   ##########################
     SCOPE
   ##########################
-  updateScope: (@scope) ->
-    each child in @children do child.updateScope @scope
+  updateScope: (@scope, options) ->
+    each child in @children do child.updateScope @scope, options

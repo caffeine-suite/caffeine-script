@@ -1,3 +1,5 @@
+import &StandardImport
+
 class NumberLiteralStn extends &BaseStn
 
   toSourceNode: (options) ->
@@ -7,11 +9,12 @@ class NumberLiteralStn extends &BaseStn
       if options?.dotBase
         []
           "("
-          value
+          "#{value}"
           ")"
       else
-        value
+        "#{value}"
 
   @getter
     propName: -> @props.value
     canBeUsedInES6Structuring: -> true
+    compileTimeValue: -> parseFloat @props.value

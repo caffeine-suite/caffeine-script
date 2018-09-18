@@ -47,8 +47,8 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     if withKeyClause && comprehensionType != :object
       throw new Error "" Invalid Comprehension: The 'with-key' clause is only compatbile with 'object' comprehensions #{getComprehensionsFound @labeledClauses}
 
-    if (toClause || byClause || tilClause) && comprehensionType != :array
-      throw new Error "" Invalid Comprehension: 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions #{getComprehensionsFound @labeledClauses}
+    # if (toClause || byClause || tilClause) && (comprehensionType != :array && comprehensionType != :each)
+    #   throw new Error "" Invalid Comprehension: 'from-array', 'to', 'by' and 'til' clauses not supported for '#{comprehensionType}' comprehensions #{getComprehensionsFound @labeledClauses}
 
     sourceCounts = 0
     sourceCounts++ if fromClause || toClause || tilClause
@@ -56,9 +56,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     sourceCounts++ if fromObjectClause
     unless sourceCounts == 1
       throw new Error "" Invalid Comprehension: Exactly one 'from/to/til', 'from-array' or 'from-object' clause expected #{getComprehensionsFound @labeledClauses}
-
-    if toClause && tilClause
-      throw new Error "" Invalid Comprehension: At most one 'to' or 'til' clause expected #{getComprehensionsFound @labeledClauses}
 
     if toClause && tilClause
       throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
@@ -96,10 +93,10 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {labeledClauses, comprehensionType} = @
 
-    if labeledClauses.fromArrayClause || !!labeledClauses.fromObjectClause
-      @generateFromArray comprehensionType, labeledClauses
-    else if labeledClauses.toClause || labeledClauses.tilClause
-      @generateArrayRange labeledClauses
+    if labeledClauses.fromArrayClause || labeledClauses.fromObjectClause || labeledClauses.toClause || labeledClauses.tilClause
+      @generateInlineIteration comprehensionType, labeledClauses
+    # else if labeledClauses.toClause || labeledClauses.tilClause
+    #   @generateArrayRange comprehensionType, labeledClauses
     else
       switch comprehensionType
       when :each, :array, :object
@@ -137,34 +134,45 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     array p in params
       p ? Null ?= SimpleLiteralStn value: :null
 
-  # Caf.arrayRange(fromValue, toValue, withClause = returnFirst, whenClause = returnTrue, byValue, til, into = []) ->
-  generateArrayRange: ({withClause, whenClause, toClause, tilClause, byClause, fromClause, intoClause})->
-
-    if tilClause
-      toClause = tilClause
-      tilClause = :true
-
-    FunctionInvocationStn
-      IdentifierStn identifier: "" Caf.arrayRange
-
-      @resolveStnParams
-        fromClause ? "0"
-        toClause
-        {} f: withClause
-        {} f: whenClause
-        byClause
-        tilClause
-        intoClause
-
-  generateFromArray: (comprehensionType, {fromArrayClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
+  generateInlineIteration: (comprehensionType, {fromArrayClause, fromClause, tilClause, toClause, byClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
     variableDefinition = variableDefinition?.children
-    fromId      = IdentifierStn preferredIdentifier: :from
-    intoId      = IdentifierStn preferredIdentifier: :into
 
+    if toClause || tilClause
+      fromClause ?= NumberLiteralStn value: :0
+      toClauseEquality = if tilClause
+        toClause = tilClause
+        ""
+      else
+        "="
 
+      byClauseCompileTimeValue = byClause?.compileTimeValue
+      fromCompileTimeValue = fromClause.compileTimeValue
+      toCompileTimeValue = toClause.compileTimeValue
+
+      if fromCompileTimeValue? && toCompileTimeValue?
+        unless byClause
+          byClauseCompileTimeValue = switch
+          when fromCompileTimeValue < toCompileTimeValue then 1
+          when fromCompileTimeValue > toCompileTimeValue then -1
+          else                                                0
+
+      if byClauseCompileTimeValue?
+        switch
+          when byClauseCompileTimeValue < 0 then byClauseIsNegative = true
+          when byClauseCompileTimeValue > 0 then byClauseIsPositive = true
+          when byClauseCompileTimeValue == 0 then byClauseIsZero = true
+      else
+        byId = IdentifierStn preferredIdentifier: :by
+
+      toId = IdentifierStn preferredIdentifier: :to unless toCompileTimeValue?
+
+    else
+      fromId    = IdentifierStn preferredIdentifier: :from
+      lengthId  = IdentifierStn preferredIdentifier: :length
+
+    intoId      = IdentifierStn preferredIdentifier: :into unless comprehensionType == 'each' && toClause && !intoClause
     iId         = IdentifierStn preferredIdentifier: if fromObjectClause then :k else :i
-    lengthId    = IdentifierStn preferredIdentifier: :length
 
     unless variableDefinition
       variableDefinition = [] IdentifierStn preferredIdentifier: :v, addToLets: false
@@ -179,11 +187,12 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       keyValueStn ?= iId.valueStn
       withKeyClause ?= keyValueStn
 
-    intoClause = AssignmentStn intoId, intoClause ?
+
+    intoId && intoClause = AssignmentStn intoId, intoClause ?
       switch comprehensionType
-      when :object then PureJsStn "{}"
-      when :each then fromId
-      when :array then PureJsStn "[]"
+      when :object  then PureJsStn "{}"
+      when :each    then fromId || toClause
+      when :array   then PureJsStn "[]"
       else PureJsStn "null"
 
     invokeWithClauseAndPush = if comprehensionType == :each
@@ -222,42 +231,80 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
       else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
+
     loopStn = if fromObjectClause then ForStn else WhileStn
     StatementsStn
-      AssignmentStn fromId, BinaryOperatorStn
+      fromId && AssignmentStn fromId, BinaryOperatorStn
         operator: "||"
         fromArrayClause ? fromObjectClause
         PureJsStn if fromObjectClause then "{}" else "[]"
 
-      AssignmentStn lengthId, AccessorStn fromId, IdentifierStn "length" unless fromObjectClause
-      AssignmentStn iId, PureJsStn "0" unless fromObjectClause
+      lengthId && AssignmentStn lengthId, toClause || AccessorStn fromId, IdentifierStn "length" unless fromObjectClause
+      toId && AssignmentStn toId, toClause
+
+      switch
+        when fromArrayClause then AssignmentStn iId, NumberLiteralStn value: :0
+        when toClause then AssignmentStn iId, fromClause ?= NumberLiteralStn value: :0
+
+      # by = byClause || if fromValue < toValue then 1 else -1
+      byId && AssignmentStn byId, byClause ||
+        IfStn
+          BinaryOperatorStn
+            operator: "<"
+            iId
+            toId
+          NumberLiteralStn value: :1
+          NumberLiteralStn value: :-1
+
       intoClause
 
-      loopStn
+      !byClauseIsZero && loopStn
         if fromObjectClause
           ForInControlStn
             let: true
             keyValueStn ?= iId.valueStn
             fromId
-        else
+        else if fromArrayClause
           BinaryOperatorStn
             operator: "<"
             iId
             lengthId
+        else # to/til
+          # (byValue >= 0 && v <= toValue) || (byValue < 0 && v >= toValue)
+          positiveByTest = BinaryOperatorStn {operator: "<#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
+          negativeByTest = BinaryOperatorStn {operator: ">#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
+
+          switch
+          when byClauseIsPositive then positiveByTest
+          when byClauseIsNegative then negativeByTest
+          else # unknown by-value
+            BinaryOperatorStn
+              operator: :||
+              BinaryOperatorStn
+                operator: :&&
+                BinaryOperatorStn {operator: :>}, byId, NumberLiteralStn value: :0
+                positiveByTest
+
+              BinaryOperatorStn
+                operator: :&&
+                BinaryOperatorStn {operator: :<}, byId, NumberLiteralStn value: :0
+                negativeByTest
+
         StatementsStn
-          LetStn
-            if fromObjectClause
-              AssignmentStn
-                valueId
-                AccessorStn
-                  fromId
-                  keyValueStn
-            else
-              array v, i in variableDefinition
+          if variableDefinition?.length > 0
+            LetStn
+              if fromObjectClause
                 AssignmentStn
-                  v
-                  if i == 0 then AccessorStn fromId, iId.getValueStn()
-                  else iId
+                  valueId
+                  AccessorStn
+                    fromId
+                    keyValueStn
+              else
+                array v, i in variableDefinition
+                  AssignmentStn
+                    v
+                    if !toClause && i == 0 then AccessorStn fromId, iId.getValueStn()
+                    else iId
 
           if whenClause
             IfStn whenClause, invokeWithClauseAndPush
@@ -265,10 +312,21 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
             invokeWithClauseAndPush
 
           unless fromObjectClause
-            UnaryOperatorStn
-              operand: :++
-              tail: true
-              iId
+            if byId || byClauseCompileTimeValue? && !floatEq 1, Math.abs byClauseCompileTimeValue
+              AssignmentStn
+                operator: :+
+                iId
+                byId || NumberLiteralStn value: byClauseCompileTimeValue
+            else if byClauseCompileTimeValue < 0
+              UnaryOperatorStn
+                operand: :--
+                tail: true
+                iId
+            else
+              UnaryOperatorStn
+                operand: :++
+                tail: true
+                iId
 
       if returnNullIfFalse
         BinaryOperatorStn
@@ -276,7 +334,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           intoId
           PureJsStn :null
       else
-        intoId
+        intoId || toId || NumberLiteralStn value: toCompileTimeValue
 
 
   # Caf.find(source, withClause, whenClause) ->

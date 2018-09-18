@@ -22,6 +22,11 @@ class StatementsStn extends &BaseStn
 
     out
 
+  @getter
+    compileTimeValue: ->
+      if @children.length == 1
+        @children[0].compileTimeValue
+
   ###########
     PRIVATE
 

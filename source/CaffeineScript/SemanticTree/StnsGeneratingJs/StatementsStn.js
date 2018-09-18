@@ -53,6 +53,13 @@ Caf.defMod(module, () => {
             );
             return out;
           };
+          this.getter({
+            compileTimeValue: function() {
+              return this.children.length === 1
+                ? this.children[0].compileTimeValue
+                : undefined;
+            }
+          });
           this.prototype._getChildrenSourceNodes = function(
             returnAction,
             generateStatements = true,

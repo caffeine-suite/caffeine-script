@@ -18,7 +18,7 @@ Caf.defMod(module, () => {
             }
           },
           function(ScopeStnMixin, classSuper, instanceSuper) {
-            let normalizePerferredName;
+            let normalizePerferredName, addExplicitlyDeclared;
             this.abstractClass();
             this.normalizePerferredName = normalizePerferredName = function(
               preferredName = "temp"
@@ -59,7 +59,9 @@ Caf.defMod(module, () => {
                 }
               );
             };
-            this.prototype.addArgumentName = function(identifier) {
+            this.prototype.addExplicitlyDeclared = addExplicitlyDeclared = function(
+              identifier
+            ) {
               this.identifiersInScope[identifier] = true;
               return (this.argumentNames[identifier] = true);
             };
@@ -74,18 +76,22 @@ Caf.defMod(module, () => {
             };
             this.prototype.addIdentifierAssigned = function(
               identifier,
-              initializer
+              initializer,
+              insideLet
             ) {
               return identifier
-                ? (this._boundUniqueIdentifiers
-                    ? (() => {
-                        throw new Error(
-                          "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                        );
-                      })()
-                    : undefined,
-                  (this.identifiersInScope[identifier] = true),
-                  (this.identifiersAssigned[identifier] = initializer || true))
+                ? insideLet
+                  ? this.addExplicitlyDeclared(identifier)
+                  : (this._boundUniqueIdentifiers
+                      ? (() => {
+                          throw new Error(
+                            "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                          );
+                        })()
+                      : undefined,
+                    (this.identifiersInScope[identifier] = true),
+                    (this.identifiersAssigned[identifier] =
+                      initializer || true))
                 : undefined;
             };
             this.getter({

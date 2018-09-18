@@ -21,15 +21,6 @@ module.exports = suite: parseTestSuite
     "each v in b with v()": "Caf.each2(b, (v) => v());"
     "each v in b when v()": "Caf.each2(b, null, (v) => v());"
 
-  range:
-    "array to 10":                    "Caf.arrayRange(0, 10);"
-    "array a to 10":                  "Caf.arrayRange(0, 10);"
-    "array to 10 by 2":               "Caf.arrayRange(0, 10, null, null, 2);"
-    "array til 10":                   "Caf.arrayRange(0, 10, null, null, null, true);"
-    "array to 10 with 1":             "Caf.arrayRange(0, 10, () => 1);"
-    "array a to 10 when a %% 2 == 0": "Caf.arrayRange(0, 10, null, (a) => Caf.mod(a, 2) === 0);"
-    "array from 2 to 10":             "Caf.arrayRange(2, 10);"
-
   efficiency:
     fromObject:
       each:
@@ -250,6 +241,34 @@ module.exports = suite: parseTestSuite
             while (i < length)
             {let myValue = from[i], myKey = i; into[myKey + \"1\"] = myValue; i++;};
             into;"
+
+    til:
+      each:
+        "each til 10":            "let i; i = 0; while (i < 10) {let v = i; v; i++;}; 10;"
+        "each a til 10":          "let i; i = 0; while (i < 10) {let a = i; a; i++;}; 10;"
+        "each til 10 with 1":     "let i; i = 0; while (i < 10) {let v = i; 1; i++;}; 10;"
+        "each to 10":             "let i; i = 0; while (i <= 10) {let v = i; v; i++;}; 10;"
+        "each from a to b by c":  "let to, i, by; to = b; i = a; by = c; while (by > 0 && i <= to || by < 0 && i >= to) {let v = i; v; i += by;}; to;"
+        "each to 10 by -1":       "let i; i = 0; while (i >= 10) {let v = i; v; i--;}; 10;"
+        "each to 10 by 0":        "let i; i = 0; 10;"
+
+        "each from 2 til 10":     "let i; i = 2; while (i < 10) {let v = i; v; i++;}; 10;"
+        "each from 10 til 2":     "let i; i = 10; while (i > 2) {let v = i; v; i--;}; 2;"
+        "each til 10 by 2":       "let i; i = 0; while (i < 10) {let v = i; v; i += 2;}; 10;"
+
+      array:
+        "array til 10":           "let i, into; i = 0; into = []; while (i < 10) {let v = i; into.push(v); i++;}; into;"
+        "array til 10 with 1":    "let i, into; i = 0; into = []; while (i < 10) {let v = i; into.push(1); i++;}; into;"
+        "array to 1 by .25":      "let i, into; i = 0; into = []; while (i <= 1) {let v = i; into.push(v); i += 0.25;}; into;"
+
+        "array a til 10 when a %% 2 == 0":      "let i, into; i = 0; into = []; while (i < 10) {let a = i; if (Caf.mod(a, 2) === 0) {into.push(a);}; i++;}; into;"
+        "array myV, myK til 10 with myV * myK": "let i, into; i = 0; into = []; while (i < 10) {let myV = i, myK = i; into.push(myV * myK); i++;}; into;"
+
+      object:
+        "object til 10": "let i, into; i = 0; into = {}; while (i < 10) {let v = i; into[v] = v; i++;}; into;"
+
+      find:
+        "find v til 10 when v > 4": "let i, into; i = 0; into = null; while (i < 10) {let v = i; if (v > 4) {into = v; break;}; i++;}; into;"
 
   multipleArgs:
     """

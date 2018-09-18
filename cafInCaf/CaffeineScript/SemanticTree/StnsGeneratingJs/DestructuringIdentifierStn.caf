@@ -2,9 +2,9 @@ import &StandardImport
 
 class DestructuringIdentifierStn extends &BaseStn
 
-  updateScope: (scope) ->
+  updateScope: (scope, options) ->
     @scope = scope
-    @scope.addIdentifierAssigned @labeledChildren.identifier.identifier
+    @scope.addIdentifierAssigned @labeledChildren.identifier.identifier, undefined, options?.insideLet
     super
 
   @getter

@@ -8,6 +8,9 @@ Caf.defMod(module, () => {
       function(LetStn, classSuper, instanceSuper) {
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
+          return Caf.each2(this.children, child =>
+            child.updateScope(this.scope, { insideLet: true })
+          );
         };
         this.prototype.toSourceNode = function() {
           return this.createSourceNode(
