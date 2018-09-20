@@ -13,6 +13,7 @@ class FunctionDefinitionArgStn extends &BaseStn
   @getter
     argumentName: -> @target.name
     isSimpleIdentifier: -> @target.type == :Identifier
+    explicitIdentifier: -> @target?.explicitIdentifier
     propName: -> @target.name
     valueStn: -> @target.getValueStn()
 

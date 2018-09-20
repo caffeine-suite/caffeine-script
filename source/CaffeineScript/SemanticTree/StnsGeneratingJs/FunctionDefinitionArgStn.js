@@ -21,6 +21,10 @@ Caf.defMod(module, () => {
           isSimpleIdentifier: function() {
             return this.target.type === "Identifier";
           },
+          explicitIdentifier: function() {
+            let base;
+            return Caf.exists((base = this.target)) && base.explicitIdentifier;
+          },
           propName: function() {
             return this.target.name;
           },

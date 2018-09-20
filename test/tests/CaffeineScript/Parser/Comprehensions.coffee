@@ -295,6 +295,12 @@ module.exports = suite: parseTestSuite
       find:
         "find v til 10 when v > 4": "let i, into; i = 0; into = null; while (i < 10) {let v = i; if (v > 4) {into = v; break;}; i++;}; into;"
 
+      regressions:
+        """
+        import a
+        array i til 10
+        """: "(() => {let i1, into; return (i1 = 0, into = [], (() => {while (i1 < 10) {let i = i1; into.push(i); i1++;};})(), into);})();"
+
   multipleArgs:
     """
     object myV, myK from mySource
