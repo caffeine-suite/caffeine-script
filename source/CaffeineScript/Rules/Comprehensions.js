@@ -29,7 +29,7 @@ Caf.defMod(module, () => {
       this.rule(
         {
           comprehensionVariableDef_:
-            "!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType"
+            "!comprehensionIterationType argDef optionalArg* _ &comprehensionIterationType"
         },
         { stnFactory: "FunctionDefinitionArgsStn" }
       );

@@ -71,6 +71,8 @@ Caf.defMod(module, () => {
             let valueClauses,
               variableDefinition,
               comprehensionType,
+              maxVarDefs,
+              isReduce,
               toClause,
               byClause,
               tilClause,
@@ -83,18 +85,25 @@ Caf.defMod(module, () => {
               sourceCounts,
               base;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
+            ({ comprehensionType } = this);
             if (
               (Caf.exists(variableDefinition) &&
-                variableDefinition.children.length) > 2
+                variableDefinition.children.length) >
+              (maxVarDefs = (isReduce = comprehensionType === "reduce") ? 3 : 2)
             ) {
               throw new Error(
-                `Can define at most two loop variables (value followed optionally by key). You defined: ${Caf.toString(
+                `Can define at most ${Caf.toString(
+                  maxVarDefs
+                )} variables for ${Caf.toString(
+                  comprehensionType
+                )} comprehensions. Allowed variables: ${Caf.toString(
+                  isReduce ? "accumulator, " : undefined
+                )}"value and key", in that order. You defined: ${Caf.toString(
                   Caf.exists((base = variableDefinition.parseTreeNode)) &&
                     base.toString()
-                )}.`
+                )}."`
               );
             }
-            ({ comprehensionType } = this);
             ({
               toClause,
               byClause,

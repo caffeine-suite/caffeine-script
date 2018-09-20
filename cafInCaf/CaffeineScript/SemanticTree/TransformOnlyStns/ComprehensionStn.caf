@@ -32,10 +32,13 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
   validate: ->
     {valueClauses, variableDefinition} = @labeledChildren
-    if variableDefinition?.children.length > 2
-      throw new Error "Can define at most two loop variables (value followed optionally by key). You defined: #{variableDefinition.parseTreeNode?.toString()}."
-
     {comprehensionType} = @
+    if variableDefinition?.children.length > maxVarDefs = if isReduce = (comprehensionType == 'reduce') then 3 else 2
+      throw new Error
+        ""
+          Can define at most #{maxVarDefs} variables for #{comprehensionType} comprehensions.
+          Allowed variables: #{if isReduce then "accumulator, "}"value and key", in that order.
+          You defined: #{variableDefinition.parseTreeNode?.toString()}."
 
     {toClause, byClause, tilClause, fromClause,
     fromArrayClause, fromObjectClause, withKeyClause,

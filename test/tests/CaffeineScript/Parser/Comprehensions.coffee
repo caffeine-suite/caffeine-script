@@ -23,8 +23,9 @@ module.exports = suite: parseTestSuite
     "each v in b when v()": "Caf.each2(b, null, (v) => v());"
 
   reduce:
-    "reduce a, b from c inject 0 with a + b": "Caf.reduce(c, (a, b) => a + b, null, 0);"
+    "reduce a, v from c inject 0 with a + v": "Caf.reduce(c, (a, v) => a + v, null, 0);"
     "reduce total, {age} from kids with total + age": "Caf.reduce(kids, (total, {age}) => total + age);"
+    "reduce a, v, k from 1 2 3 with a + v + k": "Caf.reduce([1, 2, 3], (a, v, k) => a + v + k);"
 
   efficiency:
     fromObject:

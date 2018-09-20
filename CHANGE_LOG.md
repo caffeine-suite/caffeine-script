@@ -1,23 +1,22 @@
 ### 0.63
 
-NEW: Comprehension efficiency options
+##### NEW: Comprehension efficiency options
 
-To support source-container-type detection. CaffeineScript uses the CaffeineScriptRuntime library to implement
-comprehensions. This requires creating and passing functions for the with-clauses and when-clauses, which can
-be very slow sometimes in JavaScript.
+To support source-container-type detection. CaffeineScript uses the CaffeineScriptRuntime library to implement comprehensions. This requires creating and passing functions for with-clauses and when-clauses, which can be very slow sometimes in JavaScript.
 
-Now, CaffeineScript supports more normal, inline interation without external function calls. Here's how to use it:
+Now, CaffeineScript supports more normal, inline iteration without external function calls. You just have to specify what the source-type is. Here's how:
 
 ```coffeescript
-# equivelent inline-array iteration
+# inline-array iteration
 array from-array myArray
-array from myArray by 1        # adding a by-clause forces from-array iteration
+array from myArray by 1   
+# adding by, short or skip clauses is an alternative way to force from-array iteration
 
 # inline-object iteration
 array from-object myObject
 ```
 
-NEW: `to/til` support for all comprehension types.
+##### NEW: `to/til` support for all comprehension types.
 
 Previously, only `array` was supported.
 
@@ -27,7 +26,7 @@ find til 4    # returns 1
 each til 4    # returns 4
 ```
 
-NEW: `by` clause for array-iteration - including reverse iteration:
+##### NEW: `by` clause for array-iteration - including reverse iteration:
 
 ```coffeescript
 array myArray by 2  # grab every other element starting at the myArray[0]
@@ -35,7 +34,7 @@ array myArray by -1 # return a new array, reversed
 ```
 > Note: Non-constant by-clauses are only supported with til/to iteration.
 
-NEW: `short` and `skip` clauses for array-iteration:
+##### NEW: `short` and `skip` clauses for array-iteration:
 
 ```coffeescript
 array myArray skip 1       # skip the first element
@@ -47,6 +46,29 @@ array myArray by 2 skip 1  # select the odd elements
 ```
 > Note: When using `by` and `short` or `skip`, the short and skip are only affect by the by-clause's sign, not its magnitude. e.g. `skip 1` always starts at index 1 when `by > 0` and always starts at index length - 2 when `by < 0` whether by is 2, 10 or 100.
 
+##### NEW: `reduce` comprehensions
+
+Reduce, like find, is a little special compared to the other comprehensions. 
+
+* **reduce comprehension variables:** The reduce variables are different from all the other comprehension types. They are: `accumulator, value, key`
+* **reduce when-clause:** is evaluated for every *non-undefined value* (not every value, as with other comprehensions). Note, null-values work normally, only undefined values are special.
+* **reduce with-clause:** is only called when *both accumulator and value are non-undefined* (and, if there is a when-clause, it returned truish). Again, null-values are passed through, only undefined-values are special.
+* **reduce accumulator:** This is the new and interesting part. The accumulator is initialized with the inject-clause's value or undefined if there is no inject-clause. It is then updated with the return-value of every with-clause invocation.
+* **reduce default-with-block:** returns the first variable just like all other comprehensions, except in this case, that means the accumulator, not the source-value.
+* **reduce sources:** currently only the `from` clause is supported. The following clauses are not supported yet: `from-array / from-object / to / til`
+
+Examples:
+
+```
+reduce accumulator, value from 1 2 3 inject 0 with accumulator + value
+# > 6
+
+reduce 1 2 3                            # > 1
+reduce a, v from [] with a + v          # > undefined
+reduce a, v from [] with a + v inject 0 # > 0
+reduce a, v from [] 1 with a + v        # > 1
+reduce a, v from 1 2 3 with a + v       # > 6
+```
 
 ### 0.58
 

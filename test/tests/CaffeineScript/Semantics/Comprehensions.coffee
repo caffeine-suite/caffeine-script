@@ -49,3 +49,13 @@ module.exports = suite: semanticTestSuite
     reduce total, {age} from kids with total + age inject 0
     / kids.length
     """: 4.5
+
+    """
+    obj =
+      no1: .5
+      yes1: 2
+      yes2: 200
+      yes3: 20
+      no2: .25
+    reduce a, v, k from obj with a + v when /yes/.test k
+    """: 222

@@ -28,7 +28,7 @@ import &StandardImport
     #   :requiredValue
 
   @rule
-    comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg? _ &comprehensionIterationType'
+    comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg* _ &comprehensionIterationType'
     {} stnFactory: :FunctionDefinitionArgsStn
 
   @rule
