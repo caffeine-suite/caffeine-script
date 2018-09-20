@@ -88,6 +88,12 @@ switch subject
   when :content     then false  # means the server doesn't like our content - since we weren't really sending any, something weird happend
   else false                    # something weird happened
 ```
+---
+
+The trailing space in the interpolation breacks things...
+```coffeescript
+"#{123 }"
+```
 
 ---
 ```coffeescript

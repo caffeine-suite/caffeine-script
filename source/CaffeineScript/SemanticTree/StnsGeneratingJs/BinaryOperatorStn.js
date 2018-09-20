@@ -31,7 +31,9 @@ Caf.defMod(module, () => {
             this.right = this.children[1];
             if (!(this.left && this.right)) {
               throw new Error(
-                `left and right required: ${Caf.toString(
+                `BinaryOperatorStn (${Caf.toString(
+                  this.operator
+                )}): left and right required: ${Caf.toString(
                   formattedInspect({ left: this.left, right: this.right })
                 )}`
               );

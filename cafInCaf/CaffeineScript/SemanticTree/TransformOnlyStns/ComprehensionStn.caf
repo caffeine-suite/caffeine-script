@@ -37,7 +37,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     {comprehensionType} = @
 
-    {toClause, byClause, tilClause, fromClause, fromArrayClause, fromObjectClause, withKeyClause} = @labeledClauses
+    {toClause, byClause, tilClause, fromClause,
+    fromArrayClause, fromObjectClause, withKeyClause,
+    skipClause, shortClause} = @labeledClauses
 
     if fromArrayClause
       switch comprehensionType
@@ -60,8 +62,11 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     if toClause && tilClause
       throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
 
-    if byClause && !(tilClause || toClause)
-      throw new Error "" Invalid Comprehension: 'to' or 'til' clauses required when using a 'by' clause.  #{getComprehensionsFound @labeledClauses}
+    if !(toClause || tilClause) && byClause && !byClause.compileTimeValue?
+      throw new Error "" Comprehension not supported: Non-constant by-clauses with array-iteration are not supported."
+
+    if (byClause || skipClause || shortClause) && !(tilClause || toClause || fromClause || fromArrayClause)
+      throw new Error "" Invalid Comprehension: 'to', 'til', 'from' or 'from-array' clauses required when using 'by', 'skip' or 'short' clauses.  #{getComprehensionsFound @labeledClauses}
 
   clauseAliases =
     returning:  :into
@@ -92,8 +97,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     @initLabeledChildren()
 
     {labeledClauses, comprehensionType} = @
+    {byClause, shortClause, skipClause, fromObjectClause, toClause, tilClause, fromArrayClause} = labeledClauses
 
-    if labeledClauses.fromArrayClause || labeledClauses.fromObjectClause || labeledClauses.toClause || labeledClauses.tilClause
+    if byClause || shortClause || skipClause || fromObjectClause || toClause || tilClause || fromArrayClause
       @generateInlineIteration comprehensionType, labeledClauses
     # else if labeledClauses.toClause || labeledClauses.tilClause
     #   @generateArrayRange comprehensionType, labeledClauses
@@ -134,7 +140,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     array p in params
       p ? Null ?= SimpleLiteralStn value: :null
 
-  generateInlineIteration: (comprehensionType, {fromArrayClause, fromClause, tilClause, toClause, byClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
+  generateInlineIteration: (comprehensionType, {fromArrayClause, shortClause, skipClause, fromClause, tilClause, toClause, byClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
     variableDefinition = variableDefinition?.children
 
@@ -157,19 +163,39 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           when fromCompileTimeValue > toCompileTimeValue then -1
           else                                                0
 
-      if byClauseCompileTimeValue?
-        switch
-          when byClauseCompileTimeValue < 0 then byClauseIsNegative = true
-          when byClauseCompileTimeValue > 0 then byClauseIsPositive = true
-          when byClauseCompileTimeValue == 0 then byClauseIsZero = true
-      else
-        byId = IdentifierStn preferredIdentifier: :by
-
-      toId = IdentifierStn preferredIdentifier: :to unless toCompileTimeValue?
-
     else
-      fromId    = IdentifierStn preferredIdentifier: :from
-      lengthId  = IdentifierStn preferredIdentifier: :length
+      if byClause || shortClause || skipClause
+        byClauseCompileTimeValue = byClause?.compileTimeValue
+        shortClauseCompileTimeValue = shortClause?.compileTimeValue
+        skipClauseCompileTimeValue = skipClause?.compileTimeValue
+        fromArrayClause ?= fromClause
+        if byClauseCompileTimeValue? && byClauseCompileTimeValue < 0
+          unless shortClause && !shortClauseCompileTimeValue?
+            toCompileTimeValue = shortClauseCompileTimeValue ? 0
+            shortClause = null
+
+          reverseArray = true
+
+      if fromArrayClause
+        if skipClause
+          if skipClauseCompileTimeValue?
+            skipClause = null
+            fromCompileTimeValue = skipClauseCompileTimeValue
+        else
+          fromCompileTimeValue = 0
+
+
+      fromId  = IdentifierStn preferredIdentifier: :from
+
+    toId = IdentifierStn preferredIdentifier: :to unless toCompileTimeValue?
+
+    if byClauseCompileTimeValue?
+      switch
+        when byClauseCompileTimeValue < 0 then byClauseIsNegative = true
+        when byClauseCompileTimeValue > 0 then byClauseIsPositive = true
+        when byClauseCompileTimeValue == 0 then byClauseIsZero = true
+    else if toClause || byClause
+      byId = IdentifierStn preferredIdentifier: :by
 
     intoId      = IdentifierStn preferredIdentifier: :into unless comprehensionType == 'each' && toClause && !intoClause
     iId         = IdentifierStn preferredIdentifier: if fromObjectClause then :k else :i
@@ -239,11 +265,44 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         fromArrayClause ? fromObjectClause
         PureJsStn if fromObjectClause then "{}" else "[]"
 
-      lengthId && AssignmentStn lengthId, toClause || AccessorStn fromId, IdentifierStn "length" unless fromObjectClause
-      toId && AssignmentStn toId, toClause
+      toId && switch
+      when toCompileTimeValue? then AssignmentStn toId, NumberLiteralStn value: toCompileTimeValue
+      when fromObjectClause then null
+      when fromArrayClause
+        AssignmentStn
+          toId
+          if shortClause
+            if reverseArray
+              shortClause
+            else
+              BinaryOperatorStn
+                operator: "-"
+                AccessorStn fromId, IdentifierStn "length"
+                shortClause
+          else
+            AccessorStn fromId, IdentifierStn "length"
+
+      when toClause
+        AssignmentStn toId, toClause
 
       switch
-        when fromArrayClause then AssignmentStn iId, NumberLiteralStn value: :0
+        when fromArrayClause
+          AssignmentStn
+            iId
+            if reverseArray
+              BinaryOperatorStn
+                operator: "-"
+                AccessorStn fromId, IdentifierStn "length"
+                if skipClause
+                  BinaryOperatorStn
+                    operator: "+"
+                    skipClause
+                    NumberLiteralStn value: 1
+                else
+                  NumberLiteralStn value: 1 + (skipClauseCompileTimeValue ? 0)
+            else
+              skipClause ? NumberLiteralStn value: fromCompileTimeValue
+
         when toClause then AssignmentStn iId, fromClause ?= NumberLiteralStn value: :0
 
       # by = byClause || if fromValue < toValue then 1 else -1
@@ -266,9 +325,10 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
             fromId
         else if fromArrayClause
           BinaryOperatorStn
-            operator: "<"
+            operator: if reverseArray then ">=" else "<"
             iId
-            lengthId
+            toId ? NumberLiteralStn value: toCompileTimeValue
+
         else # to/til
           # (byValue >= 0 && v <= toValue) || (byValue < 0 && v >= toValue)
           positiveByTest = BinaryOperatorStn {operator: "<#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
@@ -313,10 +373,16 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
           unless fromObjectClause
             if byId || byClauseCompileTimeValue? && !floatEq 1, Math.abs byClauseCompileTimeValue
-              AssignmentStn
-                operator: :+
-                iId
-                byId || NumberLiteralStn value: byClauseCompileTimeValue
+              if byClauseCompileTimeValue && byClauseCompileTimeValue < 0
+                AssignmentStn
+                  operator: :-
+                  iId
+                  NumberLiteralStn value: Math.abs byClauseCompileTimeValue
+              else
+                AssignmentStn
+                  operator: :+
+                  iId
+                  byId || NumberLiteralStn value: byClauseCompileTimeValue
             else if byClauseCompileTimeValue < 0
               UnaryOperatorStn
                 operand: :--

@@ -7,7 +7,7 @@ class BinaryOperatorStn extends &BaseStn
     @operator = props.operator # should be JavaScript operator (== willnot be comverted to ===)
     @left = @children[0]
     @right = @children[1]
-    throw new Error "left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right
+    throw new Error "BinaryOperatorStn (#{@operator}): left and right required: #{formattedInspect left: @left, right: @right}" unless @left && @right
 
   updateScope: (@scope) ->
     if @operator == "?" && !@left.isReference

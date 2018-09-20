@@ -1,3 +1,39 @@
+### 0.62
+
+NEW: Comprehension efficiency options
+
+To support source-container-type detection. CaffeineScript uses the CaffeineScriptRuntime library to implement
+comprehensions. This requires creating and passing functions for the with-clauses and when-clauses, which can
+be very slow sometimes in JavaScript.
+
+Now, CaffeineScript supports more normal, inline interation without external function calls. Here's how to use it:
+
+```coffeescript
+# equivelent inline-array iteration
+array from-array myArray
+array from myArray by 1        # adding a by-clause forces from-array iteration
+
+# inline-object iteration
+array from-object myObject
+```
+
+NEW: `to/til` support for all comprehension types.
+
+Previously, only `array` was supported.
+
+```coffeescript
+object til 4  # returns 1:1 2:2 3:3 4:4
+find til 4    # returns 1
+each til 4    # returns 4
+```
+
+NEW: `by` clause for array-iteration - including reverse iteration:
+
+```coffeescript
+array myArray by 2  # grab every other element starting at the myArray[0]
+array myArray by -1 # return a new array, reversed
+```
+
 ### 0.58
 
 NEW: Extract is partially supported:

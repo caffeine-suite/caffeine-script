@@ -63,56 +63,56 @@ module.exports = suite: parseTestSuite
       each:
         basic:
           "each from-array b": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = from;
-            while (i < length)
+            while (i < to)
             {let v = from[i]; v; i++;};
             into;"
       find:
         basic:
           "find from-array b": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = null;
-            while (i < length)
+            while (i < to)
             {let v = from[i]; if (v) {into = v; break;}; i++;};
             into;"
 
         withClause:
           "find myValue from-array b with myValue && 10": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = null;
-            while (i < length)
+            while (i < to)
             {let myValue = from[i]; if (into = myValue && 10) {break;}; i++;};
             into || null;"
 
         whenClause:
           "find myValue from-array b when myValue < 10": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = null;
-            while (i < length)
+            while (i < to)
             {let myValue = from[i]; if (myValue < 10) {into = myValue; break;}; i++;};
             into;"
 
         withClause:
           "find myValue from-array b when myValue < 10 with myValue + 7": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = null;
-            while (i < length)
+            while (i < to)
             {let myValue = from[i]; if (myValue < 10) {into = myValue + 7; break;}; i++;};
             into;"
 
@@ -120,127 +120,145 @@ module.exports = suite: parseTestSuite
       array:
         basic:
           "array from-array b": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = [];
-            while (i < length)
+            while (i < to)
             {let v = from[i]; into.push(v); i++;};
             into;"
 
         with:
           "array myValue from-array b with myValue + 1": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = [];
-            while (i < length)
+            while (i < to)
             {let myValue = from[i]; into.push(myValue + 1); i++;};
             into;"
 
         into:
           "array from-array b into [] 1": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = [1];
-            while (i < length)
+            while (i < to)
             {let v = from[i]; into.push(v); i++;};
             into;"
 
         when:
           "array myValue from-array b when myValue > 1": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = [];
-            while (i < length)
+            while (i < to)
             {let myValue = from[i]; if (myValue > 1) {into.push(myValue);}; i++;};
             into;"
 
         destructuring:
           object:
             "array {myProp} from-array b": "
-              let from, length, i, into;
+              let from, to, i, into;
               from = b || [];
-              length = from.length;
+              to = from.length;
               i = 0;
               into = [];
-              while (i < length)
+              while (i < to)
               {let {myProp} = from[i]; into.push({myProp}); i++;};
               into;"
 
           defaults:
             "array {myProp = 123} from-array b": "
-              let from, length, i, into;
+              let from, to, i, into;
               from = b || [];
-              length = from.length;
+              to = from.length;
               i = 0;
               into = [];
-              while (i < length)
+              while (i < to)
               {let {myProp = 123} = from[i]; into.push({myProp}); i++;};
               into;"
 
           subObject:
             # "a = b: c": "
             "array {myProp: {myFoo}} from-array b": "
-              let from, length, i, into;
+              let from, to, i, into;
               from = b || [];
-              length = from.length;
+              to = from.length;
               i = 0;
               into = [];
-              while (i < length)
+              while (i < to)
               {let {myProp: {myFoo}} = from[i]; into.push({myProp: {myFoo}}); i++;};
               into;"
 
           array:
             "array [myProp] from-array b": "
-              let from, length, i, into;
+              let from, to, i, into;
               from = b || [];
-              length = from.length;
+              to = from.length;
               i = 0;
               into = [];
-              while (i < length)
+              while (i < to)
               {let [myProp] = from[i]; into.push([myProp]); i++;};
               into;"
 
       object:
         basic:
           "object from-array b": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = {};
-            while (i < length)
+            while (i < to)
             {let v = from[i]; into[v] = v; i++;};
             into;"
 
         customNames:
           "object myValue, myKey from-array b": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = {};
-            while (i < length)
+            while (i < to)
             {let myValue = from[i], myKey = i; into[myValue] = myValue; i++;};
             into;"
 
         withKey:
           "object myValue, myKey from-array b with-key myKey + '1'": "
-            let from, length, i, into;
+            let from, to, i, into;
             from = b || [];
-            length = from.length;
+            to = from.length;
             i = 0;
             into = {};
-            while (i < length)
+            while (i < to)
             {let myValue = from[i], myKey = i; into[myKey + \"1\"] = myValue; i++;};
             into;"
+
+    forcedFromArray:
+      by:
+        "array from a by 2": "let from, to, i, into; from = a || []; to = from.length; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i += 2;}; into;"
+        "array a by -1": "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+        "array a by c":   null # "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+
+      skip:
+        "array from a skip 1":        "let from, to, i, into; from = a || []; to = from.length; i = 1; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
+        "array from a skip b":        "let from, to, i, into; from = a || []; to = from.length; i = b; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
+        "array from a skip 1 by -1":  "let from, i, into; from = a || []; i = from.length - 2; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+        "array from a skip b by -1":  "let from, i, into; from = a || []; i = from.length - (b + 1); into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+
+      short:
+        "array from a short 1":       "let from, to, i, into; from = a || []; to = from.length - 1; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
+        "array from a short b":       "let from, to, i, into; from = a || []; to = from.length - b; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
+        "array a short 1 by -1":      "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 1) {let v = from[i]; into.push(v); i--;}; into;"
+        "array a short b by -1":      "let from, to, i, into; from = a || []; to = b; i = from.length - 1; into = []; while (i >= to) {let v = from[i]; into.push(v); i--;}; into;"
 
     til:
       each:
@@ -248,6 +266,7 @@ module.exports = suite: parseTestSuite
         "each a til 10":          "let i; i = 0; while (i < 10) {let a = i; a; i++;}; 10;"
         "each til 10 with 1":     "let i; i = 0; while (i < 10) {let v = i; 1; i++;}; 10;"
         "each to 10":             "let i; i = 0; while (i <= 10) {let v = i; v; i++;}; 10;"
+        "each a by c":            null # "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
         "each from a to b by c":  "let to, i, by; to = b; i = a; by = c; while (by > 0 && i <= to || by < 0 && i >= to) {let v = i; v; i += by;}; to;"
         "each to 10 by -1":       "let i; i = 0; while (i >= 10) {let v = i; v; i--;}; 10;"
         "each to 10 by 0":        "let i; i = 0; 10;"

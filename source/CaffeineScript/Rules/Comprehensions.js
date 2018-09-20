@@ -5,7 +5,7 @@ Caf.defMod(module, () => {
     return function() {
       this.rule({
         withOrDo: /(with|do)\b/,
-        comprehensionValueClauseType: /(from|in|into|returning|when|with|to|by|til|do)(-[a-z]+)*\b/
+        comprehensionValueClauseType: /(from|in|into|returning|when|with|to|by|til|do|skip|short)(-[a-z]+)*\b/
       });
       this.rule(
         {
