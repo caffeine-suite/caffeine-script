@@ -165,6 +165,30 @@ module.exports =
     else
       object map, (v) -> parseTestSuite options, v
 
+  ###
+  semanticTestSuite:
+
+  IN: (options, map) OR (map)
+
+    options: not used yet
+    map:
+      An arbitrary plain object structure where:
+
+        prop-keys:
+          are either suite-labels for sub-test-suites OR
+          the source CaffeineScript for a test
+          -- depending on the prop-value
+
+        prop-values: are either sub-maps OR
+          the expecting-values for the tests
+
+      If the prop-value is not a plainObject, it is an expecting-value.
+      If the prop-value has either a 'value' key or 'knownFailing' key,
+        If 'value': the prop-value for the value-key is used as the expecting-balue.
+        If 'knownFailing': the test is a 'knownFailing' test (see elsewhere what that means)
+          Also, this isn't currently supported here, bit it probably will be.
+
+  ###
   semanticTestSuite: semanticTestSuite = (a, b) ->
     map = if b
       options = a
@@ -175,24 +199,31 @@ module.exports =
 
     hasTestValues = hasOther = false
     for k, v of map
-      if !v? || v?.knownFailing || isString v
+      if !isPlainObject(v) || v.knownFailing || v.value
         hasTestValues = true
       else
         hasOther = true
 
-    throw new Error "either pass all null/string/{knownFailing:string} or all sub-suites as objects withouth knownFailing fields!" if hasTestValues && hasOther
+    if hasTestValues && hasOther
+      throw new Error "either pass all test-values (any non-plain-object, or plain-objects with value: or knownFailing: props) or all sub-suites as plain-objects withouth knownFailing fields!"
+
     if hasTestValues
       ->
         object map, (jsControl, cafScriptSource) ->
-          niceTest name = "#{cafScriptSource} >> #{jsControl || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+          expectingValue = if isPlainObject jsControl
+            {value, knownFailing} = jsControl
+            value
+          else
+            jsControl
+
+          niceTest name = "#{cafScriptSource} >> #{expectingValue || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
             {js} = compileAndReportErrors cafScriptSource, {name}
             cafOutput = eval """
               let Caf = require(\'caffeine-script-runtime\');
               #{js}
               """
-            controlOutput = eval jsControl
-            unless eq controlOutput, cafOutput
-              assert.eq controlOutput, cafOutput, {js}
+            unless eq expectingValue, cafOutput
+              assert.eq expectingValue, cafOutput, {js}
 
     else
       object map, (v) -> semanticTestSuite options, v
