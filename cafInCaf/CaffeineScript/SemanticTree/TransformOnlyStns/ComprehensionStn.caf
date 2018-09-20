@@ -105,8 +105,8 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     #   @generateArrayRange comprehensionType, labeledClauses
     else
       switch comprehensionType
-      when :each, :array, :object
-        @generateArrayOrEach
+      when :each, :array, :object, :reduce
+        @generateRuntimeBackedIteration
           if comprehensionType == :each then :each2 else comprehensionType
           labeledClauses
 
@@ -418,7 +418,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
   # Caf.array( source, withClause = returnFirst, whenClause = returnTrue, into = []) ->
   # Caf.object(source, withClause = returnFirst, whenClause = returnTrue, into = {}) ->
   # Caf.each2( source, withClause = returnFirst, whenClause = returnTrue, into)
-  generateArrayOrEach: (method, {fromClause, intoClause, withClause, whenClause, withKeyClause})->
+  generateRuntimeBackedIteration: (method, {fromClause, intoClause, injectClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
 
     # if the value-variable is defined, it's a destructuring set the special default withClause
@@ -434,5 +434,5 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         fromClause
         {} f: withClause
         {} f: whenClause
-        intoClause
+        intoClause ? injectClause
         {} f: withKeyClause

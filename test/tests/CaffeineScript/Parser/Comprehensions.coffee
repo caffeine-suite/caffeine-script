@@ -11,6 +11,7 @@ module.exports = suite: parseTestSuite
     "object b":       "Caf.object(b);"
     "each b":         "Caf.each2(b);"
     "find b":         "Caf.find(b);"
+    "reduce b":       "Caf.reduce(b);"
 
   object:
     "object v, k in b with-key k + k": "Caf.object(b, null, null, null, (v, k) => k + k);"
@@ -20,6 +21,9 @@ module.exports = suite: parseTestSuite
     "each v, k in b":       "Caf.each2(b);"
     "each v in b with v()": "Caf.each2(b, (v) => v());"
     "each v in b when v()": "Caf.each2(b, null, (v) => v());"
+
+  reduce:
+    "reduce a, b from c inject 0 with a + b": "Caf.reduce(c, (a, b) => a + b, null, 0);"
 
   efficiency:
     fromObject:

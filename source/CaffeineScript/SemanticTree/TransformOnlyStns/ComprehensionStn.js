@@ -240,7 +240,8 @@ Caf.defMod(module, () => {
                     case "each":
                     case "array":
                     case "object":
-                      return this.generateArrayOrEach(
+                    case "reduce":
+                      return this.generateRuntimeBackedIteration(
                         comprehensionType === "each"
                           ? "each2"
                           : comprehensionType,
@@ -723,9 +724,16 @@ Caf.defMod(module, () => {
               )
             );
           };
-          this.prototype.generateArrayOrEach = function(
+          this.prototype.generateRuntimeBackedIteration = function(
             method,
-            { fromClause, intoClause, withClause, whenClause, withKeyClause }
+            {
+              fromClause,
+              intoClause,
+              injectClause,
+              withClause,
+              whenClause,
+              withKeyClause
+            }
           ) {
             let variableDefinition, base;
             ({ variableDefinition } = this.labeledChildren);
@@ -745,7 +753,7 @@ Caf.defMod(module, () => {
                 fromClause,
                 { f: withClause },
                 { f: whenClause },
-                intoClause,
+                intoClause != null ? intoClause : injectClause,
                 { f: withKeyClause }
               )
             );

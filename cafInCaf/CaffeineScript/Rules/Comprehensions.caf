@@ -3,7 +3,7 @@ import &StandardImport
 ->
   @rule
     withOrDo: /(with|do)\b/
-    comprehensionValueClauseType: /(from|in|into|returning|when|with|to|by|til|do|skip|short)(-[a-z]+)*\b/
+    comprehensionValueClauseType: /(from|in|into|returning|inject|when|with|to|by|til|do|skip|short)(-[a-z]+)*\b/
 
   @rule
     comprehensionOutputType:      /(object|array|reduce|each|find)\b/

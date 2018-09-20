@@ -1,4 +1,4 @@
-### 0.62
+### 0.63
 
 NEW: Comprehension efficiency options
 
@@ -33,6 +33,20 @@ NEW: `by` clause for array-iteration - including reverse iteration:
 array myArray by 2  # grab every other element starting at the myArray[0]
 array myArray by -1 # return a new array, reversed
 ```
+> Note: Non-constant by-clauses are only supported with til/to iteration.
+
+NEW: `short` and `skip` clauses for array-iteration:
+
+```coffeescript
+array myArray skip 1       # skip the first element
+array myArray short 1      # do all but the last element
+array myArray skip 2 short 1  # skip the first two, don't don the last 
+
+array myArray by 2         # select the even elements
+array myArray by 2 skip 1  # select the odd elements
+```
+> Note: When using `by` and `short` or `skip`, the short and skip are only affect by the by-clause's sign, not its magnitude. e.g. `skip 1` always starts at index 1 when `by > 0` and always starts at index length - 2 when `by < 0` whether by is 2, 10 or 100.
+
 
 ### 0.58
 
