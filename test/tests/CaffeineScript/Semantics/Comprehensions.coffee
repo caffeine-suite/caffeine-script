@@ -34,6 +34,9 @@ module.exports = suite: semanticTestSuite
     "array a to 4 with Math.sqrt(a) * 100 | 0": [0, 100, 141, 173, 200]
 
     "(f = -> -3); array til f()":               [0, -1, -2]
+    "object til 4":                             value: 0: 0, 1: 1, 2: 2, 3: 3
+    "find til 4":                               1
+    "each til 4":                               4
 
   reduce:
     "reduce 1 2 3":                             1

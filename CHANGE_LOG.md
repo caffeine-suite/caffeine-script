@@ -21,9 +21,9 @@ array from-object myObject
 Previously, only `array` was supported.
 
 ```coffeescript
-object til 4  # returns 1:1 2:2 3:3 4:4
-find til 4    # returns 1
-each til 4    # returns 4
+object til 4  # returns 0:0 1:1 2:2 3:3
+find til 4    # returns 1, the first trueish value
+each til 4    # returns 4, the value pass into to/til
 ```
 
 ##### NEW: `by` clause for array-iteration - including reverse iteration:
