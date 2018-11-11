@@ -397,6 +397,13 @@ module.exports = suite: parseTestSuite
       ""
         # looks like a comment but its not
       """: '"# looks like a comment but its not";'
+
+      '''
+      """
+        abc
+          ## should be indented in string
+      ''': '"abc\\n  ## should be indented in string";'
+
   interpolated:
     basic:
       '"${#{foo}}"':                     '`\\${${Caf.toString(foo)}}`;'
