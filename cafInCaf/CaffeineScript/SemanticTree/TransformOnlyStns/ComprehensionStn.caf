@@ -66,7 +66,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
 
     if !(toClause || tilClause) && byClause && !byClause.compileTimeValue?
-      throw new Error "" Comprehension not supported: Non-constant by-clauses with array-iteration are not supported."
+      throw new Error "" Comprehension not supported: Non-constant by-clauses with array-iteration are not supported yet. Try making it a range iteration: array i in 0 til myArray.length by myByClause with v = myArray[i]"
 
     if (byClause || skipClause || shortClause) && !(tilClause || toClause || fromClause || fromArrayClause)
       throw new Error "" Invalid Comprehension: 'to', 'til', 'from' or 'from-array' clauses required when using 'by', 'skip' or 'short' clauses.  #{getComprehensionsFound @labeledClauses}

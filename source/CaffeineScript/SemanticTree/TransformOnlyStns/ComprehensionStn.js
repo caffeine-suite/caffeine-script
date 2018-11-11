@@ -168,7 +168,7 @@ Caf.defMod(module, () => {
               !(byClause.compileTimeValue != null)
             ) {
               throw new Error(
-                'Comprehension not supported: Non-constant by-clauses with array-iteration are not supported."'
+                'Comprehension not supported: Non-constant by-clauses with array-iteration are not supported yet. Try making it a range iteration: array i in 0 til myArray.length by myByClause with v = myArray[i]"'
               );
             }
             return (byClause || skipClause || shortClause) &&
