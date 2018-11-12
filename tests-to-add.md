@@ -1,47 +1,39 @@
-# BIG PROBLEMS
-
-Comment Preprocessing has to go:
-
-This:
+# Improvements
 
 ```coffeescript
-"""
-  abc
-## comment
+# in-array should work
+array a in-array b
 ```
-Currently compiles to:
-
+---
 ```coffeescript
-"abc\n## comment"
+  {
+    a
+    b
+  } = myObject
+
+  {
+  a
+  b
+  } = myObject
+
+  {}
+    a
+    b
+  = myObject
 ```
 
-The comment should not be in the string!
 
-OH NOES!
 
-Also,
 
-```coffeescript
-"""
-  abc
-    ## comment
-```
-
-Currently compiles to:
-
-```coffeescript
-"abc\n## comment"
-```
-
-The comment SHOULD be in the string, but it should have 2 spaces first.
-
-I tried just stripping comments in the preprocessor, but that breaks the
-second example above.
+# Comment Todo
 
 The real solution looks like this: Every block sub-parsed, other than literals
 like string-blocks or comment-blocks themselves, needs something akin to the
 current preprocess step: Any under-indented comments should be up-indented to
 the base of the sub-block. I -think- that'll solve it.
+
+
+
 
 # SEMANTIC TODO
 
@@ -73,7 +65,93 @@ However, I'm OK with the following not setting 'b':
 > a extract b.c
 ```
 
+--------
+
+### Extract Todo
+
+```coffeescript
+# these should all be equivalent
+a extract b, c, d
+a extract
+  b
+  c
+  d
+
+a extract
+  b, c
+  d
+```
+
+`extract` in comprehensions and function definitions:
+
+```coffeescript
+# these should all be equivalent
+(a extract b) ->
+(extract b) ->
+
+# IDEA
+{b} ->
+
+# these should all be equivalent
+each a from c with a.b
+each a extract b from c
+each extract b from c
+
+# IDEA
+each a.b from c
+each .b from c
+```
+
+#### Extract Bug
+
+This:
+
+```coffeescript
+@foo extract? a, b
+```
+
+Should NOT access `this.foo` over and over; it should store it in a temp. What if `this.foo` is a getter and not simply a prop?
+
+DOH - it's even more wrong than I thought:
+
+```javascript
+// current, wrong output:
+if (Caf.exists(this.foo)) {
+  a = this.foo.a;
+} else {
+  b = this.foo.b;
+}
+
+// should be
+if (Caf.exists(temp = this.foo)) {
+  a = temp.a;
+  b = temp.b;
+}
+```
+
+# Generates invalid javascript:
+
+```coffeescript
+class ImikimiStyles extends &ArtSuite.HotStyleProps || Object
+```
+
+---
+
+```coffeescript
+import &StandardImport
+
+authorizedSync = (request) ->
+  !!if Neptune.Art.Config.configName == "Production"
+    request.session.userId in config.curators
+  else
+    present request.session.userId
+```
+
+
+
+
 # SHOULD COMPILE
+
 
 I think the problem is the trailing comments:
 
@@ -90,7 +168,8 @@ switch subject
 ```
 ---
 
-The trailing space in the interpolation breacks things...
+The trailing space in the interpolation breaks things...
+
 ```coffeescript
 "#{123 }"
 ```
@@ -122,33 +201,9 @@ new class FakeSocket
 ```coffeescript
   {@getPriority} = options
 ```
----
-```coffeescript
-  {
-    a
-    b
-  } = myObject
 
-  {
-  a
-  b
-  } = myObject
 
-  {}
-    a
-    b
-  = myObject
-```
----
-```coffeescript
-import &StandardImport
 
-authorizedSync = (request) ->
-  !!if Neptune.Art.Config.configName == "Production"
-    request.session.userId in config.curators
-  else
-    present request.session.userId
-```
 
 # SHOULD NOT COMPILE
 
@@ -183,7 +238,47 @@ App extends FluxComponent
 ```
 
 
+
+
+
 # WRONG COMPILE
+
+
+```coffeescript
+->
+  array x1 to 1
+  -> x1 = 1
+```
+
+The second function should also
+have a `"let x1;"` since it is a peer of `array`.
+
+---
+
+```coffeescript
+each step from 2 to 6
+  myRad = 2 ** step
+```
+
+myRad should be "let" inside the loop, not outside.
+
+---
+
+Starting a line with a dot-number: ".4"
+
+```coffeescript
+a
+  1
+  .3
+# should be: a(1, .3)
+
+log a
+.9
+# should be: log(a);.9
+```
+
+---
+
 
 ```coffeescript
 # THIS:
@@ -192,17 +287,29 @@ App extends FluxComponent
 # SHOULD BE:
 -(a**2)
 ```
+
 ---
-```coffeescript
-if i == cats.length - 1 then Promise.then -> action event, props else {}
-# "action event, props" should be inside the .then funciton
-```
----
+
 Should just become: -1 (-01 is illegal in JavaScript)
 
 ```coffeescript
 -01
 ```
+
+
+---
+
+```coffeescript
+if i == cats.length - 1 then Promise.then -> action event, props else {}
+```
+
+`action event, props` should be inside the `.then` funciton. The problem probably comes from this parse error:
+
+```coffeescript
+# does not parse!
+if a then -> c else d
+```
+
 
 
 ---
@@ -214,4 +321,11 @@ Caf.array(list.sort(function(a, b) {})(b - a), null, item => item);
 
 # Should be:
 Caf.array(list.sort(function(a, b) {return b - a}), null, item => item);
+```
+
+Probably same problem as above:
+
+```coffeescript
+# this does not parse!
+array item in -> a when item
 ```
