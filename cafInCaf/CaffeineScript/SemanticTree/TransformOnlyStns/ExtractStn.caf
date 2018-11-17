@@ -55,6 +55,6 @@ class ExtractStn extends &BaseStn
               IdentifierStn identifier: "Caf.exists"
               conditionalSource ? extractSource
 
-            doExtract
+            StatementsStn doExtract
         else
           doExtract

@@ -89,32 +89,15 @@ each a.b from c
 each .b from c
 ```
 
-#### Extract Bug
 
-This:
 
-```coffeescript
-@foo extract? a, b
-```
 
-Should NOT access `this.foo` over and over; it should store it in a temp. What if `this.foo` is a getter and not simply a prop?
 
-DOH - it's even more wrong than I thought:
 
-```javascript
-// current, wrong output:
-if (Caf.exists(this.foo)) {
-  a = this.foo.a;
-} else {
-  b = this.foo.b;
-}
 
-// should be
-if (Caf.exists(temp = this.foo)) {
-  a = temp.a;
-  b = temp.b;
-}
-```
+
+
+
 
 # Generates invalid javascript:
 

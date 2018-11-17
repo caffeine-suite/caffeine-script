@@ -33,10 +33,15 @@ module.exports = suite: parseTestSuite
       "a extract b as c": "let c; c = a.b;"
 
     conditional:
-      "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
-      "a extract b extract? c": "let c, temp; temp = a.b; if (Caf.exists(temp)) {c = temp.c;};"
+      base:
+        "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
+        "a extract b extract? c": "let c, temp; temp = a.b; if (Caf.exists(temp)) {c = temp.c;};"
 
-      "a.c extract? b": "let b, temp; if (Caf.exists(temp = a.c)) {b = temp.b;};"
+        "a.c extract? b": "let b, temp; if (Caf.exists(temp = a.c)) {b = temp.b;};"
+
+      regressions:
+        "@foo extract a, b":  "let a, b, temp; temp = this.foo; a = temp.a; b = temp.b;"
+        "@foo extract? a, b": "let a, b, temp; if (Caf.exists(temp = this.foo)) {a = temp.a; b = temp.b;};"
 
       # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
       # "a extract? b = 1": "let b, temp; b = (undefined !== temp = Caf.exists(a) ? a.b : undefined) ? temp : 1;"

@@ -75,7 +75,7 @@ Caf.defMod(module, () => {
                           ? conditionalSource
                           : extractSource
                       ),
-                      doExtract
+                      StatementsStn(doExtract)
                     )
                   : doExtract)
               : undefined
