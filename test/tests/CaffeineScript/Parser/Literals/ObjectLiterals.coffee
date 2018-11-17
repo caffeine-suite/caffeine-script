@@ -93,26 +93,7 @@ module.exports = suite: parseTestSuite
       foo: 1 if bar
       """: null
         ###
-        NOTE: this could reasonably be interpreted as:
-          if bar
-            baz: 2
-            foo: 1
-
-        All we need to do is let lineStartExpression be followed by a tailControlOperator.
-        Further note, this is how we already interpret this:
-
-          if foo
-            1
-          else 2 if baz
-
-          # interpreted as
-          if bax
-            if foo
-              1
-            else
-              2
-
-        BUT - coffeeScript finally go it right, and I want it right, too:
+        coffeeScript finally go it right, and I want it right, too:
 
           a: b if c
           d: 1

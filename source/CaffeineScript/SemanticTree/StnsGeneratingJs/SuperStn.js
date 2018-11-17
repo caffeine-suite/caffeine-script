@@ -77,8 +77,8 @@ Caf.defMod(module, () => {
                   this.props.passArguments
                     ? [", ", "arguments"]
                     : args.length > 0
-                      ? [", ", this.stnArrayToSourceNodes(args, ", ")]
-                      : undefined,
+                    ? [", ", this.stnArrayToSourceNodes(args, ", ")]
+                    : undefined,
                   ")"
                 ));
           };

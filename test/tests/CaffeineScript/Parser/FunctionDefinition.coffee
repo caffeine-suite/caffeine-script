@@ -138,3 +138,12 @@ module.exports = suite: parseTestSuite
       (c) -> @b c
     """: "(function() {return (c) => this.b(c);});"
 
+    # "if -> then b": "if (function() {}) {b;};"
+    # "if a then -> else b": "if (a) {(function() {});} else {b;};"
+    "if a then -> c else b": null # "if (a) {(function() {return c;});} else {b;};"
+    # "if i == cats.length - 1 then Promise.then -> action event, props else {}": "
+    #   if (i === cats.length - 1)
+    #   {Promise.then(function() {return action(event, props);});}
+    #   else {({});};
+    #   "
+

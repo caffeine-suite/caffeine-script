@@ -257,10 +257,10 @@ Caf.defMod(module, () => {
                           initializer
                         )}`
                       : initializer.toJsExpression != null
-                        ? `${Caf.toString(identifier)} = ${Caf.toString(
-                            initializer.toJsExpression()
-                          )}`
-                        : identifier,
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer.toJsExpression()
+                        )}`
+                      : identifier,
                   (initializer, identifier) =>
                     !identifiersAssignedInParentScopes ||
                     !identifiersAssignedInParentScopes[identifier]

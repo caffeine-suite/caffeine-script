@@ -166,8 +166,8 @@ Caf.defMod(module, () => {
                         statementStns
                       ])
                 : preBodyStatements
-                  ? [preBodyStatements, statementStns]
-                  : statementStns
+                ? [preBodyStatements, statementStns]
+                : statementStns
             );
           };
           this.getter({

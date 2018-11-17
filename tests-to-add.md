@@ -329,3 +329,25 @@ Probably same problem as above:
 # this does not parse!
 array item in -> a when item
 ```
+
+# Should Compile
+
+```coffeescript
+"Hi there #{} empty iterpolation should be fine!"
+```
+
+```coffeescript
+# backward compatible with coffeescript
+{
+  hi: 1
+}
+
+[
+  1
+]
+
+{
+  a
+  b
+} = foo
+```

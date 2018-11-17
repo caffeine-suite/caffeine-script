@@ -42,7 +42,7 @@ importBody:
 
 newLineStatementExtension:
   "end lineStartBinaryOperatorAndExpression"
-  "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
+  "end &/\\??\\.(?!\\d)/ valueExtension+ binaryOperatorSequenceExtension?"
 
 lineOfStatements:
   pattern:

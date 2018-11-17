@@ -30,14 +30,14 @@ Caf.defMod(module, () => {
             return !childrenNodes || childrenNodes.length === 0
               ? this.createSourceNode("/(?:)/")
               : hasInterpolation
-                ? this.createSourceNode(
-                    "RegExp(`",
-                    childrenNodes,
-                    "`",
-                    modifiers ? [", '", modifiers, "'"] : undefined,
-                    ")"
-                  )
-                : this.createSourceNode("/", childrenNodes, "/", modifiers);
+              ? this.createSourceNode(
+                  "RegExp(`",
+                  childrenNodes,
+                  "`",
+                  modifiers ? [", '", modifiers, "'"] : undefined,
+                  ")"
+                )
+              : this.createSourceNode("/", childrenNodes, "/", modifiers);
           };
         }
       ));

@@ -17,17 +17,17 @@ Caf.defMod(module, () => {
             return isFunction(stnFactoryName)
               ? stnFactoryName
               : isString(stnFactoryName)
-                ? (!(out = this[stnFactoryName])
-                    ? (() => {
-                        throw new Error(
-                          `stnFactoryName not found: ${Caf.toString(
-                            formattedInspect(stnFactoryName)
-                          )}`
-                        );
-                      })()
-                    : undefined,
-                  out)
-                : undefined;
+              ? (!(out = this[stnFactoryName])
+                  ? (() => {
+                      throw new Error(
+                        `stnFactoryName not found: ${Caf.toString(
+                          formattedInspect(stnFactoryName)
+                        )}`
+                      );
+                    })()
+                  : undefined,
+                out)
+              : undefined;
           };
         }
       ));

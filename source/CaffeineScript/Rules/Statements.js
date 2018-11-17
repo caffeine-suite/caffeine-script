@@ -56,7 +56,7 @@ Caf.defMod(module, () => {
         importBody: ["root", { stnFactory: "ImportBodyStn" }],
         newLineStatementExtension: [
           "end lineStartBinaryOperatorAndExpression",
-          "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
+          "end &/\\??\\.(?!\\d)/ valueExtension+ binaryOperatorSequenceExtension?"
         ],
         lineOfStatements: {
           pattern: [

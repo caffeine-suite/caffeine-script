@@ -22,10 +22,10 @@ Caf.defMod(module, () => {
               quotes = /"/.test(base)
                 ? "'"
                 : /'/.test(base)
-                  ? ((singleCount = base.split("'").length - 1),
-                    (doubleCount = base.split('"').length - 1),
-                    doubleCount <= singleCount ? '"' : "'")
-                  : '"';
+                ? ((singleCount = base.split("'").length - 1),
+                  (doubleCount = base.split('"').length - 1),
+                  doubleCount <= singleCount ? '"' : "'")
+                : '"';
               out =
                 quotes +
                 escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +

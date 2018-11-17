@@ -98,15 +98,15 @@ Caf.defMod(module, () => {
                         })(),
                         c.toSourceNode({ generateReturnStatement: true }))
                     : generateStatements
-                      ? c.toSourceNode({
-                          statement: !classBody,
-                          generateStatements: true,
-                          parentIsStatements: true
-                        })
-                      : c.toSourceNode({
-                          expression: true,
-                          returnValueIsIgnored: i < lines.length - 1
-                        });
+                    ? c.toSourceNode({
+                        statement: !classBody,
+                        generateStatements: true,
+                        parentIsStatements: true
+                      })
+                    : c.toSourceNode({
+                        expression: true,
+                        returnValueIsIgnored: i < lines.length - 1
+                      });
                 return a;
               },
               null,

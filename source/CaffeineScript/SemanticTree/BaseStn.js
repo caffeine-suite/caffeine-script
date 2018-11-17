@@ -181,17 +181,15 @@ Caf.defMod(module, () => {
             stnTypeStopPattern,
             _foundList = []
           ) {
-            Caf.each2(
-              this.children,
-              child =>
-                stnTypePattern.test(child.type)
-                  ? _foundList.push(child)
-                  : !(
-                      Caf.exists(stnTypeStopPattern) &&
-                      stnTypeStopPattern.test(child.type)
-                    )
-                    ? child.find(stnTypePattern, stnTypeStopPattern, _foundList)
-                    : undefined
+            Caf.each2(this.children, child =>
+              stnTypePattern.test(child.type)
+                ? _foundList.push(child)
+                : !(
+                    Caf.exists(stnTypeStopPattern) &&
+                    stnTypeStopPattern.test(child.type)
+                  )
+                ? child.find(stnTypePattern, stnTypeStopPattern, _foundList)
+                : undefined
             );
             return _foundList.length === 0 ? null : _foundList;
           };

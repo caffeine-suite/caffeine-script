@@ -51,7 +51,7 @@ Caf.defMod(module, () => {
           "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
         elseClause:
           "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
-        controlStructorClauseJoiner: ["_", "end"],
+        controlStructorClauseJoiner: "_? end?",
         catch: /catch\b/,
         try: /try\b/,
         ifUnlessWhileUntil: /(if|unless|while|until)\b/,

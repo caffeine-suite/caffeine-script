@@ -37,8 +37,8 @@ Caf.defMod(module, () => {
                 ])
               })
             : accessorStn.isAccessor || accessorStn.type === "This"
-              ? { value1: accessorStn, value2: accessorStn }
-              : this.getValueWithCapture(accessorStn);
+            ? { value1: accessorStn, value2: accessorStn }
+            : this.getValueWithCapture(accessorStn);
         };
         this.prototype.getValueWithCapture = function(accessorStn) {
           let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;

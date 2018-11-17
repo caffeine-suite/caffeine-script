@@ -223,15 +223,13 @@ Caf.defMod(module, () => {
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;
-              Caf.each2(
-                operators,
-                (op, i) =>
-                  lowestPrecidence > (p = this.getOpPrecidence(op))
-                    ? ((firstOccurance = lastOccurance = i),
-                      (lowestPrecidence = p))
-                    : lowestPrecidence === p
-                      ? (lastOccurance = i)
-                      : undefined
+              Caf.each2(operators, (op, i) =>
+                lowestPrecidence > (p = this.getOpPrecidence(op))
+                  ? ((firstOccurance = lastOccurance = i),
+                    (lowestPrecidence = p))
+                  : lowestPrecidence === p
+                  ? (lastOccurance = i)
+                  : undefined
               );
               opIndexToResolve = this.getPrecidenceLevelIsLeftAssociative(p)
                 ? firstOccurance

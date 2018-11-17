@@ -50,9 +50,8 @@ Caf.defMod(module, () => {
               {
                 getStn: function() {
                   let children;
-                  children = Caf.array(
-                    this.getMatchStns(),
-                    m => (m instanceof ObjectStn.class ? m.children : m)
+                  children = Caf.array(this.getMatchStns(), m =>
+                    m instanceof ObjectStn.class ? m.children : m
                   );
                   return ObjectStn(children);
                 }

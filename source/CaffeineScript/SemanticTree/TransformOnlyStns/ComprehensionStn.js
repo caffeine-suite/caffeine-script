@@ -291,14 +291,12 @@ Caf.defMod(module, () => {
             });
             Null = null;
             params = params.slice(0, lastNonNulIndex + 1);
-            return Caf.array(
-              params,
-              p =>
-                p != null
-                  ? p
-                  : Null != null
-                    ? Null
-                    : (Null = SimpleLiteralStn({ value: "null" }))
+            return Caf.array(params, p =>
+              p != null
+                ? p
+                : Null != null
+                ? Null
+                : (Null = SimpleLiteralStn({ value: "null" }))
             );
           };
           this.prototype.generateInlineIteration = function(
@@ -574,8 +572,8 @@ Caf.defMod(module, () => {
                                 })
                           )
                         : skipClause != null
-                          ? skipClause
-                          : NumberLiteralStn({ value: fromCompileTimeValue })
+                        ? skipClause
+                        : NumberLiteralStn({ value: fromCompileTimeValue })
                     );
                   case !toClause:
                     return AssignmentStn(
@@ -608,55 +606,53 @@ Caf.defMod(module, () => {
                         fromId
                       )
                     : fromArrayClause
-                      ? BinaryOperatorStn(
-                          { operator: reverseArray ? ">=" : "<" },
-                          iId,
-                          toId != null
-                            ? toId
-                            : NumberLiteralStn({ value: toCompileTimeValue })
-                        )
-                      : ((positiveByTest = BinaryOperatorStn(
-                          { operator: `<${Caf.toString(toClauseEquality)}` },
-                          iId,
-                          toId ||
-                            NumberLiteralStn({ value: toCompileTimeValue })
-                        )),
-                        (negativeByTest = BinaryOperatorStn(
-                          { operator: `>${Caf.toString(toClauseEquality)}` },
-                          iId,
-                          toId ||
-                            NumberLiteralStn({ value: toCompileTimeValue })
-                        )),
-                        (() => {
-                          switch (false) {
-                            case !byClauseIsPositive:
-                              return positiveByTest;
-                            case !byClauseIsNegative:
-                              return negativeByTest;
-                            default:
-                              return BinaryOperatorStn(
-                                { operator: "||" },
+                    ? BinaryOperatorStn(
+                        { operator: reverseArray ? ">=" : "<" },
+                        iId,
+                        toId != null
+                          ? toId
+                          : NumberLiteralStn({ value: toCompileTimeValue })
+                      )
+                    : ((positiveByTest = BinaryOperatorStn(
+                        { operator: `<${Caf.toString(toClauseEquality)}` },
+                        iId,
+                        toId || NumberLiteralStn({ value: toCompileTimeValue })
+                      )),
+                      (negativeByTest = BinaryOperatorStn(
+                        { operator: `>${Caf.toString(toClauseEquality)}` },
+                        iId,
+                        toId || NumberLiteralStn({ value: toCompileTimeValue })
+                      )),
+                      (() => {
+                        switch (false) {
+                          case !byClauseIsPositive:
+                            return positiveByTest;
+                          case !byClauseIsNegative:
+                            return negativeByTest;
+                          default:
+                            return BinaryOperatorStn(
+                              { operator: "||" },
+                              BinaryOperatorStn(
+                                { operator: "&&" },
                                 BinaryOperatorStn(
-                                  { operator: "&&" },
-                                  BinaryOperatorStn(
-                                    { operator: ">" },
-                                    byId,
-                                    NumberLiteralStn({ value: "0" })
-                                  ),
-                                  positiveByTest
+                                  { operator: ">" },
+                                  byId,
+                                  NumberLiteralStn({ value: "0" })
                                 ),
+                                positiveByTest
+                              ),
+                              BinaryOperatorStn(
+                                { operator: "&&" },
                                 BinaryOperatorStn(
-                                  { operator: "&&" },
-                                  BinaryOperatorStn(
-                                    { operator: "<" },
-                                    byId,
-                                    NumberLiteralStn({ value: "0" })
-                                  ),
-                                  negativeByTest
-                                )
-                              );
-                          }
-                        })()),
+                                  { operator: "<" },
+                                  byId,
+                                  NumberLiteralStn({ value: "0" })
+                                ),
+                                negativeByTest
+                              )
+                            );
+                        }
+                      })()),
                   StatementsStn(
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
@@ -701,8 +697,8 @@ Caf.defMod(module, () => {
                                 })
                             )
                         : byClauseCompileTimeValue < 0
-                          ? UnaryOperatorStn({ operand: "--", tail: true }, iId)
-                          : UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                        ? UnaryOperatorStn({ operand: "--", tail: true }, iId)
+                        : UnaryOperatorStn({ operand: "++", tail: true }, iId)
                       : undefined
                   )
                 ),
@@ -713,8 +709,8 @@ Caf.defMod(module, () => {
                     PureJsStn("null")
                   )
                 : intoId ||
-                  toId ||
-                  NumberLiteralStn({ value: toCompileTimeValue })
+                    toId ||
+                    NumberLiteralStn({ value: toCompileTimeValue })
             );
           };
           this.prototype.generateFind = function({

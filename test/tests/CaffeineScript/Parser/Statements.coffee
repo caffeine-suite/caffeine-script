@@ -42,3 +42,10 @@ module.exports = suite: parseTestSuite
     a
     /1/
     """: "a; /1/;"
+
+  dotLineStarts:
+    regressions:
+      """
+      a
+      .123
+      """: "a; .123;"

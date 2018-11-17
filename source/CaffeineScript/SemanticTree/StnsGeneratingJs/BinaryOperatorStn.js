@@ -124,8 +124,8 @@ Caf.defMod(module, () => {
                     operatorPrecidence === parentOperatorPrecidence &&
                     isLeftOperand ===
                       getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
-                    ? false
-                    : true);
+                  ? false
+                  : true);
           };
         }
       ));

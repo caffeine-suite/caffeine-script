@@ -38,32 +38,32 @@ Caf.defMod(module, () => {
                   this.statementsSourceNodes
                 )
               : options.module
-                ? ((identifiersToImport = Caf.array(
-                    this.generateImportMap(),
-                    (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                  )),
-                  (statementsSourceNode = this.statements.toSourceNode({
-                    returnAction: true
-                  })),
-                  (lets = compactFlatten([
-                    identifiersToImport,
-                    this.requiredIdentifierLets
-                  ])),
-                  this.createSourceNode(
-                    "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
-                    lets.length > 0
-                      ? `let ${Caf.toString(lets.join(", "))}; `
-                      : undefined,
-                    statementsSourceNode,
-                    "});"
-                  ))
-                : (({ statementsSourceNodes } = this),
-                  this.createSourceNode(
-                    present((autoLets = this.getAutoLets()))
-                      ? [autoLets, "; "]
-                      : undefined,
-                    statementsSourceNodes
-                  ));
+              ? ((identifiersToImport = Caf.array(
+                  this.generateImportMap(),
+                  (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                )),
+                (statementsSourceNode = this.statements.toSourceNode({
+                  returnAction: true
+                })),
+                (lets = compactFlatten([
+                  identifiersToImport,
+                  this.requiredIdentifierLets
+                ])),
+                this.createSourceNode(
+                  "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                  lets.length > 0
+                    ? `let ${Caf.toString(lets.join(", "))}; `
+                    : undefined,
+                  statementsSourceNode,
+                  "});"
+                ))
+              : (({ statementsSourceNodes } = this),
+                this.createSourceNode(
+                  present((autoLets = this.getAutoLets()))
+                    ? [autoLets, "; "]
+                    : undefined,
+                  statementsSourceNodes
+                ));
           };
           this.prototype.rootUpdateScope = function() {
             return !this._scopeHasBeenUpdated
