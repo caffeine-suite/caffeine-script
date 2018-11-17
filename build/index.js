@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.65.1"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.65.2"};
 
 /***/ }),
 /* 5 */
@@ -658,9 +658,8 @@ Caf.defMod(module, () => {
       let legalUnquotedPropName;
       return {
         deescapeSpaces: function(string) {
-          return Caf.array(
-            string.split(/((?:\\\\)+)/),
-            (str, i) => (Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str)
+          return Caf.array(string.split(/((?:\\\\)+)/), (str, i) =>
+            Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
           ).join("");
         },
         escapeNewLines: function(string) {
@@ -678,10 +677,8 @@ Caf.defMod(module, () => {
           split = charsToEscape.match(/\\/)
             ? [string]
             : string.split(/((?:\\.)+)/);
-          return Caf.array(
-            split,
-            (str, i) =>
-              Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
+          return Caf.array(split, (str, i) =>
+            Caf.mod(i, 2) === 0 ? str.replace(charsRegExp, "\\$1") : str
           ).join("");
         },
         legalUnquotedPropName: (legalUnquotedPropName = /^(0|[1-9][0-9]*|[a-z_][0-9_a-z]*)$/i),
@@ -726,17 +723,17 @@ Caf.defMod(module, () => {
             return isFunction(stnFactoryName)
               ? stnFactoryName
               : isString(stnFactoryName)
-                ? (!(out = this[stnFactoryName])
-                    ? (() => {
-                        throw new Error(
-                          `stnFactoryName not found: ${Caf.toString(
-                            formattedInspect(stnFactoryName)
-                          )}`
-                        );
-                      })()
-                    : undefined,
-                  out)
-                : undefined;
+              ? (!(out = this[stnFactoryName])
+                  ? (() => {
+                      throw new Error(
+                        `stnFactoryName not found: ${Caf.toString(
+                          formattedInspect(stnFactoryName)
+                        )}`
+                      );
+                    })()
+                  : undefined,
+                out)
+              : undefined;
           };
         }
       ));
@@ -815,8 +812,8 @@ Caf.defMod(module, () => {
                 ])
               })
             : accessorStn.isAccessor || accessorStn.type === "This"
-              ? { value1: accessorStn, value2: accessorStn }
-              : this.getValueWithCapture(accessorStn);
+            ? { value1: accessorStn, value2: accessorStn }
+            : this.getValueWithCapture(accessorStn);
         };
         this.prototype.getValueWithCapture = function(accessorStn) {
           let AssignmentStn, ReferenceStn, IdentifierStn, baseIdentifierHandle;
@@ -1095,17 +1092,15 @@ Caf.defMod(module, () => {
             stnTypeStopPattern,
             _foundList = []
           ) {
-            Caf.each2(
-              this.children,
-              child =>
-                stnTypePattern.test(child.type)
-                  ? _foundList.push(child)
-                  : !(
-                      Caf.exists(stnTypeStopPattern) &&
-                      stnTypeStopPattern.test(child.type)
-                    )
-                    ? child.find(stnTypePattern, stnTypeStopPattern, _foundList)
-                    : undefined
+            Caf.each2(this.children, child =>
+              stnTypePattern.test(child.type)
+                ? _foundList.push(child)
+                : !(
+                    Caf.exists(stnTypeStopPattern) &&
+                    stnTypeStopPattern.test(child.type)
+                  )
+                ? child.find(stnTypePattern, stnTypeStopPattern, _foundList)
+                : undefined
             );
             return _foundList.length === 0 ? null : _foundList;
           };
@@ -1916,8 +1911,8 @@ Caf.defMod(module, () => {
                     operatorPrecidence === parentOperatorPrecidence &&
                     isLeftOperand ===
                       getPrecidenceLevelIsLeftAssociative(operatorPrecidence)
-                    ? false
-                    : true);
+                  ? false
+                  : true);
           };
         }
       ));
@@ -2161,15 +2156,13 @@ Caf.defMod(module, () => {
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;
-              Caf.each2(
-                operators,
-                (op, i) =>
-                  lowestPrecidence > (p = this.getOpPrecidence(op))
-                    ? ((firstOccurance = lastOccurance = i),
-                      (lowestPrecidence = p))
-                    : lowestPrecidence === p
-                      ? (lastOccurance = i)
-                      : undefined
+              Caf.each2(operators, (op, i) =>
+                lowestPrecidence > (p = this.getOpPrecidence(op))
+                  ? ((firstOccurance = lastOccurance = i),
+                    (lowestPrecidence = p))
+                  : lowestPrecidence === p
+                  ? (lastOccurance = i)
+                  : undefined
               );
               opIndexToResolve = this.getPrecidenceLevelIsLeftAssociative(p)
                 ? firstOccurance
@@ -2372,63 +2365,59 @@ Caf.defMod(module, () => {
                   )
                 ),
                 StatementsStn(
-                  (statementsToCount = Caf.array(
-                    body.children,
-                    stn =>
-                      stn.type === "Object"
-                        ? Caf.array(stn.children, objectPropValueStn => {
-                            let propNameStn,
-                              propValueStn,
-                              assignToStn,
-                              propName,
-                              isThisProp;
-                            [
-                              propNameStn,
-                              propValueStn
-                            ] = objectPropValueStn.children;
-                            assignToStn = (() => {
-                              switch (propNameStn.type) {
-                                case "ObjectPropName":
-                                  ({ propName, isThisProp } = propNameStn);
-                                  return isThisProp
-                                    ? ThisStn(
-                                        IdentifierStn({ identifier: propName })
-                                      )
-                                    : propName === "constructor"
-                                      ? ((constructorStn = propValueStn), null)
-                                      : AccessorStn(
-                                          ThisStn(
-                                            IdentifierStn({
-                                              identifier: "prototype"
-                                            })
-                                          ),
-                                          IdentifierStn({
-                                            identifier: propName
-                                          })
-                                        );
-                                case "ObjectLiteralAccessor":
-                                  return AccessorStn(
-                                    ThisStn(
-                                      IdentifierStn({ identifier: "prototype" })
-                                    ),
-                                    propNameStn.children
-                                  );
-                                default:
-                                  return (() => {
-                                    throw new Error(
-                                      `unknown object property name Stn type: ${Caf.toString(
-                                        propNameStn.type
-                                      )}`
+                  (statementsToCount = Caf.array(body.children, stn =>
+                    stn.type === "Object"
+                      ? Caf.array(stn.children, objectPropValueStn => {
+                          let propNameStn,
+                            propValueStn,
+                            assignToStn,
+                            propName,
+                            isThisProp;
+                          [
+                            propNameStn,
+                            propValueStn
+                          ] = objectPropValueStn.children;
+                          assignToStn = (() => {
+                            switch (propNameStn.type) {
+                              case "ObjectPropName":
+                                ({ propName, isThisProp } = propNameStn);
+                                return isThisProp
+                                  ? ThisStn(
+                                      IdentifierStn({ identifier: propName })
+                                    )
+                                  : propName === "constructor"
+                                  ? ((constructorStn = propValueStn), null)
+                                  : AccessorStn(
+                                      ThisStn(
+                                        IdentifierStn({
+                                          identifier: "prototype"
+                                        })
+                                      ),
+                                      IdentifierStn({ identifier: propName })
                                     );
-                                  })();
-                              }
-                            })();
-                            return (
-                              assignToStn &&
-                              AssignmentStn(assignToStn, propValueStn)
-                            );
-                          })
-                        : stn
+                              case "ObjectLiteralAccessor":
+                                return AccessorStn(
+                                  ThisStn(
+                                    IdentifierStn({ identifier: "prototype" })
+                                  ),
+                                  propNameStn.children
+                                );
+                              default:
+                                return (() => {
+                                  throw new Error(
+                                    `unknown object property name Stn type: ${Caf.toString(
+                                      propNameStn.type
+                                    )}`
+                                  );
+                                })();
+                            }
+                          })();
+                          return (
+                            assignToStn &&
+                            AssignmentStn(assignToStn, propValueStn)
+                          );
+                        })
+                      : stn
                   ))
                 )
               );
@@ -3201,8 +3190,8 @@ Caf.defMod(module, () => {
                         statementStns
                       ])
                 : preBodyStatements
-                  ? [preBodyStatements, statementStns]
-                  : statementStns
+                ? [preBodyStatements, statementStns]
+                : statementStns
             );
           };
           this.getter({
@@ -3555,10 +3544,10 @@ Caf.defMod(module, () => {
                           initializer
                         )}`
                       : initializer.toJsExpression != null
-                        ? `${Caf.toString(identifier)} = ${Caf.toString(
-                            initializer.toJsExpression()
-                          )}`
-                        : identifier,
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer.toJsExpression()
+                        )}`
+                      : identifier,
                   (initializer, identifier) =>
                     !identifiersAssignedInParentScopes ||
                     !identifiersAssignedInParentScopes[identifier]
@@ -4706,14 +4695,14 @@ Caf.defMod(module, () => {
             return !childrenNodes || childrenNodes.length === 0
               ? this.createSourceNode("/(?:)/")
               : hasInterpolation
-                ? this.createSourceNode(
-                    "RegExp(`",
-                    childrenNodes,
-                    "`",
-                    modifiers ? [", '", modifiers, "'"] : undefined,
-                    ")"
-                  )
-                : this.createSourceNode("/", childrenNodes, "/", modifiers);
+              ? this.createSourceNode(
+                  "RegExp(`",
+                  childrenNodes,
+                  "`",
+                  modifiers ? [", '", modifiers, "'"] : undefined,
+                  ")"
+                )
+              : this.createSourceNode("/", childrenNodes, "/", modifiers);
           };
         }
       ));
@@ -4839,32 +4828,32 @@ Caf.defMod(module, () => {
                   this.statementsSourceNodes
                 )
               : options.module
-                ? ((identifiersToImport = Caf.array(
-                    this.generateImportMap(),
-                    (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
-                  )),
-                  (statementsSourceNode = this.statements.toSourceNode({
-                    returnAction: true
-                  })),
-                  (lets = compactFlatten([
-                    identifiersToImport,
-                    this.requiredIdentifierLets
-                  ])),
-                  this.createSourceNode(
-                    "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
-                    lets.length > 0
-                      ? `let ${Caf.toString(lets.join(", "))}; `
-                      : undefined,
-                    statementsSourceNode,
-                    "});"
-                  ))
-                : (({ statementsSourceNodes } = this),
-                  this.createSourceNode(
-                    present((autoLets = this.getAutoLets()))
-                      ? [autoLets, "; "]
-                      : undefined,
-                    statementsSourceNodes
-                  ));
+              ? ((identifiersToImport = Caf.array(
+                  this.generateImportMap(),
+                  (v, k) => `${Caf.toString(k)} = global.${Caf.toString(k)}`
+                )),
+                (statementsSourceNode = this.statements.toSourceNode({
+                  returnAction: true
+                })),
+                (lets = compactFlatten([
+                  identifiersToImport,
+                  this.requiredIdentifierLets
+                ])),
+                this.createSourceNode(
+                  "\"use strict\"\nlet Caf = require('caffeine-script-runtime');\nCaf.defMod(module, () => {",
+                  lets.length > 0
+                    ? `let ${Caf.toString(lets.join(", "))}; `
+                    : undefined,
+                  statementsSourceNode,
+                  "});"
+                ))
+              : (({ statementsSourceNodes } = this),
+                this.createSourceNode(
+                  present((autoLets = this.getAutoLets()))
+                    ? [autoLets, "; "]
+                    : undefined,
+                  statementsSourceNodes
+                ));
           };
           this.prototype.rootUpdateScope = function() {
             return !this._scopeHasBeenUpdated
@@ -4988,15 +4977,15 @@ Caf.defMod(module, () => {
                         })(),
                         c.toSourceNode({ generateReturnStatement: true }))
                     : generateStatements
-                      ? c.toSourceNode({
-                          statement: !classBody,
-                          generateStatements: true,
-                          parentIsStatements: true
-                        })
-                      : c.toSourceNode({
-                          expression: true,
-                          returnValueIsIgnored: i < lines.length - 1
-                        });
+                    ? c.toSourceNode({
+                        statement: !classBody,
+                        generateStatements: true,
+                        parentIsStatements: true
+                      })
+                    : c.toSourceNode({
+                        expression: true,
+                        returnValueIsIgnored: i < lines.length - 1
+                      });
                 return a;
               },
               null,
@@ -5083,10 +5072,10 @@ Caf.defMod(module, () => {
               quotes = /"/.test(base)
                 ? "'"
                 : /'/.test(base)
-                  ? ((singleCount = base.split("'").length - 1),
-                    (doubleCount = base.split('"').length - 1),
-                    doubleCount <= singleCount ? '"' : "'")
-                  : '"';
+                ? ((singleCount = base.split("'").length - 1),
+                  (doubleCount = base.split('"').length - 1),
+                  doubleCount <= singleCount ? '"' : "'")
+                : '"';
               out =
                 quotes +
                 escapeUnescaped(base.replace(/\n/g, "\\n"), quotes) +
@@ -5218,8 +5207,8 @@ Caf.defMod(module, () => {
                   this.props.passArguments
                     ? [", ", "arguments"]
                     : args.length > 0
-                      ? [", ", this.stnArrayToSourceNodes(args, ", ")]
-                      : undefined,
+                    ? [", ", this.stnArrayToSourceNodes(args, ", ")]
+                    : undefined,
                   ")"
                 ));
           };
@@ -5827,7 +5816,7 @@ Caf.defMod(module, () => {
               !(byClause.compileTimeValue != null)
             ) {
               throw new Error(
-                'Comprehension not supported: Non-constant by-clauses with array-iteration are not supported."'
+                'Comprehension not supported: Non-constant by-clauses with array-iteration are not supported yet. Try making it a range iteration: array i in 0 til myArray.length by myByClause with v = myArray[i]"'
               );
             }
             return (byClause || skipClause || shortClause) &&
@@ -5950,14 +5939,12 @@ Caf.defMod(module, () => {
             });
             Null = null;
             params = params.slice(0, lastNonNulIndex + 1);
-            return Caf.array(
-              params,
-              p =>
-                p != null
-                  ? p
-                  : Null != null
-                    ? Null
-                    : (Null = SimpleLiteralStn({ value: "null" }))
+            return Caf.array(params, p =>
+              p != null
+                ? p
+                : Null != null
+                ? Null
+                : (Null = SimpleLiteralStn({ value: "null" }))
             );
           };
           this.prototype.generateInlineIteration = function(
@@ -6233,8 +6220,8 @@ Caf.defMod(module, () => {
                                 })
                           )
                         : skipClause != null
-                          ? skipClause
-                          : NumberLiteralStn({ value: fromCompileTimeValue })
+                        ? skipClause
+                        : NumberLiteralStn({ value: fromCompileTimeValue })
                     );
                   case !toClause:
                     return AssignmentStn(
@@ -6267,55 +6254,53 @@ Caf.defMod(module, () => {
                         fromId
                       )
                     : fromArrayClause
-                      ? BinaryOperatorStn(
-                          { operator: reverseArray ? ">=" : "<" },
-                          iId,
-                          toId != null
-                            ? toId
-                            : NumberLiteralStn({ value: toCompileTimeValue })
-                        )
-                      : ((positiveByTest = BinaryOperatorStn(
-                          { operator: `<${Caf.toString(toClauseEquality)}` },
-                          iId,
-                          toId ||
-                            NumberLiteralStn({ value: toCompileTimeValue })
-                        )),
-                        (negativeByTest = BinaryOperatorStn(
-                          { operator: `>${Caf.toString(toClauseEquality)}` },
-                          iId,
-                          toId ||
-                            NumberLiteralStn({ value: toCompileTimeValue })
-                        )),
-                        (() => {
-                          switch (false) {
-                            case !byClauseIsPositive:
-                              return positiveByTest;
-                            case !byClauseIsNegative:
-                              return negativeByTest;
-                            default:
-                              return BinaryOperatorStn(
-                                { operator: "||" },
+                    ? BinaryOperatorStn(
+                        { operator: reverseArray ? ">=" : "<" },
+                        iId,
+                        toId != null
+                          ? toId
+                          : NumberLiteralStn({ value: toCompileTimeValue })
+                      )
+                    : ((positiveByTest = BinaryOperatorStn(
+                        { operator: `<${Caf.toString(toClauseEquality)}` },
+                        iId,
+                        toId || NumberLiteralStn({ value: toCompileTimeValue })
+                      )),
+                      (negativeByTest = BinaryOperatorStn(
+                        { operator: `>${Caf.toString(toClauseEquality)}` },
+                        iId,
+                        toId || NumberLiteralStn({ value: toCompileTimeValue })
+                      )),
+                      (() => {
+                        switch (false) {
+                          case !byClauseIsPositive:
+                            return positiveByTest;
+                          case !byClauseIsNegative:
+                            return negativeByTest;
+                          default:
+                            return BinaryOperatorStn(
+                              { operator: "||" },
+                              BinaryOperatorStn(
+                                { operator: "&&" },
                                 BinaryOperatorStn(
-                                  { operator: "&&" },
-                                  BinaryOperatorStn(
-                                    { operator: ">" },
-                                    byId,
-                                    NumberLiteralStn({ value: "0" })
-                                  ),
-                                  positiveByTest
+                                  { operator: ">" },
+                                  byId,
+                                  NumberLiteralStn({ value: "0" })
                                 ),
+                                positiveByTest
+                              ),
+                              BinaryOperatorStn(
+                                { operator: "&&" },
                                 BinaryOperatorStn(
-                                  { operator: "&&" },
-                                  BinaryOperatorStn(
-                                    { operator: "<" },
-                                    byId,
-                                    NumberLiteralStn({ value: "0" })
-                                  ),
-                                  negativeByTest
-                                )
-                              );
-                          }
-                        })()),
+                                  { operator: "<" },
+                                  byId,
+                                  NumberLiteralStn({ value: "0" })
+                                ),
+                                negativeByTest
+                              )
+                            );
+                        }
+                      })()),
                   StatementsStn(
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
@@ -6360,8 +6345,8 @@ Caf.defMod(module, () => {
                                 })
                             )
                         : byClauseCompileTimeValue < 0
-                          ? UnaryOperatorStn({ operand: "--", tail: true }, iId)
-                          : UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                        ? UnaryOperatorStn({ operand: "--", tail: true }, iId)
+                        : UnaryOperatorStn({ operand: "++", tail: true }, iId)
                       : undefined
                   )
                 ),
@@ -6372,8 +6357,8 @@ Caf.defMod(module, () => {
                     PureJsStn("null")
                   )
                 : intoId ||
-                  toId ||
-                  NumberLiteralStn({ value: toCompileTimeValue })
+                    toId ||
+                    NumberLiteralStn({ value: toCompileTimeValue })
             );
           };
           this.prototype.generateFind = function({
@@ -6676,9 +6661,8 @@ Caf.defMod(module, () => {
         class CaffeineScriptParser extends Parser {},
         function(CaffeineScriptParser, classSuper, instanceSuper) {
           this.nodeBaseClass = __webpack_require__(/*! ./CafParseNodeBaseClass */ 93);
-          Caf.each2(
-            __webpack_require__(/*! ./Rules */ 94).modules,
-            mod => (isFunction(mod) ? mod.call(this) : this.rule(mod))
+          Caf.each2(__webpack_require__(/*! ./Rules */ 94).modules, mod =>
+            isFunction(mod) ? mod.call(this) : this.rule(mod)
           );
           this.prototype.parse = function(source, options) {
             return instanceSuper.parse.call(
@@ -7208,7 +7192,7 @@ Caf.defMod(module, () => {
           "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
         elseClause:
           "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
-        controlStructorClauseJoiner: ["_", "end"],
+        controlStructorClauseJoiner: "_? end?",
         catch: /catch\b/,
         try: /try\b/,
         ifUnlessWhileUntil: /(if|unless|while|until)\b/,
@@ -7738,9 +7722,8 @@ Caf.defMod(module, () => {
               {
                 getStn: function() {
                   let children;
-                  children = Caf.array(
-                    this.getMatchStns(),
-                    m => (m instanceof ObjectStn.class ? m.children : m)
+                  children = Caf.array(this.getMatchStns(), m =>
+                    m instanceof ObjectStn.class ? m.children : m
                   );
                   return ObjectStn(children);
                 }
@@ -8179,7 +8162,7 @@ Caf.defMod(module, () => {
         importBody: ["root", { stnFactory: "ImportBodyStn" }],
         newLineStatementExtension: [
           "end lineStartBinaryOperatorAndExpression",
-          "end &/\\??\\./ valueExtension+ binaryOperatorSequenceExtension?"
+          "end &/\\??\\.(?!\\d)/ valueExtension+ binaryOperatorSequenceExtension?"
         ],
         lineOfStatements: {
           pattern: [
