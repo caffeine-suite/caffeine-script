@@ -1,4 +1,4 @@
-import &StandardImport
+import &StandardImport, {} &JavaScriptReservedWords
 
 class DestructuringIdentifierStn extends &BaseStn
 
@@ -7,7 +7,12 @@ class DestructuringIdentifierStn extends &BaseStn
     @scope.addIdentifierAssigned @labeledChildren.identifier.identifier, undefined, options?.insideLet
     super
 
+  validate: ->
+    if JavaScriptReservedWords[@identifier]
+      throw new Error "'#{@identifier}' is reserved by JavaScript and cannot be used for destructuring."
+
   @getter
+    identifier: -> @labeledChildren.identifier.identifier
     structuringStn: ->
       @labeledChildren.identifier
 

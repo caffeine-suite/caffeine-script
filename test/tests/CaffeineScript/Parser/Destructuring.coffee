@@ -99,6 +99,8 @@ module.exports = suite: parseTestSuite
 
     "{a} = b ||= {}": "let a, b; ({a} = b || (b = {}));"
 
+    "{default} = b": null
+
   conditionalLeftHandSide:
     "a?.b = c":     "Caf.exists(a) && (a.b = c);"
     "a?.b = c = d": "let c; Caf.exists(a) && (a.b = c = d);"
