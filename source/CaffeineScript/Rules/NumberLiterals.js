@@ -10,7 +10,7 @@ Caf.defMod(module, () => {
         {
           stnFactory: "NumberLiteralStn",
           stnProps: function() {
-            return { value: this.toString().replace(/^0+(\d)/, "$1") };
+            return { value: this.toString().replace(/^(-?)0+(\d)/, "$1$2") };
           }
         }
       );

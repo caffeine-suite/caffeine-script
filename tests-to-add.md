@@ -208,24 +208,14 @@ new class FakeSocket
 # SHOULD NOT COMPILE
 
 ```coffeescript
-a = private: 1
-{private} = a
-console.log private
-```
----
-I need to test all assigns to ensure they aren't in &javaScriptReservedWords.
-
-```coffeescript
+# simplest example
 foo (a)->
   .bar
-
-testUpdatesAfterBillsAndAlicesMessages = =>
-  @testCreateBillsMessage()
-  .then @testCreateAlicesMessage
-  .then (message) =>
-    .then @setup
-
 ```
+
+Above one is super tricky! The function def correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happilly accepts it. It actaully could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
+
+NOTE: It isn't just dot-line-starts. This also failes fore operator-line-starts.
 
 ---
 ```coffeescript
@@ -261,21 +251,6 @@ each step from 2 to 6
 ```
 
 myRad should be "let" inside the loop, not outside.
-
----
-
-Starting a line with a dot-number: ".4"
-
-```coffeescript
-a
-  1
-  .3
-# should be: a(1, .3)
-
-log a
-.9
-# should be: log(a);.9
-```
 
 ---
 

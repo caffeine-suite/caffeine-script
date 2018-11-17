@@ -31,4 +31,4 @@ import &StandardImport
     {}
       stnFactory: :NumberLiteralStn
       stnProps: ~>
-        value: @toString().replace /^0+(\d)/, "$1"
+        value: @toString().replace /^(-?)0+(\d)/, "$1$2"

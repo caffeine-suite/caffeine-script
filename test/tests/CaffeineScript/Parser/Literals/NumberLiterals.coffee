@@ -49,3 +49,7 @@ module.exports = suite: parseTestSuite
   binary:
     "0b0":  "0b0;"
     "0b01": "0b01;"
+
+  regressions:
+    "01": "1;"
+    "-01": "-1;"

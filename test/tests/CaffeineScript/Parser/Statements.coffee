@@ -49,3 +49,9 @@ module.exports = suite: parseTestSuite
       a
       .123
       """: "a; .123;"
+
+      """
+      foo (a)->
+        .bar
+      """: null # ILLEGAL
+
