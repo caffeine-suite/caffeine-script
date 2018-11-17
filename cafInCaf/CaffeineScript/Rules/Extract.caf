@@ -1,9 +1,15 @@
-import &StandardImport
+import &StandardImport, &CaffeineEight
 
 extractExpression:
   "" extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget
+  "" extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _? extractBodyBlock
   stnFactory: :ExtractStn
   stnProps: -> conditional: !!@conditionalExtract
+
+extractBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: :extractBody
+
+extractBody: "end* extractBodyLine+"
+extractBodyLine: "extractionTarget end"
 
 conditionalExtract:
   /\?/

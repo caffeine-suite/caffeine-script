@@ -69,19 +69,6 @@ However, I'm OK with the following not setting 'b':
 
 ### Extract Todo
 
-```coffeescript
-# these should all be equivalent
-a extract b, c, d
-a extract
-  b
-  c
-  d
-
-a extract
-  b, c
-  d
-```
-
 `extract` in comprehensions and function definitions:
 
 ```coffeescript
@@ -261,14 +248,6 @@ myRad should be "let" inside the loop, not outside.
 
 # SHOULD BE:
 -(a**2)
-```
-
----
-
-Should just become: -1 (-01 is illegal in JavaScript)
-
-```coffeescript
--01
 ```
 
 

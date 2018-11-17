@@ -1,40 +1,50 @@
 "use strict";
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
-  return (() => {
-    return {
-      extractExpression: [
-        "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
-        {
-          stnFactory: "ExtractStn",
-          stnProps: function() {
-            return { conditional: !!this.conditionalExtract };
+  return Caf.importInvoke(
+    ["Extensions"],
+    [global, require("../StandardImport"), require("caffeine-eight")],
+    Extensions => {
+      return {
+        extractExpression: [
+          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _? extractBodyBlock",
+          {
+            stnFactory: "ExtractStn",
+            stnProps: function() {
+              return { conditional: !!this.conditionalExtract };
+            }
           }
-        }
-      ],
-      conditionalExtract: /\?/,
-      extractionTarget: "objectExtractionList",
-      objectExtractionList: [
-        "extractAction:extractAction _comma_ objectExtractionList",
-        "extractAction:extractAction"
-      ],
-      extractAction: ["chainExtract", "extractToIdentifier"],
-      chainExtract: [
-        "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
-        {
-          stnFactory: "ExtractStn",
-          stnProps: function() {
-            return { conditional: !!this.conditionalExtract };
+        ],
+        extractBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+          rule: "extractBody"
+        }),
+        extractBody: "end* extractBodyLine+",
+        extractBodyLine: "extractionTarget end",
+        conditionalExtract: /\?/,
+        extractionTarget: "objectExtractionList",
+        objectExtractionList: [
+          "extractAction:extractAction _comma_ objectExtractionList",
+          "extractAction:extractAction"
+        ],
+        extractAction: ["chainExtract", "extractToIdentifier"],
+        chainExtract: [
+          "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+          {
+            stnFactory: "ExtractStn",
+            stnProps: function() {
+              return { conditional: !!this.conditionalExtract };
+            }
           }
-        }
-      ],
-      extractDefault: "_? '=' _? expression",
-      extractAs: "_ 'as' _ identifier",
-      extractPathExtension: "dot extractPathExtension:identifier",
-      extractToIdentifier: [
-        "bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?",
-        { stnFactory: "ExtractToIdentifierStn" }
-      ]
-    };
-  })();
+        ],
+        extractDefault: "_? '=' _? expression",
+        extractAs: "_ 'as' _ identifier",
+        extractPathExtension: "dot extractPathExtension:identifier",
+        extractToIdentifier: [
+          "bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?",
+          { stnFactory: "ExtractToIdentifierStn" }
+        ]
+      };
+    }
+  );
 });

@@ -39,6 +39,29 @@ module.exports = suite: parseTestSuite
       # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
       # "a extract? b = 1": "let b, temp; b = (undefined !== temp = Caf.exists(a) ? a.b : undefined) ? temp : 1;"
 
+    withBlock:
+      """
+      a extract
+        b
+        c
+      """: "let b, c; b = a.b; c = a.c;"
+
+      # """
+      # a extract
+      #   b
+      #   c extract d
+      # """: "let b, c, d; b = a.b; c = a.c; d = c.d;"
+
+      """
+      a extract
+        b, c
+      """: "let b, c; b = a.b; c = a.c;"
+      """
+      a extract
+        b, c
+        d
+      """: "let b, c, d; b = a.b; c = a.c; d = a.d;"
+
     pathing:
       "a extract b.c": "let c; c = a.b.c;"
       ###
@@ -51,18 +74,6 @@ module.exports = suite: parseTestSuite
         c = a?.b?.c ? 1;
       ###
       # "a extract? b.c = 1": "c = a?.b?.c ? 1;"
-
-  #   blocks:
-  #     """
-  #     a extract
-  #       b
-  #     """: "let b; b = a.b;"
-
-  #     """
-  #     a extract
-  #       b
-  #       c
-  #     """: "let b, c; (b = a.b, c = a.c);"
 
   #   subExpressions:
   #     "a = b + c extract d": "let a, d; a = b + (d = c.d);"
