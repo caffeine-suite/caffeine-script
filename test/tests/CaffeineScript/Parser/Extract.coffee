@@ -36,6 +36,8 @@ module.exports = suite: parseTestSuite
       "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
       "a extract b extract? c": "let c, temp; temp = a.b; if (Caf.exists(temp)) {c = temp.c;};"
 
+      "a.c extract? b": "let b, temp; if (Caf.exists(temp = a.c)) {b = temp.b;};"
+
       # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
       # "a extract? b = 1": "let b, temp; b = (undefined !== temp = Caf.exists(a) ? a.b : undefined) ? temp : 1;"
 
@@ -56,6 +58,7 @@ module.exports = suite: parseTestSuite
       a extract
         b, c
       """: "let b, c; b = a.b; c = a.c;"
+
       """
       a extract
         b, c

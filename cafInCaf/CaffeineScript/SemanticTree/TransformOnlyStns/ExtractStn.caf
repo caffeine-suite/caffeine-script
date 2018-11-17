@@ -23,11 +23,17 @@ class ExtractStn extends &BaseStn
     {conditional} = @props
 
     StatementsStn
-      unless conditional || extractSource.type == :Reference || extractSource.type == :Identifier
+      unless extractSource.type == :Reference || extractSource.type == :Identifier
         complexSource = extractSource
-        AssignmentStn
+        captureBase = AssignmentStn
           extractSource = IdentifierStn()
           complexSource
+
+        if conditional
+          conditionalSource = captureBase
+          null
+        else
+          captureBase
 
       if true
         doExtract = array child, i in extractActions
@@ -47,7 +53,7 @@ class ExtractStn extends &BaseStn
           ControlOperatorStn
             FunctionInvocationStn
               IdentifierStn identifier: "Caf.exists"
-              extractSource
+              conditionalSource ? extractSource
 
             doExtract
         else

@@ -18,6 +18,8 @@ Caf.defMod(module, () => {
             extractActions,
             conditional,
             complexSource,
+            captureBase,
+            conditionalSource,
             doExtract;
           ({
             StatementsStn,
@@ -35,12 +37,17 @@ Caf.defMod(module, () => {
           ({ conditional } = this.props);
           return StatementsStn(
             !(
-              conditional ||
               extractSource.type === "Reference" ||
               extractSource.type === "Identifier"
             )
               ? ((complexSource = extractSource),
-                AssignmentStn((extractSource = IdentifierStn()), complexSource))
+                (captureBase = AssignmentStn(
+                  (extractSource = IdentifierStn()),
+                  complexSource
+                )),
+                conditional
+                  ? ((conditionalSource = captureBase), null)
+                  : captureBase)
               : undefined,
             true
               ? ((doExtract = Caf.array(extractActions, (child, i) => {
@@ -64,7 +71,9 @@ Caf.defMod(module, () => {
                   ? ControlOperatorStn(
                       FunctionInvocationStn(
                         IdentifierStn({ identifier: "Caf.exists" }),
-                        extractSource
+                        conditionalSource != null
+                          ? conditionalSource
+                          : extractSource
                       ),
                       doExtract
                     )
