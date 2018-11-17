@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.65.3"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.0"};
 
 /***/ }),
 /* 5 */
@@ -7454,42 +7454,52 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
-  return (() => {
-    return {
-      extractExpression: [
-        "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
-        {
-          stnFactory: "ExtractStn",
-          stnProps: function() {
-            return { conditional: !!this.conditionalExtract };
+  return Caf.importInvoke(
+    ["Extensions"],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    Extensions => {
+      return {
+        extractExpression: [
+          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _? extractBodyBlock",
+          {
+            stnFactory: "ExtractStn",
+            stnProps: function() {
+              return { conditional: !!this.conditionalExtract };
+            }
           }
-        }
-      ],
-      conditionalExtract: /\?/,
-      extractionTarget: "objectExtractionList",
-      objectExtractionList: [
-        "extractAction:extractAction _comma_ objectExtractionList",
-        "extractAction:extractAction"
-      ],
-      extractAction: ["chainExtract", "extractToIdentifier"],
-      chainExtract: [
-        "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
-        {
-          stnFactory: "ExtractStn",
-          stnProps: function() {
-            return { conditional: !!this.conditionalExtract };
+        ],
+        extractBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
+          rule: "extractBody"
+        }),
+        extractBody: "end* extractBodyLine+",
+        extractBodyLine: "extractionTarget end",
+        conditionalExtract: /\?/,
+        extractionTarget: "objectExtractionList",
+        objectExtractionList: [
+          "extractAction:extractAction _comma_ objectExtractionList",
+          "extractAction:extractAction"
+        ],
+        extractAction: ["chainExtract", "extractToIdentifier"],
+        chainExtract: [
+          "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+          {
+            stnFactory: "ExtractStn",
+            stnProps: function() {
+              return { conditional: !!this.conditionalExtract };
+            }
           }
-        }
-      ],
-      extractDefault: "_? '=' _? expression",
-      extractAs: "_ 'as' _ identifier",
-      extractPathExtension: "dot extractPathExtension:identifier",
-      extractToIdentifier: [
-        "bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?",
-        { stnFactory: "ExtractToIdentifierStn" }
-      ]
-    };
-  })();
+        ],
+        extractDefault: "_? '=' _? expression",
+        extractAs: "_ 'as' _ identifier",
+        extractPathExtension: "dot extractPathExtension:identifier",
+        extractToIdentifier: [
+          "bastIdentifier:identifier extractPathExtension* extractAs:extractAs? extractDefault:extractDefault?",
+          { stnFactory: "ExtractToIdentifierStn" }
+        ]
+      };
+    }
+  );
 });
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
@@ -7673,7 +7683,7 @@ Caf.defMod(module, () => {
         {
           stnFactory: "NumberLiteralStn",
           stnProps: function() {
-            return { value: this.toString().replace(/^0+(\d)/, "$1") };
+            return { value: this.toString().replace(/^(-?)0+(\d)/, "$1$2") };
           }
         }
       );

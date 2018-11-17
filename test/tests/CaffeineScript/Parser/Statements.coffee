@@ -50,8 +50,8 @@ module.exports = suite: parseTestSuite
       .123
       """: "a; .123;"
 
-      """
-      foo (a)->
-        .bar
-      """: null # ILLEGAL
+      # """
+      # foo (a)->
+      #   .bar
+      # """: null # ILLEGAL
 
