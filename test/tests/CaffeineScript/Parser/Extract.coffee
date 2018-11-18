@@ -13,7 +13,8 @@ module.exports = suite: parseTestSuite
       "a extract b, c": "let b, c; b = a.b; c = a.c;"
 
     complexBase:
-      "a.b extract c, d": "let c, d, temp; temp = a.b; c = temp.c; d = temp.d;"
+      "a.b extract c":      "let c; c = a.b.c;"
+      "a.b extract c, d":   "let c, d, temp; temp = a.b; c = temp.c; d = temp.d;"
       # "a + b extract c": "as"
 
     expression:
@@ -21,9 +22,13 @@ module.exports = suite: parseTestSuite
       "d = a extract b, c": "let d, b, c; d = (b = a.b, c = a.c);"
 
     nested:
-      "a extract b extract c": "let c, temp; temp = a.b; c = temp.c;"
-      "a extract b extract c extract d": "let d, temp, temp1; temp = a.b; temp1 = temp.c; d = temp1.d;"
-      "d = a extract b extract c": "let d, c, temp; d = (temp = a.b, c = temp.c);"
+      "a extract b extract c": "let b, c; b = a.b; c = b.c;"
+      "a extract x as b extract c": "let b, c; b = a.x; c = b.c;"
+      "a extract b extract c extract d": "let b, c, d; b = a.b; c = b.c; d = c.d;"
+      "d = a extract b extract c": "let d, b, c; d = (b = a.b, c = b.c);"
+      "x.a extract b extract c": "let b, c; b = x.a.b; c = b.c;"
+      "a extract x.b extract c": "let b, c; b = a.x.b; c = b.c;"
+      "a extract b extract x.c": "let b, c; b = a.b; c = b.x.c;"
 
     default:
       "a extract b = c": "let b, temp; b = (undefined !== (temp = a.b)) ? temp : c;"
@@ -33,12 +38,15 @@ module.exports = suite: parseTestSuite
       "a extract b as c": "let c; c = a.b;"
 
     conditional:
-      base:
+      basic:
         "a extract? b": "let b; if (Caf.exists(a)) {b = a.b;};"
-        "a extract b extract? c": "let c, temp; temp = a.b; if (Caf.exists(temp)) {c = temp.c;};"
+        "a extract b extract? c": "let b, c; b = a.b; if (Caf.exists(b)) {c = b.c;};"
 
-        "a.c extract? b": "let b, temp; if (Caf.exists(temp = a.c)) {b = temp.b;};"
+      complexBase:
+        "a.b extract? c":     "let c, temp; if (Caf.exists(temp = a.b)) {c = temp.c;};"
+        "a.b extract? c, d":  "let c, d, temp; if (Caf.exists(temp = a.b)) {c = temp.c; d = temp.d;};"
 
+      # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
       # withDefaults:
       #   "a extract? b = 1": "let b, temp; b = ((temp = Caf.exists(a) && a.b) != null ? temp : 1);"
       #   "b = a?.b ? 1": "let b, temp; b = ((temp = Caf.exists(a) && a.b) != null ? temp : 1);"
@@ -48,9 +56,6 @@ module.exports = suite: parseTestSuite
         "@foo extract a, b":  "let a, b, temp; temp = this.foo; a = temp.a; b = temp.b;"
         "@foo extract? a, b": "let a, b, temp; if (Caf.exists(temp = this.foo)) {a = temp.a; b = temp.b;};"
 
-      # TODO - defaults + extract? should ALWAYS apply the default, even if the base does-not-exist.
-      # "a extract? b = 1": "let b, temp; b = (undefined !== temp = Caf.exists(a) ? a.b : undefined) ? temp : 1;"
-
     withBlock:
       """
       a extract
@@ -58,11 +63,11 @@ module.exports = suite: parseTestSuite
         c
       """: "let b, c; b = a.b; c = a.c;"
 
-      # """
-      # a extract
-      #   b
-      #   c extract d
-      # """: "let b, c, d; b = a.b; c = a.c; d = c.d;"
+      """
+      a extract
+        b
+        c extract d
+      """: "let b, c, d; b = a.b; c = a.c; d = c.d;"
 
       """
       a extract
@@ -88,9 +93,9 @@ module.exports = suite: parseTestSuite
       ###
       # "a extract? b.c = 1": "c = a?.b?.c ? 1;"
 
+  subExpressions:
+    "a = b + c extract d": "let a, d; a = b + (d = c.d);"
   ### TODO
-    subExpressions:
-      "a = b + c extract d": "let a, d; a = b + (d = c.d);"
 
     lineStarts:
       """

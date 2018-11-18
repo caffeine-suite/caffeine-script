@@ -7,6 +7,14 @@ Caf.defMod(module, () => {
     return (ExtractStn = Caf.defClass(
       class ExtractStn extends require("../BaseStn") {},
       function(ExtractStn, classSuper, instanceSuper) {
+        this.getter({
+          extractSource: function() {
+            return this.labeledChildren.extractSource;
+          },
+          extractActions: function() {
+            return this.labeledChildren.extractActions;
+          }
+        });
         this.prototype.transform = function(extractSourceFromParent) {
           let StatementsStn,
             AssignmentStn,
@@ -20,7 +28,8 @@ Caf.defMod(module, () => {
             complexSource,
             captureBase,
             conditionalSource,
-            doExtract;
+            doExtract,
+            temp;
           ({
             StatementsStn,
             AssignmentStn,
@@ -29,17 +38,18 @@ Caf.defMod(module, () => {
             FunctionInvocationStn,
             ControlOperatorStn
           } = SemanticTree);
-          ({ extractSource, extractActions } = this.labeledChildren);
+          temp = this;
+          extractSource = temp.extractSource;
+          extractActions = temp.extractActions;
           extractSource =
             extractSourceFromParent != null
               ? extractSourceFromParent
               : Caf.exists(extractSource) && extractSource.transform();
           ({ conditional } = this.props);
           return StatementsStn(
-            !(
-              extractSource.type === "Reference" ||
-              extractSource.type === "Identifier"
-            )
+            (conditional || extractActions.length > 1) &&
+              (extractSource.type !== "Reference" &&
+                extractSource.type !== "Identifier")
               ? ((complexSource = extractSource),
                 (captureBase = AssignmentStn(
                   (extractSource = IdentifierStn()),
@@ -51,21 +61,24 @@ Caf.defMod(module, () => {
               : undefined,
             true
               ? ((doExtract = Caf.array(extractActions, (child, i) => {
-                  let extractChild, uniqueIdentifier;
-                  return Caf.is((extractChild = child), ExtractStn)
+                  let extractToIdentifier, extractChild, doSingleExtract;
+                  extractToIdentifier = Caf.is(child, ExtractStn)
+                    ? (extractChild = child).extractSource
+                    : child;
+                  doSingleExtract = AssignmentStn(
+                    extractToIdentifier.assignToIdentifierStn,
+                    extractToIdentifier.getTransformedExtractionStns(
+                      extractSource
+                    )
+                  );
+                  return extractChild
                     ? [
-                        AssignmentStn(
-                          (uniqueIdentifier = IdentifierStn()),
-                          extractChild.labeledChildren.extractSource.getTransformedExtractionStns(
-                            extractSource
-                          )
-                        ),
-                        extractChild.transform(uniqueIdentifier)
+                        doSingleExtract,
+                        extractChild.transform(
+                          extractToIdentifier.assignToIdentifierStn
+                        )
                       ]
-                    : AssignmentStn(
-                        child.assignToIdentifierStn,
-                        child.getTransformedExtractionStns(extractSource)
-                      );
+                    : doSingleExtract;
                 })),
                 conditional
                   ? ControlOperatorStn(

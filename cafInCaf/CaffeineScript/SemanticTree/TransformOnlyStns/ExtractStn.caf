@@ -16,14 +16,19 @@ SemanticTree = &StnRegistry
 
 class ExtractStn extends &BaseStn
 
+  @getter
+    extractSource:  -> @labeledChildren.extractSource
+    extractActions: -> @labeledChildren.extractActions
+
   transform: (extractSourceFromParent)->
     {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn, FunctionInvocationStn, ControlOperatorStn} = SemanticTree
-    {extractSource, extractActions} = @labeledChildren
+    @ extract extractSource, extractActions
     extractSource = extractSourceFromParent ? extractSource?.transform()
     {conditional} = @props
 
     StatementsStn
-      unless extractSource.type == :Reference || extractSource.type == :Identifier
+      if (conditional || extractActions.length > 1) &&
+          extractSource.type != :Reference && extractSource.type != :Identifier
         complexSource = extractSource
         captureBase = AssignmentStn
           extractSource = IdentifierStn()
@@ -37,17 +42,20 @@ class ExtractStn extends &BaseStn
 
       if true
         doExtract = array child, i in extractActions
-          if (extractChild = child) is ExtractStn
+          extractToIdentifier = if child is ExtractStn then (extractChild = child).extractSource else child
+
+          doSingleExtract =
+            AssignmentStn
+              extractToIdentifier.assignToIdentifierStn
+              extractToIdentifier.getTransformedExtractionStns extractSource
+
+          if extractChild
             []
-              AssignmentStn
-                uniqueIdentifier = IdentifierStn()
-                extractChild.labeledChildren.extractSource.getTransformedExtractionStns extractSource
-              extractChild.transform uniqueIdentifier
+              doSingleExtract
+              extractChild.transform extractToIdentifier.assignToIdentifierStn
 
           else
-            AssignmentStn
-              child.assignToIdentifierStn
-              child.getTransformedExtractionStns extractSource
+            doSingleExtract
 
         if conditional
           ControlOperatorStn
