@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.0"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.2"};
 
 /***/ }),
 /* 5 */
@@ -6476,6 +6476,14 @@ Caf.defMod(module, () => {
     return (ExtractStn = Caf.defClass(
       class ExtractStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
       function(ExtractStn, classSuper, instanceSuper) {
+        this.getter({
+          extractSource: function() {
+            return this.labeledChildren.extractSource;
+          },
+          extractActions: function() {
+            return this.labeledChildren.extractActions;
+          }
+        });
         this.prototype.transform = function(extractSourceFromParent) {
           let StatementsStn,
             AssignmentStn,
@@ -6487,7 +6495,10 @@ Caf.defMod(module, () => {
             extractActions,
             conditional,
             complexSource,
-            doExtract;
+            captureBase,
+            conditionalSource,
+            doExtract,
+            temp;
           ({
             StatementsStn,
             AssignmentStn,
@@ -6496,46 +6507,57 @@ Caf.defMod(module, () => {
             FunctionInvocationStn,
             ControlOperatorStn
           } = SemanticTree);
-          ({ extractSource, extractActions } = this.labeledChildren);
+          temp = this;
+          extractSource = temp.extractSource;
+          extractActions = temp.extractActions;
           extractSource =
             extractSourceFromParent != null
               ? extractSourceFromParent
-              : extractSource;
+              : Caf.exists(extractSource) && extractSource.transform();
           ({ conditional } = this.props);
           return StatementsStn(
-            !(
-              conditional ||
-              extractSource.type === "Reference" ||
-              extractSource.type === "Identifier"
-            )
+            (conditional || extractActions.length > 1) &&
+              (extractSource.type !== "Reference" &&
+                extractSource.type !== "Identifier")
               ? ((complexSource = extractSource),
-                AssignmentStn((extractSource = IdentifierStn()), complexSource))
+                (captureBase = AssignmentStn(
+                  (extractSource = IdentifierStn()),
+                  complexSource
+                )),
+                conditional
+                  ? ((conditionalSource = captureBase), null)
+                  : captureBase)
               : undefined,
             true
               ? ((doExtract = Caf.array(extractActions, (child, i) => {
-                  let extractChild, uniqueIdentifier;
-                  return Caf.is((extractChild = child), ExtractStn)
+                  let extractToIdentifier, extractChild, doSingleExtract;
+                  extractToIdentifier = Caf.is(child, ExtractStn)
+                    ? (extractChild = child).extractSource
+                    : child;
+                  doSingleExtract = AssignmentStn(
+                    extractToIdentifier.assignToIdentifierStn,
+                    extractToIdentifier.getTransformedExtractionStns(
+                      extractSource
+                    )
+                  );
+                  return extractChild
                     ? [
-                        AssignmentStn(
-                          (uniqueIdentifier = IdentifierStn()),
-                          extractChild.labeledChildren.extractSource.getTransformedExtractionStns(
-                            extractSource
-                          )
-                        ),
-                        extractChild.transform(uniqueIdentifier)
+                        doSingleExtract,
+                        extractChild.transform(
+                          extractToIdentifier.assignToIdentifierStn
+                        )
                       ]
-                    : AssignmentStn(
-                        child.assignToIdentifierStn,
-                        child.getTransformedExtractionStns(extractSource)
-                      );
+                    : doSingleExtract;
                 })),
                 conditional
                   ? ControlOperatorStn(
                       FunctionInvocationStn(
                         IdentifierStn({ identifier: "Caf.exists" }),
-                        extractSource
+                        conditionalSource != null
+                          ? conditionalSource
+                          : extractSource
                       ),
-                      doExtract
+                      StatementsStn(doExtract)
                     )
                   : doExtract)
               : undefined
