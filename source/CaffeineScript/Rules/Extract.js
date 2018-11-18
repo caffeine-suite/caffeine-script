@@ -7,8 +7,7 @@ Caf.defMod(module, () => {
     Extensions => {
       return {
         extractExpression: [
-          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
-          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? _? extractBodyBlock",
+          "extractSource:value _ /extract/ conditionalExtract:conditionalExtract? extractActions",
           {
             stnFactory: "ExtractStn",
             stnProps: function() {
@@ -16,6 +15,7 @@ Caf.defMod(module, () => {
             }
           }
         ],
+        extractActions: ["_ extractionTarget", "_? extractBodyBlock"],
         extractBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
           rule: "extractBody"
         }),
@@ -29,7 +29,7 @@ Caf.defMod(module, () => {
         ],
         extractAction: ["chainExtract", "extractToIdentifier"],
         chainExtract: [
-          "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? _ extractionTarget",
+          "extractSource:extractToIdentifier _ /extract/ conditionalExtract:conditionalExtract? extractActions",
           {
             stnFactory: "ExtractStn",
             stnProps: function() {

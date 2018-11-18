@@ -80,6 +80,12 @@ module.exports = suite: parseTestSuite
         d
       """: "let b, c, d; b = a.b; c = a.c; d = a.d;"
 
+      """
+      a extract
+        b extract
+          c
+      """: "let b, c; b = a.b; c = b.c;"
+
     pathing:
       "a extract b.c": "let c; c = a.b.c;"
       ###

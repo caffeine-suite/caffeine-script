@@ -47,24 +47,6 @@ while a > 0
 This should have "let a" outside the while, but should have "let b" inside, like
 all the comprehensions.
 
----------
-```
-result extract colorInfo extract colorMap
-```
-
-SHOULD extract colorInfo. Notes:
-
-1. ```> result extract colorInfo, colorInfo extract colorMap```
-  is just weird
-2. ```> (a extract b) ->```
-  That sets 'a' even though it is an intermediate value.
-
-However, I'm OK with the following not setting 'b':
-
-```
-> a extract b.c
-```
-
 --------
 
 ### Extract Todo
