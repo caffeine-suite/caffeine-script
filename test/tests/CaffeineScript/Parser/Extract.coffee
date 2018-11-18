@@ -96,6 +96,11 @@ module.exports = suite: parseTestSuite
   subExpressions:
     "a = b + c extract d": "let a, d; a = b + (d = c.d);"
   ### TODO
+    functionArgs:
+      "(extract b) ->":   "(temp) -> let b; b = temp.b;"
+      "(a extract b) ->": "(a) -> let b; b = a.b;"
+      "(a.b) ->":         "(temp) -> let b; b = temp.b;"
+      "(.b) ->":          "(temp) -> let b; b = temp.b;"
 
     lineStarts:
       """
