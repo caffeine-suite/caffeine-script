@@ -19,7 +19,7 @@ class ExtractStn extends &BaseStn
   transform: (extractSourceFromParent)->
     {StatementsStn, AssignmentStn, AccessorStn, IdentifierStn, FunctionInvocationStn, ControlOperatorStn} = SemanticTree
     {extractSource, extractActions} = @labeledChildren
-    extractSource = extractSourceFromParent ? extractSource
+    extractSource = extractSourceFromParent ? extractSource?.transform()
     {conditional} = @props
 
     StatementsStn

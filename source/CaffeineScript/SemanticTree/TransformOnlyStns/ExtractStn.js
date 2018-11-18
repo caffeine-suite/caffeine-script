@@ -33,7 +33,7 @@ Caf.defMod(module, () => {
           extractSource =
             extractSourceFromParent != null
               ? extractSourceFromParent
-              : extractSource;
+              : Caf.exists(extractSource) && extractSource.transform();
           ({ conditional } = this.props);
           return StatementsStn(
             !(

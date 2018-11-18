@@ -22,8 +22,8 @@ module.exports = suite: parseTestSuite
 
     nested:
       "a extract b extract c": "let c, temp; temp = a.b; c = temp.c;"
-      "a extract b extract c extract d": "let d, temp, temp1; temp = a.b; temp1 = temp.c; d = temp1.d;"
-      "d = a extract b extract c": "let d, c, temp; d = (temp = a.b, c = temp.c);"
+      # "a extract b extract c extract d": "let d, temp, temp1; temp = a.b; temp1 = temp.c; d = temp1.d;"
+      # "d = a extract b extract c": "let d, c, temp; d = (temp = a.b, c = temp.c);"
 
     default:
       "a extract b = c": "let b, temp; b = (undefined !== (temp = a.b)) ? temp : c;"
@@ -39,7 +39,12 @@ module.exports = suite: parseTestSuite
 
         "a.c extract? b": "let b, temp; if (Caf.exists(temp = a.c)) {b = temp.b;};"
 
+      # withDefaults:
+      #   "a extract? b = 1": "let b, temp; b = ((temp = Caf.exists(a) && a.b) != null ? temp : 1);"
+      #   "b = a?.b ? 1": "let b, temp; b = ((temp = Caf.exists(a) && a.b) != null ? temp : 1);"
+
       regressions:
+        "a?.d extract? b": "let b, temp; if (Caf.exists(temp = Caf.exists(a) && a.d)) {b = temp.b;};"
         "@foo extract a, b":  "let a, b, temp; temp = this.foo; a = temp.a; b = temp.b;"
         "@foo extract? a, b": "let a, b, temp; if (Caf.exists(temp = this.foo)) {a = temp.a; b = temp.b;};"
 
@@ -83,31 +88,33 @@ module.exports = suite: parseTestSuite
       ###
       # "a extract? b.c = 1": "c = a?.b?.c ? 1;"
 
-  #   subExpressions:
-  #     "a = b + c extract d": "let a, d; a = b + (d = c.d);"
+  ### TODO
+    subExpressions:
+      "a = b + c extract d": "let a, d; a = b + (d = c.d);"
 
-  #   lineStarts:
-  #     """
-  #     a
-  #     extract b
-  #     """: "let b; b = a.b;"
+    lineStarts:
+      """
+      a
+      extract b
+      """: "let b; b = a.b;"
 
-  #     """
-  #     a + b
-  #     extract c
-  #     """: "let c, base; (base = a + b, c = base.c);"
+      """
+      a + b
+      extract c
+      """: "let c, base; (base = a + b, c = base.c);"
 
-  #     """
-  #     a + b
-  #       extract c
-  #     """: "let c; a + (c = b.c);"
+      """
+      a + b
+        extract c
+      """: "let c; a + (c = b.c);"
 
-  # array:
-  #   basics:
-  #     "a extract [] b": "let b; b = a[0];"
-  #     "a extract [] b, c": "let b, c; (b = a[0], c = a[1]);"
+  array:
+    basics:
+      "a extract [] b": "let b; b = a[0];"
+      "a extract [] b, c": "let b, c; (b = a[0], c = a[1]);"
 
-  #   splats:
-  #     "a extract [] b, c...": "let b, c, _length; (length = a.length, b = a[0], c = a.slice(1, length - 1));"
-  #     "a extract [] b..., c": "let b, c, _length; (length = a.length, b = a.slice(0, length - 2), c = a[length - 1]);"
-  #     "a extract [] b, c..., d": "let b, c, d, _length; (length = a.length, b = a[0], c = a.slice(1, length - 2), d = a[length - 1]);"
+    splats:
+      "a extract [] b, c...": "let b, c, _length; (length = a.length, b = a[0], c = a.slice(1, length - 1));"
+      "a extract [] b..., c": "let b, c, _length; (length = a.length, b = a.slice(0, length - 2), c = a[length - 1]);"
+      "a extract [] b, c..., d": "let b, c, d, _length; (length = a.length, b = a[0], c = a.slice(1, length - 2), d = a[length - 1]);"
+  ###
