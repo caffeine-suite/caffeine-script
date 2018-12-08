@@ -160,6 +160,12 @@ new class FakeSocket
 # SHOULD NOT COMPILE
 
 ```coffeescript
+(a.b) -> a
+```
+
+---
+
+```coffeescript
 # simplest example
 foo (a)->
   .bar
@@ -185,6 +191,23 @@ App extends FluxComponent
 
 # WRONG COMPILE
 
+```coffeescript
+(a || b)
+  c
+
+# should be:
+(a || b)(c);
+```
+---
+
+```coffeescript
+object v, k with-key lowerCamelCase k.replace /^posterText/, '' in a: 1 b: 2
+
+# should be the same as:
+object v, k in a: 1 b: 2 with-key lowerCamelCase k.replace /^posterText/, ''
+
+```
+---
 
 ```coffeescript
 ->
@@ -270,3 +293,18 @@ array item in -> a when item
   b
 } = foo
 ```
+
+
+
+# TO SORT
+
+```coffeescript
+# bad regexp detect
+rect a.left, a.top, a.w/2, a.h/2
+
+# extra-indented comments should be ignored
+->
+    # extra indented first comment
+  123
+```
+
