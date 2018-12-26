@@ -1,4 +1,9 @@
 # Improvements
+```coffeescript
+{} a = b = 1
+# Should be:
+# temp = 1; {a: temp, b: temp}
+```
 
 ```coffeescript
 # in-array should work
@@ -104,6 +109,20 @@ authorizedSync = (request) ->
 
 # SHOULD COMPILE
 
+```coffeescript
+# string-block with no boddy should be no-problem
+
+a = """
+# has no body = empty string
+```
+
+---
+
+```coffeescript
+/a:a/ # doesn't compile; weird
+/// a:a # this is fine
+```
+---
 
 I think the problem is the trailing comments:
 
