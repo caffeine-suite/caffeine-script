@@ -211,6 +211,17 @@ App extends FluxComponent
 # WRONG COMPILE
 
 ```coffeescript
+# bad scoping
+
+array a til b with c = a
+# 'c' should be scoped within the loop, not outside of it
+
+while a do b = a
+# in fact, this is the problem; b should also be scoped within the loop
+
+```
+
+```coffeescript
 (a || b)
   c
 

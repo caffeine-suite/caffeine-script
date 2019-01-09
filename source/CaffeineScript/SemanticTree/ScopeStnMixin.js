@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["merge", "Error", "log", "isString", "mergeInto"],
+    ["merge", "Error", "isString", "mergeInto"],
     [global, require("../StandardImport")],
-    (merge, Error, log, isString, mergeInto) => {
+    (merge, Error, isString, mergeInto) => {
       let UniqueIdentifierHandle;
       UniqueIdentifierHandle = require("./UniqueIdentifierHandle");
       return function(toExtend) {
@@ -74,6 +74,11 @@ Caf.defMod(module, () => {
               this.identifiersInScope[identifier] = true;
               return (this.identifiersUsed[identifier] = true);
             };
+            this.prototype.addIdentifierLet = function(identifier) {
+              return identifier
+                ? this.addExplicitlyDeclared(identifier)
+                : undefined;
+            };
             this.prototype.addIdentifierAssigned = function(
               identifier,
               initializer,
@@ -81,7 +86,7 @@ Caf.defMod(module, () => {
             ) {
               return identifier
                 ? insideLet
-                  ? this.addExplicitlyDeclared(identifier)
+                  ? this.addIdentifierLet(identifier)
                   : (this._boundUniqueIdentifiers
                       ? (() => {
                           throw new Error(
@@ -127,38 +132,39 @@ Caf.defMod(module, () => {
               }
               return identifier;
             };
+            this.prototype.requireScopeUpdated = function() {
+              return !this._scopeUpdated
+                ? (() => {
+                    throw new Error(
+                      `Scope must be fully updated. ${Caf.toString(
+                        this.className
+                      )}`
+                    );
+                  })()
+                : undefined;
+            };
             this.prototype.getAvailableIdentifierName = function(
               preferredName
             ) {
-              let identifiersActiveInScope, count, name;
+              let blockedIndentifiers, count, name;
               preferredName = normalizePerferredName(preferredName);
-              return !this._scopeUpdated
-                ? log.error({
-                    ScopeStnMixin: {
-                      getAvailableIdentifierName: [
-                        `cannot be called before updateScope completes: ${Caf.toString(
-                          this.className
-                        )}`,
-                        new Error()
+              this.requireScopeUpdated();
+              blockedIndentifiers = this.identifiersInSelfParentAndChildScopes;
+              return !blockedIndentifiers[preferredName]
+                ? preferredName
+                : ((count = 0),
+                  (() => {
+                    while (
+                      blockedIndentifiers[
+                        (name = `${Caf.toString(preferredName)}${Caf.toString(
+                          (count += 1)
+                        )}`)
                       ]
+                    ) {
+                      name;
                     }
-                  })
-                : (({ identifiersActiveInScope } = this),
-                  !identifiersActiveInScope[preferredName]
-                    ? preferredName
-                    : ((count = 0),
-                      (() => {
-                        while (
-                          identifiersActiveInScope[
-                            (name = `${Caf.toString(
-                              preferredName
-                            )}${Caf.toString((count += 1))}`)
-                          ]
-                        ) {
-                          name;
-                        }
-                      })(),
-                      name));
+                  })(),
+                  name);
             };
             this.prototype.addChildScope = function(child) {
               return !(child === this)
@@ -173,14 +179,101 @@ Caf.defMod(module, () => {
                   )
                 : undefined;
             };
-            this.prototype.getAutoLets = function() {
-              let identifiers;
-              this.bindAllUniqueIdentifiersRequested();
-              return this._identifiersAssigned &&
-                (identifiers = this.requiredIdentifierLets).length > 0
-                ? `let ${Caf.toString(identifiers.join(", "))}`
-                : undefined;
+            this.prototype.getSourceNodeForAutoLetsWithStatements = function(
+              statementsStn,
+              toSourceNodeOptions
+            ) {
+              let returnAction,
+                statements,
+                autoLetIdentifiers,
+                assignedAutoLetStns,
+                numAssignsConsumed,
+                letSourceNodes,
+                out,
+                base;
+              if (Caf.exists(toSourceNodeOptions)) {
+                returnAction = toSourceNodeOptions.returnAction;
+              }
+              return (Caf.exists(
+                (base = (statements = statementsStn.statements)[0])
+              ) && base.type) === "Assignment" && this.haveAutoLets
+                ? ((autoLetIdentifiers = Caf.object(
+                    this.requiredIdentifierLets,
+                    () => true
+                  )),
+                  (assignedAutoLetStns = []),
+                  Caf.find(statements, (statement, i) => {
+                    let type, propName;
+                    type = statement.type;
+                    propName = statement.propName;
+                    return type === "Assignment" &&
+                      autoLetIdentifiers[propName] &&
+                      (!returnAction || i < statements.length - 1)
+                      ? (assignedAutoLetStns.push(statement),
+                        (autoLetIdentifiers[propName] = false),
+                        false)
+                      : true;
+                  }),
+                  0 < (numAssignsConsumed = assignedAutoLetStns.length)
+                    ? ((letSourceNodes = Caf.array(
+                        autoLetIdentifiers,
+                        (v, k) => k,
+                        (v, k) => v,
+                        Caf.array(assignedAutoLetStns, v => v.toSourceNode())
+                      )),
+                      [
+                        "let ",
+                        Caf.array(
+                          letSourceNodes,
+                          (letSourceNode, i) => {
+                            if (i > 0) {
+                              out.push(", ");
+                            }
+                            return letSourceNode;
+                          },
+                          null,
+                          (out = [])
+                        ),
+                        statements.length - numAssignsConsumed > 0
+                          ? [
+                              "; ",
+                              statementsStn.toSourceNodeWithCustomChildren(
+                                statements.slice(
+                                  numAssignsConsumed,
+                                  statementsStn.length
+                                ),
+                                toSourceNodeOptions
+                              )
+                            ]
+                          : ";"
+                      ])
+                    : [
+                        this.autoLetsForSourceNode,
+                        statementsStn.toSourceNode(toSourceNodeOptions)
+                      ])
+                : statementsStn.toSourceNode(toSourceNodeOptions);
             };
+            this.getter({
+              autoLetsForSourceNode: function() {
+                let lets;
+                return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+              },
+              haveAutoLets: function() {
+                this.bindAllUniqueIdentifiersRequested();
+                return (
+                  this._identifiersAssigned &&
+                  this.requiredIdentifierLets.length > 0
+                );
+              },
+              autoLets: function() {
+                let identifiers;
+                this.bindAllUniqueIdentifiersRequested();
+                return this._identifiersAssigned &&
+                  (identifiers = this.requiredIdentifierLets).length > 0
+                  ? `let ${Caf.toString(identifiers.join(", "))}`
+                  : undefined;
+              }
+            });
             this.prototype.getBareInitializers = function() {
               let identifiers;
               this.bindAllUniqueIdentifiersRequested();
@@ -264,6 +357,33 @@ Caf.defMod(module, () => {
                   (initializer, identifier) =>
                     !identifiersAssignedInParentScopes ||
                     !identifiersAssignedInParentScopes[identifier]
+                );
+              },
+              identifiersInParentScopes: function(out = {}) {
+                let scope;
+                scope = this.scope;
+                while (scope) {
+                  mergeInto(out, scope.identifiersInScope);
+                  scope = scope.scope !== scope ? scope.scope : null;
+                }
+                return out;
+              },
+              identifiersInChildScopes: function(out = {}) {
+                return Caf.each2(
+                  this._childScopes,
+                  childScope => {
+                    mergeInto(out, childScope.identifiersInScope);
+                    return childScope.getIdentifiersInChildScopes(out);
+                  },
+                  null,
+                  out
+                );
+              },
+              identifiersInSelfParentAndChildScopes: function() {
+                return this.getIdentifiersInParentScopes(
+                  this.getIdentifiersInChildScopes(
+                    merge(this.identifiersInScope)
+                  )
                 );
               },
               identifiersActiveInScope: function() {

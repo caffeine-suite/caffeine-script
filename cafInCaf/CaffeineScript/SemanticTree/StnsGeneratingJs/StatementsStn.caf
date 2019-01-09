@@ -22,7 +22,15 @@ class StatementsStn extends &BaseStn
 
     out
 
+  toSourceNodeWithCustomChildren: (children, options) ->
+    oldChildren = @children
+    @children = children
+    out = @toSourceNode options
+    @children = oldChildren
+    out
+
   @getter
+    statements: -> @children
     compileTimeValue: ->
       if @children.length == 1
         @children[0].compileTimeValue

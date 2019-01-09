@@ -1,5 +1,74 @@
-(test, body) ->
-  &ControlOperatorStn
-    operand: "while"
-    test
-    body
+import &StandardImport
+
+class WhileStn extends &ScopeStnMixin &BaseStn
+
+  constructor: (props, children) ->
+    super
+    @operand    = props.operand ? :while
+    if @labeledChildren.expression
+      @expression = @labeledChildren.expression
+      @body       = @labeledChildren.body       ? StnRegistry.UndefinedStn()
+    else
+      @expression = children[0]
+      @body       = children[1] ? StnRegistry.UndefinedStn()
+
+    unless @body.type == :Statements
+      @body = StnRegistry.StatementsStn @body
+      .parent = @
+
+    @validate()
+
+  @getter
+    autoLetsForSourceNode:  -> lets + "; " if lets = @getAutoLets()
+    whileReturnTempVar:     -> @_whileReturnTempVar ?= @scope.uniqueIdentifier
+    unaryOperator:          -> if @operand == :until then "!"
+    jsKeyword:              -> if @operand == :until then :while else @operand
+
+  validate: ->
+    switch @operand
+    when :while :until :for then true
+    else
+      throw new Error "INTERNAL: invalid control-operator: #{formattedInspect @operand}"
+
+  toSourceNode: (options = {})->
+    options extract expression, returnValueIsIgnored, noParens
+    @ extract operand, jsKeyword, unaryOperator
+
+    @createSourceNode
+      if expression
+        if returnValueIsIgnored
+          @doSourceNode
+            jsKeyword
+            " ("
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+            ") {"
+            @getSourceNodeForAutoLetsWithStatements @body
+            # @autoLetsForSourceNode
+            # @body.toSourceNode()
+            "};"
+
+        else
+          tempVarIdentifier = @whileReturnTempVar
+          @doSourceNode
+            jsKeyword
+            " ("
+            unaryOperator
+            @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+            ") {"
+            @getSourceNodeForAutoLetsWithStatements @body, returnAction: "#{tempVarIdentifier} ="
+            # @autoLetsForSourceNode
+            # @body.toSourceNode returnAction: "#{tempVarIdentifier} ="
+            "}; return #{tempVarIdentifier};"
+
+      else
+        []
+          jsKeyword
+          " ("
+          unaryOperator
+          @expression.toSourceNode noParens: true, expression: true, dotBase: !!unaryOperator
+          ") {"
+          @getSourceNodeForAutoLetsWithStatements @body
+          # @autoLetsForSourceNode
+          # @body.toSourceNode()
+          "}"

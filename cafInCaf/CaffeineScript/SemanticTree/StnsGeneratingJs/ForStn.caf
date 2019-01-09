@@ -1,5 +1,5 @@
 (insideForParens, body) ->
-  &ControlOperatorStn
+  &WhileStn
     operand: "for"
     insideForParens
     body

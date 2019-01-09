@@ -21,7 +21,6 @@ Caf.defMod(module, () => {
       "WhileStn",
       "BinaryOperatorStn",
       "ForInControlStn",
-      "LetStn",
       "floatEq",
       "Math",
       "UnaryOperatorStn"
@@ -46,7 +45,6 @@ Caf.defMod(module, () => {
       WhileStn,
       BinaryOperatorStn,
       ForInControlStn,
-      LetStn,
       floatEq,
       Math,
       UnaryOperatorStn
@@ -340,7 +338,8 @@ Caf.defMod(module, () => {
               invokeWithClauseAndPush,
               loopStn,
               positiveByTest,
-              negativeByTest;
+              negativeByTest,
+              temp;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
@@ -429,11 +428,12 @@ Caf.defMod(module, () => {
               intoId = IdentifierStn({ preferredIdentifier: "into" });
             }
             iId = IdentifierStn({
-              preferredIdentifier: fromObjectClause ? "k" : "i"
+              preferredIdentifier: fromObjectClause ? "k" : "i",
+              addToLets: !fromObjectClause
             });
             if (!variableDefinition) {
               variableDefinition = [
-                IdentifierStn({ preferredIdentifier: "v", addToLets: false })
+                IdentifierStn({ preferredIdentifier: "v" })
               ];
             }
             [valueId] = variableDefinition;
@@ -656,21 +656,22 @@ Caf.defMod(module, () => {
                   StatementsStn(
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
-                      ? LetStn(
-                          fromObjectClause
-                            ? AssignmentStn(
-                                valueId,
-                                AccessorStn(fromId, keyValueStn)
-                              )
-                            : Caf.array(variableDefinition, (v, i) =>
-                                AssignmentStn(
-                                  v,
-                                  !toClause && i === 0
-                                    ? AccessorStn(fromId, iId.getValueStn())
-                                    : iId
-                                )
-                              )
-                        )
+                      ? fromObjectClause
+                        ? AssignmentStn(
+                            (temp = valueId.identifierStn) != null
+                              ? temp
+                              : valueId,
+                            AccessorStn(fromId, keyValueStn)
+                          )
+                        : Caf.array(variableDefinition, (v, i) => {
+                            let temp1;
+                            return AssignmentStn(
+                              (temp1 = v.identifierStn) != null ? temp1 : v,
+                              !toClause && i === 0
+                                ? AccessorStn(fromId, iId.getValueStn())
+                                : iId
+                            );
+                          })
                       : undefined,
                     whenClause
                       ? IfStn(whenClause, invokeWithClauseAndPush)

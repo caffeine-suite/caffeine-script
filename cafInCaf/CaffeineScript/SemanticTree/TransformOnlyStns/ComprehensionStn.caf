@@ -201,10 +201,12 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       byId = IdentifierStn preferredIdentifier: :by
 
     intoId      = IdentifierStn preferredIdentifier: :into unless comprehensionType == 'each' && toClause && !intoClause
-    iId         = IdentifierStn preferredIdentifier: if fromObjectClause then :k else :i
+    iId         = IdentifierStn
+      preferredIdentifier: if fromObjectClause then :k else :i
+      addToLets: !fromObjectClause
 
     unless variableDefinition
-      variableDefinition = [] IdentifierStn preferredIdentifier: :v, addToLets: false
+      variableDefinition = [] IdentifierStn preferredIdentifier: :v #, addToLets: false
 
     [valueId] = variableDefinition
 
@@ -355,19 +357,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
         StatementsStn
           if variableDefinition?.length > 0
-            LetStn
-              if fromObjectClause
+            if fromObjectClause
+              AssignmentStn
+                valueId.identifierStn ? valueId
+                AccessorStn
+                  fromId
+                  keyValueStn
+            else
+              array v, i in variableDefinition
                 AssignmentStn
-                  valueId
-                  AccessorStn
-                    fromId
-                    keyValueStn
-              else
-                array v, i in variableDefinition
-                  AssignmentStn
-                    v
-                    if !toClause && i == 0 then AccessorStn fromId, iId.getValueStn()
-                    else iId
+                  v.identifierStn ? v
+                  if !toClause && i == 0 then AccessorStn fromId, iId.getValueStn()
+                  else iId
 
           if whenClause
             IfStn whenClause, invokeWithClauseAndPush

@@ -51,10 +51,14 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     @identifiersInScope[identifier] = true
     @identifiersUsed[identifier] = true
 
+  addIdentifierLet: (identifier) ->
+    if identifier
+      @addExplicitlyDeclared identifier
+
   addIdentifierAssigned: (identifier, initializer, insideLet)->
     if identifier
       if insideLet
-        @addExplicitlyDeclared identifier
+        @addIdentifierLet identifier
       else
         throw new Error "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned" if @_boundUniqueIdentifiers
         @identifiersInScope[identifier] = true
@@ -85,18 +89,20 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
     @identifiersAssigned[identifier] = true if addToLets
     identifier
 
+  requireScopeUpdated: ->
+    unless @_scopeUpdated
+      throw new Error "Scope must be fully updated. #{@className}"
+
   getAvailableIdentifierName: (preferredName) ->
     preferredName = normalizePerferredName preferredName
-    unless @_scopeUpdated
-      log.error ScopeStnMixin: getAvailableIdentifierName: "cannot be called before updateScope completes: #{@className}", new Error
+    @requireScopeUpdated()
+    blockedIndentifiers = @identifiersInSelfParentAndChildScopes
+    unless blockedIndentifiers[preferredName]
+      preferredName
     else
-      {identifiersActiveInScope} = @
-      unless identifiersActiveInScope[preferredName]
-        preferredName
-      else
-        count = 0
-        name while identifiersActiveInScope[name = "#{preferredName}#{count+=1}"]
-        name
+      count = 0
+      name while blockedIndentifiers[name = "#{preferredName}#{count+=1}"]
+      name
 
   addChildScope: (child) ->
     unless child == @
@@ -107,10 +113,61 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       each uniqueIdentifierHandle in @_uniqueIdentifierHandles
         uniqueIdentifierHandle.identifier
 
-  getAutoLets: ->
-    @bindAllUniqueIdentifiersRequested()
-    if @_identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
-      "let #{identifiers.join ', '}"
+  getSourceNodeForAutoLetsWithStatements: (statementsStn, toSourceNodeOptions) ->
+    toSourceNodeOptions extract? returnAction
+
+    if (statementsStn extract statements)[0]?.type == :Assignment && @haveAutoLets
+      autoLetIdentifiers = object @requiredIdentifierLets with true
+      assignedAutoLetStns = []
+      find statement, i in statements
+        statement extract type, propName
+        if type == :Assignment && autoLetIdentifiers[propName] && (!returnAction || i < statements.length - 1)
+          assignedAutoLetStns.push statement
+          autoLetIdentifiers[propName] = false
+          false
+        else true # 'found' a non-match; stop
+
+      if 0 < numAssignsConsumed = assignedAutoLetStns.length
+        letSourceNodes =
+          array v, k in autoLetIdentifiers when v with k into
+            array v in assignedAutoLetStns with v.toSourceNode()
+
+        []
+          "let "
+
+          array letSourceNode, i in letSourceNodes into out = []
+            out.push ', ' if i > 0
+            letSourceNode
+
+          if statements.length - numAssignsConsumed > 0
+            []
+              "; "
+              statementsStn.toSourceNodeWithCustomChildren
+                statements.slice numAssignsConsumed, statementsStn.length
+                toSourceNodeOptions
+          else
+            ";"
+
+      else
+        []
+          @autoLetsForSourceNode
+          statementsStn.toSourceNode toSourceNodeOptions
+
+    else
+      statementsStn.toSourceNode toSourceNodeOptions
+
+
+  @getter
+    autoLetsForSourceNode: -> lets + "; " if lets = @getAutoLets()
+
+    haveAutoLets: ->
+      @bindAllUniqueIdentifiersRequested()
+      @_identifiersAssigned && @requiredIdentifierLets.length > 0
+
+    autoLets: ->
+      @bindAllUniqueIdentifiersRequested()
+      if @_identifiersAssigned && (identifiers = @requiredIdentifierLets).length > 0
+        "let #{identifiers.join ', '}"
 
   getBareInitializers: ->
     @bindAllUniqueIdentifiersRequested()
@@ -119,6 +176,7 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
       if identifiers.length > 0
         "#{identifiers.join '; '}"
 
+  # return-value ignored
   updateScope: (@scope)->
     @bindAllUniqueIdentifiersRequested()
     @scope.addChildScope @
@@ -158,6 +216,23 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
           identifier
 
 
+    identifiersInParentScopes: (out = {})->
+      @ extract scope
+      while scope
+        mergeInto out, scope.identifiersInScope
+        scope = if scope.scope != scope then scope.scope else null
+
+      out
+
+    identifiersInChildScopes: (out = {})->
+      each childScope in @_childScopes into out
+        mergeInto out, childScope.identifiersInScope
+        childScope.getIdentifiersInChildScopes out
+
+    identifiersInSelfParentAndChildScopes: ->
+      @getIdentifiersInParentScopes @getIdentifiersInChildScopes merge @identifiersInScope
+
+    # includes parents
     identifiersActiveInScope: ->
       out = merge @_identifiersInScope
       {scope} = @

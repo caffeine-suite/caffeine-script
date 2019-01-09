@@ -226,6 +226,12 @@ module.exports = suite: parseTestSuite
   until:
     "until foo\n  bar": "while (!foo) {bar;};"
 
+  scope:
+    "while a do b = a": "while (a) {let b = a;};"
+    "c = while a do b = a": "let c, temp; c = (() => {while (a) {let b; temp = b = a;}; return temp;})();"
+    "b = 4; while a do b = a": "let b; b = 4; while (a) {b = a;};"
+    "while a do b = a; c = 5": "while (a) {let b = a, c = 5;};"
+
   ################################
   # DO
   ################################

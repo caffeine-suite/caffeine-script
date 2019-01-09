@@ -11,6 +11,10 @@ class FunctionDefinitionArgStn extends &BaseStn
     @defaultValue = children[1]
 
   @getter
+    identifierStn: ->
+      if @isSimpleIdentifier
+        @target
+
     argumentName: -> @target.name
     isSimpleIdentifier: -> @target.type == :Identifier
     explicitIdentifier: -> @target?.explicitIdentifier
@@ -23,7 +27,6 @@ class FunctionDefinitionArgStn extends &BaseStn
       @target.toSourceNode()
       [] " = " @defaultValue.toSourceNode() if @defaultValue
 
-
   generatePreBodyStatementStn: ->
     if @assignThisProperty
       {IdentifierStn, AssignmentStn, ThisStn, ReferenceStn} = &StnRegistry
@@ -32,6 +35,3 @@ class FunctionDefinitionArgStn extends &BaseStn
       AssignmentStn
         ThisStn      identifierStn
         identifierStn
-
-  getFunctionPreBodyStatementsJs: ->
-    "this.#{@target.toJs()} = #{@target.toJs()}" if @assignThisProperty

@@ -10,12 +10,23 @@ Caf.defMod(module, () => {
           {
             stnFactory: "ControlOperatorStn",
             pattern: [
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
-              "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+              "ifUnless _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "ifUnless _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "ifUnless _ expression:expression                 thenClause  elseBody:elseClause?"
             ],
             stnProps: function() {
-              return { operand: this.ifUnlessWhileUntil.toString() };
+              return { operand: this.ifUnless.toString() };
+            }
+          },
+          {
+            stnFactory: "WhileStn",
+            pattern: [
+              "whileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "whileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "whileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+            ],
+            stnProps: function() {
+              return { operand: this.whileUntil.toString() };
             }
           },
           {
@@ -54,7 +65,8 @@ Caf.defMod(module, () => {
         controlStructorClauseJoiner: "_? end?",
         catch: /catch\b/,
         try: /try\b/,
-        ifUnlessWhileUntil: /(if|unless|while|until)\b/,
+        whileUntil: /(while|until)\b/,
+        ifUnless: /(if|unless)\b/,
         thenDo: /(then|do)\b/,
         when: /when\b/,
         else: /else\b/

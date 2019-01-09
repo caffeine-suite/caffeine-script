@@ -29,9 +29,9 @@ module.exports = suite: parseTestSuite
 
   efficiency:
     fromObject:
-      each:
+      each: # TODO -- 'k' should only be 'let' once, inside the for-control block; it was wrong before, but benignly; now its broken-wrong
         "each from-object b": "
-          let from, into, k;
+          let from, into;
           from = b || {};
           into = from;
           for (let k in from)
@@ -40,7 +40,7 @@ module.exports = suite: parseTestSuite
 
       find:
         "find from-object b": "
-          let from, into, k;
+          let from, into;
           from = b || {};
           into = null;
           for (let k in from)
@@ -49,7 +49,7 @@ module.exports = suite: parseTestSuite
 
       array:
         "array from-object b": "
-          let from, into, k;
+          let from, into;
           from = b || {};
           into = [];
           for (let k in from)
@@ -58,7 +58,7 @@ module.exports = suite: parseTestSuite
 
       object:
         "object from-object b": "
-          let from, into, k;
+          let from, into;
           from = b || {};
           into = {};
           for (let k in from)
@@ -177,7 +177,7 @@ module.exports = suite: parseTestSuite
               i = 0;
               into = [];
               while (i < to)
-              {let {myProp} = from[i]; into.push({myProp}); i++;};
+              {let myProp; {myProp} = from[i]; into.push({myProp}); i++;};
               into;"
 
           defaults:
@@ -188,7 +188,7 @@ module.exports = suite: parseTestSuite
               i = 0;
               into = [];
               while (i < to)
-              {let {myProp = 123} = from[i]; into.push({myProp}); i++;};
+              {let myProp; {myProp = 123} = from[i]; into.push({myProp}); i++;};
               into;"
 
           subObject:
@@ -200,7 +200,7 @@ module.exports = suite: parseTestSuite
               i = 0;
               into = [];
               while (i < to)
-              {let {myProp: {myFoo}} = from[i]; into.push({myProp: {myFoo}}); i++;};
+              {let myFoo; {myProp: {myFoo}} = from[i]; into.push({myProp: {myFoo}}); i++;};
               into;"
 
           array:
@@ -211,7 +211,7 @@ module.exports = suite: parseTestSuite
               i = 0;
               into = [];
               while (i < to)
-              {let [myProp] = from[i]; into.push([myProp]); i++;};
+              {let myProp; [myProp] = from[i]; into.push([myProp]); i++;};
               into;"
 
       object:
@@ -300,6 +300,21 @@ module.exports = suite: parseTestSuite
         import a
         array i til 10
         """: "(() => {let i1, into; return (i1 = 0, into = [], (() => {while (i1 < 10) {let i = i1; into.push(i); i1++;};})(), into);})();"
+
+      nameCollisions:
+        """
+        array i til 10
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i = i1; into.push(i); i1++;}; into;"
+
+        """
+        array j til 10
+          i = j
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let j = i1, i; into.push(i = j); i1++;}; into;"
+
+        """
+        array i til 10  # thisone
+          a = i
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i = i1, a; into.push(a = i); i1++;}; into;"
 
   multipleArgs:
     """

@@ -15,6 +15,9 @@ Caf.defMod(module, () => {
       },
       function(FunctionDefinitionArgStn, classSuper, instanceSuper) {
         this.getter({
+          identifierStn: function() {
+            return this.isSimpleIdentifier ? this.target : undefined;
+          },
           argumentName: function() {
             return this.target.name;
           },
@@ -59,13 +62,6 @@ Caf.defMod(module, () => {
                 (({ identifier } = this.target.props), { identifier })
               )),
               AssignmentStn(ThisStn(identifierStn), identifierStn))
-            : undefined;
-        };
-        this.prototype.getFunctionPreBodyStatementsJs = function() {
-          return this.assignThisProperty
-            ? `this.${Caf.toString(this.target.toJs())} = ${Caf.toString(
-                this.target.toJs()
-              )}`
             : undefined;
         };
       }
