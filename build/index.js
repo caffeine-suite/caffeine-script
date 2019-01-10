@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.5"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.6"};
 
 /***/ }),
 /* 5 */
@@ -504,10 +504,11 @@ Caf.defMod(module, () => {
             return out;
           };
           this.prototype.getLeftAccessorChain = function() {
-            let current, accessorChain, accessor;
+            let current, accessorChain;
             current = this;
             accessorChain = [];
             while (current && current instanceof AccessorChainStn) {
+              let accessor;
               accessor = current;
               current = current.value;
               accessorChain.push(accessor);
@@ -2134,17 +2135,6 @@ Caf.defMod(module, () => {
             operands,
             combinerOverride
           ) => {
-            let lowestPrecidence,
-              firstOccurance,
-              lastOccurance,
-              p,
-              opIndexToResolve,
-              opsBefore,
-              operandsBefore,
-              op,
-              operandA,
-              operandB,
-              combiner;
             if (!(operands.length === operators.length + 1)) {
               throw new Error(
                 `expecting: operands.length:${Caf.toString(
@@ -2153,6 +2143,17 @@ Caf.defMod(module, () => {
               );
             }
             while (operators.length > 0) {
+              let lowestPrecidence,
+                firstOccurance,
+                lastOccurance,
+                p,
+                opIndexToResolve,
+                opsBefore,
+                operandsBefore,
+                op,
+                operandA,
+                operandB,
+                combiner;
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;
@@ -6062,7 +6063,7 @@ Caf.defMod(module, () => {
               return this.labeledChildren.outputType.props.token;
             },
             labeledClauses: function() {
-              let iterable, body, labeledClauses, temp, temp1;
+              let iterable, body, labeledClauses, temp1, temp2;
               ({ iterable, body } = this.labeledChildren);
               labeledClauses = {};
               Caf.each2(
@@ -6080,11 +6081,11 @@ Caf.defMod(module, () => {
                   return (labeledClauses[name] = value);
                 }
               );
-              (temp = labeledClauses.fromClause) != null
-                ? temp
-                : (labeledClauses.fromClause = iterable);
-              (temp1 = labeledClauses.withClause) != null
+              (temp1 = labeledClauses.fromClause) != null
                 ? temp1
+                : (labeledClauses.fromClause = iterable);
+              (temp2 = labeledClauses.withClause) != null
+                ? temp2
                 : (labeledClauses.withClause = body);
               return labeledClauses;
             }
@@ -8994,9 +8995,6 @@ Caf.defMod(module, () => {
               blockCommentIndentLevel,
               inBlockComment,
               i,
-              line,
-              lineIndentLevel,
-              commentOnlyLine,
               temp;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
@@ -9006,6 +9004,7 @@ Caf.defMod(module, () => {
                 (i = commentLineIndex),
                 (() => {
                   while (i < stopIndex) {
+                    let line, lineIndentLevel, commentOnlyLine;
                     line = lines[i];
                     if (nonBlankLineRegexp.test(line)) {
                       lineIndentLevel = getIndentLevel(line);
