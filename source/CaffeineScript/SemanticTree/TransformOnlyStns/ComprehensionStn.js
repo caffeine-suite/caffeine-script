@@ -186,7 +186,7 @@ Caf.defMod(module, () => {
               return this.labeledChildren.outputType.props.token;
             },
             labeledClauses: function() {
-              let iterable, body, labeledClauses, temp, temp1;
+              let iterable, body, labeledClauses, temp1, temp2;
               ({ iterable, body } = this.labeledChildren);
               labeledClauses = {};
               Caf.each2(
@@ -204,11 +204,11 @@ Caf.defMod(module, () => {
                   return (labeledClauses[name] = value);
                 }
               );
-              (temp = labeledClauses.fromClause) != null
-                ? temp
-                : (labeledClauses.fromClause = iterable);
-              (temp1 = labeledClauses.withClause) != null
+              (temp1 = labeledClauses.fromClause) != null
                 ? temp1
+                : (labeledClauses.fromClause = iterable);
+              (temp2 = labeledClauses.withClause) != null
+                ? temp2
                 : (labeledClauses.withClause = body);
               return labeledClauses;
             }

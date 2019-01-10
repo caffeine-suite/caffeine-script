@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.3"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.5"};
 
 /***/ }),
 /* 5 */
@@ -454,7 +454,7 @@ module.exports.addModules({
   AccessorChainStn: __webpack_require__(/*! ./AccessorChainStn */ 15),
   BaseStn: __webpack_require__(/*! ./BaseStn */ 23),
   BasicStns: __webpack_require__(/*! ./BasicStns */ 27),
-  ScopeStnMixin: __webpack_require__(/*! ./ScopeStnMixin */ 50),
+  ScopeStnMixin: __webpack_require__(/*! ./ScopeStnMixin */ 48),
   UniqueIdentifierHandle: __webpack_require__(/*! ./UniqueIdentifierHandle */ 22),
   ValueBaseCaptureStn: __webpack_require__(/*! ./ValueBaseCaptureStn */ 21)
 });
@@ -1446,42 +1446,42 @@ module.exports.addModules({
   DoStn: __webpack_require__(/*! ./DoStn */ 44),
   ForInControlStn: __webpack_require__(/*! ./ForInControlStn */ 45),
   ForStn: __webpack_require__(/*! ./ForStn */ 46),
-  FunctionDefinitionArgsStn: __webpack_require__(/*! ./FunctionDefinitionArgsStn */ 47),
-  FunctionDefinitionArgStn: __webpack_require__(/*! ./FunctionDefinitionArgStn */ 48),
-  FunctionDefinitionStn: __webpack_require__(/*! ./FunctionDefinitionStn */ 49),
-  FunctionInvocationStn: __webpack_require__(/*! ./FunctionInvocationStn */ 51),
-  GlobalIdentifierStn: __webpack_require__(/*! ./GlobalIdentifierStn */ 52),
-  IdentifierStn: __webpack_require__(/*! ./IdentifierStn */ 53),
-  IfStn: __webpack_require__(/*! ./IfStn */ 55),
-  ImportBodyStn: __webpack_require__(/*! ./ImportBodyStn */ 56),
-  ImportStn: __webpack_require__(/*! ./ImportStn */ 57),
-  InterpolatedStringStn: __webpack_require__(/*! ./InterpolatedStringStn */ 58),
-  LabeledDestructuringTargetStn: __webpack_require__(/*! ./LabeledDestructuringTargetStn */ 59),
-  LetStn: __webpack_require__(/*! ./LetStn */ 62),
-  NewInstanceStn: __webpack_require__(/*! ./NewInstanceStn */ 63),
-  NumberLiteralStn: __webpack_require__(/*! ./NumberLiteralStn */ 64),
-  ObjectDestructuringStn: __webpack_require__(/*! ./ObjectDestructuringStn */ 65),
-  ObjectLiteralAccessorStn: __webpack_require__(/*! ./ObjectLiteralAccessorStn */ 67),
-  ObjectPropNameStn: __webpack_require__(/*! ./ObjectPropNameStn */ 61),
-  ObjectPropValueStn: __webpack_require__(/*! ./ObjectPropValueStn */ 60),
-  ObjectStn: __webpack_require__(/*! ./ObjectStn */ 66),
-  PureJsStn: __webpack_require__(/*! ./PureJsStn */ 68),
-  ReferenceStn: __webpack_require__(/*! ./ReferenceStn */ 54),
-  RegExpStn: __webpack_require__(/*! ./RegExpStn */ 69),
-  RequireStn: __webpack_require__(/*! ./RequireStn */ 70),
-  RootStn: __webpack_require__(/*! ./RootStn */ 72),
-  SimpleLiteralStn: __webpack_require__(/*! ./SimpleLiteralStn */ 74),
-  StatementsStn: __webpack_require__(/*! ./StatementsStn */ 73),
-  StringStn: __webpack_require__(/*! ./StringStn */ 75),
-  SuperStn: __webpack_require__(/*! ./SuperStn */ 76),
-  SwitchStn: __webpack_require__(/*! ./SwitchStn */ 77),
-  SwitchWhenStn: __webpack_require__(/*! ./SwitchWhenStn */ 78),
-  ThisStn: __webpack_require__(/*! ./ThisStn */ 79),
-  ThrowStn: __webpack_require__(/*! ./ThrowStn */ 80),
-  TryStn: __webpack_require__(/*! ./TryStn */ 81),
-  UnaryOperatorStn: __webpack_require__(/*! ./UnaryOperatorStn */ 82),
-  UndefinedStn: __webpack_require__(/*! ./UndefinedStn */ 83),
-  WhileStn: __webpack_require__(/*! ./WhileStn */ 84)
+  FunctionDefinitionArgsStn: __webpack_require__(/*! ./FunctionDefinitionArgsStn */ 49),
+  FunctionDefinitionArgStn: __webpack_require__(/*! ./FunctionDefinitionArgStn */ 50),
+  FunctionDefinitionStn: __webpack_require__(/*! ./FunctionDefinitionStn */ 51),
+  FunctionInvocationStn: __webpack_require__(/*! ./FunctionInvocationStn */ 52),
+  GlobalIdentifierStn: __webpack_require__(/*! ./GlobalIdentifierStn */ 53),
+  IdentifierStn: __webpack_require__(/*! ./IdentifierStn */ 54),
+  IfStn: __webpack_require__(/*! ./IfStn */ 56),
+  ImportBodyStn: __webpack_require__(/*! ./ImportBodyStn */ 57),
+  ImportStn: __webpack_require__(/*! ./ImportStn */ 58),
+  InterpolatedStringStn: __webpack_require__(/*! ./InterpolatedStringStn */ 59),
+  LabeledDestructuringTargetStn: __webpack_require__(/*! ./LabeledDestructuringTargetStn */ 60),
+  LetStn: __webpack_require__(/*! ./LetStn */ 63),
+  NewInstanceStn: __webpack_require__(/*! ./NewInstanceStn */ 64),
+  NumberLiteralStn: __webpack_require__(/*! ./NumberLiteralStn */ 65),
+  ObjectDestructuringStn: __webpack_require__(/*! ./ObjectDestructuringStn */ 66),
+  ObjectLiteralAccessorStn: __webpack_require__(/*! ./ObjectLiteralAccessorStn */ 68),
+  ObjectPropNameStn: __webpack_require__(/*! ./ObjectPropNameStn */ 62),
+  ObjectPropValueStn: __webpack_require__(/*! ./ObjectPropValueStn */ 61),
+  ObjectStn: __webpack_require__(/*! ./ObjectStn */ 67),
+  PureJsStn: __webpack_require__(/*! ./PureJsStn */ 69),
+  ReferenceStn: __webpack_require__(/*! ./ReferenceStn */ 55),
+  RegExpStn: __webpack_require__(/*! ./RegExpStn */ 70),
+  RequireStn: __webpack_require__(/*! ./RequireStn */ 71),
+  RootStn: __webpack_require__(/*! ./RootStn */ 73),
+  SimpleLiteralStn: __webpack_require__(/*! ./SimpleLiteralStn */ 75),
+  StatementsStn: __webpack_require__(/*! ./StatementsStn */ 74),
+  StringStn: __webpack_require__(/*! ./StringStn */ 76),
+  SuperStn: __webpack_require__(/*! ./SuperStn */ 77),
+  SwitchStn: __webpack_require__(/*! ./SwitchStn */ 78),
+  SwitchWhenStn: __webpack_require__(/*! ./SwitchWhenStn */ 79),
+  ThisStn: __webpack_require__(/*! ./ThisStn */ 80),
+  ThrowStn: __webpack_require__(/*! ./ThrowStn */ 81),
+  TryStn: __webpack_require__(/*! ./TryStn */ 82),
+  UnaryOperatorStn: __webpack_require__(/*! ./UnaryOperatorStn */ 83),
+  UndefinedStn: __webpack_require__(/*! ./UndefinedStn */ 84),
+  WhileStn: __webpack_require__(/*! ./WhileStn */ 47)
 });
 
 
@@ -2865,14 +2865,20 @@ Caf.defMod(module, () => {
     return (ForInControlStn = Caf.defClass(
       class ForInControlStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
       function(ForInControlStn, classSuper, instanceSuper) {
+        this.getter({
+          varStn: function() {
+            return this.children[0];
+          },
+          fromStn: function() {
+            return this.children[1];
+          }
+        });
         this.prototype.toSourceNode = function() {
-          let varStn, fromStn;
-          [varStn, fromStn] = this.children;
           return this.createSourceNode(
             this.props.let ? "let " : undefined,
-            varStn.toSourceNode(),
+            this.varStn.toSourceNode(),
             " in ",
-            fromStn.toSourceNode({ expression: true })
+            this.fromStn.toSourceNode({ expression: true })
           );
         };
       }
@@ -2895,11 +2901,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return function(insideForParens, body) {
-    return __webpack_require__(/*! ./ControlOperatorStn */ 41)(
-      { operand: "for" },
-      insideForParens,
-      body
-    );
+    return __webpack_require__(/*! ./WhileStn */ 47)({ operand: "for" }, insideForParens, body);
   };
 });
 
@@ -2907,6 +2909,559 @@ Caf.defMod(module, () => {
 
 /***/ }),
 /* 47 */
+/*!*************************************************************************!*\
+  !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/WhileStn.js ***!
+  \*************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
+Caf.defMod(module, () => {
+  return Caf.importInvoke(
+    ["Error", "formattedInspect", "StnRegistry"],
+    [global, __webpack_require__(/*! ../../StandardImport */ 16)],
+    (Error, formattedInspect, StnRegistry) => {
+      let WhileStn;
+      return (WhileStn = Caf.defClass(
+        class WhileStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
+          __webpack_require__(/*! ../BaseStn */ 23)
+        ) {
+          constructor(props, children) {
+            let temp, temp1, temp2;
+            super(...arguments);
+            this.operand = (temp = props.operand) != null ? temp : "while";
+            if (this.labeledChildren.expression) {
+              this.expression = this.labeledChildren.expression;
+              this.body =
+                (temp1 = this.labeledChildren.body) != null
+                  ? temp1
+                  : StnRegistry.UndefinedStn();
+            } else {
+              this.expression = children[0];
+              this.body =
+                (temp2 = children[1]) != null
+                  ? temp2
+                  : StnRegistry.UndefinedStn();
+            }
+            if (!(this.body.type === "Statements")) {
+              (this.body = StnRegistry.StatementsStn(this.body)).parent = this;
+            }
+            this.validate();
+          }
+        },
+        function(WhileStn, classSuper, instanceSuper) {
+          this.getter({
+            autoLetsForSourceNode: function() {
+              let lets;
+              return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+            },
+            whileReturnTempVar: function() {
+              let temp;
+              return (temp = this._whileReturnTempVar) != null
+                ? temp
+                : (this._whileReturnTempVar = this.scope.uniqueIdentifier);
+            },
+            unaryOperator: function() {
+              return this.operand === "until" ? "!" : undefined;
+            },
+            jsKeyword: function() {
+              return this.operand === "until" ? "while" : this.operand;
+            }
+          });
+          this.prototype.validate = function() {
+            return (() => {
+              switch (this.operand) {
+                case "while":
+                case "until":
+                case "for":
+                  return true;
+                default:
+                  return (() => {
+                    throw new Error(
+                      `INTERNAL: invalid control-operator: ${Caf.toString(
+                        formattedInspect(this.operand)
+                      )}`
+                    );
+                  })();
+              }
+            })();
+          };
+          this.prototype.toSourceNode = function(options = {}) {
+            let expression,
+              returnValueIsIgnored,
+              noParens,
+              operand,
+              jsKeyword,
+              unaryOperator,
+              tempVarIdentifier,
+              temp;
+            expression = options.expression;
+            returnValueIsIgnored = options.returnValueIsIgnored;
+            noParens = options.noParens;
+            temp = this;
+            operand = temp.operand;
+            jsKeyword = temp.jsKeyword;
+            unaryOperator = temp.unaryOperator;
+            return this.createSourceNode(
+              expression
+                ? returnValueIsIgnored
+                  ? this.doSourceNode(
+                      jsKeyword,
+                      " (",
+                      unaryOperator,
+                      this.expression.toSourceNode({
+                        noParens: true,
+                        expression: true,
+                        dotBase: !!unaryOperator
+                      }),
+                      ") {",
+                      this.getSourceNodeForAutoLetsWithStatements(this.body),
+                      "};"
+                    )
+                  : ((tempVarIdentifier = this.whileReturnTempVar),
+                    this.doSourceNode(
+                      jsKeyword,
+                      " (",
+                      unaryOperator,
+                      this.expression.toSourceNode({
+                        noParens: true,
+                        expression: true,
+                        dotBase: !!unaryOperator
+                      }),
+                      ") {",
+                      this.getSourceNodeForAutoLetsWithStatements(this.body, {
+                        returnAction: `${Caf.toString(tempVarIdentifier)} =`
+                      }),
+                      `}; return ${Caf.toString(tempVarIdentifier)};`
+                    ))
+                : [
+                    jsKeyword,
+                    " (",
+                    unaryOperator,
+                    this.expression.toSourceNode({
+                      noParens: true,
+                      expression: true,
+                      dotBase: !!unaryOperator
+                    }),
+                    ") {",
+                    this.getSourceNodeForAutoLetsWithStatements(this.body),
+                    "}"
+                  ]
+            );
+          };
+        }
+      ));
+    }
+  );
+});
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
+
+/***/ }),
+/* 48 */
+/*!*************************************************************!*\
+  !*** ./source/CaffeineScript/SemanticTree/ScopeStnMixin.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
+Caf.defMod(module, () => {
+  return Caf.importInvoke(
+    ["merge", "Error", "isString", "mergeInto"],
+    [global, __webpack_require__(/*! ../StandardImport */ 16)],
+    (merge, Error, isString, mergeInto) => {
+      let UniqueIdentifierHandle;
+      UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 22);
+      return function(toExtend) {
+        let ScopeStnMixin;
+        return (ScopeStnMixin = Caf.defClass(
+          class ScopeStnMixin extends toExtend {
+            constructor() {
+              super(...arguments);
+              this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
+              this._scopeUpdated = false;
+            }
+          },
+          function(ScopeStnMixin, classSuper, instanceSuper) {
+            let normalizePerferredName, addExplicitlyDeclared;
+            this.abstractClass();
+            this.normalizePerferredName = normalizePerferredName = function(
+              preferredName = "temp"
+            ) {
+              return preferredName;
+            };
+            this.getter({
+              childScopes: function() {
+                return this._childScopes || (this._childScopes = []);
+              },
+              argumentNames: function() {
+                return this._argumentNames || (this._argumentNames = {});
+              },
+              identifiersUsed: function() {
+                return this._identifiersUsed || (this._identifiersUsed = {});
+              },
+              identifiersAssigned: function() {
+                return (
+                  this._identifiersAssigned || (this._identifiersAssigned = {})
+                );
+              },
+              identifiersInScope: function() {
+                return (
+                  this._identifiersInScope || (this._identifiersInScope = {})
+                );
+              }
+            });
+            this.prototype.getInspectedProps = function() {
+              return merge(
+                instanceSuper.getInspectedProps.apply(this, arguments),
+                {
+                  scope: merge({
+                    argumentNames: this.argumentNames,
+                    identifiersUsed: this.identifiersUsed,
+                    identifiersAssigned: this.identifiersAssigned,
+                    identifiersInScope: this.identifiersInScope
+                  })
+                }
+              );
+            };
+            this.prototype.addExplicitlyDeclared = addExplicitlyDeclared = function(
+              identifier
+            ) {
+              this.identifiersInScope[identifier] = true;
+              return (this.argumentNames[identifier] = true);
+            };
+            this.prototype.addIdentifierUsed = function(identifier) {
+              if (this._boundUniqueIdentifiers) {
+                throw new Error(
+                  "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
+                );
+              }
+              this.identifiersInScope[identifier] = true;
+              return (this.identifiersUsed[identifier] = true);
+            };
+            this.prototype.addIdentifierLet = function(identifier) {
+              return identifier
+                ? this.addExplicitlyDeclared(identifier)
+                : undefined;
+            };
+            this.prototype.addIdentifierAssigned = function(
+              identifier,
+              initializer,
+              insideLet
+            ) {
+              return identifier
+                ? insideLet
+                  ? this.addIdentifierLet(identifier)
+                  : (this._boundUniqueIdentifiers
+                      ? (() => {
+                          throw new Error(
+                            "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
+                          );
+                        })()
+                      : undefined,
+                    (this.identifiersInScope[identifier] = true),
+                    (this.identifiersAssigned[identifier] =
+                      initializer || true))
+                : undefined;
+            };
+            this.getter({
+              uniqueIdentifier: function(preferredName) {
+                return this.getUniqueIdentifierHandle(preferredName).identifier;
+              },
+              uniqueIdentifierHandle: function(preferredName, addToLets) {
+                preferredName = normalizePerferredName(preferredName);
+                return this.addUniqueIdentifierHandle(
+                  new UniqueIdentifierHandle(preferredName, addToLets)
+                );
+              }
+            });
+            this.prototype.addUniqueIdentifierHandle = function(uih) {
+              return !uih.scope
+                ? ((uih.scope = this),
+                  this.uniqueIdentifierHandles.push(uih),
+                  uih)
+                : undefined;
+            };
+            this.prototype.bindUniqueIdentifier = function(
+              preferredName,
+              uniqueIdentifierHandle,
+              addToLets = true
+            ) {
+              let identifier;
+              preferredName = normalizePerferredName(preferredName);
+              identifier = this.getAvailableIdentifierName(preferredName);
+              this.boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle;
+              this.identifiersInScope[identifier] = true;
+              if (addToLets) {
+                this.identifiersAssigned[identifier] = true;
+              }
+              return identifier;
+            };
+            this.prototype.requireScopeUpdated = function() {
+              return !this._scopeUpdated
+                ? (() => {
+                    throw new Error(
+                      `Scope must be fully updated. ${Caf.toString(
+                        this.className
+                      )}`
+                    );
+                  })()
+                : undefined;
+            };
+            this.prototype.getAvailableIdentifierName = function(
+              preferredName
+            ) {
+              let blockedIndentifiers, count, name;
+              preferredName = normalizePerferredName(preferredName);
+              this.requireScopeUpdated();
+              blockedIndentifiers = this.identifiersInSelfParentAndChildScopes;
+              return !blockedIndentifiers[preferredName]
+                ? preferredName
+                : ((count = 0),
+                  (() => {
+                    while (
+                      blockedIndentifiers[
+                        (name = `${Caf.toString(preferredName)}${Caf.toString(
+                          (count += 1)
+                        )}`)
+                      ]
+                    ) {
+                      name;
+                    }
+                  })(),
+                  name);
+            };
+            this.prototype.addChildScope = function(child) {
+              return !(child === this)
+                ? this.childScopes.push(child)
+                : undefined;
+            };
+            this.prototype.bindAllUniqueIdentifiersRequested = function() {
+              return this._uniqueIdentifierHandles
+                ? Caf.each2(
+                    this._uniqueIdentifierHandles,
+                    uniqueIdentifierHandle => uniqueIdentifierHandle.identifier
+                  )
+                : undefined;
+            };
+            this.prototype.getSourceNodeForAutoLetsWithStatements = function(
+              statementsStn,
+              toSourceNodeOptions
+            ) {
+              let returnAction;
+              if (Caf.exists(toSourceNodeOptions)) {
+                returnAction = toSourceNodeOptions.returnAction;
+              }
+              return false
+                ? undefined
+                : [
+                    this.autoLetsForSourceNode,
+                    statementsStn.toSourceNode(toSourceNodeOptions)
+                  ];
+            };
+            this.getter({
+              autoLetsForSourceNode: function() {
+                let lets;
+                return (lets = this.getAutoLets()) ? lets + "; " : undefined;
+              },
+              haveAutoLets: function() {
+                this.bindAllUniqueIdentifiersRequested();
+                return (
+                  this._identifiersAssigned &&
+                  this.requiredIdentifierLets.length > 0
+                );
+              },
+              autoLets: function() {
+                let identifiers;
+                this.bindAllUniqueIdentifiersRequested();
+                return this._identifiersAssigned &&
+                  (identifiers = this.requiredIdentifierLets).length > 0
+                  ? `let ${Caf.toString(identifiers.join(", "))}`
+                  : undefined;
+              }
+            });
+            this.prototype.getBareInitializers = function() {
+              let identifiers;
+              this.bindAllUniqueIdentifiersRequested();
+              return this._identifiersAssigned &&
+                (identifiers = this.requiredIdentifierLets).length > 0
+                ? ((identifiers = Caf.array(identifiers, null, identifier =>
+                    identifier.match(/=/)
+                  )),
+                  identifiers.length > 0
+                    ? `${Caf.toString(identifiers.join("; "))}`
+                    : undefined)
+                : undefined;
+            };
+            this.prototype.updateScope = function(scope) {
+              this.scope = scope;
+              this.bindAllUniqueIdentifiersRequested();
+              this.scope.addChildScope(this);
+              Caf.each2(this.getChildrenToUpdateScope(), child =>
+                child.updateScope(this)
+              );
+              return (this._scopeUpdated = true);
+            };
+            this.prototype.generateImportMap = function(
+              map = {},
+              assignedInParentScope = this.identifiersAssignedInParentScopes
+            ) {
+              let assignedInThisOrParentScope;
+              assignedInThisOrParentScope = merge(
+                assignedInParentScope,
+                this._identifiersAssigned,
+                this._argumentNames
+              );
+              Caf.object(
+                this._identifiersUsed,
+                null,
+                (v, identifier) => !assignedInThisOrParentScope[identifier],
+                map
+              );
+              Caf.each2(
+                this._childScopes,
+                childScope =>
+                  childScope.generateImportMap(
+                    map,
+                    assignedInThisOrParentScope
+                  ),
+                childScope => !childScope.isImports
+              );
+              return map;
+            };
+            this.getter({
+              childrenToUpdateScope: function() {
+                return this.children;
+              },
+              uniqueIdentifierHandles: function() {
+                return (
+                  this._uniqueIdentifierHandles ||
+                  (this._uniqueIdentifierHandles = [])
+                );
+              },
+              boundUniqueIdentifiers: function() {
+                return (
+                  this._boundUniqueIdentifiers ||
+                  (this._boundUniqueIdentifiers = {})
+                );
+              },
+              requiredIdentifierLets: function() {
+                let identifiersAssignedInParentScopes;
+                ({ identifiersAssignedInParentScopes } = this);
+                return Caf.array(
+                  this.identifiersAssigned,
+                  (initializer, identifier) =>
+                    isString(initializer)
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer
+                        )}`
+                      : initializer.toJsExpression != null
+                      ? `${Caf.toString(identifier)} = ${Caf.toString(
+                          initializer.toJsExpression()
+                        )}`
+                      : identifier,
+                  (initializer, identifier) =>
+                    !identifiersAssignedInParentScopes ||
+                    !identifiersAssignedInParentScopes[identifier]
+                );
+              },
+              identifiersInParentScopes: function(out = {}) {
+                let scope;
+                scope = this.scope;
+                while (scope) {
+                  mergeInto(out, scope.identifiersInScope);
+                  scope = scope.scope !== scope ? scope.scope : null;
+                }
+                return out;
+              },
+              identifiersInChildScopes: function(out = {}) {
+                return Caf.each2(
+                  this._childScopes,
+                  childScope => {
+                    mergeInto(out, childScope.identifiersInScope);
+                    return childScope.getIdentifiersInChildScopes(out);
+                  },
+                  null,
+                  out
+                );
+              },
+              identifiersInSelfParentAndChildScopes: function() {
+                return this.getIdentifiersInParentScopes(
+                  this.getIdentifiersInChildScopes(
+                    merge(this.identifiersInScope)
+                  )
+                );
+              },
+              identifiersActiveInScope: function() {
+                let out, scope, notDone;
+                out = merge(this._identifiersInScope);
+                ({ scope } = this);
+                notDone = true;
+                while (scope && notDone) {
+                  mergeInto(out, scope.identifiersAssigned);
+                  if (scope === scope.scope) {
+                    notDone = false;
+                  } else {
+                    ({ scope } = scope);
+                  }
+                }
+                return out;
+              },
+              identifiersUsedInThisScopeButNotAssigned: function() {
+                let assigned;
+                assigned = this.identifiersAssignedInThisOrParentScopes;
+                return Caf.object(
+                  this.identifiersUsed,
+                  (v, k) => true,
+                  (v, k) => !assigned[k]
+                );
+              },
+              identifiersUsedButNotAssigned: function() {
+                let assigned, ret;
+                assigned = this.identifiersAssignedInThisOrParentScopes;
+                ret = Caf.object(
+                  this.identifiersUsed,
+                  (v, k) => true,
+                  (v, k) => !assigned[k]
+                );
+                Caf.each2(this._childScopes, childScope =>
+                  mergeInto(ret, childScope.identifiersUsedButNotAssigned)
+                );
+                return (this._identifiersUsedButNotAssigned = ret);
+              },
+              identifiersAssignedInThisOrParentScopes: function() {
+                return merge(
+                  this._argumentNames,
+                  this._identifiersAssigned,
+                  this.identifiersAssignedInParentScopes
+                );
+              },
+              identifiersAssignedInParentScopes: function() {
+                return this.scope && this.scope !== this
+                  ? merge(
+                      this.scope.identifiersAssignedInParentScopes,
+                      this.scope._identifiersAssigned,
+                      this._argumentNames
+                    )
+                  : undefined;
+              }
+            });
+          }
+        ));
+      };
+    }
+  );
+});
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
+
+/***/ }),
+/* 49 */
 /*!******************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionArgsStn.js ***!
   \******************************************************************************************/
@@ -2950,7 +3505,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 48 */
+/* 50 */
 /*!*****************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionArgStn.js ***!
   \*****************************************************************************************/
@@ -2975,6 +3530,9 @@ Caf.defMod(module, () => {
       },
       function(FunctionDefinitionArgStn, classSuper, instanceSuper) {
         this.getter({
+          identifierStn: function() {
+            return this.isSimpleIdentifier ? this.target : undefined;
+          },
           argumentName: function() {
             return this.target.name;
           },
@@ -3021,13 +3579,6 @@ Caf.defMod(module, () => {
               AssignmentStn(ThisStn(identifierStn), identifierStn))
             : undefined;
         };
-        this.prototype.getFunctionPreBodyStatementsJs = function() {
-          return this.assignThisProperty
-            ? `this.${Caf.toString(this.target.toJs())} = ${Caf.toString(
-                this.target.toJs()
-              )}`
-            : undefined;
-        };
       }
     ));
   })();
@@ -3036,7 +3587,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 49 */
+/* 51 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionStn.js ***!
   \**************************************************************************************/
@@ -3054,7 +3605,7 @@ Caf.defMod(module, () => {
       let StnRegistry, FunctionDefinitionStn;
       StnRegistry = __webpack_require__(/*! ../../StnRegistry */ 19);
       return (FunctionDefinitionStn = Caf.defClass(
-        class FunctionDefinitionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 50)(
+        class FunctionDefinitionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
           __webpack_require__(/*! ../BaseStn */ 23)
         ) {
           constructor(props, children, pretransformedStn) {
@@ -3299,347 +3850,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 50 */
-/*!*************************************************************!*\
-  !*** ./source/CaffeineScript/SemanticTree/ScopeStnMixin.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
-Caf.defMod(module, () => {
-  return Caf.importInvoke(
-    ["merge", "Error", "log", "isString", "mergeInto"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16)],
-    (merge, Error, log, isString, mergeInto) => {
-      let UniqueIdentifierHandle;
-      UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 22);
-      return function(toExtend) {
-        let ScopeStnMixin;
-        return (ScopeStnMixin = Caf.defClass(
-          class ScopeStnMixin extends toExtend {
-            constructor() {
-              super(...arguments);
-              this._uniqueIdentifierHandles = this._boundUniqueIdentifiers = this._identifiersUsedButNotAssigned = this._argumentNames = this._identifiersUsed = this._identifiersAssigned = this._childScopes = this._identifiersInScope = null;
-              this._scopeUpdated = false;
-            }
-          },
-          function(ScopeStnMixin, classSuper, instanceSuper) {
-            let normalizePerferredName, addExplicitlyDeclared;
-            this.abstractClass();
-            this.normalizePerferredName = normalizePerferredName = function(
-              preferredName = "temp"
-            ) {
-              return preferredName;
-            };
-            this.getter({
-              childScopes: function() {
-                return this._childScopes || (this._childScopes = []);
-              },
-              argumentNames: function() {
-                return this._argumentNames || (this._argumentNames = {});
-              },
-              identifiersUsed: function() {
-                return this._identifiersUsed || (this._identifiersUsed = {});
-              },
-              identifiersAssigned: function() {
-                return (
-                  this._identifiersAssigned || (this._identifiersAssigned = {})
-                );
-              },
-              identifiersInScope: function() {
-                return (
-                  this._identifiersInScope || (this._identifiersInScope = {})
-                );
-              }
-            });
-            this.prototype.getInspectedProps = function() {
-              return merge(
-                instanceSuper.getInspectedProps.apply(this, arguments),
-                {
-                  scope: merge({
-                    argumentNames: this.argumentNames,
-                    identifiersUsed: this.identifiersUsed,
-                    identifiersAssigned: this.identifiersAssigned,
-                    identifiersInScope: this.identifiersInScope
-                  })
-                }
-              );
-            };
-            this.prototype.addExplicitlyDeclared = addExplicitlyDeclared = function(
-              identifier
-            ) {
-              this.identifiersInScope[identifier] = true;
-              return (this.argumentNames[identifier] = true);
-            };
-            this.prototype.addIdentifierUsed = function(identifier) {
-              if (this._boundUniqueIdentifiers) {
-                throw new Error(
-                  "bindUniqueIdentifier must be called AFTER all calls to addIdentifierUsed"
-                );
-              }
-              this.identifiersInScope[identifier] = true;
-              return (this.identifiersUsed[identifier] = true);
-            };
-            this.prototype.addIdentifierAssigned = function(
-              identifier,
-              initializer,
-              insideLet
-            ) {
-              return identifier
-                ? insideLet
-                  ? this.addExplicitlyDeclared(identifier)
-                  : (this._boundUniqueIdentifiers
-                      ? (() => {
-                          throw new Error(
-                            "bindUniqueIdentifier must be called AFTER all calls to addIdentifierAssigned"
-                          );
-                        })()
-                      : undefined,
-                    (this.identifiersInScope[identifier] = true),
-                    (this.identifiersAssigned[identifier] =
-                      initializer || true))
-                : undefined;
-            };
-            this.getter({
-              uniqueIdentifier: function(preferredName) {
-                return this.getUniqueIdentifierHandle(preferredName).identifier;
-              },
-              uniqueIdentifierHandle: function(preferredName, addToLets) {
-                preferredName = normalizePerferredName(preferredName);
-                return this.addUniqueIdentifierHandle(
-                  new UniqueIdentifierHandle(preferredName, addToLets)
-                );
-              }
-            });
-            this.prototype.addUniqueIdentifierHandle = function(uih) {
-              return !uih.scope
-                ? ((uih.scope = this),
-                  this.uniqueIdentifierHandles.push(uih),
-                  uih)
-                : undefined;
-            };
-            this.prototype.bindUniqueIdentifier = function(
-              preferredName,
-              uniqueIdentifierHandle,
-              addToLets = true
-            ) {
-              let identifier;
-              preferredName = normalizePerferredName(preferredName);
-              identifier = this.getAvailableIdentifierName(preferredName);
-              this.boundUniqueIdentifiers[identifier] = uniqueIdentifierHandle;
-              this.identifiersInScope[identifier] = true;
-              if (addToLets) {
-                this.identifiersAssigned[identifier] = true;
-              }
-              return identifier;
-            };
-            this.prototype.getAvailableIdentifierName = function(
-              preferredName
-            ) {
-              let identifiersActiveInScope, count, name;
-              preferredName = normalizePerferredName(preferredName);
-              return !this._scopeUpdated
-                ? log.error({
-                    ScopeStnMixin: {
-                      getAvailableIdentifierName: [
-                        `cannot be called before updateScope completes: ${Caf.toString(
-                          this.className
-                        )}`,
-                        new Error()
-                      ]
-                    }
-                  })
-                : (({ identifiersActiveInScope } = this),
-                  !identifiersActiveInScope[preferredName]
-                    ? preferredName
-                    : ((count = 0),
-                      (() => {
-                        while (
-                          identifiersActiveInScope[
-                            (name = `${Caf.toString(
-                              preferredName
-                            )}${Caf.toString((count += 1))}`)
-                          ]
-                        ) {
-                          name;
-                        }
-                      })(),
-                      name));
-            };
-            this.prototype.addChildScope = function(child) {
-              return !(child === this)
-                ? this.childScopes.push(child)
-                : undefined;
-            };
-            this.prototype.bindAllUniqueIdentifiersRequested = function() {
-              return this._uniqueIdentifierHandles
-                ? Caf.each2(
-                    this._uniqueIdentifierHandles,
-                    uniqueIdentifierHandle => uniqueIdentifierHandle.identifier
-                  )
-                : undefined;
-            };
-            this.prototype.getAutoLets = function() {
-              let identifiers;
-              this.bindAllUniqueIdentifiersRequested();
-              return this._identifiersAssigned &&
-                (identifiers = this.requiredIdentifierLets).length > 0
-                ? `let ${Caf.toString(identifiers.join(", "))}`
-                : undefined;
-            };
-            this.prototype.getBareInitializers = function() {
-              let identifiers;
-              this.bindAllUniqueIdentifiersRequested();
-              return this._identifiersAssigned &&
-                (identifiers = this.requiredIdentifierLets).length > 0
-                ? ((identifiers = Caf.array(identifiers, null, identifier =>
-                    identifier.match(/=/)
-                  )),
-                  identifiers.length > 0
-                    ? `${Caf.toString(identifiers.join("; "))}`
-                    : undefined)
-                : undefined;
-            };
-            this.prototype.updateScope = function(scope) {
-              this.scope = scope;
-              this.bindAllUniqueIdentifiersRequested();
-              this.scope.addChildScope(this);
-              Caf.each2(this.getChildrenToUpdateScope(), child =>
-                child.updateScope(this)
-              );
-              return (this._scopeUpdated = true);
-            };
-            this.prototype.generateImportMap = function(
-              map = {},
-              assignedInParentScope = this.identifiersAssignedInParentScopes
-            ) {
-              let assignedInThisOrParentScope;
-              assignedInThisOrParentScope = merge(
-                assignedInParentScope,
-                this._identifiersAssigned,
-                this._argumentNames
-              );
-              Caf.object(
-                this._identifiersUsed,
-                null,
-                (v, identifier) => !assignedInThisOrParentScope[identifier],
-                map
-              );
-              Caf.each2(
-                this._childScopes,
-                childScope =>
-                  childScope.generateImportMap(
-                    map,
-                    assignedInThisOrParentScope
-                  ),
-                childScope => !childScope.isImports
-              );
-              return map;
-            };
-            this.getter({
-              childrenToUpdateScope: function() {
-                return this.children;
-              },
-              uniqueIdentifierHandles: function() {
-                return (
-                  this._uniqueIdentifierHandles ||
-                  (this._uniqueIdentifierHandles = [])
-                );
-              },
-              boundUniqueIdentifiers: function() {
-                return (
-                  this._boundUniqueIdentifiers ||
-                  (this._boundUniqueIdentifiers = {})
-                );
-              },
-              requiredIdentifierLets: function() {
-                let identifiersAssignedInParentScopes;
-                ({ identifiersAssignedInParentScopes } = this);
-                return Caf.array(
-                  this.identifiersAssigned,
-                  (initializer, identifier) =>
-                    isString(initializer)
-                      ? `${Caf.toString(identifier)} = ${Caf.toString(
-                          initializer
-                        )}`
-                      : initializer.toJsExpression != null
-                      ? `${Caf.toString(identifier)} = ${Caf.toString(
-                          initializer.toJsExpression()
-                        )}`
-                      : identifier,
-                  (initializer, identifier) =>
-                    !identifiersAssignedInParentScopes ||
-                    !identifiersAssignedInParentScopes[identifier]
-                );
-              },
-              identifiersActiveInScope: function() {
-                let out, scope, notDone;
-                out = merge(this._identifiersInScope);
-                ({ scope } = this);
-                notDone = true;
-                while (scope && notDone) {
-                  mergeInto(out, scope.identifiersAssigned);
-                  if (scope === scope.scope) {
-                    notDone = false;
-                  } else {
-                    ({ scope } = scope);
-                  }
-                }
-                return out;
-              },
-              identifiersUsedInThisScopeButNotAssigned: function() {
-                let assigned;
-                assigned = this.identifiersAssignedInThisOrParentScopes;
-                return Caf.object(
-                  this.identifiersUsed,
-                  (v, k) => true,
-                  (v, k) => !assigned[k]
-                );
-              },
-              identifiersUsedButNotAssigned: function() {
-                let assigned, ret;
-                assigned = this.identifiersAssignedInThisOrParentScopes;
-                ret = Caf.object(
-                  this.identifiersUsed,
-                  (v, k) => true,
-                  (v, k) => !assigned[k]
-                );
-                Caf.each2(this._childScopes, childScope =>
-                  mergeInto(ret, childScope.identifiersUsedButNotAssigned)
-                );
-                return (this._identifiersUsedButNotAssigned = ret);
-              },
-              identifiersAssignedInThisOrParentScopes: function() {
-                return merge(
-                  this._argumentNames,
-                  this._identifiersAssigned,
-                  this.identifiersAssignedInParentScopes
-                );
-              },
-              identifiersAssignedInParentScopes: function() {
-                return this.scope && this.scope !== this
-                  ? merge(
-                      this.scope.identifiersAssignedInParentScopes,
-                      this.scope._identifiersAssigned,
-                      this._argumentNames
-                    )
-                  : undefined;
-              }
-            });
-          }
-        ));
-      };
-    }
-  );
-});
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
-
-/***/ }),
-/* 51 */
+/* 52 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionInvocationStn.js ***!
   \**************************************************************************************/
@@ -3732,7 +3943,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 52 */
+/* 53 */
 /*!************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/GlobalIdentifierStn.js ***!
   \************************************************************************************/
@@ -3759,7 +3970,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 53 */
+/* 54 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/IdentifierStn.js ***!
   \******************************************************************************/
@@ -3825,7 +4036,7 @@ Caf.defMod(module, () => {
               return true;
             },
             valueStn: function() {
-              return __webpack_require__(/*! ./ReferenceStn */ 54)(this);
+              return __webpack_require__(/*! ./ReferenceStn */ 55)(this);
             }
           });
           this.prototype.updateScope = function(scope) {
@@ -3849,7 +4060,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /*!*****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ReferenceStn.js ***!
   \*****************************************************************************/
@@ -3915,7 +4126,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /*!**********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/IfStn.js ***!
   \**********************************************************************/
@@ -3939,7 +4150,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ImportBodyStn.js ***!
   \******************************************************************************/
@@ -3952,9 +4163,9 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return (() => {
     let ImportStn, ImportBodyStn;
-    ImportStn = __webpack_require__(/*! ./ImportStn */ 57);
+    ImportStn = __webpack_require__(/*! ./ImportStn */ 58);
     return (ImportBodyStn = Caf.defClass(
-      class ImportBodyStn extends __webpack_require__(/*! ../ScopeStnMixin */ 50)(
+      class ImportBodyStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
         __webpack_require__(/*! ../BaseStn */ 23)
       ) {},
       function(ImportBodyStn, classSuper, instanceSuper) {
@@ -3970,7 +4181,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 57 */
+/* 58 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ImportStn.js ***!
   \**************************************************************************/
@@ -4071,7 +4282,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 58 */
+/* 59 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/InterpolatedStringStn.js ***!
   \**************************************************************************************/
@@ -4131,7 +4342,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 59 */
+/* 60 */
 /*!**********************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/LabeledDestructuringTargetStn.js ***!
   \**********************************************************************************************/
@@ -4149,8 +4360,8 @@ Caf.defMod(module, () => {
       function(LabeledDestructuringTargetStn, classSuper, instanceSuper) {
         this.getter({
           structuringStn: function() {
-            return __webpack_require__(/*! ./ObjectPropValueStn */ 60)(
-              __webpack_require__(/*! ./ObjectPropNameStn */ 61)(this.children[0]),
+            return __webpack_require__(/*! ./ObjectPropValueStn */ 61)(
+              __webpack_require__(/*! ./ObjectPropNameStn */ 62)(this.children[0]),
               this.children[1].getValueStn()
             );
           }
@@ -4168,7 +4379,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 60 */
+/* 61 */
 /*!***********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectPropValueStn.js ***!
   \***********************************************************************************/
@@ -4275,7 +4486,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 61 */
+/* 62 */
 /*!**********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectPropNameStn.js ***!
   \**********************************************************************************/
@@ -4331,7 +4542,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 62 */
+/* 63 */
 /*!***********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/LetStn.js ***!
   \***********************************************************************/
@@ -4371,7 +4582,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /*!*******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/NewInstanceStn.js ***!
   \*******************************************************************************/
@@ -4423,7 +4634,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 64 */
+/* 65 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/NumberLiteralStn.js ***!
   \*********************************************************************************/
@@ -4471,7 +4682,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /*!***************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectDestructuringStn.js ***!
   \***************************************************************************************/
@@ -4492,7 +4703,7 @@ Caf.defMod(module, () => {
             return this.structuringStn;
           },
           structuringStn: function() {
-            return __webpack_require__(/*! ./ObjectStn */ 66)(
+            return __webpack_require__(/*! ./ObjectStn */ 67)(
               Caf.array(this.children, child => child.getStructuringStn())
             );
           }
@@ -4516,7 +4727,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectStn.js ***!
   \**************************************************************************/
@@ -4590,7 +4801,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 67 */
+/* 68 */
 /*!*****************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectLiteralAccessorStn.js ***!
   \*****************************************************************************************/
@@ -4637,7 +4848,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/PureJsStn.js ***!
   \**************************************************************************/
@@ -4677,7 +4888,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 69 */
+/* 70 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RegExpStn.js ***!
   \**************************************************************************/
@@ -4735,7 +4946,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /*!***************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RequireStn.js ***!
   \***************************************************************************/
@@ -4751,7 +4962,7 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(/*! ../../StandardImport */ 16)],
     peek => {
       let findModuleSync, RequireStn;
-      ({ findModuleSync } = __webpack_require__(/*! caffeine-mc */ 71));
+      ({ findModuleSync } = __webpack_require__(/*! caffeine-mc */ 72));
       return (RequireStn = Caf.defClass(
         class RequireStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
         function(RequireStn, classSuper, instanceSuper) {
@@ -4792,7 +5003,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /*!*****************************************************************************!*\
   !*** external "require('caffeine-mc' /* ABC - not inlining fellow NPM *_/)" ***!
   \*****************************************************************************/
@@ -4802,7 +5013,7 @@ Caf.defMod(module, () => {
 module.exports = require('caffeine-mc' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 72 */
+/* 73 */
 /*!************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RootStn.js ***!
   \************************************************************************/
@@ -4818,9 +5029,9 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(/*! ../../StandardImport */ 16)],
     (compactFlatten, present) => {
       let StatementsStn, RootStn;
-      StatementsStn = __webpack_require__(/*! ./StatementsStn */ 73);
+      StatementsStn = __webpack_require__(/*! ./StatementsStn */ 74);
       return (RootStn = Caf.defClass(
-        class RootStn extends __webpack_require__(/*! ../ScopeStnMixin */ 50)(
+        class RootStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
           __webpack_require__(/*! ../BaseStn */ 23)
         ) {
           constructor(props, children) {
@@ -4891,7 +5102,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 73 */
+/* 74 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/StatementsStn.js ***!
   \******************************************************************************/
@@ -4954,7 +5165,21 @@ Caf.defMod(module, () => {
             );
             return out;
           };
+          this.prototype.toSourceNodeWithCustomChildren = function(
+            children,
+            options
+          ) {
+            let oldChildren, out;
+            oldChildren = this.children;
+            this.children = children;
+            out = this.toSourceNode(options);
+            this.children = oldChildren;
+            return out;
+          };
           this.getter({
+            statements: function() {
+              return this.children;
+            },
             compileTimeValue: function() {
               return this.children.length === 1
                 ? this.children[0].compileTimeValue
@@ -5027,7 +5252,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 74 */
+/* 75 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SimpleLiteralStn.js ***!
   \*********************************************************************************/
@@ -5062,7 +5287,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 75 */
+/* 76 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/StringStn.js ***!
   \**************************************************************************/
@@ -5142,7 +5367,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 76 */
+/* 77 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SuperStn.js ***!
   \*************************************************************************/
@@ -5243,7 +5468,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SwitchStn.js ***!
   \**************************************************************************/
@@ -5317,7 +5542,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 78 */
+/* 79 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SwitchWhenStn.js ***!
   \******************************************************************************/
@@ -5358,7 +5583,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 79 */
+/* 80 */
 /*!************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ThisStn.js ***!
   \************************************************************************/
@@ -5408,7 +5633,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 80 */
+/* 81 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ThrowStn.js ***!
   \*************************************************************************/
@@ -5439,7 +5664,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 81 */
+/* 82 */
 /*!***********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/TryStn.js ***!
   \***********************************************************************/
@@ -5490,7 +5715,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 82 */
+/* 83 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/UnaryOperatorStn.js ***!
   \*********************************************************************************/
@@ -5555,7 +5780,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 83 */
+/* 84 */
 /*!*****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/UndefinedStn.js ***!
   \*****************************************************************************/
@@ -5577,25 +5802,6 @@ Caf.defMod(module, () => {
       }
     ));
   })();
-});
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
-
-/***/ }),
-/* 84 */
-/*!*************************************************************************!*\
-  !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/WhileStn.js ***!
-  \*************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
-let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
-Caf.defMod(module, () => {
-  return function(test, body) {
-    return __webpack_require__(/*! ./ControlOperatorStn */ 41)({ operand: "while" }, test, body);
-  };
 });
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
@@ -5691,7 +5897,6 @@ Caf.defMod(module, () => {
       "WhileStn",
       "BinaryOperatorStn",
       "ForInControlStn",
-      "LetStn",
       "floatEq",
       "Math",
       "UnaryOperatorStn"
@@ -5716,14 +5921,13 @@ Caf.defMod(module, () => {
       WhileStn,
       BinaryOperatorStn,
       ForInControlStn,
-      LetStn,
       floatEq,
       Math,
       UnaryOperatorStn
     ) => {
       let ComprehensionStn;
       return (ComprehensionStn = Caf.defClass(
-        class ComprehensionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 50)(
+        class ComprehensionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
           __webpack_require__(/*! ../BaseStn */ 23)
         ) {},
         function(ComprehensionStn, classSuper, instanceSuper) {
@@ -6010,7 +6214,8 @@ Caf.defMod(module, () => {
               invokeWithClauseAndPush,
               loopStn,
               positiveByTest,
-              negativeByTest;
+              negativeByTest,
+              temp;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
@@ -6099,11 +6304,12 @@ Caf.defMod(module, () => {
               intoId = IdentifierStn({ preferredIdentifier: "into" });
             }
             iId = IdentifierStn({
-              preferredIdentifier: fromObjectClause ? "k" : "i"
+              preferredIdentifier: fromObjectClause ? "k" : "i",
+              addToLets: !fromObjectClause
             });
             if (!variableDefinition) {
               variableDefinition = [
-                IdentifierStn({ preferredIdentifier: "v", addToLets: false })
+                IdentifierStn({ preferredIdentifier: "v" })
               ];
             }
             [valueId] = variableDefinition;
@@ -6326,21 +6532,22 @@ Caf.defMod(module, () => {
                   StatementsStn(
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
-                      ? LetStn(
-                          fromObjectClause
-                            ? AssignmentStn(
-                                valueId,
-                                AccessorStn(fromId, keyValueStn)
-                              )
-                            : Caf.array(variableDefinition, (v, i) =>
-                                AssignmentStn(
-                                  v,
-                                  !toClause && i === 0
-                                    ? AccessorStn(fromId, iId.getValueStn())
-                                    : iId
-                                )
-                              )
-                        )
+                      ? fromObjectClause
+                        ? AssignmentStn(
+                            (temp = valueId.identifierStn) != null
+                              ? temp
+                              : valueId,
+                            AccessorStn(fromId, keyValueStn)
+                          )
+                        : Caf.array(variableDefinition, (v, i) => {
+                            let temp1;
+                            return AssignmentStn(
+                              (temp1 = v.identifierStn) != null ? temp1 : v,
+                              !toClause && i === 0
+                                ? AccessorStn(fromId, iId.getValueStn())
+                                : iId
+                            );
+                          })
                       : undefined,
                     whenClause
                       ? IfStn(whenClause, invokeWithClauseAndPush)
@@ -7195,12 +7402,23 @@ Caf.defMod(module, () => {
           {
             stnFactory: "ControlOperatorStn",
             pattern: [
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
-              "ifUnlessWhileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
-              "ifUnlessWhileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+              "ifUnless _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "ifUnless _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "ifUnless _ expression:expression                 thenClause  elseBody:elseClause?"
             ],
             stnProps: function() {
-              return { operand: this.ifUnlessWhileUntil.toString() };
+              return { operand: this.ifUnless.toString() };
+            }
+          },
+          {
+            stnFactory: "WhileStn",
+            pattern: [
+              "whileUntil _ expression:expressionWithOneLessBlock body:block  elseBody:elseClause?",
+              "whileUntil _ expression:expressionWithOneLessBlock body:block? elseBody:elseClause",
+              "whileUntil _ expression:expression                 thenClause  elseBody:elseClause?"
+            ],
+            stnProps: function() {
+              return { operand: this.whileUntil.toString() };
             }
           },
           {
@@ -7239,7 +7457,8 @@ Caf.defMod(module, () => {
         controlStructorClauseJoiner: "_? end?",
         catch: /catch\b/,
         try: /try\b/,
-        ifUnlessWhileUntil: /(if|unless|while|until)\b/,
+        whileUntil: /(while|until)\b/,
+        ifUnless: /(if|unless)\b/,
         thenDo: /(then|do)\b/,
         when: /when\b/,
         else: /else\b/
@@ -7420,7 +7639,6 @@ Caf.defMod(module, () => {
               match,
               m,
               endOffset,
-              matchLength,
               expressionSource;
             ({ nextOffset, source } = parentNode);
             offset = nextOffset;
@@ -7432,8 +7650,7 @@ Caf.defMod(module, () => {
                 (() => {
                   while ((match = matchBlock(source, offset))) {
                     endOffset = offset;
-                    ({ matchLength } = match);
-                    offset += matchLength;
+                    offset += match.matchLength;
                   }
                 })(),
                 (expressionSource = source.slice(originalOffset, endOffset)),

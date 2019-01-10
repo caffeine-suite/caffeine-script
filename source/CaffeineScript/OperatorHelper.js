@@ -201,17 +201,6 @@ Caf.defMod(module, () => {
             operands,
             combinerOverride
           ) => {
-            let lowestPrecidence,
-              firstOccurance,
-              lastOccurance,
-              p,
-              opIndexToResolve,
-              opsBefore,
-              operandsBefore,
-              op,
-              operandA,
-              operandB,
-              combiner;
             if (!(operands.length === operators.length + 1)) {
               throw new Error(
                 `expecting: operands.length:${Caf.toString(
@@ -220,6 +209,17 @@ Caf.defMod(module, () => {
               );
             }
             while (operators.length > 0) {
+              let lowestPrecidence,
+                firstOccurance,
+                lastOccurance,
+                p,
+                opIndexToResolve,
+                opsBefore,
+                operandsBefore,
+                op,
+                operandA,
+                operandB,
+                combiner;
               lowestPrecidence = this.getOpPrecidence(operators[0]);
               firstOccurance = lastOccurance = 0;
               p = null;

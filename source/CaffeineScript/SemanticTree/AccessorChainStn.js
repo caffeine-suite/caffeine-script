@@ -27,10 +27,11 @@ Caf.defMod(module, () => {
             return out;
           };
           this.prototype.getLeftAccessorChain = function() {
-            let current, accessorChain, accessor;
+            let current, accessorChain;
             current = this;
             accessorChain = [];
             while (current && current instanceof AccessorChainStn) {
+              let accessor;
               accessor = current;
               current = current.value;
               accessorChain.push(accessor);

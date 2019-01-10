@@ -49,9 +49,6 @@ Caf.defMod(module, () => {
               blockCommentIndentLevel,
               inBlockComment,
               i,
-              line,
-              lineIndentLevel,
-              commentOnlyLine,
               temp;
             return commentLineIndex >= 0
               ? ((indentChange = 0),
@@ -61,6 +58,7 @@ Caf.defMod(module, () => {
                 (i = commentLineIndex),
                 (() => {
                   while (i < stopIndex) {
+                    let line, lineIndentLevel, commentOnlyLine;
                     line = lines[i];
                     if (nonBlankLineRegexp.test(line)) {
                       lineIndentLevel = getIndentLevel(line);
