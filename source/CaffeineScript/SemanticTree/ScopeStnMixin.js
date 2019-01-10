@@ -183,75 +183,16 @@ Caf.defMod(module, () => {
               statementsStn,
               toSourceNodeOptions
             ) {
-              let returnAction,
-                statements,
-                autoLetIdentifiers,
-                assignedAutoLetStns,
-                numAssignsConsumed,
-                letSourceNodes,
-                out,
-                base;
+              let returnAction;
               if (Caf.exists(toSourceNodeOptions)) {
                 returnAction = toSourceNodeOptions.returnAction;
               }
-              return (Caf.exists(
-                (base = (statements = statementsStn.statements)[0])
-              ) && base.type) === "Assignment" && this.haveAutoLets
-                ? ((autoLetIdentifiers = Caf.object(
-                    this.requiredIdentifierLets,
-                    () => true
-                  )),
-                  (assignedAutoLetStns = []),
-                  Caf.find(statements, (statement, i) => {
-                    let type, propName;
-                    type = statement.type;
-                    propName = statement.propName;
-                    return type === "Assignment" &&
-                      autoLetIdentifiers[propName] &&
-                      (!returnAction || i < statements.length - 1)
-                      ? (assignedAutoLetStns.push(statement),
-                        (autoLetIdentifiers[propName] = false),
-                        false)
-                      : true;
-                  }),
-                  0 < (numAssignsConsumed = assignedAutoLetStns.length)
-                    ? ((letSourceNodes = Caf.array(
-                        autoLetIdentifiers,
-                        (v, k) => k,
-                        (v, k) => v,
-                        Caf.array(assignedAutoLetStns, v => v.toSourceNode())
-                      )),
-                      [
-                        "let ",
-                        Caf.array(
-                          letSourceNodes,
-                          (letSourceNode, i) => {
-                            if (i > 0) {
-                              out.push(", ");
-                            }
-                            return letSourceNode;
-                          },
-                          null,
-                          (out = [])
-                        ),
-                        statements.length - numAssignsConsumed > 0
-                          ? [
-                              "; ",
-                              statementsStn.toSourceNodeWithCustomChildren(
-                                statements.slice(
-                                  numAssignsConsumed,
-                                  statementsStn.length
-                                ),
-                                toSourceNodeOptions
-                              )
-                            ]
-                          : ";"
-                      ])
-                    : [
-                        this.autoLetsForSourceNode,
-                        statementsStn.toSourceNode(toSourceNodeOptions)
-                      ])
-                : statementsStn.toSourceNode(toSourceNodeOptions);
+              return false
+                ? undefined
+                : [
+                    this.autoLetsForSourceNode,
+                    statementsStn.toSourceNode(toSourceNodeOptions)
+                  ];
             };
             this.getter({
               autoLetsForSourceNode: function() {

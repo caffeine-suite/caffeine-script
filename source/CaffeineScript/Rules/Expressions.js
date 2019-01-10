@@ -66,7 +66,6 @@ Caf.defMod(module, () => {
               match,
               m,
               endOffset,
-              matchLength,
               expressionSource;
             ({ nextOffset, source } = parentNode);
             offset = nextOffset;
@@ -78,8 +77,7 @@ Caf.defMod(module, () => {
                 (() => {
                   while ((match = matchBlock(source, offset))) {
                     endOffset = offset;
-                    ({ matchLength } = match);
-                    offset += matchLength;
+                    offset += match.matchLength;
                   }
                 })(),
                 (expressionSource = source.slice(originalOffset, endOffset)),

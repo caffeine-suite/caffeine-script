@@ -59,8 +59,7 @@ upToButNotEol = /[^\n]*/y
 
         while (match = matchBlock source, offset)
           endOffset = offset
-          {matchLength} = match
-          offset += matchLength
+          offset += match.matchLength
 
         expressionSource = source.slice originalOffset, endOffset
         parentNode.subparse

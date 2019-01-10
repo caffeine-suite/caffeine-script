@@ -116,45 +116,53 @@ UniqueIdentifierHandle = &UniqueIdentifierHandle
   getSourceNodeForAutoLetsWithStatements: (statementsStn, toSourceNodeOptions) ->
     toSourceNodeOptions extract? returnAction
 
-    if (statementsStn extract statements)[0]?.type == :Assignment && @haveAutoLets
-      autoLetIdentifiers = object @requiredIdentifierLets with true
-      assignedAutoLetStns = []
-      find statement, i in statements
-        statement extract type, propName
-        if type == :Assignment && autoLetIdentifiers[propName] && (!returnAction || i < statements.length - 1)
-          assignedAutoLetStns.push statement
-          autoLetIdentifiers[propName] = false
-          false
-        else true # 'found' a non-match; stop
+    ##
+      This isn't quite ready for prime-time yet. The problem is
+      we need to detect if the rValue of the assign has dependencies on
+      variables we haven't let yet.
 
-      if 0 < numAssignsConsumed = assignedAutoLetStns.length
-        letSourceNodes =
-          array v, k in autoLetIdentifiers when v with k into
-            array v in assignedAutoLetStns with v.toSourceNode()
+      Ex: while a do b = c; c = 0
+        Bad code, I know, but it should generate legal JS:
+          while (a) {let b, c; b = c; c = 0;}
 
-        []
-          "let "
+      Another special case problem: while a do b = c = 0
 
-          array letSourceNode, i in letSourceNodes into out = []
-            out.push ', ' if i > 0
-            letSourceNode
+      if (statementsStn extract statements)[0]?.type == :Assignment && @haveAutoLets
+        autoLetIdentifiers = object @requiredIdentifierLets with true
+        assignedAutoLetStns = []
+        find statement, i in statements
+          statement extract type, propName
+          if type == :Assignment && autoLetIdentifiers[propName] && (!returnAction || i < statements.length - 1)
+            assignedAutoLetStns.push statement
+            autoLetIdentifiers[propName] = false
+            false
+          else true # 'found' a non-match; stop
 
-          if statements.length - numAssignsConsumed > 0
-            []
-              "; "
-              statementsStn.toSourceNodeWithCustomChildren
-                statements.slice numAssignsConsumed, statementsStn.length
-                toSourceNodeOptions
-          else
-            ";"
+    if false # 0 < numAssignsConsumed = assignedAutoLetStns?.length
+      # letSourceNodes =
+      #   array v, k in autoLetIdentifiers when v with k into
+      #     array v in assignedAutoLetStns with v.toSourceNode()
 
-      else
-        []
-          @autoLetsForSourceNode
-          statementsStn.toSourceNode toSourceNodeOptions
+      # []
+      #   "let "
+
+      #   array letSourceNode, i in letSourceNodes into out = []
+      #     out.push ', ' if i > 0
+      #     letSourceNode
+
+      #   if statements.length - numAssignsConsumed > 0
+      #     []
+      #       "; "
+      #       statementsStn.toSourceNodeWithCustomChildren
+      #         statements.slice numAssignsConsumed, statementsStn.length
+      #         toSourceNodeOptions
+      #   else
+      #     ";"
 
     else
-      statementsStn.toSourceNode toSourceNodeOptions
+      []
+        @autoLetsForSourceNode
+        statementsStn.toSourceNode toSourceNodeOptions
 
 
   @getter

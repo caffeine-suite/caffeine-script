@@ -35,7 +35,7 @@ module.exports = suite: parseTestSuite
           from = b || {};
           into = from;
           for (let k in from)
-          {let v = from[k]; v;};
+          {let v; v = from[k]; v;};
           into;"
 
       find:
@@ -44,7 +44,7 @@ module.exports = suite: parseTestSuite
           from = b || {};
           into = null;
           for (let k in from)
-          {let v = from[k]; if (v) {into = v; break;};};
+          {let v; v = from[k]; if (v) {into = v; break;};};
           into;"
 
       array:
@@ -53,7 +53,7 @@ module.exports = suite: parseTestSuite
           from = b || {};
           into = [];
           for (let k in from)
-          {let v = from[k]; into.push(v);};
+          {let v; v = from[k]; into.push(v);};
           into;"
 
       object:
@@ -62,7 +62,7 @@ module.exports = suite: parseTestSuite
           from = b || {};
           into = {};
           for (let k in from)
-          {let v = from[k]; into[k] = v;};
+          {let v; v = from[k]; into[k] = v;};
           into;"
 
     fromArray:
@@ -75,7 +75,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = from;
             while (i < to)
-            {let v = from[i]; v; i++;};
+            {let v; v = from[i]; v; i++;};
             into;"
       find:
         basic:
@@ -86,7 +86,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = null;
             while (i < to)
-            {let v = from[i]; if (v) {into = v; break;}; i++;};
+            {let v; v = from[i]; if (v) {into = v; break;}; i++;};
             into;"
 
         withClause:
@@ -97,7 +97,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = null;
             while (i < to)
-            {let myValue = from[i]; if (into = myValue && 10) {break;}; i++;};
+            {let myValue; myValue = from[i]; if (into = myValue && 10) {break;}; i++;};
             into || null;"
 
         whenClause:
@@ -108,7 +108,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = null;
             while (i < to)
-            {let myValue = from[i]; if (myValue < 10) {into = myValue; break;}; i++;};
+            {let myValue; myValue = from[i]; if (myValue < 10) {into = myValue; break;}; i++;};
             into;"
 
         withClause:
@@ -119,9 +119,8 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = null;
             while (i < to)
-            {let myValue = from[i]; if (myValue < 10) {into = myValue + 7; break;}; i++;};
+            {let myValue; myValue = from[i]; if (myValue < 10) {into = myValue + 7; break;}; i++;};
             into;"
-
 
       array:
         basic:
@@ -132,7 +131,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = [];
             while (i < to)
-            {let v = from[i]; into.push(v); i++;};
+            {let v; v = from[i]; into.push(v); i++;};
             into;"
 
         with:
@@ -143,7 +142,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = [];
             while (i < to)
-            {let myValue = from[i]; into.push(myValue + 1); i++;};
+            {let myValue; myValue = from[i]; into.push(myValue + 1); i++;};
             into;"
 
         into:
@@ -154,7 +153,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = [1];
             while (i < to)
-            {let v = from[i]; into.push(v); i++;};
+            {let v; v = from[i]; into.push(v); i++;};
             into;"
 
         when:
@@ -165,7 +164,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = [];
             while (i < to)
-            {let myValue = from[i]; if (myValue > 1) {into.push(myValue);}; i++;};
+            {let myValue; myValue = from[i]; if (myValue > 1) {into.push(myValue);}; i++;};
             into;"
 
         destructuring:
@@ -223,7 +222,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = {};
             while (i < to)
-            {let v = from[i]; into[v] = v; i++;};
+            {let v; v = from[i]; into[v] = v; i++;};
             into;"
 
         customNames:
@@ -234,7 +233,7 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = {};
             while (i < to)
-            {let myValue = from[i], myKey = i; into[myValue] = myValue; i++;};
+            {let myValue, myKey; myValue = from[i]; myKey = i; into[myValue] = myValue; i++;};
             into;"
 
         withKey:
@@ -245,76 +244,76 @@ module.exports = suite: parseTestSuite
             i = 0;
             into = {};
             while (i < to)
-            {let myValue = from[i], myKey = i; into[myKey + \"1\"] = myValue; i++;};
+            {let myValue, myKey; myValue = from[i]; myKey = i; into[myKey + \"1\"] = myValue; i++;};
             into;"
 
     forcedFromArray:
       by:
-        "array from a by 2": "let from, to, i, into; from = a || []; to = from.length; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i += 2;}; into;"
-        "array a by -1": "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+        "array from a by 2": "let from, to, i, into; from = a || []; to = from.length; i = 0; into = []; while (i < to) {let v; v = from[i]; into.push(v); i += 2;}; into;"
+        "array a by -1": "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v; v = from[i]; into.push(v); i--;}; into;"
         "array a by c":   null # "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
 
       skip:
-        "array from a skip 1":        "let from, to, i, into; from = a || []; to = from.length; i = 1; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
-        "array from a skip b":        "let from, to, i, into; from = a || []; to = from.length; i = b; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
-        "array from a skip 1 by -1":  "let from, i, into; from = a || []; i = from.length - 2; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
-        "array from a skip b by -1":  "let from, i, into; from = a || []; i = from.length - (b + 1); into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
+        "array from a skip 1":        "let from, to, i, into; from = a || []; to = from.length; i = 1; into = []; while (i < to) {let v; v = from[i]; into.push(v); i++;}; into;"
+        "array from a skip b":        "let from, to, i, into; from = a || []; to = from.length; i = b; into = []; while (i < to) {let v; v = from[i]; into.push(v); i++;}; into;"
+        "array from a skip 1 by -1":  "let from, i, into; from = a || []; i = from.length - 2; into = []; while (i >= 0) {let v; v = from[i]; into.push(v); i--;}; into;"
+        "array from a skip b by -1":  "let from, i, into; from = a || []; i = from.length - (b + 1); into = []; while (i >= 0) {let v; v = from[i]; into.push(v); i--;}; into;"
 
       short:
-        "array from a short 1":       "let from, to, i, into; from = a || []; to = from.length - 1; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
-        "array from a short b":       "let from, to, i, into; from = a || []; to = from.length - b; i = 0; into = []; while (i < to) {let v = from[i]; into.push(v); i++;}; into;"
-        "array a short 1 by -1":      "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 1) {let v = from[i]; into.push(v); i--;}; into;"
-        "array a short b by -1":      "let from, to, i, into; from = a || []; to = b; i = from.length - 1; into = []; while (i >= to) {let v = from[i]; into.push(v); i--;}; into;"
+        "array from a short 1":       "let from, to, i, into; from = a || []; to = from.length - 1; i = 0; into = []; while (i < to) {let v; v = from[i]; into.push(v); i++;}; into;"
+        "array from a short b":       "let from, to, i, into; from = a || []; to = from.length - b; i = 0; into = []; while (i < to) {let v; v = from[i]; into.push(v); i++;}; into;"
+        "array a short 1 by -1":      "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 1) {let v; v = from[i]; into.push(v); i--;}; into;"
+        "array a short b by -1":      "let from, to, i, into; from = a || []; to = b; i = from.length - 1; into = []; while (i >= to) {let v; v = from[i]; into.push(v); i--;}; into;"
 
     til:
       each:
-        "each til 10":            "let i; i = 0; while (i < 10) {let v = i; v; i++;}; 10;"
-        "each a til 10":          "let i; i = 0; while (i < 10) {let a = i; a; i++;}; 10;"
-        "each til 10 with 1":     "let i; i = 0; while (i < 10) {let v = i; 1; i++;}; 10;"
-        "each to 10":             "let i; i = 0; while (i <= 10) {let v = i; v; i++;}; 10;"
         "each a by c":            null # "let from, i, into; from = a || []; i = from.length - 1; into = []; while (i >= 0) {let v = from[i]; into.push(v); i--;}; into;"
-        "each from a to b by c":  "let to, i, by; to = b; i = a; by = c; while (by > 0 && i <= to || by < 0 && i >= to) {let v = i; v; i += by;}; to;"
-        "each to 10 by -1":       "let i; i = 0; while (i >= 10) {let v = i; v; i--;}; 10;"
+        "each til 10":            "let i; i = 0; while (i < 10) {let v; v = i; v; i++;}; 10;"
+        "each a til 10":          "let i; i = 0; while (i < 10) {let a; a = i; a; i++;}; 10;"
+        "each til 10 with 1":     "let i; i = 0; while (i < 10) {let v; v = i; 1; i++;}; 10;"
+        "each to 10":             "let i; i = 0; while (i <= 10) {let v; v = i; v; i++;}; 10;"
+        "each from a to b by c":  "let to, i, by; to = b; i = a; by = c; while (by > 0 && i <= to || by < 0 && i >= to) {let v; v = i; v; i += by;}; to;"
+        "each to 10 by -1":       "let i; i = 0; while (i >= 10) {let v; v = i; v; i--;}; 10;"
         "each to 10 by 0":        "let i; i = 0; 10;"
 
-        "each from 2 til 10":     "let i; i = 2; while (i < 10) {let v = i; v; i++;}; 10;"
-        "each from 10 til 2":     "let i; i = 10; while (i > 2) {let v = i; v; i--;}; 2;"
-        "each til 10 by 2":       "let i; i = 0; while (i < 10) {let v = i; v; i += 2;}; 10;"
+        "each from 2 til 10":     "let i; i = 2; while (i < 10) {let v; v = i; v; i++;}; 10;"
+        "each from 10 til 2":     "let i; i = 10; while (i > 2) {let v; v = i; v; i--;}; 2;"
+        "each til 10 by 2":       "let i; i = 0; while (i < 10) {let v; v = i; v; i += 2;}; 10;"
 
       array:
-        "array til 10":           "let i, into; i = 0; into = []; while (i < 10) {let v = i; into.push(v); i++;}; into;"
-        "array til 10 with 1":    "let i, into; i = 0; into = []; while (i < 10) {let v = i; into.push(1); i++;}; into;"
-        "array to 1 by .25":      "let i, into; i = 0; into = []; while (i <= 1) {let v = i; into.push(v); i += 0.25;}; into;"
+        "array til 10":           "let i, into; i = 0; into = []; while (i < 10) {let v; v = i; into.push(v); i++;}; into;"
+        "array til 10 with 1":    "let i, into; i = 0; into = []; while (i < 10) {let v; v = i; into.push(1); i++;}; into;"
+        "array to 1 by .25":      "let i, into; i = 0; into = []; while (i <= 1) {let v; v = i; into.push(v); i += 0.25;}; into;"
 
-        "array a til 10 when a %% 2 == 0":      "let i, into; i = 0; into = []; while (i < 10) {let a = i; if (Caf.mod(a, 2) === 0) {into.push(a);}; i++;}; into;"
-        "array myV, myK til 10 with myV * myK": "let i, into; i = 0; into = []; while (i < 10) {let myV = i, myK = i; into.push(myV * myK); i++;}; into;"
+        "array a til 10 when a %% 2 == 0":      "let i, into; i = 0; into = []; while (i < 10) {let a; a = i; if (Caf.mod(a, 2) === 0) {into.push(a);}; i++;}; into;"
+        "array myV, myK til 10 with myV * myK": "let i, into; i = 0; into = []; while (i < 10) {let myV, myK; myV = i; myK = i; into.push(myV * myK); i++;}; into;"
 
       object:
-        "object til 10": "let i, into; i = 0; into = {}; while (i < 10) {let v = i; into[v] = v; i++;}; into;"
+        "object til 10": "let i, into; i = 0; into = {}; while (i < 10) {let v; v = i; into[v] = v; i++;}; into;"
 
       find:
-        "find v til 10 when v > 4": "let i, into; i = 0; into = null; while (i < 10) {let v = i; if (v > 4) {into = v; break;}; i++;}; into;"
+        "find v til 10 when v > 4": "let i, into; i = 0; into = null; while (i < 10) {let v; v = i; if (v > 4) {into = v; break;}; i++;}; into;"
 
       regressions:
         """
         import a
         array i til 10
-        """: "(() => {let i1, into; return (i1 = 0, into = [], (() => {while (i1 < 10) {let i = i1; into.push(i); i1++;};})(), into);})();"
+        """: "(() => {let i1, into; return (i1 = 0, into = [], (() => {while (i1 < 10) {let i; i = i1; into.push(i); i1++;};})(), into);})();"
 
       nameCollisions:
         """
         array i til 10
-        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i = i1; into.push(i); i1++;}; into;"
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i; i = i1; into.push(i); i1++;}; into;"
 
         """
         array j til 10
           i = j
-        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let j = i1, i; into.push(i = j); i1++;}; into;"
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let j, i; j = i1; into.push(i = j); i1++;}; into;"
 
         """
         array i til 10  # thisone
           a = i
-        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i = i1, a; into.push(a = i); i1++;}; into;"
+        """: "let i1, into; i1 = 0; into = []; while (i1 < 10) {let i, a; i = i1; into.push(a = i); i1++;}; into;"
 
   multipleArgs:
     """
