@@ -127,7 +127,7 @@ Caf.defMod(module, () => {
           interpolation: [
             "interpolationStart interpolationEnd expression:toEolAndBlock",
             "interpolationStart _OrEnd interpolationEnd",
-            "interpolationStart expression:root interpolationEnd",
+            "interpolationStart _? expression:root interpolationEnd",
             "interpolationStart expression:block end? interpolationEnd"
           ]
         });

@@ -415,6 +415,9 @@ module.exports = suite: parseTestSuite
       '"before#{@foo + bar}after"':      '`before${Caf.toString(this.foo + bar)}after`;'
       '"before#{foo}middle#{bar}after"': '`before${Caf.toString(foo)}middle${Caf.toString(bar)}after`;'
 
+    whitespace:
+      '"#{ foo}"':                        '`${Caf.toString(foo)}`;'
+      '"#{foo }"':                        '`${Caf.toString(foo)}`;'
     # block:
     #   """
     #   "hi\#{
