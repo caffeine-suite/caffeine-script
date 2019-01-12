@@ -49,6 +49,18 @@ module.exports = suite: parseTestSuite
     mixed:
       "1 2 if bar": "if (bar) {[1, 2];};"
 
+  withObjects:
+    "{a: 1}, {b: 2}": "[{a: 1}, {b: 2}];"
+    "{a: 1} {b: 2}":  "[{a: 1}, {b: 2}];"
+    "{a: 1} b: 2":    "[{a: 1}, {b: 2}];"
+    "a: 1 {b: 2}":    "({a: [1, {b: 2}]});" # this is correctly and object, not an implicit array
+
+  withExplicitSubArrays:
+    "[1], [2]": "[[1], [2]];"
+    "[1] [2]":  "[[1], [2]];"
+    "[1] [] 2": "[[1], [2]];"
+    "1 [2]":    "[1, [2]];"
+
   matchless:
     "[] 1"    : "[1];"
     "[] 1, 2" : "[1, 2];"

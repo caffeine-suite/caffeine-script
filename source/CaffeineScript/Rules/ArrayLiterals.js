@@ -18,6 +18,11 @@ Caf.defMod(module, () => {
               stnFactory: "ArrayStn",
               stnProps: { implicitArray: true }
             }
+          ],
+          implicitArrayWithoutImplicitObjects: [
+            "start:expression _comma_ simpleValueListWithoutImplicitObjects",
+            "start:literal _ simpleValueListWithoutImplicitObjects",
+            { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ]
         },
         { stnFactory: "ArrayStn" }

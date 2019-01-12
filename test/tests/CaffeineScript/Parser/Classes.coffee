@@ -159,6 +159,7 @@ module.exports = suite: parseTestSuite
     # We need a better way of handling class-defs so this compiles and
     # makes sense. Basically, the constructor function needs to be in the
     # same scope as the class-body:
+    # 2019: Can we solve this by making the inner function NOT a scope?
     """
     class Foo
       b = []

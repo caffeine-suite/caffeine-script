@@ -65,3 +65,29 @@ module.exports = suite: parseTestSuite
       """: "({length: Caf.array(a, null, (v) => a > 10).length});"
 
       "{abc.def 123}": "({def: abc.def(123)});"
+
+
+    mixed:
+      """
+      {}
+        a, b
+        c
+      """: "({a, b, c});"
+
+    mixed:
+      """
+      {}
+        a: b, c
+        c
+      """: "({a: [b, c], c});"
+
+      """
+      {}
+        a: b, c, c: 4
+      """: "({a: [b, c], c: 4});"
+
+      """
+      {}
+        a: b, c, c: 4
+        d
+      """: "({a: [b, c], c: 4, d});"

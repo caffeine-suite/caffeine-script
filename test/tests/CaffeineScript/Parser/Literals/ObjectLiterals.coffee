@@ -118,23 +118,79 @@ module.exports = suite: parseTestSuite
       "{'hi mom':1}": '({"hi mom": 1});'
       "'hi mom':1":   '({"hi mom": 1});'
 
-  toEol:
-    "{} a:1"       : "({a: 1});"
-    "{} a:1, b:2"  : "({a: 1, b: 2});"
+  explicit:
+    toEol:
+      "{} a:1"       : "({a: 1});"
+      "{} a:1, 2"    : "({a: [1, 2]});"
+      "{} a:1, b:2"  : "({a: 1, b: 2});"
 
-  toEolNesting:
-    "{} a: {} b:2"      : "({a: {b: 2}});"
-    "{} a:\n {} b:2"    : "({a: {b: 2}});"
-    "{} a:\n {}\n b:2"  : "({a: [{}, {b: 2}]});"
+    toEolNesting:
+      "{} a: {} b:2"      : "({a: {b: 2}});"
+      "{} a:\n {} b:2"    : "({a: {b: 2}});"
+      "{} a:\n {}\n b:2"  : "({a: [{}, {b: 2}]});"
 
-  explicitBlock:
-    "{}\n a:1"        : "({a: 1});"
-    "{}\n a:1\n b:2"  : "({a: 1, b: 2});"
-    """
-    {}
-      # comment on first line
-      a: 1
-    """: "({a: 1});"
+    block:
+      "{}\n a:1"        : "({a: 1});"
+      "{}\n a:1\n b:2"  : "({a: 1, b: 2});"
+      """
+      {}
+        # comment on first line
+        a: 1
+      """: "({a: 1});"
+
+      """
+      {}
+        a: 1
+        # comment on last line
+      """: "({a: 1});"
+
+    mixed:
+      basic:
+        """
+        {}
+          a: 1, b: 2
+          c: 3
+        """: "({a: 1, b: 2, c: 3});"
+        """
+        {}
+          a: 1, b: 2,
+          c: 3
+        """: "({a: 1, b: 2, c: 3});"
+
+        """
+        {}
+          a: 1
+          b: 2, c: 3
+        """: "({a: 1, b: 2, c: 3});"
+
+
+      withImplicitArrays:
+        """
+        {}
+          a: 1, 2
+          c: 3
+        """: "({a: [1, 2], c: 3});"
+
+        """
+        {}
+          a: 1, 2,
+          c: 3
+        """: "({a: [1, 2], c: 3});"
+
+        """
+        {}
+          a: 1, 2, c: 3
+        """: "({a: [1, 2], c: 3});"
+
+        """
+        {}
+          a: 2 c: 3
+        """: "({a: 2, c: 3});"
+
+        """
+        {}
+          a: 1 2 c: 3
+        """: "({a: [1, 2], c: 3});"
 
   implicit:
     basic:
@@ -184,6 +240,18 @@ module.exports = suite: parseTestSuite
       a: b: 1
       """: '({c: 2, a: {b: 1}});'
 
+    withImplicitArrays:
+      "d: 5, 6": "({d: [5, 6]});"
+      "d: 5 6":  "({d: [5, 6]});"
+
+      """
+      a: :shut :the :frell :up
+      b: :dude :this :== :cool
+      """: '({a: ["shut", "the", "frell", "up"], b: ["dude", "this", "==", "cool"]});'
+
+      "a: 1, 2, b: 3":  "({a: [1, 2], b: 3});"
+      "a: 1 2 b: 3":  "({a: [1, 2], b: 3});"
+
 
   withExplicitArrays:
     "a: []":      "({a: []});"
@@ -199,14 +267,6 @@ module.exports = suite: parseTestSuite
     "d: 1 + 2": "({d: 1 + 2});"
     "d: a b":   "({d: a(b)});"
 
-  withImplicitArrays:
-    "d: 5, 6": "({d: [5, 6]});"
-    "d: 5 6":  "({d: [5, 6]});"
-
-    """
-    a: :shut :the :frell :up
-    b: :dude :this :== :cool
-    """: '({a: ["shut", "the", "frell", "up"], b: ["dude", "this", "==", "cool"]});'
 
   # this == a narrow feature we don't need yet
   # withDiplicatPropNames:

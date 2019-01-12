@@ -37,8 +37,18 @@ Caf.defMod(module, () => {
             "literal",
             "super"
           ],
+          simpleInvocableValue: [
+            "require",
+            "tagMacro",
+            "globalIdentifier",
+            "this",
+            "super",
+            "thisProperty",
+            "identifierReference"
+          ],
           functionInvocation: [
-            "simpleValue extendedFunctionInvocationExtension+",
+            "simpleInvocableValue extendedFunctionInvocationExtension+",
+            "literal accessorExtension extendedFunctionInvocationExtension+",
             "parentheticalExpression extendedFunctionInvocationExtension+"
           ],
           extendedFunctionInvocationExtension:
@@ -121,6 +131,10 @@ Caf.defMod(module, () => {
         return this.rule({
           requiredValue: [
             "_? _end? implicitArrayOrExpression",
+            "/ */ comment? rValueBlock"
+          ],
+          singleValueOrImplicitArrayWithoutImplicitObjects: [
+            "_? _end? implicitArrayWithoutImplicitObjectsOrExpression",
             "/ */ comment? rValueBlock"
           ],
           rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({

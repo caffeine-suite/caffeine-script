@@ -121,8 +121,18 @@ import &StandardImport, &CaffeineEight
       :literal
       :super
 
+    simpleInvocableValue:
+      :require
+      :tagMacro
+      :globalIdentifier
+      :this
+      :super
+      :thisProperty
+      :identifierReference
+
     functionInvocation:
-      "" simpleValue extendedFunctionInvocationExtension+
+      "" simpleInvocableValue extendedFunctionInvocationExtension+
+      "" literal accessorExtension extendedFunctionInvocationExtension+
       "" parentheticalExpression extendedFunctionInvocationExtension+
 
     extendedFunctionInvocationExtension:
@@ -193,6 +203,10 @@ import &StandardImport, &CaffeineEight
   @rule
     requiredValue:
       "" _? _end? implicitArrayOrExpression
+      "" / */ comment? rValueBlock
+
+    singleValueOrImplicitArrayWithoutImplicitObjects:
+      "" _? _end? implicitArrayWithoutImplicitObjectsOrExpression
       "" / */ comment? rValueBlock
 
     rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock rule: :rValueBlockSubParse

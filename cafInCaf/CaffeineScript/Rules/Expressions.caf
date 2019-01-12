@@ -12,6 +12,10 @@ upToButNotEol = /[^\n]*/y
       :implicitArray
       :expression
 
+    implicitArrayWithoutImplicitObjectsOrExpression:
+      :implicitArrayWithoutImplicitObjects
+      :expression
+
     expression:
       :binOpExpression
       :unaryOpExpression

@@ -33,6 +33,13 @@ module.exports = suite: parseTestSuite
     baseExtraction:
       "a.foo.bar?(b)":  "let base; Caf.isF((base = a.foo).bar) && base.bar(b);"
 
+  implicitObjects:
+    "foo a: 1, b: 2":     "foo({a: 1, b: 2});"
+    "foo a: 1, 2":        "foo({a: [1, 2]});"
+    "foo 1, a: 1, 2":     "foo(1, {a: [1, 2]});"
+    "foo a: 1, 2, b: 2":  "foo({a: [1, 2], b: 2});"
+    "foo a: 1 2 b: 2":    "foo({a: [1, 2], b: 2});"
+
   block:
     basic:
       """
@@ -65,6 +72,9 @@ module.exports = suite: parseTestSuite
       a: 1,
       b: 2
       """: "foo(bar, {a: 1, b: 2});"
+
+      "/foo/.b c":      "/foo/.b(c);"
+      "'foo'.match c":  '("foo").match(c);'
 
     # This == failing now, rather than generating bad code.
     # That's OK! We could decide to support it later.

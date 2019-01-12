@@ -38,14 +38,10 @@ Caf.defMod(module, () => {
                 ],
                 bracketedObject:
                   "openCurly_ props:explicitPropertyList _closeCurly",
-                multilineImplicitObject: {
-                  pattern:
-                    "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
-                },
-                multilineExplicitObject: {
-                  pattern:
-                    '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
-                }
+                multilineImplicitObject:
+                  "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+",
+                multilineExplicitObject:
+                  "explicitObjectLine multilineExplicitObjectExtension+"
               },
               {
                 getStn: function() {
@@ -58,32 +54,35 @@ Caf.defMod(module, () => {
               }
             );
             this.rule({
+              explicitObjectLine: [
+                "oneLineExplicitObject",
+                "!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression"
+              ],
               multilineImplicitObjectExtension:
                 "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
-              multilineExplicitObjectExtension:
-                "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
+              multilineExplicitObjectExtension: "end+ explicitObjectLine",
               implicitObjectWithTwoOrMorePropsOnOneLine: [
                 "literalProp _ propertyList",
                 "valueProp _comma_ propertyList"
               ],
               explicitPropertyList: [
-                "valueProp _comma_ explicitPropertyList",
-                "literalProp _ explicitPropertyList",
-                "structurableProp _comma_ explicitPropertyList",
+                "valueProp optionalComma explicitPropertyList",
+                "structurableProp _comma_? explicitPropertyList",
                 "explicitValuePropWithComplexExpression"
               ],
               propertyList: [
-                "valueProp _comma_ propertyList",
-                "literalProp _ propertyList",
+                "valueProp optionalComma propertyList",
                 "valuePropWithComplexExpression"
-              ]
+              ],
+              implicitObjectStart: "propName _colon_"
             });
             this.rule(
               {
                 literalProp: "propName _colon_ propValue:literal",
-                valueProp: "propName _colon_ propValue:expression",
+                valueProp:
+                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects",
                 valuePropWithComplexExpression:
-                  "propName _colon_ propValue:requiredValue"
+                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
               },
               {
                 name: "literalObjectProperty",

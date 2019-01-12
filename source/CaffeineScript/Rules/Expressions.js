@@ -18,6 +18,10 @@ Caf.defMod(module, () => {
         this.rule({
           lineStartExpression: "multilineImplicitObject",
           implicitArrayOrExpression: ["implicitArray", "expression"],
+          implicitArrayWithoutImplicitObjectsOrExpression: [
+            "implicitArrayWithoutImplicitObjects",
+            "expression"
+          ],
           expression: [
             "binOpExpression",
             "unaryOpExpression",
