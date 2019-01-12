@@ -5,6 +5,10 @@ import &StandardImport
     _:            "" / +/ comment?
     end:          :lineEndComment
 
+    _OrEnd:
+      :_
+      :end
+
     comment:
       {} pattern: "/##[^\n]*/ unparsedBlock*"
       {} pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/
@@ -15,22 +19,23 @@ import &StandardImport
         end-of-buffer     ($)
         semi-column       ";"
         close-parenthesis ")"
+        close-curly       "}"
 
       NOTE:   A close-parenthesis can be considered an 'end'
       WHY?    It's needed to make this parse: (-> 1)
               Without it, the "1" wouldn't be a statement.
-      NOTE:   The close-paren is not 'consumed' by this regexp.
+      NOTE:   close-parens, close-curlies are not 'consumed' by this regexp
 
     _end:
       ///
         (\ * (\n | ;\ * | $) )+
         |
-        (\ * (?=\)))
+        (\ * (?=[\)}]))
 
     lineStartComment: "comment _end" "_end"
     lineEndComment:   "_? comment? _end lineStartComment*"
 
-    # commenting this out breacks compiling: LiteralStrings.caf
+    # commenting this out breaks compiling: LiteralStrings.caf
     {} getPresent: ~> false
 
     onlyCommentsRemain: "lineEndComment /$/"

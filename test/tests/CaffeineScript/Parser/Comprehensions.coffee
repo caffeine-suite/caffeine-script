@@ -247,6 +247,12 @@ module.exports = suite: parseTestSuite
             {let myValue, myKey; myValue = from[i]; myKey = i; into[myKey + \"1\"] = myValue; i++;};
             into;"
 
+      regressions:
+        """
+        ->
+          array x1 to 1
+          -> x1 = 1
+        """: "(function() {let i, into; i = 0; into = []; while (i <= 1) {let x1; x1 = i; into.push(x1); i++;}; into; return () => {let x1; return x1 = 1;};});"
     forcedFromArray:
       by:
         "array from a by 2": "let from, to, i, into; from = a || []; to = from.length; i = 0; into = []; while (i < to) {let v; v = from[i]; into.push(v); i += 2;}; into;"

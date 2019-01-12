@@ -7,11 +7,12 @@ Caf.defMod(module, () => {
         {
           _: "/ +/ comment?",
           end: "lineEndComment",
+          _OrEnd: ["_", "end"],
           comment: [
             { pattern: "/##[^\n]*/ unparsedBlock*" },
             { pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/ }
           ],
-          _end: /( *(\n|; *|$))+|( *(?=\)))/,
+          _end: /( *(\n|; *|$))+|( *(?=[\)}]))/,
           lineStartComment: ["comment _end", "_end"],
           lineEndComment: "_? comment? _end lineStartComment*"
         },

@@ -97,9 +97,14 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
         ret
 
   @rule
+    ##
+      interpolation body should be statements with the last (or only) one
+      optionally ending with a could-match-"}" instead of the normal 'end'
     interpolation:
-      "interpolationStart expression interpolationEnd"
-      "interpolationStart expression:requiredValue _end? interpolationEnd"
+      "interpolationStart interpolationEnd expression:toEolAndBlock"
+      "interpolationStart _OrEnd interpolationEnd"
+      "interpolationStart expression:root interpolationEnd"
+      "interpolationStart expression:block end? interpolationEnd"
 
   @rule
     dqStringInterpolation:    "interpolation mid:dqStringMiddle interpolationContinues:dqStringInterpolation?"
@@ -107,7 +112,8 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
     blockStringInterpolation: "interpolation mid:blockStringMiddle interpolationContinues:blockStringInterpolation?"
     {}
       getStnChildren: (appendTo = [])~>
-        appendTo.push @interpolation.expression.getStn()
+        if @interpolation extract expression
+          appendTo.push expression.getStn()
         appendTo.push StringStn parseTreeNode: @, value: @mid.toString() if @mid.matchLength > 0
         @interpolationContinues?.getStnChildren appendTo
         appendTo

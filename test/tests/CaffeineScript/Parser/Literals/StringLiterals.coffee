@@ -45,6 +45,7 @@ module.exports = suite: parseTestSuite
       "'\#{a b}'":    "`${Caf.toString(a(b))}`;"
       "'a\#{a b}b'":  "`a${Caf.toString(a(b))}b`;"
 
+
   unquotedStrings:
     wordStrings:
       ":hi":        '"hi";'
@@ -414,16 +415,141 @@ module.exports = suite: parseTestSuite
       '"before#{@foo + bar}after"':      '`before${Caf.toString(this.foo + bar)}after`;'
       '"before#{foo}middle#{bar}after"': '`before${Caf.toString(foo)}middle${Caf.toString(bar)}after`;'
 
-    block:
-      """
-      "hi\#{
-        1
-      }there"
-      """: "`hi${Caf.toString(1)}there`;"
-      """
-      "hi\#{
-        1
-        2
-      }there"
-      """: "`hi${Caf.toString([1, 2])}there`;"
+    # block:
+    #   """
+    #   "hi\#{
+    #     1
+    #   }there"
+    #   """: "`hi${Caf.toString(1)}there`;"
+    #   """
+    #   "hi\#{
+    #     1
+    #     2
+    #   }there"
+    #   """: "`hi${Caf.toString([1, 2])}there`;"
 
+
+    lineBreaks:
+      '"before\#{\na\n}after"': "`before${Caf.toString(a)}after`;"
+      '"before\#{\na}after"': "`before${Caf.toString(a)}after`;"
+      '"before\#{a\n}after"': "`before${Caf.toString(a)}after`;"
+
+    comments:
+      """
+      "before\#{
+      # comment
+      1 + 2
+      }after"
+      """: "`before${Caf.toString(1 + 2)}after`;"
+
+    empty:
+      '"before\#{ }after"': "`beforeafter`;"
+
+      """
+      "before\#{
+      # comment
+      }after"
+      """: "`beforeafter`;"
+
+    multiline:
+      """
+      "before\#{
+      1
+      2
+      }after"
+      """: "`before${Caf.toString((1, 2))}after`;"
+
+      """
+      "before\#{a
+      b
+      }after"
+      """: "`before${Caf.toString((a, b))}after`;"
+
+      """
+      "before\#{a
+        b
+      }after"
+      """: "`before${Caf.toString(a(b))}after`;"
+
+    block:
+      indented:
+        """
+        "before\#{}
+          1
+        after"
+        """: "`before${Caf.toString(1)} after`;"
+
+        """
+        "before\#{}
+          a
+          b
+        after"
+        """: "`before${Caf.toString((a, b))} after`;"
+
+
+        """
+        "before\#{}
+          a
+          b
+
+        after"
+        """: "`before${Caf.toString((a, b))} after`;"
+
+        """
+        "before\#{}
+          a
+          b
+
+
+        after"
+        """: "`before${Caf.toString((a, b))} after`;"
+
+        """
+        "before\#{} a
+          b
+
+        after"
+        """: "`before${Caf.toString(a(b))} after`;"
+
+        """
+        ""
+          before\#{}
+            a
+            b
+
+          after
+        """: "`before${Caf.toString((a, b))} after`;"
+
+        '''
+        """
+          before\#{}
+            a
+            b
+          after
+        ''': "`before${Caf.toString((a, b))}\\nafter`;"
+
+        '''
+        """
+          before\#{}
+            a
+            b
+
+          after
+        ''': "`before${Caf.toString((a, b))}\\n\\nafter`;"
+
+      toEol:
+        '"before\#{} 1\nafter"': "`before${Caf.toString(1)} after`;"
+        '"" before\#{} 1': "`before${Caf.toString(1)}`;"
+      matched:
+        """
+        "before\#{
+          a
+          b
+        }after"
+        """: "`before${Caf.toString((a, b))}after`;"
+
+    # empty:
+    #   '"Hi \\\#{}."': "`Hi \#{}.`;"
+    #   '"Hi #{}."': "`Hi .`;"
+      # '"Hi #{  }."': "Hi ."
+      # '"Hi #{;}."': "Hi ."

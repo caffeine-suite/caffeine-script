@@ -125,8 +125,10 @@ Caf.defMod(module, () => {
         );
         this.rule({
           interpolation: [
-            "interpolationStart expression interpolationEnd",
-            "interpolationStart expression:requiredValue _end? interpolationEnd"
+            "interpolationStart interpolationEnd expression:toEolAndBlock",
+            "interpolationStart _OrEnd interpolationEnd",
+            "interpolationStart expression:root interpolationEnd",
+            "interpolationStart expression:block end? interpolationEnd"
           ]
         });
         return this.rule(
@@ -140,8 +142,10 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let base;
-              appendTo.push(this.interpolation.expression.getStn());
+              let expression, base;
+              if ((expression = this.interpolation.expression)) {
+                appendTo.push(expression.getStn());
+              }
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })

@@ -211,17 +211,6 @@ App extends FluxComponent
 # WRONG COMPILE
 
 ```coffeescript
-# bad scoping
-
-array a til b with c = a
-# 'c' should be scoped within the loop, not outside of it
-
-while a do b = a
-# in fact, this is the problem; b should also be scoped within the loop
-
-```
-
-```coffeescript
 (a || b)
   c
 
@@ -238,27 +227,6 @@ object v, k in a: 1 b: 2 with-key lowerCamelCase k.replace /^posterText/, ''
 
 ```
 ---
-
-```coffeescript
-->
-  array x1 to 1
-  -> x1 = 1
-```
-
-The second function should also
-have a `"let x1;"` since it is a peer of `array`.
-
----
-
-```coffeescript
-each step from 2 to 6
-  myRad = 2 ** step
-```
-
-myRad should be "let" inside the loop, not outside.
-
----
-
 
 ```coffeescript
 # THIS:
@@ -338,3 +306,9 @@ rect a.left, a.top, a.w/2, a.h/2
   123
 ```
 
+# Improved Parse Errors
+
+```
+# should show <here> right before &&&, not at start of line
+"before#{&&&}after"
+```
