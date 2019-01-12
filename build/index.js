@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.66.6"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.67.1"};
 
 /***/ }),
 /* 5 */
@@ -7298,11 +7298,12 @@ Caf.defMod(module, () => {
         {
           _: "/ +/ comment?",
           end: "lineEndComment",
+          _OrEnd: ["_", "end"],
           comment: [
             { pattern: "/##[^\n]*/ unparsedBlock*" },
             { pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/ }
           ],
-          _end: /( *(\n|; *|$))+|( *(?=\)))/,
+          _end: /( *(\n|; *|$))+|( *(?=[\)}]))/,
           lineStartComment: ["comment _end", "_end"],
           lineEndComment: "_? comment? _end lineStartComment*"
         },
@@ -8588,8 +8589,10 @@ Caf.defMod(module, () => {
         );
         this.rule({
           interpolation: [
-            "interpolationStart expression interpolationEnd",
-            "interpolationStart expression:requiredValue _end? interpolationEnd"
+            "interpolationStart interpolationEnd expression:toEolAndBlock",
+            "interpolationStart _OrEnd interpolationEnd",
+            "interpolationStart _? expression:root interpolationEnd",
+            "interpolationStart expression:block end? interpolationEnd"
           ]
         });
         return this.rule(
@@ -8603,8 +8606,10 @@ Caf.defMod(module, () => {
           },
           {
             getStnChildren: function(appendTo = []) {
-              let base;
-              appendTo.push(this.interpolation.expression.getStn());
+              let expression, base;
+              if ((expression = this.interpolation.expression)) {
+                appendTo.push(expression.getStn());
+              }
               if (this.mid.matchLength > 0) {
                 appendTo.push(
                   StringStn({ parseTreeNode: this, value: this.mid.toString() })
