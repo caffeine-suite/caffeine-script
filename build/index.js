@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.2"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.4"};
 
 /***/ }),
 /* 5 */
@@ -7447,8 +7447,9 @@ Caf.defMod(module, () => {
         ],
         switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
         switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
-          rule: "switchBody"
+          rule: "switchBodyBlockRule"
         }),
+        switchBodyBlockRule: ":switchBody end?",
         switchWhenClause: [
           "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
           "end? when _ whenValue:implicitArrayOrExpression  thenDo:thenClause",
@@ -8081,8 +8082,8 @@ Caf.defMod(module, () => {
             return this.rule(
               {
                 propName: [
-                  "!/then\\s/ str:identifier &_colon_",
-                  "!/then\\s/ str:unquotedString &/:/",
+                  "!regExpLiteral !/then\\s/ str:identifier &_colon_",
+                  "!regExpLiteral !/then\\s/ str:unquotedString &/:/",
                   "quotedString:stringLiteral &stringLiteralPropNameTail"
                 ]
               },
@@ -8407,7 +8408,7 @@ Caf.defMod(module, () => {
           "statementWithoutEnd"
         ],
         statementWithoutEnd: [
-          "implicitArrayOrExpression !tailControlOperator",
+          "implicitArrayOrExpression !tailControlOperator _? comment?",
           {
             pattern:
               "implicitArrayOrExpression tailControlOperatorComplexExpression+",
@@ -8522,6 +8523,12 @@ Caf.defMod(module, () => {
                   ret.compactNewLines();
                 }
                 return ret;
+              }
+            },
+            {
+              pattern: "/\"\"\"|'''/",
+              getStn: function() {
+                return StringStn({ parseTreeNode: this, value: "" });
               }
             },
             {
