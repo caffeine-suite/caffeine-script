@@ -45,8 +45,8 @@ class BinaryOperatorStn extends &BaseStn
       parentOperatorPrecidence = getOpPrecidence @operator
       binaryOperatorToSourceNodeArray
         @operator
-        @left.toSourceNode  merge commonSubToSourceNodeProps, {} subExpression: true isLeftOperand: true  parentOperatorPrecidence
-        @right.toSourceNode merge commonSubToSourceNodeProps, {} subExpression: true isLeftOperand: false parentOperatorPrecidence
+        @left.toSourceNode  merge commonSubToSourceNodeProps, {} parentOperatorPrecidence, subExpression: true isLeftOperand: true
+        @right.toSourceNode merge commonSubToSourceNodeProps, {} parentOperatorPrecidence, subExpression: true isLeftOperand: false
         @left
 
     if options && @_needsParens options

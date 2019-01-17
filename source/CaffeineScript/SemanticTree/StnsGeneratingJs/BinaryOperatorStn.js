@@ -82,16 +82,16 @@ Caf.defMod(module, () => {
                     this.operator,
                     this.left.toSourceNode(
                       merge(commonSubToSourceNodeProps, {
+                        parentOperatorPrecidence,
                         subExpression: true,
-                        isLeftOperand: true,
-                        parentOperatorPrecidence
+                        isLeftOperand: true
                       })
                     ),
                     this.right.toSourceNode(
                       merge(commonSubToSourceNodeProps, {
+                        parentOperatorPrecidence,
                         subExpression: true,
-                        isLeftOperand: false,
-                        parentOperatorPrecidence
+                        isLeftOperand: false
                       })
                     ),
                     this.left
