@@ -133,9 +133,11 @@ foo (a)->
   .bar
 ```
 
-Above one is super tricky! The function def correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happilly accepts it. It actaully could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
+Above one is super tricky! The function def correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happily accepts it. It actually could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
 
-NOTE: It isn't just dot-line-starts. This also failes fore operator-line-starts.
+I think we need "match-block-or-no-block" to solve this.
+
+NOTE: It isn't just dot-line-starts. This also fails fore operator-line-starts.
 
 ---
 ```coffeescript
