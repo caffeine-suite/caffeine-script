@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.1"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.2"};
 
 /***/ }),
 /* 5 */
@@ -7154,21 +7154,15 @@ Caf.defMod(module, () => {
       return this.rule(
         {
           array: ["'[]' _? valueList", "'[]'"],
-          brackedArray: "openBracket_ valueList _comma_? _closeBracket",
+          brackedArray:
+            "openBracket_ valueList _comma_optionalNewLine? _closeBracket",
           implicitArray: [
-            {
-              pattern: "start:expression _comma_ simpleValueList _comma_?",
-              stnFactory: "ArrayStn",
-              stnProps: { implicitArray: true }
-            },
-            {
-              pattern: "start:literal _ simpleValueList _comma_?",
-              stnFactory: "ArrayStn",
-              stnProps: { implicitArray: true }
-            }
+            "start:expression optionalComma simpleValueList _comma_?",
+            "start:literal _ simpleValueList _comma_?",
+            { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ],
           implicitArrayWithoutImplicitObjects: [
-            "start:expression _comma_ simpleValueListWithoutImplicitObjects",
+            "start:expression optionalComma simpleValueListWithoutImplicitObjects",
             "start:literal _ simpleValueListWithoutImplicitObjects",
             { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ]
@@ -7196,7 +7190,10 @@ Caf.defMod(module, () => {
   return (() => {
     return function() {
       return this.rule(
-        { assignmentExtension: "_? assignmentOperator requiredValue" },
+        {
+          assignmentExtension:
+            "_? assignmentOperator singleValueOrImplicitArray"
+        },
         {
           stnFactory: "AssignmentStn",
           stnExtension: true,
@@ -7370,7 +7367,7 @@ Caf.defMod(module, () => {
         { stnFactory: "FunctionDefinitionArgsStn" }
       );
       this.rule({
-        optionalArg: "_comma_ !withOrDo argDef",
+        optionalArg: "_comma_optionalNewLine !withOrDo argDef",
         comprehensionIterationTypeClause_: "comprehensionIterationType _?",
         unlabeledFromClause: "keywordLabeledStatementsWithOneLessBlock",
         comprehensionBody: "block"
@@ -7493,7 +7490,7 @@ Caf.defMod(module, () => {
       this.rule(
         {
           destructuringAssignment:
-            "structure:destructuringTarget _? '=' _? value:requiredValue"
+            "structure:destructuringTarget _? '=' _? value:singleValueOrImplicitArray"
         },
         { stnFactory: "DestructuringAssignmentStn" }
       );
@@ -7512,7 +7509,7 @@ Caf.defMod(module, () => {
         arrayDestructuringList: [
           {
             pattern:
-              "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+              "element:arrayDestructuringElement _comma_optionalNewLine arrayDestructuringList"
           },
           { pattern: "element:arrayDestructuringElement" }
         ],
@@ -7525,7 +7522,7 @@ Caf.defMod(module, () => {
         objectDestructuringList: [
           {
             pattern:
-              "element:objectDestructuringElement _comma_ objectDestructuringList"
+              "element:objectDestructuringElement _comma_optionalNewLine objectDestructuringList"
           },
           { pattern: "element:objectDestructuringElement" }
         ],
@@ -7727,7 +7724,7 @@ Caf.defMod(module, () => {
         conditionalExtract: /\?/,
         extractionTarget: "objectExtractionList",
         objectExtractionList: [
-          "extractAction:extractAction _comma_ objectExtractionList",
+          "extractAction:extractAction _comma_optionalNewLine objectExtractionList",
           "extractAction:extractAction"
         ],
         extractAction: ["chainExtract", "extractToIdentifier"],
@@ -7806,7 +7803,7 @@ Caf.defMod(module, () => {
           { stnFactory: "FunctionDefinitionArgsStn" }
         ],
         argDefList: [
-          "argDef _comma_ argDefList",
+          "argDef _comma_optionalNewLine argDefList",
           "argDef _ argDefList",
           "argDef"
         ],
@@ -8017,11 +8014,11 @@ Caf.defMod(module, () => {
               multilineExplicitObjectExtension: "end+ explicitObjectLine",
               implicitObjectWithTwoOrMorePropsOnOneLine: [
                 "literalProp _ propertyList",
-                "valueProp _comma_ propertyList"
+                "valueProp _comma_optionalNewLine propertyList"
               ],
               explicitPropertyList: [
                 "valueProp optionalComma explicitPropertyList",
-                "structurableProp _comma_? explicitPropertyList",
+                "structurableProp _comma_optionalNewLine? explicitPropertyList",
                 "explicitValuePropWithComplexExpression"
               ],
               propertyList: [
@@ -8696,7 +8693,8 @@ Caf.defMod(module, () => {
     this.rule({
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
-      _comma_: /\ *, *\n*/,
+      _comma_: /\ *, */,
+      _comma_optionalNewLine: /\ *, *\n*/,
       optionalComma: /\ *, *\n*|\ */,
       _arrow: /\ *[-~=]>/,
       openParen_: /\( */,
@@ -8762,14 +8760,14 @@ Caf.defMod(module, () => {
         this.rule({
           simpleValueList: [
             "element:listItemExpression optionalComma simpleValueList",
-            "element:listItemExpression _? ',' _? valueListBlock",
+            "element:listItemExpression _comma_ valueListBlock",
             "element:listItemExpression"
           ],
           simpleValueListWithoutImplicitObjects:
             "!implicitObjectStart simpleValueListWithoutImplicitObjectOptions",
           simpleValueListWithoutImplicitObjectOptions: [
             "element:listItemExpression optionalComma simpleValueListWithoutImplicitObjects",
-            "element:listItemExpression _? ',' _? valueListBlock",
+            "element:listItemExpression _comma_ valueListBlock",
             "element:listItemExpression"
           ]
         });
@@ -8782,7 +8780,7 @@ Caf.defMod(module, () => {
             },
             {
               pattern:
-                "lineStartStatementWithoutEnd newLineStatementExtension* end"
+                "lineStartStatementWithoutEnd newLineStatementExtension* _comma_? end"
             }
           ],
           listItemExpression: [
@@ -8940,7 +8938,7 @@ Caf.defMod(module, () => {
           dotOrQuestionDot: /\??\./
         });
         return this.rule({
-          requiredValue: [
+          singleValueOrImplicitArray: [
             "_? _end? implicitArrayOrExpression",
             "/ */ comment? rValueBlock"
           ],
