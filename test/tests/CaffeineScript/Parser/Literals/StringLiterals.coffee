@@ -410,7 +410,10 @@ module.exports = suite: parseTestSuite
       '""':   '"";'
       "''":   '"";'
 
-
+      """
+      ""
+      foo
+      """: '""; foo;'
 
   interpolated:
     basic:

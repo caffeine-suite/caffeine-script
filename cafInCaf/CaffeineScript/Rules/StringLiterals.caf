@@ -19,7 +19,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
   @rule
     stringLiteral:
       {}
-        pattern: "" /""/ tripple:/"/? &/#{blockStringStartChar.source}/ stringBlock?
+        pattern: "" /""/ tripple:/"/? &/#{blockStringStartChar.source}/ stringBlock
         getStn: ~>
           ret = @stringBlock.getStn()
           unless @tripple
@@ -38,7 +38,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
           ret
 
       {}
-        pattern: "" /"""?|'''?/
+        pattern: "" /"""|'''/
         getStn: ~> StringStn parseTreeNode: @, value: ""
 
       ## word-strings

@@ -29,7 +29,7 @@ Caf.defMod(module, () => {
             {
               pattern: `/""/ tripple:/"/? &/${Caf.toString(
                 blockStringStartChar.source
-              )}/ stringBlock?`,
+              )}/ stringBlock`,
               getStn: function() {
                 let ret;
                 ret = this.stringBlock.getStn();
@@ -56,7 +56,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: "/\"\"\"?|'''?/",
+              pattern: "/\"\"\"|'''/",
               getStn: function() {
                 return StringStn({ parseTreeNode: this, value: "" });
               }
