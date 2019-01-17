@@ -170,7 +170,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.67.1"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.1"};
 
 /***/ }),
 /* 5 */
@@ -1870,16 +1870,16 @@ Caf.defMod(module, () => {
                     this.operator,
                     this.left.toSourceNode(
                       merge(commonSubToSourceNodeProps, {
+                        parentOperatorPrecidence,
                         subExpression: true,
-                        isLeftOperand: true,
-                        parentOperatorPrecidence
+                        isLeftOperand: true
                       })
                     ),
                     this.right.toSourceNode(
                       merge(commonSubToSourceNodeProps, {
+                        parentOperatorPrecidence,
                         subExpression: true,
-                        isLeftOperand: false,
-                        parentOperatorPrecidence
+                        isLeftOperand: false
                       })
                     ),
                     this.left
@@ -7166,6 +7166,11 @@ Caf.defMod(module, () => {
               stnFactory: "ArrayStn",
               stnProps: { implicitArray: true }
             }
+          ],
+          implicitArrayWithoutImplicitObjects: [
+            "start:expression _comma_ simpleValueListWithoutImplicitObjects",
+            "start:literal _ simpleValueListWithoutImplicitObjects",
+            { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ]
         },
         { stnFactory: "ArrayStn" }
@@ -7593,6 +7598,10 @@ Caf.defMod(module, () => {
         this.rule({
           lineStartExpression: "multilineImplicitObject",
           implicitArrayOrExpression: ["implicitArray", "expression"],
+          implicitArrayWithoutImplicitObjectsOrExpression: [
+            "implicitArrayWithoutImplicitObjects",
+            "expression"
+          ],
           expression: [
             "binOpExpression",
             "unaryOpExpression",
@@ -7983,14 +7992,10 @@ Caf.defMod(module, () => {
                 ],
                 bracketedObject:
                   "openCurly_ props:explicitPropertyList _closeCurly",
-                multilineImplicitObject: {
-                  pattern:
-                    "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+"
-                },
-                multilineExplicitObject: {
-                  pattern:
-                    '!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression multilineExplicitObjectExtension+"'
-                }
+                multilineImplicitObject:
+                  "!implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression multilineImplicitObjectExtension+",
+                multilineExplicitObject:
+                  "explicitObjectLine multilineExplicitObjectExtension+"
               },
               {
                 getStn: function() {
@@ -8003,32 +8008,35 @@ Caf.defMod(module, () => {
               }
             );
             this.rule({
+              explicitObjectLine: [
+                "oneLineExplicitObject",
+                "!implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression"
+              ],
               multilineImplicitObjectExtension:
                 "end+ !implicitObjectWithTwoOrMorePropsOnOneLine valuePropWithComplexExpression",
-              multilineExplicitObjectExtension:
-                "end+ !implicitObjectWithTwoOrMorePropsOnOneLine explicitValuePropWithComplexExpression",
+              multilineExplicitObjectExtension: "end+ explicitObjectLine",
               implicitObjectWithTwoOrMorePropsOnOneLine: [
                 "literalProp _ propertyList",
                 "valueProp _comma_ propertyList"
               ],
               explicitPropertyList: [
-                "valueProp _comma_ explicitPropertyList",
-                "literalProp _ explicitPropertyList",
-                "structurableProp _comma_ explicitPropertyList",
+                "valueProp optionalComma explicitPropertyList",
+                "structurableProp _comma_? explicitPropertyList",
                 "explicitValuePropWithComplexExpression"
               ],
               propertyList: [
-                "valueProp _comma_ propertyList",
-                "literalProp _ propertyList",
+                "valueProp optionalComma propertyList",
                 "valuePropWithComplexExpression"
-              ]
+              ],
+              implicitObjectStart: "propName _colon_"
             });
             this.rule(
               {
                 literalProp: "propName _colon_ propValue:literal",
-                valueProp: "propName _colon_ propValue:expression",
+                valueProp:
+                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects",
                 valuePropWithComplexExpression:
-                  "propName _colon_ propValue:requiredValue"
+                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
               },
               {
                 name: "literalObjectProperty",
@@ -8689,6 +8697,7 @@ Caf.defMod(module, () => {
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
       _comma_: /\ *, *\n*/,
+      optionalComma: /\ *, *\n*|\ */,
       _arrow: /\ *[-~=]>/,
       openParen_: /\( */,
       _closeParen: /\ *\)/,
@@ -8752,9 +8761,15 @@ Caf.defMod(module, () => {
         });
         this.rule({
           simpleValueList: [
-            "element:listItemExpression _comma_ simpleValueList",
+            "element:listItemExpression optionalComma simpleValueList",
             "element:listItemExpression _? ',' _? valueListBlock",
-            "element:literal _ simpleValueList",
+            "element:listItemExpression"
+          ],
+          simpleValueListWithoutImplicitObjects:
+            "!implicitObjectStart simpleValueListWithoutImplicitObjectOptions",
+          simpleValueListWithoutImplicitObjectOptions: [
+            "element:listItemExpression optionalComma simpleValueListWithoutImplicitObjects",
+            "element:listItemExpression _? ',' _? valueListBlock",
             "element:listItemExpression"
           ]
         });
@@ -8833,8 +8848,18 @@ Caf.defMod(module, () => {
             "literal",
             "super"
           ],
+          simpleInvocableValue: [
+            "require",
+            "tagMacro",
+            "globalIdentifier",
+            "this",
+            "super",
+            "thisProperty",
+            "identifierReference"
+          ],
           functionInvocation: [
-            "simpleValue extendedFunctionInvocationExtension+",
+            "simpleInvocableValue extendedFunctionInvocationExtension+",
+            "literal accessorExtension extendedFunctionInvocationExtension+",
             "parentheticalExpression extendedFunctionInvocationExtension+"
           ],
           extendedFunctionInvocationExtension:
@@ -8917,6 +8942,10 @@ Caf.defMod(module, () => {
         return this.rule({
           requiredValue: [
             "_? _end? implicitArrayOrExpression",
+            "/ */ comment? rValueBlock"
+          ],
+          singleValueOrImplicitArrayWithoutImplicitObjects: [
+            "_? _end? implicitArrayWithoutImplicitObjectsOrExpression",
             "/ */ comment? rValueBlock"
           ],
           rValueBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
