@@ -162,3 +162,27 @@ module.exports = suite: parseTestSuite
     when c then d
     else b?.c
     """: "switch (a) {case c: d; break; default: Caf.exists(b) && b.c;};"
+
+    """
+    switch b
+      when :a then true # comment
+    """: 'switch (b) {case "a": true;};'
+
+    """
+    switch b
+      # comment
+      when :a then true
+      # comment
+      when :b then true
+      # comment
+    """: 'switch (b) {case "a": true; break; case "b": true;};'
+
+    """
+    switch foo
+      when bar
+        123
+      # comment
+    """: 'switch (foo) {case bar: 123;};'
+
+
+

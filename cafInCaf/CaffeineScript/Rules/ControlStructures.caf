@@ -39,7 +39,8 @@ catchClause:
 
 switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
 
-switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: :switchBody
+switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: :switchBodyBlockRule
+switchBodyBlockRule: "" :switchBody end?
 
 switchWhenClause:
   "end? when _ whenValue:expressionWithOneLessBlock thenDo:block"

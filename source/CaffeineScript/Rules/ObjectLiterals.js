@@ -130,8 +130,8 @@ Caf.defMod(module, () => {
             return this.rule(
               {
                 propName: [
-                  "!/then\\s/ str:identifier &_colon_",
-                  "!/then\\s/ str:unquotedString &/:/",
+                  "!regExpLiteral !/then\\s/ str:identifier &_colon_",
+                  "!regExpLiteral !/then\\s/ str:unquotedString &/:/",
                   "quotedString:stringLiteral &stringLiteralPropNameTail"
                 ]
               },

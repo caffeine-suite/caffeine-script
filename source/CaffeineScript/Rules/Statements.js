@@ -23,7 +23,7 @@ Caf.defMod(module, () => {
           "statementWithoutEnd"
         ],
         statementWithoutEnd: [
-          "implicitArrayOrExpression !tailControlOperator",
+          "implicitArrayOrExpression !tailControlOperator _? comment?",
           {
             pattern:
               "implicitArrayOrExpression tailControlOperatorComplexExpression+",

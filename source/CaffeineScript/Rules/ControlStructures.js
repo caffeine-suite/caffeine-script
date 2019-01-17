@@ -51,8 +51,9 @@ Caf.defMod(module, () => {
         ],
         switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
         switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
-          rule: "switchBody"
+          rule: "switchBodyBlockRule"
         }),
+        switchBodyBlockRule: ":switchBody end?",
         switchWhenClause: [
           "end? when _ whenValue:expressionWithOneLessBlock thenDo:block",
           "end? when _ whenValue:implicitArrayOrExpression  thenDo:thenClause",

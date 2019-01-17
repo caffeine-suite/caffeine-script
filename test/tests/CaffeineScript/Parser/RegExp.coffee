@@ -181,3 +181,4 @@ module.exports = suite: parseTestSuite
     '/// a b': "/ab/;"
     '/// a #{b}': "RegExp(`a${Caf.toString(b)}`);"
     '/// a #{b} c': "RegExp(`a${Caf.toString(b)}c`);"
+    '/a:b/': '/a:b/;'

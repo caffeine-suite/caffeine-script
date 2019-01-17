@@ -98,51 +98,6 @@ authorizedSync = (request) ->
 # SHOULD COMPILE
 
 ```coffeescript
-# string-block with no boddy should be no-problem
-
-a = """
-# has no body = empty string
-```
-
----
-
-```coffeescript
-/a:a/ # doesn't compile; weird
-/// a:a # this is fine
-```
----
-
-I think the problem is the trailing comments:
-
-```coffeescript
-switch subject
-  when :mailbox     then true   # the mailbox is unavailable
-  when :mailSystem  then true   # the mail system is unvailable
-  when :addressing  then true   # the address is bad (i.e. there is no mailbox)
-  when :security    then false  # could just be that the server doesn't like our IP
-  when :network     then false  # by definition, temporary failure, probably should never be a clientFailure
-  when :protocol    then false  # means the server thinks WE broke protocol
-  when :content     then false  # means the server doesn't like our content - since we weren't really sending any, something weird happend
-  else false                    # something weird happened
-```
----
-
-The trailing space in the interpolation breaks things...
-
-```coffeescript
-"#{123 }"
-```
-
----
-```coffeescript
-switch foo
-  when bar
-    123
-  # comment here fails
-```
----
-
-```coffeescript
 new class FakeSocket
 ```
 
@@ -153,12 +108,12 @@ new class FakeSocket
 ```
 ---
 ```coffeescript
-  [].slice 0, 100
+[].slice 0, 100
 ```
 ---
 
 ```coffeescript
-  {@getPriority} = options
+{@getPriority} = options
 ```
 
 
@@ -261,18 +216,10 @@ array item in -> a when item
 # Should Compile
 
 ```coffeescript
-"Hi there #{} empty iterpolation should be fine!"
-```
-
-```coffeescript
 # backward compatible with coffeescript
 {
   hi: 1
 }
-
-[
-  1
-]
 
 {
   a

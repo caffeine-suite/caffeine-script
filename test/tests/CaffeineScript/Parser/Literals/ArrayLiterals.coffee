@@ -50,6 +50,7 @@ module.exports = suite: parseTestSuite
       "[1 + 2 3]"   : "[1 + 2, 3];"
       "[1 + :2 3]"  : '[1 + "2", 3];'
       "[1 + a 3]"   : "[1 + a(3)];"
+      "[/hi/ 3]"   : "[/hi/, 3];"
 
   implicit:
     basic:

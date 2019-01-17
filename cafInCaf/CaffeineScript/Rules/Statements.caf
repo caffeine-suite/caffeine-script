@@ -16,7 +16,7 @@ lineStartStatementWithoutEnd:
   :statementWithoutEnd
 
 statementWithoutEnd:
-  "" implicitArrayOrExpression !tailControlOperator
+  "" implicitArrayOrExpression !tailControlOperator _? comment?
 
   pattern: 'implicitArrayOrExpression tailControlOperatorComplexExpression+'
   getStn: ~>
