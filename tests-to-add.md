@@ -42,18 +42,6 @@ the base of the sub-block. I -think- that'll solve it.
 
 # SEMANTIC TODO
 
-```coffeescript
-a = 10
-while a > 0
-  b = a
-  a--
-```
-
-This should have "let a" outside the while, but should have "let b" inside, like
-all the comprehensions.
-
---------
-
 ### Extract Todo
 
 `extract` in comprehensions and function definitions:

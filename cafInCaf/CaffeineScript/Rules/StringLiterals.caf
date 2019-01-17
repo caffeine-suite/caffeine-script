@@ -19,7 +19,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
   @rule
     stringLiteral:
       {}
-        pattern: "" /""/ tripple:/"/? &/#{blockStringStartChar.source}/ stringBlock
+        pattern: "" /""/ tripple:/"/? &/#{blockStringStartChar.source}/ stringBlock?
         getStn: ~>
           ret = @stringBlock.getStn()
           unless @tripple
@@ -29,12 +29,17 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
           ret.trimRight?()
           ret
 
+
       {}
         pattern: "" /''/ tripple:/'/? &/ +[^ \\n]| *\\n/ unparsedBlock
         getStn: ~>
           ret = StringStn parseTreeNode: @, value: @unparsedBlock.toString()
           ret.compactNewLines() unless @tripple
           ret
+
+      {}
+        pattern: "" /"""?|'''?/
+        getStn: ~> StringStn parseTreeNode: @, value: ""
 
       ## word-strings
         :unquoted strings

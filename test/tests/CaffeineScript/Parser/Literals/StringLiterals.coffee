@@ -405,6 +405,13 @@ module.exports = suite: parseTestSuite
           ## should be indented in string
       ''': '"abc\\n  ## should be indented in string";'
 
+      '"""':  '"";'
+      "'''":  '"";'
+      '""':   '"";'
+      "''":   '"";'
+
+
+
   interpolated:
     basic:
       '"${#{foo}}"':                     '`\\${${Caf.toString(foo)}}`;'
