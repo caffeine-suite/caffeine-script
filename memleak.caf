@@ -1,0 +1,35 @@
+import &ArtSuite
+## NOTES
+  2019-01-17 SBD - There definitly is a memory-leak of sorts.
+
+  Compiling every file in cafInCaf seems to trigger the memory leak.
+
+  We seem to leak a fixed amount per unique file. If you re-compile that file,
+  even from scratch, it doesn't crease the leak.
+
+  Therefor, this run stabalizes after every file has been compiled once.
+
+  However, it maxes out at about 900 megs where compiling just one of these files
+  over and over only consumes 150 megs.
+
+  Clearly compiling even more files would result in even more memory leakage.
+
+i = 0
+CafMc = require :caffeine-mc
+CaffeineScript = require :caffeine-script
+&globPromise "cafInCaf/**/*.caf"
+.then (files) ->
+  log "#{files.length} files"
+  while true
+    each sourceFile in files
+      log "CaffeineScript #{i}: #{sourceFile}"
+      CaffeineScript.compile
+        (&fsExtra.readFileSync sourceFile).toString()
+        {}
+          sourceFile
+          sourceRoot: "/Users/shanebdavis/imikimi/npm/caffeine-script"
+          cache:      false
+          prettier:   false
+          inlineMap:  false
+
+      i++
