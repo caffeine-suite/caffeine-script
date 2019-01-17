@@ -69,6 +69,29 @@ module.exports = suite: parseTestSuite
         2
       """: "foo(1, 2);"
 
+    withImplicitArrays:
+      """
+      foo
+        1, 2
+        3
+      """: "foo([1, 2], 3);"
+
+    optionalCommas:
+      """
+      foo
+        1,
+        2
+      """: "foo(1, 2);"
+
+      """
+      foo
+        1
+        2,
+      """: "foo(1, 2);"
+
+
+
+
     multiple:
       """
       foo

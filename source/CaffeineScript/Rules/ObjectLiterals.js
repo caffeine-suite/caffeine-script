@@ -63,11 +63,11 @@ Caf.defMod(module, () => {
               multilineExplicitObjectExtension: "end+ explicitObjectLine",
               implicitObjectWithTwoOrMorePropsOnOneLine: [
                 "literalProp _ propertyList",
-                "valueProp _comma_ propertyList"
+                "valueProp _comma_optionalNewLine propertyList"
               ],
               explicitPropertyList: [
                 "valueProp optionalComma explicitPropertyList",
-                "structurableProp _comma_? explicitPropertyList",
+                "structurableProp _comma_optionalNewLine? explicitPropertyList",
                 "explicitValuePropWithComplexExpression"
               ],
               propertyList: [

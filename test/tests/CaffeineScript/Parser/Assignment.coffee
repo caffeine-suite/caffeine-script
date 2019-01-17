@@ -95,6 +95,24 @@ module.exports = suite: parseTestSuite
         (base = a.b).c || (base.c =
         function() {let base1; return (base1 = foo.bar).c || (base1.c = d);});"
 
+  implicitArrays:
+    basic:
+      "a = 1, 2"      : "let a; a = [1, 2];"
+      "a = 1,\n2"     : "let a; a = [1, 2];"
+
+    trailingCommas:
+      "a = 1, 2,"     : "let a; a = [1, 2];"
+
+    optionalCommas:
+      "a = 1 2"       : "let a; a = [1, 2];"
+      "a = b 2"       : "let a; a = b(2);"
+      "a = b.c 2"     : "let a; a = b.c(2);"
+      "a = {a} 2"     : "let a; a = [{a}, 2];"
+      "a = [a] 2"     : "let a; a = [[a], 2];"
+      "a = 1 + 2 3"   : "let a; a = [1 + 2, 3];"
+      "a = 1 + :2 3"  : 'let a; a = [1 + "2", 3];'
+      "a = 1 + a 3"   : "let a; a = 1 + a(3);"
+
   regressions:
     "@b ||= 1":   "this.b || (this.b = 1);"
     "a.b ||= 1":  "a.b || (a.b = 1);"

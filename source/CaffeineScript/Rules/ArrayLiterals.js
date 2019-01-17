@@ -6,21 +6,15 @@ Caf.defMod(module, () => {
       return this.rule(
         {
           array: ["'[]' _? valueList", "'[]'"],
-          brackedArray: "openBracket_ valueList _comma_? _closeBracket",
+          brackedArray:
+            "openBracket_ valueList _comma_optionalNewLine? _closeBracket",
           implicitArray: [
-            {
-              pattern: "start:expression _comma_ simpleValueList _comma_?",
-              stnFactory: "ArrayStn",
-              stnProps: { implicitArray: true }
-            },
-            {
-              pattern: "start:literal _ simpleValueList _comma_?",
-              stnFactory: "ArrayStn",
-              stnProps: { implicitArray: true }
-            }
+            "start:expression optionalComma simpleValueList _comma_?",
+            "start:literal _ simpleValueList _comma_?",
+            { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ],
           implicitArrayWithoutImplicitObjects: [
-            "start:expression _comma_ simpleValueListWithoutImplicitObjects",
+            "start:expression optionalComma simpleValueListWithoutImplicitObjects",
             "start:literal _ simpleValueListWithoutImplicitObjects",
             { stnFactory: "ArrayStn", stnProps: { implicitArray: true } }
           ]

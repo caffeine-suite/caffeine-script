@@ -41,7 +41,7 @@ Caf.defMod(module, () => {
           { stnFactory: "FunctionDefinitionArgsStn" }
         ],
         argDefList: [
-          "argDef _comma_ argDefList",
+          "argDef _comma_optionalNewLine argDefList",
           "argDef _ argDefList",
           "argDef"
         ],

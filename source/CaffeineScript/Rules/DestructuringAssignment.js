@@ -6,7 +6,7 @@ Caf.defMod(module, () => {
       this.rule(
         {
           destructuringAssignment:
-            "structure:destructuringTarget _? '=' _? value:requiredValue"
+            "structure:destructuringTarget _? '=' _? value:singleValueOrImplicitArray"
         },
         { stnFactory: "DestructuringAssignmentStn" }
       );
@@ -25,7 +25,7 @@ Caf.defMod(module, () => {
         arrayDestructuringList: [
           {
             pattern:
-              "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+              "element:arrayDestructuringElement _comma_optionalNewLine arrayDestructuringList"
           },
           { pattern: "element:arrayDestructuringElement" }
         ],
@@ -38,7 +38,7 @@ Caf.defMod(module, () => {
         objectDestructuringList: [
           {
             pattern:
-              "element:objectDestructuringElement _comma_ objectDestructuringList"
+              "element:objectDestructuringElement _comma_optionalNewLine objectDestructuringList"
           },
           { pattern: "element:objectDestructuringElement" }
         ],

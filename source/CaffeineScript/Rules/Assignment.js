@@ -4,7 +4,10 @@ Caf.defMod(module, () => {
   return (() => {
     return function() {
       return this.rule(
-        { assignmentExtension: "_? assignmentOperator requiredValue" },
+        {
+          assignmentExtension:
+            "_? assignmentOperator singleValueOrImplicitArray"
+        },
         {
           stnFactory: "AssignmentStn",
           stnExtension: true,

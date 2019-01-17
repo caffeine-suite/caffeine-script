@@ -11,7 +11,7 @@ import &StandardImport, &CaffeineEight
   @rule
     simpleValueList:
       "element:listItemExpression optionalComma simpleValueList"
-      "element:listItemExpression _? ',' _? valueListBlock"
+      "element:listItemExpression _comma_ valueListBlock"
       "element:listItemExpression"
 
     simpleValueListWithoutImplicitObjects:
@@ -21,7 +21,7 @@ import &StandardImport, &CaffeineEight
 
     simpleValueListWithoutImplicitObjectOptions:
       "element:listItemExpression optionalComma simpleValueListWithoutImplicitObjects"
-      "element:listItemExpression _? ',' _? valueListBlock"
+      "element:listItemExpression _comma_ valueListBlock"
       "element:listItemExpression"
 
   @rule
@@ -30,7 +30,7 @@ import &StandardImport, &CaffeineEight
         pattern: "statementWithoutEnd newLineStatementExtension* ellipsis end"
         stnFactory: :ArraySpreadElementStn
       {}
-        pattern: "lineStartStatementWithoutEnd newLineStatementExtension* end"
+        pattern: "lineStartStatementWithoutEnd newLineStatementExtension* _comma_? end"
 
     listItemExpression:
       {}

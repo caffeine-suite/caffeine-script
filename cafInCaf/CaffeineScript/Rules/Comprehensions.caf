@@ -23,16 +23,12 @@ import &StandardImport
 
     comprehensionValueClauses: "comprehensionValueClause+"
 
-    # expressionWithOneLessBlockOrBlock:
-    #   :expressionWithOneLessBlock
-    #   :requiredValue
-
   @rule
     comprehensionVariableDef_: '!comprehensionIterationType argDef optionalArg* _ &comprehensionIterationType'
     {} stnFactory: :FunctionDefinitionArgsStn
 
   @rule
-    optionalArg: "_comma_ !withOrDo argDef"
+    optionalArg: "_comma_optionalNewLine !withOrDo argDef"
 
     comprehensionIterationTypeClause_: 'comprehensionIterationType _?'
     unlabeledFromClause: "keywordLabeledStatementsWithOneLessBlock"

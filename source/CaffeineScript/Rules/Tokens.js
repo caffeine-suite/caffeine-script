@@ -6,7 +6,8 @@ Caf.defMod(module, () => {
     this.rule({
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
-      _comma_: /\ *, *\n*/,
+      _comma_: /\ *, */,
+      _comma_optionalNewLine: /\ *, *\n*/,
       optionalComma: /\ *, *\n*|\ */,
       _arrow: /\ *[-~=]>/,
       openParen_: /\( */,

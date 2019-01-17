@@ -129,7 +129,7 @@ Caf.defMod(module, () => {
           dotOrQuestionDot: /\??\./
         });
         return this.rule({
-          requiredValue: [
+          singleValueOrImplicitArray: [
             "_? _end? implicitArrayOrExpression",
             "/ */ comment? rValueBlock"
           ],

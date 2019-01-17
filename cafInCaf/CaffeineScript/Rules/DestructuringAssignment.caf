@@ -2,7 +2,7 @@ import &StandardImport
 
 ->
   @rule
-    destructuringAssignment: "structure:destructuringTarget _? '=' _? value:requiredValue"
+    destructuringAssignment: "structure:destructuringTarget _? '=' _? value:singleValueOrImplicitArray"
     {} stnFactory: :DestructuringAssignmentStn
 
   @rule
@@ -20,7 +20,7 @@ import &StandardImport
 
   @rule
     arrayDestructuringList:
-      {} pattern: "element:arrayDestructuringElement _comma_ arrayDestructuringList"
+      {} pattern: "element:arrayDestructuringElement _comma_optionalNewLine arrayDestructuringList"
       {} pattern: "element:arrayDestructuringElement"
 
     arrayDestructuringElement:
@@ -29,7 +29,7 @@ import &StandardImport
 
   @rule
     objectDestructuringList:
-      {} pattern: "element:objectDestructuringElement _comma_ objectDestructuringList"
+      {} pattern: "element:objectDestructuringElement _comma_optionalNewLine objectDestructuringList"
       {} pattern: "element:objectDestructuringElement"
 
     objectDestructuringElement:

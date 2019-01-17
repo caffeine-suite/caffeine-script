@@ -24,7 +24,7 @@ Caf.defMod(module, () => {
         conditionalExtract: /\?/,
         extractionTarget: "objectExtractionList",
         objectExtractionList: [
-          "extractAction:extractAction _comma_ objectExtractionList",
+          "extractAction:extractAction _comma_optionalNewLine objectExtractionList",
           "extractAction:extractAction"
         ],
         extractAction: ["chainExtract", "extractToIdentifier"],

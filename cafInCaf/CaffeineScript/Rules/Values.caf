@@ -201,7 +201,7 @@ import &StandardImport, &CaffeineEight
     dotOrQuestionDot: /\??\./
 
   @rule
-    requiredValue:
+    singleValueOrImplicitArray:
       "" _? _end? implicitArrayOrExpression
       "" / */ comment? rValueBlock
 

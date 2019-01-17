@@ -16,14 +16,14 @@ Caf.defMod(module, () => {
         this.rule({
           simpleValueList: [
             "element:listItemExpression optionalComma simpleValueList",
-            "element:listItemExpression _? ',' _? valueListBlock",
+            "element:listItemExpression _comma_ valueListBlock",
             "element:listItemExpression"
           ],
           simpleValueListWithoutImplicitObjects:
             "!implicitObjectStart simpleValueListWithoutImplicitObjectOptions",
           simpleValueListWithoutImplicitObjectOptions: [
             "element:listItemExpression optionalComma simpleValueListWithoutImplicitObjects",
-            "element:listItemExpression _? ',' _? valueListBlock",
+            "element:listItemExpression _comma_ valueListBlock",
             "element:listItemExpression"
           ]
         });
@@ -36,7 +36,7 @@ Caf.defMod(module, () => {
             },
             {
               pattern:
-                "lineStartStatementWithoutEnd newLineStatementExtension* end"
+                "lineStartStatementWithoutEnd newLineStatementExtension* _comma_? end"
             }
           ],
           listItemExpression: [

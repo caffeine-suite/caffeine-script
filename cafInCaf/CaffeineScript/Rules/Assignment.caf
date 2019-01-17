@@ -3,7 +3,7 @@ import &StandardImport, &CaffeineEight
 ->
   @rule
     assignmentExtension:
-      "_? assignmentOperator requiredValue"
+      "_? assignmentOperator singleValueOrImplicitArray"
 
     {}
       stnFactory:   :AssignmentStn
