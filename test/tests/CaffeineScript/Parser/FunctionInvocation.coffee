@@ -6,11 +6,19 @@
 
 module.exports = suite: parseTestSuite
   noParens:
-    "foo 5"    : "foo(5);"
-    "foo 1, 2" : "foo(1, 2);"
-    "foo 1 2"  : "foo(1, 2);"
-    "foo 'bar'": 'foo("bar");'
-    "foo bar 2": "foo(bar(2));"
+    "foo 5"         : "foo(5);"
+    "foo 1, 2"      : "foo(1, 2);"
+    "foo :bar"      : 'foo("bar");'
+
+  implicitCommas:
+    "foo bar 2"     : "foo(bar(2));"
+    "foo a.bar 2"   : "foo(a.bar(2));"
+    "foo 1 2"       : "foo(1, 2);"
+    "foo {a} 2"     : "foo({a}, 2);"
+    "foo [a] 2"     : "foo([a], 2);"
+    "foo 1 + 2 3"   : "foo(1 + 2, 3);"
+    "foo 1 + :2 3"  : 'foo(1 + "2", 3);'
+    "foo 1 + a 3"   : "foo(1 + a(3));"
 
   parens:
     "foo()"               : "foo();"
@@ -39,6 +47,8 @@ module.exports = suite: parseTestSuite
     "foo 1, a: 1, 2":     "foo(1, {a: [1, 2]});"
     "foo a: 1, 2, b: 2":  "foo({a: [1, 2], b: 2});"
     "foo a: 1 2 b: 2":    "foo({a: [1, 2], b: 2});"
+    "foo a: 1 b: 2 3":    "foo({a: 1, b: [2, 3]});"
+    "foo a: 1 b: 2 a":    "foo({a: 1, b: [2, a]});"
 
   block:
     basic:

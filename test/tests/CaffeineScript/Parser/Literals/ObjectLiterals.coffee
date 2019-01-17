@@ -243,6 +243,7 @@ module.exports = suite: parseTestSuite
     withImplicitArrays:
       "d: 5, 6": "({d: [5, 6]});"
       "d: 5 6":  "({d: [5, 6]});"
+      "a: true, b: 5 6 c":  "({a: true, b: [5, 6, c]});"
 
       """
       a: :shut :the :frell :up
