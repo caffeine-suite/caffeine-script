@@ -10,6 +10,12 @@
 &DotSubdir
 # Should generate: require('./.DotSubdir')
 ```
+---
+```coffeescript
+# bad regexp detect
+rect a.left, a.top, a.w/2, a.h/2
+```
+
 
 # Improvements
 ```coffeescript
@@ -33,6 +39,10 @@ array a in-array b
   a
   b
   } = myObject
+  
+  {
+    hi: 1
+  }
 
   {}
     a
@@ -50,6 +60,12 @@ like string-blocks or comment-blocks themselves, needs something akin to the
 current preprocess step: Any under-indented comments should be up-indented to
 the base of the sub-block. I -think- that'll solve it.
 
+```coffeescript
+# extra-indented comments should be ignored
+->
+    # extra indented first comment
+  foo
+```
 
 
 
@@ -146,7 +162,7 @@ foo (a)->
   .bar
 ```
 
-Above one is super tricky! The function def correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happily accepts it. It actually could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
+Above one is super tricky! The function definition correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happily accepts it. It actually could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
 
 I think we need "match-block-or-no-block" to solve this.
 
@@ -155,11 +171,6 @@ NOTE: It isn't just dot-line-starts. This also fails fore operator-line-starts.
 ---
 ```coffeescript
 App extends FluxComponent
-```
----
-'default' is an illegal variable name in JS
-```coffeescript
-({default, fields}) ->
 ```
 
 
@@ -226,34 +237,6 @@ Probably same problem as above:
 ```coffeescript
 # this does not parse!
 array item in -> a when item
-```
-
-# Should Compile
-
-```coffeescript
-# backward compatible with coffeescript
-{
-  hi: 1
-}
-
-{
-  a
-  b
-} = foo
-```
-
-
-
-# TO SORT
-
-```coffeescript
-# bad regexp detect
-rect a.left, a.top, a.w/2, a.h/2
-
-# extra-indented comments should be ignored
-->
-    # extra indented first comment
-  123
 ```
 
 # Improved Parse Errors

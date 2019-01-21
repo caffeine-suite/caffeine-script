@@ -51,3 +51,6 @@ module.exports = suite: parseTestSuite
     "1 + (2 * 5)":    "1 + 2 * 5;"
     "(new Foo).bar":  "(new Foo).bar;"
 
+  reservedWords:
+    "default = 1": null
+

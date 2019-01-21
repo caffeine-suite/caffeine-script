@@ -108,6 +108,10 @@
         | no | off
         | typeof
 
+        ### Reserved but not Used (from JavaScript)
+
+        | #{&ArtStandardLib.log &JavaScriptReservedWordList.join '|'}
+
         ### Reserved but not Used (future CaffeineScript)
 
         | reduce | inject
