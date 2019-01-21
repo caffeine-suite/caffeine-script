@@ -20,9 +20,7 @@ Caf.defMod(module, () => {
       ellipsis: "'...'",
       reservedWord: RegExp(
         `(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|throw|and|or|not|extract|as|for|return|break|of|yes|on|no|off|typeof|${Caf.toString(
-          require("art-standard-lib").log(
-            require("../JavaScriptReservedWordList").join("|")
-          )
+          require("../JavaScriptReservedWordList").join("|")
         )}|reduce|inject|promise|await|short|skip|mixin|tap)(-[a-z]+)*\\b(?![-])`
       ),
       identifier: [

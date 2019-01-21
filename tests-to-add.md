@@ -16,6 +16,14 @@
 rect a.left, a.top, a.w/2, a.h/2
 ```
 
+---
+```coffeescript
+# regex needs interpolation blocks:
+///
+  hi #{}
+    myString + "foo"
+```
+
 
 # Improvements
 ```coffeescript
@@ -39,7 +47,7 @@ array a in-array b
   a
   b
   } = myObject
-  
+
   {
     hi: 1
   }

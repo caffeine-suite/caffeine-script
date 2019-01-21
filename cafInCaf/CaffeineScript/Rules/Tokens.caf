@@ -110,7 +110,7 @@
 
         ### Reserved but not Used (from JavaScript)
 
-        | #{&ArtStandardLib.log &JavaScriptReservedWordList.join '|'}
+        | #{&JavaScriptReservedWordList.join '|'}
 
         ### Reserved but not Used (future CaffeineScript)
 
