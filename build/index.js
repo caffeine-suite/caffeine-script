@@ -107,17 +107,18 @@ module.exports = __webpack_require__(/*! ./source/CaffeineScript */ 1);
 module.exports = __webpack_require__(/*! ./namespace */ 2);
 
 module.exports.includeInNamespace(__webpack_require__(/*! ./CaffeineScript */ 10)).addModules({
-  CaffeineScriptParser: __webpack_require__(/*! ./CaffeineScriptParser */ 91),
-  CafParseNodeBaseClass: __webpack_require__(/*! ./CafParseNodeBaseClass */ 93),
+  CaffeineScriptParser: __webpack_require__(/*! ./CaffeineScriptParser */ 92),
+  CafParseNodeBaseClass: __webpack_require__(/*! ./CafParseNodeBaseClass */ 94),
+  JavaScriptReservedWordList: __webpack_require__(/*! ./JavaScriptReservedWordList */ 21),
   JavaScriptReservedWords: __webpack_require__(/*! ./JavaScriptReservedWords */ 20),
   Lib: __webpack_require__(/*! ./Lib */ 18),
-  OperatorHelper: __webpack_require__(/*! ./OperatorHelper */ 38),
-  Preprocessors: __webpack_require__(/*! ./Preprocessors */ 121),
+  OperatorHelper: __webpack_require__(/*! ./OperatorHelper */ 39),
+  Preprocessors: __webpack_require__(/*! ./Preprocessors */ 122),
   StandardImport: __webpack_require__(/*! ./StandardImport */ 16),
   StnRegistry: __webpack_require__(/*! ./StnRegistry */ 19)
 });
 
-__webpack_require__(/*! ./Rules */ 94);
+__webpack_require__(/*! ./Rules */ 95);
 
 __webpack_require__(/*! ./SemanticTree */ 14);
 
@@ -170,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.5"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.68.6"};
 
 /***/ }),
 /* 5 */
@@ -337,7 +338,7 @@ Caf.defMod(module, () => {
                 sourceFile,
                 sourceRoot
               } = options);
-              transformedStn = (stn = (parseTree = __webpack_require__(/*! ./CaffeineScriptParser */ 91).parse(
+              transformedStn = (stn = (parseTree = __webpack_require__(/*! ./CaffeineScriptParser */ 92).parse(
                 source,
                 options
               )).getStn())
@@ -452,18 +453,18 @@ module.exports = __webpack_require__(/*! ./namespace */ 6);
 
 module.exports.addModules({
   AccessorChainStn: __webpack_require__(/*! ./AccessorChainStn */ 15),
-  BaseStn: __webpack_require__(/*! ./BaseStn */ 23),
-  BasicStns: __webpack_require__(/*! ./BasicStns */ 27),
-  ScopeStnMixin: __webpack_require__(/*! ./ScopeStnMixin */ 48),
-  UniqueIdentifierHandle: __webpack_require__(/*! ./UniqueIdentifierHandle */ 22),
-  ValueBaseCaptureStn: __webpack_require__(/*! ./ValueBaseCaptureStn */ 21)
+  BaseStn: __webpack_require__(/*! ./BaseStn */ 24),
+  BasicStns: __webpack_require__(/*! ./BasicStns */ 28),
+  ScopeStnMixin: __webpack_require__(/*! ./ScopeStnMixin */ 49),
+  UniqueIdentifierHandle: __webpack_require__(/*! ./UniqueIdentifierHandle */ 23),
+  ValueBaseCaptureStn: __webpack_require__(/*! ./ValueBaseCaptureStn */ 22)
 });
 
-__webpack_require__(/*! ./PlaceholderStns */ 28);
+__webpack_require__(/*! ./PlaceholderStns */ 29);
 
-__webpack_require__(/*! ./StnsGeneratingJs */ 31);
+__webpack_require__(/*! ./StnsGeneratingJs */ 32);
 
-__webpack_require__(/*! ./TransformOnlyStns */ 85);
+__webpack_require__(/*! ./TransformOnlyStns */ 86);
 
 
 /***/ }),
@@ -485,7 +486,7 @@ Caf.defMod(module, () => {
       let StnRegistry, AccessorChainStn;
       StnRegistry = __webpack_require__(/*! ../StnRegistry */ 19);
       return (AccessorChainStn = Caf.defClass(
-        class AccessorChainStn extends __webpack_require__(/*! ./ValueBaseCaptureStn */ 21) {},
+        class AccessorChainStn extends __webpack_require__(/*! ./ValueBaseCaptureStn */ 22) {},
         function(AccessorChainStn, classSuper, instanceSuper) {
           this.abstractClass();
           this.prototype.transform = function() {
@@ -756,17 +757,32 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
-  let words, out;
-  words = __webpack_require__(/*! art-standard-lib */ 13).w(
-    "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
-  );
-  return Caf.each2(words, word => (out[word] = true), null, (out = {}));
+  return Caf.object(__webpack_require__(/*! ./JavaScriptReservedWordList */ 21), () => true);
 });
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
 /* 21 */
+/*!*************************************************************!*\
+  !*** ./source/CaffeineScript/JavaScriptReservedWordList.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
+Caf.defMod(module, () => {
+  return __webpack_require__(/*! art-standard-lib */ 13).w(
+    "abstract  else        instanceof  super boolean   enum        int         switch break     export      interface   synchronized byte      extends     let         this case      false       long        throw catch     final       native      throws char      finally     new         transient class     float       null        true const     for         package     try continue  function    private     typeof debugger  goto        protected   var default   if          public      void delete    implements  return      volatile do        import      short       while double    in          static      with"
+  );
+});
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ 11)(module)))
+
+/***/ }),
+/* 22 */
 /*!*******************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/ValueBaseCaptureStn.js ***!
   \*******************************************************************/
@@ -779,10 +795,10 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return (() => {
     let UniqueIdentifierHandle, StnRegistry, ValueBaseCaptureStn;
-    UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 22);
+    UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 23);
     StnRegistry = __webpack_require__(/*! ../StnRegistry */ 19);
     return (ValueBaseCaptureStn = Caf.defClass(
-      class ValueBaseCaptureStn extends __webpack_require__(/*! ./BaseStn */ 23) {},
+      class ValueBaseCaptureStn extends __webpack_require__(/*! ./BaseStn */ 24) {},
       function(ValueBaseCaptureStn, classSuper, instanceSuper) {
         this.abstractClass();
         this.prototype.getValueWithBaseCapture = function(accessorStn) {
@@ -842,7 +858,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 22 */
+/* 23 */
 /*!**********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/UniqueIdentifierHandle.js ***!
   \**********************************************************************/
@@ -902,7 +918,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 23 */
+/* 24 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/BaseStn.js ***!
   \*******************************************************/
@@ -927,9 +943,9 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! art-object-tree-factory */ 24),
-      __webpack_require__(/*! caffeine-source-map */ 25),
-      __webpack_require__(/*! art-binary */ 26)
+      __webpack_require__(/*! art-object-tree-factory */ 25),
+      __webpack_require__(/*! caffeine-source-map */ 26),
+      __webpack_require__(/*! art-binary */ 27)
     ],
     (
       BaseClass,
@@ -1286,7 +1302,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 24 */
+/* 25 */
 /*!*****************************************************************************************!*\
   !*** external "require('art-object-tree-factory' /* ABC - not inlining fellow NPM *_/)" ***!
   \*****************************************************************************************/
@@ -1296,7 +1312,7 @@ Caf.defMod(module, () => {
 module.exports = require('art-object-tree-factory' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 25 */
+/* 26 */
 /*!*************************************************************************************!*\
   !*** external "require('caffeine-source-map' /* ABC - not inlining fellow NPM *_/)" ***!
   \*************************************************************************************/
@@ -1306,7 +1322,7 @@ module.exports = require('art-object-tree-factory' /* ABC - not inlining fellow 
 module.exports = require('caffeine-source-map' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 26 */
+/* 27 */
 /*!****************************************************************************!*\
   !*** external "require('art-binary' /* ABC - not inlining fellow NPM *_/)" ***!
   \****************************************************************************/
@@ -1316,7 +1332,7 @@ module.exports = require('caffeine-source-map' /* ABC - not inlining fellow NPM 
 module.exports = require('art-binary' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 27 */
+/* 28 */
 /*!*********************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/BasicStns.js ***!
   \*********************************************************/
@@ -1331,7 +1347,7 @@ Caf.defMod(module, () => {
     ["merge"],
     [global, __webpack_require__(/*! ../StandardImport */ 16)],
     merge => {
-      return merge(__webpack_require__(/*! ./PlaceholderStns */ 28), __webpack_require__(/*! ./StnsGeneratingJs */ 31));
+      return merge(__webpack_require__(/*! ./PlaceholderStns */ 29), __webpack_require__(/*! ./StnsGeneratingJs */ 32));
     }
   );
 });
@@ -1339,7 +1355,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 28 */
+/* 29 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/PlaceholderStns/index.coffee ***!
   \*************************************************************************/
@@ -1349,13 +1365,13 @@ Caf.defMod(module, () => {
 module.exports = __webpack_require__(/*! ./namespace */ 7);
 
 module.exports.addModules({
-  ComprehensionValueClauseStn: __webpack_require__(/*! ./ComprehensionValueClauseStn */ 29),
-  SemanticTokenStn: __webpack_require__(/*! ./SemanticTokenStn */ 30)
+  ComprehensionValueClauseStn: __webpack_require__(/*! ./ComprehensionValueClauseStn */ 30),
+  SemanticTokenStn: __webpack_require__(/*! ./SemanticTokenStn */ 31)
 });
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /*!*******************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/PlaceholderStns/ComprehensionValueClauseStn.js ***!
   \*******************************************************************************************/
@@ -1369,7 +1385,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ComprehensionValueClauseStn;
     return (ComprehensionValueClauseStn = Caf.defClass(
-      class ComprehensionValueClauseStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ComprehensionValueClauseStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ComprehensionValueClauseStn, classSuper, instanceSuper) {
         this.getter({
           type: function() {
@@ -1387,7 +1403,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 30 */
+/* 31 */
 /*!********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/PlaceholderStns/SemanticTokenStn.js ***!
   \********************************************************************************/
@@ -1401,7 +1417,7 @@ Caf.defMod(module, () => {
   return (() => {
     let SemanticTokenStn;
     return (SemanticTokenStn = Caf.defClass(
-      class SemanticTokenStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+      class SemanticTokenStn extends __webpack_require__(/*! ../BaseStn */ 24) {
         constructor() {
           let base;
           super(...arguments);
@@ -1423,7 +1439,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 31 */
+/* 32 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/index.coffee ***!
   \**************************************************************************/
@@ -1433,61 +1449,61 @@ Caf.defMod(module, () => {
 module.exports = __webpack_require__(/*! ./namespace */ 8);
 
 module.exports.addModules({
-  AccessorStn: __webpack_require__(/*! ./AccessorStn */ 32),
-  ArrayDestructuringStn: __webpack_require__(/*! ./ArrayDestructuringStn */ 33),
-  ArraySpreadElementStn: __webpack_require__(/*! ./ArraySpreadElementStn */ 35),
-  ArrayStn: __webpack_require__(/*! ./ArrayStn */ 34),
-  AssignmentStn: __webpack_require__(/*! ./AssignmentStn */ 36),
-  BinaryOperatorStn: __webpack_require__(/*! ./BinaryOperatorStn */ 37),
-  CatchStn: __webpack_require__(/*! ./CatchStn */ 39),
-  ClassStn: __webpack_require__(/*! ./ClassStn */ 40),
-  ControlOperatorStn: __webpack_require__(/*! ./ControlOperatorStn */ 41),
-  DestructuringAssignmentStn: __webpack_require__(/*! ./DestructuringAssignmentStn */ 42),
-  DestructuringIdentifierStn: __webpack_require__(/*! ./DestructuringIdentifierStn */ 43),
-  DoStn: __webpack_require__(/*! ./DoStn */ 44),
-  ForInControlStn: __webpack_require__(/*! ./ForInControlStn */ 45),
-  ForStn: __webpack_require__(/*! ./ForStn */ 46),
-  FunctionDefinitionArgsStn: __webpack_require__(/*! ./FunctionDefinitionArgsStn */ 49),
-  FunctionDefinitionArgStn: __webpack_require__(/*! ./FunctionDefinitionArgStn */ 50),
-  FunctionDefinitionStn: __webpack_require__(/*! ./FunctionDefinitionStn */ 51),
-  FunctionInvocationStn: __webpack_require__(/*! ./FunctionInvocationStn */ 52),
-  GlobalIdentifierStn: __webpack_require__(/*! ./GlobalIdentifierStn */ 53),
-  IdentifierStn: __webpack_require__(/*! ./IdentifierStn */ 54),
-  IfStn: __webpack_require__(/*! ./IfStn */ 56),
-  ImportBodyStn: __webpack_require__(/*! ./ImportBodyStn */ 57),
-  ImportStn: __webpack_require__(/*! ./ImportStn */ 58),
-  InterpolatedStringStn: __webpack_require__(/*! ./InterpolatedStringStn */ 59),
-  LabeledDestructuringTargetStn: __webpack_require__(/*! ./LabeledDestructuringTargetStn */ 60),
-  LetStn: __webpack_require__(/*! ./LetStn */ 63),
-  NewInstanceStn: __webpack_require__(/*! ./NewInstanceStn */ 64),
-  NumberLiteralStn: __webpack_require__(/*! ./NumberLiteralStn */ 65),
-  ObjectDestructuringStn: __webpack_require__(/*! ./ObjectDestructuringStn */ 66),
-  ObjectLiteralAccessorStn: __webpack_require__(/*! ./ObjectLiteralAccessorStn */ 68),
-  ObjectPropNameStn: __webpack_require__(/*! ./ObjectPropNameStn */ 62),
-  ObjectPropValueStn: __webpack_require__(/*! ./ObjectPropValueStn */ 61),
-  ObjectStn: __webpack_require__(/*! ./ObjectStn */ 67),
-  PureJsStn: __webpack_require__(/*! ./PureJsStn */ 69),
-  ReferenceStn: __webpack_require__(/*! ./ReferenceStn */ 55),
-  RegExpStn: __webpack_require__(/*! ./RegExpStn */ 70),
-  RequireStn: __webpack_require__(/*! ./RequireStn */ 71),
-  RootStn: __webpack_require__(/*! ./RootStn */ 73),
-  SimpleLiteralStn: __webpack_require__(/*! ./SimpleLiteralStn */ 75),
-  StatementsStn: __webpack_require__(/*! ./StatementsStn */ 74),
-  StringStn: __webpack_require__(/*! ./StringStn */ 76),
-  SuperStn: __webpack_require__(/*! ./SuperStn */ 77),
-  SwitchStn: __webpack_require__(/*! ./SwitchStn */ 78),
-  SwitchWhenStn: __webpack_require__(/*! ./SwitchWhenStn */ 79),
-  ThisStn: __webpack_require__(/*! ./ThisStn */ 80),
-  ThrowStn: __webpack_require__(/*! ./ThrowStn */ 81),
-  TryStn: __webpack_require__(/*! ./TryStn */ 82),
-  UnaryOperatorStn: __webpack_require__(/*! ./UnaryOperatorStn */ 83),
-  UndefinedStn: __webpack_require__(/*! ./UndefinedStn */ 84),
-  WhileStn: __webpack_require__(/*! ./WhileStn */ 47)
+  AccessorStn: __webpack_require__(/*! ./AccessorStn */ 33),
+  ArrayDestructuringStn: __webpack_require__(/*! ./ArrayDestructuringStn */ 34),
+  ArraySpreadElementStn: __webpack_require__(/*! ./ArraySpreadElementStn */ 36),
+  ArrayStn: __webpack_require__(/*! ./ArrayStn */ 35),
+  AssignmentStn: __webpack_require__(/*! ./AssignmentStn */ 37),
+  BinaryOperatorStn: __webpack_require__(/*! ./BinaryOperatorStn */ 38),
+  CatchStn: __webpack_require__(/*! ./CatchStn */ 40),
+  ClassStn: __webpack_require__(/*! ./ClassStn */ 41),
+  ControlOperatorStn: __webpack_require__(/*! ./ControlOperatorStn */ 42),
+  DestructuringAssignmentStn: __webpack_require__(/*! ./DestructuringAssignmentStn */ 43),
+  DestructuringIdentifierStn: __webpack_require__(/*! ./DestructuringIdentifierStn */ 44),
+  DoStn: __webpack_require__(/*! ./DoStn */ 45),
+  ForInControlStn: __webpack_require__(/*! ./ForInControlStn */ 46),
+  ForStn: __webpack_require__(/*! ./ForStn */ 47),
+  FunctionDefinitionArgsStn: __webpack_require__(/*! ./FunctionDefinitionArgsStn */ 50),
+  FunctionDefinitionArgStn: __webpack_require__(/*! ./FunctionDefinitionArgStn */ 51),
+  FunctionDefinitionStn: __webpack_require__(/*! ./FunctionDefinitionStn */ 52),
+  FunctionInvocationStn: __webpack_require__(/*! ./FunctionInvocationStn */ 53),
+  GlobalIdentifierStn: __webpack_require__(/*! ./GlobalIdentifierStn */ 54),
+  IdentifierStn: __webpack_require__(/*! ./IdentifierStn */ 55),
+  IfStn: __webpack_require__(/*! ./IfStn */ 57),
+  ImportBodyStn: __webpack_require__(/*! ./ImportBodyStn */ 58),
+  ImportStn: __webpack_require__(/*! ./ImportStn */ 59),
+  InterpolatedStringStn: __webpack_require__(/*! ./InterpolatedStringStn */ 60),
+  LabeledDestructuringTargetStn: __webpack_require__(/*! ./LabeledDestructuringTargetStn */ 61),
+  LetStn: __webpack_require__(/*! ./LetStn */ 64),
+  NewInstanceStn: __webpack_require__(/*! ./NewInstanceStn */ 65),
+  NumberLiteralStn: __webpack_require__(/*! ./NumberLiteralStn */ 66),
+  ObjectDestructuringStn: __webpack_require__(/*! ./ObjectDestructuringStn */ 67),
+  ObjectLiteralAccessorStn: __webpack_require__(/*! ./ObjectLiteralAccessorStn */ 69),
+  ObjectPropNameStn: __webpack_require__(/*! ./ObjectPropNameStn */ 63),
+  ObjectPropValueStn: __webpack_require__(/*! ./ObjectPropValueStn */ 62),
+  ObjectStn: __webpack_require__(/*! ./ObjectStn */ 68),
+  PureJsStn: __webpack_require__(/*! ./PureJsStn */ 70),
+  ReferenceStn: __webpack_require__(/*! ./ReferenceStn */ 56),
+  RegExpStn: __webpack_require__(/*! ./RegExpStn */ 71),
+  RequireStn: __webpack_require__(/*! ./RequireStn */ 72),
+  RootStn: __webpack_require__(/*! ./RootStn */ 74),
+  SimpleLiteralStn: __webpack_require__(/*! ./SimpleLiteralStn */ 76),
+  StatementsStn: __webpack_require__(/*! ./StatementsStn */ 75),
+  StringStn: __webpack_require__(/*! ./StringStn */ 77),
+  SuperStn: __webpack_require__(/*! ./SuperStn */ 78),
+  SwitchStn: __webpack_require__(/*! ./SwitchStn */ 79),
+  SwitchWhenStn: __webpack_require__(/*! ./SwitchWhenStn */ 80),
+  ThisStn: __webpack_require__(/*! ./ThisStn */ 81),
+  ThrowStn: __webpack_require__(/*! ./ThrowStn */ 82),
+  TryStn: __webpack_require__(/*! ./TryStn */ 83),
+  UnaryOperatorStn: __webpack_require__(/*! ./UnaryOperatorStn */ 84),
+  UndefinedStn: __webpack_require__(/*! ./UndefinedStn */ 85),
+  WhileStn: __webpack_require__(/*! ./WhileStn */ 48)
 });
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /*!****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/AccessorStn.js ***!
   \****************************************************************************/
@@ -1550,7 +1566,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 33 */
+/* 34 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ArrayDestructuringStn.js ***!
   \**************************************************************************************/
@@ -1564,14 +1580,14 @@ Caf.defMod(module, () => {
   return (() => {
     let ArrayDestructuringStn;
     return (ArrayDestructuringStn = Caf.defClass(
-      class ArrayDestructuringStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ArrayDestructuringStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ArrayDestructuringStn, classSuper, instanceSuper) {
         this.getter({
           valueStn: function() {
             return this.structuringStn;
           },
           structuringStn: function() {
-            return __webpack_require__(/*! ./ArrayStn */ 34)(
+            return __webpack_require__(/*! ./ArrayStn */ 35)(
               Caf.array(this.children, child => child.getStructuringStn())
             );
           }
@@ -1595,7 +1611,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 34 */
+/* 35 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ArrayStn.js ***!
   \*************************************************************************/
@@ -1609,7 +1625,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ArrayStn;
     return (ArrayStn = Caf.defClass(
-      class ArrayStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+      class ArrayStn extends __webpack_require__(/*! ../BaseStn */ 24) {
         constructor(props, children) {
           if (children.length === 1 && children[0].props.implicitArray) {
             children = children[0].children;
@@ -1644,7 +1660,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 35 */
+/* 36 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ArraySpreadElementStn.js ***!
   \**************************************************************************************/
@@ -1658,7 +1674,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ArraySpreadElementStn;
     return (ArraySpreadElementStn = Caf.defClass(
-      class ArraySpreadElementStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ArraySpreadElementStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ArraySpreadElementStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function() {
           return this.createSourceNode("...", this.childrenToSourceNodes());
@@ -1671,7 +1687,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 36 */
+/* 37 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/AssignmentStn.js ***!
   \******************************************************************************/
@@ -1778,7 +1794,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 37 */
+/* 38 */
 /*!**********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/BinaryOperatorStn.js ***!
   \**********************************************************************************/
@@ -1799,7 +1815,7 @@ Caf.defMod(module, () => {
       "Error",
       "formattedInspect"
     ],
-    [global, __webpack_require__(/*! ../../StandardImport */ 16), __webpack_require__(/*! ../../OperatorHelper */ 38)],
+    [global, __webpack_require__(/*! ../../StandardImport */ 16), __webpack_require__(/*! ../../OperatorHelper */ 39)],
     (
       operatorIsInfixJs,
       binaryOperatorToSourceNodeArray,
@@ -1811,7 +1827,7 @@ Caf.defMod(module, () => {
     ) => {
       let BinaryOperatorStn;
       return (BinaryOperatorStn = Caf.defClass(
-        class BinaryOperatorStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class BinaryOperatorStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor(props, children) {
             super(...arguments);
             this.operator = props.operator;
@@ -1924,7 +1940,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /*!*************************************************!*\
   !*** ./source/CaffeineScript/OperatorHelper.js ***!
   \*************************************************/
@@ -2192,7 +2208,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/CatchStn.js ***!
   \*************************************************************************/
@@ -2206,7 +2222,7 @@ Caf.defMod(module, () => {
   return (() => {
     let CatchStn;
     return (CatchStn = Caf.defClass(
-      class CatchStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class CatchStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(CatchStn, classSuper, instanceSuper) {
         this.prototype.updateScope = function(scope) {
           let errorIdentifier, body;
@@ -2255,7 +2271,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ClassStn.js ***!
   \*************************************************************************/
@@ -2273,7 +2289,7 @@ Caf.defMod(module, () => {
       let SemanticTree, ClassStn;
       SemanticTree = __webpack_require__(/*! ../../StnRegistry */ 19);
       return (ClassStn = Caf.defClass(
-        class ClassStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ClassStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ClassStn, classSuper, instanceSuper) {
           this.getter({
             className: function() {
@@ -2494,7 +2510,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 41 */
+/* 42 */
 /*!***********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ControlOperatorStn.js ***!
   \***********************************************************************************/
@@ -2511,7 +2527,7 @@ Caf.defMod(module, () => {
     (Error, formattedInspect, StnRegistry) => {
       let ControlOperatorStn;
       return (ControlOperatorStn = Caf.defClass(
-        class ControlOperatorStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class ControlOperatorStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor(props, children) {
             let temp, temp1, temp2;
             super(...arguments);
@@ -2685,7 +2701,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 42 */
+/* 43 */
 /*!*******************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/DestructuringAssignmentStn.js ***!
   \*******************************************************************************************/
@@ -2699,7 +2715,7 @@ Caf.defMod(module, () => {
   return (() => {
     let DestructuringAssignmentStn;
     return (DestructuringAssignmentStn = Caf.defClass(
-      class DestructuringAssignmentStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class DestructuringAssignmentStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(DestructuringAssignmentStn, classSuper, instanceSuper) {
         this.getter({
           structuringStn: function() {
@@ -2733,7 +2749,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 43 */
+/* 44 */
 /*!*******************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/DestructuringIdentifierStn.js ***!
   \*******************************************************************************************/
@@ -2754,7 +2770,7 @@ Caf.defMod(module, () => {
     (JavaScriptReservedWords, Error) => {
       let DestructuringIdentifierStn;
       return (DestructuringIdentifierStn = Caf.defClass(
-        class DestructuringIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class DestructuringIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(DestructuringIdentifierStn, classSuper, instanceSuper) {
           this.prototype.updateScope = function(scope, options) {
             this.scope = scope;
@@ -2811,7 +2827,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 44 */
+/* 45 */
 /*!**********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/DoStn.js ***!
   \**********************************************************************/
@@ -2828,7 +2844,7 @@ Caf.defMod(module, () => {
     Object => {
       let DoStn;
       return (DoStn = Caf.defClass(
-        class DoStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class DoStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(DoStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function() {
             let functionDefinition;
@@ -2850,7 +2866,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 45 */
+/* 46 */
 /*!********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ForInControlStn.js ***!
   \********************************************************************************/
@@ -2864,7 +2880,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ForInControlStn;
     return (ForInControlStn = Caf.defClass(
-      class ForInControlStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ForInControlStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ForInControlStn, classSuper, instanceSuper) {
         this.getter({
           varStn: function() {
@@ -2890,7 +2906,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 46 */
+/* 47 */
 /*!***********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ForStn.js ***!
   \***********************************************************************/
@@ -2902,14 +2918,14 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return function(insideForParens, body) {
-    return __webpack_require__(/*! ./WhileStn */ 47)({ operand: "for" }, insideForParens, body);
+    return __webpack_require__(/*! ./WhileStn */ 48)({ operand: "for" }, insideForParens, body);
   };
 });
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 47 */
+/* 48 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/WhileStn.js ***!
   \*************************************************************************/
@@ -2926,8 +2942,8 @@ Caf.defMod(module, () => {
     (Error, formattedInspect, StnRegistry) => {
       let WhileStn;
       return (WhileStn = Caf.defClass(
-        class WhileStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
-          __webpack_require__(/*! ../BaseStn */ 23)
+        class WhileStn extends __webpack_require__(/*! ../ScopeStnMixin */ 49)(
+          __webpack_require__(/*! ../BaseStn */ 24)
         ) {
           constructor(props, children) {
             let temp, temp1, temp2;
@@ -3061,7 +3077,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 48 */
+/* 49 */
 /*!*************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/ScopeStnMixin.js ***!
   \*************************************************************/
@@ -3077,7 +3093,7 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(/*! ../StandardImport */ 16)],
     (merge, Error, isString, mergeInto) => {
       let UniqueIdentifierHandle;
-      UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 22);
+      UniqueIdentifierHandle = __webpack_require__(/*! ./UniqueIdentifierHandle */ 23);
       return function(toExtend) {
         let ScopeStnMixin;
         return (ScopeStnMixin = Caf.defClass(
@@ -3462,7 +3478,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 49 */
+/* 50 */
 /*!******************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionArgsStn.js ***!
   \******************************************************************************************/
@@ -3476,7 +3492,7 @@ Caf.defMod(module, () => {
   return (() => {
     let FunctionDefinitionArgsStn;
     return (FunctionDefinitionArgsStn = Caf.defClass(
-      class FunctionDefinitionArgsStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class FunctionDefinitionArgsStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(FunctionDefinitionArgsStn, classSuper, instanceSuper) {
         this.getter({
           argumentNameList: function() {
@@ -3506,7 +3522,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 50 */
+/* 51 */
 /*!*****************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionArgStn.js ***!
   \*****************************************************************************************/
@@ -3520,7 +3536,7 @@ Caf.defMod(module, () => {
   return (() => {
     let FunctionDefinitionArgStn;
     return (FunctionDefinitionArgStn = Caf.defClass(
-      class FunctionDefinitionArgStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+      class FunctionDefinitionArgStn extends __webpack_require__(/*! ../BaseStn */ 24) {
         constructor(props, children) {
           super(...arguments);
           this.assignThisProperty = props.assignThisProperty;
@@ -3588,7 +3604,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 51 */
+/* 52 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionDefinitionStn.js ***!
   \**************************************************************************************/
@@ -3606,8 +3622,8 @@ Caf.defMod(module, () => {
       let StnRegistry, FunctionDefinitionStn;
       StnRegistry = __webpack_require__(/*! ../../StnRegistry */ 19);
       return (FunctionDefinitionStn = Caf.defClass(
-        class FunctionDefinitionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
-          __webpack_require__(/*! ../BaseStn */ 23)
+        class FunctionDefinitionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 49)(
+          __webpack_require__(/*! ../BaseStn */ 24)
         ) {
           constructor(props, children, pretransformedStn) {
             let onlyChild;
@@ -3851,7 +3867,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 52 */
+/* 53 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/FunctionInvocationStn.js ***!
   \**************************************************************************************/
@@ -3944,7 +3960,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 53 */
+/* 54 */
 /*!************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/GlobalIdentifierStn.js ***!
   \************************************************************************************/
@@ -3958,7 +3974,7 @@ Caf.defMod(module, () => {
   return (() => {
     let GlobalIdentifierStn;
     return (GlobalIdentifierStn = Caf.defClass(
-      class GlobalIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class GlobalIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(GlobalIdentifierStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function() {
           return this.createSourceNode(this.props.identifier);
@@ -3971,7 +3987,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/IdentifierStn.js ***!
   \******************************************************************************/
@@ -3987,12 +4003,12 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../../StandardImport */ 16),
-      { UniqueIdentifierHandle: __webpack_require__(/*! ../UniqueIdentifierHandle */ 22) }
+      { UniqueIdentifierHandle: __webpack_require__(/*! ../UniqueIdentifierHandle */ 23) }
     ],
     (identifierRegexp, UniqueIdentifierHandle, String, merge) => {
       let IdentifierStn;
       return (IdentifierStn = Caf.defClass(
-        class IdentifierStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class IdentifierStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor(props, children) {
             let identifier, temp, base;
             if (Caf.is((identifier = children[0]), String)) {
@@ -4037,7 +4053,7 @@ Caf.defMod(module, () => {
               return true;
             },
             valueStn: function() {
-              return __webpack_require__(/*! ./ReferenceStn */ 55)(this);
+              return __webpack_require__(/*! ./ReferenceStn */ 56)(this);
             }
           });
           this.prototype.updateScope = function(scope) {
@@ -4061,7 +4077,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /*!*****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ReferenceStn.js ***!
   \*****************************************************************************/
@@ -4075,7 +4091,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ReferenceStn;
     return (ReferenceStn = Caf.defClass(
-      class ReferenceStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ReferenceStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ReferenceStn, classSuper, instanceSuper) {
         this.prototype.updateScope = function(scope) {
           let base;
@@ -4127,7 +4143,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /*!**********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/IfStn.js ***!
   \**********************************************************************/
@@ -4139,7 +4155,7 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return function(test, body, elseClause) {
-    return __webpack_require__(/*! ./ControlOperatorStn */ 41)(
+    return __webpack_require__(/*! ./ControlOperatorStn */ 42)(
       { operand: "if" },
       test,
       body,
@@ -4151,7 +4167,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 57 */
+/* 58 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ImportBodyStn.js ***!
   \******************************************************************************/
@@ -4164,10 +4180,10 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return (() => {
     let ImportStn, ImportBodyStn;
-    ImportStn = __webpack_require__(/*! ./ImportStn */ 58);
+    ImportStn = __webpack_require__(/*! ./ImportStn */ 59);
     return (ImportBodyStn = Caf.defClass(
-      class ImportBodyStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
-        __webpack_require__(/*! ../BaseStn */ 23)
+      class ImportBodyStn extends __webpack_require__(/*! ../ScopeStnMixin */ 49)(
+        __webpack_require__(/*! ../BaseStn */ 24)
       ) {},
       function(ImportBodyStn, classSuper, instanceSuper) {
         this.prototype.isImports = true;
@@ -4182,7 +4198,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 58 */
+/* 59 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ImportStn.js ***!
   \**************************************************************************/
@@ -4199,7 +4215,7 @@ Caf.defMod(module, () => {
     (arrayWithoutLast, Object, compactFlatten) => {
       let ImportStn;
       return (ImportStn = Caf.defClass(
-        class ImportStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ImportStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ImportStn, classSuper, instanceSuper) {
           this.getter({
             nonImportScope: function() {
@@ -4283,7 +4299,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 59 */
+/* 60 */
 /*!**************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/InterpolatedStringStn.js ***!
   \**************************************************************************************/
@@ -4300,7 +4316,7 @@ Caf.defMod(module, () => {
     peek => {
       let InterpolatedStringStn;
       return (InterpolatedStringStn = Caf.defClass(
-        class InterpolatedStringStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class InterpolatedStringStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(InterpolatedStringStn, classSuper, instanceSuper) {
           this.prototype.compactNewLines = function(compactLeft, compactRight) {
             return Caf.each2(
@@ -4343,7 +4359,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 60 */
+/* 61 */
 /*!**********************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/LabeledDestructuringTargetStn.js ***!
   \**********************************************************************************************/
@@ -4357,12 +4373,12 @@ Caf.defMod(module, () => {
   return (() => {
     let LabeledDestructuringTargetStn;
     return (LabeledDestructuringTargetStn = Caf.defClass(
-      class LabeledDestructuringTargetStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class LabeledDestructuringTargetStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(LabeledDestructuringTargetStn, classSuper, instanceSuper) {
         this.getter({
           structuringStn: function() {
-            return __webpack_require__(/*! ./ObjectPropValueStn */ 61)(
-              __webpack_require__(/*! ./ObjectPropNameStn */ 62)(this.children[0]),
+            return __webpack_require__(/*! ./ObjectPropValueStn */ 62)(
+              __webpack_require__(/*! ./ObjectPropNameStn */ 63)(this.children[0]),
               this.children[1].getValueStn()
             );
           }
@@ -4380,7 +4396,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 61 */
+/* 62 */
 /*!***********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectPropValueStn.js ***!
   \***********************************************************************************/
@@ -4411,7 +4427,7 @@ Caf.defMod(module, () => {
     ) => {
       let ObjectPropValueStn;
       return (ObjectPropValueStn = Caf.defClass(
-        class ObjectPropValueStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ObjectPropValueStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ObjectPropValueStn, classSuper, instanceSuper) {
           this.getter({
             isObject: true,
@@ -4487,7 +4503,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 62 */
+/* 63 */
 /*!**********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectPropNameStn.js ***!
   \**********************************************************************************/
@@ -4504,7 +4520,7 @@ Caf.defMod(module, () => {
     (identifierRegexp, peek, escapePropName) => {
       let ObjectPropNameStn;
       return (ObjectPropNameStn = Caf.defClass(
-        class ObjectPropNameStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ObjectPropNameStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ObjectPropNameStn, classSuper, instanceSuper) {
           this.getter({
             canBeUsedInES6Structuring: function() {
@@ -4543,7 +4559,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /*!***********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/LetStn.js ***!
   \***********************************************************************/
@@ -4557,7 +4573,7 @@ Caf.defMod(module, () => {
   return (() => {
     let LetStn;
     return (LetStn = Caf.defClass(
-      class LetStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class LetStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(LetStn, classSuper, instanceSuper) {
         this.prototype.updateScope = function(scope) {
           this.scope = scope;
@@ -4583,7 +4599,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 64 */
+/* 65 */
 /*!*******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/NewInstanceStn.js ***!
   \*******************************************************************************/
@@ -4597,7 +4613,7 @@ Caf.defMod(module, () => {
   return (() => {
     let NewInstanceStn;
     return (NewInstanceStn = Caf.defClass(
-      class NewInstanceStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class NewInstanceStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(NewInstanceStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function(options) {
           let noParens, child, childNodes;
@@ -4635,7 +4651,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/NumberLiteralStn.js ***!
   \*********************************************************************************/
@@ -4652,7 +4668,7 @@ Caf.defMod(module, () => {
     parseFloat => {
       let NumberLiteralStn;
       return (NumberLiteralStn = Caf.defClass(
-        class NumberLiteralStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class NumberLiteralStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(NumberLiteralStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
             let value;
@@ -4683,7 +4699,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /*!***************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectDestructuringStn.js ***!
   \***************************************************************************************/
@@ -4697,14 +4713,14 @@ Caf.defMod(module, () => {
   return (() => {
     let ObjectDestructuringStn;
     return (ObjectDestructuringStn = Caf.defClass(
-      class ObjectDestructuringStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ObjectDestructuringStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ObjectDestructuringStn, classSuper, instanceSuper) {
         this.getter({
           valueStn: function() {
             return this.structuringStn;
           },
           structuringStn: function() {
-            return __webpack_require__(/*! ./ObjectStn */ 67)(
+            return __webpack_require__(/*! ./ObjectStn */ 68)(
               Caf.array(this.children, child => child.getStructuringStn())
             );
           }
@@ -4728,7 +4744,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 67 */
+/* 68 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectStn.js ***!
   \**************************************************************************/
@@ -4743,7 +4759,7 @@ Caf.defMod(module, () => {
     let StnRegistry, ObjectStn;
     StnRegistry = __webpack_require__(/*! ../../StnRegistry */ 19);
     return (ObjectStn = Caf.defClass(
-      class ObjectStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ObjectStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ObjectStn, classSuper, instanceSuper) {
         let splitObjectsAtSameProps;
         this.getter({
@@ -4802,7 +4818,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /*!*****************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ObjectLiteralAccessorStn.js ***!
   \*****************************************************************************************/
@@ -4816,7 +4832,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ObjectLiteralAccessorStn;
     return (ObjectLiteralAccessorStn = Caf.defClass(
-      class ObjectLiteralAccessorStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+      class ObjectLiteralAccessorStn extends __webpack_require__(/*! ../BaseStn */ 24) {
         constructor(props, children) {
           super(...arguments);
           this.key = children[0];
@@ -4849,7 +4865,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 69 */
+/* 70 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/PureJsStn.js ***!
   \**************************************************************************/
@@ -4866,7 +4882,7 @@ Caf.defMod(module, () => {
     String => {
       let PureJsStn;
       return (PureJsStn = Caf.defClass(
-        class PureJsStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class PureJsStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor(props, children) {
             let js;
             if (Caf.is((js = children[0]), String)) {
@@ -4889,7 +4905,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RegExpStn.js ***!
   \**************************************************************************/
@@ -4906,7 +4922,7 @@ Caf.defMod(module, () => {
     isString => {
       let RegExpStn;
       return (RegExpStn = Caf.defClass(
-        class RegExpStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class RegExpStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(RegExpStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function() {
             let value, modifiers, childrenNodes, hasInterpolation, base;
@@ -4947,7 +4963,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /*!***************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RequireStn.js ***!
   \***************************************************************************/
@@ -4963,9 +4979,9 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(/*! ../../StandardImport */ 16)],
     peek => {
       let findModuleSync, RequireStn;
-      ({ findModuleSync } = __webpack_require__(/*! caffeine-mc */ 72));
+      ({ findModuleSync } = __webpack_require__(/*! caffeine-mc */ 73));
       return (RequireStn = Caf.defClass(
-        class RequireStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class RequireStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(RequireStn, classSuper, instanceSuper) {
           this.getter({
             rawRequireString: function() {
@@ -5004,7 +5020,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 72 */
+/* 73 */
 /*!*****************************************************************************!*\
   !*** external "require('caffeine-mc' /* ABC - not inlining fellow NPM *_/)" ***!
   \*****************************************************************************/
@@ -5014,7 +5030,7 @@ Caf.defMod(module, () => {
 module.exports = require('caffeine-mc' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 73 */
+/* 74 */
 /*!************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/RootStn.js ***!
   \************************************************************************/
@@ -5030,10 +5046,10 @@ Caf.defMod(module, () => {
     [global, __webpack_require__(/*! ../../StandardImport */ 16)],
     (compactFlatten, present) => {
       let StatementsStn, RootStn;
-      StatementsStn = __webpack_require__(/*! ./StatementsStn */ 74);
+      StatementsStn = __webpack_require__(/*! ./StatementsStn */ 75);
       return (RootStn = Caf.defClass(
-        class RootStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
-          __webpack_require__(/*! ../BaseStn */ 23)
+        class RootStn extends __webpack_require__(/*! ../ScopeStnMixin */ 49)(
+          __webpack_require__(/*! ../BaseStn */ 24)
         ) {
           constructor(props, children) {
             super(...arguments);
@@ -5103,7 +5119,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 74 */
+/* 75 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/StatementsStn.js ***!
   \******************************************************************************/
@@ -5120,7 +5136,7 @@ Caf.defMod(module, () => {
     Error => {
       let StatementsStn;
       return (StatementsStn = Caf.defClass(
-        class StatementsStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class StatementsStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(StatementsStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
             let returnAction,
@@ -5253,7 +5269,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 75 */
+/* 76 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SimpleLiteralStn.js ***!
   \*********************************************************************************/
@@ -5266,7 +5282,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   let SimpleLiteralStn;
   return (SimpleLiteralStn = Caf.defClass(
-    class SimpleLiteralStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+    class SimpleLiteralStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
     function(SimpleLiteralStn, classSuper, instanceSuper) {
       this.prototype.toSourceNode = function(options) {
         let value;
@@ -5288,7 +5304,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 76 */
+/* 77 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/StringStn.js ***!
   \**************************************************************************/
@@ -5305,7 +5321,7 @@ Caf.defMod(module, () => {
     (deescapeSpaces, escapeUnescaped, escapeMustEscapes) => {
       let StringStn;
       return (StringStn = Caf.defClass(
-        class StringStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class StringStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(StringStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
             return this.createSourceNode(this.getJsLiteral(options));
@@ -5368,7 +5384,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SuperStn.js ***!
   \*************************************************************************/
@@ -5385,7 +5401,7 @@ Caf.defMod(module, () => {
     (Error, isString, merge) => {
       let SuperStn;
       return (SuperStn = Caf.defClass(
-        class SuperStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class SuperStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor(props, args) {
             super(...arguments);
             this.args = args;
@@ -5469,7 +5485,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 78 */
+/* 79 */
 /*!**************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SwitchStn.js ***!
   \**************************************************************************/
@@ -5486,7 +5502,7 @@ Caf.defMod(module, () => {
     arrayBetweenEach => {
       let SwitchStn;
       return (SwitchStn = Caf.defClass(
-        class SwitchStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class SwitchStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(SwitchStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options) {
             let expression,
@@ -5543,7 +5559,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 79 */
+/* 80 */
 /*!******************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/SwitchWhenStn.js ***!
   \******************************************************************************/
@@ -5557,7 +5573,7 @@ Caf.defMod(module, () => {
   return (() => {
     let SwitchWhenStn;
     return (SwitchWhenStn = Caf.defClass(
-      class SwitchWhenStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class SwitchWhenStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(SwitchWhenStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function(options) {
           let falsifyCases, returnAction, whenValue, thenDo;
@@ -5584,7 +5600,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 80 */
+/* 81 */
 /*!************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ThisStn.js ***!
   \************************************************************************/
@@ -5601,7 +5617,7 @@ Caf.defMod(module, () => {
     (identifierRegexp, escapeJavascriptString, peek) => {
       let ThisStn;
       return (ThisStn = Caf.defClass(
-        class ThisStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ThisStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ThisStn, classSuper, instanceSuper) {
           this.getter({
             identifier: function() {
@@ -5634,7 +5650,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 81 */
+/* 82 */
 /*!*************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/ThrowStn.js ***!
   \*************************************************************************/
@@ -5648,7 +5664,7 @@ Caf.defMod(module, () => {
   return (() => {
     let ThrowStn;
     return (ThrowStn = Caf.defClass(
-      class ThrowStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ThrowStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ThrowStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function({ expression }) {
           let base;
@@ -5665,7 +5681,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 82 */
+/* 83 */
 /*!***********************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/TryStn.js ***!
   \***********************************************************************/
@@ -5682,7 +5698,7 @@ Caf.defMod(module, () => {
     StnRegistry => {
       let TryStn;
       return (TryStn = Caf.defClass(
-        class TryStn extends __webpack_require__(/*! ../BaseStn */ 23) {
+        class TryStn extends __webpack_require__(/*! ../BaseStn */ 24) {
           constructor() {
             let temp, base;
             super(...arguments);
@@ -5716,7 +5732,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 83 */
+/* 84 */
 /*!*********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/UnaryOperatorStn.js ***!
   \*********************************************************************************/
@@ -5730,7 +5746,7 @@ Caf.defMod(module, () => {
   return (() => {
     let UnaryOperatorStn;
     return (UnaryOperatorStn = Caf.defClass(
-      class UnaryOperatorStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class UnaryOperatorStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(UnaryOperatorStn, classSuper, instanceSuper) {
         this.getter({
           normalizedOperand: function() {
@@ -5781,7 +5797,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 84 */
+/* 85 */
 /*!*****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/StnsGeneratingJs/UndefinedStn.js ***!
   \*****************************************************************************/
@@ -5795,7 +5811,7 @@ Caf.defMod(module, () => {
   return (() => {
     let UndefinedStn;
     return (UndefinedStn = Caf.defClass(
-      class UndefinedStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class UndefinedStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(UndefinedStn, classSuper, instanceSuper) {
         this.prototype.toSourceNode = function() {
           return this.createSourceNode("undefined");
@@ -5808,7 +5824,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 85 */
+/* 86 */
 /*!***************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/index.coffee ***!
   \***************************************************************************/
@@ -5818,16 +5834,16 @@ Caf.defMod(module, () => {
 module.exports = __webpack_require__(/*! ./namespace */ 9);
 
 module.exports.addModules({
-  CaptureStn: __webpack_require__(/*! ./CaptureStn */ 86),
-  ComprehensionStn: __webpack_require__(/*! ./ComprehensionStn */ 87),
-  ExtractStn: __webpack_require__(/*! ./ExtractStn */ 89),
-  ExtractToIdentifierStn: __webpack_require__(/*! ./ExtractToIdentifierStn */ 90),
-  StandardImport: __webpack_require__(/*! ./StandardImport */ 88)
+  CaptureStn: __webpack_require__(/*! ./CaptureStn */ 87),
+  ComprehensionStn: __webpack_require__(/*! ./ComprehensionStn */ 88),
+  ExtractStn: __webpack_require__(/*! ./ExtractStn */ 90),
+  ExtractToIdentifierStn: __webpack_require__(/*! ./ExtractToIdentifierStn */ 91),
+  StandardImport: __webpack_require__(/*! ./StandardImport */ 89)
 });
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /*!****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/CaptureStn.js ***!
   \****************************************************************************/
@@ -5842,7 +5858,7 @@ Caf.defMod(module, () => {
     let SemanticTree, CaptureStn;
     SemanticTree = __webpack_require__(/*! ../../StnRegistry */ 19);
     return (CaptureStn = Caf.defClass(
-      class CaptureStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class CaptureStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(CaptureStn, classSuper, instanceSuper) {
         this.prototype.postTransform = function() {
           return SemanticTree.ObjectStn(
@@ -5867,7 +5883,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 87 */
+/* 88 */
 /*!**********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/ComprehensionStn.js ***!
   \**********************************************************************************/
@@ -5902,7 +5918,7 @@ Caf.defMod(module, () => {
       "Math",
       "UnaryOperatorStn"
     ],
-    [global, __webpack_require__(/*! ./StandardImport */ 88)],
+    [global, __webpack_require__(/*! ./StandardImport */ 89)],
     (
       Error,
       lowerCamelCase,
@@ -5928,8 +5944,8 @@ Caf.defMod(module, () => {
     ) => {
       let ComprehensionStn;
       return (ComprehensionStn = Caf.defClass(
-        class ComprehensionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 48)(
-          __webpack_require__(/*! ../BaseStn */ 23)
+        class ComprehensionStn extends __webpack_require__(/*! ../ScopeStnMixin */ 49)(
+          __webpack_require__(/*! ../BaseStn */ 24)
         ) {},
         function(ComprehensionStn, classSuper, instanceSuper) {
           let getComprehensionsFound, clauseAliases;
@@ -6650,7 +6666,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 88 */
+/* 89 */
 /*!********************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/StandardImport.js ***!
   \********************************************************************************/
@@ -6661,13 +6677,13 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */(function(module) {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
-  return __webpack_require__(/*! ../../StandardImport */ 16).mergeWithSelf(__webpack_require__(/*! ../BasicStns */ 27));
+  return __webpack_require__(/*! ../../StandardImport */ 16).mergeWithSelf(__webpack_require__(/*! ../BasicStns */ 28));
 });
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 89 */
+/* 90 */
 /*!****************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/ExtractStn.js ***!
   \****************************************************************************/
@@ -6682,7 +6698,7 @@ Caf.defMod(module, () => {
     let SemanticTree, ExtractStn;
     SemanticTree = __webpack_require__(/*! ../../StnRegistry */ 19);
     return (ExtractStn = Caf.defClass(
-      class ExtractStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+      class ExtractStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
       function(ExtractStn, classSuper, instanceSuper) {
         this.getter({
           extractSource: function() {
@@ -6779,7 +6795,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 90 */
+/* 91 */
 /*!****************************************************************************************!*\
   !*** ./source/CaffeineScript/SemanticTree/TransformOnlyStns/ExtractToIdentifierStn.js ***!
   \****************************************************************************************/
@@ -6800,7 +6816,7 @@ Caf.defMod(module, () => {
       "AssignmentStn",
       "IdentifierStn"
     ],
-    [global, __webpack_require__(/*! ./StandardImport */ 88)],
+    [global, __webpack_require__(/*! ./StandardImport */ 89)],
     (
       peek,
       AccessorStn,
@@ -6812,7 +6828,7 @@ Caf.defMod(module, () => {
     ) => {
       let ExtractToIdentifierStn;
       return (ExtractToIdentifierStn = Caf.defClass(
-        class ExtractToIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 23) {},
+        class ExtractToIdentifierStn extends __webpack_require__(/*! ../BaseStn */ 24) {},
         function(ExtractToIdentifierStn, classSuper, instanceSuper) {
           this.getter({
             assignToIdentifierStn: function() {
@@ -6888,7 +6904,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 91 */
+/* 92 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/CaffeineScriptParser.js ***!
   \*******************************************************/
@@ -6904,22 +6920,22 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ./StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
-      __webpack_require__(/*! ./CafParseNodeBaseClass */ 93)
+      __webpack_require__(/*! caffeine-eight */ 93),
+      __webpack_require__(/*! ./CafParseNodeBaseClass */ 94)
     ],
     (Parser, isFunction) => {
       let CaffeineScriptParser;
       return (CaffeineScriptParser = Caf.defClass(
         class CaffeineScriptParser extends Parser {},
         function(CaffeineScriptParser, classSuper, instanceSuper) {
-          this.nodeBaseClass = __webpack_require__(/*! ./CafParseNodeBaseClass */ 93);
-          Caf.each2(__webpack_require__(/*! ./Rules */ 94).modules, mod =>
+          this.nodeBaseClass = __webpack_require__(/*! ./CafParseNodeBaseClass */ 94);
+          Caf.each2(__webpack_require__(/*! ./Rules */ 95).modules, mod =>
             isFunction(mod) ? mod.call(this) : this.rule(mod)
           );
           this.prototype.parse = function(source, options) {
             return instanceSuper.parse.call(
               this,
-              __webpack_require__(/*! ./Preprocessors */ 121).preprocess(source),
+              __webpack_require__(/*! ./Preprocessors */ 122).preprocess(source),
               options
             );
           };
@@ -6932,7 +6948,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 92 */
+/* 93 */
 /*!********************************************************************************!*\
   !*** external "require('caffeine-eight' /* ABC - not inlining fellow NPM *_/)" ***!
   \********************************************************************************/
@@ -6942,7 +6958,7 @@ Caf.defMod(module, () => {
 module.exports = require('caffeine-eight' /* ABC - not inlining fellow NPM */);
 
 /***/ }),
-/* 93 */
+/* 94 */
 /*!********************************************************!*\
   !*** ./source/CaffeineScript/CafParseNodeBaseClass.js ***!
   \********************************************************/
@@ -6958,7 +6974,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ./StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ./StnRegistry */ 19)
     ],
     (Nodes, isFunction, RootStn) => {
@@ -7060,7 +7076,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /*!**************************************************!*\
   !*** ./source/CaffeineScript/Rules/index.coffee ***!
   \**************************************************/
@@ -7070,37 +7086,37 @@ Caf.defMod(module, () => {
 module.exports = __webpack_require__(/*! ./namespace */ 5);
 
 module.exports.addModules({
-  Accessors: __webpack_require__(/*! ./Accessors */ 95),
-  ArrayLiterals: __webpack_require__(/*! ./ArrayLiterals */ 96),
-  Assignment: __webpack_require__(/*! ./Assignment */ 97),
-  Blocks: __webpack_require__(/*! ./Blocks */ 98),
-  Classes: __webpack_require__(/*! ./Classes */ 99),
-  Comments: __webpack_require__(/*! ./Comments */ 100),
-  Comprehensions: __webpack_require__(/*! ./Comprehensions */ 101),
-  ControlStructures: __webpack_require__(/*! ./ControlStructures */ 102),
-  DestructuringAssignment: __webpack_require__(/*! ./DestructuringAssignment */ 103),
-  Expressions: __webpack_require__(/*! ./Expressions */ 104),
-  Extract: __webpack_require__(/*! ./Extract */ 105),
-  Functions: __webpack_require__(/*! ./Functions */ 106),
-  KeywordLiterals: __webpack_require__(/*! ./KeywordLiterals */ 107),
-  Literals: __webpack_require__(/*! ./Literals */ 108),
-  NumberLiterals: __webpack_require__(/*! ./NumberLiterals */ 109),
-  ObjectLiterals: __webpack_require__(/*! ./ObjectLiterals */ 110),
-  Operators: __webpack_require__(/*! ./Operators */ 111),
-  RegExp: __webpack_require__(/*! ./RegExp */ 112),
-  Require: __webpack_require__(/*! ./Require */ 113),
-  Root: __webpack_require__(/*! ./Root */ 114),
-  Statements: __webpack_require__(/*! ./Statements */ 115),
-  StringLiterals: __webpack_require__(/*! ./StringLiterals */ 116),
-  TagMacros: __webpack_require__(/*! ./TagMacros */ 117),
-  Tokens: __webpack_require__(/*! ./Tokens */ 118),
-  ValueLists: __webpack_require__(/*! ./ValueLists */ 119),
-  Values: __webpack_require__(/*! ./Values */ 120)
+  Accessors: __webpack_require__(/*! ./Accessors */ 96),
+  ArrayLiterals: __webpack_require__(/*! ./ArrayLiterals */ 97),
+  Assignment: __webpack_require__(/*! ./Assignment */ 98),
+  Blocks: __webpack_require__(/*! ./Blocks */ 99),
+  Classes: __webpack_require__(/*! ./Classes */ 100),
+  Comments: __webpack_require__(/*! ./Comments */ 101),
+  Comprehensions: __webpack_require__(/*! ./Comprehensions */ 102),
+  ControlStructures: __webpack_require__(/*! ./ControlStructures */ 103),
+  DestructuringAssignment: __webpack_require__(/*! ./DestructuringAssignment */ 104),
+  Expressions: __webpack_require__(/*! ./Expressions */ 105),
+  Extract: __webpack_require__(/*! ./Extract */ 106),
+  Functions: __webpack_require__(/*! ./Functions */ 107),
+  KeywordLiterals: __webpack_require__(/*! ./KeywordLiterals */ 108),
+  Literals: __webpack_require__(/*! ./Literals */ 109),
+  NumberLiterals: __webpack_require__(/*! ./NumberLiterals */ 110),
+  ObjectLiterals: __webpack_require__(/*! ./ObjectLiterals */ 111),
+  Operators: __webpack_require__(/*! ./Operators */ 112),
+  RegExp: __webpack_require__(/*! ./RegExp */ 113),
+  Require: __webpack_require__(/*! ./Require */ 114),
+  Root: __webpack_require__(/*! ./Root */ 115),
+  Statements: __webpack_require__(/*! ./Statements */ 116),
+  StringLiterals: __webpack_require__(/*! ./StringLiterals */ 117),
+  TagMacros: __webpack_require__(/*! ./TagMacros */ 118),
+  Tokens: __webpack_require__(/*! ./Tokens */ 119),
+  ValueLists: __webpack_require__(/*! ./ValueLists */ 120),
+  Values: __webpack_require__(/*! ./Values */ 121)
 });
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /*!**************************************************!*\
   !*** ./source/CaffeineScript/Rules/Accessors.js ***!
   \**************************************************/
@@ -7138,7 +7154,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 96 */
+/* 97 */
 /*!******************************************************!*\
   !*** ./source/CaffeineScript/Rules/ArrayLiterals.js ***!
   \******************************************************/
@@ -7176,7 +7192,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 97 */
+/* 98 */
 /*!***************************************************!*\
   !*** ./source/CaffeineScript/Rules/Assignment.js ***!
   \***************************************************/
@@ -7211,7 +7227,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 98 */
+/* 99 */
 /*!***********************************************!*\
   !*** ./source/CaffeineScript/Rules/Blocks.js ***!
   \***********************************************/
@@ -7224,7 +7240,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     Extensions => {
       return function() {
         this.rule({ blocks: "block+" });
@@ -7257,7 +7273,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 99 */
+/* 100 */
 /*!************************************************!*\
   !*** ./source/CaffeineScript/Rules/Classes.js ***!
   \************************************************/
@@ -7283,7 +7299,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 100 */
+/* 101 */
 /*!*************************************************!*\
   !*** ./source/CaffeineScript/Rules/Comments.js ***!
   \*************************************************/
@@ -7323,7 +7339,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 101 */
+/* 102 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/Rules/Comprehensions.js ***!
   \*******************************************************/
@@ -7386,7 +7402,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /*!**********************************************************!*\
   !*** ./source/CaffeineScript/Rules/ControlStructures.js ***!
   \**********************************************************/
@@ -7399,7 +7415,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     Extensions => {
       return {
         controlStatement: [
@@ -7475,7 +7491,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 103 */
+/* 104 */
 /*!****************************************************************!*\
   !*** ./source/CaffeineScript/Rules/DestructuringAssignment.js ***!
   \****************************************************************/
@@ -7568,7 +7584,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 104 */
+/* 105 */
 /*!****************************************************!*\
   !*** ./source/CaffeineScript/Rules/Expressions.js ***!
   \****************************************************/
@@ -7584,7 +7600,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ../StnRegistry */ 19)
     ],
     Extensions => {
@@ -7691,7 +7707,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 105 */
+/* 106 */
 /*!************************************************!*\
   !*** ./source/CaffeineScript/Rules/Extract.js ***!
   \************************************************/
@@ -7704,7 +7720,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     Extensions => {
       return {
         extractExpression: [
@@ -7753,7 +7769,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 106 */
+/* 107 */
 /*!**************************************************!*\
   !*** ./source/CaffeineScript/Rules/Functions.js ***!
   \**************************************************/
@@ -7766,7 +7782,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions", "Error"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     (Extensions, Error) => {
       return {
         functionDefinition: [
@@ -7854,7 +7870,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 107 */
+/* 108 */
 /*!********************************************************!*\
   !*** ./source/CaffeineScript/Rules/KeywordLiterals.js ***!
   \********************************************************/
@@ -7883,7 +7899,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 108 */
+/* 109 */
 /*!*************************************************!*\
   !*** ./source/CaffeineScript/Rules/Literals.js ***!
   \*************************************************/
@@ -7911,7 +7927,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 109 */
+/* 110 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/Rules/NumberLiterals.js ***!
   \*******************************************************/
@@ -7942,7 +7958,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 110 */
+/* 111 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/Rules/ObjectLiterals.js ***!
   \*******************************************************/
@@ -7959,7 +7975,7 @@ Caf.defMod(module, () => {
     (parentImports = [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ../StnRegistry */ 19)
     ]),
     Extensions => {
@@ -8108,7 +8124,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 111 */
+/* 112 */
 /*!**************************************************!*\
   !*** ./source/CaffeineScript/Rules/Operators.js ***!
   \**************************************************/
@@ -8131,7 +8147,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! ../OperatorHelper */ 38),
+      __webpack_require__(/*! ../OperatorHelper */ 39),
       __webpack_require__(/*! ../StnRegistry */ 19)
     ],
     (
@@ -8230,7 +8246,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 112 */
+/* 113 */
 /*!***********************************************!*\
   !*** ./source/CaffeineScript/Rules/RegExp.js ***!
   \***********************************************/
@@ -8246,7 +8262,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ../StnRegistry */ 19)
     ],
     Extensions => {
@@ -8324,7 +8340,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 113 */
+/* 114 */
 /*!************************************************!*\
   !*** ./source/CaffeineScript/Rules/Require.js ***!
   \************************************************/
@@ -8349,7 +8365,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 114 */
+/* 115 */
 /*!*********************************************!*\
   !*** ./source/CaffeineScript/Rules/Root.js ***!
   \*********************************************/
@@ -8375,7 +8391,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 115 */
+/* 116 */
 /*!***************************************************!*\
   !*** ./source/CaffeineScript/Rules/Statements.js ***!
   \***************************************************/
@@ -8391,7 +8407,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ../StnRegistry */ 19)
     ],
     ControlOperatorStn => {
@@ -8460,7 +8476,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 116 */
+/* 117 */
 /*!*******************************************************!*\
   !*** ./source/CaffeineScript/Rules/StringLiterals.js ***!
   \*******************************************************/
@@ -8476,7 +8492,7 @@ Caf.defMod(module, () => {
     [
       global,
       __webpack_require__(/*! ../StandardImport */ 16),
-      __webpack_require__(/*! caffeine-eight */ 92),
+      __webpack_require__(/*! caffeine-eight */ 93),
       __webpack_require__(/*! ../StnRegistry */ 19),
       __webpack_require__(/*! ../Lib */ 18)
     ],
@@ -8641,7 +8657,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 117 */
+/* 118 */
 /*!**************************************************!*\
   !*** ./source/CaffeineScript/Rules/TagMacros.js ***!
   \**************************************************/
@@ -8684,7 +8700,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 118 */
+/* 119 */
 /*!***********************************************!*\
   !*** ./source/CaffeineScript/Rules/Tokens.js ***!
   \***********************************************/
@@ -8712,7 +8728,13 @@ Caf.defMod(module, () => {
       _closeCurly: /\ *\}/,
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
-      reservedWord: /(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|throw|and|or|not|extract|as|for|return|break|of|yes|on|no|off|typeof|reduce|inject|promise|await|short|skip|mixin|tap)(-[a-z]+)*\b(?![-])/,
+      reservedWord: RegExp(
+        `(import|true|false|null|undefined|global|require|module|eval|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|throw|and|or|not|extract|as|for|return|break|of|yes|on|no|off|typeof|${Caf.toString(
+          __webpack_require__(/*! art-standard-lib */ 13).log(
+            __webpack_require__(/*! ../JavaScriptReservedWordList */ 21).join("|")
+          )
+        )}|reduce|inject|promise|await|short|skip|mixin|tap)(-[a-z]+)*\\b(?![-])`
+      ),
       identifier: [
         /(?!\d)((?!\s)[$\w\u007f-\uffff])+/,
         {
@@ -8741,7 +8763,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 119 */
+/* 120 */
 /*!***************************************************!*\
   !*** ./source/CaffeineScript/Rules/ValueLists.js ***!
   \***************************************************/
@@ -8754,7 +8776,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     Extensions => {
       return function() {
         this.rule({ valueList: ["simpleValueList", "valueListBlock"] });
@@ -8806,7 +8828,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 120 */
+/* 121 */
 /*!***********************************************!*\
   !*** ./source/CaffeineScript/Rules/Values.js ***!
   \***********************************************/
@@ -8819,7 +8841,7 @@ let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
     ["Extensions"],
-    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 92)],
+    [global, __webpack_require__(/*! ../StandardImport */ 16), __webpack_require__(/*! caffeine-eight */ 93)],
     Extensions => {
       return function() {
         this.rule({
@@ -8975,7 +8997,7 @@ Caf.defMod(module, () => {
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../node_modules/webpack/buildin/module.js */ 11)(module)))
 
 /***/ }),
-/* 121 */
+/* 122 */
 /*!************************************************!*\
   !*** ./source/CaffeineScript/Preprocessors.js ***!
   \************************************************/
