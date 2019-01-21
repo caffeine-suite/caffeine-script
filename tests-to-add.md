@@ -1,3 +1,16 @@
+# ToSort
+
+```coffeescript
+###
+  directory structure:
+    thisFile.caf
+    .DotSubdir/index.js
+
+###
+&DotSubdir
+# Should generate: require('./.DotSubdir')
+```
+
 # Improvements
 ```coffeescript
 {} a = b = 1

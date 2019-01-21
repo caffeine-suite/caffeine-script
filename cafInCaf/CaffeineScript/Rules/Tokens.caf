@@ -113,7 +113,7 @@
         | reduce | inject
         | promise | await
         | short | skip
-        | mixin
+        | mixin | tap
 
         )
 

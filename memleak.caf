@@ -16,7 +16,7 @@ import &ArtSuite
 
 i = 0
 CafMc = require :caffeine-mc
-CaffeineScript = require :caffeine-script
+CaffeineScript = require :./index.coffee
 &globPromise "cafInCaf/**/*.caf"
 .then (files) ->
   log "#{files.length} files"
