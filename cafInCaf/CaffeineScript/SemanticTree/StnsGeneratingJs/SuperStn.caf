@@ -1,5 +1,7 @@
 import &StandardImport
 
+# TODO: refactor this into a pure-transform Stn
+
 class SuperStn extends &BaseStn
 
   constructor: (props, @args) ->
@@ -63,6 +65,6 @@ class SuperStn extends &BaseStn
         else if args.length > 0
           []
             ", "
-            @stnArrayToSourceNodes args, ', '
+            @stnArrayToSourceNodes args, ', ' expression: true
 
         ")"

@@ -263,4 +263,18 @@ module.exports = suite: parseTestSuite
           bar()
           super
       """: "
-        let C; C = Caf.defClass(class C extends Object {constructor(foo) {bar(); super(...arguments); this.foo = foo;};});"
+        let C; C = Caf.defClass(class C extends Object {constructor(foo) {bar(); super(...arguments); this.foo = foo;};});
+        "
+
+      """
+      class Foo
+        render: ->
+          super
+            if true then 123
+      """: "
+        let Foo;
+        Foo = Caf.defClass(class Foo extends Object {},
+        function(Foo, classSuper, instanceSuper)
+        {this.prototype.render = function()
+        {return instanceSuper.render.call(this, true ? 123 : undefined);};});
+        "

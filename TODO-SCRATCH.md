@@ -1,6 +1,15 @@
 # ToSort
 
 ```coffeescript
+# this code puts an 'if' into the function arguments rather than a 
+# ?-: trinary... 
+class Foo
+  render: ->
+    super
+      if true then "foo"
+```
+
+```coffeescript
 ###
   directory structure:
     thisFile.caf
