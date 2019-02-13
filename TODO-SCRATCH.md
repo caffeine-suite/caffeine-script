@@ -27,6 +27,15 @@ Syntax Highlighting
 
 # To Sort
 ```coffeescript
+# when should share scope with the with-clause (and with-key) clause
+# I think we can rework iterators JAvaScript code to use
+# only one funciton instead of two, even when there is a when
+# or with-key clause.
+array a in b when c = a.foo
+  c
+```
+
+```coffeescript
 # should be legal:
 A
 +

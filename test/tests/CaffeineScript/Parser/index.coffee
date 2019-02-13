@@ -26,6 +26,5 @@ module.exports
   Statements:         require './Statements'        
   Structuring:        require './Structuring'       
   Switch:             require './Switch'            
-  TagMacros:          require './TagMacros'         
   Values:             require './Values'            
 require './Literals'
