@@ -364,12 +364,13 @@ class BaseStn extends BaseClass
     catch e
       ce = @parseTreeNode.parser.generateCompileError {}
         failureIndex: @sourceOffset
-        errorType: "Validation"
+        errorType:    :Validation
         e.message
         e.info
 
       ce.stack = e.stack
       throw ce
+
     each child in @children do child.validateAll()
     @
 

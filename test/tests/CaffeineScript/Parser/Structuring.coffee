@@ -7,6 +7,7 @@
 module.exports = suite: parseTestSuite
   notSupported:
     "{a+1}": null
+    "{} -foo": null
 
   ObjectLiterals:
     bracketed:

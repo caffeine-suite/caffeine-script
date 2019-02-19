@@ -1,8 +1,36 @@
 {CaffeineScript} = Neptune
 {isNumber, each, object, array, isArray, log, formattedInspect, isPlainObject, merge, object, stringCount, isString} = Neptune.Art.StandardLib
 {CaffeineScriptParser} = CaffeineScript
+{CaffeineEightCompileError} = require 'caffeine-eight'
+
+compile = (source, parseOptions, toJsOptions) ->
+  parseTree               = CaffeineScriptParser.parse source, parseOptions
+  semanticTree            = parseTree.getStn()
+  transformedSemanticTree = semanticTree.validateAll().transform()
+  transformedSemanticTree.toJsUsingSourceNode toJsOptions
+  .compiled.js
 
 module.exports = suite:
+
+  structuring: ->
+    test "unary operator", ->
+      source = """
+        {} -foomageddon
+        """
+
+      parser = new CaffeineScriptParser
+
+      (assert.rejects -> compile source
+      ).then (rejectsWith)->
+        log {rejectsWith}
+        assert.true rejectsWith instanceof CaffeineEightCompileError
+        assert.match rejectsWith.message, "not allowed when structuring"
+        assert.selectedEq
+          failureIndex: 3
+          line:   0
+          column: 3
+          rejectsWith.info
+
 	inFunctionBlocks: ->
     # # skipKnownFailingTest
     test "failure position with nested blocks", ->

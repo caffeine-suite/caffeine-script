@@ -26,6 +26,37 @@ Syntax Highlighting
 * support #{} block syntax highlighting
 
 # To Sort
+
+```
+# TODO: "UnaryOperator not allowed when structuring an object" should reveal a line-number:
+log {} "#{message}": bitmap.clone(), size: bitmap.size, testArea
+
+###
+ERROR in ./test/tests/Art.Engine/Core/CoreHelper.caf
+Module build failed (from ../caffeine-mc/webpack-loader.js):
+Error: UnaryOperator not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.
+###
+```
+
+```coffeescript
+rect 10 -5 40 50
+# should be: rect(10, -5, 40, 50)
+```
+```coffeescript
+# Shouldn't this:
+log {} currentTopicChanged, currentPostChanged, postsChanged,
+  post: !!post?.id
+  posts: posts?.length
+  topic: !!topic?.id
+
+# be the same as this?
+log {}
+  currentTopicChanged, currentPostChanged, postsChanged,
+  post: !!post?.id
+  posts: posts?.length
+  topic: !!topic?.id
+
+```
 ```coffeescript
 # when should share scope with the with-clause (and with-key) clause
 # I think we can rework iterators JAvaScript code to use
