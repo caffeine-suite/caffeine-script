@@ -26,6 +26,10 @@ Syntax Highlighting
 * support #{} block syntax highlighting
 
 # To Sort
+```
+foo--: 123
+# should be: {"foo--": 123}
+```
 
 ```
 # TODO: "UnaryOperator not allowed when structuring an object" should reveal a line-number:
