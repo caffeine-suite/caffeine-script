@@ -27,6 +27,40 @@ Syntax Highlighting
 
 # To Sort
 ```
+# IDEA:
+a = switch
+when foo()
+when bar()
+# right now, a == undefined
+# could mean:
+a = switch
+when temp1 = foo() then temp1
+when temp2 = bar() then temp2
+
+# what-does-this-mean-for-new-'if'-switcher?
+if
+  foo() then
+  bar() then
+# I fell like that should be illegal;
+# hanging prepositions feel bad :)
+
+```
+```
+foo extract
+  foo
+  bar
+# this should mean:
+foo1 = foo
+foo = foo1.foo
+bar = foo1.bar
+
+```
+```
+# should be the same:
+point 0, -1
+point 0  -1
+```
+```
 foo--: 123
 # should be: {"foo--": 123}
 ```
