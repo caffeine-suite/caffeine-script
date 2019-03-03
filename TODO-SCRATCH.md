@@ -27,6 +27,20 @@ Syntax Highlighting
 
 # To Sort
 ```
+# these should be the same
+# WRONG-codegen
+///i
+  a
+  #{foo}
+  b
+
+# RIGHT-codegen
+///i a #{foo} b
+
+# should be: RegExp(`a${Caf.toString(foo)}b`, "i")
+
+```
+```
 # IDEA:
 a = switch
 when foo()
