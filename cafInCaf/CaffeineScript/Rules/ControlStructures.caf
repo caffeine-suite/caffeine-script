@@ -37,7 +37,7 @@ catchClause:
   "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?"
   stnFactory: :CatchStn
 
-switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?"
+switchBody: "switchWhen:switchWhenClause* switchElse:elseClause?"
 
 switchBodyBlock:  Extensions.IndentBlocks.getPropsToSubparseBlock rule: :switchBodyBlockRule
 switchBodyBlockRule: "" :switchBody end?
@@ -47,8 +47,8 @@ switchWhenClause:
   "end? when _ whenValue:implicitArrayOrExpression  thenDo:thenClause"
   stnFactory: :SwitchWhenStn
 
-thenClause: "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock"
-elseClause: "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock"
+thenClause: "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock?"
+elseClause: "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock?"
 
 controlStructorClauseJoiner: "" _? end?
 

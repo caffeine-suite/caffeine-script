@@ -187,4 +187,23 @@ module.exports = suite: parseTestSuite
     """
     switch foo
     when bar then
-    """: "aa"
+    """: "switch (foo) {case bar: undefined};"
+
+    """
+    switch foo
+    when bar
+    """: null
+
+    """
+    switch foo
+    """: "switch (foo) {};"
+
+    """
+    switch foo
+    else 123
+    """: "switch (foo) {default: 123;};"
+
+    """
+    switch foo
+    else
+    """: "switch (foo) {};"

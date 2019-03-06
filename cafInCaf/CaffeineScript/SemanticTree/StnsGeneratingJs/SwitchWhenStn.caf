@@ -23,4 +23,7 @@ class SwitchWhenStn extends &BaseStn
 
       ": "
 
-      thenDo.toSourceNode {returnAction}
+      if thenDo
+        thenDo.toSourceNode {returnAction}
+      else
+        :undefined

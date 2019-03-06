@@ -49,7 +49,7 @@ Caf.defMod(module, () => {
           "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?",
           { stnFactory: "CatchStn" }
         ],
-        switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
+        switchBody: "switchWhen:switchWhenClause* switchElse:elseClause?",
         switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
           rule: "switchBodyBlockRule"
         }),
@@ -60,9 +60,9 @@ Caf.defMod(module, () => {
           { stnFactory: "SwitchWhenStn" }
         ],
         thenClause:
-          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
+          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock?",
         elseClause:
-          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
+          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock?",
         controlStructorClauseJoiner: "_? end?",
         catch: /catch\b/,
         try: /try\b/,

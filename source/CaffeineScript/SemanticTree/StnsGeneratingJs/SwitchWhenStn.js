@@ -20,7 +20,7 @@ Caf.defMod(module, () => {
                 )
               : [whenValue.toSourceNode({ dotBase: falsifyCases })],
             ": ",
-            thenDo.toSourceNode({ returnAction })
+            thenDo ? thenDo.toSourceNode({ returnAction }) : "undefined"
           );
         };
       }
