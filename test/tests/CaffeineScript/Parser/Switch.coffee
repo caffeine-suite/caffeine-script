@@ -184,5 +184,7 @@ module.exports = suite: parseTestSuite
       # comment
     """: 'switch (foo) {case bar: 123;};'
 
-
-
+    """
+    switch foo
+    when bar then
+    """: "aa"

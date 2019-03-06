@@ -26,28 +26,7 @@ Syntax Highlighting
 * support #{} block syntax highlighting
 
 # To Sort
-```
-# __dirname and __filename support!
-# in particular, I need this for arg.build.config.caf && webpack:
-webpack:
-  common:
-    output: path: "#{__dirname}/docs"
-```
 
-```
-# these should be the same
-# WRONG-codegen
-///i
-  a
-  #{foo}
-  b
-
-# RIGHT-codegen
-///i a #{foo} b
-
-# should be: RegExp(`a${Caf.toString(foo)}b`, "i")
-
-```
 ```
 # IDEA:
 a = switch
@@ -63,7 +42,7 @@ when temp2 = bar() then temp2
 if
   foo() then
   bar() then
-# I fell like that should be illegal;
+# I feel like that should be illegal;
 # hanging prepositions feel bad :)
 
 ```
