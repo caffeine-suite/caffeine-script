@@ -9,5 +9,8 @@ class ReturnStatementStn extends &BaseStn
 
   toSourceNode: ->
     @createSourceNode
-      "return "
-      @children[0].toSourceNode()
+      if @children[0]
+        []
+          "return "
+          @children[0].toSourceNode()
+      else :return

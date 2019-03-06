@@ -24,8 +24,9 @@ Caf.defMod(module, () => {
           };
           this.prototype.toSourceNode = function() {
             return this.createSourceNode(
-              "return ",
-              this.children[0].toSourceNode()
+              this.children[0]
+                ? ["return ", this.children[0].toSourceNode()]
+                : "return"
             );
           };
         }

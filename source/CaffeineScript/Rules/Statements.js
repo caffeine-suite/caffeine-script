@@ -23,12 +23,13 @@ Caf.defMod(module, () => {
           "statementWithoutEnd"
         ],
         returnStatement: [
-          "/return/ _ implicitArrayOrExpression",
+          "/return\\b/ _ implicitArrayOrExpression",
+          "/return\\b/",
           { stnFactory: "ReturnStatementStn" }
         ],
         breakStatement: [
-          "/break/ _ implicitArrayOrExpression",
-          "/break/",
+          "/break\\b/ _ implicitArrayOrExpression",
+          "/break\\b/",
           { stnFactory: "BreakStatementStn" }
         ],
         statementWithoutEnd: [
