@@ -44,6 +44,8 @@
         | require
         | module
         | eval
+        | __dirname
+        | __filename
 
         ### Object Oriented
 

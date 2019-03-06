@@ -21,6 +21,7 @@ module.exports
   Operators:          require './Operators'         
   RegExp:             require './RegExp'            
   Require:            require './Require'           
+  ReservedVariables:  require './ReservedVariables' 
   Scope:              require './Scope'             
   SpacesAndTabs:      require './SpacesAndTabs'     
   Statements:         require './Statements'        

@@ -97,7 +97,7 @@ Caf.defMod(module, () => {
         );
         this.rule({
           globalIdentifier: {
-            pattern: /(global|require|module|eval|this)\b/,
+            pattern: /(global|require|module|eval|this|__dirname|__filename)\b/,
             stnFactory: "GlobalIdentifierStn",
             stnProps: function() {
               return { identifier: this.text };

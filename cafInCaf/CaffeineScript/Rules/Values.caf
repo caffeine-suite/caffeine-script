@@ -176,7 +176,7 @@ import &StandardImport, &CaffeineEight
 
   @rule
     globalIdentifier:
-      pattern:    /(global|require|module|eval|this)\b/
+      pattern:    /(global|require|module|eval|this|__dirname|__filename)\b/
       stnFactory: :GlobalIdentifierStn
       stnProps: ~> identifier: @text
 
