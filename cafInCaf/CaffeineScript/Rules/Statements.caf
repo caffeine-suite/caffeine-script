@@ -15,10 +15,20 @@ lineStartStatementWithoutEnd:
   :lineStartExpression
   :statementWithoutEnd
 
+returnStatement:
+  "" /return/ _ implicitArrayOrExpression
+  stnFactory: :ReturnStatementStn
+
+breakStatement:
+  "" /break/ _ implicitArrayOrExpression
+  "" /break/
+  stnFactory: :BreakStatementStn
+
+
 statementWithoutEnd:
   "" implicitArrayOrExpression !tailControlOperator _? comment?
 
-  pattern: 'implicitArrayOrExpression tailControlOperatorComplexExpression+'
+  "" implicitArrayOrExpression tailControlOperatorComplexExpression+
   getStn: ~>
     stn = @implicitArrayOrExpression.getStn()
     each tco in @tailControlOperatorComplexExpressions

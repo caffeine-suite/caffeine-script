@@ -104,7 +104,10 @@ Caf.defMod(module, () => {
                       ? ((childExpression = c.toSourceNode({
                           expression: true
                         })),
-                        returnAction.length > 0
+                        c.type === "ReturnStatement" ||
+                        c.type === "BreakStatement"
+                          ? childExpression
+                          : returnAction.length > 0
                           ? [returnAction, " ", childExpression]
                           : childExpression)
                       : ((() => {

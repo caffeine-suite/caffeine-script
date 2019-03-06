@@ -51,7 +51,10 @@ class StatementsStn extends &BaseStn
       a = if returnAction? && i == lines.length - 1
         if !c.jsExpressionUsesReturn
           childExpression = c.toSourceNode expression: true
-          if returnAction.length > 0
+
+          if c.type == :ReturnStatement || c.type == :BreakStatement
+            childExpression
+          else if returnAction.length > 0
             [] returnAction, " ", childExpression
           else
             childExpression

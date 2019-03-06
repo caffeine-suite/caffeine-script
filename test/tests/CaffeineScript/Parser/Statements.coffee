@@ -55,3 +55,85 @@ module.exports = suite: parseTestSuite
       #   .bar
       # """: null # ILLEGAL
 
+  break:
+    """
+    while 1
+      break
+    """: "while (1) {break;};"
+
+    """
+    a = while 1
+      break
+    """: "let a, temp; a = (() => {while (1) {break;}; return temp;})();"
+
+    """
+    a = while 1
+      break 2
+      3
+    """: "let a, temp; a = (() => {while (1) {return 2; temp = 3;}; return temp;})();"
+
+    """
+    ->
+      break
+    """: null
+
+    """
+    if true
+      break
+    """: null
+
+    """
+    switch foo
+    when 1 then break
+    """: null
+
+    """
+    array a in foo
+      break
+    """: null
+
+    """
+    class Foo
+      break
+    """: null
+
+  return:
+    """
+    ->
+      return 1
+    """: "(function() {return 1;});"
+
+    """
+    ->
+      return 1
+      return 2
+    """: "(function() {return 1; return 2;});"
+
+    """
+    while 1
+      return 2
+    """: "while (1) {return 2;};"
+
+    """
+    return 2 if true
+    """: "if (true) {return 2;};"
+
+    """
+    if true
+      return 2
+    """: "if (true) {return 2;};"
+
+    """
+    switch foo
+    when 1 then return 2
+    """: "switch (foo) {case 1: return 2;};"
+
+    """
+    array a in foo
+      return 2
+    """: null
+
+    """
+    class Foo
+      return 2
+    """: null

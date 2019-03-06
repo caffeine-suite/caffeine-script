@@ -1,0 +1,13 @@
+import &StandardImport
+
+class ReturnStatementStn extends &BaseStn
+
+  validate: ->
+    p = @findParent /^(Class|Comprehesion|FunctionDefinition|While|Switch|ControlOperator)$/
+    if !p || /^(Class|Comprehesion)/.test p.type
+      throw new Error "'return' not allowed in: root, class or comprehesion contexts."
+
+  toSourceNode: ->
+    @createSourceNode
+      "return "
+      @children[0].toSourceNode()

@@ -86,6 +86,7 @@ Caf.defMod(module, () => {
             operand = temp.operand;
             jsKeyword = temp.jsKeyword;
             unaryOperator = temp.unaryOperator;
+            this.usedAsExpression = false;
             return this.createSourceNode(
               expression
                 ? returnValueIsIgnored
@@ -102,7 +103,8 @@ Caf.defMod(module, () => {
                       this.getSourceNodeForAutoLetsWithStatements(this.body),
                       "};"
                     )
-                  : ((tempVarIdentifier = this.whileReturnTempVar),
+                  : ((this.usedAsExpression = true),
+                    (tempVarIdentifier = this.whileReturnTempVar),
                     this.doSourceNode(
                       jsKeyword,
                       " (",

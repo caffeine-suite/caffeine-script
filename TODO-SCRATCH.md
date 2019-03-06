@@ -27,6 +27,14 @@ Syntax Highlighting
 
 # To Sort
 ```
+# __dirname and __filename support!
+# in particular, I need this for arg.build.config.caf && webpack:
+webpack:
+  common:
+    output: path: "#{__dirname}/docs"
+```
+
+```
 # these should be the same
 # WRONG-codegen
 ///i

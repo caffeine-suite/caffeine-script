@@ -1,0 +1,20 @@
+import &StandardImport
+
+class BreakStatementStn extends &BaseStn
+
+  validate: ->
+    p = @findParent /^(Class|Comprehesion|FunctionDefinition|While|Switch|ControlOperator)$/
+    if !p || !/^(While)/.test p.type
+      throw new Error "'break' not allowed in: root, class or comprehesion contexts."
+
+  toSourceNode: ->
+    p = @findParent /^(While)$/
+
+    @createSourceNode
+      if p.usedAsExpression && @children[0]
+        []
+          "return "
+          @children[0].toSourceNode()
+
+      else
+        :break

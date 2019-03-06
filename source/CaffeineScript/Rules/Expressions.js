@@ -17,7 +17,12 @@ Caf.defMod(module, () => {
         let oneLessBlockSubparser;
         this.rule({
           lineStartExpression: "multilineImplicitObject",
-          implicitArrayOrExpression: ["implicitArray", "expression"],
+          implicitArrayOrExpression: [
+            "returnStatement",
+            "breakStatement",
+            "implicitArray",
+            "expression"
+          ],
           implicitArrayWithoutImplicitObjectsOrExpression: [
             "implicitArrayWithoutImplicitObjects",
             "expression"

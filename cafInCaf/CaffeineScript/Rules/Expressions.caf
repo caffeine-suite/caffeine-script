@@ -9,6 +9,8 @@ upToButNotEol = /[^\n]*/y
     lineStartExpression: "multilineImplicitObject"
 
     implicitArrayOrExpression:
+      :returnStatement
+      :breakStatement
       :implicitArray
       :expression
 

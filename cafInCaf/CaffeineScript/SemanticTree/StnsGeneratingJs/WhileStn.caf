@@ -34,6 +34,8 @@ class WhileStn extends &ScopeStnMixin &BaseStn
     options extract expression, returnValueIsIgnored, noParens
     @ extract operand, jsKeyword, unaryOperator
 
+    @usedAsExpression = false
+
     @createSourceNode
       if expression
         if returnValueIsIgnored
@@ -49,6 +51,7 @@ class WhileStn extends &ScopeStnMixin &BaseStn
             "};"
 
         else
+          @usedAsExpression = true
           tempVarIdentifier = @whileReturnTempVar
           @doSourceNode
             jsKeyword

@@ -22,11 +22,19 @@ Caf.defMod(module, () => {
           "lineStartExpression",
           "statementWithoutEnd"
         ],
+        returnStatement: [
+          "/return/ _ implicitArrayOrExpression",
+          { stnFactory: "ReturnStatementStn" }
+        ],
+        breakStatement: [
+          "/break/ _ implicitArrayOrExpression",
+          "/break/",
+          { stnFactory: "BreakStatementStn" }
+        ],
         statementWithoutEnd: [
           "implicitArrayOrExpression !tailControlOperator _? comment?",
+          "implicitArrayOrExpression tailControlOperatorComplexExpression+",
           {
-            pattern:
-              "implicitArrayOrExpression tailControlOperatorComplexExpression+",
             getStn: function() {
               let stn;
               stn = this.implicitArrayOrExpression.getStn();
