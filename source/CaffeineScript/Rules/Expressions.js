@@ -33,12 +33,12 @@ Caf.defMod(module, () => {
             "expressionWithoutBinOps"
           ],
           expressionWithoutBinOps: [
-            "incDecUnaryExpression",
             "controlStatement",
             "comprehension",
             "classDefinition",
             "destructuringAssignment",
             "structuredLiteral",
+            "incDecUnaryExpression",
             "throwExpression",
             "functionDefinition",
             "extractExpression",

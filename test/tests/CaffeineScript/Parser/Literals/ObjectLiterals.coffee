@@ -341,6 +341,10 @@ module.exports = suite: parseTestSuite
       a: 1
     """: "let b; b = {a: 1};"
 
+    """
+    foo--: 123
+    """: '({"foo--": 123});'
+
   withTailControl:
     """
     foo: if bar then a: 1
