@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.0"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.3"};
 
 /***/ }),
 /* 5 */
@@ -5699,7 +5699,7 @@ Caf.defMod(module, () => {
                 )
               : [whenValue.toSourceNode({ dotBase: falsifyCases })],
             ": ",
-            thenDo.toSourceNode({ returnAction })
+            thenDo ? thenDo.toSourceNode({ returnAction }) : "undefined"
           );
         };
       }
@@ -7560,10 +7560,10 @@ Caf.defMod(module, () => {
           {
             stnFactory: "SwitchStn",
             pattern: [
-              "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
-              "/switch/ _ condition:expression? switchBody",
-              "/switch/ switchBodyBlock",
-              "/switch/ switchBody"
+              "switch _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
+              "switch _ condition:expression? switchBody",
+              "switch switchBodyBlock",
+              "switch switchBody"
             ]
           }
         ],
@@ -7571,7 +7571,7 @@ Caf.defMod(module, () => {
           "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?",
           { stnFactory: "CatchStn" }
         ],
-        switchBody: "switchWhen:switchWhenClause+ switchElse:elseClause?",
+        switchBody: "switchWhen:switchWhenClause* switchElse:elseClause?",
         switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
           rule: "switchBodyBlockRule"
         }),
@@ -7582,10 +7582,11 @@ Caf.defMod(module, () => {
           { stnFactory: "SwitchWhenStn" }
         ],
         thenClause:
-          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock",
+          "controlStructorClauseJoiner thenDo _? body:lineOfStatementsOrBlock?",
         elseClause:
-          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock",
+          "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock?",
         controlStructorClauseJoiner: "_? end?",
+        switch: /switch\b/,
         catch: /catch\b/,
         try: /try\b/,
         whileUntil: /(while|until)\b/,
@@ -8304,7 +8305,9 @@ Caf.defMod(module, () => {
           }
         },
         binaryOperatorAndExpression: [
-          "_? binaryOperator _? _end? rValue:unaryOpExpression",
+          "binaryOperator rValue:unaryOpExpression",
+          "_? binaryOperator _ rValue:unaryOpExpression",
+          "_? binaryOperator _end rValue:unaryOpExpression",
           "_? binaryOperator _? rValue:rValueBlock"
         ],
         lineStartBinaryOperatorAndExpression: [
@@ -8436,9 +8439,11 @@ Caf.defMod(module, () => {
             return { value: this.text === "\\ " ? " " : this.text };
           }
         },
-        multilineRegExpComment: { pattern: "/^|\\n|\\s/ comment" },
+        multilineRegExpComment: {
+          pattern: "/^|\\n|\\s/ !interpolationStart comment"
+        },
         multilineRegExpInterpolation: {
-          pattern: "/ */ interpolationStart expression interpolationEnd"
+          pattern: "/(\\n|\\s)*/ interpolationStart expression interpolationEnd"
         },
         multilineRegExpForwardSlashes: {
           pattern: /\/\/?(?!\/)/,
