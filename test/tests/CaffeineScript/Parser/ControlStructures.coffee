@@ -158,6 +158,16 @@ module.exports = suite: parseTestSuite
       else b
       """: "if (true) {undefined;} else {b;};"
 
+      # this one isn't easy
+      # """
+      # if true
+      # """: "if (true) {undefined;};"
+
+      """
+      if true
+      else
+      """: "if (true) {undefined;};"
+
       """
       a = if true
         #
