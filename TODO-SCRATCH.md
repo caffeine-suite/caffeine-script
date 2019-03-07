@@ -192,21 +192,6 @@ c = b?.foo
 c extract? d
 ```
 
-```coffeescript
-# wrong compile:
-///
-  #{var1} |
-  #{var2}
-
-# should be: RegExp(`${Caf.toString(var1)}|${Caf.toString(var2)}`);
-```
-
-```coffeescript
-# this
-rect 0 -10000 100000 100000
-# becomes:
-rect(0 - 10000, 100000, 100000);
-```
 
 ```coffeescript
 # compiler ERROR

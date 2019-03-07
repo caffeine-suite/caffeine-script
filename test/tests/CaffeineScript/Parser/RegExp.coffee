@@ -192,3 +192,15 @@ module.exports = suite: parseTestSuite
 
     "///i a \#{foo} b": "RegExp(`a${Caf.toString(foo)}b`, 'i');"
 
+
+    """
+    ///i
+      \#{a}
+      \#{b}
+    """: "RegExp(`${Caf.toString(a)}${Caf.toString(b)}`, 'i');"
+
+    """
+    ///
+      \#{var1} |
+      \#{var2}
+    """: "RegExp(`${Caf.toString(var1)}|${Caf.toString(var2)}`);"
