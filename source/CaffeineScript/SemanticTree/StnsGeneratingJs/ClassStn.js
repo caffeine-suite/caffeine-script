@@ -209,7 +209,10 @@ Caf.defMod(module, () => {
               " extends ",
               (temp =
                 Caf.exists(classExtends) &&
-                classExtends.toSourceNode({ expression: true })) != null
+                classExtends.toSourceNode({
+                  expression: true,
+                  dotBase: true
+                })) != null
                 ? temp
                 : "Object",
               " {",

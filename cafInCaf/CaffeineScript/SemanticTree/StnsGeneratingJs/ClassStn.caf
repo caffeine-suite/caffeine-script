@@ -113,7 +113,7 @@ class ClassStn extends &BaseStn
       "Caf.defClass(class "
       className.toSourceNode()
       " extends "
-      classExtends?.toSourceNode(expression: true) ? :Object
+      classExtends?.toSourceNode(expression: true, dotBase: true) ? :Object
 
       " {"
       classBody?.toSourceNode classBody: true

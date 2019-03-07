@@ -25,7 +25,560 @@ Syntax Highlighting
 * support starting blocks with """ at the end of a line instead of only at the start
 * support #{} block syntax highlighting
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # To Sort
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Improvements
+
+
+```coffeescript
+# TODO:
+{}
+  baz
+  {foo, fun} = bar
+# should be: {baz: baz, foo: bar.foo, fun: bar.fun}
+# also sets: foo and bar as expected
+{}
+  baz
+  bar extract foo, fun
+# should be: {baz: baz, fun: bar.fun}
+# also sets: foo and fun as expected
+```
+
+```coffeescript
+# TODO: - word-string-interpolation:
+:foo#{bar}
+# should be: `foo${bar}`
+```
+
+```coffeescript
+# extract should support '?' and '||/or'
+# we should ALSO support these options for function defaults
+# extract ? vs = vs ||
+a extract
+  b ?= :default  # default-if-undefined-or-null
+  c = :default   # default-if-undefined
+  d ||= :default # default-if-false
+```
+
+```coffeescript
+# extract should set defaults no matter what
+o = a extract?
+  d = :noD
+# d AND o should == :noD when !a?
+
+# should apply recursively:
+o = a extract?
+  b extract?
+    d = :noD
+# o, b, and d should == :noD when !a?
+
+# should apply recursively:
+o = a extract?
+  b = c extract?
+    d = :noD
+# o, b, and d should == (if c? then c.d else :noD) when !a?
+```
+
+-----
+
+```coffeescript
+# let's do this soon:
+{@foo} = bar
+bar extract @foo
+```
+---
+
+```coffeescript
+# regex needs interpolation blocks:
+///
+  hi #{}
+    myString + "foo"
+```
+
+---
+
+```coffeescript
+{} a = b = 1
+# Should be:
+# temp = 1; {a: temp, b: temp}
+```
+
+```coffeescript
+# in-array should work
+array a in-array b
+```
+---
+```coffeescript
+  {
+    a
+    b
+  } = myObject
+
+  {
+  a
+  b
+  } = myObject
+
+  {
+    hi: 1
+  }
+
+  {}
+    a
+    b
+  = myObject
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Comment Todo
+
+The real solution looks like this: Every block sub-parsed, other than literals
+like string-blocks or comment-blocks themselves, needs something akin to the
+current preprocess step: Any under-indented comments should be up-indented to
+the base of the sub-block. I -think- that'll solve it.
+
+```coffeescript
+# extra-indented comments should be ignored
+->
+    # extra indented first comment
+  foo
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Generates invalid javascript:
+
+
+```coffeescript
+# generates invalid javascript: {copy-to-clipboard: require('copy-to-clipboard')}
+{} &copy-to-clipboard
+```
+
+
+```coffeescript
+class ImikimiStyles extends &ArtSuite.HotStyleProps || Object
+```
+
+---
+
+```coffeescript
+import &StandardImport
+
+authorizedSync = (request) ->
+  !!if Neptune.Art.Config.configName == "Production"
+    request.session.userId in config.curators
+  else
+    present request.session.userId
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# SHOULD COMPILE
+
+```coffeescript
+new class FakeSocket
+```
+
+---
+
+```coffeescript
+(-> arguments.length)()
+```
+
+---
+
+```coffeescript
+[].slice 0, 100
+```
+
+---
+
+
+```coffeescript
+# compiler ERROR
+chapterPost?.postsInChapter++
+```
+
+```coffeescript
+# compile ERROR
+each d from lastDepth - 1 til 3
+  lastLevelNumber[d] = null
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# SHOULD NOT COMPILE
+
+```coffeescript
+(a.b) -> a
+```
+
+---
+
+```coffeescript
+# simplest example
+foo (a)->
+  .bar
+```
+
+Above one is super tricky! The function definition correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happily accepts it. It actually could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
+
+I think we need "match-block-or-no-block" to solve this.
+
+NOTE: It isn't just dot-line-starts. This also fails fore operator-line-starts.
+
+---
+```coffeescript
+App extends FluxComponent
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# WRONG COMPILE
+
+
+```coffeescript
+# this code puts an 'if' into the function arguments rather than a
+# ?-: trinary...
+class Foo
+  render: ->
+    super
+      if true then "foo"
+```
+
+
+
+```coffeescript
+###
+  directory structure:
+    thisFile.caf
+    .DotSubdir/index.js
+
+###
+&DotSubdir
+# Should generate: require('./.DotSubdir')
+```
+
+
+```coffeescript
+# bad regexp detect
+rect a.left, a.top, a.w/2, a.h/2
+```
+
+
+```coffeescript
+array a in things when a &&
+  true
+
+# AHEM. That should NOT be:
+# > Caf.array(things, null, a => a) && true
+# It should either be an error, or it should be what I was wanting:
+# > array a in things when a && true
+
+```
+---
+
+I think the following code is solvable if we make the "comma-then-block-extends-list" an optional comma. I -think- it'll work.
+
+```coffeescript
+# this:
+a :string
+  b
+# should probably be this:
+a :string, b
+# not: a(:string)(b)
+```
+
+---
+
+```coffeescript
+(a || b)
+  c
+
+# should be:
+(a || b)(c);
+```
+
+
+```coffeescript
+# Shouldn't this:
+log {} currentTopicChanged, currentPostChanged, postsChanged,
+  post: !!post?.id
+  posts: posts?.length
+  topic: !!topic?.id
+
+# be the same as this?
+log {}
+  currentTopicChanged, currentPostChanged, postsChanged,
+  post: !!post?.id
+  posts: posts?.length
+  topic: !!topic?.id
+```
+
+---
+
+```coffeescript
+object v, k with-key lowerCamelCase k.replace /^posterText/, '' in a: 1 b: 2
+
+# should be the same as:
+object v, k in a: 1 b: 2 with-key lowerCamelCase k.replace /^posterText/, ''
+
+```
+---
+
+```coffeescript
+# THIS:
+-a**2
+
+# SHOULD BE:
+-(a**2)
+```
+
+```
+foo extract
+  foo
+  bar
+# this should mean:
+foo1 = foo
+foo = foo1.foo
+bar = foo1.bar
+```
+
+
+---
+
+```coffeescript
+if i == cats.length - 1 then Promise.then -> action event, props else {}
+```
+
+`action event, props` should be inside the `.then` funciton. The problem probably comes from this parse error:
+
+```coffeescript
+# does not parse!
+if a then -> c else d
+```
+
+
+
+---
+```coffeescript
+array item in list.sort (a, b) -> b - a when item
+
+# Should NOT be:
+Caf.array(list.sort(function(a, b) {})(b - a), null, item => item);
+
+# Should be:
+Caf.array(list.sort(function(a, b) {return b - a}), null, item => item);
+```
+
+Probably same problem as above:
+
+```coffeescript
+# this does not parse!
+array item in -> a when item
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Improved Parse Errors
+
+
+```
+# TODO: "UnaryOperator not allowed when structuring an object" should reveal a line-number:
+log {} "#{message}": bitmap.clone(), size: bitmap.size, testArea
+
+###
+ERROR in ./test/tests/Art.Engine/Core/CoreHelper.caf
+Module build failed (from ../caffeine-mc/webpack-loader.js):
+Error: UnaryOperator not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.
+###
+```
+
+```
+# should show <here> right before &&&, not at start of line
+"before#{&&&}after"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Should Be Legal
+
+```coffeescript
+# should be legal:
+A
++
+  B
+```
+
+
+
+
+
+
+
+
+
+
+
+
+# Ideas
 
 ```
 # IDEA:
@@ -46,70 +599,61 @@ if
 # hanging prepositions feel bad :)
 
 ```
-```
-foo extract
-  foo
-  bar
-# this should mean:
-foo1 = foo
-foo = foo1.foo
-bar = foo1.bar
 
-```
 
-```
-foo--: 123
-# should be: {"foo--": 123}
-```
 
-```
-# TODO: "UnaryOperator not allowed when structuring an object" should reveal a line-number:
-log {} "#{message}": bitmap.clone(), size: bitmap.size, testArea
 
-###
-ERROR in ./test/tests/Art.Engine/Core/CoreHelper.caf
-Module build failed (from ../caffeine-mc/webpack-loader.js):
-Error: UnaryOperator not allowed when structuring an object. Legal examples: foo.accessors, &requires and identifiers.
-###
-```
 
-```coffeescript
-# Shouldn't this:
-log {} currentTopicChanged, currentPostChanged, postsChanged,
-  post: !!post?.id
-  posts: posts?.length
-  topic: !!topic?.id
 
-# be the same as this?
-log {}
-  currentTopicChanged, currentPostChanged, postsChanged,
-  post: !!post?.id
-  posts: posts?.length
-  topic: !!topic?.id
 
-```
+
+
+
+
+
+
+
+
+
+
+
+# Major Plans
+
+### Fix Comprehension Scoping
+
 ```coffeescript
 # when should share scope with the with-clause (and with-key) clause
-# I think we can rework iterators JAvaScript code to use
+# I think we can rework iterators JavaScript code to use
 # only one funciton instead of two, even when there is a when
 # or with-key clause.
 array a in b when c = a.foo
   c
 ```
 
-```coffeescript
-# should be legal:
-A
-+
-  B
-```
+### Extract
+
+`extract` in comprehensions and function definitions:
 
 ```coffeescript
-# If Foo has its own Function object, global.Function will NOT
-# be used! Huh.
-import Foo
-a is Function
+# these should all be equivalent
+(a extract b) ->
+(extract b) ->
+
+# IDEA
+{b} ->
+
+# these should all be equivalent
+each a from c with a.b
+each a extract b from c
+each extract b from c
+
+# IDEA
+each a.b from c
+each .b from c
 ```
+
+### Improve While Scoping
+
 
 ```coffeescript
 # This SHOULD 'let p' in the while-test, not in the body, assuming
@@ -120,8 +664,9 @@ while p = @nextPoint
 # What about this? Should also let-p in the while-test, but trickier.
 while someFun p = @nextPoint
   {x, y} = p
-
 ```
+
+### New IF-Block
 
 ```coffeescript
 # IF, SWITCH and more BLOCK options:
@@ -176,8 +721,33 @@ else foo
 ```
 
 
+
+# Quandaries
+
+
 ```coffeescript
-# We should suppor this:
+# If Foo has its own Function object, global.Function will NOT
+# be used! Huh.
+import Foo
+a is Function
+```
+
+```coffeescript
+# strings in object-construction should either:
+#   be an error << MY GUT says error
+#   or, be: [myString]: myString
+PostDate {}
+  @post
+  :row :childrenCenterRight
+  oneLine:  true
+  size:     wcw: 1, h: gridSize * 2
+  color:    TextPalette.white.secondary
+
+```
+
+
+```coffeescript
+# We should support this:
 a extract
   b
   (c = b?.foo) extract? d
@@ -194,47 +764,6 @@ c extract? d
 
 
 ```coffeescript
-# compiler ERROR
-chapterPost?.postsInChapter++
-```
-
-```coffeescript
-# compile ERROR
-each d from lastDepth - 1 til 3
-  lastLevelNumber[d] = null
-
-```
-
-```coffeescript
-# strings in object-construction should either:
-#   be an error << MY GUT says error
-#   or, be: [myString]: myString
-PostDate {}
-  @post
-  :row :childrenCenterRight
-  oneLine:  true
-  size:     wcw: 1, h: gridSize * 2
-  color:    TextPalette.white.secondary
-
-```
-
-```coffeescript
-# generates invalid javascript: {copy-to-clipboard: require('copy-to-clipboard')}
-{} &copy-to-clipboard
-```
-
-```coffeescript
-array a in things when a &&
-  true
-
-# AHEM. That should NOT be:
-# > Caf.array(things, null, a => a) && true
-# It should either be an error, or it should be what I was wanting:
-# > array a in things when a && true
-
-```
-
-```coffeescript
 # hmm, ES6 is so dumb
 assert.eq
   (a = d) -> a
@@ -244,332 +773,10 @@ assert.eq
 # as it should be. Adding defaults should not change the external API! WTF?!?
 # This is a problem for my fastBind function which needs to know the number of args a function has
 ```
----
-I think the following code is solvable if we make the "comma-then-block-extends-list" an optional comma. I -think- it'll work.
 
-```coffeescript
-# this:
-a :string
-  b
-# should probably be this:
-a :string, b
-# not: a(:string)(b)
+
 ```
----
-
-
-```coffeescript
-# let's do this soon:
-{@foo} = bar
-bar extract @foo
-```
-
-```coffeescript
-# extract should support '?' and '||/or'
-# we should ALSO support these options for function defaults
-# extract ? vs = vs ||
-a extract
-  b ?= :default  # default-if-undefined-or-null
-  c = :default   # default-if-undefined
-  d ||= :default # default-if-false
-```
-
-```coffeescript
-# extract should set defaults no matter what
-o = a extract?
-  d = :noD
-# d AND o should == :noD when !a?
-
-# should apply recursively:
-o = a extract?
-  b extract?
-    d = :noD
-# o, b, and d should == :noD when !a?
-
-# should apply recursively:
-o = a extract?
-  b = c extract?
-    d = :noD
-# o, b, and d should == (if c? then c.d else :noD) when !a?
-```
-
-```coffeescript
-# TODO: - word-string-interpolation:
-:foo#{bar}
-# should be: `foo${bar}`
-```
-
-```coffeescript
-# TODO:
-{}
-  baz
-  {foo, fun} = bar
-# should be: {baz: baz, foo: bar.foo, fun: bar.fun}
-{}
-  baz
-  bar extract foo, fun
-# should be: {baz: baz, fun: bar.fun}
-
-
-```coffeescript
-# this code puts an 'if' into the function arguments rather than a
-# ?-: trinary...
 class Foo
-  render: ->
-    super
-      if true then "foo"
-```
-
-```coffeescript
-###
-  directory structure:
-    thisFile.caf
-    .DotSubdir/index.js
-
-###
-&DotSubdir
-# Should generate: require('./.DotSubdir')
-```
----
-```coffeescript
-# bad regexp detect
-rect a.left, a.top, a.w/2, a.h/2
-```
-
----
-```coffeescript
-# regex needs interpolation blocks:
-///
-  hi #{}
-    myString + "foo"
-```
-
-
-# Improvements
-```coffeescript
-{} a = b = 1
-# Should be:
-# temp = 1; {a: temp, b: temp}
-```
-
-```coffeescript
-# in-array should work
-array a in-array b
-```
----
-```coffeescript
-  {
-    a
-    b
-  } = myObject
-
-  {
-  a
-  b
-  } = myObject
-
-  {
-    hi: 1
-  }
-
-  {}
-    a
-    b
-  = myObject
-```
-
-
-
-
-# Comment Todo
-
-The real solution looks like this: Every block sub-parsed, other than literals
-like string-blocks or comment-blocks themselves, needs something akin to the
-current preprocess step: Any under-indented comments should be up-indented to
-the base of the sub-block. I -think- that'll solve it.
-
-```coffeescript
-# extra-indented comments should be ignored
-->
-    # extra indented first comment
-  foo
-```
-
-
-
-# SEMANTIC TODO
-
-### Extract Todo
-
-`extract` in comprehensions and function definitions:
-
-```coffeescript
-# these should all be equivalent
-(a extract b) ->
-(extract b) ->
-
-# IDEA
-{b} ->
-
-# these should all be equivalent
-each a from c with a.b
-each a extract b from c
-each extract b from c
-
-# IDEA
-each a.b from c
-each .b from c
-```
-
-
-
-
-
-
-
-
-
-
-
-# Generates invalid javascript:
-
-```coffeescript
-class ImikimiStyles extends &ArtSuite.HotStyleProps || Object
-```
-
----
-
-```coffeescript
-import &StandardImport
-
-authorizedSync = (request) ->
-  !!if Neptune.Art.Config.configName == "Production"
-    request.session.userId in config.curators
-  else
-    present request.session.userId
-```
-
-
-
-
-# SHOULD COMPILE
-
-```coffeescript
-new class FakeSocket
-```
-
----
-
-```coffeescript
-(-> arguments.length)()
-```
----
-```coffeescript
-[].slice 0, 100
-```
----
-
-```coffeescript
-{@getPriority} = options
-```
-
-
-
-
-# SHOULD NOT COMPILE
-
-```coffeescript
-(a.b) -> a
-```
-
----
-
-```coffeescript
-# simplest example
-foo (a)->
-  .bar
-```
-
-Above one is super tricky! The function definition correctly fails to match the indented block starting with a dot-line-start, but then the indented-dot-line-start happily accepts it. It actually could be considered legal! However, it's horrific to my eyes. It breaks principle-of-least-surprise badly.
-
-I think we need "match-block-or-no-block" to solve this.
-
-NOTE: It isn't just dot-line-starts. This also fails fore operator-line-starts.
-
----
-```coffeescript
-App extends FluxComponent
-```
-
-
-
-
-
-# WRONG COMPILE
-
-```coffeescript
-(a || b)
-  c
-
-# should be:
-(a || b)(c);
-```
----
-
-```coffeescript
-object v, k with-key lowerCamelCase k.replace /^posterText/, '' in a: 1 b: 2
-
-# should be the same as:
-object v, k in a: 1 b: 2 with-key lowerCamelCase k.replace /^posterText/, ''
-
-```
----
-
-```coffeescript
-# THIS:
--a**2
-
-# SHOULD BE:
--(a**2)
-```
-
-
----
-
-```coffeescript
-if i == cats.length - 1 then Promise.then -> action event, props else {}
-```
-
-`action event, props` should be inside the `.then` funciton. The problem probably comes from this parse error:
-
-```coffeescript
-# does not parse!
-if a then -> c else d
-```
-
-
-
----
-```coffeescript
-array item in list.sort (a, b) -> b - a when item
-
-# Should NOT be:
-Caf.array(list.sort(function(a, b) {})(b - a), null, item => item);
-
-# Should be:
-Caf.array(list.sort(function(a, b) {return b - a}), null, item => item);
-```
-
-Probably same problem as above:
-
-```coffeescript
-# this does not parse!
-array item in -> a when item
-```
-
-# Improved Parse Errors
-
-```
-# should show <here> right before &&&, not at start of line
-"before#{&&&}after"
+  b = []
+  constructor: (a = b) ->
 ```

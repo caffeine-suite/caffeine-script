@@ -278,3 +278,7 @@ module.exports = suite: parseTestSuite
         {this.prototype.render = function()
         {return instanceSuper.render.call(this, true ? 123 : undefined);};});
         "
+
+      """
+      class Foo extends Bar || Baz
+      """: "let Foo; Foo = Caf.defClass(class Foo extends (Bar || Baz) {});"

@@ -58,7 +58,11 @@ class BinaryOperatorStn extends &BaseStn
     PRIVATE
 
   _needsParens: (toJsOptions) ->
-    {dotBase, parentOperatorPrecidence, isLeftOperand} = toJsOptions if toJsOptions
+    toJsOptions extract?
+      dotBase
+      parentOperatorPrecidence
+      isLeftOperand
+      isSub
 
     unless parentOperatorPrecidence?
       dotBase

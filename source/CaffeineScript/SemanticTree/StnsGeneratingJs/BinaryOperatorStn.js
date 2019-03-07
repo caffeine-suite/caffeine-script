@@ -106,13 +106,13 @@ Caf.defMod(module, () => {
             let dotBase,
               parentOperatorPrecidence,
               isLeftOperand,
+              isSub,
               operatorPrecidence;
-            if (toJsOptions) {
-              ({
-                dotBase,
-                parentOperatorPrecidence,
-                isLeftOperand
-              } = toJsOptions);
+            if (Caf.exists(toJsOptions)) {
+              dotBase = toJsOptions.dotBase;
+              parentOperatorPrecidence = toJsOptions.parentOperatorPrecidence;
+              isLeftOperand = toJsOptions.isLeftOperand;
+              isSub = toJsOptions.isSub;
             }
             return !(parentOperatorPrecidence != null)
               ? dotBase
