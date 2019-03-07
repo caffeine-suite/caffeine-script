@@ -219,6 +219,11 @@ the base of the sub-block. I -think- that'll solve it.
 # Generates invalid javascript:
 
 
+```coffeescript
+# compiler ERROR
+chapterPost?.postsInChapter++
+```
+
 
 
 
@@ -256,15 +261,8 @@ the base of the sub-block. I -think- that'll solve it.
 
 
 ```coffeescript
-# compiler ERROR
-chapterPost?.postsInChapter++
-```
-
-```coffeescript
 # compile ERROR
-each d from lastDepth - 1 til 3
-  lastLevelNumber[d] = null
-
+each from a til 3
 ```
 
 
@@ -339,17 +337,6 @@ App extends FluxComponent
 
 
 # WRONG COMPILE
-
-
-```coffeescript
-# this code puts an 'if' into the function arguments rather than a
-# ?-: trinary...
-class Foo
-  render: ->
-    super
-      if true then "foo"
-```
-
 
 
 ```coffeescript
