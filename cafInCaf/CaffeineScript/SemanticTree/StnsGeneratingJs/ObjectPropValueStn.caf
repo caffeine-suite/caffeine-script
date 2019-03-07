@@ -31,7 +31,7 @@ class ObjectPropValueStn extends &BaseStn
     throw new Error "no prop name" unless present @propName
 
   toSourceNode: ->
-    {valueChild, propName} = @
+    @ extract valueChild, propName
     base = valueChild.toSourceNode expression: true
     propName = propName.toSourceNode() unless isString propName
 

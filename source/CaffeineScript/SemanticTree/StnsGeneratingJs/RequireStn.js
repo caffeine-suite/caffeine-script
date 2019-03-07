@@ -2,9 +2,9 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["peek"],
+    ["escapePropName", "peek"],
     [global, require("../../StandardImport")],
-    peek => {
+    (escapePropName, peek) => {
       let findModuleSync, RequireStn;
       ({ findModuleSync } = require("caffeine-mc"));
       return (RequireStn = Caf.defClass(
@@ -15,9 +15,11 @@ Caf.defMod(module, () => {
               return this.props.require;
             },
             propName: function() {
-              return /\//.test(this.rawRequireString)
-                ? peek(this.rawRequireString.split("/"))
-                : this.rawRequireString;
+              return escapePropName(
+                /\//.test(this.rawRequireString)
+                  ? peek(this.rawRequireString.split("/"))
+                  : this.rawRequireString
+              );
             },
             requireString: function() {
               return findModuleSync(this.rawRequireString, this.parser.options)

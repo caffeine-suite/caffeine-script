@@ -92,3 +92,8 @@ module.exports = suite: parseTestSuite
         a: b, c, c: 4
         d
       """: "({a: [b, c], c: 4, d});"
+
+    regressions:
+      """
+      {} &copy-to-clipboard
+      """: '({"copy-to-clipboard": require(\'copy-to-clipboard\')});'

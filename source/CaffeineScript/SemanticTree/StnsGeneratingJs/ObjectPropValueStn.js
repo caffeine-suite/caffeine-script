@@ -78,8 +78,10 @@ Caf.defMod(module, () => {
               : undefined;
           };
           this.prototype.toSourceNode = function() {
-            let valueChild, propName, base;
-            ({ valueChild, propName } = this);
+            let valueChild, propName, base, temp;
+            temp = this;
+            valueChild = temp.valueChild;
+            propName = temp.propName;
             base = valueChild.toSourceNode({ expression: true });
             if (!isString(propName)) {
               propName = propName.toSourceNode();
