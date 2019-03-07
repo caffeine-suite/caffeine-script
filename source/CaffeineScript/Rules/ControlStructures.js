@@ -38,10 +38,10 @@ Caf.defMod(module, () => {
           {
             stnFactory: "SwitchStn",
             pattern: [
-              "/switch/ _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
-              "/switch/ _ condition:expression? switchBody",
-              "/switch/ switchBodyBlock",
-              "/switch/ switchBody"
+              "switch _ condition:expressionWithOneLessBlock? _? switchBodyBlock",
+              "switch _ condition:expression? switchBody",
+              "switch switchBodyBlock",
+              "switch switchBody"
             ]
           }
         ],
@@ -64,6 +64,7 @@ Caf.defMod(module, () => {
         elseClause:
           "controlStructorClauseJoiner else   _? lineOfStatementsOrBlock?",
         controlStructorClauseJoiner: "_? end?",
+        switch: /switch\b/,
         catch: /catch\b/,
         try: /try\b/,
         whileUntil: /(while|until)\b/,

@@ -207,3 +207,7 @@ module.exports = suite: parseTestSuite
     switch foo
     else
     """: "switch (foo) {};"
+
+    """
+    switchElse
+    """: "switchElse;"
