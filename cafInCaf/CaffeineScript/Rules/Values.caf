@@ -144,6 +144,7 @@ import &StandardImport, &CaffeineEight
       :thisProperty
       :globalIdentifier
       :identifierReference
+      :classDefinition
       :require
 
     newValue:

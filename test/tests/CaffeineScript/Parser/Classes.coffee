@@ -33,6 +33,8 @@ module.exports = suite: parseTestSuite
         .bar
         """:             "(new Foo).bar;"
 
+        "new class FakeSocket": "let FakeSocket; new (FakeSocket = Caf.defClass(class FakeSocket extends Object {}));"
+
     withThisBase:
       "new @":                  "new this;"
       "new @ props, children":  "new this(props, children);"

@@ -60,6 +60,7 @@ Caf.defMod(module, () => {
             "thisProperty",
             "globalIdentifier",
             "identifierReference",
+            "classDefinition",
             "require"
           ],
           newValue: [
