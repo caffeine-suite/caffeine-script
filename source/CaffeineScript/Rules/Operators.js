@@ -55,7 +55,9 @@ Caf.defMod(module, () => {
           }
         },
         binaryOperatorAndExpression: [
-          "_? binaryOperator _? _end? rValue:unaryOpExpression",
+          "binaryOperator rValue:unaryOpExpression",
+          "_? binaryOperator _ rValue:unaryOpExpression",
+          "_? binaryOperator _end rValue:unaryOpExpression",
           "_? binaryOperator _? rValue:rValueBlock"
         ],
         lineStartBinaryOperatorAndExpression: [

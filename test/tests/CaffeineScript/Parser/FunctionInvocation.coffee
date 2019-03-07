@@ -182,3 +182,6 @@ module.exports = suite: parseTestSuite
     a b,
       c
     """: "a(b, c);"
+
+    "point 0  -1": "point(0, -1);"
+    "rect 10 -5 40 50": "rect(10, -5, 40, 50);"

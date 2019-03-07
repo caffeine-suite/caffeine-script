@@ -15,7 +15,7 @@ Streamlining development is going to be my next focus:
 
 Help with CoffeeScript conversion:
 
-* Allow `for`, but log a DEPRICATION
+* Allow `for`, but log a DEPRECATION
 * Can we make my old-style "array fromArray, (v, k) ->" lib a compile error? Right now they compile into something really broken.
 * Allow `{\n\tblah\n}` both for structuring and destructuring.
 
@@ -56,11 +56,7 @@ foo = foo1.foo
 bar = foo1.bar
 
 ```
-```
-# should be the same:
-point 0, -1
-point 0  -1
-```
+
 ```
 foo--: 123
 # should be: {"foo--": 123}
@@ -77,10 +73,6 @@ Error: UnaryOperator not allowed when structuring an object. Legal examples: foo
 ###
 ```
 
-```coffeescript
-rect 10 -5 40 50
-# should be: rect(10, -5, 40, 50)
-```
 ```coffeescript
 # Shouldn't this:
 log {} currentTopicChanged, currentPostChanged, postsChanged,
