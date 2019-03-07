@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.3"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.5"};
 
 /***/ }),
 /* 5 */
@@ -1912,13 +1912,13 @@ Caf.defMod(module, () => {
             let dotBase,
               parentOperatorPrecidence,
               isLeftOperand,
+              isSub,
               operatorPrecidence;
-            if (toJsOptions) {
-              ({
-                dotBase,
-                parentOperatorPrecidence,
-                isLeftOperand
-              } = toJsOptions);
+            if (Caf.exists(toJsOptions)) {
+              dotBase = toJsOptions.dotBase;
+              parentOperatorPrecidence = toJsOptions.parentOperatorPrecidence;
+              isLeftOperand = toJsOptions.isLeftOperand;
+              isSub = toJsOptions.isSub;
             }
             return !(parentOperatorPrecidence != null)
               ? dotBase
@@ -2542,7 +2542,10 @@ Caf.defMod(module, () => {
               " extends ",
               (temp =
                 Caf.exists(classExtends) &&
-                classExtends.toSourceNode({ expression: true })) != null
+                classExtends.toSourceNode({
+                  expression: true,
+                  dotBase: true
+                })) != null
                 ? temp
                 : "Object",
               " {",
@@ -7738,12 +7741,12 @@ Caf.defMod(module, () => {
             "expressionWithoutBinOps"
           ],
           expressionWithoutBinOps: [
-            "incDecUnaryExpression",
             "controlStatement",
             "comprehension",
             "classDefinition",
             "destructuringAssignment",
             "structuredLiteral",
+            "incDecUnaryExpression",
             "throwExpression",
             "functionDefinition",
             "extractExpression",

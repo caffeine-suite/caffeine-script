@@ -225,10 +225,6 @@ the base of the sub-block. I -think- that'll solve it.
 ```
 
 
-```coffeescript
-class ImikimiStyles extends &ArtSuite.HotStyleProps || Object
-```
-
 ---
 
 ```coffeescript
