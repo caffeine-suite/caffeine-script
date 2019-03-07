@@ -240,10 +240,6 @@ the base of the sub-block. I -think- that'll solve it.
 
 # SHOULD COMPILE
 
-```coffeescript
-new class FakeSocket
-```
-
 ---
 
 ```coffeescript
