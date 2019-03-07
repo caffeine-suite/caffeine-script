@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.5"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.7"};
 
 /***/ }),
 /* 5 */
@@ -4541,8 +4541,10 @@ Caf.defMod(module, () => {
               : undefined;
           };
           this.prototype.toSourceNode = function() {
-            let valueChild, propName, base;
-            ({ valueChild, propName } = this);
+            let valueChild, propName, base, temp;
+            temp = this;
+            valueChild = temp.valueChild;
+            propName = temp.propName;
             base = valueChild.toSourceNode({ expression: true });
             if (!isString(propName)) {
               propName = propName.toSourceNode();
@@ -5032,9 +5034,9 @@ Caf.defMod(module, () => {
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["peek"],
+    ["escapePropName", "peek"],
     [global, __webpack_require__(/*! ../../StandardImport */ 16)],
-    peek => {
+    (escapePropName, peek) => {
       let findModuleSync, RequireStn;
       ({ findModuleSync } = __webpack_require__(/*! caffeine-mc */ 74));
       return (RequireStn = Caf.defClass(
@@ -5045,9 +5047,11 @@ Caf.defMod(module, () => {
               return this.props.require;
             },
             propName: function() {
-              return /\//.test(this.rawRequireString)
-                ? peek(this.rawRequireString.split("/"))
-                : this.rawRequireString;
+              return escapePropName(
+                /\//.test(this.rawRequireString)
+                  ? peek(this.rawRequireString.split("/"))
+                  : this.rawRequireString
+              );
             },
             requireString: function() {
               return findModuleSync(this.rawRequireString, this.parser.options)
@@ -5893,7 +5897,8 @@ Caf.defMod(module, () => {
           }
           childNode = this.children[0].toSourceNode({
             dotBase: true,
-            forUnaryOpeartor: true
+            forUnaryOpeartor: true,
+            expression: true
           });
           base = this.tail
             ? [childNode, this.normalizedOperand]

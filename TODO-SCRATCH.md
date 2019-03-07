@@ -219,12 +219,6 @@ the base of the sub-block. I -think- that'll solve it.
 # Generates invalid javascript:
 
 
-```coffeescript
-# generates invalid javascript: {copy-to-clipboard: require('copy-to-clipboard')}
-{} &copy-to-clipboard
-```
-
-
 
 
 
