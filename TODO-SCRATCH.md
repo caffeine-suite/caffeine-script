@@ -225,19 +225,6 @@ the base of the sub-block. I -think- that'll solve it.
 ```
 
 
----
-
-```coffeescript
-import &StandardImport
-
-authorizedSync = (request) ->
-  !!if Neptune.Art.Config.configName == "Production"
-    request.session.userId in config.curators
-  else
-    present request.session.userId
-```
-
-
 
 
 

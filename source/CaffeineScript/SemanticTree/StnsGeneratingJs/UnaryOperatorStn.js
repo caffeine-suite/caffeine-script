@@ -38,7 +38,8 @@ Caf.defMod(module, () => {
           }
           childNode = this.children[0].toSourceNode({
             dotBase: true,
-            forUnaryOpeartor: true
+            forUnaryOpeartor: true,
+            expression: true
           });
           base = this.tail
             ? [childNode, this.normalizedOperand]

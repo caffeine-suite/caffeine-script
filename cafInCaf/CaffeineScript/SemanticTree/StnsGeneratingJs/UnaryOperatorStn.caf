@@ -22,7 +22,10 @@ class UnaryOperatorStn extends &BaseStn
   toSourceNode: (options) ->
     {dotBase, forUnaryOpeartor} = options if options
 
-    childNode = @children[0].toSourceNode dotBase: true forUnaryOpeartor: true
+    childNode = @children[0].toSourceNode
+      dotBase: true
+      forUnaryOpeartor: true
+      expression: true
 
     base = if @tail
       childNode, @normalizedOperand

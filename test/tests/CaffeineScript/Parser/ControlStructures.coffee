@@ -151,6 +151,7 @@ module.exports = suite: parseTestSuite
 
 
     regressions:
+      "!if a then b": "!(a ? b : undefined);"
       "if false then :mytrue": 'if (false) {"mytrue";};'
 
       """
