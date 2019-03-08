@@ -46,7 +46,15 @@ Syntax Highlighting
 # To Sort
 
 
-
+```
+# Should this be legal?
+1 /2
+# right now you have two spacing options:
+1 / 2
+1/2
+# I just made it illegal when I fixed this:
+# "1 -2" == "[1, -2]" and "a 1 -2" == "a(1, -2)"
+```
 
 
 
@@ -164,7 +172,9 @@ array a in-array b
   = myObject
 ```
 
+---
 
+`break` & `return` for comprehensions
 
 
 
