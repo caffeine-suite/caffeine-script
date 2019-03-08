@@ -95,5 +95,5 @@ module.exports = suite: parseTestSuite
 
     regressions:
       """
-      {} &copy-to-clipboard
-      """: '({"copy-to-clipboard": require(\'copy-to-clipboard\')});'
+      {} &art-standard-lib
+      """: '({"art-standard-lib": require(\'art-standard-lib\')});'
