@@ -54,7 +54,7 @@ unaryOpExpression:
         operand: operand.toString().trim()
         tail: true
         stn
-    each operand in (@unaryOperator_s || []).slice().reverse()
+    each operand in (@unaryOperators_ || []).slice().reverse()
       stn = UnaryOperatorStn
         operand: operand.toString().trim()
         stn

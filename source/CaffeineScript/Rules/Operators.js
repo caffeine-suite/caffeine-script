@@ -96,7 +96,7 @@ Caf.defMod(module, () => {
                 ))
             );
             Caf.each2(
-              (this.unaryOperator_s || []).slice().reverse(),
+              (this.unaryOperators_ || []).slice().reverse(),
               operand =>
                 (stn = UnaryOperatorStn(
                   { operand: operand.toString().trim() },
