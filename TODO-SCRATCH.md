@@ -44,6 +44,118 @@ Syntax Highlighting
 
 
 # To Sort
+```
+# SHOULD COMPILE
+if !response.isRootRequest ||
+    response.requestProps.prefetch == false ||
+    response.requestProps.include == false || # DEPRICATED
+    response.type == :delete
+
+  response
+```
+
+```
+# IDEA:
+b = {} = a
+# could be:
+b = object a
+# OK, so not a big savings there, but what I want is this:
+
+{}
+  {} = a
+  foo: bar
+  # ...
+
+# The ability to merge "a" into the new object we are also
+# merging other things into.
+# Example 2:
+
+{}
+  {} = a
+  {} = b
+# i.e.: merge a, b
+# OR equiv:
+{}
+  object a
+  object b
+
+# None look terribly "obvious" to me, but they are useful,
+# and currently illegal...
+# REALWORLD EXAMPLE: Art.Ery/Ery.caf
+
+[]
+  &Filters
+  {}
+    config
+    pipelines
+    &Session.session
+    # ...
+
+# could be:
+{}
+  {} = &Filters
+  config
+  pipelines
+  &Session.session
+
+# I like "{} = foo" best, it's consistent with what I know-i-want:
+{}
+  {a, b} = foo
+  c: 123
+# IE:
+a: foo.a
+b: foo.b
+c: 123
+```
+
+```
+# ANOTHER COOL IDEA:
+c = {-a} = b
+# equals
+c = object v, k in b when k != :a
+
+AND, how about this one:
+c = {/^a.*/} = b
+# equals
+c = object v, k in b when /^a.*/.test k
+
+# mix-and-match: (?)
+c = {/^a/, -a} = b
+# since that could just be this, maybe we only allow one regexp:
+c = {/^a.+/} = b
+# in fact, I almost think {/ /} is a special thing, since you
+# can express any possible selector that way, adding special logic
+# w.r.t. how separate selectors combine (is it AND or is it OR?)
+# is just messy.
+
+# NOTE, I have no idea what this means:
+{/^a/i} = b # This has no side-effects and if the return is ignored...
+# Probably: cpu burner
+# Could be ILLEGAL, but I like to minimize what's ILLEGAL.
+
+############################
+# Another, realworld example:
+# THIS
+# 7 tokens
+merge
+  objectWithout responseProps, :dataUpdates
+  {} data
+# OR, only creates 1 obj, 12 tokens
+out = objectWithout responseProps, :dataUpdates
+out.data = data
+out
+
+# COULD BE THIS:
+# NOTE: this would only create 1 object instead of 3!
+# 8 tokens
+{}
+  {-dataUpdates} = responseProps
+  data
+
+# Here is another, current option, that only creates 1 object:
+# 18 tokens
+object v, k in responseProps into {} data when k != :dataUpdates && k != :data
+```
 
 
 ```
