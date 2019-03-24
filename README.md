@@ -6,7 +6,9 @@ I believe less is more. It is the first principle of design and foundation of ju
 
 [![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic.png)](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/Why-CaffeineScript-InfoGraphic-Large.png)
 
-CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **2.5-3x** more efficient than JSX, TypeScript or JavaScript. Imagine seeing 3x as much code on screen at once. Imagine having 3x less code to write. Imagine having 3x less code to change when you need to refactor. Imagine having 3x less code to debug.
+CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **2.5-3x** more efficient than JSX, TypeScript or JavaScript. You can see 3x as much code on screen at once, solve problems with 3x less code, and have 3x less code to change when you need to refactor. Perhaps most important of all, you could have 3x less code to debug.
+
+Code size matters. Less is more.
 
 TicTacToe source:
 * [CaffeineScript source](https://github.com/imikimi/art-suite-demos/blob/master/source/Art.SuiteDemos/Demos/TicTacToe/Main.caf)

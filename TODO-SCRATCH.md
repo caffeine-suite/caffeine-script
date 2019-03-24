@@ -35,15 +35,54 @@ Syntax Highlighting
 
 
 
-
-
-
-
-
-
-
-
 # To Sort
+```
+find {}
+# should probably return undefined...
+# Why? well, we'd like to distinguish between finding and not finding:
+find a in b when a == null
+```
+```
+# IDEA: this:
+if find v, k in record when allowedFields[k]
+  object v, k in record when allowedFields[k]
+
+# could be:
+object-if-find v, k in record when allowedFields[k]
+
+# array-version:
+array-if-find v, k in record when allowedFields[k]
+
+# I don't quite like that syntax, but the idea is:
+# For either 'object' or 'array', return null instead of
+# an empty {} or [] - if empty it would be.
+# This is an optional mode; most the time I want
+# that empty {} or [] so other things don't break.
+
+# OOPS - and interesting. THIS is actually correct:
+if (find  v, k in record when v? && allowedFields[k])?
+  object v, k in record when allowedFields[k]
+# If when we find the first k in allowedFields, and v == 0,
+# the if will be false; ack! In fact, I'd like to have even v == null be OK
+# I really like the idea of object-if-find now. It would be just like object,
+# except it would vivify the return-object upon the first key it finds that
+# passes 'when'.
+```
+
+```
+# IDEA alias opportunity: found == find
+# It's nice when combined with 'if'
+if found v in records when v.foo?
+  ...
+
+# hey, that'z nize!
+if found records with .foo?
+  ...
+
+# or if we do the object-if syntax:
+object-if-found records with allowedFields[..] # .. == second param which is the key
+
+# I kinda like it since it's more declarative-feeling vs imparative.
 ```
 # SHOULD COMPILE
 if !response.isRootRequest ||
