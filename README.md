@@ -28,7 +28,7 @@ Read more about programming with less:
 
 JavaScript has a golden heart. At its core, it is a powerful hybrid of object-oriented, functional and dynamically-typed languages. Combined with modern runtimes, world-class garbage collectors and JIT compilers, JavaScript can be a surprisingly good platform for building great applications.
 
-However, JavaScript has an ailing body. Even now, in 2018, JavaScript has major syntax and semantic problems which make it error prone and dangerous. JavaScript's syntax is excessively verbose. Code readability matters, especially for large projects, and JavaScript's syntax is the least readable of any major language. This is easy to fix, and the rewards can be huge.
+However, JavaScript has an ailing body. Even now, in 2019, JavaScript has major syntax and semantic problems which make it error prone and dangerous. JavaScript's syntax is excessively verbose. Code readability matters, especially for large projects, and JavaScript's syntax is the least readable of any major language. This is easy to fix, and the rewards can be huge.
 
 Further, JavaScript has many dangerous holes in its semantics which can introduce subtle, hard to find bugs. They include [accidental globals](https://github.com/caffeine-suite/caffeine-script/wiki/Globals), [weakly-typed truth](https://github.com/caffeine-suite/caffeine-script/wiki/Caffeine-Truth), [weakly-typed equality](https://github.com/caffeine-suite/caffeine-script/wiki/Equality) and other [weakly-typed operators](https://github.com/caffeine-suite/caffeine-script/wiki/Operator-Overloading). Thankfully, the core JavaScript semantics are good, and these auxiliary semantics can be partially or fully fixed without changing JavaScript.
 

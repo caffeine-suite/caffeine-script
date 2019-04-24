@@ -37,6 +37,31 @@ Syntax Highlighting
 
 # To Sort
 ```
+1,2,3
+(1,2,3)
+# should be the same
+```
+
+```
+a = (1;2;3)
+# javascript: a = (1,2,3);
+```
+
+```
+# should be an ERROR
+"" invited you to join #{} getTopicTitle @topic.
+# however, it becomes: "invited you to join getTopicTitle @topic."
+```
+```
+# doesn't properly let the temp var
+
+while inverseBlocks.pop() extract? text
+
+# also, but slightly different - still doesn't properly 'let'
+while a extract? b
+
+```
+```
 find {}
 # should probably return undefined...
 # Why? well, we'd like to distinguish between finding and not finding:
