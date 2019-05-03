@@ -37,6 +37,64 @@ Syntax Highlighting
 
 # To Sort
 ```
+###
+The interpolation fails to parse, which then means it becomes part of the string!
+
+This is another example of a "hard-fail" parse. We need a way for partially-matched
+sub-patterns to hard-fail (all parsing fails - well, I guess not all, but the parent
+string shouldn't succeed). In this case, it should be something like:
+  could-match-interpolation OR continue matching WITHOUT interpolation-start
+
+In this case, there's another thing going on which is weird. It looks like this
+shoudl parse just fine and the "b" should NOT be in the interpolation block, but
+since the interpolation block starts indented, it isn't obvious that PARSING
+is going to start back at the STRING-BLOCK's indention level - which means PARSING
+sees the "b" as indented relative to the interpolation-block.
+
+All of which means... we need some rule that makes more sense here. Options:
+
+a) if the interpolation is indented with white-space, the block must be further indented
+  Example:
+
+  a
+    #{} foo
+      This would be in
+    This would be out
+
+b) interpolation body-block must ALWAYS be more indented than the #{}, regardless of
+  what characters came before the "#{}". Example:
+
+  a
+    this is nice #{} foo
+                  This would be in
+
+    this is nice #{} foo
+                 This would be out
+
+
+c) #{} can always be used as a "to-the-end-of-line", but it can only consume following lines
+   if all chars before it were whitespace. (extreme version of options-a)
+
+   Example:
+
+  a
+    #{} foo
+      This would be in
+
+    this is nice #{} foo
+                     Even this would be out
+
+GUT: I'm liking option-c.
+
+###
+"""
+  a
+    #{} "this should be in an interpolation"
+    b
+
+```
+
+```
 1,2,3
 (1,2,3)
 # should be the same
