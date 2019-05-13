@@ -155,9 +155,9 @@ __webpack_require__(/*! ./SemanticTree/namespace */ 6);
 
 /***/ }),
 /* 3 */
-/*!************************************************************************************!*\
+/*!*************************************************************************************!*\
   !*** external "require('neptune-namespaces' /* ABC - not inlining fellow NPM *_/)" ***!
-  \************************************************************************************/
+  \*************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.11"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.12"};
 
 /***/ }),
 /* 5 */
@@ -423,9 +423,9 @@ module.exports = function(module) {
 
 /***/ }),
 /* 12 */
-/*!*****************************************************************************************!*\
+/*!******************************************************************************************!*\
   !*** external "require('caffeine-script-runtime' /* ABC - not inlining fellow NPM *_/)" ***!
-  \*****************************************************************************************/
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -433,9 +433,9 @@ module.exports = require('caffeine-script-runtime' /* ABC - not inlining fellow 
 
 /***/ }),
 /* 13 */
-/*!**********************************************************************************!*\
+/*!***********************************************************************************!*\
   !*** external "require('art-standard-lib' /* ABC - not inlining fellow NPM *_/)" ***!
-  \**********************************************************************************/
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -633,9 +633,9 @@ Caf.defMod(module, () => {
 
 /***/ }),
 /* 17 */
-/*!**********************************************************************************!*\
+/*!***********************************************************************************!*\
   !*** external "require('art-class-system' /* ABC - not inlining fellow NPM *_/)" ***!
-  \**********************************************************************************/
+  \***********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1303,9 +1303,9 @@ Caf.defMod(module, () => {
 
 /***/ }),
 /* 25 */
-/*!*****************************************************************************************!*\
+/*!******************************************************************************************!*\
   !*** external "require('art-object-tree-factory' /* ABC - not inlining fellow NPM *_/)" ***!
-  \*****************************************************************************************/
+  \******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1313,9 +1313,9 @@ module.exports = require('art-object-tree-factory' /* ABC - not inlining fellow 
 
 /***/ }),
 /* 26 */
-/*!*************************************************************************************!*\
+/*!**************************************************************************************!*\
   !*** external "require('caffeine-source-map' /* ABC - not inlining fellow NPM *_/)" ***!
-  \*************************************************************************************/
+  \**************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -1323,9 +1323,9 @@ module.exports = require('caffeine-source-map' /* ABC - not inlining fellow NPM 
 
 /***/ }),
 /* 27 */
-/*!****************************************************************************!*\
+/*!*****************************************************************************!*\
   !*** external "require('art-binary' /* ABC - not inlining fellow NPM *_/)" ***!
-  \****************************************************************************/
+  \*****************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -5082,9 +5082,9 @@ Caf.defMod(module, () => {
 
 /***/ }),
 /* 74 */
-/*!*****************************************************************************!*\
+/*!******************************************************************************!*\
   !*** external "require('caffeine-mc' /* ABC - not inlining fellow NPM *_/)" ***!
-  \*****************************************************************************/
+  \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -6349,8 +6349,7 @@ Caf.defMod(module, () => {
               invokeWithClauseAndPush,
               loopStn,
               positiveByTest,
-              negativeByTest,
-              temp;
+              negativeByTest;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
@@ -6668,16 +6667,17 @@ Caf.defMod(module, () => {
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
                       ? fromObjectClause
-                        ? AssignmentStn(
-                            (temp = valueId.identifierStn) != null
-                              ? temp
-                              : valueId,
-                            AccessorStn(fromId, keyValueStn)
-                          )
-                        : Caf.array(variableDefinition, (v, i) => {
-                            let temp1;
+                        ? Caf.array(variableDefinition, (v, i) => {
+                            let temp;
                             return AssignmentStn(
-                              (temp1 = v.identifierStn) != null ? temp1 : v,
+                              (temp = v.identifierStn) != null ? temp : v,
+                              i === 0 ? AccessorStn(fromId, keyValueStn) : iId
+                            );
+                          })
+                        : Caf.array(variableDefinition, (v, i) => {
+                            let temp;
+                            return AssignmentStn(
+                              (temp = v.identifierStn) != null ? temp : v,
                               !toClause && i === 0
                                 ? AccessorStn(fromId, iId.getValueStn())
                                 : iId
@@ -7067,9 +7067,9 @@ Caf.defMod(module, () => {
 
 /***/ }),
 /* 95 */
-/*!********************************************************************************!*\
+/*!*********************************************************************************!*\
   !*** external "require('caffeine-eight' /* ABC - not inlining fellow NPM *_/)" ***!
-  \********************************************************************************/
+  \*********************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
