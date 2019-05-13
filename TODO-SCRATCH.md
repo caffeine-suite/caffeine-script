@@ -37,6 +37,12 @@ Syntax Highlighting
 
 # To Sort
 ```
+# naming the key in from-object doesn't work
+each v, k4 from-object source
+  _into[k4] = v
+```
+
+```
 ###
 The interpolation fails to parse, which then means it becomes part of the string!
 

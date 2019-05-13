@@ -358,11 +358,16 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         StatementsStn
           if variableDefinition?.length > 0
             if fromObjectClause
-              AssignmentStn
-                valueId.identifierStn ? valueId
-                AccessorStn
-                  fromId
-                  keyValueStn
+              array v, i in variableDefinition
+                AssignmentStn
+                  v.identifierStn ? v
+                  if i == 0
+                    AccessorStn
+                      fromId
+                      keyValueStn
+                  else
+                    iId
+
             else
               array v, i in variableDefinition
                 AssignmentStn

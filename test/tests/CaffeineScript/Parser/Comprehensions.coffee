@@ -64,6 +64,23 @@ module.exports = suite: parseTestSuite
           for (let k in from)
           {let v; v = from[k]; into[k] = v;};
           into;"
+      regressions:
+        "object myV from-object b with myV": "
+          let from, into;
+          from = b || {};
+          into = {};
+          for (let k in from)
+          {let myV; myV = from[k]; into[k] = myV;};
+          into;"
+
+        "object myV, myK from-object b with myV + myK": "
+          let from, into;
+          from = b || {};
+          into = {};
+          for (let k in from)
+          {let myV, myK; myV = from[k]; myK = k; into[k] = myV + myK;};
+          into;"
+
 
     fromArray:
       each:

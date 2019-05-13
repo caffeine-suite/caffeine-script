@@ -338,8 +338,7 @@ Caf.defMod(module, () => {
               invokeWithClauseAndPush,
               loopStn,
               positiveByTest,
-              negativeByTest,
-              temp;
+              negativeByTest;
             ({ variableDefinition } = this.labeledChildren);
             variableDefinition =
               Caf.exists(variableDefinition) && variableDefinition.children;
@@ -657,16 +656,17 @@ Caf.defMod(module, () => {
                     (Caf.exists(variableDefinition) &&
                       variableDefinition.length) > 0
                       ? fromObjectClause
-                        ? AssignmentStn(
-                            (temp = valueId.identifierStn) != null
-                              ? temp
-                              : valueId,
-                            AccessorStn(fromId, keyValueStn)
-                          )
-                        : Caf.array(variableDefinition, (v, i) => {
-                            let temp1;
+                        ? Caf.array(variableDefinition, (v, i) => {
+                            let temp;
                             return AssignmentStn(
-                              (temp1 = v.identifierStn) != null ? temp1 : v,
+                              (temp = v.identifierStn) != null ? temp : v,
+                              i === 0 ? AccessorStn(fromId, keyValueStn) : iId
+                            );
+                          })
+                        : Caf.array(variableDefinition, (v, i) => {
+                            let temp;
+                            return AssignmentStn(
+                              (temp = v.identifierStn) != null ? temp : v,
                               !toClause && i === 0
                                 ? AccessorStn(fromId, iId.getValueStn())
                                 : iId
