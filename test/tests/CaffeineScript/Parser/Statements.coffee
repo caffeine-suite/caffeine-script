@@ -99,7 +99,20 @@ module.exports = suite: parseTestSuite
         break
       """: null
 
+    nesting:
+      """
+      while 1
+        array a in foo
+          break
+      """: null
+      """
+      array a in foo
+        while 1
+          break
+      """: "ok"
+
     regressions:
+
       """
       breakOut = isFun
       """: "let breakOut; breakOut = isFun;"

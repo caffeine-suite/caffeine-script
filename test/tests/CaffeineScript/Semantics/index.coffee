@@ -4,4 +4,5 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  Comprehensions: require './Comprehensions'
+  Comprehensions:          require './Comprehensions'         
+  ComprehensionsEfficient: require './ComprehensionsEfficient'
