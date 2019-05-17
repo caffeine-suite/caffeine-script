@@ -36,6 +36,43 @@ Syntax Highlighting
 
 
 # To Sort
+```coffeescript
+# efficiency
+out = each in-array a
+###
+Currently:
+  let out, from, to, i, into; out =
+  (from = a || [],
+  to = from.length,
+  i = 0,
+  into = from,
+  (() => {while (i < to) {let v; v = from[i]; v; i++;};})(),
+  into);
+
+We'd like this to NOT create function-wrap around the while-loop.
+
+We could at least detect the above situation - when the result is immediately
+assigned to a value as a Statement. We could refactor this easily - replacing 'todo' with 'out'
+and converting it all to statements:
+
+  let out, from, to, i;
+  from = a || [];
+  to = from.length;
+  i = 0;
+  out = from;
+  while (i < to) {let v; v = from[i]; v; i++;};
+
+We could also be lazier and just add 'out = into' to the end, and otherwise treating it as statements.
+  let out, from, to, i, into;
+  from = a || [];
+  to = from.length;
+  i = 0;
+  into = from;
+  while (i < to) {let v; v = from[i]; v; i++;};
+  out = into;
+
+###
+```
 ```
 # naming the key in from-object doesn't work
 each v, k4 from-object source
