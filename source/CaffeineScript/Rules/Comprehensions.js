@@ -20,7 +20,23 @@ Caf.defMod(module, () => {
           {
             stnFactory: "ComprehensionValueClauseStn",
             stnProps: function() {
-              return { type: this.comprehensionValueClauseType.toString() };
+              let type;
+              return {
+                type: (() => {
+                  switch (
+                    (type = this.comprehensionValueClauseType.toString())
+                  ) {
+                    case "in":
+                      return "from";
+                    case "in-array":
+                      return "from-array";
+                    case "in-object":
+                      return "from-object";
+                    default:
+                      return type;
+                  }
+                })()
+              };
             }
           }
         ],

@@ -19,7 +19,13 @@ import &StandardImport
         value:keywordLabeledStatementsWithOneLessBlock
       stnFactory: :ComprehensionValueClauseStn
       stnProps: ~>
-        type: @comprehensionValueClauseType.toString()
+
+        type:
+          switch type = @comprehensionValueClauseType.toString()
+          when :in        then :from
+          when :in-array  then :from-array
+          when :in-object then :from-object
+          else type
 
     comprehensionValueClauses: "comprehensionValueClause+"
 
