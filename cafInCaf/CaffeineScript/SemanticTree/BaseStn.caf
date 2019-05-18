@@ -92,8 +92,18 @@ class BaseStn extends BaseClass
   @newInstance: (props, children) ->
     new @ props, children
 
-  emptyProps = {}
-  emptyChidlren = []
+  ##
+    TODO: make props pure-functional everywhere;
+      then we can use:
+
+      emptyProps = {}
+
+    Right now props are mutated (somewhere), so this
+    breaks things.
+
+    This is both a performance and "good code" thing.
+
+  emptyChildren = []
   @postCreateConcreteClass: (options)->
     {classModuleState, hotReloadEnabled} = options
     super
@@ -101,7 +111,7 @@ class BaseStn extends BaseClass
       class: @
       (props, children) ->
 
-        @newInstance props ? {}, children ? []
+        @newInstance props ? {}, children ? emptyChildren
 
   findParent: (stnTypePattern) ->
     {parent} = @

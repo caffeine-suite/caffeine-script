@@ -66,7 +66,7 @@ Caf.defMod(module, () => {
           }
         },
         function(BaseStn, classSuper, instanceSuper) {
-          let emptyProps, emptyChidlren, sourceNodeLineColumnScratch;
+          let emptyChildren, sourceNodeLineColumnScratch;
           this.abstractClass();
           this.setter("parseTreeNode");
           this.getter({
@@ -153,8 +153,7 @@ Caf.defMod(module, () => {
           this.newInstance = function(props, children) {
             return new this(props, children);
           };
-          emptyProps = {};
-          emptyChidlren = [];
+          emptyChildren = [];
           this.postCreateConcreteClass = function(options) {
             let classModuleState, hotReloadEnabled;
             ({ classModuleState, hotReloadEnabled } = options);
@@ -163,7 +162,7 @@ Caf.defMod(module, () => {
               createObjectTreeFactory({ class: this }, (props, children) =>
                 this.newInstance(
                   props != null ? props : {},
-                  children != null ? children : []
+                  children != null ? children : emptyChildren
                 )
               )
             );
