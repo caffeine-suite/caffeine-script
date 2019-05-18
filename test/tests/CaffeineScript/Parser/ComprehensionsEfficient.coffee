@@ -87,15 +87,15 @@ module.exports = suite: parseTestSuite
         (() => {while (i < to) {let v; v = from[i]; v; i++;};})(),
         into);"
 
-    break:
-      "out = each a in-array b with break a": "
-        let out, from, to, i, into;
-        out = (from = b || [],
-        to = from.length,
-        i = 0,
-        into = from,
-        (() => {while (i < to) {let a; a = from[i]; into = a; break; i++;};})(),
-        into);"
+    # break:
+    #   "out = each a in-array b with break a": "
+    #     let out, from, to, i, into;
+    #     out = (from = b || [],
+    #     to = from.length,
+    #     i = 0,
+    #     into = from,
+    #     (() => {while (i < to) {let a; a = from[i]; into = a; break; i++;};})(),
+    #     into);"
 
       # "-> each in-array b with return foo": "ok"
 
