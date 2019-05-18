@@ -1,5 +1,7 @@
-(insideForParens, body) ->
-  &WhileStn
-    operand: "for"
-    insideForParens
-    body
+&ArtObjectTreeFactory.createObjectTreeFactory
+  name: :ForStn
+  (props, body) ->
+    &WhileStn
+      operand: "for"
+      props
+      body

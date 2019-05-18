@@ -30,6 +30,28 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
   getComprehensionsFound = (labeledClauses) ->
     "" (clauses found: #{(array clause in labeledClauses when clause with clause.clauseType).join ', '})
 
+  supportedClauseLabels = object in []
+      :byClause
+
+      :fromClause
+      :fromArrayClause
+      :fromObjectClause
+
+      :intoClause
+
+      :shortClause
+      :skipClause
+
+      :tilClause
+      :toClause
+
+      :withClause
+      :withKeyClause
+      :whenClause
+
+      :injectClause
+    true
+
   validate: ->
     {valueClauses, variableDefinition} = @labeledChildren
     {comprehensionType} = @
@@ -40,9 +62,18 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           Allowed variables: #{if isReduce then "accumulator, "}"value and key", in that order.
           You defined: #{variableDefinition.parseTreeNode?.toString()}."
 
-    {toClause, byClause, tilClause, fromClause,
-    fromArrayClause, fromObjectClause, withKeyClause,
-    skipClause, shortClause} = @labeledClauses
+    find __, clauseName in @labeledClauses when !supportedClauseLabels[clauseName]
+      throw new Error "" Invalid Comprehension clause: #{clauseName}
+
+    @labeledClauses extract
+
+      toClause, byClause, tilClause
+
+      fromClause
+      fromArrayClause
+      fromObjectClause
+
+      withKeyClause, skipClause, shortClause
 
     if fromArrayClause
       switch comprehensionType
@@ -60,7 +91,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     sourceCounts++ if fromArrayClause
     sourceCounts++ if fromObjectClause
     unless sourceCounts == 1
-      throw new Error "" Invalid Comprehension: Exactly one 'from/to/til', 'from-array' or 'from-object' clause expected #{getComprehensionsFound @labeledClauses}
+      throw new Error "" Invalid Comprehension: Exactly one 'from/to/til', 'to/from-array' or 'to/from-object' clause expected #{getComprehensionsFound @labeledClauses}
 
     if toClause && tilClause
       throw new Error "" Invalid Comprehension: only one 'to' or 'til' clause allowed  #{getComprehensionsFound @labeledClauses}
@@ -80,21 +111,40 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     comprehensionType: -> @labeledChildren.outputType.props.token
 
     labeledClauses: ->
-      {iterable, body} = @labeledChildren
-      labeledClauses = {}
+      unless @_labeledClauses
+        {iterable, body} = @labeledChildren
+        @_labeledClauses = labeledClauses = {}
 
-      each {type, value} in @labeledChildren.valueClauses
-        type = clauseAliases[type] ? type
-        name = lowerCamelCase type + :Clause
-        if labeledClauses[name]
-          throw new Error "" no more than one '#{type}' clause allowed
-        value.clauseType = type
-        labeledClauses[name] = value
+        each {type, value} in @labeledChildren.valueClauses
+          type = clauseAliases[type] ? type
+          name = lowerCamelCase type + :Clause
+          if labeledClauses[name]
+            throw new Error "" no more than one '#{type}' clause allowed
+          value.clauseType = type
+          labeledClauses[name] = value
 
-      labeledClauses.fromClause ?= iterable
-      labeledClauses.withClause ?= body
+        labeledClauses.fromClause ?= iterable
+        labeledClauses.withClause ?= body
 
-      labeledClauses
+      @_labeledClauses
+
+    generatesInlineIteration: ->
+      unless @_generatesInlineIteration
+        @ extract labeledClauses
+
+        raw =
+          labeledClauses.byClause
+          ? labeledClauses.shortClause
+          ? labeledClauses.skipClause
+          ? labeledClauses.fromObjectClause
+          ? labeledClauses.toClause
+          ? labeledClauses.tilClause
+          ? labeledClauses.fromArrayClause
+
+        @_generatesInlineIteration = !!raw
+
+      @_generatesInlineIteration
+
 
   postTransform: ->
     @initLabeledChildren()
@@ -323,6 +373,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       intoClause
 
       !byClauseIsZero && loopStn
+        captureResultsAs: intoId
         if fromObjectClause
           ForInControlStn
             let: true

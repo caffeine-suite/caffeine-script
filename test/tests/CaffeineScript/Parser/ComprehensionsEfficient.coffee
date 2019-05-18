@@ -87,15 +87,40 @@ module.exports = suite: parseTestSuite
         (() => {while (i < to) {let v; v = from[i]; v; i++;};})(),
         into);"
 
-    # break:
-    #   "out = each a in-array b with break a": "
-    #     let out, from, to, i, into;
-    #     out = (from = b || [],
-    #     to = from.length,
-    #     i = 0,
-    #     into = from,
-    #     (() => {while (i < to) {let a; a = from[i]; into = a; break; i++;};})(),
-    #     into);"
+    break:
+      "each a in-array b with break a": "
+        let from, to, i, into;
+        from = b || [];
+        to = from.length;
+        i = 0;
+        into = from;
+        while (i < to) {let a; a = from[i]; into = a; break; i++;};
+        into;"
+
+      "out = each a in-array b with break a": "
+        let out, from, to, i, into;
+        out = (from = b || [],
+        to = from.length,
+        i = 0,
+        into = from,
+        (() => {while (i < to) {let a; a = from[i]; into = a; break; i++;};})(),
+        into);"
+
+      "array a in-array b with return a": null
+
+      "-> array a in-array b with return a": "
+        (function()
+        {let from, to, i, into;
+        return (from = b || [], to = from.length, i = 0, into = [], (() =>
+        {while (i < to) {let a; a = from[i]; into.push(return a); i++;};})(),
+        into);});"
+
+      "-> out = array a in-array b with return a": "
+        (function()
+        {let out, from, to, i, into;
+        return out = (from = b || [], to = from.length, i = 0, into = [], (() =>
+        {while (i < to) {let a; a = from[i]; into.push(return a); i++;};})(),
+        into);});"
 
       # "-> each in-array b with return foo": "ok"
 

@@ -11,13 +11,22 @@ Caf.defMod(module, () => {
         function(ReturnStatementStn, classSuper, instanceSuper) {
           this.prototype.validate = function() {
             let p;
-            p = this.findParent(
-              /^(Class|Comprehesion|FunctionDefinition|While|Switch|ControlOperator)$/
-            );
-            return !p || /^(Class|Comprehesion)/.test(p.type)
+            p = this.findParent(/^(Class|Comprehension|FunctionDefinition)$/);
+            while (
+              p &&
+              p.type === "Comprehension" &&
+              p.getGeneratesInlineIteration()
+            ) {
+              p = p.findParent(/^(Class|Comprehension|FunctionDefinition)$/);
+            }
+            return !(p != null)
+              ? (() => {
+                  throw new Error("'return' not allowed in root context.");
+                })()
+              : p.type !== "FunctionDefinition"
               ? (() => {
                   throw new Error(
-                    "'return' not allowed in: root, class or comprehesion contexts."
+                    "'return' must be inside a function context and NOT inside certain comprehesions (any without an 'in/from-array' or 'in/from-object' clause)"
                   );
                 })()
               : undefined;

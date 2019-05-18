@@ -100,12 +100,11 @@ module.exports = suite: parseTestSuite
       """: null
 
     nesting:
-      # temporarilly disabled - currently failing; but fix is almost ready
-      # """
-      # while 1
-      #   array a in foo
-      #     break
-      # """: null
+      """
+      while 1
+        array a in foo
+          break
+      """: null
 
       """
       array a in foo
@@ -138,34 +137,92 @@ module.exports = suite: parseTestSuite
       """: "(function() {return 1; return 2;});"
 
       """
-      while 1
-        return 2
-      """: "while (1) {return 2;};"
+      ->
+        while 1
+          return 2
+      """: "(function() {let temp; return (() => {while (1) {return 2;}; return temp;})();});"
 
       """
-      return 2 if true
-      """: "if (true) {return 2;};"
+      -> return 2 if true
+      """: return2IfTrue = "(function() {return true ? return 2 : undefined;});"
 
       """
-      if true
-        return 2
-      """: "if (true) {return 2;};"
+      ->
+        if true
+          return 2
+      """: return2IfTrue
 
       """
-      switch foo
-      when 1 then return 2
-      """: "switch (foo) {case 1: return 2;};"
+      ->
+        switch foo
+        when 1 then return 2
+      """: "(function() {return (() => {switch (foo) {case 1: return 2;};})();});"
 
     notAllowed:
       """
-      array a in foo
-        return 2
+        while 1
+          return 2
+      """: null
+
+      """
+      ->
+        array a in foo
+          return 2
       """: null
 
       """
       class Foo
         return 2
       """: null
+
+    nesting:
+      illegal: ->
+        """
+        ->
+          while 1
+            array a in foo
+              return
+        """: null
+
+        """
+        ->
+          array a in foo
+            return
+        """: null
+
+        """
+        ->
+          array a in foo
+            while 1
+              return
+        """: null
+
+      legal: ->
+        """
+          array a in foo
+            ->
+              return
+        """: "ok"
+
+        """
+        ->
+          array a in-array foo
+            return
+        """: "ok"
+
+        """
+        ->
+          array a in-array foo
+            while 1
+              return
+        """: "ok"
+
+        """
+        ->
+          while 1
+            array a in-array foo
+              return
+        """: "ok"
 
     regressions:
       """

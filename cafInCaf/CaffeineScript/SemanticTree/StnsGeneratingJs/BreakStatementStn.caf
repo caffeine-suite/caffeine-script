@@ -3,15 +3,28 @@ import &StandardImport
 class BreakStatementStn extends &BaseStn
 
   validate: ->
-    p = @findParent /^(Class|Comprehesion|FunctionDefinition|While|Switch|ControlOperator)$/
-    if !p || !/^(While)/.test p.type
-      throw new Error "'break' not allowed in: root, class or comprehesion contexts."
+    p = @findParent /^(Class|Comprehension|FunctionDefinition|While|Switch|ControlOperator)$/
+    switch
+    when !p? then throw new Error "'break' not allowed in root context."
+    when /^(Comprehension)/.test(p.type) && p.getGeneratesInlineIteration() then null
+    when /^(While)/.test p.type then null
+    else
+      throw new Error "'break' not allowed in these contexts: root, class or comprehesions without an 'in/from-array' or 'in/from-object' clause"
 
   toSourceNode: ->
     p = @findParent /^(While)$/
 
     @createSourceNode
-      if p.usedAsExpression && @children[0]
+      switch
+      when p.captureResultsAs
+        []
+          p.captureResultsAs.toSourceNode()
+          " = "
+          @children[0]?.toSourceNode()
+          ? :undefined
+          "; break"
+
+      when p.usedAsExpression && @children[0]
         []
           "return "
           @children[0].toSourceNode()

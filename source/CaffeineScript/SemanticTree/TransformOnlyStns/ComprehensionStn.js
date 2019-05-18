@@ -55,7 +55,7 @@ Caf.defMod(module, () => {
           require("../BaseStn")
         ) {},
         function(ComprehensionStn, classSuper, instanceSuper) {
-          let getComprehensionsFound, clauseAliases;
+          let getComprehensionsFound, supportedClauseLabels, clauseAliases;
           getComprehensionsFound = function(labeledClauses) {
             return `(clauses found: ${Caf.toString(
               Caf.array(
@@ -65,6 +65,24 @@ Caf.defMod(module, () => {
               ).join(", ")
             )})`;
           };
+          supportedClauseLabels = Caf.object(
+            [
+              "byClause",
+              "fromClause",
+              "fromArrayClause",
+              "fromObjectClause",
+              "intoClause",
+              "shortClause",
+              "skipClause",
+              "tilClause",
+              "toClause",
+              "withClause",
+              "withKeyClause",
+              "whenClause",
+              "injectClause"
+            ],
+            () => true
+          );
           this.prototype.validate = function() {
             let valueClauses,
               variableDefinition,
@@ -81,7 +99,8 @@ Caf.defMod(module, () => {
               skipClause,
               shortClause,
               sourceCounts,
-              base;
+              base,
+              temp;
             ({ valueClauses, variableDefinition } = this.labeledChildren);
             ({ comprehensionType } = this);
             if (
@@ -102,17 +121,26 @@ Caf.defMod(module, () => {
                 )}."`
               );
             }
-            ({
-              toClause,
-              byClause,
-              tilClause,
-              fromClause,
-              fromArrayClause,
-              fromObjectClause,
-              withKeyClause,
-              skipClause,
-              shortClause
-            } = this.labeledClauses);
+            Caf.find(
+              this.labeledClauses,
+              (__, clauseName) =>
+                (() => {
+                  throw new Error(
+                    `Invalid Comprehension clause: ${Caf.toString(clauseName)}`
+                  );
+                })(),
+              (__, clauseName) => !supportedClauseLabels[clauseName]
+            );
+            temp = this.labeledClauses;
+            toClause = temp.toClause;
+            byClause = temp.byClause;
+            tilClause = temp.tilClause;
+            fromClause = temp.fromClause;
+            fromArrayClause = temp.fromArrayClause;
+            fromObjectClause = temp.fromObjectClause;
+            withKeyClause = temp.withKeyClause;
+            skipClause = temp.skipClause;
+            shortClause = temp.shortClause;
             if (fromArrayClause) {
               switch (comprehensionType) {
                 case "array":
@@ -148,7 +176,7 @@ Caf.defMod(module, () => {
             }
             if (!(sourceCounts === 1)) {
               throw new Error(
-                `Invalid Comprehension: Exactly one 'from/to/til', 'from-array' or 'from-object' clause expected ${Caf.toString(
+                `Invalid Comprehension: Exactly one 'from/to/til', 'to/from-array' or 'to/from-object' clause expected ${Caf.toString(
                   getComprehensionsFound(this.labeledClauses)
                 )}`
               );
@@ -187,30 +215,61 @@ Caf.defMod(module, () => {
             },
             labeledClauses: function() {
               let iterable, body, labeledClauses, temp1, temp2;
-              ({ iterable, body } = this.labeledChildren);
-              labeledClauses = {};
-              Caf.each2(
-                this.labeledChildren.valueClauses,
-                ({ type, value }) => {
-                  let name, temp;
-                  type = (temp = clauseAliases[type]) != null ? temp : type;
-                  name = lowerCamelCase(type + "Clause");
-                  if (labeledClauses[name]) {
-                    throw new Error(
-                      `no more than one '${Caf.toString(type)}' clause allowed`
-                    );
+              if (!this._labeledClauses) {
+                ({ iterable, body } = this.labeledChildren);
+                this._labeledClauses = labeledClauses = {};
+                Caf.each2(
+                  this.labeledChildren.valueClauses,
+                  ({ type, value }) => {
+                    let name, temp;
+                    type = (temp = clauseAliases[type]) != null ? temp : type;
+                    name = lowerCamelCase(type + "Clause");
+                    if (labeledClauses[name]) {
+                      throw new Error(
+                        `no more than one '${Caf.toString(
+                          type
+                        )}' clause allowed`
+                      );
+                    }
+                    value.clauseType = type;
+                    return (labeledClauses[name] = value);
                   }
-                  value.clauseType = type;
-                  return (labeledClauses[name] = value);
-                }
-              );
-              (temp1 = labeledClauses.fromClause) != null
-                ? temp1
-                : (labeledClauses.fromClause = iterable);
-              (temp2 = labeledClauses.withClause) != null
-                ? temp2
-                : (labeledClauses.withClause = body);
-              return labeledClauses;
+                );
+                (temp1 = labeledClauses.fromClause) != null
+                  ? temp1
+                  : (labeledClauses.fromClause = iterable);
+                (temp2 = labeledClauses.withClause) != null
+                  ? temp2
+                  : (labeledClauses.withClause = body);
+              }
+              return this._labeledClauses;
+            },
+            generatesInlineIteration: function() {
+              let labeledClauses, raw, temp, temp1, temp2, temp3, temp4, temp5;
+              if (!this._generatesInlineIteration) {
+                labeledClauses = this.labeledClauses;
+                raw =
+                  (temp =
+                    (temp1 =
+                      (temp2 =
+                        (temp3 =
+                          (temp4 =
+                            (temp5 = labeledClauses.byClause) != null
+                              ? temp5
+                              : labeledClauses.shortClause) != null
+                            ? temp4
+                            : labeledClauses.skipClause) != null
+                          ? temp3
+                          : labeledClauses.fromObjectClause) != null
+                        ? temp2
+                        : labeledClauses.toClause) != null
+                      ? temp1
+                      : labeledClauses.tilClause) != null
+                    ? temp
+                    : labeledClauses.fromArrayClause;
+                this._generatesInlineIteration = !!raw;
+              }
+              return this._generatesInlineIteration;
             }
           });
           this.prototype.postTransform = function() {
@@ -596,6 +655,7 @@ Caf.defMod(module, () => {
               intoClause,
               !byClauseIsZero &&
                 loopStn(
+                  { captureResultsAs: intoId },
                   fromObjectClause
                     ? ForInControlStn(
                         { let: true },

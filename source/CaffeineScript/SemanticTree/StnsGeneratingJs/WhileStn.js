@@ -35,6 +35,9 @@ Caf.defMod(module, () => {
         },
         function(WhileStn, classSuper, instanceSuper) {
           this.getter({
+            captureResultsAs: function() {
+              return this.props.captureResultsAs;
+            },
             autoLetsForSourceNode: function() {
               let lets;
               return (lets = this.getAutoLets()) ? lets + "; " : undefined;

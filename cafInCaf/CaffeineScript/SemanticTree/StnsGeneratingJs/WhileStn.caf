@@ -19,6 +19,7 @@ class WhileStn extends &ScopeStnMixin &BaseStn
     @validate()
 
   @getter
+    captureResultsAs:       -> @props.captureResultsAs
     autoLetsForSourceNode:  -> lets + "; " if lets = @getAutoLets()
     whileReturnTempVar:     -> @_whileReturnTempVar ?= @scope.uniqueIdentifier
     unaryOperator:          -> if @operand == :until then "!"
