@@ -183,8 +183,8 @@ Caf.defMod(module, () => {
             } else {
               children = this.children;
             }
-            return new AssignmentStn(
-              new IdentifierStn({ identifier: className }),
+            return AssignmentStn(
+              IdentifierStn({ identifier: className }),
               new ClassStn(
                 merge(this.props, {
                   className,

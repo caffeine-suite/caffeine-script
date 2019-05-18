@@ -97,8 +97,8 @@ class ClassStn extends &BaseStn
     else
       children = @children
 
-    new AssignmentStn
-      new IdentifierStn identifier: className
+    AssignmentStn
+      IdentifierStn identifier: className
       new ClassStn
         merge @props, {} className, classSuperHandle, instanceSuperHandle
         children
