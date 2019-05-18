@@ -159,7 +159,10 @@ Caf.defMod(module, () => {
             classSuper.postCreateConcreteClass.apply(this, arguments);
             return require("../StnRegistry").register(
               createObjectTreeFactory({ class: this }, (props, children) =>
-                this.newInstance(props, children)
+                this.newInstance(
+                  props != null ? props : {},
+                  children != null ? children : []
+                )
               )
             );
           };

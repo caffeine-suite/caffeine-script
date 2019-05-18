@@ -97,8 +97,9 @@ class BaseStn extends BaseClass
     super
     &StnRegistry.register createObjectTreeFactory
       class: @
-      (props, children) =>
-        @newInstance props, children
+      (props, children) ->
+
+        @newInstance props ? {}, children ? []
 
   findParent: (stnTypePattern) ->
     {parent} = @
