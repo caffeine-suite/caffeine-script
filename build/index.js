@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.13"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.14"};
 
 /***/ }),
 /* 5 */
@@ -1087,7 +1087,10 @@ Caf.defMod(module, () => {
             classSuper.postCreateConcreteClass.apply(this, arguments);
             return __webpack_require__(/*! ../StnRegistry */ 19).register(
               createObjectTreeFactory({ class: this }, (props, children) =>
-                this.newInstance(props, children)
+                this.newInstance(
+                  props != null ? props : {},
+                  children != null ? children : []
+                )
               )
             );
           };
@@ -7487,7 +7490,23 @@ Caf.defMod(module, () => {
           {
             stnFactory: "ComprehensionValueClauseStn",
             stnProps: function() {
-              return { type: this.comprehensionValueClauseType.toString() };
+              let type;
+              return {
+                type: (() => {
+                  switch (
+                    (type = this.comprehensionValueClauseType.toString())
+                  ) {
+                    case "in":
+                      return "from";
+                    case "in-array":
+                      return "from-array";
+                    case "in-object":
+                      return "from-object";
+                    default:
+                      return type;
+                  }
+                })()
+              };
             }
           }
         ],
