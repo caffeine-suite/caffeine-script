@@ -24,7 +24,7 @@
   },
   "scripts": {
     "build": "caf -v -p -c cafInCaf -o source",
-    "perf": "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf",
+    "perf": "nn -s;mocha -u tdd perf",
     "start": "webpack-dev-server --hot --inline --progress",
     "test": "nn -s;mocha -u tdd",
     "testInBrowser": "webpack-dev-server --progress"
