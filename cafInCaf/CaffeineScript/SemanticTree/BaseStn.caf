@@ -25,12 +25,12 @@ class BaseStn extends BaseClass
       children should be a compatoJsParenExpressionct, flat array of Stns
 
     TODO: I'd like to make setting the parseTreeNode cleaner.
-  constructor: (props, @children = [], @pretransformedStn) ->
+  constructor: (props, @children = [], @pretransformedStn, parseTreeNode) ->
     super
-    @parseTreeNode = @pretransformedStn?.parseTreeNode ? props.parseTreeNode
+    @parseTreeNode = @pretransformedStn?.parseTreeNode ? parseTreeNode ? props.parseTreeNode
     # throw new Error "no @parseTreeNode (#{@type})" unless @parseTreeNode
     @pretransformedStn ||= @
-    @props = objectWithout props, "parseTreeNode"
+    @_props = objectWithout props, "parseTreeNode"
 
     try
       # log "--- #{@parseTreeNode?.offset} --- #{@parseTreeNode}"
@@ -41,8 +41,9 @@ class BaseStn extends BaseClass
 
     @initLabeledChildren()
 
-  @setter "parseTreeNode"
+  @setter :parseTreeNode
   @getter
+    props: -> @_props ?= {}
     compileTimeValue: -> undefined
     parseTreeNode: -> @_parseTreeNode ? @parent?.parseTreeNode
 
@@ -103,6 +104,10 @@ class BaseStn extends BaseClass
 
     This is both a performance and "good code" thing.
 
+    npm run bench suggests emptyChildren improved overall compile
+    speed by 5%!
+
+  emptyProps = {}
   emptyChildren = []
   @postCreateConcreteClass: (options)->
     {classModuleState, hotReloadEnabled} = options

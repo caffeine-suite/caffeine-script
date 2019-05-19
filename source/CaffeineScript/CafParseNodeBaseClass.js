@@ -2,14 +2,14 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["Nodes", "isFunction", "RootStn"],
+    ["Nodes", "isFunction", "merge", "compactFlattenAllFast", "RootStn"],
     [
       global,
       require("./StandardImport"),
       require("caffeine-eight"),
       require("./StnRegistry")
     ],
-    (Nodes, isFunction, RootStn) => {
+    (Nodes, isFunction, merge, compactFlattenAllFast, RootStn) => {
       let StnRegistry, CafParseNodeBaseClass;
       StnRegistry = require("./StnRegistry");
       return (CafParseNodeBaseClass = Caf.defClass(
@@ -73,11 +73,13 @@ Caf.defMod(module, () => {
           this.prototype.getStn = function(left) {
             let stn, factory, x, currentStnLabel;
             stn = (factory = this.getStnFactory())
-              ? factory(
-                  { parseTreeNode: this },
-                  (Caf.isF(this.stnProps) && this.stnProps()) || this.stnProps,
-                  left,
-                  this.getStnChildren()
+              ? new factory.class(
+                  merge(
+                    (Caf.isF(this.stnProps) && this.stnProps()) || this.stnProps
+                  ),
+                  compactFlattenAllFast(left, this.getStnChildren()),
+                  null,
+                  this
                 )
               : ((x = this.getStnChildren(left)),
                 x.length === 1 ? x[0] : x.length === 0 ? left : x);

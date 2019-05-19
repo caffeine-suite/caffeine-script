@@ -32,27 +32,30 @@ Caf.defMod(module, () => {
       let BaseStn;
       return (BaseStn = Caf.defClass(
         class BaseStn extends BaseClass {
-          constructor(props, children = [], pretransformedStn) {
-            let e, temp, base, temp1, temp2, base1, base2;
+          constructor(props, children = [], pretransformedStn, parseTreeNode) {
+            let e, temp, temp1, base, temp2, temp3, base1, base2;
             super(...arguments);
             this.children = children;
             this.pretransformedStn = pretransformedStn;
             this.parseTreeNode =
               (temp =
-                Caf.exists((base = this.pretransformedStn)) &&
-                base.parseTreeNode) != null
+                (temp1 =
+                  Caf.exists((base = this.pretransformedStn)) &&
+                  base.parseTreeNode) != null
+                  ? temp1
+                  : parseTreeNode) != null
                 ? temp
                 : props.parseTreeNode;
             this.pretransformedStn || (this.pretransformedStn = this);
-            this.props = objectWithout(props, "parseTreeNode");
+            this._props = objectWithout(props, "parseTreeNode");
             try {
-              (temp1 = this._sourceIndex) != null
-                ? temp1
+              (temp2 = this._sourceIndex) != null
+                ? temp2
                 : (this._sourceIndex =
-                    (temp2 =
+                    (temp3 =
                       Caf.exists((base1 = this.pretransformedStn)) &&
                       base1.sourceIndex) != null
-                      ? temp2
+                      ? temp3
                       : Caf.exists((base2 = this.parseTreeNode)) &&
                         base2.absoluteOffset);
             } catch (error) {
@@ -66,10 +69,14 @@ Caf.defMod(module, () => {
           }
         },
         function(BaseStn, classSuper, instanceSuper) {
-          let emptyChildren, sourceNodeLineColumnScratch;
+          let emptyProps, emptyChildren, sourceNodeLineColumnScratch;
           this.abstractClass();
           this.setter("parseTreeNode");
           this.getter({
+            props: function() {
+              let temp;
+              return (temp = this._props) != null ? temp : (this._props = {});
+            },
             compileTimeValue: function() {
               return undefined;
             },
@@ -153,6 +160,7 @@ Caf.defMod(module, () => {
           this.newInstance = function(props, children) {
             return new this(props, children);
           };
+          emptyProps = {};
           emptyChildren = [];
           this.postCreateConcreteClass = function(options) {
             let classModuleState, hotReloadEnabled;

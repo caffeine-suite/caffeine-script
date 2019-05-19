@@ -43,11 +43,15 @@ class CafParseNodeBaseClass extends Nodes.Node
 
   getStn: (left) ->
     stn = if factory = @getStnFactory()
-      factory
-        parseTreeNode: @
-        @stnProps?() || @stnProps
-        left
-        @getStnChildren()
+      new factory.class
+        merge
+          @stnProps?() || @stnProps
+        compactFlattenAllFast
+          left
+          @getStnChildren()
+        null
+        @
+
     else
       x = @getStnChildren left
 
