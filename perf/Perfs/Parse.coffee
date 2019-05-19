@@ -1,7 +1,7 @@
-{Parser} = Neptune.CaffeineScript
+{CaffeineScriptParser} = Neptune.CaffeineScript
 
 benchmarkParse = (source) ->
-  benchmark source, -> Parser.parse source
+  benchmark source, -> CaffeineScriptParser.parse source
 
 module.exports = suite: ->
 

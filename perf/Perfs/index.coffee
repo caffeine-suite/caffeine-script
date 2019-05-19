@@ -4,4 +4,5 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  Parse: require './Parse'
+  Compile: require './Compile'
+  Parse:   require './Parse'  
