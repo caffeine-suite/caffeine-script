@@ -17,7 +17,7 @@ npm:
     source-map:               :^0.7.2
 
   scripts:
-    perf:     "nn -s;mocha -u tdd --compilers coffee:coffee-script/register perf"
+    perf:   "nn -s;mocha -u tdd perf"
     build:  "caf -v -p -c cafInCaf -o source"
 
   config:
