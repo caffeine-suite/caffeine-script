@@ -1,16 +1,5 @@
 import &StandardImport, &CaffeineEight, &CafParseNodeBaseClass
 
-##
-  Eventualy I want all AstNodes to respond to:
-
-  initially we should do:
-    toJsExpression - no need for parens because it is either inside brackets already or the end of an expression.
-    toStatement - no return-value needed; generate the nicest JS you can.
-
-  eventually we should also do:
-    toJsExpressionInList - add parens if a following comma would confusing things
-    toJsExpression(operatorBefore, operatorAfter) - add parens if needed to ensure operator precidence
-
 class CaffeineScriptParser extends Parser
   @nodeBaseClass: &CafParseNodeBaseClass
 
