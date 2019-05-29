@@ -20,6 +20,8 @@ Caf.defMod(module, () => {
           if (returnValueIsIgnored) {
             expression = null;
           }
+          structure != null ? structure : (structure = this.children[0]);
+          value != null ? value : (value = this.children[1]);
           return this.createSourceNode(
             !noParens ? "(" : undefined,
             structure.toSourceNode(),

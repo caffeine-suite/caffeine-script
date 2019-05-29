@@ -37,6 +37,94 @@ Syntax Highlighting
 
 # To Sort
 ```coffeescript
+# OOPS! 'return' doesn't actually return
+->
+  array i in a
+    return [i] if i == 5
+
+# The problem is since 'while' is used as an expression, it's wrapped
+# in a function. Therefor the 'return' only returns from that wrapper,
+# not the user's function.
+
+# Coffee-script actually appears to get this wrong:
+# CoffeeScript's output:
+(function() {
+  var i, j, len;
+  for (j = 0, len = a.length; j < len; j++) {
+    i = a[j];
+    if (i === 10) {
+      return [i];
+    }
+  }
+});
+
+# Note it doesn't return the for-comprehension result if i never === 10.
+
+# Another scenario:
+->
+  a = array i in a
+    return [i] if i == 5
+    i
+
+  123
+
+# CoffeeScript has a fit - i.e. has a syntax error: [stdin]:3:5: error: cannot use a pure statement in an expression
+
+# I think we can solve both of these scenarios within the limitations of JavaScript:
+# For example:
+# IN
+->
+  array i in a
+    return [i] if i == 10
+    i
+
+#OUT
+(function() {
+  var i, j, len, into = [];
+  for (j = 0, len = a.length; j < len; j++) {
+    i = a[j];
+    if (i === 10) {
+      return [i];
+    }
+    into[j] = i
+  }
+  return into;
+});
+
+###
+However, I don't think we can do-so in a general-purpose way without "expression disection",
+
+Which basically means taking each little sub-expression, moving them into individual statements,
+saving their return-value in a temp, and then doing the next "higher" sub-expression.
+
+But... can we even do that if, say, we have nested comprehensions and the return is in the innermost one?
+
+I think we should at least do what coffeescript does, and I think we can also support the "a = array b"
+scenario. This lets the user effectively refactor their code to have the same intent - plus one explicit
+temp var. Else, we should report an error. At least for now.
+###
+# EXAMPLE
+->
+  foo array i in a
+    return [i] if i == 5
+
+#OUT
+(function() {
+  var i, j, len, into = [];
+  for (j = 0, len = a.length; j < len; j++) {
+    i = a[j];
+    if (i === 10) {
+      return [i];
+    }
+    into[j] = i
+  }
+  return foo into;
+});
+
+# Applying "foo" is now a more complex scenario.
+```
+
+```coffeescript
 # efficiency
 out = each in-array a
 ###

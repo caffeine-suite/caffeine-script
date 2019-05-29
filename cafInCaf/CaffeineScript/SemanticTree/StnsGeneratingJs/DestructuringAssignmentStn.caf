@@ -11,6 +11,9 @@ class DestructuringAssignmentStn extends &BaseStn
     {structure, value} = @labeledChildren
     expression = null if returnValueIsIgnored
 
+    structure ?= @children[0]
+    value     ?= @children[1]
+
     @createSourceNode
       "(" unless noParens
       structure.toSourceNode()

@@ -80,6 +80,9 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         when :array, :object, :each, :find then null
         else throw new Error "" Invalid Comprehension: The 'from-array' clause is only compatible with 'array' or 'object' comprehensions #{getComprehensionsFound @labeledClauses}
 
+    if (toClause || tilClause) && (skipClause || shortClause)
+      throw new Error "" Invalid Comprehension: 'skip' and 'short' clauses are not supported for 'to' and 'til' comprehensions (yet)'
+
     if withKeyClause && comprehensionType != :object
       throw new Error "" Invalid Comprehension: The 'with-key' clause is only compatbile with 'object' comprehensions #{getComprehensionsFound @labeledClauses}
 
@@ -193,6 +196,17 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
     array p in params
       p ? Null ?= SimpleLiteralStn value: :null
 
+  autoDestructuringAssignment = (toChild, fromChild) ->
+    stn = if toChild.children?[0]?.type == :ObjectDestructuring
+      [toChild] = toChild.children
+      DestructuringAssignmentStn
+
+    else AssignmentStn
+
+    stn
+      toChild.identifierStn ? toChild
+      fromChild
+
   generateInlineIteration: (comprehensionType, {fromArrayClause, shortClause, skipClause, fromClause, tilClause, toClause, byClause, fromObjectClause, intoClause, withClause, whenClause, withKeyClause})->
     {variableDefinition} = @labeledChildren
     variableDefinition = variableDefinition?.children
@@ -204,6 +218,12 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
         ""
       else
         "="
+
+      if skipClause
+        throw new Error "skip-clause not supported (yet) in to/til iteration"
+
+      if shortClause
+        throw new Error "short-clause not supported (yet) in to/til iteration"
 
       byClauseCompileTimeValue = byClause?.compileTimeValue
       fromCompileTimeValue = fromClause.compileTimeValue
@@ -313,146 +333,154 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       else throw new Error "comprehensionType: #{comprehensionType} not supported (yet?) with from-array clauses"
 
 
-    loopStn = if fromObjectClause then ForStn else WhileStn
     StatementsStn
-      fromId && AssignmentStn fromId, BinaryOperatorStn
-        operator: "||"
-        fromArrayClause ? fromObjectClause
-        PureJsStn if fromObjectClause then "{}" else "[]"
-
-      toId && switch
-      when toCompileTimeValue? then AssignmentStn toId, NumberLiteralStn value: toCompileTimeValue
-      when fromObjectClause then null
-      when fromArrayClause
-        AssignmentStn
-          toId
-          if shortClause
-            if reverseArray
-              shortClause
-            else
-              BinaryOperatorStn
-                operator: "-"
-                AccessorStn fromId, IdentifierStn "length"
-                shortClause
-          else
-            AccessorStn fromId, IdentifierStn "length"
-
-      when toClause
-        AssignmentStn toId, toClause
-
-      switch
-        when fromArrayClause
-          AssignmentStn
-            iId
-            if reverseArray
-              BinaryOperatorStn
-                operator: "-"
-                AccessorStn fromId, IdentifierStn "length"
-                if skipClause
-                  BinaryOperatorStn
-                    operator: "+"
-                    skipClause
-                    NumberLiteralStn value: 1
-                else
-                  NumberLiteralStn value: 1 + (skipClauseCompileTimeValue ? 0)
-            else
-              skipClause ? NumberLiteralStn value: fromCompileTimeValue
-
-        when toClause then AssignmentStn iId, fromClause ?= NumberLiteralStn value: :0
-
-      # by = byClause || if fromValue < toValue then 1 else -1
-      byId && AssignmentStn byId, byClause ||
-        IfStn
-          BinaryOperatorStn
-            operator: "<"
-            iId
-            toId
-          NumberLiteralStn value: :1
-          NumberLiteralStn value: :-1
+      fromId && AssignmentStn fromId, fromArrayClause ? fromObjectClause
 
       intoClause
 
-      !byClauseIsZero && loopStn
-        captureResultsAs: intoId
-        if fromObjectClause
-          ForInControlStn
-            let: true
-            keyValueStn ?= iId.valueStn
-            fromId
-        else if fromArrayClause
-          BinaryOperatorStn
-            operator: if reverseArray then ">=" else "<"
-            iId
-            toId ? NumberLiteralStn value: toCompileTimeValue
+      if true
+        skippableStns = []
+          toId && switch
+          when toCompileTimeValue? then AssignmentStn toId, NumberLiteralStn value: toCompileTimeValue
+          when fromObjectClause then null
+          when fromArrayClause
+            AssignmentStn
+              toId
+              if shortClause
+                if reverseArray
+                  shortClause
+                else
+                  BinaryOperatorStn
+                    operator: "-"
+                    AccessorStn fromId, IdentifierStn :length
+                    shortClause
+              else
+                AccessorStn fromId, IdentifierStn :length
 
-        else # to/til
-          # (byValue >= 0 && v <= toValue) || (byValue < 0 && v >= toValue)
-          positiveByTest = BinaryOperatorStn {operator: "<#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
-          negativeByTest = BinaryOperatorStn {operator: ">#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
+          when toClause
+            AssignmentStn toId, toClause
 
           switch
-          when byClauseIsPositive then positiveByTest
-          when byClauseIsNegative then negativeByTest
-          else # unknown by-value
-            BinaryOperatorStn
-              operator: :||
-              BinaryOperatorStn
-                operator: :&&
-                BinaryOperatorStn {operator: :>}, byId, NumberLiteralStn value: :0
-                positiveByTest
+            when fromArrayClause
+              AssignmentStn
+                iId
+                if reverseArray
+                  BinaryOperatorStn
+                    operator: "-"
+                    AccessorStn fromId, IdentifierStn :length
+                    if skipClause
+                      BinaryOperatorStn
+                        operator: "+"
+                        skipClause
+                        NumberLiteralStn value: 1
+                    else
+                      NumberLiteralStn value: 1 + (skipClauseCompileTimeValue ? 0)
+                else
+                  skipClause ? NumberLiteralStn value: fromCompileTimeValue
 
-              BinaryOperatorStn
-                operator: :&&
-                BinaryOperatorStn {operator: :<}, byId, NumberLiteralStn value: :0
-                negativeByTest
+            when toClause then AssignmentStn iId, fromClause ?= NumberLiteralStn value: :0
 
-        StatementsStn
-          if variableDefinition?.length > 0
-            if fromObjectClause
-              array v, i in variableDefinition
-                AssignmentStn
-                  v.identifierStn ? v
-                  if i == 0
-                    AccessorStn
-                      fromId
-                      keyValueStn
+          # by = byClause || if fromValue < toValue then 1 else -1
+          byId && AssignmentStn byId, byClause ||
+            IfStn
+              BinaryOperatorStn
+                operator: "<"
+                iId
+                toId
+              NumberLiteralStn value: :1
+              NumberLiteralStn value: :-1
+
+          if !byClauseIsZero
+            loopStn = if fromObjectClause then ForStn else WhileStn
+            loopStn
+              captureResultsAs: intoId
+              if fromObjectClause
+                ForInControlStn
+                  let: true
+                  keyValueStn ?= iId.valueStn
+                  fromId
+              else if fromArrayClause
+                BinaryOperatorStn
+                  operator: if reverseArray then ">=" else "<"
+                  iId
+                  toId ? NumberLiteralStn value: toCompileTimeValue
+
+              else # to/til
+                # (byValue >= 0 && v <= toValue) || (byValue < 0 && v >= toValue)
+                positiveByTest = BinaryOperatorStn {operator: "<#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
+                negativeByTest = BinaryOperatorStn {operator: ">#{toClauseEquality}"}, iId, toId || NumberLiteralStn value: toCompileTimeValue
+
+                switch
+                when byClauseIsPositive then positiveByTest
+                when byClauseIsNegative then negativeByTest
+                else # unknown by-value
+                  BinaryOperatorStn
+                    operator: :||
+                    BinaryOperatorStn
+                      operator: :&&
+                      BinaryOperatorStn {operator: :>}, byId, NumberLiteralStn value: :0
+                      positiveByTest
+
+                    BinaryOperatorStn
+                      operator: :&&
+                      BinaryOperatorStn {operator: :<}, byId, NumberLiteralStn value: :0
+                      negativeByTest
+
+              StatementsStn
+                if variableDefinition?.length > 0
+                  if fromObjectClause
+                    array v, i in variableDefinition
+                      autoDestructuringAssignment
+                        v.identifierStn ? v
+                        if i == 0
+                          AccessorStn
+                            fromId
+                            keyValueStn
+                        else
+                          iId
+
                   else
-                    iId
+                    array v, i in variableDefinition
+                      autoDestructuringAssignment
+                        v.identifierStn ? v
+                        if !toClause && i == 0 then AccessorStn fromId, iId.getValueStn()
+                        else iId
 
-            else
-              array v, i in variableDefinition
-                AssignmentStn
-                  v.identifierStn ? v
-                  if !toClause && i == 0 then AccessorStn fromId, iId.getValueStn()
-                  else iId
+                if whenClause
+                  IfStn whenClause, invokeWithClauseAndPush
+                else
+                  invokeWithClauseAndPush
 
-          if whenClause
-            IfStn whenClause, invokeWithClauseAndPush
-          else
-            invokeWithClauseAndPush
+                unless fromObjectClause
+                  if byId || byClauseCompileTimeValue? && !floatEq 1, Math.abs byClauseCompileTimeValue
+                    if byClauseCompileTimeValue && byClauseCompileTimeValue < 0
+                      AssignmentStn
+                        operator: :-
+                        iId
+                        NumberLiteralStn value: Math.abs byClauseCompileTimeValue
+                    else
+                      AssignmentStn
+                        operator: :+
+                        iId
+                        byId || NumberLiteralStn value: byClauseCompileTimeValue
+                  else if byClauseCompileTimeValue < 0
+                    UnaryOperatorStn
+                      operand: :--
+                      tail: true
+                      iId
+                  else
+                    UnaryOperatorStn
+                      operand: :++
+                      tail: true
+                      iId
 
-          unless fromObjectClause
-            if byId || byClauseCompileTimeValue? && !floatEq 1, Math.abs byClauseCompileTimeValue
-              if byClauseCompileTimeValue && byClauseCompileTimeValue < 0
-                AssignmentStn
-                  operator: :-
-                  iId
-                  NumberLiteralStn value: Math.abs byClauseCompileTimeValue
-              else
-                AssignmentStn
-                  operator: :+
-                  iId
-                  byId || NumberLiteralStn value: byClauseCompileTimeValue
-            else if byClauseCompileTimeValue < 0
-              UnaryOperatorStn
-                operand: :--
-                tail: true
-                iId
-            else
-              UnaryOperatorStn
-                operand: :++
-                tail: true
-                iId
+        if fromId
+          IfStn
+            UnaryOperatorStn
+              operand: :?
+              fromId
+            StatementsStn skippableStns
+        else skippableStns
 
       if returnNullIfFalse
         BinaryOperatorStn
@@ -461,7 +489,6 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
           PureJsStn :null
       else
         intoId || toId || NumberLiteralStn value: toCompileTimeValue
-
 
   # Caf.find(source, withClause, whenClause) ->
   generateFind: ({fromClause, withClause, whenClause})->

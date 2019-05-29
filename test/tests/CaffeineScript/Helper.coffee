@@ -209,21 +209,25 @@ module.exports =
 
     if hasTestValues
       ->
-        object map, (jsControl, cafScriptSource) ->
+        object map, (jsControl, cafSource) ->
           expectingValue = if isPlainObject jsControl
             {value, knownFailing} = jsControl
             value
           else
             jsControl
 
-          niceTest name = "#{cafScriptSource} >> #{expectingValue || 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
-            {js} = compileAndReportErrors cafScriptSource, {name}
-            cafOutput = eval """
-              let Caf = require(\'caffeine-script-runtime\');
-              #{js}
-              """
+          niceTest name = "#{cafSource} >> #{(expectingValue && formattedInspect expectingValue) ? 'ILLEGAL'}".replace(/\n/g, "\\n"), ->
+            {js} = compileAndReportErrors cafSource, {name}
+            try
+              cafOutput = eval """
+                let Caf = require(\'caffeine-script-runtime\');
+                #{js}
+                """
+            catch error
+              log.error {cafSource, jsOutput: js}
+              assert.fail error
             unless eq expectingValue, cafOutput
-              assert.eq expectingValue, cafOutput, {js}
+              assert.eq expectingValue, cafOutput, {cafSource, jsOutput: js}
 
     else
       object map, (v) -> semanticTestSuite options, v
