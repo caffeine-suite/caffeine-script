@@ -171,7 +171,7 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.17"};
+module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd perf","start":"webpack-dev-server --hot --inline --progress","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress"},"version":"0.70.18"};
 
 /***/ }),
 /* 5 */
@@ -2828,6 +2828,8 @@ Caf.defMod(module, () => {
           if (returnValueIsIgnored) {
             expression = null;
           }
+          structure != null ? structure : (structure = this.children[0]);
+          value != null ? value : (value = this.children[1]);
           return this.createSourceNode(
             !noParens ? "(" : undefined,
             structure.toSourceNode(),
@@ -6077,17 +6079,18 @@ Caf.defMod(module, () => {
       "FunctionDefinitionStn",
       "String",
       "SimpleLiteralStn",
+      "DestructuringAssignmentStn",
+      "AssignmentStn",
       "NumberLiteralStn",
       "IdentifierStn",
-      "AssignmentStn",
       "PureJsStn",
       "FunctionInvocationStn",
       "AccessorStn",
       "StatementsStn",
       "IfStn",
+      "BinaryOperatorStn",
       "ForStn",
       "WhileStn",
-      "BinaryOperatorStn",
       "ForInControlStn",
       "floatEq",
       "Math",
@@ -6101,17 +6104,18 @@ Caf.defMod(module, () => {
       FunctionDefinitionStn,
       String,
       SimpleLiteralStn,
+      DestructuringAssignmentStn,
+      AssignmentStn,
       NumberLiteralStn,
       IdentifierStn,
-      AssignmentStn,
       PureJsStn,
       FunctionInvocationStn,
       AccessorStn,
       StatementsStn,
       IfStn,
+      BinaryOperatorStn,
       ForStn,
       WhileStn,
-      BinaryOperatorStn,
       ForInControlStn,
       floatEq,
       Math,
@@ -6123,7 +6127,10 @@ Caf.defMod(module, () => {
           __webpack_require__(/*! ../BaseStn */ 24)
         ) {},
         function(ComprehensionStn, classSuper, instanceSuper) {
-          let getComprehensionsFound, supportedClauseLabels, clauseAliases;
+          let getComprehensionsFound,
+            supportedClauseLabels,
+            clauseAliases,
+            autoDestructuringAssignment;
           getComprehensionsFound = function(labeledClauses) {
             return `(clauses found: ${Caf.toString(
               Caf.array(
@@ -6224,6 +6231,11 @@ Caf.defMod(module, () => {
                     )}`
                   );
               }
+            }
+            if ((toClause || tilClause) && (skipClause || shortClause)) {
+              throw new Error(
+                "Invalid Comprehension: 'skip' and 'short' clauses are not supported for 'to' and 'til' comprehensions (yet)'"
+              );
             }
             if (withKeyClause && comprehensionType !== "object") {
               throw new Error(
@@ -6424,6 +6436,19 @@ Caf.defMod(module, () => {
                 : (Null = SimpleLiteralStn({ value: "null" }))
             );
           };
+          autoDestructuringAssignment = function(toChild, fromChild) {
+            let stn, base, base1, temp;
+            stn =
+              (Caf.exists((base = toChild.children)) &&
+                (Caf.exists((base1 = base[0])) && base1.type)) ===
+              "ObjectDestructuring"
+                ? (([toChild] = toChild.children), DestructuringAssignmentStn)
+                : AssignmentStn;
+            return stn(
+              (temp = toChild.identifierStn) != null ? temp : toChild,
+              fromChild
+            );
+          };
           this.prototype.generateInlineIteration = function(
             comprehensionType,
             {
@@ -6463,6 +6488,7 @@ Caf.defMod(module, () => {
               valueStn,
               keyValueStn,
               invokeWithClauseAndPush,
+              skippableStns,
               loopStn,
               positiveByTest,
               negativeByTest;
@@ -6474,6 +6500,16 @@ Caf.defMod(module, () => {
                 ? fromClause
                 : (fromClause = NumberLiteralStn({ value: "0" }));
               toClauseEquality = tilClause ? ((toClause = tilClause), "") : "=";
+              if (skipClause) {
+                throw new Error(
+                  "skip-clause not supported (yet) in to/til iteration"
+                );
+              }
+              if (shortClause) {
+                throw new Error(
+                  "short-clause not supported (yet) in to/til iteration"
+                );
+              }
               byClauseCompileTimeValue =
                 Caf.exists(byClause) && byClause.compileTimeValue;
               fromCompileTimeValue = fromClause.compileTimeValue;
@@ -6634,203 +6670,242 @@ Caf.defMod(module, () => {
                         })();
                     }
                   })();
-            loopStn = fromObjectClause ? ForStn : WhileStn;
             return StatementsStn(
               fromId &&
                 AssignmentStn(
                   fromId,
-                  BinaryOperatorStn(
-                    { operator: "||" },
-                    fromArrayClause != null
-                      ? fromArrayClause
-                      : fromObjectClause,
-                    PureJsStn(fromObjectClause ? "{}" : "[]")
-                  )
-                ),
-              toId &&
-                (() => {
-                  switch (false) {
-                    case !(toCompileTimeValue != null):
-                      return AssignmentStn(
-                        toId,
-                        NumberLiteralStn({ value: toCompileTimeValue })
-                      );
-                    case !fromObjectClause:
-                      return null;
-                    case !fromArrayClause:
-                      return AssignmentStn(
-                        toId,
-                        shortClause
-                          ? reverseArray
-                            ? shortClause
-                            : BinaryOperatorStn(
-                                { operator: "-" },
-                                AccessorStn(fromId, IdentifierStn("length")),
-                                shortClause
-                              )
-                          : AccessorStn(fromId, IdentifierStn("length"))
-                      );
-                    case !toClause:
-                      return AssignmentStn(toId, toClause);
-                  }
-                })(),
-              (() => {
-                switch (false) {
-                  case !fromArrayClause:
-                    return AssignmentStn(
-                      iId,
-                      reverseArray
-                        ? BinaryOperatorStn(
-                            { operator: "-" },
-                            AccessorStn(fromId, IdentifierStn("length")),
-                            skipClause
-                              ? BinaryOperatorStn(
-                                  { operator: "+" },
-                                  skipClause,
-                                  NumberLiteralStn({ value: 1 })
-                                )
-                              : NumberLiteralStn({
-                                  value:
-                                    1 +
-                                    (skipClauseCompileTimeValue != null
-                                      ? skipClauseCompileTimeValue
-                                      : 0)
-                                })
-                          )
-                        : skipClause != null
-                        ? skipClause
-                        : NumberLiteralStn({ value: fromCompileTimeValue })
-                    );
-                  case !toClause:
-                    return AssignmentStn(
-                      iId,
-                      fromClause != null
-                        ? fromClause
-                        : (fromClause = NumberLiteralStn({ value: "0" }))
-                    );
-                }
-              })(),
-              byId &&
-                AssignmentStn(
-                  byId,
-                  byClause ||
-                    IfStn(
-                      BinaryOperatorStn({ operator: "<" }, iId, toId),
-                      NumberLiteralStn({ value: "1" }),
-                      NumberLiteralStn({ value: "-1" })
-                    )
+                  fromArrayClause != null ? fromArrayClause : fromObjectClause
                 ),
               intoClause,
-              !byClauseIsZero &&
-                loopStn(
-                  { captureResultsAs: intoId },
-                  fromObjectClause
-                    ? ForInControlStn(
-                        { let: true },
-                        keyValueStn != null
-                          ? keyValueStn
-                          : (keyValueStn = iId.valueStn),
-                        fromId
-                      )
-                    : fromArrayClause
-                    ? BinaryOperatorStn(
-                        { operator: reverseArray ? ">=" : "<" },
-                        iId,
-                        toId != null
-                          ? toId
-                          : NumberLiteralStn({ value: toCompileTimeValue })
-                      )
-                    : ((positiveByTest = BinaryOperatorStn(
-                        { operator: `<${Caf.toString(toClauseEquality)}` },
-                        iId,
-                        toId || NumberLiteralStn({ value: toCompileTimeValue })
-                      )),
-                      (negativeByTest = BinaryOperatorStn(
-                        { operator: `>${Caf.toString(toClauseEquality)}` },
-                        iId,
-                        toId || NumberLiteralStn({ value: toCompileTimeValue })
-                      )),
+              true
+                ? ((skippableStns = [
+                    toId &&
                       (() => {
                         switch (false) {
-                          case !byClauseIsPositive:
-                            return positiveByTest;
-                          case !byClauseIsNegative:
-                            return negativeByTest;
-                          default:
-                            return BinaryOperatorStn(
-                              { operator: "||" },
-                              BinaryOperatorStn(
-                                { operator: "&&" },
-                                BinaryOperatorStn(
-                                  { operator: ">" },
-                                  byId,
-                                  NumberLiteralStn({ value: "0" })
-                                ),
-                                positiveByTest
-                              ),
-                              BinaryOperatorStn(
-                                { operator: "&&" },
-                                BinaryOperatorStn(
-                                  { operator: "<" },
-                                  byId,
-                                  NumberLiteralStn({ value: "0" })
-                                ),
-                                negativeByTest
-                              )
+                          case !(toCompileTimeValue != null):
+                            return AssignmentStn(
+                              toId,
+                              NumberLiteralStn({ value: toCompileTimeValue })
                             );
+                          case !fromObjectClause:
+                            return null;
+                          case !fromArrayClause:
+                            return AssignmentStn(
+                              toId,
+                              shortClause
+                                ? reverseArray
+                                  ? shortClause
+                                  : BinaryOperatorStn(
+                                      { operator: "-" },
+                                      AccessorStn(
+                                        fromId,
+                                        IdentifierStn("length")
+                                      ),
+                                      shortClause
+                                    )
+                                : AccessorStn(fromId, IdentifierStn("length"))
+                            );
+                          case !toClause:
+                            return AssignmentStn(toId, toClause);
                         }
-                      })()),
-                  StatementsStn(
-                    (Caf.exists(variableDefinition) &&
-                      variableDefinition.length) > 0
-                      ? fromObjectClause
-                        ? Caf.array(variableDefinition, (v, i) => {
-                            let temp;
-                            return AssignmentStn(
-                              (temp = v.identifierStn) != null ? temp : v,
-                              i === 0 ? AccessorStn(fromId, keyValueStn) : iId
-                            );
-                          })
-                        : Caf.array(variableDefinition, (v, i) => {
-                            let temp;
-                            return AssignmentStn(
-                              (temp = v.identifierStn) != null ? temp : v,
-                              !toClause && i === 0
-                                ? AccessorStn(fromId, iId.getValueStn())
-                                : iId
-                            );
-                          })
-                      : undefined,
-                    whenClause
-                      ? IfStn(whenClause, invokeWithClauseAndPush)
-                      : invokeWithClauseAndPush,
-                    !fromObjectClause
-                      ? byId ||
-                        (byClauseCompileTimeValue != null &&
-                          !floatEq(1, Math.abs(byClauseCompileTimeValue)))
-                        ? byClauseCompileTimeValue &&
-                          byClauseCompileTimeValue < 0
-                          ? AssignmentStn(
-                              { operator: "-" },
-                              iId,
-                              NumberLiteralStn({
-                                value: Math.abs(byClauseCompileTimeValue)
-                              })
-                            )
-                          : AssignmentStn(
-                              { operator: "+" },
-                              iId,
-                              byId ||
-                                NumberLiteralStn({
-                                  value: byClauseCompileTimeValue
+                      })(),
+                    (() => {
+                      switch (false) {
+                        case !fromArrayClause:
+                          return AssignmentStn(
+                            iId,
+                            reverseArray
+                              ? BinaryOperatorStn(
+                                  { operator: "-" },
+                                  AccessorStn(fromId, IdentifierStn("length")),
+                                  skipClause
+                                    ? BinaryOperatorStn(
+                                        { operator: "+" },
+                                        skipClause,
+                                        NumberLiteralStn({ value: 1 })
+                                      )
+                                    : NumberLiteralStn({
+                                        value:
+                                          1 +
+                                          (skipClauseCompileTimeValue != null
+                                            ? skipClauseCompileTimeValue
+                                            : 0)
+                                      })
+                                )
+                              : skipClause != null
+                              ? skipClause
+                              : NumberLiteralStn({
+                                  value: fromCompileTimeValue
                                 })
-                            )
-                        : byClauseCompileTimeValue < 0
-                        ? UnaryOperatorStn({ operand: "--", tail: true }, iId)
-                        : UnaryOperatorStn({ operand: "++", tail: true }, iId)
+                          );
+                        case !toClause:
+                          return AssignmentStn(
+                            iId,
+                            fromClause != null
+                              ? fromClause
+                              : (fromClause = NumberLiteralStn({ value: "0" }))
+                          );
+                      }
+                    })(),
+                    byId &&
+                      AssignmentStn(
+                        byId,
+                        byClause ||
+                          IfStn(
+                            BinaryOperatorStn({ operator: "<" }, iId, toId),
+                            NumberLiteralStn({ value: "1" }),
+                            NumberLiteralStn({ value: "-1" })
+                          )
+                      ),
+                    !byClauseIsZero
+                      ? ((loopStn = fromObjectClause ? ForStn : WhileStn),
+                        loopStn(
+                          { captureResultsAs: intoId },
+                          fromObjectClause
+                            ? ForInControlStn(
+                                { let: true },
+                                keyValueStn != null
+                                  ? keyValueStn
+                                  : (keyValueStn = iId.valueStn),
+                                fromId
+                              )
+                            : fromArrayClause
+                            ? BinaryOperatorStn(
+                                { operator: reverseArray ? ">=" : "<" },
+                                iId,
+                                toId != null
+                                  ? toId
+                                  : NumberLiteralStn({
+                                      value: toCompileTimeValue
+                                    })
+                              )
+                            : ((positiveByTest = BinaryOperatorStn(
+                                {
+                                  operator: `<${Caf.toString(toClauseEquality)}`
+                                },
+                                iId,
+                                toId ||
+                                  NumberLiteralStn({
+                                    value: toCompileTimeValue
+                                  })
+                              )),
+                              (negativeByTest = BinaryOperatorStn(
+                                {
+                                  operator: `>${Caf.toString(toClauseEquality)}`
+                                },
+                                iId,
+                                toId ||
+                                  NumberLiteralStn({
+                                    value: toCompileTimeValue
+                                  })
+                              )),
+                              (() => {
+                                switch (false) {
+                                  case !byClauseIsPositive:
+                                    return positiveByTest;
+                                  case !byClauseIsNegative:
+                                    return negativeByTest;
+                                  default:
+                                    return BinaryOperatorStn(
+                                      { operator: "||" },
+                                      BinaryOperatorStn(
+                                        { operator: "&&" },
+                                        BinaryOperatorStn(
+                                          { operator: ">" },
+                                          byId,
+                                          NumberLiteralStn({ value: "0" })
+                                        ),
+                                        positiveByTest
+                                      ),
+                                      BinaryOperatorStn(
+                                        { operator: "&&" },
+                                        BinaryOperatorStn(
+                                          { operator: "<" },
+                                          byId,
+                                          NumberLiteralStn({ value: "0" })
+                                        ),
+                                        negativeByTest
+                                      )
+                                    );
+                                }
+                              })()),
+                          StatementsStn(
+                            (Caf.exists(variableDefinition) &&
+                              variableDefinition.length) > 0
+                              ? fromObjectClause
+                                ? Caf.array(variableDefinition, (v, i) => {
+                                    let temp;
+                                    return autoDestructuringAssignment(
+                                      (temp = v.identifierStn) != null
+                                        ? temp
+                                        : v,
+                                      i === 0
+                                        ? AccessorStn(fromId, keyValueStn)
+                                        : iId
+                                    );
+                                  })
+                                : Caf.array(variableDefinition, (v, i) => {
+                                    let temp;
+                                    return autoDestructuringAssignment(
+                                      (temp = v.identifierStn) != null
+                                        ? temp
+                                        : v,
+                                      !toClause && i === 0
+                                        ? AccessorStn(fromId, iId.getValueStn())
+                                        : iId
+                                    );
+                                  })
+                              : undefined,
+                            whenClause
+                              ? IfStn(whenClause, invokeWithClauseAndPush)
+                              : invokeWithClauseAndPush,
+                            !fromObjectClause
+                              ? byId ||
+                                (byClauseCompileTimeValue != null &&
+                                  !floatEq(
+                                    1,
+                                    Math.abs(byClauseCompileTimeValue)
+                                  ))
+                                ? byClauseCompileTimeValue &&
+                                  byClauseCompileTimeValue < 0
+                                  ? AssignmentStn(
+                                      { operator: "-" },
+                                      iId,
+                                      NumberLiteralStn({
+                                        value: Math.abs(
+                                          byClauseCompileTimeValue
+                                        )
+                                      })
+                                    )
+                                  : AssignmentStn(
+                                      { operator: "+" },
+                                      iId,
+                                      byId ||
+                                        NumberLiteralStn({
+                                          value: byClauseCompileTimeValue
+                                        })
+                                    )
+                                : byClauseCompileTimeValue < 0
+                                ? UnaryOperatorStn(
+                                    { operand: "--", tail: true },
+                                    iId
+                                  )
+                                : UnaryOperatorStn(
+                                    { operand: "++", tail: true },
+                                    iId
+                                  )
+                              : undefined
+                          )
+                        ))
                       : undefined
-                  )
-                ),
+                  ]),
+                  fromId
+                    ? IfStn(
+                        UnaryOperatorStn({ operand: "?" }, fromId),
+                        StatementsStn(skippableStns)
+                      )
+                    : skippableStns)
+                : undefined,
               returnNullIfFalse
                 ? BinaryOperatorStn(
                     { operator: "||" },
