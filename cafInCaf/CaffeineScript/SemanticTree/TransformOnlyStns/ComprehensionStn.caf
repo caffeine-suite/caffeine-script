@@ -157,8 +157,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
 
     if byClause || shortClause || skipClause || fromObjectClause || toClause || tilClause || fromArrayClause
       @generateInlineIteration comprehensionType, labeledClauses
-    # else if labeledClauses.toClause || labeledClauses.tilClause
-    #   @generateArrayRange comprehensionType, labeledClauses
+
     else
       switch comprehensionType
       when :each, :array, :object, :reduce

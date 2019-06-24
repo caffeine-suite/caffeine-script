@@ -36,6 +36,68 @@ Syntax Highlighting
 
 
 # To Sort
+
+```coffeescript
+# new & change: /// regex blocks should accept any kind of string:
+
+new:    /// "hi there"
+equals: /// #{"hi there"}
+equals: /hi there/
+```
+
+```coffeescript
+# new feature:
+
+foo.:bar.bob .baz
+foo."bar.bob".baz
+# equals:
+foo["bar.bob"].baz
+
+```
+
+```coffeescript
+# finally isn't supported?!?!
+try
+  a
+finally
+  b
+```
+```coffeescript
+# Caf compile failes:
+object k in-array functionsToBindList into @
+  if prototypeMethod = prototype[k]
+    fastBind prototypeMethod, @
+```
+
+```coffeescript
+# what about 'unless' as a negative 'when'?
+# It conflicts with tail-unless... but I really want it! Hrm.
+# I think we really need a diff keyword. Consistency first, functionality second.
+# The advantags is it lets us use less parenthesis
+array foo in bar when !(foo in baz)
+# vs
+array foo in bar when-not foo in baz
+
+# when-not may be interesting; we could also do when-exists or when-not-exists
+# In other words, we could chain unary operator-tests, but as a block which keeps
+# syntax-low.... maybe...
+```
+
+```coffeescript
+# how hard would it be to support this CaffeineScript solution?
+# It currently is a syntax error, so presumably it's really easy - i.e. it shouldn't conflict with anything.
+# It should just be another custom operator, just one with a "_" rule inbetween
+a not in b
+
+```
+```coffeescript
+# can we fix this easy? I think so:
+
+foo
+# unindented comment before block
+  bar
+```
+
 ```coffeescript
 # OOPS! 'return' doesn't actually return
 ->

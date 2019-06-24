@@ -2,6 +2,5 @@
   &ArtClassSystem
   &Lib
   &ArtStandardLib
-  # &CaffeineJsGen
   StnRegistry: &StnRegistry
   javaScriptReservedWords: &JavaScriptReservedWords
