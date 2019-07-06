@@ -104,6 +104,11 @@ module.exports = suite: semanticTestSuite
       break:
         "each a in-array 1 2 with break 123": 123
         "out = each a in-array 1 2 with break 123": 123
+        """
+        each a in-array 1 2
+          if a == 2
+            break a + 100
+        """: 102
 
       find:
         basic:

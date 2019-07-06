@@ -36,6 +36,25 @@ Syntax Highlighting
 
 
 # To Sort
+```coffeescript
+# compile error
+switch
+when if a then b else c
+  213
+else 555
+
+# actual use case:
+switch
+when error.info extract? response
+  "hi"
+
+```
+
+```coffeescript
+# compile error for this:
+object a from-array b
+  c
+```
 
 ```coffeescript
 # new & change: /// regex blocks should accept any kind of string:

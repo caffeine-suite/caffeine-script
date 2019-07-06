@@ -20,7 +20,24 @@ module.exports = suite: parseTestSuite
     return:
       "array a in-array b with return a": null
 
-
+    break:
+      """
+      each a in-array 1 2
+        if a == 2
+          break a + 100
+      """: "
+        let from, into, to, i;
+        from = [1, 2];
+        into = from;
+        if (from != null)
+        {to = from.length;
+        i = 0;
+        while (i < to)
+        {let a;
+        a = from[i];
+        if (a === 2) {into = a + 100; break;};
+        i++;};};
+        into;"
 
     array:
       destructuring:

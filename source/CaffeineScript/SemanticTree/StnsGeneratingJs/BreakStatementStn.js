@@ -12,7 +12,7 @@ Caf.defMod(module, () => {
           this.prototype.validate = function() {
             let p;
             p = this.findParent(
-              /^(Class|Comprehension|FunctionDefinition|While|Switch|ControlOperator)$/
+              /^(Class|Comprehension|FunctionDefinition|While|Switch)$/
             );
             return (() => {
               switch (false) {

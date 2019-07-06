@@ -3,7 +3,7 @@ import &StandardImport
 class BreakStatementStn extends &BaseStn
 
   validate: ->
-    p = @findParent /^(Class|Comprehension|FunctionDefinition|While|Switch|ControlOperator)$/
+    p = @findParent /^(Class|Comprehension|FunctionDefinition|While|Switch)$/
     switch
     when !p? then throw new Error "'break' not allowed in root context."
     when /^(Comprehension)/.test(p.type) && p.getGeneratesInlineIteration() then null
