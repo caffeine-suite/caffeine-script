@@ -52,17 +52,17 @@ CaffeineScript starts where CoffeeScript left off, fixing its shortcomings and t
 
 CaffeineScript:
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptDemo.png)
-> GitHub doesn't support custom syntax highlighting, so I've included the image above. You can access the [example source here](example.caf).
+> 41 tokens in CaffeineScript - GitHub doesn't support custom syntax highlighting, so I've included the image above. You can access the [example source here](example.caf).
 
 
 Logically equivalent JavaScript:
 ```JavaScript
 let {FluxComponent, Element} = require("art-suite");
-let PlayerLine = null;
+let PlayerLine = require("./PlayerLine");
 
 class PlayerList extends FluxComponent {
   render() {
-    let 
+    let
       currentPlayers = this.currentPlayers.sort( (a, b) => b.score - a.score ),
       into = [],
       {length} = currentPlayers;
@@ -80,6 +80,7 @@ PlayerList.subscriptions("players.currentPlayers");
 
 module.exports = PlayerList;
 ```
+> 122 tokens in JavaScript
 
 Related: [ArtSuite](https://github.com/imikimi/art-suite)
 
