@@ -64,15 +64,15 @@ class PlayerList extends FluxComponent {
   render() {
     let
       currentPlayers = this.currentPlayers.sort( (a, b) => b.score - a.score ),
-      into = [],
+      children = [],
       {length} = currentPlayers;
 
     for (let i = 0; i < length; i++) {
       let player = currentPlayers[i];
-      into.push(PlayerLine(player, { key: player.name }));
+      children.push(PlayerLine(player, { key: player.name }));
     }
 
-    return into;
+    return Element({childrenLayout: "column"}, children);
   }
 }
 
@@ -80,7 +80,7 @@ PlayerList.subscriptions("players.currentPlayers");
 
 module.exports = PlayerList;
 ```
-> 122 tokens in JavaScript
+> 130 tokens in JavaScript
 
 Related: [ArtSuite](https://github.com/imikimi/art-suite)
 
