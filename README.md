@@ -8,7 +8,7 @@ I believe less is more. It is the first principle of design and foundation of ju
 
 > 2019 UPDATE: I'm using and developing CaffieneScript every day. Progress continues, the above example has been reduced to just 220 tokens. You can see more here: [CaffeineScript TicTacToe](https://github.com/imikimi/art-suite-demos/tree/master/source/Art.SuiteDemos/Demos/TicTacToe)
 
-CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **2.5-3x** more efficient than JSX, TypeScript or JavaScript. You can see 3x as much code on screen at once, solve problems with 3x less code, and have 3x less code to change when you need to refactor. Perhaps most important of all, you could have 3x less code to debug.
+CaffeineScript, with the help of ArtSuite, takes **3x** less code to write this complete implementation of Tic-Tac-Toe. In general, CaffeineScript is **3-5x** more efficient than JSX, TypeScript or JavaScript. You can see 3x as much code on screen at once, solve problems with 3x less code, and have 3x less code to change when you need to refactor. Perhaps most important of all, you could have 3x less code to debug.
 
 Code size matters. Less is more.
 
@@ -46,48 +46,39 @@ If you love CoffeeScript, or even if you liked some parts but others drove you c
 
 CaffeineScript is an open-source programming language that compiles to JavaScript. The goal is to minimize total effort, over a product's lifetime, for the entire team. Design thinking is essential for achieving that goal. That means [user-experience](https://github.com/shanebdavis/caffeine-script/wiki/UX-Design-for-Langauges) and [graphic design](https://github.com/shanebdavis/caffeine-script/wiki/Graphic-Design-for-Languages) are as important as computer-science and software engineering. A well-designed language makes code more beautiful, programming more fun, and, ultimately, lets us get more done with less effort.
 
-CaffeineScript starts where CoffeeScript left off, fixing its shortcomings and taking a big step forward for high-productivity javascript. Two concrete examples: [improved React-style programming](https://github.com/shanebdavis/caffeine-script/wiki/React-with-CaffeineScript) and [90% reduced module-specific code](https://github.com/shanebdavis/caffeine-script/wiki/Streamlined-Modules). The result is a lean, high-level language that empowers you to get the most out of JavaScript.
+CaffeineScript starts where CoffeeScript left off, fixing its shortcomings and taking a big step forward for high-productivity JavaScript. Two concrete examples: [improved React-style programming](https://github.com/shanebdavis/caffeine-script/wiki/React-with-CaffeineScript) and [90% reduced module-specific code](https://github.com/shanebdavis/caffeine-script/wiki/Streamlined-Modules). The result is a lean, high-level language that empowers you to get the most out of JavaScript.
 
 ### Example
 
 CaffeineScript:
 ![logo](https://raw.githubusercontent.com/wiki/shanebdavis/caffeine-script/CaffeineScriptDemo.png)
+> GitHub doesn't support custom syntax highlighting, so I've included the image above. You can access the [example source here](example.caf).
 
-JavaScript:
+
+Logically equivalent JavaScript:
 ```JavaScript
-"use strict";
-let Caf = require("caffeine-script-runtime");
-Caf.defMod(module, () => {
-  return Caf.importInvoke(
-    ["FluxComponent", "Element"],
-    [global, require("art-suite")],
-    (FluxComponent, Element) => {
-      let PlayerList;
-      return (PlayerList = Caf.defClass(
-        class PlayerList extends FluxComponent {},
-        function(PlayerList, classSuper, instanceSuper) {
-          this.subscriptions("players.currentPlayers");
-          this.prototype.render = function() {
-            return Element(
-              { childrenLayout: "column" },
-              Caf.each(
-                this.currentPlayers.sort((a, b) => {
-                  return b.score - a.score;
-                }),
-                [],
-                (player, cafK, cafInto) => {
-                  cafInto.push(
-                    require("./PlayerLine")(player, { key: player.name })
-                  );
-                }
-              )
-            );
-          };
-        }
-      ));
+let {FluxComponent, Element} = require("art-suite");
+let PlayerLine = null;
+
+class PlayerList extends FluxComponent {
+  render() {
+    let 
+      currentPlayers = this.currentPlayers.sort( (a, b) => b.score - a.score ),
+      into = [],
+      {length} = currentPlayers;
+
+    for (let i = 0; i < length; i++) {
+      let player = currentPlayers[i];
+      into.push(PlayerLine(player, { key: player.name }));
     }
-  );
-});
+
+    return into;
+  }
+}
+
+PlayerList.subscriptions("players.currentPlayers");
+
+module.exports = PlayerList;
 ```
 
 Related: [ArtSuite](https://github.com/imikimi/art-suite)
