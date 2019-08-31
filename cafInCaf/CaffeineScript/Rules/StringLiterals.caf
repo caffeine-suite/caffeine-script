@@ -1,6 +1,5 @@
 import &StandardImport, &CaffeineEight, &StnRegistry, &Lib
 
-wordStringChar = /// [^\n\s,)\]\}]
 blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
 
 ->
@@ -41,23 +40,60 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
         pattern: "" /"""|'''/
         getStn: ~> StringStn parseTreeNode: @, value: ""
 
-      ## word-strings
-        :unquoted strings
-        : is omitted
-        reserved: '::' for a future word-string-block
-        reserved: backslashes are currently excluded until I decide
-          if they should be escaped or
-          if we should support escapes
-          Could be interesting: :foo\sbar could == "foo bar"
+      ## :wordString
+        Word-strings start with ':' and are followed by one or more characters
+        of any type EXCEPT:
+
+          close-brackets:   ) } ]
+          comma:            ,
+          white-space:      \s \n \t
+
+        The starting ':' is omitted in the output string.
+
+        Escaping is supported.
+
+        EXCEPTION: '::' is reserved for future use
+
+        Examples:
+          :word
+          > "word"
+
+          # most non-whitespace characters are allowed
+          :https://www.home.com/foo.bar?erg=123
+          > "https://www.home.com/foo.bar?erg=123"
+
+          # escaping is allowed
+          :hi\nthere
+          > "hi\nthere"
+
+          # "::" is reserved for future features
+          ::
+          > Syntax Error
+
       {}
-        pattern: /// :(?!:) #{wordStringChar.source}+
+        pattern: "" /:(?!:)/ unquotedString2
         getStn: ~> StringStn parseTreeNode: @, value: @toString().slice 1
 
-      ## hashtag-strings
-        #hashtag and color (#fff) strings
-        The # is preserved
+      ## #hashStrings (primary use: hashtag and colors)
+        Uses the same logic as wordStrings EXCEPT:
+
+        * The starting "#" is INCLUDED in the output string.
+        * "##" is a comment
+
+        Examples:
+          #tagThis
+          > "#tagThis"
+
+          #ff7700
+          > "#ff7700"
+
+          ##hi << double-# followed by anything is a comment
+          > ;
+
+        The starting '#' is preserved.
+        reserved: '##' for comments
       {}
-        pattern: /#[$\w\u007f-\uffff]+/
+        pattern: "" /\#(?!\#)/ unquotedString2
         getStn: ~> StringStn parseTreeNode: @, value: @toString()
 
       # number-with-unit strings

@@ -152,7 +152,58 @@
       - should we allow escaping?
       - should we allow #{} interpolation?
 
-    unquotedString:     /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/
+    unquotedString:     /// [-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+
+
+    ##
+      SBD Aug2019: I'm coming to these conclusions:
+      - all except: space, comma, [], (), {}, ;
+        - we could allow [ ( { in most places,
+          but for consistency sake, all brackets
+          must be excaped in unquoted strings.
+
+      USES:
+        :wordStrings    # start with ':', which is ignored in the output string
+        #hashStrings    # start with '#', which is included in the output string
+        propNames: 123  # end with ':',   which is ignored in the output string
+
+      EXCEPTIONS:
+        - propNames: cannot START with a quote (' " `) or escape (\)
+
+        - No double start characters: the first two characters must be different
+          - ## is a comment, not the #hashString "##"
+          - :: is illegal (for now), not the :wordString ":"
+
+      - escaping:       YES
+      - interpolation:  YES (WIP)
+
+    unquotedString2:
+      ///
+        (?:
+
+        [^;:\n\s,)\]\}]
+
+        |
+
+        : [^;\n\s,)\]\}]
+
+        )+
+
+    unquotedPropNameToken:
+      # /// (?: (?! [\s \x7f () [\] {} ; : , ]) [ \0x21-\uffff] )+
+      # /// [a-zA-Z0-9]
+      ///
+
+        (?:
+
+        [^ \s \0-\x20 \x7f [ \] {} () ; : , ' " ` \\]
+
+        (?:
+          [^ \s \0-\x20 \x7f [ \] {} () ; : , \\]
+          |
+          \\ .
+        )*
+
+        )
 
     unaryTailOperator:  /// \?
     unaryOperator_:

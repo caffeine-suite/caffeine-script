@@ -48,14 +48,36 @@ module.exports = suite: parseTestSuite
 
   unquotedStrings:
     wordStrings:
-      ":hi":        '"hi";'
+      basic:
+        ":hi":        '"hi";'
+
+      escaped:
+        ":hi\\tthere":  '"hi\\tthere";'
+        ":\\.":         '"\\.";'
+        ":Hi\\_there.": '"Hi there.";'
+        # ":\\ ":         '" ";'
+        # ":hi\\ there":  '"hi there";'
+        # ":(and\\)":     '"(and)";'
+        # ":[and\\]":     '"[and]";'
+        # ":{and\\}":     '"{and}";'
+        # ":this\\,that": '"this.that";'
+
+      interpolation:
+        ":a\#{123}":   null # illegal now, but will be: "`a${Caf.toString(123)}`;"
+        '"a\#{123}"':  "`a${Caf.toString(123)}`;"
 
     hashStrings:
-      "#fff":       '"#fff";'
-      "#hashTag":   '"#hashTag";'
+      basic:
+        "#fff":       '"#fff";'
+        "#hashTag":   '"#hashTag";'
 
-      # parses as a comment
-      "#-":         ';'
+        # no longer parses as a comment
+        "#-":         '"#-";'
+
+      escaped:
+        "#hi\\tthere":  '"#hi\\tthere";'
+        "#\\.":         '"#\\.";'
+        "#Hi\\_there.": '"#Hi there.";'
 
     _10UnitStrings:
       "0px":          '"0px";'
@@ -259,6 +281,13 @@ module.exports = suite: parseTestSuite
           "'foo\\ubeefhi'":   '"foo\\ubeefhi";'
           "'foo\\u{b}hi'":    '"foo\\u{b}hi";'
           "'foo\\u{beef}hi'": '"foo\\u{beef}hi";'
+
+        spaces:
+          "'foo\\ bar'": '"foo bar";'
+          "'foo\\_bar'": '"foo bar";'
+
+          "'foo\\\\ bar'": '"foo\\\\ bar";'
+          "'foo\\\\_bar'": '"foo\\\\_bar";'
 
         regressions:
           """

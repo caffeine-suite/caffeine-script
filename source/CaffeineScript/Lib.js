@@ -2,16 +2,16 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["escapeRegExp", "escapeJavascriptString"],
+    ["escapeRegExp"],
     [global, require("art-standard-lib")],
-    (escapeRegExp, escapeJavascriptString) => {
-      let legalUnquotedPropName;
+    escapeRegExp => {
+      let deescapeSpaces, legalUnquotedPropName;
       return {
-        deescapeSpaces: function(string) {
+        deescapeSpaces: (deescapeSpaces = function(string) {
           return Caf.array(string.split(/((?:\\\\)+)/), (str, i) =>
-            Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
+            Caf.mod(i, 2) === 0 ? str.replace(/\\[_ ]/g, " ") : str
           ).join("");
-        },
+        }),
         escapeNewLines: function(string) {
           return string.replace(/\n/g, "\\n");
         },
@@ -35,7 +35,7 @@ Caf.defMod(module, () => {
         escapePropName: function(rawPropName) {
           return legalUnquotedPropName.test(rawPropName)
             ? rawPropName
-            : escapeJavascriptString(rawPropName);
+            : '"' + deescapeSpaces(rawPropName).replace(/["]/g, '\\"') + '"';
         },
         identifierRegexp: /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/
       };

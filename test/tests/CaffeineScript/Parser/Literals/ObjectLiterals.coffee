@@ -8,9 +8,18 @@ module.exports = suite: parseTestSuite
 
   basic:
     "{}"          : "({});"
+    "a: 1"        : "({a: 1});"
     "{a:1}"       : "({a: 1});"
+    "(a:1)"       : "({a: 1});"
+    "(a: 1)"      : "({a: 1});"
+
     "{a:1, b:2}"  : "({a: 1, b: 2});"
     "1: 2"        : "({1: 2});"
+
+  extendedBasic:
+    "abcdefghijklmnopqrstuvwxyz: 1": '({abcdefghijklmnopqrstuvwxyz: 1});'
+    "0123456789: 1": '({"0123456789": 1});'
+    "a.b: 1": '({"a.b": 1});'
 
   computedKeys:
     "{[a]:1}"     : "({[a]: 1});"
@@ -35,12 +44,21 @@ module.exports = suite: parseTestSuite
     #   # foo
     # """: null
 
-  colonDisambiguation:
-    "a  :1":    'a("1");'
-    "a:  1":    "({a: 1});"
-    "a : 1":    "({a: 1});"
-    "a:\n  1":  "({a: 1});"
+  colonVariations:
+    notObject:
+      "a :  1": null # illegal
+      "a   :1": 'a("1");'
 
+    legalObjects:
+      "a:1   ": "({a: 1});"
+      "a:   1": "({a: 1});"
+      "a:b: 1": '({"a:b": 1});'
+      ":a:  1": '({":a": 1});'
+
+    legalObjectsWithNewLines:
+      "a:\n1 ": "({a: 1});"
+      "a: \n1": "({a: 1});"
+      "a:\n 1": "({a: 1});"
 
   unusualKeys:
     explicitObjects:
@@ -66,10 +84,23 @@ module.exports = suite: parseTestSuite
       "?:1":     '({"?": 1});'
       "%:1":     '({"%": 1});'
 
+    extensions:
+      "foo:foo: 1":   '({"foo:foo": 1});'
+      "a:b:c:d:e: 1": '({"a:b:c:d:e": 1});'
+      "https://www.foo.com: 1": '({"https://www.foo.com": 1});'
+
     regressions:
+      '": 1"':  '": 1";'
+      '": 1':   null
+
       """
-      #f00: 1
-      """: '({"#f00": 1});'
+      #f11: 1
+      """: '({"#f11": 1});'
+
+      # """
+      # :foo: 1
+      # """: '({":foo": 1});'
+
 
       """
       a:
@@ -117,6 +148,7 @@ module.exports = suite: parseTestSuite
     quotedKeys:
       "{'hi mom':1}": '({"hi mom": 1});'
       "'hi mom':1":   '({"hi mom": 1});'
+      '"hi mom":1':   '({"hi mom": 1});'
 
   explicit:
     toEol:
@@ -344,6 +376,28 @@ module.exports = suite: parseTestSuite
     """
     foo--: 123
     """: '({"foo--": 123});'
+
+    """
+    foo?: 123
+    """: '({"foo?": 123});'
+
+    "foo?bar:123":  '({"foo?bar": 123});'
+    "foo!bar:123":  '({"foo!bar": 123});'
+
+  notObject:
+    "foo?bar :123": 'Caf.isF(foo) && foo(bar("123"));'
+    "foo!bar :123": 'foo(!bar("123"));'
+
+  escapes:
+    "hi\\ there: 1":    '({"hi there": 1});'
+    '"hi\\ there": 1':  '({"hi there": 1});'
+    "hi\\_there: 1":    '({"hi there": 1});'
+    '"hi\\_there": 1':  '({"hi there": 1});'
+
+    "hi\\nthere: 1":    '({"hi\\nthere": 1});'
+    '"hi\\nthere": 1':  '({"hi\\nthere": 1});'
+
+    'hi"there": 1':    '({"hi\\"there\\"": 1});'
 
   withTailControl:
     """

@@ -107,19 +107,24 @@ Caf.defMod(module, () => {
               }
             });
             this.rule({
-              stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
+              stringLiteralPropNameTail: ["_ /:/ !unquotedString", /:/]
             });
             this.rule(
-              { thisPropName: "/@/ unquotedString?" },
+              { thisPropName: "/@/ propNameExtension*" },
               {
                 stnFactory: "ThisStn",
                 stnProps: function() {
-                  return { identifier: this.unquotedString.toString() };
+                  let base;
+                  return {
+                    identifier:
+                      Caf.exists((base = this.propNameExtension)) &&
+                      base.toString()
+                  };
                 }
               }
             );
             this.rule(
-              { propName: "!/then\\s/ str:thisPropName &_colon_" },
+              { propName: "!/then\\s/ thisPropName &_colon_" },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
@@ -127,22 +132,25 @@ Caf.defMod(module, () => {
                 }
               }
             );
+            this.rule({ propNameExtension: "/:*/ unquotedPropNameToken &/:/" });
+            this.rule(
+              { propName: "!regExpLiteral !/then\\s/ propNameExtension+" },
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  return { value: this.toString(), isThisProp: false };
+                }
+              }
+            );
             return this.rule(
               {
-                propName: [
-                  "!regExpLiteral !/then\\s/ str:identifier &_colon_",
-                  "!regExpLiteral !/then\\s/ str:unquotedString &/:/",
+                propName:
                   "quotedString:stringLiteral &stringLiteralPropNameTail"
-                ]
               },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
-                  let base;
-                  return {
-                    value: Caf.exists((base = this.str)) && base.toString(),
-                    isThisProp: false
-                  };
+                  return { value: this.toString(), isThisProp: false };
                 }
               }
             );

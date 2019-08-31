@@ -92,7 +92,7 @@ module.exports = suite: parseTestSuite
     foo: 123 # comment
     """: '({foo: 123});'
 
-  anyNumberOfOctothorpsAllowedExcept3:
+  anyNumberOfOctothorpsAllowed:
     "#\n1\n###": "1;"
     "##\n1\n###": "1;"
     "###\n1\n###": "1;"

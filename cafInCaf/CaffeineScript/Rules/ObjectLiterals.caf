@@ -113,33 +113,43 @@ import Extensions
       stnFactory: "ObjectLiteralAccessorStn"
 
   @rule
-    stringLiteralPropNameTail: [
-      "_ /:/ !unquotedString"
-      "/:/"
-    ]
+    stringLiteralPropNameTail:
+      "" _ /:/ !unquotedString
+      /:/
 
   @rule
-    thisPropName: "/@/ unquotedString?"
+    thisPropName: "/@/ propNameExtension*"
     {}
       stnFactory: :ThisStn
-      stnProps: ~> identifier: @unquotedString.toString()
+      stnProps: ~> identifier: @propNameExtension?.toString()
 
   @rule
     propName:
-      "!/then\\s/ str:thisPropName &_colon_"
+      "" !/then\\s/ thisPropName &_colon_
     {}
       stnFactory: "ObjectPropNameStn"
       stnProps: ~>
         isThisProp: true
 
   @rule
+    propNameExtension:
+      "" /:*/ unquotedPropNameToken &/:/
+
+  @rule
     propName:
-      "!regExpLiteral !/then\\s/ str:identifier &_colon_"
-      "!regExpLiteral !/then\\s/ str:unquotedString &/:/"
-      "quotedString:stringLiteral &stringLiteralPropNameTail"
+      "" !regExpLiteral !/then\\s/ propNameExtension+
+    {}
+      stnFactory: :ObjectPropNameStn
+      stnProps: ~>
+        value: @toString()
+        isThisProp: false
+
+  @rule
+    propName:
+      "" quotedString:stringLiteral &stringLiteralPropNameTail
 
     {}
-      stnFactory: "ObjectPropNameStn"
+      stnFactory: :ObjectPropNameStn
       stnProps: ~>
-        value: @str?.toString()
+        value: @toString()
         isThisProp: false

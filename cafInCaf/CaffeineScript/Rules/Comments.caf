@@ -11,7 +11,7 @@ import &StandardImport
 
     comment:
       {} pattern: "/##[^\n]*/ unparsedBlock*"
-      {} pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/
+      {} pattern: /// \ * \# ( [\ \t] [^\n]* | (?=\n|$) )
 
     ##
       Statement-ends are:

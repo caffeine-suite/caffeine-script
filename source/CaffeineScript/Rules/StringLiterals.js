@@ -11,8 +11,7 @@ Caf.defMod(module, () => {
       require("../Lib")
     ],
     (Extensions, StringStn, InterpolatedStringStn) => {
-      let wordStringChar, blockStringStartChar;
-      wordStringChar = /[^\n\s,)\]\}]/;
+      let blockStringStartChar;
       blockStringStartChar = /( |\n|[^.\n\s,)\]\}])/;
       return function() {
         this.rule({
@@ -62,7 +61,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: RegExp(`:(?!:)${Caf.toString(wordStringChar.source)}+`),
+              pattern: "/:(?!:)/ unquotedString2",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,
@@ -71,7 +70,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: /#[$\w\u007f-\uffff]+/,
+              pattern: "/#(?!#)/ unquotedString2",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,

@@ -1,13 +1,18 @@
 import &ArtStandardLib
 
-deescapeSpaces: (string) ->
+### deescapeSpaces
+  IN: string
+  OUT: string
+    Input string with all "\ " and "\_" sequences converted into " ".
+
+    This is done safely so "\\ " and "\\_" becomes "\ " and "\_" respectively.
+deescapeSpaces: deescapeSpaces = (string) ->
   array str, i from string.split /((?:\\\\)+)/
     if i %% 2 == 0
-      str.replace /\\ /g, ' '
+      str.replace /\\[_ ]/g, ' '
     else
       str
   .join ''
-
 
 escapeNewLines: (string) -> string.replace /\n/g,  "\\n"
 
@@ -46,7 +51,11 @@ escapePropName: (rawPropName) ->
   if legalUnquotedPropName.test rawPropName
     rawPropName
   else
-    escapeJavascriptString rawPropName
+    '"' +
+      deescapeSpaces rawPropName
+      .replace /["]/g, '\\"'
+    + '"'
+
 
 identifierRegexp:
   ///

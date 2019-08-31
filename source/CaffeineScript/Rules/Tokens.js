@@ -34,6 +34,8 @@ Caf.defMod(module, () => {
       ],
       pathedRequire: /((?!\s)[-\/$\w\u007f-\uffff])+/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
+      unquotedString2: /(?:[^;:\n\s,)\]\}]|:[^;\n\s,)\]\}])+/,
+      unquotedPropNameToken: /(?:[^\s\0-\x20\x7f[\]{}();:,'"`\\](?:[^\s\0-\x20\x7f[\]{}();:,\\]|\\.)*)/,
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b|delete\b) *|-(?![-:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|is|isnt|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
