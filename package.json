@@ -29,5 +29,5 @@
     "test": "nn -s;mocha -u tdd",
     "testInBrowser": "webpack-dev-server --progress --env.devServer"
   },
-  "version": "0.70.20"
+  "version": "0.71.0"
 }
