@@ -36,6 +36,118 @@ Syntax Highlighting
 
 
 # To Sort
+```
+# this should probably work, but since it's not an actual NPM; it's built in, it doesn't
+&child_process
+```
+```
+# BREAKING CHANGE IDEA: simplify reduce - always
+# use the following format regardless of container-size
+# or number of inputs specified:
+
+reduce last, value, key from container [inject first-last-value]
+
+# Why? I can never remember the sub-rules for reduce!
+# Also, I want a comprehension that returns the last result like 'while':
+
+reduce _, value from container
+  value
+
+# the problem is "sum" in its nicest form evaluates "+" one less than the number
+# of values.
+
+# 2019-08: Right now reduce skips undefined values, assigns last
+# to the first undefined value, and invokes with on the remaining values.
+# ARG - reduce actually makes sense as-is. The reduce operation combines
+# values pair-wise until there is only one.
+#
+# Perhaps it makes more sense to change the return-value of "each"
+# I've yet to find a case where truning the container is what I want.
+# Occasionally I want the last value like "while"
+# It would also increase consistency - while and each work the same!
+# I'm also strating to think of "statements" as also in this group of
+# concepts - its actually a "sequence expression" - eval each returning last.
+#
+# OOO - and "each til 10" - what should that even return under the old scheme?
+# under this new idea, it returns 9;
+```
+```
+# compile error
+object i til turingStore.length by 10
+
+# should logically be:
+object i in array i til turingStore.length by 10
+
+```
+
+```
+# new: subclassof
+Neptune.PackageNamespace subclassof Neptune.Namespace
+# equals:
+Neptune.PackageNamespace.prototype instanceof Neptune.Namespace
+```
+---
+Change how we handle `__filename` - I just figured out how NODE.js does it! When you require code, it is evaluated within this function. Therefor, those 5 values should all be considered 'global' and should all be handled the same way. I think the first 3 are, but we need to add `__filename` and `__dirname`.
+
+```javascript
+(function (exports, require, module, __filename, __dirname) {
+  // ...
+}
+```
+---
+
+```coffeescript
+# bad JS
+haveColor = find color in-object @colors when color
+```
+```coffeescript
+# defaultState isn't defined? What?!?!
+import Foo
+class NewTrackingState extends FluxSubscriptionsMixin ApplicationState
+
+  @stateFields defaultState =
+    colors:   {}
+
+  constructor: ->
+    @onNextReady ->
+      @subscribe {}
+        modelName:  :newTrackingNavState
+        key:        :selectedDate
+        updatesCallback:  ({data}) ->
+          @models.vegLog.getTracking @models.newTrackingNavState.selectedDateText
+          .then (data) -> @setState merge defaultState, data
+
+```
+
+```coffeescript
+# new feature
+{}
+  a
+  b: 2
+  object v, k in foo with v * 2
+
+# object goes "into" the {}-created object
+temp = a: a, b: 2
+object v, k in foo with v * 2 into temp
+temp
+
+```
+
+```coffeescript
+# new feature: stop comprehension when
+# motivation: another way to avoid using "break"
+
+array v from 1 10 100 until v == 10
+# v = [] 1
+
+array v from 1 10 100 unto v == 10
+# v = [] 1, 10
+
+# Note this uses the same semantics as "til" and "to":
+#  "til v"  - stop BEFORE v
+#  "to v"   - stop AFTER v
+```
+
 ```coffeescript
 # compile error
 switch
