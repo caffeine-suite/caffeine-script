@@ -157,10 +157,10 @@ module.exports = require('neptune-namespaces' /* ABC - not inlining fellow NPM *
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: author, config, dependencies, description, license, name, repository, scripts, version, default */
+/*! exports provided: author, config, dependencies, description, devDependencies, license, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = {"author":"Shane Brinkman-Davis Delamore, Imikimi LLC\"","config":{"blanket":{"pattern":"source"}},"dependencies":{"art-binary":"*","art-build-configurator":"*","art-object-tree-factory":"*","caffeine-eight":"*","caffeine-mc":"*","caffeine-script-runtime":"*","caffeine-source-map":"*","source-map":"^0.7.2"},"description":"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.","license":"ISC","name":"caffeine-script","repository":{"type":"git","url":"git@github.com:shanebdavis/caffeine-script.git"},"scripts":{"build":"caf -v -p -c cafInCaf -o source","perf":"nn -s;mocha -u tdd perf","start":"webpack-dev-server --hot --inline --progress --env.devServer","test":"nn -s;mocha -u tdd","testInBrowser":"webpack-dev-server --progress --env.devServer"},"version":"0.70.20"};
+module.exports = JSON.parse("{\"author\":\"Shane Brinkman-Davis Delamore, Imikimi LLC\",\"config\":{\"blanket\":{\"pattern\":\"source\"}},\"dependencies\":{\"art-binary\":\"*\",\"art-build-configurator\":\"*\",\"art-object-tree-factory\":\"*\",\"caffeine-eight\":\"*\",\"caffeine-mc\":\"*\",\"caffeine-script-runtime\":\"*\",\"caffeine-source-map\":\"*\",\"source-map\":\"^0.7.2\"},\"description\":\"CaffeineScript makes programming more wonderful, code more beautiful and programmers more productive. It is a lean, high-level language that empowers you to get the most out of any JavaScript runtime.\",\"devDependencies\":{\"art-testbench\":\"*\",\"case-sensitive-paths-webpack-plugin\":\"^2.2.0\",\"chai\":\"^4.2.0\",\"coffee-loader\":\"^0.7.3\",\"css-loader\":\"^3.0.0\",\"json-loader\":\"^0.5.7\",\"mocha\":\"^6.2.0\",\"mock-fs\":\"^4.10.0\",\"script-loader\":\"^0.7.2\",\"style-loader\":\"^1.0.0\",\"webpack\":\"^4.39.1\",\"webpack-cli\":\"*\",\"webpack-dev-server\":\"^3.7.2\",\"webpack-merge\":\"^4.2.1\",\"webpack-node-externals\":\"^1.7.2\",\"webpack-stylish\":\"^0.1.8\"},\"license\":\"ISC\",\"name\":\"caffeine-script\",\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:shanebdavis/caffeine-script.git\"},\"scripts\":{\"build\":\"caf -v -p -c cafInCaf -o source\",\"perf\":\"nn -s;mocha -u tdd perf\",\"start\":\"webpack-dev-server --hot --inline --progress --env.devServer\",\"test\":\"nn -s;mocha -u tdd\",\"testInBrowser\":\"webpack-dev-server --progress --env.devServer\"},\"version\":\"0.71.1\"}");
 
 /***/ }),
 /* 5 */
@@ -603,16 +603,16 @@ module.exports = require('art-class-system' /* ABC - not inlining fellow NPM */)
 let Caf = __webpack_require__(/*! caffeine-script-runtime */ 12);
 Caf.defMod(module, () => {
   return Caf.importInvoke(
-    ["escapeRegExp", "escapeJavascriptString"],
+    ["escapeRegExp"],
     [global, __webpack_require__(/*! art-standard-lib */ 13)],
-    (escapeRegExp, escapeJavascriptString) => {
-      let legalUnquotedPropName;
+    escapeRegExp => {
+      let deescapeSpaces, legalUnquotedPropName;
       return {
-        deescapeSpaces: function(string) {
+        deescapeSpaces: (deescapeSpaces = function(string) {
           return Caf.array(string.split(/((?:\\\\)+)/), (str, i) =>
-            Caf.mod(i, 2) === 0 ? str.replace(/\\ /g, " ") : str
+            Caf.mod(i, 2) === 0 ? str.replace(/\\[_ ]/g, " ") : str
           ).join("");
-        },
+        }),
         escapeNewLines: function(string) {
           return string.replace(/\n/g, "\\n");
         },
@@ -636,7 +636,7 @@ Caf.defMod(module, () => {
         escapePropName: function(rawPropName) {
           return legalUnquotedPropName.test(rawPropName)
             ? rawPropName
-            : escapeJavascriptString(rawPropName);
+            : '"' + deescapeSpaces(rawPropName).replace(/["]/g, '\\"') + '"';
         },
         identifierRegexp: /^(?!\d)((?!\s)[$\w\u007f-\uffff])+$/
       };
@@ -7588,7 +7588,7 @@ Caf.defMod(module, () => {
           _OrEnd: ["_", "end"],
           comment: [
             { pattern: "/##[^\n]*/ unparsedBlock*" },
-            { pattern: /\ *#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))/ }
+            { pattern: / *\#([ \t][^\n]*|(?=\n|$))/ }
           ],
           _end: /( *(\n|; *|$))+|( *(?=[\)}]))/,
           lineStartComment: ["comment _end", "_end"],
@@ -8366,19 +8366,24 @@ Caf.defMod(module, () => {
               }
             });
             this.rule({
-              stringLiteralPropNameTail: ["_ /:/ !unquotedString", "/:/"]
+              stringLiteralPropNameTail: ["_ /:/ !unquotedString", /:/]
             });
             this.rule(
-              { thisPropName: "/@/ unquotedString?" },
+              { thisPropName: "/@/ propNameExtension*" },
               {
                 stnFactory: "ThisStn",
                 stnProps: function() {
-                  return { identifier: this.unquotedString.toString() };
+                  let base;
+                  return {
+                    identifier:
+                      Caf.exists((base = this.propNameExtension)) &&
+                      base.toString()
+                  };
                 }
               }
             );
             this.rule(
-              { propName: "!/then\\s/ str:thisPropName &_colon_" },
+              { propName: "!/then\\s/ thisPropName &_colon_" },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
@@ -8386,22 +8391,25 @@ Caf.defMod(module, () => {
                 }
               }
             );
+            this.rule({ propNameExtension: "/:*/ unquotedPropNameToken &/:/" });
+            this.rule(
+              { propName: "!regExpLiteral !/then\\s/ propNameExtension+" },
+              {
+                stnFactory: "ObjectPropNameStn",
+                stnProps: function() {
+                  return { value: this.toString(), isThisProp: false };
+                }
+              }
+            );
             return this.rule(
               {
-                propName: [
-                  "!regExpLiteral !/then\\s/ str:identifier &_colon_",
-                  "!regExpLiteral !/then\\s/ str:unquotedString &/:/",
+                propName:
                   "quotedString:stringLiteral &stringLiteralPropNameTail"
-                ]
               },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
-                  let base;
-                  return {
-                    value: Caf.exists((base = this.str)) && base.toString(),
-                    isThisProp: false
-                  };
+                  return { value: this.toString(), isThisProp: false };
                 }
               }
             );
@@ -8801,8 +8809,7 @@ Caf.defMod(module, () => {
       __webpack_require__(/*! ../Lib */ 18)
     ],
     (Extensions, StringStn, InterpolatedStringStn) => {
-      let wordStringChar, blockStringStartChar;
-      wordStringChar = /[^\n\s,)\]\}]/;
+      let blockStringStartChar;
       blockStringStartChar = /( |\n|[^.\n\s,)\]\}])/;
       return function() {
         this.rule({
@@ -8852,7 +8859,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: RegExp(`:(?!:)${Caf.toString(wordStringChar.source)}+`),
+              pattern: "/:(?!:)/ unquotedString2",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,
@@ -8861,7 +8868,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: /#[$\w\u007f-\uffff]+/,
+              pattern: "/#(?!#)/ unquotedString2",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,
@@ -9039,6 +9046,8 @@ Caf.defMod(module, () => {
       ],
       pathedRequire: /((?!\s)[-\/$\w\u007f-\uffff])+/,
       unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
+      unquotedString2: /(?:[^;:\n\s,)\]\}]|:[^;\n\s,)\]\}])+/,
+      unquotedPropNameToken: /(?:[^\s\0-\x20\x7f[\]{}();:,'"`\\](?:[^\s\0-\x20\x7f[\]{}();:,\\]|\\.)*)/,
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b|delete\b) *|-(?![-:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|is|isnt|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,
