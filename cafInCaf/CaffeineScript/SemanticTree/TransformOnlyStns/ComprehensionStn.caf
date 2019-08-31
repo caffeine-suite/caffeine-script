@@ -275,7 +275,7 @@ class ComprehensionStn extends &ScopeStnMixin &BaseStn
       addToLets: !fromObjectClause
 
     unless variableDefinition
-      variableDefinition = [] IdentifierStn preferredIdentifier: :v #, addToLets: false
+      variableDefinition = [] IdentifierStn preferredIdentifier: :v # , addToLets: false
 
     [valueId] = variableDefinition
 

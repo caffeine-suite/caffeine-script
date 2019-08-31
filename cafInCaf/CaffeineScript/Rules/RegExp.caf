@@ -59,7 +59,7 @@ multilineRegExpEscape:
   stnProps:   ~> value: if @text == "\\ " then ' ' else @text
 
 multilineRegExpComment:
-  pattern:    "/^|\\n|\\s/ !interpolationStart comment" #/(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
+  pattern:    "/^|\\n|\\s/ !interpolationStart comment" # /(^|\n|\s)+#(?!\{)[^\n]+[\s\n]*/
   # stnFactory: :StringStn
   # stnProps:   ~> value: ""
 

@@ -8,6 +8,6 @@ class ThrowStn extends &BaseStn
       @childrenToSourceNodes()
 
     @createSourceNode if expression
-      @doSourceNode base, :;
+      @doSourceNode base, ";"
     else
       base
