@@ -56,21 +56,36 @@ reduce _, value from container
 # the problem is "sum" in its nicest form evaluates "+" one less than the number
 # of values.
 
+reduce sum, value from container inject 0
+  sum + value
+
 # 2019-08: Right now reduce skips undefined values, assigns last
 # to the first undefined value, and invokes with on the remaining values.
 # ARG - reduce actually makes sense as-is. The reduce operation combines
 # values pair-wise until there is only one.
 #
 # Perhaps it makes more sense to change the return-value of "each"
-# I've yet to find a case where truning the container is what I want.
+# I've yet to find a case where returning the container is what I want.
 # Occasionally I want the last value like "while"
 # It would also increase consistency - while and each work the same!
-# I'm also strating to think of "statements" as also in this group of
+# I'm also starting to think of "statements" as also in this group of
 # concepts - its actually a "sequence expression" - eval each returning last.
 #
 # OOO - and "each til 10" - what should that even return under the old scheme?
 # under this new idea, it returns 9;
 ```
+
+2019-08-31: I actually like BOTH the new `each`-return-value AND simplifying `reduce`. Reduce should NOT skip values. Reduce should invoke once per source value. The reduced-value is undefined unless inject is specified. 
+
+I think I like the idea of the alternate way to specify inject is to use defaults. However, logically for other comprehensions, should be applied every loop:
+
+```
+reduce sum = 0, value from container with sum + value
+```
+
+Honestly, I'm ok with that inconsistency! Reduce's first parameter is special anyway. So what if it only initializes once while value and key would initialize every time? Actually, only value makes sense to have defaults. Key is always a string.
+
+
 ```
 # compile error
 object i til turingStore.length by 10
@@ -187,14 +202,7 @@ foo["bar.bob"].baz
 ```
 
 ```coffeescript
-# finally isn't supported?!?!
-try
-  a
-finally
-  b
-```
-```coffeescript
-# Caf compile failes:
+# Caf compile fails:
 object k in-array functionsToBindList into @
   if prototypeMethod = prototype[k]
     fastBind prototypeMethod, @
@@ -248,6 +256,7 @@ foo
     if (i === 10) {
       return [i];
     }
+  # << should return comprehension here
   }
 });
 
@@ -360,7 +369,7 @@ each v, k4 from-object source
   _into[k4] = v
 ```
 
-```
+```coffeescript
 ###
 The interpolation fails to parse, which then means it becomes part of the string!
 
