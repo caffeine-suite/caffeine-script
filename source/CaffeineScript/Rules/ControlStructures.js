@@ -32,7 +32,7 @@ Caf.defMod(module, () => {
           {
             stnFactory: "TryStn",
             pattern:
-              "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause?"
+              "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause? optionalFinally:finallyClause?"
           },
           { stnFactory: "DoStn", pattern: "/do/ _ functionDefinition" },
           {
@@ -48,6 +48,10 @@ Caf.defMod(module, () => {
         catchClause: [
           "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?",
           { stnFactory: "CatchStn" }
+        ],
+        finallyClause: [
+          "controlStructorClauseJoiner finally _? body:lineOfStatementsOrBlock?",
+          { stnFactory: "FinallyStn" }
         ],
         switchBody: "switchWhen:switchWhenClause* switchElse:elseClause?",
         switchBodyBlock: Extensions.IndentBlocks.getPropsToSubparseBlock({
@@ -66,6 +70,7 @@ Caf.defMod(module, () => {
         controlStructorClauseJoiner: "_? end?",
         switch: /switch\b/,
         catch: /catch\b/,
+        finally: /finally\b/,
         try: /try\b/,
         whileUntil: /(while|until)\b/,
         ifUnless: /(if|unless)\b/,

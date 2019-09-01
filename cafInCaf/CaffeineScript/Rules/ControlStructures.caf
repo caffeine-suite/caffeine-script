@@ -19,7 +19,7 @@ controlStatement:
 
   {}
     stnFactory: :TryStn
-    pattern: "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause?"
+    pattern: "try _? body:lineOfStatementsOrBlock optionalCatch:catchClause? optionalFinally:finallyClause?"
 
   {}
     stnFactory: :DoStn
@@ -36,6 +36,10 @@ controlStatement:
 catchClause:
   "controlStructorClauseJoiner catch _? errorIdentifier:identifier? body:lineOfStatementsOrBlock?"
   stnFactory: :CatchStn
+
+finallyClause:
+  "controlStructorClauseJoiner finally _? body:lineOfStatementsOrBlock?"
+  stnFactory: :FinallyStn
 
 switchBody: "switchWhen:switchWhenClause* switchElse:elseClause?"
 
@@ -54,6 +58,7 @@ controlStructorClauseJoiner: "" _? end?
 
 switch:     /switch\b/
 catch:      /catch\b/
+finally:    /finally\b/
 try:        /try\b/
 whileUntil: /(while|until)\b/
 ifUnless:   /(if|unless)\b/

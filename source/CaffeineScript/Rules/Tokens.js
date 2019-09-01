@@ -19,7 +19,7 @@ Caf.defMod(module, () => {
       _else: /(( *\n)+| +)else/,
       ellipsis: "'...'",
       reservedWord: RegExp(
-        `(import|true|false|null|undefined|global|require|module|eval|__dirname|__filename|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|throw|and|or|not|extract|as|for|return|break|of|yes|on|no|off|typeof|${Caf.toString(
+        `(import|true|false|null|undefined|global|require|module|eval|__dirname|__filename|super|class|new|this|delete|instanceof|is|isnt|switch|when|then|else|if|until|while|unless|array|each|find|object|from|in|with|do|into|returning|with-key|to|by|til|try|catch|finally|throw|and|or|not|extract|as|for|return|break|of|yes|on|no|off|typeof|${Caf.toString(
           require("../JavaScriptReservedWordList").join("|")
         )}|reduce|inject|promise|await|short|skip|mixin|tap)(-[a-z]+)*\\b(?![-])`
       ),

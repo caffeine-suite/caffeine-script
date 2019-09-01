@@ -11,7 +11,12 @@ Caf.defMod(module, () => {
           constructor() {
             let temp, base;
             super(...arguments);
-            if (!this.labeledChildren.optionalCatch) {
+            if (
+              !(
+                this.labeledChildren.optionalCatch ||
+                this.labeledChildren.optionalFinally
+              )
+            ) {
               (this.children[1] =
                 (temp = (base = this.labeledChildren).optionalCatch) != null
                   ? temp
@@ -21,14 +26,16 @@ Caf.defMod(module, () => {
         },
         function(TryStn, classSuper, instanceSuper) {
           this.prototype.toSourceNode = function(options = {}) {
-            let expression, body, optionalCatch, base;
+            let expression, body, optionalCatch, optionalFinally, base;
             ({ expression } = options);
-            ({ body, optionalCatch } = this.labeledChildren);
+            ({ body, optionalCatch, optionalFinally } = this.labeledChildren);
             base = [
               "try {",
               body.toSourceNode({ returnAction: !!expression }),
               "} ",
-              optionalCatch.toSourceNode(options)
+              Caf.exists(optionalCatch) && optionalCatch.toSourceNode(options),
+              Caf.exists(optionalFinally) &&
+                optionalFinally.toSourceNode(options)
             ];
             return expression ? this.doSourceNode(null, [base, ";"]) : base;
           };

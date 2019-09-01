@@ -1,0 +1,9 @@
+import &StandardImport
+
+class FinallyStn extends &BaseStn
+
+  toSourceNode: (options = {}) ->
+    @createSourceNode
+      "finally {"
+      @labeledChildren.body?.toSourceNode()
+      "}"

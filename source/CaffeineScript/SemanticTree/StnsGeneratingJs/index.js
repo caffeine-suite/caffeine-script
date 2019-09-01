@@ -17,6 +17,7 @@
   DestructuringAssignmentStn:    require('./DestructuringAssignmentStn'),
   DestructuringIdentifierStn:    require('./DestructuringIdentifierStn'),
   DoStn:                         require('./DoStn'),
+  FinallyStn:                    require('./FinallyStn'),
   ForInControlStn:               require('./ForInControlStn'),
   ForStn:                        require('./ForStn'),
   FunctionDefinitionArgsStn:     require('./FunctionDefinitionArgsStn'),

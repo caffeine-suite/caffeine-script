@@ -423,6 +423,12 @@ module.exports = suite: parseTestSuite
             catch (error1)
               {bar = error1; error;};"
 
+    finally:
+      basic:
+        """
+        try foo finally bar
+        """: "try {foo;} finally {bar;};"
+
   throw:
     "throw new Error": "throw new Error;"
     """
