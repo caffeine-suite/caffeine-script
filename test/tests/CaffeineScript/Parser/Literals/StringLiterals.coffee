@@ -51,12 +51,23 @@ module.exports = suite: parseTestSuite
       basic:
         ":hi":        '"hi";'
 
+      illegal:
+        ":(":   null
+        ":{":   null
+        ":[":   null
+
       escaped:
         ":hi\\tthere":  '"hi\\tthere";'
+        ":hi\\nthere":  '"hi\\nthere";'
         ":\\.":         '"\\.";'
-        ":Hi\\_there.": '"Hi there.";'
-        # ":\\ ":         '" ";'
-        # ":hi\\ there":  '"hi there";'
+        ":\\ ":         '" ";'
+        ":\\\\":        '"\\\\";'
+        ":_":           '"_";'
+        ":\\_":         '" ";'
+        ":\\s":         '"\\s";'
+        ":Hi\\_there":  '"Hi there";'
+        ":Hi\\sthere":  '"Hi\\sthere";'
+        ":Hi\\ there":  '"Hi there";'
         # ":(and\\)":     '"(and)";'
         # ":[and\\]":     '"[and]";'
         # ":{and\\}":     '"{and}";'
@@ -64,7 +75,6 @@ module.exports = suite: parseTestSuite
 
       interpolation:
         ":a\#{123}":   null # illegal now, but will be: "`a${Caf.toString(123)}`;"
-        '"a\#{123}"':  "`a${Caf.toString(123)}`;"
 
     hashStrings:
       basic:
@@ -75,18 +85,24 @@ module.exports = suite: parseTestSuite
         "#-":         '"#-";'
 
       escaped:
-        "#hi\\tthere":  '"#hi\\tthere";'
-        "#\\.":         '"#\\.";'
-        "#Hi\\_there.": '"#Hi there.";'
+        "#hi\\tthere":    '"#hi\\tthere";'
+        "#\\.":           '"#\\.";'
+        "#\\_":           '"# ";'
+        "#\\ ":           '"# ";'
+        "#Hi\\_there.":   '"#Hi there.";'
+        "#Hi\\ there.":   '"#Hi there.";'
+
+      interpolation:
+        "#a\#{123}":   null # illegal now, but will be: "`a${Caf.toString(123)}`;"
 
     _10UnitStrings:
-      "0px":          '"0px";'
-      "1px":          '"1px";'
-      "10px":         '"10px";'
-      "-10px":        '"-10px";'
-      ".1px":         '".1px";'
-      "-.1px":        '"-.1px";'
-      "0.8em":        '"0.8em";'
+      "0px":        '"0px";'
+      "1px":        '"1px";'
+      "10px":       '"10px";'
+      "-10px":      '"-10px";'
+      ".1px":       '".1px";'
+      "-.1px":      '"-.1px";'
+      "0.8em":      '"0.8em";'
 
     unusual:
       ':0':         '"0";'
@@ -97,6 +113,8 @@ module.exports = suite: parseTestSuite
       ':10':        '"10";'
       ':#fff':      '"#fff";'
       ':*':         '"*";'
+      ':h:mmtt':    '"h:mmtt";'
+      ':h:':        '"h:";'
 
       ':-':         '"-";'
       ':\\n':       '"\\n";'

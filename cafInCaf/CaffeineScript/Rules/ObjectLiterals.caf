@@ -84,14 +84,19 @@ import Extensions
       "valueProp optionalComma propertyList"
       "valuePropWithComplexExpression"
 
-    implicitObjectStart: "propName _colon_"
+    implicitObjectStart: "" propName propNameEndColon
 
   @rule
-    literalProp:  "propName _colon_ propValue:literal"
-    valueProp:    "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
+    propNameEndColon:
+      "" /:/ _?
+      "" _ /:/ _
+
+  @rule
+    literalProp:  "propName propNameEndColon propValue:literal"
+    valueProp:    "propName propNameEndColon propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
 
     valuePropWithComplexExpression:
-      "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
+      "propName propNameEndColon propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
 
     {}
       name: "literalObjectProperty"
@@ -113,11 +118,6 @@ import Extensions
       stnFactory: "ObjectLiteralAccessorStn"
 
   @rule
-    stringLiteralPropNameTail:
-      "" _ /:/ !unquotedString
-      /:/
-
-  @rule
     thisPropName: "/@/ propNameExtension*"
     {}
       stnFactory: :ThisStn
@@ -125,7 +125,7 @@ import Extensions
 
   @rule
     propName:
-      "" !/then\\s/ thisPropName &_colon_
+      "" !/then\\s/ thisPropName &propNameEndColon
     {}
       stnFactory: "ObjectPropNameStn"
       stnProps: ~>
@@ -133,11 +133,11 @@ import Extensions
 
   @rule
     propNameExtension:
-      "" /:*/ unquotedPropNameToken &/:/
+      "" /:*/ unquotedPropNameToken &propNameEndColon
 
   @rule
     propName:
-      "" !regExpLiteral !/then\\s/ propNameExtension+
+      "" !regExpLiteral !/then\\s/ unquotedPropNameToken &propNameEndColon propNameExtension*
     {}
       stnFactory: :ObjectPropNameStn
       stnProps: ~>
@@ -146,7 +146,7 @@ import Extensions
 
   @rule
     propName:
-      "" quotedString:stringLiteral &stringLiteralPropNameTail
+      "" quotedString:stringLiteral &propNameEndColon
 
     {}
       stnFactory: :ObjectPropNameStn

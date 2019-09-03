@@ -24,8 +24,6 @@ module.exports = suite: parseTestSuite
   computedKeys:
     "{[a]:1}"     : "({[a]: 1});"
     "[a]:1"       : "({[a]: 1});"
-    "[a] : 1"     : "({[a]: 1});"
-    '"#{a}" : 1'  : "({[`${Caf.toString(a)}`]: 1});"
     """
     b: 1
     [a]:2
@@ -33,6 +31,11 @@ module.exports = suite: parseTestSuite
     """
     b: 1 [a]:2
     """           : "({b: 1, [a]: 2});"
+
+  colonsMustTrailImmediately:
+    "a      : 1"  : "({a: 1});"
+    "[a]    : 1"  : "({[a]: 1});"
+    '"#{a}" : 1'  : "({[`${Caf.toString(a)}`]: 1});"
 
   parseFailures:
     """
@@ -44,21 +47,40 @@ module.exports = suite: parseTestSuite
     #   # foo
     # """: null
 
-  colonVariations:
-    notObject:
-      "a :  1": null # illegal
-      "a   :1": 'a("1");'
+  unquotedPropNamePrecidence:
 
-    legalObjects:
-      "a:1   ": "({a: 1});"
-      "a:   1": "({a: 1});"
-      "a:b: 1": '({"a:b": 1});'
-      ":a:  1": '({":a": 1});'
+    wordStringsHaveTopPriority:
+      "{:foo:  123}": null # colonPropNameStartNotAllowedEvenInExplicitObjects
+      "a         :1": 'a("1");'
+      ":a:        1": '["a:", 1];'
+      ":a#c:      1": '["a#c:", 1];'
+      "foo?bar :123": 'Caf.isF(foo) && foo(bar("123"));'
+      "foo!bar :123": 'foo(!bar("123"));'
 
-    legalObjectsWithNewLines:
-      "a:\n1 ": "({a: 1});"
-      "a: \n1": "({a: 1});"
-      "a:\n 1": "({a: 1});"
+    colonsAllowedInsideUnquotedPropNames:
+      "a:b:   1": '({"a:b": 1});'
+      "a:b:c: 1": '({"a:b:c": 1});'
+
+      "https://www.foo.com: 1": '({"https://www.foo.com": 1});'
+
+    spacesAroundTrailingColonAllowed:
+      "a:b                  : 1": '({"a:b": 1});'
+      "a:b:c                : 1": '({"a:b:c": 1});'
+
+      "https://www.foo.com  : 1": '({"https://www.foo.com": 1});'
+
+    hashStringsHaveBottomPriority:
+      "#a:    1":    '({"#a": 1});'
+      "#a#c:  1":  '({"#a#c": 1});'
+      "#a:c:  1":  '({"#a:c": 1});'
+
+    quotesRequired:
+      "':foo:foo': 1":'({":foo:foo": 1});'  # quotes required for starts-with-colon
+
+  legalObjectsWithNewLines:
+    "a:\n1 ": "({a: 1});"
+    "a: \n1": "({a: 1});"
+    "a:\n 1": "({a: 1});"
 
   unusualKeys:
     explicitObjects:
@@ -84,10 +106,10 @@ module.exports = suite: parseTestSuite
       "?:1":     '({"?": 1});'
       "%:1":     '({"%": 1});'
 
-    extensions:
-      "foo:foo: 1":   '({"foo:foo": 1});'
-      "a:b:c:d:e: 1": '({"a:b:c:d:e": 1});'
-      "https://www.foo.com: 1": '({"https://www.foo.com": 1});'
+
+    punctuation:
+      "foo?bar : 123": '({"foo?bar": 123});'
+      "foo!bar : 123": '({"foo!bar": 123});'
 
     regressions:
       '": 1"':  '": 1";'
@@ -383,10 +405,6 @@ module.exports = suite: parseTestSuite
 
     "foo?bar:123":  '({"foo?bar": 123});'
     "foo!bar:123":  '({"foo!bar": 123});'
-
-  notObject:
-    "foo?bar :123": 'Caf.isF(foo) && foo(bar("123"));'
-    "foo!bar :123": 'foo(!bar("123"));'
 
   escapes:
     "hi\\ there: 1":    '({"hi there": 1});'

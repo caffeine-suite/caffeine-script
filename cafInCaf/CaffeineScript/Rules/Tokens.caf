@@ -145,17 +145,6 @@
         ( (?!\s) [-\/$\w\u007f-\uffff] )+
 
     ##
-      SBD Feb2017: still debating exactly what should be included in unquoted strings
-
-      - definitly not: space, comma, [], (), {}
-      - could, could not: '', "", ``
-      - questionables: |, \
-      - should we allow escaping?
-      - should we allow #{} interpolation?
-
-    unquotedString:     /// [-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+
-
-    ##
       SBD Aug2019: I'm coming to these conclusions:
       - all except: space, comma, [], (), {}, ;
         - we could allow [ ( { in most places,
@@ -177,31 +166,62 @@
       - escaping:       YES
       - interpolation:  YES (WIP)
 
-    unquotedString2:
+    unquotedStringCharacter: unquotedStringCharacter =
       ///
         (?:
 
-        [^;:\n\s,)\]\}]
+        (?!     # don't match interpolation here
+          \#
+          \{
+        )
+
+        (?:
+          [^ \s \0-\x20 \x7f ; , () [ \] {} \\ ]
+          |
+          \\ .  # escapes automatically consume next character
+        )
+
+        )
+
+    unquotedString:
+      ///
+        (?:
+
+        #{unquotedStringCharacter.source}
+
+        )+
+
+    unquotedStringWithoutTrailingColon:
+      ///
+        (?:
+
+        (?![:])
+
+        #{unquotedStringCharacter.source}
 
         |
 
-        : [^;\n\s,)\]\}]
+        : #{unquotedStringCharacter.source}
 
         )+
 
     unquotedPropNameToken:
-      # /// (?: (?! [\s \x7f () [\] {} ; : , ]) [ \0x21-\uffff] )+
-      # /// [a-zA-Z0-9]
       ///
-
         (?:
 
-        [^ \s \0-\x20 \x7f [ \] {} () ; : , ' " ` \\]
+        (?![ : ' " ` \\ ])
+
+        #{unquotedStringCharacter.source}
 
         (?:
-          [^ \s \0-\x20 \x7f [ \] {} () ; : , \\]
-          |
-          \\ .
+          (?![ : ])
+          # Colons are actually allowed, but they are
+          # matched in the propName rule.
+
+          # (they cannot be consumed here in case they are
+          # the final colon)
+
+          #{unquotedStringCharacter.source}
         )*
 
         )

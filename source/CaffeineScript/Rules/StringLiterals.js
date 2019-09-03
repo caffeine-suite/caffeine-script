@@ -61,7 +61,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: "/:(?!:)/ unquotedString2",
+              pattern: "/:(?!:)/ unquotedString",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,
@@ -70,7 +70,7 @@ Caf.defMod(module, () => {
               }
             },
             {
-              pattern: "/#(?!#)/ unquotedString2",
+              pattern: "/#(?!#)/ unquotedStringWithoutTrailingColon",
               getStn: function() {
                 return StringStn({
                   parseTreeNode: this,

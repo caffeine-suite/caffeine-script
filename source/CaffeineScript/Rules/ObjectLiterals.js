@@ -74,15 +74,16 @@ Caf.defMod(module, () => {
                 "valueProp optionalComma propertyList",
                 "valuePropWithComplexExpression"
               ],
-              implicitObjectStart: "propName _colon_"
+              implicitObjectStart: "propName propNameEndColon"
             });
+            this.rule({ propNameEndColon: ["/:/ _?", "_ /:/ _"] });
             this.rule(
               {
-                literalProp: "propName _colon_ propValue:literal",
+                literalProp: "propName propNameEndColon propValue:literal",
                 valueProp:
-                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects",
+                  "propName propNameEndColon propValue:singleValueOrImplicitArrayWithoutImplicitObjects",
                 valuePropWithComplexExpression:
-                  "propName _colon_ propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
+                  "propName propNameEndColon propValue:singleValueOrImplicitArrayWithoutImplicitObjects"
               },
               {
                 name: "literalObjectProperty",
@@ -106,9 +107,6 @@ Caf.defMod(module, () => {
                 stnFactory: "ObjectLiteralAccessorStn"
               }
             });
-            this.rule({
-              stringLiteralPropNameTail: ["_ /:/ !unquotedString", /:/]
-            });
             this.rule(
               { thisPropName: "/@/ propNameExtension*" },
               {
@@ -124,7 +122,7 @@ Caf.defMod(module, () => {
               }
             );
             this.rule(
-              { propName: "!/then\\s/ thisPropName &_colon_" },
+              { propName: "!/then\\s/ thisPropName &propNameEndColon" },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
@@ -132,9 +130,14 @@ Caf.defMod(module, () => {
                 }
               }
             );
-            this.rule({ propNameExtension: "/:*/ unquotedPropNameToken &/:/" });
+            this.rule({
+              propNameExtension: "/:*/ unquotedPropNameToken &propNameEndColon"
+            });
             this.rule(
-              { propName: "!regExpLiteral !/then\\s/ propNameExtension+" },
+              {
+                propName:
+                  "!regExpLiteral !/then\\s/ unquotedPropNameToken &propNameEndColon propNameExtension*"
+              },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {
@@ -143,10 +146,7 @@ Caf.defMod(module, () => {
               }
             );
             return this.rule(
-              {
-                propName:
-                  "quotedString:stringLiteral &stringLiteralPropNameTail"
-              },
+              { propName: "quotedString:stringLiteral &propNameEndColon" },
               {
                 stnFactory: "ObjectPropNameStn",
                 stnProps: function() {

@@ -2,7 +2,7 @@
 let Caf = require("caffeine-script-runtime");
 Caf.defMod(module, () => {
   return function() {
-    let assignmentOperator;
+    let unquotedStringCharacter, assignmentOperator;
     this.rule({
       _equals_: /\ *= */,
       _colon_: /: *| +:( +|(?=\n))/,
@@ -33,9 +33,20 @@ Caf.defMod(module, () => {
         }
       ],
       pathedRequire: /((?!\s)[-\/$\w\u007f-\uffff])+/,
-      unquotedString: /[-~!@\#$%^&*_+=|\\<>?\/.$\w\u007f-\uffff]+/,
-      unquotedString2: /(?:[^;:\n\s,)\]\}]|:[^;\n\s,)\]\}])+/,
-      unquotedPropNameToken: /(?:[^\s\0-\x20\x7f[\]{}();:,'"`\\](?:[^\s\0-\x20\x7f[\]{}();:,\\]|\\.)*)/,
+      unquotedStringCharacter: (unquotedStringCharacter = /(?:(?!\#\{)(?:[^\s\0-\x20\x7f;,()[\]{}\\]|\\.))/),
+      unquotedString: RegExp(
+        `(?:${Caf.toString(unquotedStringCharacter.source)})+`
+      ),
+      unquotedStringWithoutTrailingColon: RegExp(
+        `(?:(?![:])${Caf.toString(
+          unquotedStringCharacter.source
+        )}|:${Caf.toString(unquotedStringCharacter.source)})+`
+      ),
+      unquotedPropNameToken: RegExp(
+        `(?:(?![:'"\`\\\\])${Caf.toString(
+          unquotedStringCharacter.source
+        )}(?:(?![:])${Caf.toString(unquotedStringCharacter.source)})*)`
+      ),
       unaryTailOperator: /\?/,
       unaryOperator_: /([!~]|not\b|delete\b) *|-(?![-:])/,
       binaryOperator: /&&|\|\||&(?=\s)|\||\^|\?|((and|or|in|is|isnt|instanceof)\b)|<<|>>>|>>|==|!=|<=|>=|<|>|\/\/|%%|\*\*|[-+*\/%]/,

@@ -71,7 +71,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
           > Syntax Error
 
       {}
-        pattern: "" /:(?!:)/ unquotedString2
+        pattern: "" /:(?!:)/ unquotedString
         getStn: ~> StringStn parseTreeNode: @, value: @toString().slice 1
 
       ## #hashStrings (primary use: hashtag and colors)
@@ -93,7 +93,7 @@ blockStringStartChar = /// (\  | \n | [^.\n\s,)\]\}] )
         The starting '#' is preserved.
         reserved: '##' for comments
       {}
-        pattern: "" /\#(?!\#)/ unquotedString2
+        pattern: "" /\#(?!\#)/ unquotedStringWithoutTrailingColon
         getStn: ~> StringStn parseTreeNode: @, value: @toString()
 
       # number-with-unit strings
