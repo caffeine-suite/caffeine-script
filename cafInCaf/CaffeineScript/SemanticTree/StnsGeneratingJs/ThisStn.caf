@@ -19,7 +19,7 @@ class ThisStn extends &BaseStn
       if identifierRegexp.test id
         @createSourceNode :this. id
       else
-        @createSourceNode :this[ id, "]"
+        @createSourceNode "this[" id, "]"
     else
       @createSourceNode
         :this
