@@ -35,12 +35,15 @@
     "webpack-node-externals": "^1.7.2",
     "webpack-stylish": "^0.1.8"
   },
+  "here2": {
+    "lines": "origin\tgit@github.com:caffeine-suite/caffeine-script.git (fetch)\norigin\tgit@github.com:caffeine-suite/caffeine-script.git (push)"
+  },
   "homepage": "https://github.com/caffeine-suite/caffeine-script",
   "license": "ISC",
   "name": "caffeine-script",
   "repository": {
     "type": "git",
-    "url": "https://github.com/caffeine-suite/caffeine-script.git"
+    "url": "git@github.com:shanebdavis/caffeine-script.git"
   },
   "scripts": {
     "build": "caf -v -p -c cafInCaf -o source",
