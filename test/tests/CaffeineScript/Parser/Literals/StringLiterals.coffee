@@ -76,6 +76,9 @@ module.exports = suite: parseTestSuite
       interpolation:
         ":a\#{123}":   null # illegal now, but will be: "`a${Caf.toString(123)}`;"
 
+      regressions:
+        ":git@github.com:shanebdavis/caffeine-script.git": '"git@github.com:shanebdavis/caffeine-script.git";'
+
     hashStrings:
       basic:
         "#fff":       '"#fff";'
