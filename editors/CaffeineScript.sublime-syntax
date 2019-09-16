@@ -19,11 +19,11 @@ contexts:
       scope: string.regexp.caffeine
 
     # block regexp
-    - match: '///[igmuy ] *[^ \n][^\n]*'
+    - match: '///[igmuy]?( |(?:\n|$)) *[^\n]*'
       scope: string.regexp.caffeine
 
     # block regexp
-    - match: '(?:^( *))///[igmuy]*\n'
+    - match: '(?:^( *))///[igmuy]* *\n'
       scope: string.regexp.caffeine
       push: block_regexp
 
@@ -80,11 +80,11 @@ contexts:
       scope: constant.numeric.caffeine
 
     # word-string
-    - match: ':(?!:)[^\\\n\s,)\]\}]+'
+    - match: ':(?!:)[^\n\s,;{}()\[\]]+'
       scope: string.quoted.double.caffeine
 
     # hash-string
-    - match: '#[$\w\u007f-\uffff]+'
+    - match: '#(?!#)[^\n\s,;{}()\[\]]+'
       scope: string.quoted.double.caffeine
 
     # number
@@ -110,7 +110,7 @@ contexts:
       scope: variable.other.member.caffeine
 
     # to-eol-comment
-    - match: '#([^\n$\w\u007f-\uffff]+[^\n]*|(?=\n|$))'
+    - match: '#([\x00-\x20\x7f\s;,()\[\]{}\\]|$)([^\n]*|(?=\n|$))'
       scope: comment.line.caffeine
 
     # - match: '"".*'
