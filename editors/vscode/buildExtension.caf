@@ -1,6 +1,6 @@
 json = JSON.stringify
   &extensionSourceInCaf/caffeinescriptTmLanguage
   null
-  "        "
+  "  "
 
 &fs.writeFileSync "./extension/syntaxes/caffeinescript.tmLanguage.json", json
