@@ -4,11 +4,12 @@
 	"license": "MIT",
 	"engines": { "vscode": "*" },
   "publisher": "caffeine-suite",
+  "repository": "https://github.com/caffeine-suite/caffeine-script",
   "displayName": "Official CaffeineScript Language Support",
   "description": "Syntax highlighting support for CaffeineScript.",
   "scripts": {"build": "cd source;caf ./buildExtension"},
   "categories": ["Programming Languages"],
-  "icon": "./assets/caffeine-logo.png",
+  "icon": "caffeine-logo.png",
 	"contributes": {
 		"languages": [{
 			"id": "caffeinescript",
