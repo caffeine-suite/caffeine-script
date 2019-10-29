@@ -7,8 +7,8 @@
   "scopeName": "source.caffeine",
   "patterns": [
     {
-      "match": "([-+]?(?!00)[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\\w\\u007f-\\uffff])(?!\\.[0-9])",
-      "name": "constant.numeric.caffeine"
+      "match": "&(?!\\d)((?:(?!\\s)[-/$\\w\\u007f-\\uffff])+)",
+      "name": "string.quoted.other.caffeine"
     },
     {
       "match": ":(?!:)[^\\n\\s,;{}()\\[\\]]+",
@@ -17,6 +17,30 @@
     {
       "match": "#(?!#)[^\\n\\s,;{}()\\[\\]]+",
       "name": "string.quoted.double.caffeine"
+    },
+    {
+      "begin": "(?:^( *))\"\"\"?[^\\n]*\\n",
+      "end": "^(?!\\1 +[^ ])(?= *[^ \\n])",
+      "name": "string.quoted.double.caffeine"
+    },
+    {
+      "begin": "\"\"",
+      "end": "(?:\n)",
+      "name": "string.quoted.double.caffeine"
+    },
+    {
+      "begin": "\"(?!\")",
+      "end": "\"",
+      "name": "string.quoted.double.caffeine"
+    },
+    {
+      "begin": "'",
+      "end": "'",
+      "name": "string.quoted.double.caffeine"
+    },
+    {
+      "match": "([-+]?(?!00)[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\\w\\u007f-\\uffff])(?!\\.[0-9])",
+      "name": "constant.numeric.caffeine"
     },
     {
       "match": "/[^/\\s]([^\\\\/]|\\\\.)*/[igmuy]*",
@@ -47,40 +71,41 @@
       "name": "constant.language.caffeine"
     },
     {
-      "match": "(?!\\d)[\\w\\u007f-\\uffff]+",
-      "name": "entity.identifier.caffeine"
-    },
-    {
-      "match": "&(?!\\d)((?:(?!\\s)[-/$\\w\\u007f-\\uffff])+)",
-      "name": "string.quoted.other.caffeine"
+      "match": "[-+=!%&*|<>?]|==|&&|\\|\\|",
+      "name": "keyword.operator.caffeine"
     },
     {
       "match": "[-=~]>",
       "name": "storage.type.function.caffeine"
     },
     {
-      "match": "[-+=!%&*|<>?]|==|&&|\\|\\|",
-      "name": "keyword.operator.caffeine"
-    },
-    {
       "match": "[()\\[\\]{}]",
       "name": "meta.brace.caffeine"
+    },
+    {
+      "match": "\\.",
+      "name": "punctuation.accessor.caffeine"
+    },
+    {
+      "match": "(?!\\d)[\\w\\u007f-\\uffff]+",
+      "name": "entity.identifier.caffeine"
     },
     {
       "match": "\\@(?!\\d)((?:(?!\\s)[$\\w\\u007f-\\uffff])+)?",
       "name": "variable.other.member.caffeine"
     },
     {
-      "match": "#([\\x00-\\x20\\x7f\\s;,()\\[\\]{}\\\\]|$)([^\\n]*|(?=\\n|$))",
-      "name": "comment.line.caffeine"
-    },
-    {
       "match": "\\.[_a-zA-Z0-9]+",
       "name": "punctuation.accessor.caffeine"
     },
     {
-      "match": "\\.",
-      "name": "punctuation.accessor.caffeine"
+      "match": "#([\\x00-\\x20\\x7f\\s;,()\\[\\]{}\\\\]|$)([^\\n]*|(?=\\n|$))",
+      "name": "comment.line.caffeine"
+    },
+    {
+      "begin": "(?:^( *))##",
+      "name": "comment.block.caffeine",
+      "end": "^(?!\\1 +[^ ])(?= *[^ \\n])"
     }
   ],
   "repository": {}

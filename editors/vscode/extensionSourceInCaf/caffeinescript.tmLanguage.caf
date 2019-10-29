@@ -6,11 +6,15 @@ name:      :CaffeineScript
 scopeName: :source.caffeine
 patterns:
   []
-    # Numbers
+    #############################
+    # Auto-Require
     {}
-      match:  '([-+]?(?!00)[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\\w\\u007f-\\uffff])(?!\\.[0-9])'
-      name:   :constant.numeric.caffeine
+      match: '&(?!\\d)((?:(?!\\s)[-/$\\w\\u007f-\\uffff])+)'
+      name: :string.quoted.other.caffeine
 
+    #############################
+      STRINGs
+    #############################
     # word-string
     {}
       match:  ':(?!:)[^\\n\\s,;{}()\\[\\]]+'
@@ -21,7 +25,37 @@ patterns:
       match:  '#(?!#)[^\\n\\s,;{}()\\[\\]]+'
       name:   :string.quoted.double.caffeine
 
+    # block-string
+    {}
+      begin:  "" (?:^( *))"""?[^\\n]*\\n
+      end:    "" ^(?!\\1 +[^ ])(?= *[^ \\n])
+      name:   :string.quoted.double.caffeine
 
+    # to-eol-string
+    {}
+      begin:  "" ""
+      end:    "" (?:\n)
+      name:   :string.quoted.double.caffeine
+
+    {}
+      begin:  "" "(?!")
+      end:    "" "
+      name:   :string.quoted.double.caffeine
+
+    {}
+      begin:  "" '
+      end:    "" '
+      name:   :string.quoted.double.caffeine
+
+    #############################
+    # Numbers
+    {}
+      match:  '([-+]?(?!00)[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\\w\\u007f-\\uffff])(?!\\.[0-9])'
+      name:   :constant.numeric.caffeine
+
+    #############################
+      REGEXP
+    #############################
     # regexp
     {}
       match: '/[^/\\s]([^\\\\/]|\\\\.)*/[igmuy]*'
@@ -32,16 +66,21 @@ patterns:
       match: '///[igmuy]?( |(?:\\n|$)) *[^\\n]*'
       name: :string.regexp.caffeine
 
+    #############################
     # macro
     {}
       match: '<[\\w\\u007f-\\uffff]+>'
       name: :keyword.macro.compileTime.caffeine
 
+    #############################
     # object-literal property names:
     {}
       match: '((?!\\s)[-~!@\\#$%^&*_+=|\\\\<>?/.$\\w\\u007f-\\uffff])+(?:\\:)'
       name: :variable.other.property.caffeine
 
+    #############################
+      KEYWORDS
+    #############################
     {}
       match:
         ""
@@ -66,15 +105,12 @@ patterns:
       match: '\\b(NaN|global|null|undefined)\\b'
       name: :constant.language.caffeine
 
-    # identifier
+    #############################
+      OPERATORS
+    #############################
     {}
-      match: '(?!\\d)[\\w\\u007f-\\uffff]+'
-      name: :entity.identifier.caffeine
-
-    # Auto-Require
-    {}
-      match: '&(?!\\d)((?:(?!\\s)[-/$\\w\\u007f-\\uffff])+)'
-      name: :string.quoted.other.caffeine
+      match: '[-+=!%&*|<>?]|==|&&|\\|\\|'
+      name: :keyword.operator.caffeine
 
     # Function Declaration
     {}
@@ -82,33 +118,45 @@ patterns:
       name: :storage.type.function.caffeine
 
     {}
-      match: '[-+=!%&*|<>?]|==|&&|\\|\\|'
-      name: :keyword.operator.caffeine
-
-    {}
       match: '[()\\[\\]{}]'
       name: :meta.brace.caffeine
+
+    # dot
+    {}
+      match: '\\.'
+      name: :punctuation.accessor.caffeine
+
+    #############################
+      IDENTIFIERS
+    #############################
+    # identifier
+    {}
+      match: '(?!\\d)[\\w\\u007f-\\uffff]+'
+      name: :entity.identifier.caffeine
 
     # this-member: @foo
     {}
       match: '\\@(?!\\d)((?:(?!\\s)[$\\w\\u007f-\\uffff])+)?'
       name: :variable.other.member.caffeine
 
-    # to-eol-comment
-    {}
-      match: '#([\\x00-\\x20\\x7f\\s;,()\\[\\]{}\\\\]|$)([^\\n]*|(?=\\n|$))'
-      name: :comment.line.caffeine
-
-
     # dot property access
     {}
       match: '\\.[_a-zA-Z0-9]+'
       name: :punctuation.accessor.caffeine
 
-    # dot
+    #############################
+      COMMENTS
+    #############################
+    # to-eol-comment
     {}
-      match: '\\.'
-      name: :punctuation.accessor.caffeine
+      match: "" #([\\x00-\\x20\\x7f\\s;,()\\[\\]{}\\\\]|$)([^\\n]*|(?=\\n|$))
+      name: :comment.line.caffeine
+
+    # block-comment
+    {}
+      begin: "" (?:^( *))##
+      name: :comment.block.caffeine
+      end: "" ^(?!\\1 +[^ ])(?= *[^ \\n])
 
 
 ##
