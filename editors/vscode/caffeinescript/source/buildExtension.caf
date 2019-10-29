@@ -1,0 +1,8 @@
+&fs.writeFileSync
+  out = "../syntaxes/caffeinescript.tmLanguage.json"
+  json = JSON.stringify
+    &caffeinescriptTmLanguage
+    null
+    "  "
+
+console.log "" build wrote #{json.length} bytes to: #{out}
