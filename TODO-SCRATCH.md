@@ -37,6 +37,64 @@ Syntax Highlighting
 
 # To Sort
 ```
+# parse-with-one-less-subblock doesn't work here:
+# Caf:
+find node in nextNodes when node.type == nextNodeType &&
+  @_sequenceExistsInDag node
+
+# parsed:
+Caf.find(nextNodes, null, node => node.type === nextNodeType) &&
+  this._sequenceExistsInDag(node);
+
+# should be:
+Caf.find(
+  nextNodes,
+  null,
+  node => node.type === nextNodeType && this._sequenceExistsInDag(node)
+)
+
+# clearly "&&" is expecting a block to follow, but
+# that possibility has been precluded.
+# The tricky part is if you remove "&&", then
+# we need the one-less-block requirement otherwise
+# nextNodeType will be invoked as a function.
+# Really what we want is to supress implicit function invocations
+# (if we don't already have a with-block) unless there are 2 or more
+# sub-blocks.
+# BUT, we want to allow other explicit-expects-sub-blocks
+```
+```
+#` should be a comment
+:&nbsp;•&nbsp; should be a word-string
+```
+
+```
+# badjs: doesn't properly declare "temp" var
+array a in-array b with array c in-array a
+```
+
+```
+# this should not not need the trailing 'null'
+# to return directly from the explicit return-statement
+# It doesn't right now because the outer-most each gets
+# wrapped in a "do" block.
+->
+  @ extract nodesByMergePriority
+  each candidateList in-array nodesByMergePriority
+    each i til candidateList.length - 1 by 1
+      each j from i + 1 til candidateList.length by 1
+        n1 = candidateList[i]
+        n2 = candidateList[j]
+        if @nodesAreMergable n1, n2
+          return @withMergedNodes n1, n2
+  null # should not be needed
+```
+
+```
+# empty while should be OK
+i = 10
+while i--
+```
 # this should probably work, but since it's not an actual NPM; it's built in, it doesn't
 &child_process
 ```
@@ -75,7 +133,7 @@ reduce sum, value from container inject 0
 # under this new idea, it returns 9;
 ```
 
-2019-08-31: I actually like BOTH the new `each`-return-value AND simplifying `reduce`. Reduce should NOT skip values. Reduce should invoke once per source value. The reduced-value is undefined unless inject is specified. 
+2019-08-31: I actually like BOTH the new `each`-return-value AND simplifying `reduce`. Reduce should NOT skip values. Reduce should invoke once per source value. The reduced-value is undefined unless inject is specified.
 
 I think I like the idea of the alternate way to specify inject is to use defaults. However, logically for other comprehensions, should be applied every loop:
 
