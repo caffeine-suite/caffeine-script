@@ -6,6 +6,112 @@ name:      :CaffeineScript
 scopeName: :source.caffeine
 patterns:
   []
+    # Numbers
+    {}
+      match:  '([-+]?(?!00)[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?|0b[01]+|0o[0-7]+|0x[0-9a-f]+)(?![$\\w\\u007f-\\uffff])(?!\\.[0-9])'
+      name:   :constant.numeric.caffeine
+
+    # word-string
+    {}
+      match:  ':(?!:)[^\\n\\s,;{}()\\[\\]]+'
+      name:   :string.quoted.double.caffeine
+
+    # hash-string
+    {}
+      match:  '#(?!#)[^\\n\\s,;{}()\\[\\]]+'
+      name:   :string.quoted.double.caffeine
+
+
+    # regexp
+    {}
+      match: '/[^/\\s]([^\\\\/]|\\\\.)*/[igmuy]*'
+      name: :string.regexp.caffeine
+
+    # block regexp
+    {}
+      match: '///[igmuy]?( |(?:\\n|$)) *[^\\n]*'
+      name: :string.regexp.caffeine
+
+    # macro
+    {}
+      match: '<[\\w\\u007f-\\uffff]+>'
+      name: :keyword.macro.compileTime.caffeine
+
+    # object-literal property names:
+    {}
+      match: '((?!\\s)[-~!@\\#$%^&*_+=|\\\\<>?/.$\\w\\u007f-\\uffff])+(?:\\:)'
+      name: :variable.other.property.caffeine
+
+    {}
+      match:
+        ""
+          (?x)
+          \\b
+          (
+            (( in | from ) - )? ( array | object )
+            | super | await | delete | reduce | inject | as | with-key | extract
+            | instanceof | return | break | into | returning | try | catch | promise
+            | then | and | or | is | isnt | not | if | else | switch | unless | until | throw
+            | new | while | class | extends | find | each | to | til | by | in
+            | from | with | do | case | when | import
+          )
+          \\b
+      name: :keyword.caffeine
+
+    {}
+      match: '\\b(false|true)\\b'
+      name: :constant.language.boolean.caffeine
+
+    {}
+      match: '\\b(NaN|global|null|undefined)\\b'
+      name: :constant.language.caffeine
+
+    # identifier
+    {}
+      match: '(?!\\d)[\\w\\u007f-\\uffff]+'
+      name: :entity.identifier.caffeine
+
+    # Auto-Require
+    {}
+      match: '&(?!\\d)((?:(?!\\s)[-/$\\w\\u007f-\\uffff])+)'
+      name: :string.quoted.other.caffeine
+
+    # Function Declaration
+    {}
+      match: '[-=~]>'
+      name: :storage.type.function.caffeine
+
+    {}
+      match: '[-+=!%&*|<>?]|==|&&|\\|\\|'
+      name: :keyword.operator.caffeine
+
+    {}
+      match: '[()\\[\\]{}]'
+      name: :meta.brace.caffeine
+
+    # this-member: @foo
+    {}
+      match: '\\@(?!\\d)((?:(?!\\s)[$\\w\\u007f-\\uffff])+)?'
+      name: :variable.other.member.caffeine
+
+    # to-eol-comment
+    {}
+      match: '#([\\x00-\\x20\\x7f\\s;,()\\[\\]{}\\\\]|$)([^\\n]*|(?=\\n|$))'
+      name: :comment.line.caffeine
+
+
+    # dot property access
+    {}
+      match: '\\.[_a-zA-Z0-9]+'
+      name: :punctuation.accessor.caffeine
+
+    # dot
+    {}
+      match: '\\.'
+      name: :punctuation.accessor.caffeine
+
+
+##
     {}
       match: "(new)\\s+(?:(?:(class)\\s+(\\w+(?:\\.\\w*)*)?)|(\\w+(?:\\.\\w*)*))"
       name:  :meta.class.instance.constructor.caffeine
@@ -261,7 +367,8 @@ patterns:
     {} include: :#single_quoted_string
     {} include: :#double_quoted_string
 
-repository:
+repository: {}
+##
   arguments:
     patterns:
       []
