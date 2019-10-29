@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"license": "MIT",
 	"engines": { "vscode": "*" },
-  "publisher": "Shane Brinkman-Davis",
+  "publisher": "caffeine-suite",
   "displayName": "Official CaffeineScript Language Support",
   "description": "Syntax highlighting support for CaffeineScript.",
   "scripts": {"build": "cd source;caf ./buildExtension"},
