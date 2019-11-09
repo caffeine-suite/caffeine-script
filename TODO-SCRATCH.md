@@ -37,6 +37,10 @@ Syntax Highlighting
 
 # To Sort
 ```
+double = 123 # wrongly gets matched as "do"
+```
+
+```
 # parse-with-one-less-subblock doesn't work here:
 # Caf:
 find node in nextNodes when node.type == nextNodeType &&
