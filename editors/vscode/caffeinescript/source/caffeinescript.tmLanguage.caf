@@ -87,12 +87,31 @@ patterns:
           (?x)
           \\b
           (
-            (( in | from ) - )? ( array | object )
-            | super | await | delete | reduce | inject | as | with-key | extract
-            | instanceof | return | break | into | returning | try | catch | promise
-            | then | and | or | is | isnt | not | if | else | switch | unless | until | throw
-            | new | while | class | extends | find | each | to | til | by | in
-            | from | with | do | case | when | import
+            super
+            | delete | as
+            | extract | import
+            | instanceof | is
+
+            | return | break
+
+            | throw | try | catch
+            | if | unless | then | else
+            | switch
+            | and | or | isnt | not
+            | while | until
+
+            | new | class | extends
+
+            | (( in | from ) - )? ( array | object )
+            | reduce | inject | find | each
+            | into | returning
+            | to | til | by | in | from
+            | with | do | with-key
+            | short | skip
+            | when
+
+            | await | yield
+            | case
           )
           \\b
       name: :keyword.caffeine
