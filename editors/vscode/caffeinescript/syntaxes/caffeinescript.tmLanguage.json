@@ -95,7 +95,7 @@
       "name": "variable.other.member.caffeine"
     },
     {
-      "match": "\\.[_a-zA-Z0-9]+",
+      "match": "\\.[w-￿]+",
       "name": "punctuation.accessor.caffeine"
     },
     {

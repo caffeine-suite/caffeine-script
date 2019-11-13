@@ -160,7 +160,7 @@ patterns:
 
     # dot property access
     {}
-      match: '\\.[_a-zA-Z0-9]+'
+      match: '\\.[\w\u007f-\uffff]+'
       name: :punctuation.accessor.caffeine
 
     #############################

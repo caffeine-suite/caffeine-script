@@ -126,7 +126,7 @@ contexts:
       scope: string.quoted.double.caffeine
       push: single_quoted_string
 
-    - match: '\.[_a-zA-Z0-9]+'
+    - match: '\.[\w\u007f-\uffff]+'
       scope: punctuation.accessor.caffeine
 
     - match: '\.'
