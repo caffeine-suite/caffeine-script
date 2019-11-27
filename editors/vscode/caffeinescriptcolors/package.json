@@ -1,21 +1,24 @@
 {
-    "name": "caffeinescriptcolors",
-    "displayName": "CaffeineScriptColors",
-    "description": "Official CaffeineScript color scheme",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.38.0"
-    },
-    "categories": [
-        "Themes"
-    ],
-    "contributes": {
-        "themes": [
-            {
-                "label": "CaffeineScriptColors",
-                "uiTheme": "vs-dark",
-                "path": "./themes/CaffeineScriptColors-color-theme.json"
-            }
-        ]
-    }
+  "name": "caffeinescriptcolors",
+  "publisher": "caffeine-script-publisher",
+  "repository": "https://github.com/caffeine-suite/caffeine-script",
+  "displayName": "Caffeine Script Colors",
+  "description": "Official CaffeineScript color scheme",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.38.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "scripts": {"build":"vsce package"},
+  "contributes": {
+    "themes": [
+      {
+        "label": "CaffeineScriptColors",
+        "uiTheme": "vs-dark",
+        "path": "./themes/CaffeineScriptColors-color-theme.json"
+      }
+    ]
+  }
 }
